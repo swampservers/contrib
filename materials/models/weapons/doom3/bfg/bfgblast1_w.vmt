@@ -1,0 +1,14 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/doom3/bfg/bfgblast1"
+	"$additive" 1
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+		"textureScrollVar" "$basetexturetransform"
+		"textureScrollRate" 2
+		"textureScrollAngle" 90.00
+		}
+   }
+}

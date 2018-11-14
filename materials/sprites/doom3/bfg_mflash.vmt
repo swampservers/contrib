@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$baseTexture" "sprites/doom3/bfg_mflash"
+	"$additive" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+}

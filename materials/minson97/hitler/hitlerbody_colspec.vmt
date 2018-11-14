@@ -1,0 +1,25 @@
+vertexlitgeneric
+{
+$baseTexture "minson97\hitler\hitlerbody_colspec"
+$bumpmap "minson97\hitler\hitlerbody_norms"
+
+$nocull 1
+
+$phong 1
+$phongboost "3"
+$phongexponent 5
+$phongtint "[.85 .85 1]"
+$phongfresnelranges "[.2 .5 5]"
+
+
+
+$nodecal 1
+$ambientocclusion 1
+$halflambert 1
+$diffuseexp "1.5"
+
+$detail "minson97\hitler\leatherdetail"
+$detailscale 17.5
+$detailblendfactor 2.45
+$detailblendmode 0
+}

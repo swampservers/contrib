@@ -1,0 +1,9 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/ppm/base/render/clothes_wbs_full"
+	"$ignorez"			1
+	"$vertexcolor" 		1
+	"$vertexalpha" 		1
+	"$nolod" 			1
+ 
+}

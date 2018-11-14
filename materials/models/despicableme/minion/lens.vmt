@@ -1,0 +1,17 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/despicableme/minion/lens"
+	"$halflambert"			"1"
+
+
+	"$phong"				"1"
+	"$phongboost"			"10"
+	"$phongexponent"		"80"
+	"$phongfresnelranges"	"[0.1 1 8]"
+
+	"$rimlight"				"0.5"
+	"$rimlightboost"		"0.1"
+	"$nocull" 1
+	"$translucent" 1
+}
+

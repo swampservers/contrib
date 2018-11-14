@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/player/shrek/shrek"
+	"$envmapmask" "models/player/shrek/shrek_mask"
+	"$halflambert" "1"
+
+}

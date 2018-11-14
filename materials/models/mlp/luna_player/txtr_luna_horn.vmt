@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/mlp/luna_player/horn"
+	"$bumpmap" "models/mlp/luna_player/mask"
+
+	"$model" "1"
+	"$phong" "1"
+	"$phongexponent" "0.1"
+	"$phongboost" "0.1"
+	"$phongalbedotint" "1"
+	"$phongtint" "[1 .95 .95]"
+	"$phongfresnelranges"	"[0.5 6 10]"
+}

@@ -1,0 +1,19 @@
+"VertexlitGeneric"
+{
+	"$baseTexture" "models\despicableme\minion\chrome"
+	"$bumpmap" "models/effects/flat_normal" 
+
+	"$nocull" 1
+
+	"$phong" "1"
+	"$phongexponent" "6"
+	"$phongboost" "3"
+	"$phongfresnelranges"	"[.25 1 4]"
+	"$basemapalphaphongmask" "1"
+
+	// Rim lighting parameters
+	"$rimlight" "1"												// To enable rim lighting (requires phong)
+	"$rimlightexponent" "4"										// Exponent for phong component of rim lighting	
+	"$rimlightboost" "2"	
+
+}

@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "swamponions/stone/marble"
+	"$color2" "[ 1 0.8 0.2]"
+	"$surfaceprop" "stone"
+	"$envmap" "shadertest/cubemap"
+	"$envmaptint" "[0.6 0.6 0.6]"
+	"$envmapsaturation" "0.7"
+	"$halflambert" "1"
+}

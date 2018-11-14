@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "phoenix_storms/gear"
+	$bumpmap		brick/brickwall021a_normal
+	"$surfaceprop" "metal"
+	"$envmap" "shadertest/cubemap"
+	"$envmapcontrast" 0
+	"$envmapsaturation" 0
+	"$selfillum" 0
+	"$model" 1
+
+	$envmaptint "[ 0.8 0.8 0.8 ]"
+}

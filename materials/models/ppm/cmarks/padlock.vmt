@@ -1,0 +1,16 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ppm/cmarks/padlock"
+
+	"$translucent" 1
+	"$phong" "1" 
+	"$phongexponent" "6"
+	"$phongboost" "0.05"
+	"$phongalbedotint" "1"
+	"$phongtint" "[1 .95 .95]"
+	"$phongfresnelranges"	"[0.5 6 10]"
+	
+	$rimlight               1
+	$rimlightexponent       2
+	$rimlightboost          1
+}

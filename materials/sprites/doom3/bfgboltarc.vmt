@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$baseTexture" "sprites/doom3/bfgboltarc"
+	"$additive" 1
+}

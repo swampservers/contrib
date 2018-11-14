@@ -1,0 +1,23 @@
+"EyeRefract"
+{
+	"$Iris"               "models\ZTP\NickWilde/eye-pupil"			  // Iris color in RGB with cornea noise in A
+	"$AmbientOcclTexture" "models\ZTP\NickWilde/eye-extra"		// Ambient occlusion in RGB, A unused
+	"$Envmap"             "models\ZTP\NickWilde/eye-reflection-cubemap-"  // Reflection environment map
+	"$CorneaTexture"      "models\ZTP\NickWilde/eye-cornea"               // Special texture that has 2D cornea normal in RG and other data in BA
+
+	"$EyeballRadius" "1.52"				// Default 0.5
+	"$AmbientOcclColor" "[.7 .7 .7]"	// Default 0.33, 0.33, 0.33
+	"$Dilation" ".7"					// Default 0.5
+	"$ParallaxStrength" "0.1"          // Default 0.25
+	"$CorneaBumpStrength" "1.0"			// Default 1.0
+	"$Glossiness" ".35"					// Default 1.0	(attenuates reflections..making the irises seem darker)
+
+	"$halflambert" "1"
+	"$nodecal" "1"
+
+	// These effects are only available in ps.2.0b and later
+	"$RaytraceSphere" "0"				// Default 1 - Enables raytracing in the pixel shader to make the eyeball look round
+	"$SphereTexkillCombo" "0"			// Default 1 - Enables killing pixels that don't ray-intersect the sphere
+
+	"$ambientocclusion" "1"
+}

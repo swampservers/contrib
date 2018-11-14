@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/swamponions/vape/body"
+	"$surfaceprop" "plastic"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[ 0.18 0.18 0.18 ]"
+	"$envmapcontrast" 0
+	"$envmapsaturation" 0.18
+	"$selfillum" 0
+	"$model" 1
+}

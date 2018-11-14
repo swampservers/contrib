@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "particle/popcorn-kernel"
+	"$translucent" 1
+	"$vertexalpha" 1
+	"$vertexcolor" 1
+}

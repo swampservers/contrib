@@ -1,0 +1,26 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/doom3/bfg/bfg_flare1"
+	"$additive" 1
+	"$angle" 0.0
+	"$translate" "[0.0 0.0]"
+	"$center" "[0.5 0.5]"
+	"$scale" "[1.05 1.05]"
+	"Proxies"
+	{
+		"LinearRamp"
+		{
+			"rate" -350
+			"initialValue" 0.0
+			"resultVar" "$angle"
+		}
+		"TextureTransform"
+		{
+			"translateVar" "$translate"
+			"rotateVar" "$angle"
+			"scaleVar" "$scale"
+			"centerVar" "$center"
+			"resultVar" "$basetexturetransform"
+		}
+	}
+}

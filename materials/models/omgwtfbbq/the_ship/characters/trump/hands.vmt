@@ -1,0 +1,19 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/omgwtfbbq/The_Ship/Characters/Trump/TrumpSkin_albedo"
+	"$bumpmap" "models/omgwtfbbq/The_Ship/Characters/Trump/TrumpSkin_normals"
+	"$phong" "1"
+	"$phongboost" "1.5"
+"$phongexponent" "15"	
+	"$lightwarptexture" "models/omgwtfbbq/The_Ship/Characters/Trump/pyro_lightwarp"
+	"$phongfresnelranges"	"[.3 1 8]"
+	"$halflambert" "1"
+	"$color2"			"[0 0 0]"
+	"$blendTintByBaseAlpha"		"1"
+	// Rim lighting parameters
+	"$rimlight" "1"												// To enable rim lighting (requires phong)
+	"$rimlightexponent" "4"										// Exponent for phong component of rim lighting	
+	"$rimlightboost" "2"										// Boost for ambient cube component of rim lighting
+	"$rimmask" "1" 
+	"$nodecal" "1"
+}

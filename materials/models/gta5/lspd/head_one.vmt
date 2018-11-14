@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/gta5/lspd/head_one"
+	"$bumpmap" "models/gta5/lspd/head_one_bump"
+	"$halflambert" "1"
+}

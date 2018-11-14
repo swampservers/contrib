@@ -1,0 +1,23 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ppm/mature_base/horn" 
+
+	"$model" "1"
+	"$phong" "1"
+	"$phongexponent" "0.1"
+	"$phongboost" "0.1"
+	"$phongalbedotint" "1"
+	"$phongtint" "[1 .95 .95]"
+	"$phongfresnelranges"	"[0.5 6 10]"
+	"$blendtintbybasealpha" "1" 
+ 	//"$blendtintcoloroverbase" "1"
+	Proxies
+	{
+		PlayerColor
+		{
+			resultVar	$color2
+			default		0.87 0.85 0.83
+			$phongtint" = $color2
+		}
+	}
+}

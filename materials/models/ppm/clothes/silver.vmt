@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ppm/clothes/silver"
+
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" "5"	
+	"$lightwarptexture" "models/ppm/clothes/silver_lightwarp"
+	"$phongfresnelranges"	"[.25 .5 1]"
+	"$phongwarptexture"  "models/ppm/clothes/silver_phongwarp"
+
+	"$rimlight" "0.5"
+	"$rimlightexponent" "2"	
+	"$rimlightboost" "0.25"
+	"$ambientocclusion" "1"
+
+}

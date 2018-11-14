@@ -1,0 +1,7 @@
+"eyes"
+{
+	"$basetexture" "models/mlp/celestia_player/eyeball_l"
+	"$iris" "models/mlp/celestia_player/pupil_l"
+	"$halflambert" "1"
+
+}

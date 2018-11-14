@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/swamponions/bodypillow/bodypillow.vtf"
+"$surfaceprop" "carpet"
+"$model" 1
+}

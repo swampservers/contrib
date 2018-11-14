@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/doom3/bfg/bfgblast2"
+	"$additive" 1
+}

@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/weapons/doom3/plasmagun/pl_can_d"
+	"$bumpmap" "models/weapons/doom3/plasmagun/pl_can_local"
+	"$phong" "1"
+	"$phongexponent" "80"
+	"$phongboost"	"1"
+	"$phongfresnelranges"	"[1 5 1]"
+}

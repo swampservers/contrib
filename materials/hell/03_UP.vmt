@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "hell/03_UP"
+	"$basetexturetransform" "center .5 .5 scale 1 1 rotate 270 translate 0 0"
+}

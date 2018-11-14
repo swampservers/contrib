@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\gmod_tower\casino\slotmachine"
+	"$selfillum" 1
+
+	"$phong" "1"
+	"$bumpmap" "models\gmod_tower\casino\bumpmap"
+}

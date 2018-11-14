@@ -1,0 +1,8 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models/swamponions/colorabletrumphat"
+	"$surfaceprop" "plastic"
+	"$model" 1
+	"$blendtintbybasealpha" "1" // alpha channel of $basetexture: color mask.
+ 	"$blendtintcoloroverbase" "0" // blend mode. anything =/= 0 is ugly!
+}

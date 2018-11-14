@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "models/GTA5/CityCop/lowr_spec_000"
+	"$translucent" 1
+}

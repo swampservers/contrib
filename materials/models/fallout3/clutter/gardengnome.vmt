@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\fallout3\clutter\gardengnome"
+        "$bumpmap" "models\fallout3\clutter\gardengnome_n"
+}

@@ -1,0 +1,13 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/MMT00body01"
+	"$bumpmap" "models/MMT00body01NO"
+	"$halflambert" 1
+
+	"$normalmapalphaenvmapmask" 1
+
+	"$phong" "1"
+	"$phongexponent" "4"
+	"$phongboost" "0.9"	
+	"$phongfresnelranges"	"[2.0 3.0 8.5]"
+}

@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/GTA5/CityCop/p_head_diff_001_a"
+	"$bumpmap" "models/GTA5/CityCop/p_head_normal_001"
+	"$halflambert" 1
+}

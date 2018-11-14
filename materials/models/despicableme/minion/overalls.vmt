@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/despicableme/minion/overalls"
+	"$bumpmap" "models/despicableme/minion/overallsbump"
+}

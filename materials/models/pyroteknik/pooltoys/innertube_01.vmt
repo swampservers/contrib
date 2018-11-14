@@ -1,0 +1,13 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/pyroteknik/pooltoys/innertube_01"
+	"$bumpmap" "effects/flat_normal"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.02 0.02 0.02]"
+	$phong 1
+$phongboost 3
+$phongexponent 64
+$phongtint "[1 1 1]"
+$phongfresnelranges "[1 0.1 0]" 
+	"$surfaceprop" "Slime"
+}

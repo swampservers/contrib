@@ -1,0 +1,15 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\weapons\v_models\M98B\2Main"
+	"$bumpmap" "models\weapons\v_models\M98B\2Main_norm"
+	"$nocull"	"1"
+	"$normalmapalphaenvmapmask" "1"
+	"$phong" 		"1"
+	"$phongexponent" 	"466"
+	"$phongboost"   "2.2"
+	"$phongfresnelranges"   "[1 8 4]"
+                "$phongtint"                   "[0.35 0.33 0.5]" 
+	"$rimlight" "1"
+	"$rimlightexponent" "28"	
+	"$rimlightboost" "0.2"
+}

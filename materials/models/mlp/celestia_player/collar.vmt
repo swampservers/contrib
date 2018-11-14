@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/mlp/celestia_player/collar"
+	"$bumpmap" "models/mlp/celestia_player/mask"
+
+	"$model" "1"
+	"$phong" "1"
+	"$phongexponent" "0.1"
+	"$phongboost" "0.7"
+	"$phongalbedotint" "1"
+	"$phongtint" "[0.85 .64 0.42]"
+	"$phongfresnelranges"	"[0.5 6 10]"
+
+}

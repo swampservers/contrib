@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ppm/clothes/badge_gold"
+
+	"$phong" "1"
+	"$phongexponent" "10"
+	"$phongboost" "1.5"	
+	"$phongfresnelranges"	"[.3 1 8]"
+	"$halflambert" "0"
+	"$basemapalphaphongmask" "1"
+	"$lightwarptexture" "models/ppm/clothes/gold_lightwarp"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "4"	
+	"$rimlightboost" "2"
+	"$ambientocclusion" "1"
+
+}

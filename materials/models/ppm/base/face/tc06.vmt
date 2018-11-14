@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ppm/base/face/p_purple2"
+	"$detail" "models/ppm/base/face/p_purple2_r"
+}

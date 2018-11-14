@@ -1,0 +1,14 @@
+"UnlitGeneric"
+{
+	"$baseTexture" "models/weapons/doom3/plasmagun/p1"
+	"$additive" 1
+	"Proxies"
+	{
+		"AnimatedTexture"
+		{
+			"animatedTextureVar" "$basetexture"
+			"animatedTextureFrameNumVar" "$frame"
+			"animatedTextureFrameRate" "40"
+		}
+	}
+}

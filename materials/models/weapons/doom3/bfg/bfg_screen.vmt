@@ -1,0 +1,16 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/weapons/doom3/bfg/bfg_screen"
+	"$additive" 1
+	"$selfillum" 1
+	"Proxies"
+	{
+		"Sine"
+		{
+			"sineperiod" .5
+			"sinemin" "1"
+			"sinemax" "1.5"
+			"resultVar" "$selfillumTint"
+		}
+	}
+}

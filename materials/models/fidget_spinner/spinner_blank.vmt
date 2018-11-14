@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/fidget_spinner/spinner"
+                "$basemapalphaphongmask" "1"
+
+	"$phong" "1"
+	"$phongexponent" "60"
+	
+	"$phongboost" "4"	
+	"$phongfresnelranges"	"[.3 .5 3]"
+	
+	"$rimlight" "1"						
+	"$rimlightexponent" "20"				
+	"$rimlightboost" ".65"
+}

@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/pyroteknik/scooter/white"
+	"$detail" "models/pyroteknik/scooter/scooter_detail" 
+	"$detailscale" "1"
+	"$detailblendmode" "2"
+	"$bumpmap" "null-bumpmap"
+ 
+		
+	$phong 1
+	$phongexponent 32
+	$phongboost	5
+	$phongfresnelranges	"[0.05 0.5 1]"
+	 
+	"$model" 1
+	"$halflambert" 1
+
+}

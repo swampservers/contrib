@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/doom3/plasmagun/pl_can_blue"
+	"$model" 1
+	"$additive" 1
+}

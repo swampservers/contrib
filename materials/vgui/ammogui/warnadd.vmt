@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "vgui/ammogui/warnadd"
+	"$additive" 1
+	"$nolod" 1 
+}

@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\gmod_tower\casino\glass"
+	"$translucent" 1
+}

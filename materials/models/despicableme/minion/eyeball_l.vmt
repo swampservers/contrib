@@ -1,0 +1,6 @@
+"Eyes"
+{
+	"$basetexture"	"models/despicableme/minion/eyeball"
+	"$iris"         "models/despicableme/minion/iris"
+	"$halflambert"	"1"
+}

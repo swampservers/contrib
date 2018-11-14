@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/ppm/cmarks/8ball"
+
+	"$translucent" 1
+}

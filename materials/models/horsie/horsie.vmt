@@ -1,0 +1,19 @@
+"VertexLitGeneric"
+{
+
+	 $model "1"
+	 $basetexturetransform "center 0.5 0.5 scale 1.0 1.0 rotate 0.0 translate 0.0 0.0"
+	 $bumptransform "center 0.5 0.5 scale 1.0 1.0 rotate 0.0 translate 0.0 0.0"
+	 $basetexture "models/horsie/horsie"
+	 $bumpmap "models/horsie/horsie_normal"
+
+	"$phong" "1"
+	"$phongexponent" "4"
+	"$phongboost" "2"	
+	"$phongfresnelranges"	"[.05 0.1 .7]"
+
+	"$phongtint"	"[0 0 0]"
+//R G B
+
+
+}

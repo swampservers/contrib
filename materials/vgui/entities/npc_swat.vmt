@@ -1,0 +1,11 @@
+"UnlitGeneric"
+{
+	"$basetexture" "vgui/entities/npc_swat"
+ "$vertexcolor" 1
+ "$vertexalpha" 1
+ "$translucent" 1
+}
+
+
+
+

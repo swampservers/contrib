@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/pyroteknik/redbutton/bone"
+	"$bumpmap" "effects/flat_normal"
+		$phong 1
+$phongboost 3
+$phongexponent 64
+$phongtint "[1 1 1]"
+$phongfresnelranges "[1 0.1 0]" 
+
+}

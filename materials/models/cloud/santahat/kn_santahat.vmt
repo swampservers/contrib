@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\cloud\santahat\kn_santahat"
+	"$surfaceprop" "plastic"
+}

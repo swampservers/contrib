@@ -1,0 +1,19 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/mlp/celestia_player/wings"
+	"$bumpmap" "models/mlp/celestia_player/mask"
+
+	"$model" "1"
+	"$phong" "1"
+	"$basemapalphaphongmask" "1"
+	"$phongexponent" "6"
+	"$phongboost" "0.05"
+	"$phongalbedotint" "1"
+	"$phongtint" "[0.85 .54 0.72]"
+	"$phongfresnelranges"	"[0.5 6 10]"
+	
+	$rimlight               1
+	$rimlightexponent       2
+	$rimlightboost          1
+
+}

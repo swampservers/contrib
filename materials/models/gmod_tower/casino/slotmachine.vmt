@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\gmod_tower\casino\slotmachine"
+	"$envmapmask" "models\gmod_tower\casino\sm_specular"
+	"$selfillum" 1
+}

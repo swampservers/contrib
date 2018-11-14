@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	$basetexture "models/moonman/jacket_d"
+	$color2 "[ 0.8 0.8 0.8 ]"
+	$bumpmap "models/moonman/jacket_n"
+	$phongexponenttexture "models/moonman/jacket_m"
+
+	$phong "1"
+	$phongexponent "4"
+	$phongboost "2"
+	$phongfresnelranges "[0.05 0.15 1.0]"
+	$phongalbedotint "1"
+}
