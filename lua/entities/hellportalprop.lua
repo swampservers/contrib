@@ -66,6 +66,7 @@ function ENT:Initialize()
 
 	self:SetSolid(SOLID_VPHYSICS)
 	self:EnableCustomCollisions(true)
+	
 end
 
 if CLIENT then
