@@ -2,19 +2,11 @@
 local SprayThumbnails = {}
 local SprayList,SprayMeshManagerBase,page,pagecount
 
-concommand.Add("SprayMesh_Manager",SprayMeshManager)
-
 local function FormatTable(tab)
 	for k,v in pairs(tab) do
-		local sub = string.gsub(v,"^.+imgur.com/","")
-		if string.len(sub) == 11 then
-			local subext = string.Right(sub,4)
-			if subext == ".jpg" or subext == ".png" then
-				tab[k] = string.gsub(v,"^.+imgur.com/","")
-			end
-		else
-			table.remove(tab,k)
-		end
+		local id = SanitizeImgurId(tab[k])
+		if id then tab[k] = id
+		else table.remove(tab,k) end
 	end
 	for k,v in pairs(tab) do
 		local c = {}
@@ -205,3 +197,5 @@ function SprayMeshManager()
 	SprayMeshManagerThumbnails()
 	
 end
+
+concommand.Add("SprayMesh_Manager",SprayMeshManager)
