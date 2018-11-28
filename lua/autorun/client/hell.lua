@@ -128,12 +128,12 @@ local TpSpriteSize = {
 local function ChangeRenderZ(Zdn,Zup)
 	corner1a = Vector(-.5,4096.5,Zdn)
 	corner1b = Vector(-.5,4096.5,Zup)
-	corner2a = Vector(-1022,4096.5,Zup)
-	corner2b = Vector(-1022,4096.5,Zdn)
-	corner3a = Vector(-.5,5118,Zdn)
-	corner3b = Vector(-.5,5118,Zup)
-	corner4a = Vector(-1022,5118,Zdn)
-	corner4b = Vector(-1022,5118,Zup)
+	corner2a = Vector(-1023.5,4096.5,Zup)
+	corner2b = Vector(-1023.5,4096.5,Zdn)
+	corner3a = Vector(-.5,5119.5,Zdn)
+	corner3b = Vector(-.5,5119.5,Zup)
+	corner4a = Vector(-1023.5,5119.5,Zdn)
+	corner4b = Vector(-1023.5,5119.5,Zup)
 end
 
 local function Draw2DSprite(plypos,vec,width,minheight,maxheight)

@@ -1,6 +1,6 @@
 
 local SprayThumbnails = {}
-local SprayList,SprayMeshManagerBase,page,pagecount
+local SprayList,SprayMeshManagerBase,selected,page,pagecount
 
 local function FormatTable(tab)
 	for k,v in pairs(tab) do
@@ -30,6 +30,17 @@ function ReloadManager()
 	SprayList = FormatTable(SprayList)
 	SprayMeshManagerThumbnails()
 	file.Write("sprays/savedsprays.txt",util.TableToJSON(SprayList))
+end
+
+local function OutlineCurrentSpray(width,height)
+	selected = vgui.Create("DPanel",SprayMeshManagerBase)
+	selected:SetPos(width-15,height-15)
+	selected:SetSize(150,150)
+	
+	function selected:Paint(w,h)
+		surface.SetDrawColor(Color(255,255,255))
+		surface.DrawOutlinedRect(10,10,138,138)
+	end
 end
 
 function SprayMeshManagerThumbnails()
@@ -72,6 +83,8 @@ function SprayMeshManagerThumbnails()
 		
 		panel["button"].DoClick = function()
 			RunConsoleCommand("SprayMesh_URL","i.imgur.com/"..v)
+			if selected == nil then OutlineCurrentSpray(width,height) 
+			else selected:SetPos(width-15,height-15) end
 		end
 		
 		panel["button"].DoRightClick = function()
@@ -93,10 +106,9 @@ function SprayMeshManagerThumbnails()
 					<meta charset="UTF-8">
 					<title>title</title>
 					<style type = "text/css">
-						html {
-							overflow: hidden;
-						}
-						body {
+						html,body {
+							margin:0;
+							overflow:hidden;
 							text-align:center;
 						}
 					</style>
@@ -119,7 +131,12 @@ function SprayMeshManagerThumbnails()
 				</body>
 			</html>]]
 		)
-	end	
+		
+		if GetConVar("SprayMesh_URL"):GetString() == "i.imgur.com/"..v then
+			OutlineCurrentSpray(width,height)
+		end
+		
+	end
 	
 end
 
@@ -156,13 +173,13 @@ function SprayMeshManager()
 	SprayMeshManagerAddSpray = vgui.Create("DImageButton",SprayMeshManagerBase)
 	SprayMeshManagerAddSpray:SetSize(16,16)
 	SprayMeshManagerAddSpray:SetPos(10,5)
-	SprayMeshManagerAddSpray:SetImage("plus.png")
+	SprayMeshManagerAddSpray:SetImage("vgui/plus.png")
 	
 	function SprayMeshManagerAddSpray:DoClick()
 		Derma_StringRequest(
 			"Add New Spray",
 			"Input an imgur with correct formating   Example: i.imgur.com/nbn0zwo.jpg",
-			"", //https://i.imgur.com/gSougja.jpg
+			"",
 			function(link)
 				table.insert(SprayList,link)
 				ReloadManager()
