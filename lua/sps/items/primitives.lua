@@ -40,5 +40,9 @@ for k,v in pairs(primitives) do
 	if kl=="cone" then
 		itm.maxscale = 3.0
 	end
+	if kl=="plane" then
+		itm.description = "Two per slot! Lots can be used."
+		itm.perslot = 2
+	end
 	PS_ItemProduct(itm)
 end
