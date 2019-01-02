@@ -1,4 +1,8 @@
 function GetMapPropTable()
+	local arcadeanglernd = 3
+	local arcadexposrnd = 4
+	local arcadeyposrnd = 4
+
     math.randomseed(1337)
 
 	local stuff = {
