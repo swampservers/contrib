@@ -6,9 +6,9 @@ function GetMapPropTable()
     math.randomseed(1337)
 
 	local stuff = {
-        {class="prop_physics",pos=Vector(0,576,0),ang=Angle(0,90,5),model="models/unconid/xmas/xmas_tree.mdl", scale=1.2},
+        --{class="prop_physics",pos=Vector(0,576,0),ang=Angle(0,90,5),model="models/unconid/xmas/xmas_tree.mdl", scale=1.2},
 
-        {class="prop_physics",pos=Vector(-562, -5264, 0),ang=Angle(0,0,0),model="models/unconid/xmas/xmas_tree.mdl"},
+        --{class="prop_physics",pos=Vector(-562, -5264, 0),ang=Angle(0,0,0),model="models/unconid/xmas/xmas_tree.mdl"},
         {class="gmt_instrument_piano",pos=Vector(-2480,-700,0),ang=Angle(0,0,0)},
         {class="ent_chess_board",pos=Vector(-2340,-600,0),unfrozen=true},
         {class="ent_chess_board",pos=Vector(-2245,-620,0),unfrozen=true},
