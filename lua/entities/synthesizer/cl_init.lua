@@ -72,3 +72,7 @@ end
 function ENT:ShiftMod()
 	self:ToggleShiftMode()
 end
+
+function ENT:AltMod()
+	self:CycleInstrument()
+end

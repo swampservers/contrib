@@ -9,7 +9,6 @@ ENT.Spawnable		= true
 ENT.AdminSpawnable 	= true
 
 ENT.Model		= Model( "models/tnf/synth.mdl" )
-ENT.SoundDir	= "gmodtower/lobby/instruments/synthesizer/"
 
 local darker = Color( 100, 100, 100, 150 )
 ENT.Keys = {
