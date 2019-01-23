@@ -1,6 +1,6 @@
 ENT.Base			= "gmt_instrument_base"
 ENT.Type			= "anim"
-ENT.PrintName		= "Playable Piano"
+ENT.PrintName		= "Piano"
 ENT.Author			= "MacDGuy"
 ENT.Contact			= "http://www.gmtower.org"
 ENT.Purpose			= "A fully playable piano!"
@@ -9,7 +9,6 @@ ENT.Spawnable		= true
 ENT.AdminSpawnable 	= true
 
 ENT.Model		= Model( "models/fishy/furniture/piano.mdl" )
-ENT.SoundDir	= "GModTower/lobby/instruments/piano/"
 
 local darker = Color( 100, 100, 100, 150 )
 ENT.Keys = {
