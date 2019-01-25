@@ -98,3 +98,10 @@ PS_WeaponProduct({
 	description="For eating in theaters while watching Cars 2.",
 	model="models/misc/beans.mdl"
 })
+
+PS_WeaponProduct({
+	class="weapon_monster",
+	name="Monster Zero",
+	description="*sip* yep, Doom was a good game",
+	model="models/misc/monsterzero.mdl"
+})
