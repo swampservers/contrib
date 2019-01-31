@@ -443,7 +443,7 @@ function ENT:ToggleShiftMode()
 end
 
 function ENT:CycleInstrument()
-	net.Start( "ChangeInstrument" )
+	net.Start("ChangeInstrument")
 		net.WriteEntity(self)
 	net.SendToServer()
 end

@@ -25,9 +25,11 @@ function ENT:Initialize()
 	
 end
 
-net.Receive("ChangeInstrument",function()
+net.Receive("ChangeInstrument",function(len,ply)
 	local ent = net.ReadEntity()
-	ent:SetNWInt("CurrentInstrument",(ent:GetNWInt("CurrentInstrument") % 8) + 1)
+	if IsValid(ent) and ent.Base == "gmt_instrument_base" and ent.Owner == ply then
+		ent:SetNWInt("CurrentInstrument",(ent:GetNWInt("CurrentInstrument") % 8) + 1)
+	end
 end)
 
 function ENT:InitializeAfter()
