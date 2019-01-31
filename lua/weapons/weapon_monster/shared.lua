@@ -22,7 +22,7 @@ SWEP.ViewModel	= "models/misc/monsterzero.mdl"
 SWEP.WorldModel	= "models/misc/monsterzero.mdl"
 
 function SWEP:Initialize()
-    self:SetWeaponHoldType("slam") 
+    self:SetHoldType("slam") 
 end
 
 function SWEP:PrimaryAttack()

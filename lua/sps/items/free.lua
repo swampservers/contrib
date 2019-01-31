@@ -96,12 +96,14 @@ PS_WeaponProduct({
 	class="weapon_beans",
 	name="Baked Beans",
 	description="For eating in theaters while watching Cars 2.",
-	model="models/misc/beans.mdl"
+	model="models/misc/beans.mdl",
+	extrapreviewgap=1
 })
 
 PS_WeaponProduct({
 	class="weapon_monster",
 	name="Monster Zero",
-	description="*sip* yep, Doom was a good game",
-	model="models/misc/monsterzero.mdl"
+	description="*sip* yeap, Quake was a good game",
+	model="models/misc/monsterzero.mdl",
+	extrapreviewgap=2
 })
