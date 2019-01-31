@@ -36,15 +36,17 @@ function ReleaseMonster(ply)
 		net.Broadcast()
 	end
 	if ply.cantStartmonster then
-		ply.fov = ply:GetFOV()
-		ply:SetWalkSpeed(300)
-		ply:SetRunSpeed(400)
-		ply:SetFOV(ply.fov+10,1)
-		timer.Simple(5,function()
+		ply.realFov = ply:GetFOV()
+		ply.realWalkSpeed = ply:GetWalkSpeed()
+		ply.realRunSpeed = ply:GetRunSpeed()
+		ply:SetWalkSpeed(280)
+		ply:SetRunSpeed(420)
+		ply:SetFOV(ply.realFov+10,1)
+		timer.Simple(6,function()
 			ply.cantStartmonster=false
-			ply:SetWalkSpeed(200)
-			ply:SetRunSpeed(300)
-			ply:SetFOV(ply.fov,1)
+			ply:SetWalkSpeed(ply.realWalkSpeed)
+			ply:SetRunSpeed(ply.realRunSpeed)
+			ply:SetFOV(ply.realFov,1)
 		end)
 	end
 	ply.monsterCount=0
