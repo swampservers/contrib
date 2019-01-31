@@ -3,6 +3,7 @@ AddCSLuaFile( "shared.lua" )
 include( "shared.lua" )
 
 util.AddNetworkString( "InstrumentNetwork" )
+util.AddNetworkString( "ChangeInstrument" )
 
 function ENT:Initialize()
 
@@ -17,10 +18,19 @@ function ENT:Initialize()
 	if IsValid( phys ) then
 		phys:Wake()
 	end
+	
+	self:SetNWInt("CurrentInstrument",1)
 
 	self:InitializeAfter()
 	
 end
+
+net.Receive("ChangeInstrument",function(len,ply)
+	local ent = net.ReadEntity()
+	if IsValid(ent) and ent.Base == "gmt_instrument_base" and ent.Owner == ply then
+		ent:SetNWInt("CurrentInstrument",(ent:GetNWInt("CurrentInstrument") % 8) + 1)
+	end
+end)
 
 function ENT:InitializeAfter()
 end

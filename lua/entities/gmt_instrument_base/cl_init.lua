@@ -31,6 +31,19 @@ ENT.DefaultTextInfoColor = Color( 120, 120, 120, 150 )
 ENT.MaterialDir	= ""
 ENT.KeyMaterials = {}
 
+SynthesizerInstruments = {
+	"Synthesizer",
+	"eguitar",
+	"Guitar",
+	"Harp",
+	"Organ",
+	"Piano",
+	"Sax",
+	"Violin"
+}
+
+ENT.Instruments = SynthesizerInstruments
+
 ENT.MainHUD = {
 	Material = nil,
 	X = 0,
@@ -429,6 +442,12 @@ function ENT:ToggleShiftMode()
 	self.ShiftMode = !self.ShiftMode
 end
 
+function ENT:CycleInstrument()
+	net.Start("ChangeInstrument")
+		net.WriteEntity(self)
+	net.SendToServer()
+end
+
 function ENT:ShiftMod() end // Called when they press shift
 function ENT:CtrlMod() end // Called when they press cntrl
 
@@ -447,8 +466,16 @@ hook.Add( "HUDPaint", "InstrumentPaint", function()
 		surface.SetDrawColor( 0, 0, 0, 180 )
 		surface.DrawRect( 0, ScrH() - 60, ScrW(), 60 )
 
-		draw.SimpleText( "PRESS TAB TO LEAVE THE " .. name, "InstrumentNotice", ScrW() / 2, ScrH() - 35, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
+		draw.SimpleText( "PRESS TAB TO LEAVE THE " .. name, "InstrumentNotice", ScrW() / 2, ScrH() - 45, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )
 
+		name = SynthesizerInstruments[inst:GetNWInt("CurrentInstrument")]
+		if inst:GetNWInt("CurrentInstrument") == 2 then
+			name = "Electric Guitar"
+		elseif inst:GetNWInt("CurrentInstrument") == 7 then
+			name = "Saxophone"
+		end
+		draw.SimpleText( "PRESS ALT TO CHANGE THE SYNTHESIZER SOUND: " .. name, "InstrumentNotice", ScrW() / 2, ScrH() - 15, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1 )	
+	
 	end
 
 end )

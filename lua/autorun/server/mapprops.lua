@@ -10,6 +10,8 @@ function GetMapPropTable()
 
         --{class="prop_physics",pos=Vector(-562, -5264, 0),ang=Angle(0,0,0),model="models/unconid/xmas/xmas_tree.mdl"},
         {class="gmt_instrument_piano",pos=Vector(-2480,-700,0),ang=Angle(0,0,0)},
+        {class="gmt_instrument_piano",pos=Vector(500,1680,160),ang=Angle(0,0,0)},
+        
         {class="ent_chess_board",pos=Vector(-2340,-600,0),unfrozen=true},
         {class="ent_chess_board",pos=Vector(-2245,-620,0),unfrozen=true},
         {class="ent_draughts_board",pos=Vector(-2150,-640,0),unfrozen=true},

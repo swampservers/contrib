@@ -6,8 +6,7 @@ ENT.Model		= Model( "models/fishy/furniture/piano.mdl" )
 ENT.ChairModel	= Model( "models/fishy/furniture/piano_seat.mdl" )
 ENT.MaxKeys		= 4 // how many keys can be played at once
 
-ENT.SoundDir	= "GModTower/lobby/piano/note_"
-ENT.SoundExt 	= ".wav"
+ENT.SoundDir	= "GModTower/lobby/piano/"
 
 INSTNET_USE		= 1
 INSTNET_HEAR	= 2
@@ -45,6 +44,15 @@ ENT.ControlKeys = {
 		inst:CtrlMod() 
 	end,
 	
+	[KEY_LALT] = function( inst, bPressed )
+		if ( !bPressed ) then return end
+		inst:AltMod() 
+	end,
+	[KEY_RALT] = function( inst, bPressed )
+		if ( !bPressed ) then return end
+		inst:AltMod() 
+	end,
+	
 	[KEY_LSHIFT] = function( inst, bPressed )
 		inst:ShiftMod()
 	end,
@@ -56,7 +64,7 @@ function ENT:GetSound( snd )
 		return nil
 	end
 	
-	return self.SoundDir .. snd .. self.SoundExt
+	return "gmodtower/lobby/instruments/" .. self.Instruments[self:GetNWInt("CurrentInstrument")] .. "/" .. snd .. ".wav"
 end
 
 if SERVER then
