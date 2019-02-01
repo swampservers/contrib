@@ -13,14 +13,14 @@ function MonsterUpdate(ply)
 		net.WriteBool(true)
 		net.Broadcast()
 	end
-	if ply.monsterCount >= 10 then
+	if ply.monsterCount >= 12 then
 		ply.cantStartmonster = true
 		ReleaseMonster(ply)
 	end
 end
 
 hook.Add("KeyRelease","DoMonsterHook",function(ply, key)
-	if key == IN_ATTACK and !ply.cantStartmonster and ply:GetActiveWeapon():GetClass() == "weapon_monster" then
+	if key == IN_ATTACK and !ply.cantStartmonster and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_monster" then
 		if ply.monsterCount < 10 then ply.cantStartmonster=false end
 		ReleaseMonster(ply)
 	end
