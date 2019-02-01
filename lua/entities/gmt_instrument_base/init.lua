@@ -199,12 +199,11 @@ function ENT:NetworkKey( key, timestamp )
 		
 		local recievers={}
 		for k, v in pairs(player.GetAll()) do
-			if v and v:IsValid() then
 			if (not v:InTheater()) and v:GetPos():Distance(self:GetPos())<800 then
-			table.insert(recievers,v)
-			end
+				table.insert(recievers,v)
 			end
 		end
+		self.NetworkCache = recievers
 		--self.NetworkCache = Location.GetPlayersInLocation(Location.Find(self))
 	end
 
