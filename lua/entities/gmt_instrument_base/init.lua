@@ -196,16 +196,16 @@ function ENT:NetworkKey( key, timestamp )
 
 	if CurTime() > ((self.NetworkCacheTime or 0)+2) then
 		self.NetworkCacheTime = CurTime()
-		--[[
+		
 		local recievers={}
 		for k, v in pairs(player.GetAll()) do
 			if v and v:IsValid() then
-			if (not v:InTheater()) and v:GetPos():Distance(self:GetPos())<600 then
+			if (not v:InTheater()) and v:GetPos():Distance(self:GetPos())<800 then
 			table.insert(recievers,v)
 			end
 			end
-		end ]]
-		self.NetworkCache = Location.GetPlayersInLocation(Location.Find(self))
+		end
+		--self.NetworkCache = Location.GetPlayersInLocation(Location.Find(self))
 	end
 
 	net.Send(self.NetworkCache)
