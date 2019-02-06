@@ -407,3 +407,23 @@ PS_ItemProduct({
 		}
 	}
 })
+
+PS_ItemProduct({
+	class = 'catears',
+	price = 600000,
+	name = 'Cat Ears',
+	description = "Become your favorite neko e-girl gamer!",
+	model = 'models/milaco/CatEars/CatEars.mdl',
+	maxscale = 2.0,
+	wear = {
+		attach = "eyes",
+		scale = 0.8,
+		translate = Vector(-2,0,3),
+		rotate = Angle(0,-90,10),
+		pony = {
+			scale = 1.2,
+			translate = Vector(-7.5,0,11.5),
+			rotate = Angle(0,-90,10),
+		}
+	}
+})
