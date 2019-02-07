@@ -410,7 +410,7 @@ PS_ItemProduct({
 
 PS_ItemProduct({
 	class = 'catears',
-	price = 600000,
+	price = 69690,
 	name = 'Cat Ears',
 	description = "Become your favorite neko e-girl gamer!",
 	model = 'models/milaco/CatEars/CatEars.mdl',
