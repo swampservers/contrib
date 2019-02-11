@@ -173,7 +173,7 @@ function SprayMeshManager()
 	SprayMeshManagerAddSpray = vgui.Create("DImageButton",SprayMeshManagerBase)
 	SprayMeshManagerAddSpray:SetSize(16,16)
 	SprayMeshManagerAddSpray:SetPos(10,5)
-	SprayMeshManagerAddSpray:SetImage("vgui/plus.png")
+	SprayMeshManagerAddSpray:SetImage("icon16/add.png")
 	
 	function SprayMeshManagerAddSpray:DoClick()
 		Derma_StringRequest(
