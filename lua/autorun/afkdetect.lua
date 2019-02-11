@@ -2,6 +2,11 @@ if SERVER then
 	hook.Add("OnPlayerAFK","afkwepstrip",function(v)
 		--Strip freebie weapons to improve performance
 		v:StripWeapon("weapon_spraypaint")
+		v:StripWeapon("weapon_beans")
+		v:StripWeapon("weapon_switch")
+		v:StripWeapon("weapon_encyclopedia")
+		v:StripWeapon("weapon_fidget")
+		v:StripWeapon("weapon_monster")
 		v:StripWeapon("weapon_popcorn")
 		v:StripWeapon("weapon_kleiner")
 		v:StripWeapon("weapon_flappy")
