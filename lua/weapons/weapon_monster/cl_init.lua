@@ -21,7 +21,7 @@ function SWEP:DrawWorldModel()
 
 		if ply:IsPony() then
 			--pony position
-			opos = opos + (oang:Forward()*6.5) + (oang:Right()*-4.36) + (oang:Up()*-2.5)
+			opos = opos + (oang:Forward()*7.5) + (oang:Right()*-2.5) + (oang:Up()*-2.5)
 			oang:RotateAroundAxis(oang:Right(),0)
 			oang:RotateAroundAxis(oang:Forward(),5)
 			oang:RotateAroundAxis(oang:Up(),-30)
