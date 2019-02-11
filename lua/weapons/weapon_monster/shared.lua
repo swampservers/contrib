@@ -31,7 +31,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	self:ExtEmitSound("boomer/phrase1.wav", {shared=true})
+	self:ExtEmitSound("boomer/phrase1.wav", {shared=true, speech=1.8})
 end
 
 SWEP.OnDrop = SWEP.Holster
