@@ -22,6 +22,13 @@ PS_UniqueModelProduct({
 })
 
 PS_UniqueModelProduct({
+	class = 'billyherrington',
+	name = 'Billy Herrington',
+	description = "Rest in peace Billy Herrington, you will be missed.",
+	model = 'models/vinrax/player/billy_herrington.mdl'
+})
+
+PS_UniqueModelProduct({
 	class = 'ketchupdemon',
 	name = 'Mortally Challenged',
 	description = '"Demon" is an offensive term.',
