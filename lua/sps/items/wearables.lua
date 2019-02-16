@@ -417,13 +417,13 @@ PS_ItemProduct({
 	maxscale = 2.0,
 	wear = {
 		attach = "eyes",
-		scale = 0.8,
-		translate = Vector(-2,0,3),
-		rotate = Angle(0,-90,10),
+		scale = 1.0,
+		translate = Vector(-2.859,0,-2.922),
+		rotate = Angle(0,90,0),
 		pony = {
-			scale = 1.2,
-			translate = Vector(-7.5,0,11.5),
-			rotate = Angle(0,-90,10),
+			scale = 1.0,
+			translate = Vector(-16,0,-4),
+			rotate = Angle(0,90,0),
 		}
 	}
 })
