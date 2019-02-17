@@ -116,6 +116,7 @@ PS_Categories = {
 				title = "One-Life, Unique",
 				products = {
 					"celestia",
+					"billyherrington",
 					"fatbastard",
 					"fox",
 					"garfield",
