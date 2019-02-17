@@ -161,6 +161,7 @@ PS_Categories = {
 					"spikecollar",
 					"trashhattest", --party hat
 					"turtleplush"
+					"catears"
 				}
 			},
 			{
