@@ -6,11 +6,11 @@ SWEP.ViewModel	= ""
 SWEP.WorldModel = ""
 
 function SWEP:PrimaryAttack()
-	self:ExtEmitSound("billyh/asswecan.ogg", {speech=1.25, {shared=true}})
+	self:ExtEmitSound("billyh/asswecan.ogg", {speech=1.25, shared=true})
 end
 
 function SWEP:SecondaryAttack()
-	self:ExtEmitSound("billyh/endurethelash.ogg", {speech=2.1, {shared=true}})
+	self:ExtEmitSound("billyh/endurethelash.ogg", {speech=2.1, shared=true})
 end
 
 function SWEP:OnRemove()
