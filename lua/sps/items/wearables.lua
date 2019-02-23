@@ -270,7 +270,7 @@ PS_ItemProduct({
 	price = 10000000,
 	name = 'Party Hat',
 	description = "It's just a paper hat.",
-	model = 'models/misc/partyhat3d.mdl',
+	model = 'models/noz/partyhat3d.mdl',
 	color = Vector(0,0.06,0.94),
 	maxscale = 3.0,
 	wear = {
@@ -323,7 +323,7 @@ PS_ItemProduct({
 	class = "pickelhaube",
 	price = 250000,
 	name = 'Pickelhaube',
-	model = 'models/misc/pickelhaube.mdl',
+	model = 'models/noz/pickelhaube.mdl',
 	maxscale = 2.0,
 	wear = {
 		attach = "eyes",

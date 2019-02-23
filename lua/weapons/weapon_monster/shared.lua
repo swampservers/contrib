@@ -18,8 +18,8 @@ SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = false
 SWEP.Spawnable = true
 
-SWEP.ViewModel	= "models/misc/monsterzero.mdl"
-SWEP.WorldModel	= "models/misc/monsterzero.mdl"
+SWEP.ViewModel	= "models/noz/monsterzero.mdl"
+SWEP.WorldModel	= "models/noz/monsterzero.mdl"
 
 function SWEP:Initialize()
     self:SetHoldType("slam") 
