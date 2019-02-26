@@ -432,7 +432,7 @@ PS_ItemProduct({
 	class = 'tophat',
 	price = 300000,
 	name = 'Top Hat',
-	description = "Like a sir",
+	description = "Feel like a sir",
 	model = 'models/Quattro/TopHat/TopHat.mdl',
 	maxscale = 2.0,
 	wear = {
