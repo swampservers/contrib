@@ -427,3 +427,23 @@ PS_ItemProduct({
 		}
 	}
 })
+
+PS_ItemProduct({
+	class = 'uwumask',
+	price = 50000,
+	name = 'uwu Mask',
+	description = "The apparel of one who notices.",
+	model = 'models/milaco/OWOMask/OWOMask.mdl',
+	maxscale = 2.0,
+	wear = {
+		attach = "eyes",
+		scale = 0.4,
+		translate = Vector(0,0,-3.665),
+		rotate = Angle(0,0,0),
+		pony = {
+			scale = 1.025,
+			translate = Vector(-12,0,-2),
+			rotate = Angle(10,0,0),
+		}
+	}
+})
