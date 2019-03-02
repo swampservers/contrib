@@ -427,3 +427,23 @@ PS_ItemProduct({
 		}
 	}
 })
+
+PS_ItemProduct({
+	class = 'tophat',
+	price = 300000,
+	name = 'Top Hat',
+	description = "Feel like a sir",
+	model = 'models/Quattro/TopHat/TopHat.mdl',
+	maxscale = 2.0,
+	wear = {
+		attach = "eyes",
+		scale = 1.0,
+		translate = Vector(-2,0,6),
+		rotate = Angle(0,0,0),
+		pony = {
+			scale = 1.0,
+			translate = Vector(-15.299,0.008,16.79),
+			rotate = Angle(0,0,0),
+		}
+	}
+})
