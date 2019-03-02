@@ -61,9 +61,9 @@ materials/models/cloud/santahat/kn_santahat.*
 materials/models/foodnhouseholditems/mcdburger.*
 materials/models/horsie/horsie.*
 materials/models/horsie/horsie_normal.*
-materials/models/misc/partyhat.*
-materials/models/misc/pickelhaube.*
-materials/models/misc/pickelhaube_bump.*
+materials/models/noz/partyhat.*
+materials/models/noz/pickelhaube.*
+materials/models/noz/pickelhaube_bump.*
 materials/models/oldbill/spike_collar.*
 materials/models/ppm/upmane_9_mask0.*
 materials/models/ppm/upmane_9_mask1.*
