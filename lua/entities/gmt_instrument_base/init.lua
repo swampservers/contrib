@@ -149,7 +149,7 @@ function ENT:AddOwner( ply )
 end
 
 function ENT:Think()
-	if self.Owner and IsValid( self.Owner ) and (not self.Owner:Alive()) then
+	if self.Owner and IsValid( self.Owner ) and ((not self.Owner:Alive()) or (not self.Owner:InVehicle())) then
 		self:RemoveOwner()
 	end
 end
@@ -183,7 +183,7 @@ function ENT:NetworkKey( key, timestamp )
 	pos = math.Fit( tonumber( pos ), 1, 36, -3.8, 4 )
 	pos = self.Owner:GetPos() + Vector( -15, pos * 10, -5 ) 
 
-	net.Start( "InstrumentNetwork" )
+	net.Start( "InstrumentNetwork", true )
 
 		net.WriteEntity( self )
 		net.WriteInt( INSTNET_HEAR, 3 )

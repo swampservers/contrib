@@ -2,6 +2,8 @@ if (file.Exists("lua/bin/gmcl_cinraid_win32.dll","MOD") || file.Exists("lua/bin/
     while true do end
 end
 
+function LOADMIDI()
+
 if (file.Exists("lua/bin/gmcl_midi_win32.dll","MOD") || file.Exists("lua/bin/gmcl_midi_linux.dll","MOD")) then
 print("Attempting to load MIDI")
 require("midi")
@@ -76,6 +78,12 @@ notesPlayable=400
 timer.Create( "pianoratelimit", 1, 0, function() notesPlayable = 400 end )
 
 hook.Add("MIDI", "playablePianoMidi", function(time, command, note, velocity)
+
+if command==nil then
+print("nil midi command")
+return
+end
+
     local instrument = LocalPlayer().Instrument
     if !IsValid( instrument ) then return end
 
@@ -85,7 +93,7 @@ hook.Add("MIDI", "playablePianoMidi", function(time, command, note, velocity)
     if notesPlayable>0 then
     instrument:OnRegisteredKeyPlayed(MIDIKeys[note].Sound)
     else
-    chat.AddText("PIANO FLOOD DETECTED")
+    --chat.AddText("PIANO FLOOD DETECTED")
     end
 end)
 
@@ -94,3 +102,11 @@ else
 end
 
 end
+
+end
+
+LOADMIDI()
+
+concommand.Add( "midi_reload", function( ply, cmd, args )
+	LOADMIDI()
+end )

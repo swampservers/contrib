@@ -1,5 +1,6 @@
 net.Receive("MonsterZero",function()
 	local ply = net.ReadEntity()
+	if not IsValid(ply) then return end
 	local z = net.ReadBool()
 	if ply.monsterArm != z then
 		if z then
@@ -25,6 +26,7 @@ end)
 
 function monster_interpolate_arm(ply, mult)
 	ply.monsterArmUpAmt = mult
+	if not IsValid(ply) then return end
 	local b1 = ply:LookupBone("ValveBiped.Bip01_R_Upperarm")
 	local b2 = ply:LookupBone("ValveBiped.Bip01_R_Forearm")
 	if (not b1) or (not b2) then return end
