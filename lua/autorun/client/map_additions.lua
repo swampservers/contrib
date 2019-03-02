@@ -1,4 +1,4 @@
-
+--[[
 SLITPOINTS=nil
 SLITPOINTSMAT = Material( "effects/tool_tracer" )
 hook.Add("PostDrawTranslucentRenderables", "DrawArenaBorder", function(dep,sky)
@@ -10,14 +10,14 @@ hook.Add("PostDrawTranslucentRenderables", "DrawArenaBorder", function(dep,sky)
 		for d=0,72 do
 			local deg = math.rad(d*5)
 			local pt = Vector(math.sin(deg)*650,(math.cos(deg)*650)-1152, 1)
-			table.insert(SLITPOINTS, pt)
+			table.insert(SLITPOINTS, pt) ]]
 			--[[local tr = util.TraceLine( {
 				start = pt,
 				endpos = pt + Vector(0,0,-128),
 				collisiongroup = COLLISION_GROUP_WORLD
 			} )
 			table.insert(SLITPOINTS, tr.HitPos+Vector(0,0,1)) ]]
-		end
+	--[[	end
 	end
 
 	render.SetMaterial(SLITPOINTSMAT)
@@ -30,7 +30,7 @@ hook.Add("PostDrawTranslucentRenderables", "DrawArenaBorder", function(dep,sky)
 		DrawBeam(SLITPOINTS[q],SLITPOINTS[q+1])	
 	end
 
-end)
+end) ]]--
 
 hook.Add( "PostDrawTranslucentRenderables", "dirtmike",function(depth, sky)
 	if sky then
