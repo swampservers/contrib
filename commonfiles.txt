@@ -320,6 +320,8 @@ materials/models/swamponions/bicycle_helmet/bicycle_helmet.*
 materials/models/swamponions/swampcinema/sombrero.*
 materials/pointshop/merchant.*
 materials/models/milaco/CatEars/Catears.*
+materials/models/milaco/OWOMask/uwumask.*
+models/milaco/OWOMask/OWOMask.*
 models/milaco/CatEars/CatEars.*
 models/cloud/kn_santahat.*
 models/horsie/horsiemask.*
