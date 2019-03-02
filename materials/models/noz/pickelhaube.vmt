@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/noz/pickelhaube.vtf"
+	"$bumpmap" "models/noz/pickelhaube_bump.vtf"
+	"$phong" "1"
+	"$phongboost" "1"
+	"$phongfresnelranges" "[0 0.5 1]"
+}

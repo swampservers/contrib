@@ -270,7 +270,7 @@ PS_ItemProduct({
 	price = 10000000,
 	name = 'Party Hat',
 	description = "It's just a paper hat.",
-	model = 'models/misc/partyhat3d.mdl',
+	model = 'models/noz/partyhat3d.mdl',
 	color = Vector(0,0.06,0.94),
 	maxscale = 3.0,
 	wear = {
@@ -323,7 +323,7 @@ PS_ItemProduct({
 	class = "pickelhaube",
 	price = 250000,
 	name = 'Pickelhaube',
-	model = 'models/misc/pickelhaube.mdl',
+	model = 'models/noz/pickelhaube.mdl',
 	maxscale = 2.0,
 	wear = {
 		attach = "eyes",
@@ -404,6 +404,66 @@ PS_ItemProduct({
 			scale = 1.2,
 			translate = Vector(-7.5,0,11.5),
 			rotate = Angle(0,-90,10),
+		}
+	}
+})
+
+PS_ItemProduct({
+	class = 'catears',
+	price = 1450,
+	name = 'Cat Ears',
+	description = "Become your favorite neko e-girl gamer!",
+	model = 'models/milaco/CatEars/CatEars.mdl',
+	maxscale = 2.0,
+	wear = {
+		attach = "eyes",
+		scale = 1.0,
+		translate = Vector(-2.859,0,-2.922),
+		rotate = Angle(0,90,0),
+		pony = {
+			scale = 1.0,
+			translate = Vector(-16,0,-4),
+			rotate = Angle(0,90,0),
+		}
+	}
+})
+
+PS_ItemProduct({
+	class = 'uwumask',
+	price = 50000,
+	name = 'uwu Mask',
+	description = "The apparel of one who notices.",
+	model = 'models/milaco/OWOMask/OWOMask.mdl',
+	maxscale = 2.0,
+	wear = {
+		attach = "eyes",
+		scale = 0.4,
+		translate = Vector(0,0,-3.665),
+		rotate = Angle(0,0,0),
+		pony = {
+			scale = 1.025,
+			translate = Vector(-12,0,-2),
+			rotate = Angle(10,0,0),
+		}
+	}
+})
+
+PS_ItemProduct({
+	class = 'tophat',
+	price = 300000,
+	name = 'Top Hat',
+	description = "Feel like a sir",
+	model = 'models/Quattro/TopHat/TopHat.mdl',
+	maxscale = 2.0,
+	wear = {
+		attach = "eyes",
+		scale = 1.0,
+		translate = Vector(-2,0,6),
+		rotate = Angle(0,0,0),
+		pony = {
+			scale = 1.0,
+			translate = Vector(-15.299,0.008,16.79),
+			rotate = Angle(0,0,0),
 		}
 	}
 })

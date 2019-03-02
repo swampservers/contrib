@@ -1,0 +1,7 @@
+"eyes"
+{
+	"$basetexture" "models/vinrax/billy_herrington/eyeball_r"
+	"$iris" "models/vinrax/billy_herrington/pupil_r"
+	"$halflambert" 1
+	"$nodecal" "1"
+}

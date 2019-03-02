@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "color/white"
+	"$color2" "[1 0 0]"
+}

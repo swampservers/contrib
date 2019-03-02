@@ -116,6 +116,7 @@ PS_Categories = {
 				title = "One-Life, Unique",
 				products = {
 					"celestia",
+					"billyherrington",
 					"fatbastard",
 					"fox",
 					"garfield",
@@ -159,7 +160,9 @@ PS_Categories = {
 					"shrunkenhead",
 					"spikecollar",
 					"trashhattest", --party hat
-					"turtleplush"
+					"turtleplush",
+					"catears",
+					"uwumask"
 				}
 			},
 			{

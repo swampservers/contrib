@@ -22,6 +22,17 @@ PS_UniqueModelProduct({
 })
 
 PS_UniqueModelProduct({
+	class = 'billyherrington',
+	name = 'Billy Herrington',
+	description = "Rest in peace Billy Herrington, you will be missed.",
+	model = 'models/vinrax/player/billy_herrington.mdl',
+	PlayerSetModel = function(self, ply)
+		ply:Give("weapon_billyh")
+		ply:SelectWeapon("weapon_billyh")
+	end
+})
+
+PS_UniqueModelProduct({
 	class = 'ketchupdemon',
 	name = 'Mortally Challenged',
 	description = '"Demon" is an offensive term.',

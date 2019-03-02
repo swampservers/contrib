@@ -4,8 +4,8 @@ SWEP.Instructions  = "Eat while watching Cars 2"
 
 SWEP.PrintName     = "Beans"
 SWEP.Category      = "Other"
-SWEP.ViewModel     = "models/misc/beans.mdl"
-SWEP.WorldModel    = "models/misc/beans.mdl"
+SWEP.ViewModel     = "models/noz/beans.mdl"
+SWEP.WorldModel    = "models/noz/beans.mdl"
 SWEP.Spawnable	   = true
 SWEP.AdminOnly	   = false
 SWEP.ViewModelFOV  = 100
