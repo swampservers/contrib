@@ -323,8 +323,8 @@ materials/models/milaco/CatEars/Catears.*
 models/milaco/CatEars/CatEars.*
 models/cloud/kn_santahat.*
 models/horsie/horsiemask.*
-models/misc/partyhat3d.*
-models/misc/pickelhaube.*
+models/noz/partyhat3d.*
+models/noz/pickelhaube.*
 models/oldbill/spike_collar.*
 models/ppm/player_default_base.*
 models/ppm/player_default_base_nj.*
