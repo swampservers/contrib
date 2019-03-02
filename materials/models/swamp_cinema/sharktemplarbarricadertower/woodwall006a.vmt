@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$basetexture" "wood/woodwall006a"
+	"$surfaceprop" "wood"
+	"%keywords" "c17downtown,wasteland"
+	"$bumpmap" "wood/woodwall006a_normal"
+	"$parallaxmap" "wood/woodwall006a_height"
+	"$parallaxmapscale" ".05"
+}
