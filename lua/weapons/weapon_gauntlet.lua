@@ -50,10 +50,20 @@ function SWEP:PrimaryAttack()
 			FizzlePlayer(self,eyetrace.Entity,self.Owner)
 		else
 			local target = {nil,50}
-			for k,v in pairs(player.GetAll()) do
-				if (v:Alive() and v ~= self.Owner) then
-					local dis = math.sqrt(self.Owner:GetEyeTrace().HitPos:DistToSqr(v:LocalToWorld(v:OBBCenter())))
+			local allply = player.GetAll()
+			local tracepos = self.Owner:GetEyeTrace().HitPos
+			for k,v in pairs(allply) do
+				if (v:Alive() and v ~= self.Owner) then	
+					local otherpos = v:LocalToWorld(v:OBBCenter())
+					local dis = tracepos:Distance(otherpos)
 					if (dis < target[2]) then
+						local tr = util.TraceLine( {
+							start = tracepos,
+							endpos = otherpos,
+							filter = allply
+						} )
+
+						if tr.Hit then continue end
 						target = {v,dis}
 					end
 				end
