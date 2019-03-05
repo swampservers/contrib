@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$basetexture" "wood/woodfloor005a"
+	"$surfaceprop" "wood"
+	"%keywords" "c17skyscraper"
+	"$bumpmap" "wood/woodfloor005a_normal"
+	"$parallaxmap" "wood/woodfloor005a_height"
+	"$parallaxmapscale" ".02"
+}
