@@ -30,6 +30,7 @@ TrashLocationOverrides = {
 	["Rat's Lair"]=TRASHLOC_BUILD,
 	['Sewer Theater']=TRASHLOC_BUILD,
 	['Maintenance Room']=TRASHLOC_BUILD,
+	['Crawl Space']=TRASHLOC_BUILD,
 
 	['Potassium Palace']=TRASHLOC_BUILD,
 
