@@ -49,15 +49,25 @@ function ENT:DrawTranslucent()
 		render.CullMode(MATERIAL_CULLMODE_CW)
 		render.SetColorMaterial()
 		local col = self:GetTaped() and Color( 128, 255, 255, 60 ) or Color( 255, 255, 255, 20 )
-		render.DrawSphere( self:GetPos(), TrashFieldModelToRadius[self:GetModel()], 64, 32, col )
+		render.DrawSphere( self:GetPos(), self:ProtectionRadius(), 64, 32, col )
 		render.CullMode(MATERIAL_CULLMODE_CCW)
 	end
 end
 
-function ENT:ProtectsIfTaped(other)
+function ENT:ProtectionRadius()
 	local field_size = TrashFieldModelToRadius[self:GetModel()]
+	local locid = self:GetLocation()
+	local ln = Location.GetLocationNameByIndex(locid)
+	if ln=="The Pit" or ln=="Crawl Space" then
+		field_size=field_size/2
+	end
+	return field_size
+end
+
+function ENT:ProtectsIfTaped(other)
+	local field_size = self:ProtectionRadius()
 	if other:GetClass() == "prop_trash_field" then
-		field_size = field_size + TrashFieldModelToRadius[other:GetModel()]
+		field_size = field_size + other:ProtectionRadius()
 	end
 	return other:GetPos():Distance(self:GetPos()) < field_size
 end
