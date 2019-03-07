@@ -66,6 +66,7 @@ if CLIENT then
 		weapon_slam=true,
 		weapon_physgun=true,
 		weapon_slitter=true,
+		weapon_gauntlet=true,
 	}
 
 	hook.Add("HUDPaint", "drawSAFENOTIFY", function()
