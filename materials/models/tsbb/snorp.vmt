@@ -1,8 +1,6 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/TSBB/Snorp"
-	"$bumpmap" "models/TSBB/Snorp_normal"
+	"$basetexture" "models/TSBB/Snorp"	
 	"$nocull" 1
 }
-
 
