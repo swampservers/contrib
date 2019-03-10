@@ -1,0 +1,17 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/player/real/pepsiman/new/body"
+	"$bumpmap" "models/player/real/pepsiman/new/normal"
+	"$halflambert" 1
+	"$envmap" "rubber"
+
+	"$phong"				"1"
+	"$phongboost"			"2"
+	"$phongexponent"		"6"
+	"$phongfresnelranges"	"[0.1 1 8]"
+
+	"$rimlight"				"1"
+	"$rimlightboost"		"0.5"
+	"$rimlightexponent"       "2"
+}
+
