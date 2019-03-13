@@ -67,4 +67,24 @@ else
 			net.SendToServer()
 		end
 	end
+	
+	hook.Add("PlayerDeath","DeathInPit",function(ply)
+		if IsValid(ply) then
+			local loc = ply:IsPlayer() and ply:GetLocation() or Location.Find(ply)
+			local name = Location.GetLocationNameByIndex(loc)
+			if name == "The Pit" then
+				ply.PitDeath = true
+			end
+		end
+	end)
+
+	hook.Add("PlayerSpawn","SpawnNextToPit",function(ply)
+		if IsValid(ply) then
+			if ply.PitDeath then
+				ply:SetPos(Vector(0,-157,1))
+				ply:SetEyeAngles(Angle(0,270,0))
+				ply.PitDeath = false
+			end
+		end
+	end)
 end
