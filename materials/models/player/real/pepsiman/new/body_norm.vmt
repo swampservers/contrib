@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "models/player/real/pepsiman/new/body_norm"
+	"$envmap" "env_cubemap"
+}
