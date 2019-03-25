@@ -98,6 +98,13 @@ PS_UniqueModelProduct({
 })
 
 PS_UniqueModelProduct({
+	class = 'pepsiman',
+	name = 'Pepsiman',
+	description = 'DRINK!',
+	model = 'models/player/real/prawnmodels/pepsiman.mdl'
+})
+
+PS_UniqueModelProduct({
 	class = 'rick',
 	name = 'Intellectual',
 	description = 'To be fair, you have to have a very high IQ to understand Rick and Morty.',

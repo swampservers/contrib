@@ -127,6 +127,7 @@ PS_Categories = {
 					"minion",
 					"moonman",
 					"nicestmeme",
+					"pepsiman",
 					"rick",
 					"trump",
 					"weeaboo",
