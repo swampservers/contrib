@@ -81,8 +81,13 @@ else
 	hook.Add("PlayerSpawn","SpawnNextToPit",function(ply)
 		if IsValid(ply) then
 			if ply.PitDeath then
-				ply:SetPos(Vector(0,-157,1))
-				ply:SetEyeAngles(Angle(0,270,0))
+				local outsidespawns = {}
+				for k,v in pairs(ents.FindByClass("info_player_start")) do
+					if (v:GetPos().y == -64 or v:GetPos().y == -160 or v:GetPos().y == -256) then
+						table.insert(outsidespawns,v:GetPos())
+					end
+				end
+				ply:SetPos(outsidespawns[math.random(1,#outsidespawns)])
 				ply.PitDeath = false
 			end
 		end
