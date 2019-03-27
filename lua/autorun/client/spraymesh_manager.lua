@@ -1,12 +1,17 @@
 
 local SprayThumbnails = {}
-local SprayList,SprayMeshManagerBase,selected,page,pagecount
+local SprayList,SprayMeshManagerBase,selected,selectedbutton,page,pagecount
 
 local function FormatTable(tab)
 	for k,v in pairs(tab) do
-		local id = SanitizeImgurId(tab[k])
-		if id then tab[k] = id
-		else table.remove(tab,k) end
+		local s = string.find(tab[k],"%w+%.gfycat%.com/%a+%.webm$",0,false)
+		if s and tab[k]:len()<100 then
+			tab[k] = tab[k]:sub(s,-1)
+		else
+			local id = SanitizeImgurId(tab[k])
+			if id then tab[k] = "i.imgur.com/"..id
+			else table.remove(tab,k) end
+		end
 	end
 	for k,v in pairs(tab) do
 		local c = {}
@@ -27,9 +32,21 @@ function ReloadManager()
 		SprayThumbnails[k].html:Remove()
 		SprayThumbnails[k].button:Remove()
 	end
+	selected:Remove()
+	selectedbutton:Remove()
 	SprayList = FormatTable(SprayList)
 	SprayMeshManagerThumbnails()
 	file.Write("sprays/savedsprays.txt",util.TableToJSON(SprayList))
+end
+
+local function SprayOptions(link)
+	local menu = DermaMenu()
+	menu:AddOption("Remove",function()
+		table.remove(SprayList,k)
+		ReloadManager()
+	end)
+	menu:AddOption("Copy link to clipboard",function() SetClipboardText("https://"..link) end)
+	menu:Open()
 end
 
 local function OutlineCurrentSpray(width,height)
@@ -41,13 +58,27 @@ local function OutlineCurrentSpray(width,height)
 		surface.SetDrawColor(Color(255,255,255))
 		surface.DrawOutlinedRect(10,10,138,138)
 	end
+	
+	selectedbutton = vgui.Create("DButton",SprayMeshManagerBase)
+	selectedbutton:SetSize(150,150)
+	selectedbutton:SetPos(width-15,height-15)
+	selectedbutton:SetText("")
+	
+	function selectedbutton:Paint(w,h)
+		draw.RoundedBox(0,0,0,w,h,Color(0,0,0,0))
+	end
+	
+	function selectedbutton:DoRightClick()
+		SprayOptions(GetConVar("SprayMesh_URL"):GetString())
+	end
+	
 end
 
 function SprayMeshManagerThumbnails()
 	
 	SprayList = FormatTable(SprayList)
-	
 	pagecount = math.ceil(#SprayList/12)
+	local outlinecheck = false
 	
 	for k,v in pairs(SprayList) do
 		if k>page*12 then
@@ -82,19 +113,24 @@ function SprayMeshManagerThumbnails()
 		end
 		
 		panel["button"].DoClick = function()
-			RunConsoleCommand("SprayMesh_URL","i.imgur.com/"..v)
-			if selected == nil then OutlineCurrentSpray(width,height) 
-			else selected:SetPos(width-15,height-15) end
+			RunConsoleCommand("SprayMesh_URL",v)
+			if not IsValid(selected) then OutlineCurrentSpray(width,height)
+			elseif not selected:IsVisible()then OutlineCurrentSpray(width,height)
+			else
+				selected:SetPos(width-15,height-15)
+				selectedbutton:SetPos(width-15,height-15)
+			end
 		end
 		
 		panel["button"].DoRightClick = function()
-			local menu = DermaMenu()
-			menu:AddOption("Remove",function()
-				table.remove(SprayList,k)
-				ReloadManager()
-			end)
-			menu:AddOption("Copy link to clipboard",function() SetClipboardText("https://i.imgur.com/"..v) end)
-			menu:Open()
+			SprayOptions(v)
+		end
+		
+		local link = ""
+		if string.find(v,"%w+%.gfycat%.com/%a+%.webm$",0,false) then
+			link = "<video id='media' onload='FixSize()' src='".."https://"..v.."' style='width:100%;height:auto' autoplay loop muted/>"
+		else
+			link = "<img id='media' onload='FixSize()' src='".."http://"..v.."'></img>"
 		end
 		
 		panel["html"]:SetSize(128,128)
@@ -104,7 +140,7 @@ function SprayMeshManagerThumbnails()
 			<html>
 				<head>
 					<meta charset="UTF-8">
-					<title>title</title>
+					<title></title>
 					<style type = "text/css">
 						html,body {
 							margin:0;
@@ -114,9 +150,9 @@ function SprayMeshManagerThumbnails()
 					</style>
 				</head>
 				<body scroll="no">
-					<img id='media' onload='FixImage()' src=']].."http://i.imgur.com/"..v..[['></img>
+					]]..link..[[
 					<script>
-						function FixImage(){
+						function FixSize(){
 							var image = document.getElementById("media");
 							if (image.height > image.width) {
 								image.style.height = "]]..panel["html"]:GetTall()..[[px";
@@ -129,11 +165,14 @@ function SprayMeshManagerThumbnails()
 						}
 					</script>
 				</body>
-			</html>]]
-		)
+			</html>]])
 		
-		if GetConVar("SprayMesh_URL"):GetString() == "i.imgur.com/"..v then
+		if GetConVar("SprayMesh_URL"):GetString() == v then
 			OutlineCurrentSpray(width,height)
+			selected:Show()
+			outlinecheck = true
+		elseif (key == 11 or k == #SprayList) and selected != nil and selected:IsVisible() and not outlinecheck then
+			selected:Hide()
 		end
 		
 	end
