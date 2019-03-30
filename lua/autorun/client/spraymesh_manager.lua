@@ -32,8 +32,10 @@ function ReloadManager()
 		SprayThumbnails[k].html:Remove()
 		SprayThumbnails[k].button:Remove()
 	end
-	selected:Remove()
-	selectedbutton:Remove()
+	if IsValid(selected) then
+		selected:Remove()
+		selectedbutton:Remove()
+	end
 	SprayList = FormatTable(SprayList)
 	SprayMeshManagerThumbnails()
 	file.Write("sprays/savedsprays.txt",util.TableToJSON(SprayList))
