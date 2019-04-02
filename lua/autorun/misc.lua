@@ -69,27 +69,21 @@ else
 	end
 	
 	hook.Add("PlayerDeath","DeathInPit",function(ply)
-		if IsValid(ply) then
-			local loc = ply:IsPlayer() and ply:GetLocation() or Location.Find(ply)
-			local name = Location.GetLocationNameByIndex(loc)
-			if name == "The Pit" then
-				ply.PitDeath = true
-			end
+		if ply:GetLocationName() == "The Pit" then
+			ply.PitDeath = true
 		end
 	end)
 
-	hook.Add("PlayerSpawn","SpawnNextToPit",function(ply)
-		if IsValid(ply) then
-			if ply.PitDeath then
-				local outsidespawns = {}
-				for k,v in pairs(ents.FindByClass("info_player_start")) do
-					if (v:GetPos().y == -64 or v:GetPos().y == -160 or v:GetPos().y == -256) then
-						table.insert(outsidespawns,v:GetPos())
-					end
+	hook.Add("PlayerSelectSpawn","SpawnNextToPit",function(ply)
+		if ply.PitDeath then
+			local outsidespawns = {}
+			for k,v in pairs(ents.FindByClass("info_player_start")) do
+				if (v:GetPos().y == -64 or v:GetPos().y == -160 or v:GetPos().y == -256) then
+					table.insert(outsidespawns,v)
 				end
-				ply:SetPos(outsidespawns[math.random(1,#outsidespawns)])
-				ply.PitDeath = false
 			end
+			ply.PitDeath = false
+			return outsidespawns[math.random(#outsidespawns)]
 		end
 	end)
 end
