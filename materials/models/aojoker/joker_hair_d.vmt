@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/aojoker/joker_hair_d"
+	"$translucent" 1
+}
