@@ -64,7 +64,7 @@ function ENT:GetSound( snd )
 		return nil
 	end
 	
-	return "gmodtower/lobby/instruments/" .. self.Instruments[self:GetNWInt("CurrentInstrument")] .. "/" .. snd .. ".ogg"
+	return "gmodtower/lobby/instruments/" .. (self.Instruments[self:GetNWInt("CurrentInstrument")] or "Piano") .. "/" .. snd .. ".wav"
 end
 
 if SERVER then
