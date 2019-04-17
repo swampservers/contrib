@@ -28,7 +28,8 @@ PS_Categories = {
 					"wheelchair",
 					"rocketwheelchair",
 					"spacehat",
-					"mystery"
+					"mystery",
+					"weapon_airgun"
 				}
 			}
 		}
