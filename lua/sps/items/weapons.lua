@@ -132,3 +132,11 @@ PS_WeaponAndAmmoProduct({
 	ammotype = "RPG_Round",
 	amount = 2
 })
+
+PS_WeaponProduct({
+	name = 'Airzooka',
+	description = 'Blow everyone at once.',
+	price = 4000,
+	model = 'models/milaco/airgun/Airgun.mdl',
+	class = 'weapon_airgun'
+})
