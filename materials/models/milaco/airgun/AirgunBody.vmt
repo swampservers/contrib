@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/milaco/Airgun/AirgunBody.vtf"
+	"$bumpmap" "models/milaco/Airgun/Bump.vtf"
+}
