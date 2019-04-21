@@ -50,7 +50,12 @@ end
 
 
 function SWEP:SecondaryAttack()
+	self:ExtEmitSound("airhorn/honk1.ogg", {shared=true})
+end
 
+
+function SWEP:Reload()
+	self:ExtEmitSound("airhorn/honk2.ogg", {shared=true})
 end
 
 if SERVER then
