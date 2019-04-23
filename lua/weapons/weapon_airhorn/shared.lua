@@ -45,12 +45,17 @@ end
 
 function SWEP:PrimaryAttack()
 	self:SetHoldType( "revolver" )
-	self:ExtEmitSound("mlg.ogg", {shared=true, pitch=(self.Owner:Crouching() and 160 or 100) + math.Rand(-20,20)})
+	self:ExtEmitSound("airhorn/mlg.ogg", {shared=true, pitch=(self.Owner:Crouching() and 160 or 100) + math.Rand(-20,20)})
 end
 
 
 function SWEP:SecondaryAttack()
+	self:ExtEmitSound("airhorn/honk1.ogg", {shared=true})
+end
 
+
+function SWEP:Reload()
+	self:ExtEmitSound("airhorn/honk2.ogg", {shared=true})
 end
 
 if SERVER then
@@ -58,7 +63,7 @@ if SERVER then
 	function stopairhornsound(ent)
 		net.Start("stopsoundcl")
 		net.WriteEntity(ent)
-		net.WriteString("mlg.ogg")
+		net.WriteString("airhorn/mlg.ogg")
 		net.SendOmit(IsValid(ent.Owner) and ent.Owner or {})
 	end
 else
@@ -67,7 +72,7 @@ else
 		if IsValid(ent) then ent:StopSound(net.ReadString()) end
 	end)
 	function stopairhornsound(ent)
-		ent:StopSound("mlg.ogg")
+		ent:StopSound("airhorn/mlg.ogg")
 	end
 end
 
@@ -90,7 +95,7 @@ end
 
 
 function SWEP:Holster()
-	self.Weapon:StopSound("mlg.ogg")
+	self.Weapon:StopSound("airhorn/mlg.ogg")
 	return true
 end
 
