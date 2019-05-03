@@ -1,7 +1,7 @@
 local PANEL = {}
 
 local CloseTexture = Material("theater/close.png")
-local TitleBackground = Material("theater/bannernew2.png")
+--local TitleBackground = Material("theater/bannernew2.png")
 
 function PANEL:Init()
 	self:SetFocusTopLevel(true)
@@ -55,11 +55,11 @@ function PANEL:Paint(w, h)
 	surface.SetDrawColor(141, 38, 33, 255)
 	surface.DrawRect(0, 0, w, self.title:GetTall())
 	
-	surface.SetDrawColor(255, 255, 255, 255)
-	surface.SetMaterial(TitleBackground)
-	surface.DrawTexturedRect(0, -1, 512, self.title:GetTall() + 1)
+	surface.SetDrawColor(141, 38, 33, 255)
+	--surface.SetMaterial(TitleBackground)
+	surface.DrawRect(0, -1, 512, self.title:GetTall() + 1)
 	if w > 512 then
-		surface.DrawTexturedRect(460, -1, 512, self.title:GetTall() + 1)
+		surface.DrawRect(460, -1, 512, self.title:GetTall() + 1)
 	end
 end
 

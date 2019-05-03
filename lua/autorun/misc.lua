@@ -78,9 +78,9 @@ else
 	hook.Add("PlayerSelectSpawn","SpawnNextToPit",function(ply)
 		if ply.PitDeath then
 			ply.PitDeath = false
-			if IsValid(outsidespawns) and #outsidespawns < 1 then
+			if #outsidespawns < 1 then
 				for k,v in pairs(ents.FindByClass("info_player_start")) do
-					if (v:GetPos().y < -63 and v:GetPos().y > -257) then
+					if (v:GetPos().y < 36 and v:GetPos().y > -324) then
 						table.insert(outsidespawns,v)
 					end
 				end

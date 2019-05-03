@@ -26,7 +26,7 @@ PS_UniqueModelProduct({
 	name = 'Billy Herrington',
 	description = "Rest in peace Billy Herrington, you will be missed.",
 	model = 'models/vinrax/player/billy_herrington.mdl',
-	PlayerSetModel = function(self, ply)
+	OnBuy = function(self, ply)
 		ply:Give("weapon_billyh")
 		ply:SelectWeapon("weapon_billyh")
 	end

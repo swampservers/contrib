@@ -51,7 +51,21 @@ DontRenderSkyboxHere = {
 	["Movie Theater"]=true,
 	["Public Theater"]=true,
 	["Vapor Lounge"]=true,
-	["Kool Kids Klub"]=true
+	["Kool Kids Klub"]=true,
+	["Miner's Hut"]=true,
+	["Upper Caverns"]=true,
+	["Lower Caverns"]=true,
+	["Basement"]=true,
+	["Treatment Room"]=true,
+	["Server Room"]=true,
+	["Bedroom"]=true,
+	["Chromozone"]=true,
+	["Rat's Lair"]=true,
+	["Sewer Theater"]=true,
+	["Maintenance Room"]=true,
+	["Potassium Palace"]=true,
+	["Hell"]=true,
+	["Sewer Tunnels"]=true
 }
 
 hook.Add("PreDrawSkyBox", "SkyBoxRenderSkip", function()
