@@ -26,8 +26,7 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic   	= false
 SWEP.Secondary.Ammo         = "none"
 
-function FizzlePlayer(self,target,attacker)
-	if Safe(target) then return end
+function GauntletFizzlePlayer(self,target,attacker)
 	if SERVER then
 		if (target:InVehicle()) then target:ExitVehicle() end
 		local dmginfo = DamageInfo()
@@ -42,12 +41,20 @@ function FizzlePlayer(self,target,attacker)
 	end
 end
 
+function TestFizzleDeath(self,target,attacker)
+	if not Safe(target) then
+		GauntletFizzlePlayer(self,target,attacker)
+	elseif attacker:GetTheater() and attacker:GetTheater():IsPrivate() and attacker:GetTheater():GetOwner() == attacker and attacker:GetLocationName() == target:GetLocationName() then
+		GauntletFizzlePlayer(self,target,attacker)
+	else return end
+end
+
 function SWEP:PrimaryAttack()
 	local eyetrace = self.Owner:GetEyeTrace()
 	
 	if eyetrace.Hit then
 		if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) then
-			FizzlePlayer(self,eyetrace.Entity,self.Owner)
+			TestFizzleDeath(self,eyetrace.Entity,self.Owner)
 		else
 			local target = {nil,50}
 			local allply = player.GetAll()
@@ -69,7 +76,7 @@ function SWEP:PrimaryAttack()
 				end
 			end
 			if (target[2] < 50) then
-				FizzlePlayer(self,target[1],self.Owner)
+				TestFizzleDeath(self,target[1],self.Owner)
 			end
 		end
 	end
