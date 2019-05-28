@@ -618,8 +618,8 @@ function ENT:ResetBoard()
 		self:SetWhitePassant( 0 )
 		self:SetBlackPassant( 0 )
 		
-		self:SetWhiteTime( 1200 )
-		self:SetBlackTime( 1200 )
+		self:SetWhiteTime( 1800 )
+		self:SetBlackTime( 1800 )
 		
 		self:SetMoveCount( 0 )
 		self:SetRepetition( false )
