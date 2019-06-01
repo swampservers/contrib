@@ -59,8 +59,8 @@ function SWEP:PrimaryAttack()
 			PonyRifleDissolve(ponyeyetrace.Entity, self.Owner)
 		end
 	elseif self:Clip1() == 0 then
-		if SERVER and IsValid(self) then
-			self:Remove() 
+		if IsValid(self) then
+			if SERVER then self:Remove() end
 			self.Weapon:EmitSound(self.Primary.Empty)
 		end
 	end
