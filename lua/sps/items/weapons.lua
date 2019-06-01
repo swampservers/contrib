@@ -114,6 +114,14 @@ PS_WeaponAndAmmoProduct({
 })
 
 PS_WeaponAndAmmoProduct({
+	name = 'Anti-Pony Rifle',
+	description = "This specialty weapon is capable of slaughtering ponies, but is harmless to anyone else. It ceases to exist when it's out of ammo, buy it again for another one!",
+	price = 2000,
+	model = 'models/weapons/w_IRifle.mdl',
+	class = 'weapon_antiponyrifle'
+})
+
+PS_WeaponAndAmmoProduct({
 	name = 'S.L.A.M. x3',
 	description = "Explosives that can be placed as mines or thrown and detonated.",
 	price = 6000,
