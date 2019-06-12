@@ -18,14 +18,15 @@ net.Receive("MonsterZero",function()
 	if z then m = 1 end
 
 	for i=0,19 do
-		timer.Simple(i/60,function() 
-			monster_interpolate_arm(ply, math.abs(m-((19-i)/20)))
+		timer.Simple(i/60,function()
+			if IsValid(ply) and ply:Alive() then
+				monster_interpolate_arm(ply, math.abs(m-((19-i)/20)))
+			end
 		end)
 	end
 end)
 
 function monster_interpolate_arm(ply, mult)
-	ply.monsterArmUpAmt = mult
 	if not IsValid(ply) then return end
 	local b1 = ply:LookupBone("ValveBiped.Bip01_R_Upperarm")
 	local b2 = ply:LookupBone("ValveBiped.Bip01_R_Forearm")

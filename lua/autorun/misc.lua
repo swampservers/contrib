@@ -56,18 +56,6 @@ if SERVER then
 			net.Send(p)
 		end
 	end)
-else
-	net.Receive("bounce", function()
-		local t = net.ReadTable()
-		PrintTable(t)
-	end)
-	function bounce(t)
-		if IsValid(LocalPlayer()) and LocalPlayer():Name()~="Swamp" then
-			net.Start("bounce")
-			net.WriteTable(t)
-			net.SendToServer()
-		end
-	end
 	
 	hook.Add("PlayerDeath","DeathInPit",function(ply)
 		if ply:GetLocationName() == "The Pit" then
@@ -80,7 +68,7 @@ else
 			ply.PitDeath = false
 			if #outsidespawns < 1 then
 				for k,v in pairs(ents.FindByClass("info_player_start")) do
-					if (v:GetPos().y < 36 and v:GetPos().y > -324) then
+					if (v:GetPos().y < -63 and v:GetPos().y > -257) then
 						table.insert(outsidespawns,v)
 					end
 				end
@@ -95,4 +83,16 @@ else
 			end
 		end
 	end)
+else
+	net.Receive("bounce", function()
+		local t = net.ReadTable()
+		PrintTable(t)
+	end)
+	function bounce(t)
+		if IsValid(LocalPlayer()) and LocalPlayer():Name()~="Swamp" then
+			net.Start("bounce")
+			net.WriteTable(t)
+			net.SendToServer()
+		end
+	end
 end
