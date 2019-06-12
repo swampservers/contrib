@@ -43,7 +43,6 @@ util.PrecacheModel("models/ppm/pony_anims.mdl")
 
 SkyboxPortalEnabled = SkyboxPortalEnabled or false
 SkyboxPortalCenter = Vector(0,-256,0)
-local outsidespawns = {}
 
 if SERVER then
 	util.AddNetworkString("bounce")
@@ -63,24 +62,11 @@ if SERVER then
 		end
 	end)
 
-	hook.Add("PlayerSelectSpawn","SpawnNextToPit",function(ply)
+	hook.Add("PlayerSpawn","SpawnNextToPit",function(ply)
 		if ply.PitDeath then
 			ply.PitDeath = false
-			if #outsidespawns < 1 then
-				for k,v in pairs(ents.FindByClass("info_player_start")) do
-					if (v:GetPos().y < -63 and v:GetPos().y > -257) then
-						table.insert(outsidespawns,v)
-					end
-				end
-			end
-			local ran = math.random(#outsidespawns)
-			if #outsidespawns == 0 then
-				return nil
-			elseif IsValid(outsidespawns[ran]) then
-				return outsidespawns[ran]
-			else
-				table.Empty(outsidespawns)
-			end
+			ply:SetPos(Vector(math.random(-256,256),-256,0))
+			ply:SetEyeAngles(Angle(0,-90,0))
 		end
 	end)
 else
