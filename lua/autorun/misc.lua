@@ -65,8 +65,10 @@ if SERVER then
 	hook.Add("PlayerSpawn","SpawnNextToPit",function(ply)
 		if ply.PitDeath then
 			ply.PitDeath = false
-			ply:SetPos(Vector(math.random(-256,256),-256,0))
-			ply:SetEyeAngles(Angle(0,-90,0))
+			timer.Simple(0,function()
+				ply:SetPos(Vector(math.random(-256,256),-256,0))
+				ply:SetEyeAngles(Angle(0,-90,0))
+			end)
 		end
 	end)
 else
