@@ -4,6 +4,11 @@ SWEP.Slot = 2
 
 SWEP.ViewModel	= ""
 SWEP.WorldModel = ""
+SWEP.HoldType = "normal"
+
+function SWEP:Initialize()
+	self:SetHoldType("normal")
+end
 
 function SWEP:PrimaryAttack()
 	self:ExtEmitSound("billyh/asswecan.ogg", {speech=1.25, shared=true})
@@ -14,7 +19,5 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnRemove()
-	if CLIENT then
-		if self.Owner and self.Owner:IsValid() then sound.Play( "billyh/spank.ogg", self.Owner:GetPos(), 90, 100, 1) end
-	end
+	if self.Owner and self.Owner:IsValid() then self:ExtEmitSound("billyh/spank.ogg", {shared=true}) end
 end
