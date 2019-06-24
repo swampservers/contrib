@@ -2,7 +2,7 @@
 RegisterChatLUACommand({'help','motd'},'ShowMotd("http://steamcommunity.com/groups/swampservers/discussions/0/133255810024702956/")')
 
 RegisterChatConsoleCommand({'skip','voteskip'},"cinema_voteskip")
-RegisterChatLUACommand({'thirdperson','tp'},"THIRDPERSON = !THIRDPERSON")
+RegisterChatLUACommand('thirdperson',"THIRDPERSON = !THIRDPERSON")
 RegisterChatLUACommand('virtualreality',"BOBBINGVIEW = !BOBBINGVIEW")
 RegisterChatLUACommand({'global','globalchat','ooc'},[[chat.AddText("[orange]Press "..input.LookupBinding("messagemode2"):upper().." to speak in Global chat.")]])
 
