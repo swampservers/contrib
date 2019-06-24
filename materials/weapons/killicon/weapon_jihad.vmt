@@ -2,6 +2,7 @@
 {
 	"$basetexture" "weapons/killicon/weapon_jihad"
 	"$translucent" 1
+	"$additive" 1
 	"$alpha" 1
 	"$vertexcolor" 1
 	"$vertexalpha" 1
