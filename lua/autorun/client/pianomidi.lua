@@ -4,7 +4,7 @@ end
 
 function LOADMIDI()
 
-if (file.Exists("lua/bin/gmcl_midi_win32.dll","MOD") || file.Exists("lua/bin/gmcl_midi_linux.dll","MOD")) then
+if (file.Exists("lua/bin/gmcl_midi_win32.dll","MOD") || file.Exists("lua/bin/gmcl_midi_win64.dll","MOD") || file.Exists("lua/bin/gmcl_midi_linux.dll","MOD")) then
 print("Attempting to load MIDI")
 require("midi")
 if #midi.GetPorts()>0 then

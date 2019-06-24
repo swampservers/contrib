@@ -478,10 +478,11 @@ hook.Add("HUDPaint", "DrawNoFlashWarning", function()
 		if (not EmbeddedIsReady()) then return end
 		local needschromium = Theater._Video:Service().NeedsChromium and (not EmbeddedHasChromium())
 		local needsflash = Theater._Video:Service().NeedsFlash and (not EmbeddedHasFlash())
+		local needscodecs = Theater._Video:Duration()==0 and Theater._Video:Service().LivestreamNeedsCodecs and (not EmbeddedHasCodecs())
 
-		if needschromium or needsflash then
-			local plural = (needschromium and needsflash and "them" or "it")
-			draw.WordBox( 10, ScrW()/2 - 80, ScrH()/2 - 50, "You don't have "..(needschromium and "Chromium" or "")..(needschromium and needsflash and " or " or "")..(needsflash and "the correct Adobe Flash plugin" or ""), "CloseCaption_Bold",Color(0,0,0,255), Color(255,255,255,255))
+		if needschromium or needsflash or needscodecs then
+			local plural = (needschromium and 1 or 0) + (needsflash and 1 or 0) + (needscodecs and 1 or 0) > 1 and "them" or "it"
+			draw.WordBox( 10, ScrW()/2 - 80, ScrH()/2 - 50, "You don't have"..(needschromium and " Chromium," or "")..(needsflash and " the Adobe Flash plugin," or "")..(needscodecs and " the video codec patch," or ""), "CloseCaption_Bold",Color(0,0,0,255), Color(255,255,255,255))
 			draw.WordBox( 10, ScrW()/2 - 80, ScrH()/2, "Without "..plural..", you can't watch this video", "CloseCaption_Bold",Color(0,0,0,255), Color(255,255,255,255))
 			draw.WordBox( 10, ScrW()/2 - 80, ScrH()/2 + 50, "Press F2 to install "..plural.."! Then fully reboot Garry's Mod.", "CloseCaption_Bold",Color(0,0,0,255), Color(255,255,255,255))
 
