@@ -248,8 +248,7 @@ if wep:Clip1() == 5 or owner:GetAmmoCount( self.Primary.Ammo ) == 0 then return 
 	end
 end
 
---[[
 if CLIENT then
-killicon.Add( "weapon_sniper", "HUD/killicons/kcon_kar98", Color ( 0, 255, 0, 255 ) )
+	surface.CreateFont("SniperKillicon", {font = "csd", size = ScreenScale(30), antialias = true, additive = true})
+	killicon.AddFont("weapon_sniper", "SniperKillicon", "o", Color( 255, 80, 0, 255))
 end
-]]
