@@ -5,6 +5,8 @@ SWEP.Instructions = "Primary: Drop Bomb\nSecondary: Warning Siren"
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 
+killicon.Add("weapon_bigbomb", "weapons/killicon/weapon_bigbomb", Color(255, 80, 0))
+
 function SWEP:DrawWorldModel()
 	local ply = self:GetOwner()
 
