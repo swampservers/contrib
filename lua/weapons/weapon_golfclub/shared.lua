@@ -106,15 +106,40 @@ end
 
 
 	SWEP.PrintName			= "Golf Club"
-	SWEP.Author				= "Swamp & PYROTEKNIK"
 	SWEP.ViewModel      = "models/pyroteknik/putter.mdl"
 	SWEP.WorldModel   = "models/pyroteknik/putter.mdl"
 	SWEP.Slot				= 0
 	SWEP.ViewModelFOV		= 62
+	SWEP.AutoSwitchTo = false
 
-
-
-SWEP.Instructions = "Left/right click: place, hit ball\nReload: retry hole"
+	-------------------------------------------------------------------
+	SWEP.Author = "Swamp & PYROTEKNIK"
+	SWEP.Contact        = ""
+	SWEP.Purpose        = "Hit the thing with it"
+	SWEP.Instructions = "Left/right click: place, hit ball\nReload: retry hole"
+	SWEP.Spawnable      = true
+	SWEP.AdminSpawnable  = true
+	-----------------------------------------------
+	SWEP.Primary.Delay		= 0.3
+	SWEP.Primary.Recoil		= 0
+	SWEP.Primary.Damage		= 0
+	SWEP.Primary.NumShots		= 1		
+	SWEP.Primary.Cone		= 0
+	SWEP.Primary.ClipSize		= 1
+	SWEP.Primary.DefaultClip	= 1
+	SWEP.Primary.Automatic   	= false
+	SWEP.Primary.Ammo         	= "none" 
+	-------------------------------------------------
+	SWEP.Secondary.Delay			= 60.999999999
+	SWEP.Secondary.Recoil			= 0
+	SWEP.Secondary.Damage			= 1
+	SWEP.Secondary.NumShots			= 1
+	SWEP.Secondary.Cone				= 0
+	SWEP.Secondary.ClipSize			= 1
+	SWEP.Secondary.DefaultClip		= 1
+	SWEP.Secondary.Automatic   		= false
+	SWEP.Secondary.Ammo         		= "none"
+	-------------------------------------------------
 
 
 function SWEP:DrawWorldModel()
@@ -701,32 +726,3 @@ if(CLIENT)then
 end ) ]]--
 end
 
--------------------------------------------------------------------
-SWEP.Author   = "PYROTEKNIK"
-SWEP.Contact        = ""
-SWEP.Purpose        = "Hit the thing with it"
-SWEP.Instructions   = ""
-SWEP.Spawnable      = true
-SWEP.AdminSpawnable  = true
-
------------------------------------------------
-SWEP.Primary.Delay		= 0.3
-SWEP.Primary.Recoil		= 0
-SWEP.Primary.Damage		= 0
-SWEP.Primary.NumShots		= 1		
-SWEP.Primary.Cone		= 0
-SWEP.Primary.ClipSize		= 1
-SWEP.Primary.DefaultClip	= 1
-SWEP.Primary.Automatic   	= false
-SWEP.Primary.Ammo         	= "none" 
--------------------------------------------------
-SWEP.Secondary.Delay			= 60.999999999
-SWEP.Secondary.Recoil			= 0
-SWEP.Secondary.Damage			= 1
-SWEP.Secondary.NumShots			= 1
-SWEP.Secondary.Cone				= 0
-SWEP.Secondary.ClipSize			= 1
-SWEP.Secondary.DefaultClip		= 1
-SWEP.Secondary.Automatic   		= false
-SWEP.Secondary.Ammo         		= "none"
--------------------------------------------------
