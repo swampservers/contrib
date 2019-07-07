@@ -18,7 +18,7 @@ local function OwOifier(text)
 		text = string.gsub(text, nyaaa, ny)
 	end
 
-	text = string.gsub(text, "!woll", "!roll") //revert !roll
+	text = string.gsub(text, "!woww", "!roll") //revert !roll
 
 	local text = string.format(text.." %s", OwOemotes[math.random(#OwOemotes)]) //add a random emote at the end
 
