@@ -50,8 +50,6 @@ local function OwOifier(text)
 end
 
 if SERVER then
-	util.AddNetworkString("OwOSendToggleInfo")
-
 	hook.Add("PlayerSay", "ChatOwOifier",function(ply, text, team)
 		if ply:GetNWBool("OwOEnabled", false) then
 			return OwOifier(text)
