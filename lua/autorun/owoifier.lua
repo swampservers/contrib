@@ -64,7 +64,7 @@ if SERVER then
 				return ""
 			elseif ply:GetNWBool("OwOEnabled", false) == true then --Disable OwO
 				ply:SetNWBool("OwOEnabled", false)
-				ply:ChatPrint("[piunk]owo disabled")
+				ply:ChatPrint("[pink]owo disabled")
 				return ""
 			else end
 		end
