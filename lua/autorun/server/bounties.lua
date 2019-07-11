@@ -3,7 +3,7 @@ util.AddNetworkString("IncreaseBounty")
 
 hook.Add("PlayerDeath","PlayerDeath",function(ply,infl,atk)
 	local bounty = tonumber(ply:GetPData("bounty",0))
-	if bounty > 0 and ply != atk then
+	if bounty > 0 and ply != atk and type(atk) == "Player" then
 		atk:PS_GivePoints(bounty)
 		BotSayGlobal("[edgy]"..atk:Nick().." [fbc]has claimed [gold]"..ply:Nick().."'s [fbc]bounty of [rainbow]"..bounty.." [fbc]points!")
 		ply:SetPData("bounty",0)
