@@ -20,7 +20,7 @@ function NewBounty(b)
 	pselect:Dock(TOP)
 
 	for _, ply in pairs(player.GetHumans()) do
-		pselect:AddChoice(ply:Nick(),ply:UniqueID())
+		pselect:AddChoice(ply:Nick(),ply)
 	end
 
 	local l2 = vgui.Create("DLabel", bounty)
@@ -49,16 +49,16 @@ function NewBounty(b)
 	done:DockMargin(0, 0, 4, 0)
 	done:Dock(RIGHT)
 	
-	pselect.OnSelect = function(ind,val,data)
+	pselect.OnSelect = function(s,ind,val,data)
 		bounty.ply = data
+		print(type(data))
 	end
 
 	done.DoClick = function()
-		local n = tonumber(pointsselector:GetValue())
-		if n > 1000 and type(bounty.ply) == "string" then
+		if tonumber(pointsselector:GetValue()) > 0 and type(bounty.ply) == "Player" then
 			net.Start("IncreaseBounty")
-				net.WriteUInt(n,32)
-				net.WriteString(bounty.ply)
+				net.WriteUInt(tonumber(pointsselector:GetValue()),32)
+				net.WriteEntity(bounty.ply)
 			net.SendToServer()
 			bounty:Close()
 			b:Close()
@@ -100,8 +100,8 @@ net.Receive("Bounties",function()
 	
 	table.sort(t,function(a,b) return a[2] > b[2] end)
 
-	for _,v in pairs(t) do
-		List:AddLine(v[1]:Nick(),v[2])
+	for k,v in pairs(t) do
+		List:AddLine(v[1]:Nick(),v[2],v[1])
 	end
 
 	function List:OnRowRightClick(id,line)
@@ -114,12 +114,10 @@ net.Receive("Bounties",function()
 				function(amount)
 					local n = tonumber(amount)
 					if type(n) != nil then
-						if n > 1000 then
-							net.Start("IncreaseBounty")
-								net.WriteUInt(n,32)
-								net.WriteString(line:GetColumnText(1))
-							net.SendToServer()
-						end
+						net.Start("IncreaseBounty")
+							net.WriteUInt(n,32)
+							net.WriteEntity(line:GetColumnText(3))
+						net.SendToServer()
 					end
 					Bounties:Close()
 				end

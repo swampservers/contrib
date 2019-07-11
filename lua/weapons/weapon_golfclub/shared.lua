@@ -375,13 +375,17 @@ function SWEP:FinishStroke(hole)
 		local record = 10
 		if SERVER then
 			record = tonumber(self:GetOwner():GetPData("golf_"..hole, 10))
-			local monthlyreset = os.date("*t",tonumber(self:GetOwner():GetPData("monthly_reset",0)))
+			monthlyrecord = tonumber(self:GetOwner():GetPData("monthly_golf_"..hole, 10))
 			local curdate = os.date("*t",os.time())
-			if curdate["year"] > monthlyreset["year"] or curdate["month"] > monthlyreset["month"] then
+			curdate = curdate["year"]*12 + curdate["month"]
+			if curdate > tonumber(self:GetOwner():GetPData("monthly_reset",0)) then
 				for h,_ in pairs(GolfPrizeTargets) do
-					self:GetOwner():SetPData("golf_"..h,10)
+					self:GetOwner():SetPData("monthly_golf_"..h,10)
 				end
-				self:GetOwner():SetPData("monthly_reset",os.time())
+				self:GetOwner():SetPData("monthly_reset",curdate)
+			end
+			if strk<monthlyrecord then
+				self:GetOwner():SetPData("monthly_golf_"..hole, tostring(strk))
 			end
 			if strk<record then
 				self:GetOwner():SetPData("golf_"..hole, tostring(strk))
@@ -397,7 +401,7 @@ function SWEP:FinishStroke(hole)
 				local t = GolfPrizeTargets[hole]
 				if t then
 					for k,v in pairs(t) do
-						if record > v[1] and strk <= v[1] then
+						if monthlyrecord > v[1] and strk <= v[1] then
 							if self:GetOwner().familyshared then
 								self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Sorry, you're not eligible for this prize ;hahaha;" )
 							else
@@ -415,7 +419,7 @@ function SWEP:FinishStroke(hole)
 			end
 			local t = GolfPrizeTargets[hole]
 			if t then
-				local got = math.min(strk,record)
+				local got = math.min(strk,monthlyrecord)
 				local nex = nil
 				for k,v in pairs(t) do
 					if got > v[1] then

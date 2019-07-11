@@ -76,14 +76,13 @@ end)
 
 net.Receive("IncreaseBounty",function(len,ply)
 	local p = net.ReadUInt(32)
-	local s = net.ReadString()
-	local t = FindPlayer(s)
+	local e = net.ReadEntity()
 	p = p > 0 and p or 0
-	if ply:PS_HasPoints(p) and type(t) == "Player" then
+	if ply:PS_HasPoints(p) and type(e) == "Player" then
 		ply:PS_TakePoints(p)
-		t:SetPData("bounty",tonumber(t:GetPData("bounty",0)) + p)
-		ply:PS_Notify("You have increased "..t:Nick().."'s bounty by "..p.." points")
-	elseif !ply:PS_HasPoints(p) and type(t) == "Player" then
+		e:SetPData("bounty",tonumber(e:GetPData("bounty",0)) + p)
+		ply:PS_Notify("You have increased "..e:Nick().."'s bounty by "..p.." points")
+	elseif !ply:PS_HasPoints(p) and type(e) == "Player" then
 		ply:PS_Notify("You don't have enough points")
 	end
 end)
