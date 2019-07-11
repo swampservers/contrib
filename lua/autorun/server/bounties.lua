@@ -30,6 +30,22 @@ function FindPlayer(plyname)
 	end
 end
 
+function AddBounty(ply,target,amount,global)
+	if type(ply) != "Player" or type(target) != "Player" or type(amount) != "number" then return end
+	amount = amount > 0 and amount or 0
+	if ply:PS_HasPoints(amount) then
+		ply:PS_TakePoints(amount)
+		target:SetPData("bounty",tonumber(target:GetPData("bounty",0)) + amount)
+		if global then
+			BotSayGlobal("[fbc]"..to:Nick().."'s bounty is now [rainbow]"..bounty + p.." [fbc]points")
+		else
+			ply:ChatPrint("You have increased "..target:Nick().."'s bounty by "..amount.." points",ply)
+		end
+	else
+		ply:ChatPrint("[red]You don't have enough points")
+	end
+end
+
 hook.Add("PlayerSay","BountyChatCommands",function(ply,text)
 	if (string.StartWith(text,"!") or string.StartWith(text,"/")) then
 		local newtext = string.Trim(string.Trim(string.Trim(text,"!"),"/")," ")
@@ -40,15 +56,7 @@ hook.Add("PlayerSay","BountyChatCommands",function(ply,text)
 				local bounty = tonumber(to:GetPData("bounty",0))
 				if tonumber(t[3]) then
 					local p = tonumber(t[3])
-					if ply:PS_HasPoints(p) and p > 1000 then
-						ply:PS_TakePoints(p)
-						to:SetPData("bounty",bounty + p)
-						BotSayGlobal(to:Nick().."'s bounty is now [rainbow]"..bounty + p.." [fbc]points")
-					elseif ply:PS_HasPoints(p) and p < 1000 then
-						ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
-					else
-						ply:ChatPrint("[red]You don't have enough points")
-					end
+					AddBounty(ply,to,p,true)
 				elseif bounty > 0 then
 					BotSayGlobal(to:Nick().."'s bounty is [rainbow]"..bounty.." [fbc]points")
 				elseif bounty == 0 then
@@ -75,14 +83,5 @@ hook.Add("PlayerSay","BountyChatCommands",function(ply,text)
 end)
 
 net.Receive("IncreaseBounty",function(len,ply)
-	local p = net.ReadUInt(32)
-	local e = net.ReadEntity()
-	p = p > 0 and p or 0
-	if ply:PS_HasPoints(p) and type(e) == "Player" then
-		ply:PS_TakePoints(p)
-		e:SetPData("bounty",tonumber(e:GetPData("bounty",0)) + p)
-		ply:PS_Notify("You have increased "..e:Nick().."'s bounty by "..p.." points")
-	elseif !ply:PS_HasPoints(p) and type(e) == "Player" then
-		ply:PS_Notify("You don't have enough points")
-	end
+	AddBounty(ply,net.ReadEntity(),net.ReadUInt(32))
 end)

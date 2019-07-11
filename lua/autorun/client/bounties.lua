@@ -51,7 +51,6 @@ function NewBounty(b)
 	
 	pselect.OnSelect = function(s,ind,val,data)
 		bounty.ply = data
-		print(type(data))
 	end
 
 	done.DoClick = function()
