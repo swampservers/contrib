@@ -49,24 +49,23 @@ local function OwOifier(text)
 	return owotext
 end
 
-if SERVER then
-	hook.Add("PlayerSay", "ChatOwOifier",function(ply, text, team)
-		if ply:GetNWBool("OwOEnabled", false) then
-			return OwOifier(text)
-		end
-	end)
+hook.Add("PlayerSay", "ChatOwOifier",function(ply, text, team)
+	if ply:GetNWBool("OwOEnabled", false) then
+		return OwOifier(text)
+	end
+end)
 
-	hook.Add("PlayerSay", "ClientOwOToggle", function(ply, text, team)
-		if string.lower(text) == "!owo" then
-			if ply:GetNWBool("OwOEnabled", false) == false then --Enable OwO
-				ply:SetNWBool("OwOEnabled", true)
-				ply:ChatPrint("[pink]owo enabled")
-				return ""
-			elseif ply:GetNWBool("OwOEnabled", false) == true then --Disable OwO
-				ply:SetNWBool("OwOEnabled", false)
-				ply:ChatPrint("[pink]owo disabled")
-				return ""
-			else end
-		end
-	end)
-end
+hook.Add("PlayerSay", "ClientOwOToggle", function(ply, text, team)
+	if string.lower(text) == "!owo" then
+		if ply:GetNWBool("OwOEnabled", false) == false then --Enable OwO
+			ply:SetNWBool("OwOEnabled", true)
+			ply:ChatPrint("[pink]owo enabled")
+			return ""
+		elseif ply:GetNWBool("OwOEnabled", false) == true then --Disable OwO
+			ply:SetNWBool("OwOEnabled", false)
+			ply:ChatPrint("[pink]owo disabled")
+			return ""
+		else end
+	end
+end)
+	
