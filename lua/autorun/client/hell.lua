@@ -240,14 +240,25 @@ hook.Add("PostDrawOpaqueRenderables","HellRender",function(depth,skybox)
 	
 end)
 
-timer.Create("HellPortalDoomMusic", 96, 0,function()
-	sound.PlayFile("sound/hell/doom_e1m1.ogg", "3d mono noplay", function(e1m1)
-		if IsValid(e1m1) then 
-			e1m1:SetPos(Vector(3498, 3470, -1020))
-			e1m1:SetVolume(3)
-			e1m1:Set3DCone(100, 190, 0)
-			e1m1:Set3DFadeDistance(200, -1)
-			e1m1:Play()
-		end
+hook.Add("InitPostEntity", "DoomMusicInit", function()
+	local playdoommusic = true
+	local checkdist = 700
+
+	sound.PlayFile("sound/hell/doom_e1m1.ogg", "3d mono noplay noblock", function(e1m1)
+		if !IsValid(e1m1) then return end
+		e1m1:SetPos(Vector(3498, 3470, -1020))
+		e1m1:SetVolume(.5)
+		e1m1:Set3DFadeDistance(150, -1)
+		e1m1:EnableLooping(true)
+
+		timer.Create("HellPortalRadiusCheck", 0.5, 0, function()
+			if LocalPlayer():GetPos():DistToSqr(Vector(3498, 3470, -1020)) < checkdist*checkdist and playdoommusic then
+				e1m1:Play()
+				playdoommusic = false
+			elseif LocalPlayer():GetPos():DistToSqr(Vector(3498, 3470, -1020)) > checkdist*checkdist and !playdoommusic then
+				e1m1:Pause()
+				playdoommusic = true
+			end
+		end)
 	end)
 end)
