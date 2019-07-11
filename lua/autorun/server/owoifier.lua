@@ -6,45 +6,38 @@ local function OwOifier(text)
 	local splitstring = string.Split(text, "")
 	local isemoteenabled = false
 
+	if splitstring[1] == "!" then isemoteenabled = true end
+
 	for k, v in pairs(splitstring) do
-		if v == ":" or v == ";" or v == "[" or v == "]" then --Keep emotes and chat colors the same
+		if string.find(":;[]", v) then --Keep emotes and chat colors the same
 			isemoteenabled = !isemoteenabled
 		elseif v == " " then
 			isemoteenabled = false
 		end
 		if !isemoteenabled then
 			if splitstring[k+1] then
-				local dtext = table.concat(splitstring, "", k, k+1)
-
-				for nyaaa in string.gmatch(dtext, "n[aeiou]+") do --n(vowel) to ny(vowel)
-					local ny = "ny"..string.TrimLeft(nyaaa, "n")
-					local jointext = string.gsub(dtext, nyaaa, ny)
-					table.remove(splitstring, k+1)
-					table.remove(splitstring, k)
-					table.insert(splitstring, k, jointext)
+				for nyaaa in string.gmatch(splitstring[k]..splitstring[k+1], "[Nn][aeiouAEIOU]") do --n(vowel) to ny(vowel)
+					if v == v:lower() then
+						splitstring[k] = "ny"
+					else 
+						splitstring[k] = "NY"
+					end
 				end
 			end
 
-			if string.find(v, "[RrLl]") then --R and L to W
-				local stext = string.Replace(string.Replace(v, "R", "W"), "r", "w")
-				local stext = string.Replace(string.Replace(stext, "L", "W"), "l", "w")
-				table.remove(splitstring, k)
-				table.insert(splitstring, k, stext)
+			if string.find("RrLl", v) then --R and L to W
+				if v == v:lower() then
+					splitstring[k] = "w"
+				else
+					splitstring[k] = "W"
+				end
 			end		
 		end
 	end
 
 	local owotext = table.concat(splitstring)
-
 	local owotext = string.gsub(owotext, "this", "dis")
-
-	if string.StartWith(owotext, "!") then
-		owotext = string.gsub(owotext, "!woww", "!roll") --revert some commands
-		owotext = string.gsub(owotext, "!pwaytime", "!playtime")
-		owotext = string.gsub(owotext, "!kiwws", "!kills")
-	end
-
-	local owotext = string.format(owotext.." %s", OwOemotes[math.random(#OwOemotes)]) --add a random emote at the end
+	local owotext = owotext.." "..OwOemotes[math.random(#OwOemotes)] --add a random emote at the end
 
 	return owotext
 end
@@ -68,4 +61,3 @@ hook.Add("PlayerSay", "ClientOwOToggle", function(ply, text, team)
 		else end
 	end
 end)
-	
