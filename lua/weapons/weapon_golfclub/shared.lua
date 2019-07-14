@@ -394,10 +394,18 @@ function SWEP:FinishStroke(hole)
 		if !joke then GolfNotify("[yellow]"..self:GetOwner():Nick() .." completed hole '"..hole.. "' with "..endm) end
 		if SERVER then
 			local iwonsomething = false
+			local strokes = " strokes"
 			if strk<record then
-				local strokes = " strokes"
 				if strk==1 then strokes = " stroke" end
-				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your record! New record: [orange]"..tostring(strk)..strokes )
+				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your all-time record! New record: [orange]"..tostring(strk)..strokes )
+			else
+				if record==1 then strokes = " stroke" end
+				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your all-time record for this hole is: [orange]"..tostring(record)..strokes )
+			end
+			strokes = " strokes"
+			if strk<monthlyrecord then
+				if strk==1 then strokes = " stroke" end
+				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your monthly record! New record: [orange]"..tostring(strk)..strokes )
 				local t = GolfPrizeTargets[hole]
 				if t then
 					for k,v in pairs(t) do
@@ -413,9 +421,8 @@ function SWEP:FinishStroke(hole)
 					end
 				end
 			else
-				local strokes = " strokes"
-				if record==1 then strokes = " stroke" end
-				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your record for this hole is: [orange]"..tostring(record)..strokes )
+				if monthlyrecord==1 then strokes = " stroke" end
+				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your monthly record for this hole is: [orange]"..tostring(monthlyrecord)..strokes )
 			end
 			local t = GolfPrizeTargets[hole]
 			if t then

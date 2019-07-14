@@ -1,5 +1,3 @@
-util.AddNetworkString("Bounties")
-util.AddNetworkString("IncreaseBounty")
 
 hook.Add("PlayerDeath","PlayerDeath",function(ply,infl,atk)
 	local bounty = tonumber(ply:GetPData("bounty",0))
@@ -46,42 +44,35 @@ function AddBounty(ply,target,amount,global)
 	end
 end
 
-hook.Add("PlayerSay","BountyChatCommands",function(ply,text)
-	if (string.StartWith(text,"!") or string.StartWith(text,"/")) then
-		local newtext = string.Trim(string.Trim(string.Trim(text,"!"),"/")," ")
-		if (string.StartWith(newtext,"bounty")) then
-			local t = string.Explode(" ",newtext)
-			local to = FindPlayer(t[2])
-			if type(to) == "Player" then
-				local bounty = tonumber(to:GetPData("bounty",0))
-				if tonumber(t[3]) then
-					local p = tonumber(t[3])
-					AddBounty(ply,to,p,true)
-				elseif bounty > 0 then
-					BotSayGlobal(to:Nick().."'s bounty is [rainbow]"..bounty.." [fbc]points")
-				elseif bounty == 0 then
-					ply:ChatPrint("[fbc]"..to:Nick().." has no bounty")
-				end
-			else
-				ply:ChatPrint("[fbc]!bounty player points")
-			end
-			return text
+RegisterChatCommand({'bounty'}, function(ply, arg)
+	local t = string.Explode(" ",arg)
+	local to = FindPlayer(t[1])
+	if type(to) == "Player" then
+		local bounty = tonumber(to:GetPData("bounty",0))
+		if tonumber(t[2]) then
+			local p = tonumber(t[2])
+			AddBounty(ply,to,p,true)
+		elseif bounty > 0 then
+			BotSayGlobal(to:Nick().."'s bounty is [rainbow]"..bounty.." [fbc]points")
+		elseif bounty == 0 then
+			ply:ChatPrint("[fbc]"..to:Nick().." has no bounty")
 		end
-		if (newtext:lower() == "bounties") then
-			local t = {}
-			for _,v in pairs(player.GetHumans()) do
-				local bounty = tonumber(v:GetPData("bounty",0))
-				if bounty > 0 then
-					table.insert(t,{v,bounty})
-				end
-			end
-			net.Start("Bounties")
-				net.WriteTable(t)
-			net.Send(ply)
+	else
+		ply:ChatPrint("[fbc]!bounty player points")
+	end
+end, {global=true, throttle=true})
+
+RegisterChatCommand({'bounties'}, function(ply, arg)
+	local t = {}
+	for k,v in pairs(player.GetHumans()) do
+		local bounty = tonumber(v:GetPData("bounty",0))
+		if bounty > 0 then
+			table.insert(t,{v,bounty})
 		end
 	end
-end)
-
-net.Receive("IncreaseBounty",function(len,ply)
-	AddBounty(ply,net.ReadEntity(),net.ReadUInt(32))
-end)
+	table.sort(t,function(a,b) return a[2] > b[2] end)
+	ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
+	for k,v in pairs(t) do
+		ply:ChatPrint(v[1]:Nick()..": "..v[2])
+	end
+end, {global=false, throttle=false})
