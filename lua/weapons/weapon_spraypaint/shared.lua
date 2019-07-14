@@ -32,6 +32,14 @@ local function doSpray(decal,self)
 	
 	local Pos1 = trace.HitPos + (trace.HitNormal*2)
 	local Pos2 = trace.HitPos - trace.HitNormal
+
+	
+	if SERVER and (self.lastLog or 0) + 2 < CurTime() then
+		self.lastLog = CurTime()
+		sc.log(self.Owner, " spraypainting in ", self.Owner:GetLocationName(), " at ", math.floor(trace.HitPos.x), ",", math.floor(trace.HitPos.y),",", math.floor(trace.HitPos.z))
+	end
+
+
 	
 	local Bone = trace.Entity:GetPhysicsObjectNum( trace.PhysicsBone or 0 )
 	if ( !Bone ) then
