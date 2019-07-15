@@ -1,7 +1,7 @@
 
 hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
 	local bounty = GetPlayerBounty(ply)
-	if bounty > 0 and ply != atk and type(atk) == "Player" then
+	if bounty > 0 and ply != atk and atk:IsPlayer() then
 		SetPlayerBounty(ply,0)
 		atk:PS_GivePoints(bounty)
 		BotSayGlobal("[edgy]"..atk:Nick().." [fbc]has claimed [gold]"..ply:Nick().."'s [fbc]bounty of [rainbow]"..bounty.." [fbc]points!")
@@ -21,7 +21,7 @@ function SetPlayerBounty(ply,bounty)
 end
 
 function AddBounty(ply,target,amount)
-	if type(ply) != "Player" or type(target) != "Player" or type(amount) != "number" then return end
+	if !ply:IsPlayer() or !target:IsPlayer() or type(amount) != "number" then return end
 	amount = amount > 0 and amount or 0
 	if ply:PS_HasPoints(amount) then
 		SetPlayerBounty(target,GetPlayerBounty(target) + amount)
@@ -35,7 +35,7 @@ end
 RegisterChatCommand({'bounty'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local to = PlyCount(t[1])
-	if type(to[1]) == "Player" and not to[2]>1 then
+	if to[1]:IsPlayer() and not to[2]>1 then
 		local bounty = GetPlayerBounty(to)
 		local p = tonumber(t[2])
 		if type(p) == "number" then
