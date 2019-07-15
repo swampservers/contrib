@@ -34,12 +34,12 @@ end
 
 RegisterChatCommand({'bounty'},function(ply,arg)
 	local t = string.Explode(" ",arg)
-	local to = PlyCount(t[1])
-	if to[1]:IsPlayer() and not to[2]>1 then
+	local to,c = PlyCount(t[1])
+	if to:IsPlayer() and not c>1 then
 		local bounty = GetPlayerBounty(to)
 		local p = tonumber(t[2])
 		if type(p) == "number" then
-			if p > 1000 then
+			if p >= 1000 then
 				AddBounty(ply,to,p)
 			else
 				ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
