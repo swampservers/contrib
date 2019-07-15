@@ -9,7 +9,7 @@ hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
 end)
 
 function GetPlayerBounty(ply)
-	if not IsValid(ply.bounty) then
+	if ply.bounty == nil then
 		ply.bounty = tonumber(ply:GetPData("bounty",0))
 	end
 	return ply.bounty
