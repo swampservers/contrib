@@ -395,17 +395,16 @@ function SWEP:FinishStroke(hole)
 		if SERVER then
 			local iwonsomething = false
 			local strokes = " strokes"
+			local alltime = false
 			if strk<record then
 				if strk==1 then strokes = " stroke" end
 				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your all-time record! New record: [orange]"..tostring(strk)..strokes )
-			else
-				if record==1 then strokes = " stroke" end
-				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your all-time record for this hole is: [orange]"..tostring(record)..strokes )
+				alltime = true
 			end
 			strokes = " strokes"
 			if strk<monthlyrecord then
 				if strk==1 then strokes = " stroke" end
-				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your monthly record! New record: [orange]"..tostring(strk)..strokes )
+				if not alltime then self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your monthly record! New record: [orange]"..tostring(strk)..strokes ) end
 				local t = GolfPrizeTargets[hole]
 				if t then
 					for k,v in pairs(t) do
@@ -422,6 +421,7 @@ function SWEP:FinishStroke(hole)
 				end
 			else
 				if monthlyrecord==1 then strokes = " stroke" end
+				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your all-time record for this hole is: [orange]"..tostring(record)..strokes )
 				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your monthly record for this hole is: [orange]"..tostring(monthlyrecord)..strokes )
 			end
 			local t = GolfPrizeTargets[hole]

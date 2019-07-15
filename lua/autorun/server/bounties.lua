@@ -1,71 +1,65 @@
 
-hook.Add("PlayerDeath","PlayerDeath",function(ply,infl,atk)
-	local bounty = tonumber(ply:GetPData("bounty",0))
+hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
+	local bounty = GetPlayerBounty(ply)
 	if bounty > 0 and ply != atk and type(atk) == "Player" then
+		SetPlayerBounty(ply,0)
 		atk:PS_GivePoints(bounty)
 		BotSayGlobal("[edgy]"..atk:Nick().." [fbc]has claimed [gold]"..ply:Nick().."'s [fbc]bounty of [rainbow]"..bounty.." [fbc]points!")
-		ply:SetPData("bounty",0)
 	end
 end)
 
-function FindPlayer(plyname)
-	if type(plyname) == "string" and plyname != "" then
-		local search = {}
-		for k,v in pairs(player.GetAll()) do
-			local x,y,z = string.find(string.lower(v:GetName()),".*("..string.lower(plyname)..").*")
-			if z then
-				table.insert(search,v)
-			end
-		end
-		if table.Count(search) == 1 then
-			return search[1]
-		elseif table.Count(search) > 1 then
-			return "Multiple players found, be more specific."
-		elseif table.Count(search) == 0 then
-			return "No players found."
-		end
-		return "Error"
+function GetPlayerBounty(ply)
+	if not IsValid(ply.bounty) then
+		ply.bounty = tonumber(ply:GetPData("bounty",0))
 	end
+	return ply.bounty
 end
 
-function AddBounty(ply,target,amount,global)
+function SetPlayerBounty(ply,bounty)
+	ply:SetPData("bounty",bounty)
+	ply.bounty = bounty
+end
+
+function AddBounty(ply,target,amount)
 	if type(ply) != "Player" or type(target) != "Player" or type(amount) != "number" then return end
 	amount = amount > 0 and amount or 0
 	if ply:PS_HasPoints(amount) then
+		SetPlayerBounty(target,GetPlayerBounty(target) + amount)
 		ply:PS_TakePoints(amount)
-		target:SetPData("bounty",tonumber(target:GetPData("bounty",0)) + amount)
-		if global then
-			BotSayGlobal("[fbc]"..to:Nick().."'s bounty is now [rainbow]"..bounty + p.." [fbc]points")
-		else
-			ply:ChatPrint("You have increased "..target:Nick().."'s bounty by "..amount.." points",ply)
-		end
+		BotSayGlobal("[fbc]"..target:Nick().."'s bounty is now [rainbow]"..GetPlayerBounty(target) + amount.." [fbc]points")
 	else
 		ply:ChatPrint("[red]You don't have enough points")
 	end
 end
 
-RegisterChatCommand({'bounty'}, function(ply, arg)
+RegisterChatCommand({'bounty'},function(ply,arg)
 	local t = string.Explode(" ",arg)
-	local to = FindPlayer(t[1])
-	if type(to) == "Player" then
-		local bounty = tonumber(to:GetPData("bounty",0))
-		if tonumber(t[2]) then
-			local p = tonumber(t[2])
-			AddBounty(ply,to,p,true)
+	local to = PlyCount(t[1])
+	if type(to[1]) == "Player" and not to[2]>1 then
+		local bounty = GetPlayerBounty(to)
+		local p = tonumber(t[2])
+		if type(p) == "number" then
+			if p > 1000 then
+				AddBounty(ply,to,p)
+			else
+				ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
+			end
 		elseif bounty > 0 then
 			BotSayGlobal(to:Nick().."'s bounty is [rainbow]"..bounty.." [fbc]points")
 		elseif bounty == 0 then
 			ply:ChatPrint("[fbc]"..to:Nick().." has no bounty")
 		end
+	elseif
+		ply:ChatPrint("[fbc]More than one person found with that string in their name")
 	else
 		ply:ChatPrint("[fbc]!bounty player points")
 	end
-end, {global=true, throttle=true})
+end,{global=true,throttle=true})
 
-RegisterChatCommand({'bounties'}, function(ply, arg)
+RegisterChatCommand({'bounties'},function(ply,arg)
 	local t = {}
 	for k,v in pairs(player.GetHumans()) do
-		local bounty = tonumber(v:GetPData("bounty",0))
+		local bounty = GetPlayerBounty(v)
 		if bounty > 0 then
 			table.insert(t,{v,bounty})
 		end
@@ -75,4 +69,4 @@ RegisterChatCommand({'bounties'}, function(ply, arg)
 	for k,v in pairs(t) do
 		ply:ChatPrint(v[1]:Nick()..": "..v[2])
 	end
-end, {global=false, throttle=false})
+end,{global=false,throttle=false})
