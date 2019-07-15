@@ -421,8 +421,7 @@ function SWEP:FinishStroke(hole)
 				end
 			else
 				if monthlyrecord==1 then strokes = " stroke" end
-				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your all-time record for this hole is: [orange]"..tostring(record)..strokes )
-				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your monthly record for this hole is: [orange]"..tostring(monthlyrecord)..strokes )
+				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your all-time record for this hole is: [orange]"..tostring(record)..strokes.."[red]([orange]"..tostring(monthlyrecord)..strokes.." [red]this month)" )
 			end
 			local t = GolfPrizeTargets[hole]
 			if t then

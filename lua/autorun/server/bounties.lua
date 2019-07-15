@@ -32,13 +32,13 @@ function AddBounty(ply,target,amount)
 	end
 end
 
-RegisterChatCommand({'bounty'},function(ply,arg)
+RegisterChatCommand({'bounty','setbounty'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local to,c = PlyCount(t[1])
-	if to:IsPlayer() and not c>1 then
+	if to:IsPlayer() and c == 1 then
 		local bounty = GetPlayerBounty(to)
 		local p = tonumber(t[2])
-		if type(p) == "number" then
+		if p != nil then
 			if p >= 1000 then
 				AddBounty(ply,to,p)
 			else
@@ -47,7 +47,7 @@ RegisterChatCommand({'bounty'},function(ply,arg)
 		elseif bounty > 0 then
 			BotSayGlobal(to:Nick().."'s bounty is [rainbow]"..bounty.." [fbc]points")
 		elseif bounty == 0 then
-			ply:ChatPrint("[fbc]"..to:Nick().." has no bounty")
+			BotSayGlobal(to:Nick().." has no bounty")
 		end
 	elseif c>1 then
 		ply:ChatPrint("[fbc]More than one person found with that string in their name")
@@ -56,7 +56,7 @@ RegisterChatCommand({'bounty'},function(ply,arg)
 	end
 end,{global=true,throttle=true})
 
-RegisterChatCommand({'bounties'},function(ply,arg)
+RegisterChatCommand({'bounties','showbounties'},function(ply,arg)
 	local t = {}
 	for k,v in pairs(player.GetHumans()) do
 		local bounty = GetPlayerBounty(v)
@@ -67,6 +67,8 @@ RegisterChatCommand({'bounties'},function(ply,arg)
 	table.sort(t,function(a,b) return a[2] > b[2] end)
 	ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
 	for k,v in pairs(t) do
-		ply:ChatPrint(v[1]:Nick()..": "..v[2])
+		if k <= 10 then
+			ply:ChatPrint(v[1]:Nick()..": "..v[2])
+		end
 	end
 end,{global=false,throttle=false})
