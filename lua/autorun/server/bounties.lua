@@ -49,7 +49,7 @@ RegisterChatCommand({'bounty'},function(ply,arg)
 		elseif bounty == 0 then
 			ply:ChatPrint("[fbc]"..to:Nick().." has no bounty")
 		end
-	elseif
+	elseif c>1 then
 		ply:ChatPrint("[fbc]More than one person found with that string in their name")
 	else
 		ply:ChatPrint("[fbc]!bounty player points")
