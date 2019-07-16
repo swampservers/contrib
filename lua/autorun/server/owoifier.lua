@@ -6,8 +6,10 @@ local function OwOifier(text)
 	local splitstring = string.Split(text, "")
 	local isemoteenabled = false
 
-	if splitstring[1] == "!" then isemoteenabled = true end
-
+	if string.find("!/", splitstring[1]) then
+		isemoteenabled = true
+	end
+	
 	for k, v in pairs(splitstring) do
 		if string.find(":;[]", v) then --Keep emotes and chat colors the same
 			isemoteenabled = !isemoteenabled
