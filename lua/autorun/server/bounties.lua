@@ -43,20 +43,20 @@ end
 RegisterChatCommand({'bounty','setbounty'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local p = tonumber(table.remove(t))
-	local to,c = PlyCount(string.Implode(t))
-	if c == 1 then
-		local bounty = GetPlayerBounty(to)
-		if p != nil then
+	if p == nil then
+		ply:ChatPrint("[orange]!bounty player points")
+	else
+		local to,c = PlyCount(string.Implode(" ",t))
+		if c == 1 then
+			local bounty = GetPlayerBounty(to)
 			if p >= 1000 then
 				AddBounty(ply,to,p)
 			else
 				ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
 			end
+		else
+			ply:ChatPrint("[red]Player "..string.Implode(" ",t).." not found")
 		end
-	elseif c>1 then
-		ply:ChatPrint("[red]More than one person found with that string in their name")
-	else
-		ply:ChatPrint("[orange]!bounty player points")
 	end
 end,{global=true,throttle=true})
 
