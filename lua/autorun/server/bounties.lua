@@ -1,12 +1,12 @@
 
-BountyLimit = {}
+BountyLimit = BountyLimit or {}
 
 hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
 	local bounty = GetPlayerBounty(ply)
 	if BountyLimit[ply:SteamID()] == nil then BountyLimit[ply:SteamID()] = 0 end
 	if bounty > 0 and ply != atk and atk:IsPlayer() then
 		SetPlayerBounty(ply,0)
-		BountyLimit[ply:SteamID()] = math.Clamp(BountyLimit[ply:SteamID()] - bounty,0,10000000)
+		BountyLimit[ply:SteamID()] = math.max(BountyLimit[ply:SteamID()] - bounty,0)
 		atk:PS_GivePoints(bounty)
 		BotSayGlobal("[edgy]"..atk:Nick().." [fbc]has claimed [gold]"..ply:Nick().."'s [fbc]bounty of [rainbow]"..bounty.." [fbc]points!")
 	end
@@ -27,7 +27,7 @@ end
 function AddBounty(ply,target,amount)
 	if !ply:IsPlayer() or !target:IsPlayer() or type(amount) != "number" then return end
 	amount = amount > 0 and amount or 0
-	if BountyLimit[ply:SteamID()] == nil then BountyLimit[ply:SteamID()] = 0 end
+	BountyLimit[ply:SteamID()] = BountyLimit[ply:SteamID()] or 0
 	local total = BountyLimit[ply:SteamID()] + amount
 	if ply:PS_HasPoints(amount) and total <= 10000000 then
 		local add = GetPlayerBounty(target) + amount
@@ -44,10 +44,10 @@ end
 
 RegisterChatCommand({'bounty','setbounty'},function(ply,arg)
 	local t = string.Explode(" ",arg)
-	local to,c = PlyCount(string.Implode(table.remove(t)))
+	local p = tonumber(table.remove(t))
+	local to,c = PlyCount(string.Implode(t))
 	if to:IsPlayer() and c == 1 then
 		local bounty = GetPlayerBounty(to)
-		local p = tonumber(t[#t])
 		if p != nil then
 			if p >= 1000 then
 				AddBounty(ply,to,p)
