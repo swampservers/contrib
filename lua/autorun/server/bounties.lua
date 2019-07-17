@@ -3,10 +3,9 @@ BountyLimit = BountyLimit or {}
 
 hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
 	local bounty = GetPlayerBounty(ply)
-	if BountyLimit[ply:SteamID()] == nil then BountyLimit[ply:SteamID()] = 0 end
 	if bounty > 0 and ply != atk and atk:IsPlayer() then
 		SetPlayerBounty(ply,0)
-		BountyLimit[ply:SteamID()] = math.max(BountyLimit[ply:SteamID()] - bounty,0)
+		BountyLimit[ply:SteamID()] = math.max((BountyLimit[ply:SteamID()] or 0) - bounty,0)
 		atk:PS_GivePoints(bounty)
 		BotSayGlobal("[edgy]"..atk:Nick().." [fbc]has claimed [gold]"..ply:Nick().."'s [fbc]bounty of [rainbow]"..bounty.." [fbc]points!")
 	end
@@ -27,15 +26,14 @@ end
 function AddBounty(ply,target,amount)
 	if !ply:IsPlayer() or !target:IsPlayer() or type(amount) != "number" then return end
 	amount = amount > 0 and amount or 0
-	BountyLimit[ply:SteamID()] = BountyLimit[ply:SteamID()] or 0
-	local total = BountyLimit[ply:SteamID()] + amount
+	local total = (BountyLimit[ply:SteamID()] or 0) + amount
 	if ply:PS_HasPoints(amount) and total <= 10000000 then
 		local add = GetPlayerBounty(target) + amount
-		BountyLimit[ply:SteamID()] = BountyLimit[ply:SteamID()] + amount
+		BountyLimit[ply:SteamID()] = (BountyLimit[ply:SteamID()] or 0) + amount
 		SetPlayerBounty(target,add)
 		ply:PS_TakePoints(amount)
 		BotSayGlobal("[fbc]"..target:Nick().."'s bounty is now [rainbow]"..add.." [fbc]points")
-	elseif ply:PS_HasPoints(amount) and total > 10000000 then
+	elseif ply:PS_HasPoints(amount) then
 		ply:ChatPrint("[red]You have reached your limit for today")
 	else
 		ply:ChatPrint("[red]You don't have enough points")
@@ -46,7 +44,7 @@ RegisterChatCommand({'bounty','setbounty'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local p = tonumber(table.remove(t))
 	local to,c = PlyCount(string.Implode(t))
-	if to:IsPlayer() and c == 1 then
+	if c == 1 then
 		local bounty = GetPlayerBounty(to)
 		if p != nil then
 			if p >= 1000 then
@@ -64,15 +62,13 @@ end,{global=true,throttle=true})
 
 RegisterChatCommand({'showbounty'},function(ply,arg)
 	local to,c = PlyCount(arg)
-	if to:IsPlayer() and c == 1 then
+	if c == 1 then
 		local bounty = GetPlayerBounty(to)
 		if bounty > 0 then
 			ply:ChatPrint("[orange]"..to:Nick().."'s bounty is [edgy]"..bounty.." [orange]points")
 		else
 			ply:ChatPrint("[orange]"..to:Nick().." has no bounty")
 		end
-	elseif c>1 then
-		ply:ChatPrint("[red]More than one person found with that string in their name")
 	else
 		ply:ChatPrint("[orange]!showbounty player")
 	end
