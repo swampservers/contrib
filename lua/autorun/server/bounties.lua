@@ -13,7 +13,7 @@ end)
 
 function GetPlayerBounty(ply)
 	if ply.bounty == nil then
-		ply.bounty = tonumber(ply:GetPData("bounty",0) or 0)
+		ply.bounty = tonumber(ply:GetPData("bounty",0)) or 0
 	end
 	return ply.bounty
 end
