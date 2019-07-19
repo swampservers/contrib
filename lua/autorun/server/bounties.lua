@@ -48,7 +48,6 @@ RegisterChatCommand({'bounty','setbounty'},function(ply,arg)
 	else
 		local to,c = PlyCount(string.Implode(" ",t))
 		if c == 1 then
-			local bounty = GetPlayerBounty(to)
 			if p >= 1000 then
 				AddBounty(ply,to,p)
 			else
