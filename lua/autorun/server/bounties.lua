@@ -13,7 +13,7 @@ end)
 
 function GetPlayerBounty(ply)
 	if ply.bounty == nil then
-		ply.bounty = tonumber(ply:GetPData("bounty",0))
+		ply.bounty = tonumber(ply:GetPData("bounty",0)) or 0
 	end
 	return ply.bounty
 end
@@ -48,7 +48,6 @@ RegisterChatCommand({'bounty','setbounty'},function(ply,arg)
 	else
 		local to,c = PlyCount(string.Implode(" ",t))
 		if c == 1 then
-			local bounty = GetPlayerBounty(to)
 			if p >= 1000 then
 				AddBounty(ply,to,p)
 			else
