@@ -2,15 +2,19 @@
 
 RecentErrors = RecentErrors or {}
 
+function ServerDebug(e)
+    RecentErrors[tostring(e)] = CurTime()
+end
+
 ERRORLOG_REALERRORFUNCTION = ERRORLOG_REALERRORFUNCTION or debug.getregistry()[1]
-debug.getregistry()[1] = function(...)    
-    RecentErrors[string.Implode( " ", {...} )] = CurTime()
-    return ERRORLOG_REALERRORFUNCTION(...)
+debug.getregistry()[1] = function(e)    
+    ServerDebug("Error: "..tostring(e))
+    return ERRORLOG_REALERRORFUNCTION(e)
 end
 
 util.AddNetworkString("PrintConsole")
 
-concommand.Add( "sv_errors", function( ply, cmd, args )
+concommand.Add( "serverdebug", function( ply, cmd, args )
     if (ply.sv_errors_last or 0) +1 > CurTime() then return end
     ply.sv_errors_last = CurTime()
     ply:SendLua([[net.Receive("PrintConsole", function() print(net.ReadString()) end)]])
