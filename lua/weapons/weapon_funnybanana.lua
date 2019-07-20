@@ -59,6 +59,7 @@ function SWEP:SecondaryAttack() --Same as primary attack, but you laugh so hard 
 			end
 		end)
 	end
+	self:SetNextSecondaryFire(CurTime() + 10)
 end
 
 if CLIENT then
