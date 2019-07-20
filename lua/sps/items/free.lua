@@ -16,7 +16,7 @@ PS_WeaponProduct({
 	class="weapon_funnybanana",
 	name="Funny Banana Picture",
 	description="John, haha. Where did you find this one!?",
-	model='models/props_lab/frame002a.mdl'
+	model='models/chev/bananaframe.mdl'
 })
 
 PS_WeaponProduct({
