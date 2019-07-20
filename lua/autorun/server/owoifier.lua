@@ -6,12 +6,12 @@ local function OwOifier(text)
 	local splitstring = string.Split(text, "")
 	local isemoteenabled = false
 
-	if string.find("!/", splitstring[1]) then
+	if string.find(splitstring[1], "[!/]") then
 		isemoteenabled = true
 	end
 	
 	for k, v in pairs(splitstring) do
-		if string.find(":;[]", v) then --Keep emotes and chat colors the same
+		if string.find(v, "[:;%[%]]") then --Keep emotes and chat colors the same
 			isemoteenabled = !isemoteenabled
 		elseif v == " " then
 			isemoteenabled = false
@@ -27,7 +27,7 @@ local function OwOifier(text)
 				end
 			end
 
-			if string.find("RrLl", v) then --R and L to W
+			if string.find(v, "[RrLl]") then --R and L to W
 				if v == v:lower() then
 					splitstring[k] = "w"
 				else
