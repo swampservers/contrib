@@ -8,8 +8,8 @@ if CLIENT then
 	SWEP.BounceWeaponIcon = false
 end
 
-SWEP.ViewModel = "models/props_lab/frame002a.mdl"
-SWEP.WorldModel = "models/props_lab/frame002a.mdl"
+SWEP.ViewModel = "models/chev/bananaframe.mdl"
+SWEP.WorldModel = "models/chev/bananaframe.mdl"
 
 function SWEP:PrimaryAttack()
 	if CLIENT then
@@ -122,26 +122,14 @@ if CLIENT then
 end
 
 function SWEP:Holster()
-	self:SetMaterial("")
-	if CLIENT then
-		self.Owner:GetViewModel():SetMaterial("")
-	end
 	return true
 end
 
 function SWEP:Deploy()
 	self:SetHoldType("revolver")
-	self:SetMaterial("chev/weapon_funnybanana/funnybananaframe")
-	if CLIENT then
-		self.Owner:GetViewModel():SetMaterial("chev/weapon_funnybanana/funnybananaframe")
-	end
 	return true
 end
 
 function SWEP:Initialize()
-	self:SetMaterial("chev/weapon_funnybanana/funnybananaframe")
-	if CLIENT then
-		self.Owner:GetViewModel():SetMaterial("chev/weapon_funnybanana/funnybananaframe")
-	end
 	return true
 end
