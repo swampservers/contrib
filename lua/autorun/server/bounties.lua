@@ -2,6 +2,11 @@
 BountyLimit = BountyLimit or {}
 
 hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
+	if !ply:IsPlayer() then
+		ServerDebug("PlayerDeath: ply is nil")
+		error("PlayerDeath: ply is nil")
+		return
+	end
 	local bounty = GetPlayerBounty(ply)
 	if bounty > 0 and ply != atk and atk:IsPlayer() then
 		SetPlayerBounty(ply,0)
@@ -13,7 +18,12 @@ end)
 
 function GetPlayerBounty(ply)
 	if ply.bounty == nil then
-		ply.bounty = tonumber(ply:GetPData("bounty",0)) or 0
+		ply.bounty = tonumber(ply:GetPData("bounty",0))
+		if ply.bounty == nil then
+			ServerDebug("GetPlayerBounty: GetPData returned nil")
+			error("GetPlayerBounty: GetPData returned nil")
+			ply.bounty = 0
+		end
 	end
 	return ply.bounty
 end
@@ -24,7 +34,11 @@ function SetPlayerBounty(ply,bounty)
 end
 
 function AddBounty(ply,target,amount)
-	if !ply:IsPlayer() or !target:IsPlayer() or type(amount) != "number" then return end
+	if !ply:IsPlayer() or !target:IsPlayer() or type(amount) != "number" then
+		ServerDebug("AddBounty: invalid arguments")
+		error("AddBounty: invalid arguments")
+		return
+	end
 	amount = amount > 0 and amount or 0
 	local total = (BountyLimit[ply:SteamID()] or 0) + amount
 	if ply:PS_HasPoints(amount) and total <= 10000000 then
