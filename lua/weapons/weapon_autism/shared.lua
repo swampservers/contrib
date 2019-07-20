@@ -19,11 +19,11 @@ function SWEP:PrimaryAttack()
 		self:ExtEmitSound(soundfile, {speech=-1, pitch=pit})
 		local stime = SoundDuration(soundfile)*100/pit
 		self.Owner:SendLua("util.ScreenShake(LocalPlayer():GetPos(), 5, 0.5, "..tostring((stime*1.65))..", 10000 )")
-		if IsValid(self) and IsValid(self.Owner) then
-			timer.Simple(math.Rand(0,1), function()
+		timer.Simple(math.Rand(0,1), function()
+			if IsValid(self) and IsValid(self.Owner) then
 				setPlayerGesture(self.Owner, GESTURE_SLOT_ATTACK_AND_RELOAD, table.Random(autisticTwitches), true )
-			end)
-		end
+			end
+		end)
 		if stime>2 then timer.Simple(math.Rand(0,2), function() if IsValid(self.Owner) and not self.Owner.autismWalkSpeed then setPlayerGesture(self.Owner, GESTURE_SLOT_ATTACK_AND_RELOAD, table.Random(autisticTwitches), true ) end end) end
 		if stime>2 then timer.Simple(math.Rand(1,2), function() if IsValid(self.Owner) and not self.Owner.autismWalkSpeed then setPlayerGesture(self.Owner, GESTURE_SLOT_ATTACK_AND_RELOAD, table.Random(autisticTwitches), true ) end end) end
 		if stime>3 then timer.Simple(math.Rand(1,3), function() if IsValid(self.Owner) and not self.Owner.autismWalkSpeed then setPlayerGesture(self.Owner, GESTURE_SLOT_ATTACK_AND_RELOAD, table.Random(autisticTwitches), true ) end end) end
