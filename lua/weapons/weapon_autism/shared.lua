@@ -48,10 +48,10 @@ function SWEP:SecondaryAttack()
 			SetPlayerSpeechDuration(self.Owner,0.2)
 			--timer.Simple(0.2,function() SetPlayerSpeechDuration(self.Owner,0) end)
 			timer.Simple(0.9,function() 
-			if self and self.Owner then SetPlayerSpeechDuration(self.Owner,0.2) end
+				if IsValid(self) and IsValid(self.Owner) then SetPlayerSpeechDuration(self.Owner,0.2) end
 			end)
 			timer.Simple(1.9,function() 
-			if self and self.Owner then SetPlayerSpeechDuration(self.Owner,0.2) end
+				if IsValid(self) and IsValid(self.Owner) then SetPlayerSpeechDuration(self.Owner,0.2) end
 			end)
 					local stime = SoundDuration(soundfile) --*100/pit
 		self:SetNextPrimaryFire(CurTime() + stime - 0.1)
