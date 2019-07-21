@@ -169,7 +169,9 @@ function ENT:FireAttack( )
 	if self:IsOnFire() then return end
 	self:Ignite(4,0)
 	self:EmitSound("ambient/voices/f_scream1.wav")
-	timer.Simple(4, function() self:Extinguish() end)
+	timer.Simple(4, function()
+		if IsValid(self) then self:Extinguish() end
+	end)
 	self.NoPunch = CurTime()+1
 	self.lives = self.lives - 1
 	if self.lives<1 then
