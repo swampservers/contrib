@@ -28,7 +28,11 @@ function SWEP:PrimaryAttack()
 		for k, v in pairs(player.GetAll()) do
 			if self.Owner:GetPos():Distance(v:GetPos()) < 200 then
 				if v != self.Owner then
-					v:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {level=70})
+					timer.Simple(math.Rand(0,1.5),function()
+						if IsValid(v) then
+							v:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {level=70}, {pitch=math.random(90,110)})
+						end
+					end)
 				end
 			end
 		end
