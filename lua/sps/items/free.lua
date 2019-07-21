@@ -13,6 +13,13 @@ PS_WeaponProduct({
 })
 
 PS_WeaponProduct({
+	class="weapon_funnybanana",
+	name="Funny Banana Picture",
+	description="John, haha. Where did you find this one!?",
+	model='models/chev/bananaframe.mdl'
+})
+
+PS_WeaponProduct({
 	class="gmod_camera",
 	name="Cringe Compiler",
 	description="*SNAP*",

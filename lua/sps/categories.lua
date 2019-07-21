@@ -10,6 +10,7 @@ PS_Categories = {
 					"weapon_flappy",
 					"weapon_anonymous",
 					"weapon_autism",
+					"weapon_funnybanana",
 					"gmod_camera",
 					"weapon_switch",
 					"weapon_encyclopedia",
