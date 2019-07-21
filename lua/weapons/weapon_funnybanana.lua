@@ -13,7 +13,11 @@ SWEP.WorldModel = "models/chev/bananaframe.mdl"
 
 function SWEP:PrimaryAttack()
 	if CLIENT then
-		RunConsoleCommand("act", "laugh")
+		if self.Owner:IsPony() then
+			RunConsoleCommand("act", "dance")
+		else
+			RunConsoleCommand("act", "laugh")
+		end
 		
 		if math.random(0, 10) < 3 then --random chance to banana-ify the screen
 			RunConsoleCommand("pp_texturize", "pp/texturize/banana.png")
