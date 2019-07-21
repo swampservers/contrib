@@ -212,29 +212,31 @@ function SWEP:PrimaryAttack()
 		end
 
 		timer.Simple(0.1,function()
-			local boof = self.Owner:EyePos()+(self.Owner:EyeAngles():Forward()*50)
-			local aim = self.Owner:EyeAngles():Forward()
-			if math.abs(aim.z)==1 then
-				aim = -self.Owner:EyeAngles():Up()
-			end
-			aim.z = 0
-			aim:Normalize()
-			aim.z = 0.7
-			aim = aim * 30
-			for k,v in pairs(player.GetAll()) do
-				local bcenter = v:LocalToWorld(v:OBBCenter())
-				if v~= self.Owner and v:Alive() and bcenter:Distance(boof) < 70 then
-					bcenter = bcenter + (VectorRand()*16)
-					bcenter.z = bcenter.z + 8
-					sound.Play("bodypillow/hit"..tostring(math.random(1,2))..".wav", bcenter, 80, math.random(100,115),1)
-					net.Start("pillowboof")
-					net.WriteVector(bcenter)
-					net.SendPVS(bcenter)
-					if (not Safe(v)) and (not v:InVehicle()) then
-						if v:IsOnGround() then
-							v:SetPos(v:GetPos()+Vector(0,0,2))
+			if IsValid(self) and IsValid(self.Owner) then
+				local boof = self.Owner:EyePos()+(self.Owner:EyeAngles():Forward()*50)
+				local aim = self.Owner:EyeAngles():Forward()
+				if math.abs(aim.z)==1 then
+					aim = -self.Owner:EyeAngles():Up()
+				end
+				aim.z = 0
+				aim:Normalize()
+				aim.z = 0.7
+				aim = aim * 30
+				for k,v in pairs(player.GetAll()) do
+					local bcenter = v:LocalToWorld(v:OBBCenter())
+					if v~= self.Owner and v:Alive() and bcenter:Distance(boof) < 70 then
+						bcenter = bcenter + (VectorRand()*16)
+						bcenter.z = bcenter.z + 8
+						sound.Play("bodypillow/hit"..tostring(math.random(1,2))..".wav", bcenter, 80, math.random(100,115),1)
+						net.Start("pillowboof")
+						net.WriteVector(bcenter)
+						net.SendPVS(bcenter)
+						if (not Safe(v)) and (not v:InVehicle()) then
+							if v:IsOnGround() then
+								v:SetPos(v:GetPos()+Vector(0,0,2))
+							end
+							v:SetVelocity(aim)
 						end
-						v:SetVelocity(aim)
 					end
 				end
 			end
