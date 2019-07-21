@@ -87,15 +87,17 @@ if CLIENT then
 			if ba then oang = ba end
 
 			if ply:IsPony() then
-				opos = opos + oang:Forward() * 7
-				opos = opos + oang:Up() * 2
-				opos = opos + oang:Right() * -4
+				opos = opos + oang:Forward() * 11
+				opos = opos + oang:Up() * -0
+				opos = opos + oang:Right() * 0
+				oang:RotateAroundAxis(oang:Forward(), 90)
 			else
-				opos = opos + oang:Right() * 2
-				opos = opos + oang:Forward() * 0
+				opos = opos + oang:Right() * 2.5
+				opos = opos + oang:Forward() * 4
 				opos = opos + oang:Up() * 1
+				oang:RotateAroundAxis(oang:Forward(), 180)
+				oang:RotateAroundAxis(oang:Up(), 90)
 			end
-			oang:RotateAroundAxis(oang:Right(), 180)
 			self:SetupBones()
 
 			self:SetModelScale(0.6, 0)
@@ -135,7 +137,7 @@ function SWEP:Holster()
 end
 
 function SWEP:Deploy()
-	self:SetHoldType("revolver")
+	self:SetHoldType("pistol")
 	return true
 end
 
