@@ -23,28 +23,28 @@ function SWEP:PrimaryAttack()
 		end
 	end
 	if SERVER then
-		local cartoonsnd = {"funnysounds01.ogg", "funnysounds02.ogg"}
-
-		self.Owner:Say("hahaha! what a funny picture! ;banana;")
-		self.Owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {shared=true, level=70, channel=CHAN_WEAPON})
+		self.Owner:Say("hahaha! what a funny picture! ;banana;")		
 
 		for k, v in pairs(player.GetAll()) do
 			if self.Owner:GetPos():Distance(v:GetPos()) < 200 then
 				if v != self.Owner then
-					v:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {shared=true, level=70})
+					v:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {level=70})
 				end
 			end
 		end
-		
-		timer.Simple(2, function()
-			if IsValid(self) and IsValid(self.Owner) then
-				self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7})
-				self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5})
-				self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4})
-				self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5})
-			end
-		end)
 	end
+
+	local cartoonsnd = {"funnysounds01.ogg", "funnysounds02.ogg"}
+
+	self.Owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {shared=true, level=70, channel=CHAN_WEAPON})
+	timer.Simple(2, function()
+		if IsValid(self) and IsValid(self.Owner) then
+			self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7})
+			self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5})
+			self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4})
+			self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5})
+		end
+	end)
 
 	self:SetNextPrimaryFire(CurTime() + 10)
 end
@@ -53,7 +53,7 @@ function SWEP:SecondaryAttack() --Same as primary attack, but you laugh so hard 
 	self:PrimaryAttack()
 	if SERVER then
 		timer.Simple(5, function()
-			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() then
+			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() and self.Owner():GetLocationName() != "Treatment Room" then
 				self.Owner:Kill()
 				self.Owner:ChatPrint("[red]you died after laughing too hard")
 			end
