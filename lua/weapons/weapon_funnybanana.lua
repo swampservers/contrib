@@ -23,7 +23,7 @@ function SWEP:PrimaryAttack()
 		end
 	end
 	if SERVER then
-		self.Owner:Say("hahaha! what a funny picture! ;banana;")		
+		self.Owner:Say("hahaha! what a funny picture!")		
 
 		for k, v in pairs(player.GetAll()) do
 			if self.Owner:GetPos():Distance(v:GetPos()) < 200 then
