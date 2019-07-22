@@ -39,6 +39,7 @@ local function OwOifier(text)
 
 	local owotext = table.concat(splitstring)
 	local owotext = string.gsub(owotext, "this", "dis")
+	local owotext = string.gsub(owotext, "THIS", "DIS")
 	local owotext = owotext.." "..OwOemotes[math.random(#OwOemotes)] --add a random emote at the end
 
 	return owotext
