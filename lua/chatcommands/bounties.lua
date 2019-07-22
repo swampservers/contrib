@@ -2,11 +2,6 @@
 BountyLimit = BountyLimit or {}
 
 hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
-	if !ply:IsPlayer() then
-		ServerDebug("PlayerDeath: ply is nil")
-		error("PlayerDeath: ply is nil")
-		return
-	end
 	local bounty = GetPlayerBounty(ply)
 	if bounty > 0 and ply != atk and atk:IsPlayer() then
 		SetPlayerBounty(ply,0)
@@ -18,12 +13,7 @@ end)
 
 function GetPlayerBounty(ply)
 	if ply.bounty == nil then
-		ply.bounty = tonumber(ply:GetPData("bounty",0))
-		if ply.bounty == nil then
-			ServerDebug("GetPlayerBounty: GetPData returned "..tostring(ply:GetPData("bounty",0)) )
-		
-			ply.bounty = 0
-		end
+		ply.bounty = tonumber(ply:GetPData("bounty")) or 0
 	end
 	return ply.bounty
 end
