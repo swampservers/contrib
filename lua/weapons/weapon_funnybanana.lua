@@ -13,7 +13,11 @@ SWEP.WorldModel = "models/chev/bananaframe.mdl"
 
 function SWEP:PrimaryAttack()
 	if CLIENT then
-		RunConsoleCommand("act", "laugh")
+		if self.Owner:IsPony() then
+			RunConsoleCommand("act", "dance")
+		else
+			RunConsoleCommand("act", "laugh")
+		end
 		
 		if math.random(0, 10) < 3 then --random chance to banana-ify the screen
 			RunConsoleCommand("pp_texturize", "pp/texturize/banana.png")
@@ -23,28 +27,32 @@ function SWEP:PrimaryAttack()
 		end
 	end
 	if SERVER then
-		local cartoonsnd = {"funnysounds01.ogg", "funnysounds02.ogg"}
-
-		self.Owner:Say("hahaha! what a funny picture! ;banana;")
-		self.Owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {shared=true, level=70, channel=CHAN_WEAPON})
+		self.Owner:Say("hahaha! what a funny picture!")		
 
 		for k, v in pairs(player.GetAll()) do
 			if self.Owner:GetPos():Distance(v:GetPos()) < 200 then
 				if v != self.Owner then
-					v:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {shared=true, level=70})
+					timer.Simple(math.Rand(0,1.5),function()
+						if IsValid(v) then
+							v:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {level=70}, {pitch=math.random(90,110)})
+						end
+					end)
 				end
 			end
 		end
-		
-		timer.Simple(2, function()
-			if IsValid(self) and IsValid(self.Owner) then
-				self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7})
-				self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5})
-				self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4})
-				self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5})
-			end
-		end)
 	end
+
+	local cartoonsnd = {"funnysounds01.ogg", "funnysounds02.ogg"}
+
+	self.Owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {shared=true, level=70, channel=CHAN_WEAPON})
+	timer.Simple(2, function()
+		if IsValid(self) and IsValid(self.Owner) then
+			self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7})
+			self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5})
+			self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4})
+			self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5})
+		end
+	end)
 
 	self:SetNextPrimaryFire(CurTime() + 10)
 end
@@ -53,7 +61,7 @@ function SWEP:SecondaryAttack() --Same as primary attack, but you laugh so hard 
 	self:PrimaryAttack()
 	if SERVER then
 		timer.Simple(5, function()
-			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() then
+			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() and self.Owner():GetLocationName() != "Treatment Room" then
 				self.Owner:Kill()
 				self.Owner:ChatPrint("[red]you died after laughing too hard")
 			end
@@ -79,15 +87,17 @@ if CLIENT then
 			if ba then oang = ba end
 
 			if ply:IsPony() then
-				opos = opos + oang:Forward() * 7
-				opos = opos + oang:Up() * 2
-				opos = opos + oang:Right() * -4
+				opos = opos + oang:Forward() * 11
+				opos = opos + oang:Up() * -0
+				opos = opos + oang:Right() * 0
+				oang:RotateAroundAxis(oang:Forward(), 90)
 			else
-				opos = opos + oang:Right() * 2
-				opos = opos + oang:Forward() * 0
+				opos = opos + oang:Right() * 2.5
+				opos = opos + oang:Forward() * 4
 				opos = opos + oang:Up() * 1
+				oang:RotateAroundAxis(oang:Forward(), 180)
+				oang:RotateAroundAxis(oang:Up(), 90)
 			end
-			oang:RotateAroundAxis(oang:Right(), 180)
 			self:SetupBones()
 
 			self:SetModelScale(0.6, 0)
@@ -127,7 +137,7 @@ function SWEP:Holster()
 end
 
 function SWEP:Deploy()
-	self:SetHoldType("revolver")
+	self:SetHoldType("pistol")
 	return true
 end
 
