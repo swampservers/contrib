@@ -61,7 +61,7 @@ function SWEP:SecondaryAttack() --Same as primary attack, but you laugh so hard 
 	self:PrimaryAttack()
 	if SERVER then
 		timer.Simple(5, function()
-			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() and self.Owner():GetLocationName() != "Treatment Room" then
+			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() and self.Owner:GetLocationName() != "Treatment Room" then
 				self.Owner:Kill()
 				self.Owner:ChatPrint("[red]you died after laughing too hard")
 			end
