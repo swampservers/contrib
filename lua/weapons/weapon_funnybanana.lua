@@ -47,10 +47,10 @@ function SWEP:PrimaryAttack()
 	self.Owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {shared=true, level=70, channel=CHAN_WEAPON})
 	timer.Simple(2, function()
 		if IsValid(self) and IsValid(self.Owner) then
-			self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7})
-			self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5})
-			self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4})
-			self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5})
+			self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7, channel=CHAN_AUTO})
+			self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5, channel=CHAN_AUTO})
+			self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4, channel=CHAN_AUTO})
+			self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5, channel=CHAN_AUTO})
 		end
 	end)
 
@@ -61,7 +61,7 @@ function SWEP:SecondaryAttack() --Same as primary attack, but you laugh so hard 
 	self:PrimaryAttack()
 	if SERVER then
 		timer.Simple(5, function()
-			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() and self.Owner():GetLocationName() != "Treatment Room" then
+			if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() and self.Owner:GetLocationName() != "Treatment Room" then
 				self.Owner:Kill()
 				self.Owner:ChatPrint("[red]you died after laughing too hard")
 			end
