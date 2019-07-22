@@ -20,8 +20,8 @@ function GetPlayerBounty(ply)
 	if ply.bounty == nil then
 		ply.bounty = tonumber(ply:GetPData("bounty",0))
 		if ply.bounty == nil then
-			ServerDebug("GetPlayerBounty: GetPData returned nil")
-			error("GetPlayerBounty: GetPData returned nil")
+			ServerDebug("GetPlayerBounty: GetPData returned "..tostring(ply:GetPData("bounty",0)) )
+		
 			ply.bounty = 0
 		end
 	end
