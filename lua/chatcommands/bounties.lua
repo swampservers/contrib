@@ -89,7 +89,7 @@ RegisterChatCommand({'bounties','showbounties'},function(ply,arg)
 	ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
 	for k,v in ipairs(t) do
 		if k <= 10 then
-			ply:ChatPrint(v[1]:Nick()..": "..v[2])
+			ply:ChatPrint("[fbc]"..v[1]:Nick()..": [gold]"..v[2])
 		end
 	end
 end,{global=false,throttle=false})
