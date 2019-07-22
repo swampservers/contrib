@@ -47,10 +47,10 @@ function SWEP:PrimaryAttack()
 	self.Owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {shared=true, level=70, channel=CHAN_WEAPON})
 	timer.Simple(2, function()
 		if IsValid(self) and IsValid(self.Owner) then
-			self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7})
-			self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5})
-			self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4})
-			self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5})
+			self.Owner:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {shared=true, level=65, volume=0.7, channel=CHAN_AUTO})
+			self.Owner:ExtEmitSound("weapon_funnybanana/slipsoundc.ogg", {shared=true, level=65, volume=0.5, channel=CHAN_AUTO})
+			self.Owner:ExtEmitSound("weapon_funnybanana/"..cartoonsnd[math.random(#cartoonsnd)], {shared=true, level=65, volume=0.4, channel=CHAN_AUTO})
+			self.Owner:ExtEmitSound("airhorn/honk1.ogg", {shared=true, level=65, volume=0.5, channel=CHAN_AUTO})
 		end
 	end)
 
