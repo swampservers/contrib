@@ -23,21 +23,28 @@ function SetPlayerBounty(ply,bounty)
 	ply.bounty = bounty
 end
 
-function AddBounty(ply,target,amount)
-	if !ply:IsPlayer() or !target:IsPlayer() or type(amount) != "number" then
-		ServerDebug("AddBounty: invalid arguments")
-		error("AddBounty: invalid arguments")
-		return
-	end
+function AddBounty(ply,targets,amount)
 	amount = amount > 0 and amount or 0
-	local total = (BountyLimit[ply:SteamID()] or 0) + amount
-	if ply:PS_HasPoints(amount) and total <= 10000000 then
-		local add = GetPlayerBounty(target) + amount
-		BountyLimit[ply:SteamID()] = (BountyLimit[ply:SteamID()] or 0) + amount
-		SetPlayerBounty(target,add)
-		ply:PS_TakePoints(amount)
-		BotSayGlobal("[fbc]"..target:Nick().."'s bounty is now [rainbow]"..add.." [fbc]points")
-	elseif ply:PS_HasPoints(amount) then
+	local needed = amount * #targets
+	local total = (BountyLimit[ply:SteamID()] or 0) + needed
+	if ply:PS_HasPoints(needed) and total <= 10000000 then
+		for k,v in ipairs(targets) do
+			if !ply:IsPlayer() or !v:IsPlayer() or type(amount) != "number" then
+				ServerDebug("AddBounty: invalid arguments")
+				error("AddBounty: invalid arguments")
+				return
+			end
+			local add = GetPlayerBounty(v) + amount
+			BountyLimit[ply:SteamID()] = (BountyLimit[ply:SteamID()] or 0) + amount
+			SetPlayerBounty(v,add)
+			ply:PS_TakePoints(amount)
+		end
+		if #targets == 1 then
+			BotSayGlobal("[fbc]"..v:Nick().."'s bounty is now [rainbow]"..add.." [fbc]points")
+		else
+			BotSayGlobal("[fbc]"..ply:Nick().." has increased everyone's bounty by [rainbow]"..amount.." [fbc]points!")
+		end
+	elseif ply:PS_HasPoints(needed) then
 		ply:ChatPrint("[red]You have reached your limit for today")
 	else
 		ply:ChatPrint("[red]You don't have enough points")
@@ -53,12 +60,38 @@ RegisterChatCommand({'bounty','setbounty'},function(ply,arg)
 		local to,c = PlyCount(string.Implode(" ",t))
 		if c == 1 then
 			if p >= 1000 then
-				AddBounty(ply,to,p)
+				AddBounty(ply,{to},p)
 			else
 				ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
 			end
 		else
 			ply:ChatPrint("[red]Player "..string.Implode(" ",t).." not found")
+		end
+	end
+end,{global=true,throttle=true})
+
+RegisterChatCommand({'bountyall','setbountyall'},function(ply,arg)
+	local p = tonumber(arg)
+	if p == nil then
+		ply:ChatPrint("[orange]!bountyall points")
+	else
+		if p >= 1000 then
+			AddBounty(ply,player.GetHumans(),p)
+		else
+			ply:ChatPrint("[red]You must add a minimum of 1000 points to the each bounty")
+		end
+	end
+end,{global=true,throttle=true})
+
+RegisterChatCommand({'bountyrandom','setbountyrandom'},function(ply,arg)
+	local p = tonumber(arg)
+	if p == nil then
+		ply:ChatPrint("[orange]!bountyrandom points")
+	else
+		if p >= 1000 then
+			AddBounty(ply,table.Random(player.GetHumans()),p)
+		else
+			ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
 		end
 	end
 end,{global=true,throttle=true})
