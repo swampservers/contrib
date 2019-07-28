@@ -42,7 +42,7 @@ function ReleaseMonster(ply)
 		ply:SetWalkSpeed(280)
 		ply:SetRunSpeed(420)
 		ply:SetFOV(ply.realFov+10,1)
-		timer.Simple(6,function()
+		timer.Simple(10,function()
 			if IsValid(ply) then
 				ply.cantStartmonster=false
 				ply:SetWalkSpeed(ply.realWalkSpeed)

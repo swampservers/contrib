@@ -43,7 +43,7 @@ function SWEP:PrimaryAttack()
 		net.Start("Popcorn_Eat_Start")
 			net.WriteEntity(self.Owner)
 		net.Broadcast()
-		self.Owner:SetHealth(math.min(self.Owner:Health()+25,100))
+		self.Owner:SetHealth(math.min(self.Owner:Health()+25,self.Owner:GetMaxHealth()))
 	end
 	self.Owner.ChewScale = 1
 	self.Owner.ChewStart = CurTime()
