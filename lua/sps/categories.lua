@@ -122,7 +122,6 @@ PS_Categories = {
 					"fox",
 					"garfield",
 					"hitler",
-					"joker",
 					"kermit",
 					"kim",
 					"luna",
