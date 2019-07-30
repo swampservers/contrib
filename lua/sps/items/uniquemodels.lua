@@ -66,13 +66,6 @@ PS_UniqueModelProduct({
 })
 
 PS_UniqueModelProduct({
-	class = 'joker',
-	name = 'The Joker',
-	description = "Now yuo see...",
-	model = 'models/player/bobert/aojoker.mdl'
-})
-
-PS_UniqueModelProduct({
 	class = 'kermit',
 	name = 'Frog',
 	model = 'models/player/kermit.mdl'

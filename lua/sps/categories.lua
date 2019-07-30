@@ -108,6 +108,7 @@ PS_Categories = {
 				title = "Permanent",
 				products = {
 					"ogremodel",
+					"jokermodel",
 					"neckbeardmodel",
 					"crusadermodel",
 					"ponymodel"
@@ -122,7 +123,6 @@ PS_Categories = {
 					"fox",
 					"garfield",
 					"hitler",
-					"joker",
 					"kermit",
 					"kim",
 					"luna",
