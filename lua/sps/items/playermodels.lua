@@ -51,6 +51,15 @@ PS_PlayermodelItemProduct({
 	end
 })
 
+PS_UniqueModelProduct({
+	class = 'jokermodel',
+	price = 180000,
+	name = 'The Joker',
+	description = "Now yuo see...",
+	model = 'models/player/bobert/aojoker.mdl'
+	PlayerSetModel = function(self, ply) end
+})
+
 PS_PlayermodelItemProduct({
 	class = 'neckbeardmodel',
 	price = 240000,

@@ -108,6 +108,7 @@ PS_Categories = {
 				title = "Permanent",
 				products = {
 					"ogremodel",
+					"jokermodel",
 					"neckbeardmodel",
 					"crusadermodel",
 					"ponymodel"
