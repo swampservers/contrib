@@ -56,7 +56,7 @@ PS_UniqueModelProduct({
 	price = 180000,
 	name = 'The Joker',
 	description = "Now yuo see...",
-	model = 'models/player/bobert/aojoker.mdl'
+	model = 'models/player/bobert/aojoker.mdl',
 	PlayerSetModel = function(self, ply) end
 })
 
