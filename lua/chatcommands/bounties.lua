@@ -40,7 +40,7 @@ function AddBounty(ply,targets,amount)
 			ply:PS_TakePoints(amount)
 		end
 		if #targets == 1 then
-			BotSayGlobal("[fbc]"..v:Nick().."'s bounty is now [rainbow]"..add.." [fbc]points")
+			BotSayGlobal("[fbc]"..targets[1]:Nick().."'s bounty is now [rainbow]"..add.." [fbc]points")
 		else
 			BotSayGlobal("[fbc]"..ply:Nick().." has increased everyone's bounty by [rainbow]"..amount.." [fbc]points!")
 		end
@@ -122,7 +122,7 @@ RegisterChatCommand({'bounties','showbounties'},function(ply,arg)
 	ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
 	for k,v in ipairs(t) do
 		if k <= 10 then
-			ply:ChatPrint("[fbc]"..v[1]:Nick()..": [gold]"..v[2].." [fbc]("..v[1]:GetLocationName()..")")
+			ply:ChatPrint("[fbc]"..v[1]:Nick()..": [gold]"..v[2].." [white]("..v[1]:GetLocationName()..")")
 		end
 	end
 end,{global=false,throttle=false})
