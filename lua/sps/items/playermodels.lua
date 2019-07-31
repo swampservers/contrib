@@ -51,7 +51,7 @@ PS_PlayermodelItemProduct({
 	end
 })
 
-PS_UniqueModelProduct({
+PS_PlayermodelItemProduct({
 	class = 'jokermodel',
 	price = 180000,
 	name = 'The Joker',
