@@ -40,7 +40,7 @@ function AddBounty(ply,targets,amount)
 			ply:PS_TakePoints(amount)
 		end
 		if #targets == 1 then
-			BotSayGlobal("[fbc]"..targets[1]:Nick().."'s bounty is now [rainbow]"..add.." [fbc]points")
+			BotSayGlobal("[fbc]"..targets[1]:Nick().."'s bounty is now [rainbow]"..GetPlayerBounty(targets[1]).." [fbc]points")
 		else
 			BotSayGlobal("[fbc]"..ply:Nick().." has increased everyone's bounty by [rainbow]"..amount.." [fbc]points!")
 		end
