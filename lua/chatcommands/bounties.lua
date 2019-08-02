@@ -119,10 +119,18 @@ RegisterChatCommand({'bounties','showbounties'},function(ply,arg)
 		end
 	end
 	table.sort(t,function(a,b) return a[2] > b[2] end)
-	ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
-	for k,v in ipairs(t) do
-		if k <= 10 then
-			ply:ChatPrint("[fbc]"..v[1]:Nick()..": [gold]"..v[2].." [white]("..v[1]:GetLocationName()..")")
+	if #t >= 1 then
+		ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
+		for k,v in ipairs(t) do
+			if k <= 10 then
+				if not Safe(v[1]) then
+					ply:ChatPrint("[fbc]"..v[1]:Nick()..": [gold]"..v[2].." [white]("..v[1]:GetLocationName()..")")
+				else
+					ply:ChatPrint("[fbc]"..v[1]:Nick()..": [gold]"..v[2].." [white]("..v[1]:GetLocationName().." - Protected)")
+				end
+			end
 		end
+	else
+		ply:ChatPrint("[fbc]There are currently no bounties!")
 	end
 end,{global=false,throttle=false})
