@@ -119,7 +119,7 @@ RegisterChatCommand({'bounties','showbounties'},function(ply,arg)
 		end
 	end
 	table.sort(t,function(a,b) return a[2] > b[2] end)
-	if #t <= 1 then
+	if #t >= 1 then
 		ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
 		for k,v in ipairs(t) do
 			if k <= 10 then
