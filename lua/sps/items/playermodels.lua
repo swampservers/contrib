@@ -52,6 +52,15 @@ PS_PlayermodelItemProduct({
 })
 
 PS_PlayermodelItemProduct({
+	class = 'doomguymodel',
+	price = 320000,
+	name = 'Doomguy',
+	description = "They are rage, brutal, without mercy. But you. You will be worse. Rip and tear, until it is done.",
+	model = 'models/pechenko_121/doomslayer.mdl',
+	PlayerSetModel = function(self, ply) end
+})
+
+PS_PlayermodelItemProduct({
 	class = 'jokermodel',
 	price = 180000,
 	name = 'The Joker',
