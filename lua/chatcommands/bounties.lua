@@ -89,7 +89,7 @@ RegisterChatCommand({'bountyrandom','setbountyrandom'},function(ply,arg)
 		ply:ChatPrint("[orange]!bountyrandom points")
 	else
 		if p >= 1000 then
-			AddBounty(ply,table.Random(player.GetHumans()),p)
+			AddBounty(ply,{table.Random(player.GetHumans())},p)
 		else
 			ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
 		end
