@@ -33,6 +33,14 @@ PS_UniqueModelProduct({
 })
 
 PS_UniqueModelProduct({
+	class = 'doomguy',
+	name = 'Doomslayer',
+	description = "They are rage, brutal, without mercy. But you. You will be worse. Rip and tear, until it is done.",
+	model = 'models/pechenko_121/doomslayer.mdl',
+	OnBuy = function(self, ply) end
+})
+
+PS_UniqueModelProduct({
 	class = 'ketchupdemon',
 	name = 'Mortally Challenged',
 	description = '"Demon" is an offensive term.',

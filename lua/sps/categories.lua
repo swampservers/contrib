@@ -111,7 +111,6 @@ PS_Categories = {
 					"jokermodel",
 					"neckbeardmodel",
 					"crusadermodel",
-					"doomguymodel",
 					"ponymodel"
 				}
 			},
@@ -120,6 +119,7 @@ PS_Categories = {
 				products = {
 					"celestia",
 					"billyherrington",
+					"doomguy",
 					"fatbastard",
 					"fox",
 					"garfield",
