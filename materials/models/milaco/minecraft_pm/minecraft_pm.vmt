@@ -1,0 +1,9 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/milaco/minecraft_pm/minecraft_pm"
+	"$nodecal" "1"
+	"$halflambert" "1"
+	"$alphatest" "1"
+
+}
+
