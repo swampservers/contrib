@@ -61,6 +61,14 @@ PS_PlayermodelItemProduct({
 })
 
 PS_PlayermodelItemProduct({
+	class = 'minecraftmodel',
+	price = 400064,
+	name = 'Block Man',
+	model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
+	PlayerSetModel = function(self, ply) end
+})
+
+PS_PlayermodelItemProduct({
 	class = 'neckbeardmodel',
 	price = 240000,
 	name = 'Athiest',
