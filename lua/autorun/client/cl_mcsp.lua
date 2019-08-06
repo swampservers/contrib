@@ -26,42 +26,39 @@ local function MCSPRenderNewMaterial(url, ply) --This is where the magic happens
 	end, function() end)
 end
 
-hook.Add("OnPlayerChat", "MCSPChatCMDPicker", function(ply, text) --Chat command for the skin picker, make these RegisterLUAChatCommand later
-	if string.lower(text) == "!mcsp" then
-		if ply:GetModel() == MCSPmodel then
-			if IsValid(srderma) then return end
-			local srderma = Derma_StringRequest("Minecraft Skin Changer","Input an Imgur URL to change your playermodel to that skin.","",function(dermatext)
-				if string.len(dermatext) > 36 then
-					LocalPlayer():ChatPrint("URL is too long!")
-				elseif string.find(dermatext, "i%.imgur%.com/%w+%.png") then
-					net.Start("MCSPToSVBroadcastNewMaterial")
-						net.WriteString(dermatext)
-						net.WriteEntity(ply)
-						net.SendToServer()
-					RunConsoleCommand("mcsp_url", dermatext)
-				else
-					LocalPlayer():ChatPrint("Invalid URL!")
-				end
-			end,function() end,"Change skin","Cancel")
-			local srdx, srdy = srderma:GetSize()
-			--local srdermacredits = Label("Minecraft Skin Picker by Milaco and Chev", srderma) --Leave this out for now until we KNOW it's working
-			--srdermacredits:Dock(BOTTOM)
-			--srdermacredits:SetContentAlignment(2)
-			--srderma:SetSize(srdx, srdy + 15)
-			srderma:SetIcon("icon16/user.png")
-		else
-			ply:ChatPrint("You do not have a steve skin equipped!")
-		end
-		return true
+RegisterChatCommand({'mcsp','skinpicker'}, function(ply, arg)
+	if ply:GetModel() == MCSPmodel then
+		if IsValid(srderma) then return end
+		local srderma = Derma_StringRequest("Minecraft Skin Changer","Input an Imgur URL to change your playermodel to that skin.","",function(dermatext)
+			if string.len(dermatext) > 36 then
+				ply:ChatPrint("URL is too long!")
+			elseif string.find(dermatext, "i%.imgur%.com/%w+%.png") then
+				net.Start("MCSPToSVBroadcastNewMaterial")
+					net.WriteString(dermatext)
+					net.WriteEntity(ply)
+					net.SendToServer()
+				RunConsoleCommand("mcsp_url", dermatext)
+			else
+				ply:ChatPrint("Invalid URL!")
+			end
+		end,function() end,"Change skin","Cancel")
+		--local srdx, srdy = srderma:GetSize()
+		--local srdermacredits = Label("Minecraft Skin Picker by Milaco and Chev", srderma) --Leave this out for now until we KNOW it's working
+		--srdermacredits:Dock(BOTTOM)
+		--srdermacredits:SetContentAlignment(2)
+		--srderma:SetSize(srdx, srdy + 15)
+		srderma:SetIcon("icon16/user.png")
+	else
+		ply:ChatPrint("[red]You do not have a steve skin equipped!")
 	end
-	if string.lower(text) == "!mcreset" then
-		RunConsoleCommand("mcsp_url", "")
+end, {global=false, throttle=true})
+
+RegisterChatCommand({'mcspreset','mcreset'}, function(ply, arg)
+	RunConsoleCommand("mcsp_url", "")
 		net.Start("MCSPToSVResetSkin")
-			net.WriteEntity(ply)
-			net.SendToServer()
-		return true
-	end
-end)
+		net.WriteEntity(ply)
+		net.SendToServer()
+end, {global=false, throttle=true})
 
 hook.Add("PostDrawOpaqueRenderables", "DrawMinecraftPlayerRagdolls", function() --Renders the material on the player's ragdoll
 		for _, v in pairs(player.GetHumans()) do
