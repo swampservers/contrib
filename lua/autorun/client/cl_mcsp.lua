@@ -61,12 +61,12 @@ RegisterChatCommand({'mcspreset','mcreset'}, function(ply, arg)
 end, {global=false, throttle=true})
 
 hook.Add("PostDrawOpaqueRenderables", "DrawMinecraftPlayerRagdolls", function() --Renders the material on the player's ragdoll
-		for _, v in pairs(player.GetHumans()) do
-			if IsValid(v) and IsValid(v:GetRagdollEntity()) and v:GetRagdollEntity():GetModel() == MCSPmodel and v:GetNWString("MCSPSkinURL", false) then
-				v:GetRagdollEntity():SetSubMaterial(0, "!mcsp/"..v:SteamID64()..v.mcsp_systime)
-			end
+	for _, v in pairs(player.GetHumans()) do
+		if IsValid(v) and IsValid(v:GetRagdollEntity()) and v:GetRagdollEntity():GetModel() == MCSPmodel and v:GetNWString("MCSPSkinURL", false) then
+			v:GetRagdollEntity():SetSubMaterial(0, "!mcsp/"..v:SteamID64()..v.mcsp_systime)
 		end
-	end)
+	end
+end)
 
 net.Receive("MCSPToCLUpdateNewMaterial", function() --Received from server after a player sends their skin URL query to the server
 	local mcspurl = net.ReadString()
