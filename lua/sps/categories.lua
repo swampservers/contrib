@@ -119,6 +119,7 @@ PS_Categories = {
 				products = {
 					"celestia",
 					"billyherrington",
+					"doomguy",
 					"fatbastard",
 					"fox",
 					"garfield",
