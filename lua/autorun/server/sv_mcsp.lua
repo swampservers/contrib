@@ -10,6 +10,9 @@ net.Receive("MCSPToSVBroadcastNewMaterial", function()
 	local mcspurl = net.ReadString()
 	local mcspent = net.ReadEntity()
 
+	if (ply.SetMCSPTimeout or 0) > CurTime() - 10 then ply:Notify("Cooldown...") return end --cooldown
+	ply.SetMCSPTimeout = CurTime()
+
 	if mcspent:GetModel() != MCSPmodel then return end
 	if string.len(mcspurl) > 36 then netply:ChatPrint("URL is too long!") return end
 	if !string.find(mcspurl, "i%.imgur%.com/%w+%.png") then return end
