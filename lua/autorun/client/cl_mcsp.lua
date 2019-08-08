@@ -58,7 +58,7 @@ end)
 
 hook.Add("PostDrawOpaqueRenderables", "DrawMinecraftPlayerRagdolls", function() --Renders the material on the player's ragdoll
 	for _, v in pairs(player.GetHumans()) do
-		if IsValid(v) and IsValid(v:GetRagdollEntity()) and v:GetRagdollEntity():GetModel() == MCSPmodel and v:GetNWString("MCSPSkinURL", false) then
+		if IsValid(v) and IsValid(v:GetRagdollEntity()) and v:GetRagdollEntity():GetModel() == MCSPmodel and v.MCSPSkinMaterial then
 			local ragent = v:GetRagdollEntity()
 
 			render.MaterialOverrideByIndex(0, v.MCSPSkinMaterial)
