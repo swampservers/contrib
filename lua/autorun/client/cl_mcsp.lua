@@ -2,28 +2,12 @@ local MCSPmodel = "models/milaco/minecraft_pm/minecraft_pm.mdl"
 CreateClientConVar("mcsp_url", "", true, true)
 
 local function MCSPRenderNewMaterial(url, ply) --This is where the magic happens, baby
-	http.Fetch(url, function(body)
-		if !IsValid(ply) then return end
-		ply.mcsp_systime = math.floor(SysTime())
-		local filename = "mcsp/"..ply:SteamID64()..ply.mcsp_systime
-		local imagefile = file.Write(filename..".png", body)
-
-		local matfileorig = Material("data/"..filename..".png")
-
-		local matfile = CreateMaterial(filename, "VertexlitGeneric", {
-			["$basetexture"] = matfileorig:GetString("$basetexture"),
-			["$alphatest"] = 1,
-			["$halflambert"] = 1,
-			["$nodecal"] = 1,
-			["$model"] = 1,
-		})
-
-		ply:SetSubMaterial(0, "!"..filename)
-
-		if file.Exists(filename..".png", "DATA") then --delete the skin from local data since we don't need it anymore
-			file.Delete(filename..".png")
-		end
-	end, function() end)
+	ply.MCSPSkinMaterial = ImgurMaterial(url, ply, ply:GetPos(), false, "VertexLitGeneric", {
+		["$alphatest"] = 1,
+		["$halflambert"] = 1,
+		["$nodecal"] = 1,
+		["$model"] = 1
+	}):GetString("$basetexture")
 end
 
 RegisterChatCommand({'mcsp','skinpicker'}, function(ply, arg)
@@ -60,6 +44,18 @@ RegisterChatCommand({'mcspreset','mcreset'}, function(ply, arg)
 		net.SendToServer()
 end, {global=false, throttle=true})
 
+hook.Add("PrePlayerDraw", "MCSPRenderSkin", function(ply)
+	if ply:GetModel() == MCSPmodel and ply.MCSPSkinMaterial and ply:IsPlayer() then
+		render.MaterialOverride(ply.MCSPSkinMaterial)
+	end
+end)
+
+hook.Add("PostPlayerDraw", "MCSPRenderSkin", function(ply)
+	if ply:GetModel() == MCSPmodel and ply.MCSPSkinMaterial and ply:IsPlayer() then
+		render.MaterialOverride()
+	end
+end)
+
 hook.Add("PostDrawOpaqueRenderables", "DrawMinecraftPlayerRagdolls", function() --Renders the material on the player's ragdoll
 	for _, v in pairs(player.GetHumans()) do
 		if IsValid(v) and IsValid(v:GetRagdollEntity()) and v:GetRagdollEntity():GetModel() == MCSPmodel and v:GetNWString("MCSPSkinURL", false) then
@@ -93,5 +89,5 @@ end)
 
 net.Receive("MCSPToCLResetMaterial", function()
 	local mcspent = net.ReadEntity()
-	mcspent:SetSubMaterial(0, "")
+	mcspent.MCSPSkinMaterial = false
 end)
