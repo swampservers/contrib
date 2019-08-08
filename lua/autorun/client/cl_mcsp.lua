@@ -46,13 +46,13 @@ end, {global=false, throttle=true})
 
 hook.Add("PrePlayerDraw", "MCSPRenderSkin", function(ply)
 	if ply:GetModel() == MCSPmodel and ply.MCSPSkinMaterial and ply:IsPlayer() then
-		render.MaterialOverride(ply.MCSPSkinMaterial)
+		render.MaterialOverrideByIndex(0, ply.MCSPSkinMaterial)
 	end
 end)
 
 hook.Add("PostPlayerDraw", "MCSPRenderSkin", function(ply)
 	if ply:GetModel() == MCSPmodel and ply.MCSPSkinMaterial and ply:IsPlayer() then
-		render.MaterialOverride()
+		render.MaterialOverrideByIndex(0, "")
 	end
 end)
 
