@@ -7,7 +7,7 @@ local function MCSPRenderNewMaterial(url, ply) --This is where the magic happens
 		["$halflambert"] = 1,
 		["$nodecal"] = 1,
 		["$model"] = 1
-	}):GetString("$basetexture")
+	})
 end
 
 RegisterChatCommand({'mcsp','skinpicker'}, function(ply, arg)
