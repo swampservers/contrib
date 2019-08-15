@@ -218,12 +218,8 @@ function PLAYER:UpdatePlayer()
     end
 	
 	self.ChatMute.DoClick = function() 
-		self.Player.IsChatMuted = true
-		print("muted "..self.Player:Nick())
-		net.Start("SetChatMuted")
-		net.WriteEntity(self.Player)
-		net.WriteBool(self.Player.IsChatMuted)
-		net.SendToServer()
+		self.Player.IsChatMuted = !self.Player.IsChatMuted or true
+		print("muted"..self.Player:Nick().."'s chat")
 		if self.Player.IsChatMuted then
 			self.ChatMute:SetImage( "theater/chatmuted.png" )
 		else
