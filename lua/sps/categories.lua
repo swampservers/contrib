@@ -167,7 +167,8 @@ PS_Categories = {
 					"turtleplush",
 					"catears",
 					"uwumask",
-					"tophat"
+					"tophat",
+					"swampyhat"
 				}
 			},
 			{
