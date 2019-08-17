@@ -217,8 +217,12 @@ function PLAYER:UpdatePlayer()
 		end
     end
 	
-	self.ChatMute.DoClick = function() 
-		self.Player.IsChatMuted = !self.Player.IsChatMuted or true
+	self.ChatMute.DoClick = function()
+		if !IsValid(self.Player.IsChatMuted) then 
+			self.Player.IsChatMuted = true
+		else
+			self.Player.IsChatMuted = not self.Player.IsChatMuted
+		end
 		print("muted"..self.Player:Nick().."'s chat")
 		if self.Player.IsChatMuted then
 			self.ChatMute:SetImage( "theater/chatmuted.png" )
