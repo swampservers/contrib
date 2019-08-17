@@ -321,6 +321,8 @@ materials/models/swamponions/swampcinema/sombrero.*
 materials/pointshop/merchant.*
 materials/models/milaco/CatEars/CatEars.*
 materials/models/milaco/OWOMask/uwumask.*
+materials/models/milaco/swampyhat/swampyhat.*
+models/milaco/swampyhat/swampyhat.*
 models/milaco/OWOMask/OWOMask.*
 models/milaco/CatEars/CatEars.*
 models/cloud/kn_santahat.*
