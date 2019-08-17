@@ -22,7 +22,7 @@ hook.Add("PostDrawOpaqueRenderables", "DrawMinecraftPlayerRagdolls", function() 
 		if IsValid(v) and IsValid(v:GetRagdollEntity()) and v:GetRagdollEntity():GetModel() == MCSPmodel then
 			local ragent = v:GetRagdollEntity()
 
-			render.MaterialOverrideByIndex(0, ImgurMaterial(ply:GetNWString("MCSPSkinURL", false), ply, ply:GetPos(), false, "VertexLitGeneric", {
+			render.MaterialOverrideByIndex(0, ImgurMaterial(v:GetNWString("MCSPSkinURL", false), v, v:GetPos(), false, "VertexLitGeneric", {
 				["$alphatest"] = 1,
 				["$halflambert"] = 1,
 				["$nodecal"] = 1,
