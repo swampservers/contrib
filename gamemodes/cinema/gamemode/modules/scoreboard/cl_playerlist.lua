@@ -155,11 +155,18 @@ function PLAYER:Init()
 	self.Avatar:SetMouseInputEnabled( false )	
 	
 	self.Mute = vgui.Create("DImageButton", self)	
-	self.Mute:SetSize(24,24)
-    self.Mute:SetPos(476, 12)
+	self.Mute:SetSize(20,20)
+    self.Mute:SetPos(467,12)
 	
 	self.Mute:SetImage("icon32/unmuted.png")
 	self.Mute:CenterVertical()
+	
+	self.ChatMute = vgui.Create("DImageButton", self)
+	self.ChatMute:SetSize(24,24)
+    self.ChatMute:SetPos(486,12)
+	
+	self.ChatMute:SetImage("theater/chatunmuted.png")
+	self.ChatMute:CenterVertical()
 
 	self.Ping = vgui.Create( "ScoreboardPlayerPing", self )
 	self.Ping:SetPos(402, 11)
@@ -188,6 +195,12 @@ function PLAYER:UpdatePlayer()
 		self.Mute:SetImage( "icon32/muted.png" )
 	else
 		self.Mute:SetImage( "icon32/unmuted.png" )
+	end
+
+	if self.Player.IsChatMuted then
+		self.ChatMute:SetImage( "theater/chatmuted.png" )
+	else
+		self.ChatMute:SetImage( "theater/chatunmuted.png" )
 	end	
 
 	self.Mute.DoClick = function() 
@@ -202,6 +215,16 @@ function PLAYER:UpdatePlayer()
 		else
 			self.Mute:SetImage( "icon32/unmuted.png" )
 		end
+    end
+	
+	self.ChatMute.DoClick = function()
+		self.Player.IsChatMuted = not self.Player.IsChatMuted
+		print("muted"..self.Player:Nick().."'s chat")
+		if self.Player.IsChatMuted then
+			self.ChatMute:SetImage( "theater/chatmuted.png" )
+		else
+			self.ChatMute:SetImage( "theater/chatunmuted.png" )
+		end	
     end
 
     local code = self.Player:GetNetworkedString("cntry")
