@@ -81,15 +81,3 @@ PS_PlayermodelItemProduct({
 
 	end
 })
-
-PS_PlayermodelItemProduct({
-	class = 'ponymodel',
-	price = 500000,
-	name = 'Pony',
-	description = "*boop*",
-	model = 'models/ppm/player_default_base.mdl',
-	PlayerSetModel = function(self, ply)
-		ply:Give("weapon_squee")
-		ply:SelectWeapon("weapon_squee")
-	end
-})
