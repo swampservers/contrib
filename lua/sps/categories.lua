@@ -23,13 +23,13 @@ PS_Categories = {
 					"weapon_airhorn",
 					"weapon_bodypillow",
 					"weapon_magicmissile",
-					"weapon_popcorn_spam",
-					"weapon_sandcorn",
-					"weapon_physgun",
 					"wheelchair",
 					"rocketwheelchair",
+					"mystery",
 					"spacehat",
-					"mystery"
+					"weapon_popcorn_spam",
+					"weapon_sandcorn",
+					"weapon_physgun"
 				}
 			}
 		}
