@@ -51,13 +51,13 @@ PS_Categories = {
 					"weapon_ar2",
 					"weapon_357",
 					"weapon_smg1",
-					"weapon_gauntlet",
-					"weapon_sniper",
 					"weapon_crossbow",
 					"weapon_slam",
+					"weapon_sniper",
 					"weapon_rpg",
-					"weapon_doom3_bfg",
+					"weapon_gauntlet",
 					"weapon_jihad",
+					"weapon_doom3_bfg",
 					"weapon_bigbomb"
 				}
 			},
@@ -66,8 +66,8 @@ PS_Categories = {
 				products = {
 					"ammo_357_6",
 					"ammo_SMG1_45",
-					"ammo_sniper_5",
 					"ammo_XBowBolt_5",
+					"ammo_sniper_5",
 				}
 			}
 		}
