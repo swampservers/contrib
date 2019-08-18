@@ -6,6 +6,7 @@ PS_Categories = {
 		icon="star",
 		layout = {
 			{
+				title = "Free Toys",
 				products = {
 					"weapon_flappy",
 					"weapon_anonymous",
@@ -19,17 +20,22 @@ PS_Categories = {
 					"weapon_kleiner",
 					"weapon_spraypaint",
 					"weapon_beans",
-					"weapon_monster",
+					"weapon_monster"
+				}
+			},
+			{
+				title = "Expensive Toys",
+				products = {
 					"weapon_airhorn",
 					"weapon_bodypillow",
 					"weapon_magicmissile",
-					"weapon_popcorn_spam",
-					"weapon_sandcorn",
-					"weapon_physgun",
 					"wheelchair",
 					"rocketwheelchair",
+					"mystery",
 					"spacehat",
-					"mystery"
+					"weapon_popcorn_spam",
+					"weapon_sandcorn",
+					"weapon_physgun"
 				}
 			}
 		}
@@ -45,13 +51,13 @@ PS_Categories = {
 					"weapon_ar2",
 					"weapon_357",
 					"weapon_smg1",
-					"weapon_gauntlet",
-					"weapon_sniper",
 					"weapon_crossbow",
 					"weapon_slam",
+					"weapon_sniper",
 					"weapon_rpg",
-					"weapon_doom3_bfg",
+					"weapon_gauntlet",
 					"weapon_jihad",
+					"weapon_doom3_bfg",
 					"weapon_bigbomb"
 				}
 			},
@@ -60,8 +66,8 @@ PS_Categories = {
 				products = {
 					"ammo_357_6",
 					"ammo_SMG1_45",
-					"ammo_sniper_5",
 					"ammo_XBowBolt_5",
+					"ammo_sniper_5",
 				}
 			}
 		}
@@ -149,26 +155,26 @@ PS_Categories = {
 				title = "Accessories",
 				products = {
 					"trumphatfree",
-					"bigburger",
-					"sombrero",
-					"tinfoilhat",
-					"bicyclehelmet",
-					"buckethat",
-					"conehattest",
-					"pickelhaube",
 					"horsemask",
-					"kleinerglasses",
-					"headcrabhat",
-					"santahat",
-					"clownshoe",
-					"shrunkenhead",
-					"spikecollar",
-					"trashhattest", --party hat
+					"conehattest",
 					"turtleplush",
 					"catears",
+					"buckethat",
+					"santahat",
+					"swampyhat",
+					"sombrero",
+					"tinfoilhat",
+					"clownshoe",
 					"uwumask",
+					"bigburger",
+					"bicyclehelmet",
+					"shrunkenhead",
+					"spikecollar",
+					"pickelhaube",
 					"tophat",
-					"swampyhat"
+					"headcrabhat",
+					"kleinerglasses",
+					"trashhattest" --party hat
 				}
 			},
 			{
