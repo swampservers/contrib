@@ -6,6 +6,7 @@ PS_Categories = {
 		icon="star",
 		layout = {
 			{
+				title = "Free Toys",
 				products = {
 					"weapon_flappy",
 					"weapon_anonymous",
@@ -19,7 +20,12 @@ PS_Categories = {
 					"weapon_kleiner",
 					"weapon_spraypaint",
 					"weapon_beans",
-					"weapon_monster",
+					"weapon_monster"
+				}
+			},
+			{
+				title = "Expensive Toys",
+				products = {
 					"weapon_airhorn",
 					"weapon_bodypillow",
 					"weapon_magicmissile",
