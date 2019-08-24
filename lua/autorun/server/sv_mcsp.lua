@@ -31,5 +31,5 @@ RegisterChatCommand({'mcreset','minecraftreset','minecraftskinreset'}, function(
 end, {global=false, throttle=true})
 
 hook.Add("PlayerInitialSpawn", "MinecraftFindURL", function(ply)
-	if ply:GetModel() == MCSPmodel and ply:GetPData("MinecraftURL", false) then MinecraftUpdateURL(ply, ply:GetPData("MinecraftURL", false)) end
+	ply:SetNWString("MCSPSkinURL", ply:GetPData("MinecraftURL", false))
 end)
