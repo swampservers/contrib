@@ -479,11 +479,11 @@ PS_ItemProduct({
 	wear = {
 		attach = "eyes",
 		scale = 1.0,
-		translate = Vector(-15.137,0,13.469),
+		translate = Vector(0,0,0),
 		rotate = Angle(0,-90,0),
 		pony = {
 			scale = 1.0,
-			translate = Vector(-15.299,0.008,16.79),
+			translate = Vector(0,0,0),
 			rotate = Angle(0,0,0),
 		}
 	}
