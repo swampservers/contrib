@@ -9,6 +9,10 @@ function ENT:Initialize()
 	self:PhysicsInitStatic(SOLID_VPHYSICS)
 
     self:DrawShadow(false)
+    if SERVER then
+        self:SetTrigger(true) 
+        self:SetUseType(SIMPLE_USE)
+    end
 	
     self:SetSolid(SOLID_VPHYSICS)
 
@@ -22,19 +26,16 @@ function ENT:Draw()
     self:DrawModel()
 end
 
-function ENT:Think()
-    if SERVER then
-        for k, v in pairs(ents.FindInSphere(self:GetPos(), 60)) do
-            if v:IsPlayer() and !v:HasWeapon("weapon_golfclub") then
-                if v:GetLocationName()=="Golf" or v:GetLocationName()=="Upper Caverns" or v:GetLocationName()=="Lower Caverns" then --prevent grabbing the golf club through walls
-                    v:Give("weapon_golfclub")
-                    v:SelectWeapon("weapon_golfclub")
-                end
-            end
-        end
+function ENT:Use(act, caller) --Just in case a player does not touch the golf rack
+    self:StartTouch(act)
+end
 
-        self:NextThink(CurTime() + 0.5) --Save on performance
-        return true
+function ENT:StartTouch(ent)
+    if ent:IsPlayer() and !ent:HasWeapon("weapon_golfclub") then
+        if ent:GetLocationName()=="Golf" or ent:GetLocationName()=="Upper Caverns" or ent:GetLocationName()=="Lower Caverns" then --prevent grabbing the golf club through walls
+            ent:Give("weapon_golfclub")
+            ent:SelectWeapon("weapon_golfclub")
+        end
     end
 end
 
