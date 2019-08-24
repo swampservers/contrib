@@ -1,5 +1,7 @@
 "vertexlitgeneric"
 {
     "$basetexture" "models\milaco\minecraft_pm\hat_layer"
-    "$smooth" "0"
+    "$alphatest" "1"
+    "$halflambert" "1"
+    "$model" "1"
 }

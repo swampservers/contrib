@@ -1,5 +1,7 @@
 "vertexlitgeneric"
 {
     "$basetexture" "models\milaco\minecraft_pm\minecraft_pm"
-    "$smooth" "0"
+    "$translucent" "0"
+    "$halflambert" "1"
+    "$model" "1"
 }
