@@ -1,11 +1,15 @@
 local MCSPmodel = "models/milaco/minecraft_pm/minecraft_pm.mdl"
 
-hook.Add("PrePlayerDraw", "MCSPRenderSkin", function(ply)
+hook.Add("PrePlayerDraw", "MCSPRenderSkin", function(ply) --Material ID 0 is the hat layer, ID 1 is the base layer
 	if IsValid(ply) and ply:GetModel() == MCSPmodel and ply:IsPlayer() then
 		render.MaterialOverrideByIndex(0, ImgurMaterial(ply:GetNWString("MCSPSkinURL", false), ply, ply:GetPos(), false, "VertexLitGeneric", {
 			["$alphatest"] = 1,
 			["$halflambert"] = 1,
-			["$nodecal"] = 1,
+			["$model"] = 1
+		}))
+		render.MaterialOverrideByIndex(1, ImgurMaterial(ply:GetNWString("MCSPSkinURL", false), ply, ply:GetPos(), false, "VertexLitGeneric", {
+			["$translucent"] = 0,
+			["$halflambert"] = 1,
 			["$model"] = 1
 		}))
 	end
@@ -25,7 +29,11 @@ hook.Add("PostDrawOpaqueRenderables", "DrawMinecraftPlayerRagdolls", function() 
 			render.MaterialOverrideByIndex(0, ImgurMaterial(v:GetNWString("MCSPSkinURL", false), v, v:GetPos(), false, "VertexLitGeneric", {
 				["$alphatest"] = 1,
 				["$halflambert"] = 1,
-				["$nodecal"] = 1,
+				["$model"] = 1
+			}))
+			render.MaterialOverrideByIndex(1, ImgurMaterial(v:GetNWString("MCSPSkinURL", false), v, v:GetPos(), false, "VertexLitGeneric", {
+				["$translucent"] = 0,
+				["$halflambert"] = 1,
 				["$model"] = 1
 			}))
 			ragent:DrawModel()
