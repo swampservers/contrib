@@ -4,9 +4,10 @@ RegisterChatCommand({'ponyrp'}, function(ply, arg)
 		ply:SetPos(Vector(-388, 1400, -118)) --treatment room location
 
 		for k, v in pairs(ents.GetAll()) do
-			if !IsValid(v) then end
-			if v:GetName() == "treatmentdoor" then v:Fire("Close") end
-			if v:GetName() == "treatmentlever" then v:Fire("PressOut") end
+			if IsValid(v) then
+				if v:GetName() == "treatmentdoor" then v:Fire("Close") end
+				if v:GetName() == "treatmentlever" then v:Fire("PressOut") end
+			end
 		end
 	end
 end, {global=false, throttle=true})
