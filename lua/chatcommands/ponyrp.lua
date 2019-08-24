@@ -1,6 +1,5 @@
 RegisterChatCommand({'ponyrp'}, function(ply, arg)
-	if !Safe(ply) and !ply:InVehicle() then
-		if !IsValid(ply) then return end
+	if IsValid(ply) and !Safe(ply) and !ply:InVehicle() and ply:Alive() then
 		ply:SetPos(Vector(-388, 1400, -118)) --treatment room location
 
 		for k, v in pairs(ents.GetAll()) do
