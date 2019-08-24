@@ -18,6 +18,7 @@ end)
 hook.Add("PostPlayerDraw", "MCSPRenderSkin", function(ply)
 	if IsValid(ply) and ply:GetModel() == MCSPmodel and ply:IsPlayer() then
 		render.MaterialOverrideByIndex(0, "")
+		render.MaterialOverrideByIndex(1, "")
 	end
 end)
 
@@ -39,6 +40,7 @@ hook.Add("PostDrawOpaqueRenderables", "DrawMinecraftPlayerRagdolls", function() 
 			ragent:DrawModel()
 			ragent:SetNoDraw(true)
 			render.MaterialOverrideByIndex(0, "")
+			render.MaterialOverrideByIndex(1, "")
 		end
 	end
 end)
