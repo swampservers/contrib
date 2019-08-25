@@ -12,7 +12,8 @@ GM.HUDToHide = {
 	"CHudCrosshair",
 	"CHudAmmo",
 	"CHudSecondaryAmmo",
-	"CHudZoom"
+	"CHudZoom",
+	"CHUDQuickInfo"
 }
 
 GM.CrosshairWeapons = {

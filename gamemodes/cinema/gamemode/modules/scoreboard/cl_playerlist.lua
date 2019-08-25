@@ -156,14 +156,14 @@ function PLAYER:Init()
 	
 	self.Mute = vgui.Create("DImageButton", self)	
 	self.Mute:SetSize(20,20)
-    self.Mute:SetPos(467,12)
+    self.Mute:SetPos(464,12)
 	
 	self.Mute:SetImage("icon32/unmuted.png")
 	self.Mute:CenterVertical()
 	
 	self.ChatMute = vgui.Create("DImageButton", self)
-	self.ChatMute:SetSize(24,24)
-    self.ChatMute:SetPos(486,12)
+	self.ChatMute:SetSize(20,20)
+    self.ChatMute:SetPos(483,12)
 	
 	self.ChatMute:SetImage("theater/chatunmuted.png")
 	self.ChatMute:CenterVertical()
