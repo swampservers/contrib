@@ -5,6 +5,7 @@ RegisterChatConsoleCommand({'skip','voteskip'},"cinema_voteskip")
 RegisterChatLUACommand('thirdperson',"THIRDPERSON = !THIRDPERSON")
 RegisterChatLUACommand('virtualreality',"BOBBINGVIEW = !BOBBINGVIEW")
 RegisterChatLUACommand({'global','globalchat','ooc'},[[chat.AddText("[orange]Press "..input.LookupBinding("messagemode2"):upper().." to speak in Global chat.")]])
+RegisterChatLUACommand({'golf', 'golfclub'},[[chat.AddText("[orange]Walk up to a golf rack to grab a golf club!")]])
 
 RegisterChatCommand({'kills','showkills'}, function(ply, arg)
 	BotSayGlobal(ply:Nick().." has gotten [edgy]"..tostring(playerstats[ply:SteamID64()]["stat_kills"]).."[fbc] lifetime kills!")
