@@ -1,7 +1,7 @@
 local MCSPmodel = "models/milaco/minecraft_pm/minecraft_pm.mdl"
 
 hook.Add("PrePlayerDraw", "MCSPRenderSkin", function(ply) --Material ID 0 is the hat layer, ID 1 is the base layer
-	if IsValid(ply) and ply:GetModel() == MCSPmodel and ply:IsPlayer() then
+	if IsValid(ply) and ply:GetModel() == MCSPmodel and ply:IsPlayer() and ply:GetNWString("MCSPSkinURL", false) then
 		render.MaterialOverrideByIndex(1, ImgurMaterial(ply:GetNWString("MCSPSkinURL", false), ply, ply:GetPos(), false, "VertexLitGeneric", {
 			["$alpha"] = 1,
 			["$halflambert"] = 1,
