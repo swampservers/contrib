@@ -307,7 +307,7 @@ function SWEP:PrimaryAttack()
 				self:SetClip1(0)
 				self.ActiveBall = ball
 			else
-				self:GetOwner():ChatPrint("Cannot place ball here!")
+				self:GetOwner():ChatPrint("[red]Cannot place ball here!")
 			end
 			
 		end
