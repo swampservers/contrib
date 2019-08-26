@@ -93,7 +93,7 @@ RegisterChatCommand({'bountyrandom','setbountyrandom','randombounty','setrandomb
 			for k, v in pairs(player.GetHumans()) do
 				if !Safe(v) then table.insert(ranply, v) end
 			end
-			AddBounty(ply,{table.Random(ranply)},p)
+			AddBounty(ply,{ranply[math.random(#ranply)]},p)
 		else
 			ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
 		end
