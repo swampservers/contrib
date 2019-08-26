@@ -391,7 +391,7 @@ function SWEP:FinishStroke(hole)
 				self:GetOwner():SetPData("golf_"..hole, tostring(strk))
 			end
 		end
-		if !joke then GolfNotify("[yellow]"..self:GetOwner():Nick() .." completed hole '"..hole.. "' with "..endm) end
+		if !joke then GolfNotify("[yellow]"..self:GetOwner():Nick() .." completed hole '[gold]"..hole.. "[yellow]' with "..endm) end
 		if SERVER then
 			local iwonsomething = false
 			local strokes = " strokes"
