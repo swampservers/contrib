@@ -455,7 +455,7 @@ function SWEP:FailStroke(hole,nan)
 	local snd = "hl1/fvox/bell.wav"
 	self:GetOwner():EmitSound(snd,100,75)
 	if nan then else
-		GolfNotify(self:GetOwner():Nick() .." Failed Hole")
+		GolfNotify("[red]"..self:GetOwner():Nick() .." failed a hole")
 	end
 	
 	self:SetCurrentStroke(0)
