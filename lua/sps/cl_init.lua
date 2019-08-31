@@ -15,6 +15,42 @@ end)
 
 concommand.Add("ps_togglemenu", function(ply, cmd, args) PS_ToggleMenu() end)
 
+PS_DarkMode = true
+
+concommand.Add("ps_toggletheme", function(ply, cmd, args)
+	if PS_DarkMode then
+		PS_TileBGColor = Color(234, 234, 234)
+		PS_GridBGColor = Color(200, 200, 200)
+		PS_BotBGColor = Color(64, 64, 64)
+		PS_NavBarBGColor = Color(35, 35, 35)
+		PS_SwitchableColor = Color(0, 0, 0)
+		pointshopJewImage = Material("pointshop/merchant.png")
+	else
+		PS_TileBGColor = Color(37, 37, 37)
+		PS_GridBGColor = Color(33, 33, 33)
+		PS_BotBGColor = Color(33, 33, 33)
+		PS_NavBarBGColor = Color(35, 35, 35)
+		PS_SwitchableColor = Color(200, 200, 200)
+		pointshopJewImage = Material("pointshop/merchant_white.png")
+	end
+	PS_DarkMode = !PS_DarkMode
+
+	if IsValid(PS_CustomizerPanel) then
+		PS_CustomizerPanel:Remove()
+	end
+	if IsValid(PS_ShopMenu) then
+		if PS_ShopMenu:IsVisible() then
+			PS_ShopMenu:Remove()
+			PS_ShopMenu = vgui.Create('DPointShopMenu')
+			PS_ShopMenu:Show()
+		else
+			PS_ShopMenu:Remove()
+			PS_ShopMenu = vgui.Create('DPointShopMenu')
+			PS_ShopMenu:SetVisible(false)
+		end
+	end
+end)
+
 concommand.Add("ps_destroymenu", function( ply, cmd, args )
 	if IsValid(PS_CustomizerPanel) then
 		PS_CustomizerPanel:Close()
@@ -22,7 +58,7 @@ concommand.Add("ps_destroymenu", function( ply, cmd, args )
 	if IsValid(PS_ShopMenu) then
 		PS_ShopMenu:Remove()
 	end
-end )
+end)
 
 function PS_ToggleMenu()
 	if not IsValid(PS_ShopMenu) then
