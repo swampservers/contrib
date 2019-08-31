@@ -11,7 +11,7 @@ surface.CreateFont('PS_DESCTITLEFONT', { font = 'Righteous', size = 32 })
 surface.CreateFont('PS_DESCFONT', { font = 'Lato', size = 18 })
 surface.CreateFont('PS_DESCINSTFONT', { font = 'Lato', size = 20 })
 
-pointshopJewImage = Material( "pointshop/merchant.png" ) 
+pointshopJewImage = Material( "pointshop/merchant_white.png" ) 
 pointshopDollarImage = Material("icon16/money_dollar.png")
 pointshopMoneyImage = Material("icon16/money.png")
 pointshopJewStarImage = Material("countries/il.png")
@@ -89,10 +89,12 @@ local UNOWNED_ITEMS = 3
 
 PS_ColorWhite = Color(255,255,255)
 PS_ColorBlack = Color(0,0,0)
+PS_SwitchableColor = Color(200, 200, 200)
 
-PS_TileBGColor = Color(234,234,234)
-PS_GridBGColor = Color(200,200,200)
-PS_BotBGColor = Color(64,64,64)
+PS_TileBGColor = Color(37, 37, 37)
+PS_GridBGColor = Color(33, 33, 33)
+PS_BotBGColor = Color(33, 33, 33)
+PS_NavBarBGColor = Color(35, 35, 35)
 
 PS_PaintTileBG = function(pnl, w, h) surface.SetDrawColor(PS_TileBGColor) surface.DrawRect(0, 0, w, h) end
 PS_PaintGridBG = function(pnl, w, h) surface.SetDrawColor(PS_GridBGColor) surface.DrawRect(0, 0, w, h) end
@@ -127,8 +129,7 @@ function PANEL:Init()
 	self.navbar = vgui.Create("DPanel", self)
 	self.navbar:SetTall(PS_NAVBARHEIGHT)
 	self.navbar:Dock(TOP)
-	self.navbar:SetBackgroundColor(BrandColorAlternate)
-
+	self.navbar:SetBackgroundColor(PS_NavBarBGColor)
 
 	self.botbar = vgui.Create("DPanel", self)
 	self.botbar:SetTall(PS_BOTBARHEIGHT)
@@ -177,6 +178,18 @@ function PANEL:Init()
 	p.DoClick = function()
 		PS_ToggleMenu()
 		ShowMotd("https://swampservers.net/points")
+	end
+
+	-- toggle theme button
+	p = vgui.Create('DImageButton', self.navbar)
+	p:SetImage("icon16/contrast.png")
+	p:SetStretchToFit(false)
+	p.Paint = PS_PaintDarkenOnHover
+	p:SetSize(PS_NAVBARHEIGHT, PS_NAVBARHEIGHT)
+	p:SetTooltip("Toggle dark mode/light mode")
+	p:Dock(RIGHT)
+	p.DoClick = function()
+		RunConsoleCommand("ps_toggletheme")
 	end
 
 	local btns = {}
@@ -277,7 +290,7 @@ function PANEL:Init()
 		local lp=2
 		p:DockMargin(lp*2,lp,lp,lp)
 
-		p:SetColor(PS_ColorBlack)
+		p:SetColor(PS_SwitchableColor)
 
 		p:SizeToContentsY()
 		p2:SetTall(p:GetTall()+lp*2)
@@ -626,8 +639,18 @@ function PANEL:Init()
 	
 	p = vgui.Create('DButton', cont)
 	p:SetText("Give Points")
+	p:SetTextColor(PS_SwitchableColor)
 	p:DockMargin(12,12,12,12)
 	p:Dock(BOTTOM)
+	p.Paint = function(panel, w, h)
+	    if panel.Depressed then
+	    	panel:SetTextColor(PS_ColorWhite)
+	        draw.RoundedBox(4, 0, 0, w, h, Color(35, 135, 37))
+	    else
+	    	panel:SetTextColor(PS_SwitchableColor)
+	        draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+	    end
+	end
 	p.DoClick = function()
 		vgui.Create('DPointShopGivePoints')
 	end
@@ -641,8 +664,18 @@ function PANEL:Init()
 			p:SetText("Customize Playermodel")
 		end
 	end
+	p:SetTextColor(PS_SwitchableColor)
 	p:DockMargin(12,12,12,12)
 	p:Dock(TOP)
+	p.Paint = function(panel, w, h)
+	    if panel.Depressed then
+	    	panel:SetTextColor(PS_ColorWhite)
+	        draw.RoundedBox(4, 0, 0, w, h, Color(35, 135, 37))
+	    else
+	    	panel:SetTextColor(PS_SwitchableColor)
+	        draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+	    end
+	end
 	p.DoClick = function()
 		PS_ToggleMenu()
 		if LocalPlayer():IsPony() then
