@@ -182,7 +182,7 @@ function PANEL:Init()
 
 	-- toggle theme button
 	p = vgui.Create('DImageButton', self.navbar)
-	p:SetImage("icon16/contrast.png")
+	p:SetImage("icon16/lightbulb.png")
 	p:SetStretchToFit(false)
 	p.Paint = PS_PaintDarkenOnHover
 	p:SetSize(PS_NAVBARHEIGHT, PS_NAVBARHEIGHT)
