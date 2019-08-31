@@ -650,7 +650,7 @@ function PANEL:Init()
 		if LocalPlayer():IsPony() then
 			RunConsoleCommand("ppm_chared3")
 		elseif LocalPlayer():GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
-			local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Mineraft skin.", "", function(text)
+			local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Minecraft skin.", "", function(text)
 				RunConsoleCommand("say", "!minecraftskin "..text)
 			end, function() end, "Change Skin", "Cancel")
 			--local srdx, srdy = mderma:GetSize()
