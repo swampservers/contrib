@@ -7,7 +7,7 @@ concommand.Add( "cinema_night_toggle", function()
   local sky_night_rt = Material( "swamponions/sky/sky_night_rt" )
   local sky_night_up = Material( "swamponions/sky/sky_night_up" )
 
-  hook.Add( "PostDraw2DSkyBox", "DrawDayNightSky", function()
+  hook.Add( "PostDraw2DSkyBox", "DrawNightSky", function()
   	if not render.DrawingScreen() then
   		return
   	end
