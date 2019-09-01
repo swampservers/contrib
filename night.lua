@@ -1,13 +1,5 @@
 
-util.AddNetworkString("PrintConsole")
-
 concommand.Add( "cinema_night_toggle", function()
-
-  string = "Night Toggled"
-  net.WriteString(string)
-
-  net.Start("PrintConsole")
-  net.Send(ply)
 
   local sky_night_bk = Material( "swamponions/sky/sky_night_bk" )
   local sky_night_ft = Material( "swamponions/sky/sky_night_ft" )
