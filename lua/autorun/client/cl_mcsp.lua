@@ -6,12 +6,12 @@ hook.Add("PrePlayerDraw", "MCSPRenderSkin", function(ply) --Material ID 0 is the
 			["$opaque"] = 1,
 			["$halflambert"] = 1,
 			["$model"] = 1
-		}))
+		}, true))
 		render.MaterialOverrideByIndex(0, ImgurMaterial(ply:GetNWString("MCSPSkinURL", false), ply, ply:GetPos(), false, "VertexLitGeneric", {
 			["$alphatest"] = 1,
 			["$halflambert"] = 1,
 			["$model"] = 1
-		}))
+		}, true))
 	end
 end)
 
@@ -28,11 +28,11 @@ hook.Add("CreateClientsideRagdoll", "DrawMinecraftPlayerRagdolls", function(ent,
 			["$opaque"] = 1,
 			["$halflambert"] = 1,
 			["$model"] = 1
-		}):GetName())
+		}, true):GetName())
 		ragdoll:SetSubMaterial(0, "!"..ImgurMaterial(ent:GetNWString("MCSPSkinURL", false), ent, ent:GetPos(), false, "VertexLitGeneric", {
 			["$alphatest"] = 1,
 			["$halflambert"] = 1,
 			["$model"] = 1
-		}):GetName())
+		}, true):GetName())
 	end
 end)
