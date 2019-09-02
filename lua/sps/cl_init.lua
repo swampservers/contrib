@@ -239,6 +239,13 @@ local function AddScaleRecursive(ent, b, scn, recurse, safety)
 	sco.x = sco.x * scn.x
 	sco.y = sco.y * scn.y
 	sco.z = sco.z * scn.z
+	
+	if ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
+		sco.x = math.min(sco.x,1)
+		sco.y = math.min(sco.y,1)
+		sco.z = math.min(sco.z,1)
+	end
+	
 	ent:ManipulateBoneScale(b, sco)
 
 	if recurse then
