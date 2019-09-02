@@ -33,3 +33,10 @@ end, {global=false, throttle=true})
 hook.Add("PlayerInitialSpawn", "MinecraftFindURL", function(ply)
 	ply:SetNWString("MCSPSkinURL", ply:GetPData("MinecraftURL", false))
 end)
+
+hook.Add("PlayerDeathSound", "MinecraftDeathSound", function(ply, inf, att)
+	if ply:GetModel() == MCSPmodel then
+		ply:ExtEmitSound("minecraft/mc_hurt.ogg", {pitch=100})
+		return true
+	end
+end)
