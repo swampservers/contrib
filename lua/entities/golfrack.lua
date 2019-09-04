@@ -32,7 +32,7 @@ end
 
 function ENT:StartTouch(ent)
     if ent:IsPlayer() and !ent:HasWeapon("weapon_golfclub") then
-        if ent:GetLocationName()=="Golf" or ent:GetLocationName()=="Upper Caverns" or ent:GetLocationName()=="Lower Caverns" then --prevent grabbing the golf club through walls
+        if ent:GetLocationName()=="Golf" or ent:GetLocationName()=="Upper Caverns" or ent:GetLocationName()=="Lower Caverns" or ent:GetLocationName()=="Outside" then --prevent grabbing the golf club through walls
             ent:Give("weapon_golfclub")
             ent:SelectWeapon("weapon_golfclub")
         end
