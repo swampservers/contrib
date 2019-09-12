@@ -660,6 +660,8 @@ function PANEL:Init()
 	p.Think = function(p)
 		if LocalPlayer():IsPony() then
 			p:SetText("Customize Pony")
+		elseif LocalPlayer():GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
+			p:SetText("Customize Minecraft Skin")
 		else
 			p:SetText("Customize Playermodel")
 		end
@@ -680,6 +682,16 @@ function PANEL:Init()
 		PS_ToggleMenu()
 		if LocalPlayer():IsPony() then
 			RunConsoleCommand("ppm_chared3")
+		elseif LocalPlayer():GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
+			local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Minecraft skin.", "", function(text)
+				RunConsoleCommand("say", "!minecraftskin "..text)
+			end, function() end, "Change Skin", "Cancel")
+			--local srdx, srdy = mderma:GetSize()
+			--local mdermacredits = Label("Minecraft Skin Picker by Milaco and Chev", mderma) --Leave this out for now until we KNOW it's working
+			--mdermacredits:Dock(BOTTOM)
+			--mdermacredits:SetContentAlignment(2)
+			--mderma:SetSize(srdx, srdy + 15)
+			--mderma:SetIcon("icon16/user.png")
 		else
 			RunConsoleCommand("customize")
 		end

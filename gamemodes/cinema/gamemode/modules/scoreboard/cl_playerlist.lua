@@ -12,6 +12,17 @@ PLAYERLIST.TitleHeight = BrandTitleBarHeight
 PLAYERLIST.ServerHeight = 32
 PLAYERLIST.PlyHeight = 48
 
+
+function UpdateMutes()
+	for k,v in pairs(player.GetAll()) do	
+		if v ~= LocalPlayer() then
+			v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteAFKConVar:GetBool()))	
+		end
+	end
+end
+timer.Create("updatemutes",1,0,UpdateMutes)
+
+
 function PLAYERLIST:Init()
 
 	self.Title = Label( "SWAMP CINEMA", self )
@@ -191,7 +202,7 @@ function PLAYER:UpdatePlayer()
 		return
 	end
 	
-	if self.Player:IsMuted() then
+	if self.Player.ClickMuted then
 		self.Mute:SetImage( "icon32/muted.png" )
 	else
 		self.Mute:SetImage( "icon32/unmuted.png" )
@@ -204,17 +215,17 @@ function PLAYER:UpdatePlayer()
 	end	
 
 	self.Mute.DoClick = function() 
-		self.Player:SetMuted(!self.Player:IsMuted())
-		print("muted "..self.Player:Nick())
+		self.Player.ClickMuted = not (self.Player.ClickMuted or false)
 		net.Start("SetMuted")
 		net.WriteEntity(self.Player)
-		net.WriteBool(self.Player:IsMuted())
+		net.WriteBool(self.Player.ClickMuted)
 		net.SendToServer()
-		if self.Player:IsMuted() then
+		if self.Player.ClickMuted then
 			self.Mute:SetImage( "icon32/muted.png" )
 		else
 			self.Mute:SetImage( "icon32/unmuted.png" )
 		end
+		UpdateMutes()
     end
 	
 	self.ChatMute.DoClick = function()

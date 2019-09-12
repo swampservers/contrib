@@ -32,7 +32,7 @@ end
 
 function ENT:StartTouch(ent)
     if ent:IsPlayer() and !ent:HasWeapon("weapon_golfclub") then
-        if ent:GetLocationName()=="Golf" or ent:GetLocationName()=="Upper Caverns" or ent:GetLocationName()=="Lower Caverns" then --prevent grabbing the golf club through walls
+        if ent:GetLocationName()=="Golf" or ent:GetLocationName()=="Upper Caverns" or ent:GetLocationName()=="Lower Caverns" or ent:GetLocationName()=="Outside" then --prevent grabbing the golf club through walls
             ent:Give("weapon_golfclub")
             ent:SelectWeapon("weapon_golfclub")
         end
@@ -55,7 +55,7 @@ if SERVER then
         gf1:Spawn()
         gf1:SetNoDraw(true) --NoDraw this entity, since the map model is already there
 
-        gf2:SetPos(Vector(978, -1287, -3))
+        gf2:SetPos(Vector(970.2, -1284.1, -3))
         gf2:SetAngles(Angle(0, -86.5, 0))
         gf2:Spawn()
         gf2:SetNoDraw(true)
