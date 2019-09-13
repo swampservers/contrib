@@ -485,14 +485,14 @@ Map =
     {
 		Name="Hell",
 		Min = Vector(-1023,4097,0),
-        Max = Vector(0,5119,1203) --[[,
+        Max = Vector(0,5119,1203),
         Theater = {
             Flags = 0,
             Pos = Vector(-1021,4433,184),
             Ang = Angle(0,90,0),
             Width = 320,
             Height = 180
-        }]]
+        }
     },
 
 	{ --after everything except outside

@@ -35,6 +35,12 @@ if IsValid(LocalPlayer()) and LocalPlayer():Nick()=="Swamp" then
 end
 ]]
 
+RunConsoleCommand("pp_colormod","1")
+RunConsoleCommand("pp_colormod_brightness","-0.05")
+RunConsoleCommand("pp_colormod_addr","4")
+--RunConsoleCommand("pp_colormod_mulr","-1")
+
+
 matproxy.Add({
 	name = "cm_dn",
 	init = function( self, mat, values )
@@ -74,6 +80,20 @@ local sky_night_ft = Material( "swamponions/sky/sky_night_ft" )
 local sky_night_lf = Material( "swamponions/sky/sky_night_lf" )
 local sky_night_rt = Material( "swamponions/sky/sky_night_rt" )
 local sky_night_up = Material( "swamponions/sky/sky_night_up" ) 
+
+sky_day_bk =   Material("hell/03_BK")
+sky_day_ft =   Material("hell/03_FR") 
+sky_day_lf =   Material("hell/03_LF") 
+sky_day_rt =   Material("hell/03_RT") 
+sky_day_up =  Material("hell/03_UP")
+
+
+sky_night_bk =   Material("hell/03_BK")
+sky_night_ft =   Material("hell/03_FR") 
+sky_night_lf =   Material("hell/03_LF") 
+sky_night_rt =   Material("hell/03_RT") 
+sky_night_up =  Material("hell/03_UP")
+
 
 hook.Add( "PostDraw2DSkyBox", "DrawDayNightSky", function()
 	if not render.DrawingScreen() then
