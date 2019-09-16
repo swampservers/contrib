@@ -20,7 +20,7 @@ surface.CreateFont("HellPrompt",{
 })
 
 function HellPromptPlayer()
-
+--[[
 	if IsValid(HellPanel) then return end
 	
 	if GetConVar("hellpromptdisable"):GetInt() == 1 then
@@ -55,10 +55,10 @@ function HellPromptPlayer()
 	accept:CenterHorizontal()
 	accept:SetPos(accept:GetPos()-120,HellPanel:GetTall()*.5+45)
 	accept:SetSize(50,20)
-	accept.DoClick = function()
+	accept.DoClick = function()]]
 			net.Start("HellTeleport")
 			net.SendToServer()
-			HellPanel:Remove()
+			--[[HellPanel:Remove()
 	end
 	
 	local decline = vgui.Create("DButton",HellPanel)
@@ -77,7 +77,7 @@ function HellPromptPlayer()
 	toggleprompt:SetPos(toggleprompt:GetPos(),HellPanel:GetTall()*.5+85)
 	toggleprompt:SetConVar("hellpromptdisable")
 	toggleprompt:SetValue(0)
-	
+	]]
 end
 
 net.Receive("HellTeleportEffect",function()
