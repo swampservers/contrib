@@ -1,6 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "hell/TFOGE0"
-	"$basetexturetransform" "center .5 .5 scale 1 1 rotate -90 translate 0 0"
-	"$alphatest" 1
-}
