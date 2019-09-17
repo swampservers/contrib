@@ -1,5 +1,21 @@
 
 PS_ItemProduct({
+	class = "outfitter",
+	price = 1000000,
+	name = 'Outfitter',
+	description = "Allows wearing any model from workshop - type !outfitter",
+	model = 'models/player/pyroteknik/banana.mdl',
+	invcategory = "Playermodels",
+	never_equip = true
+})
+
+hook.Add("CanOutfit","ps_outfitter",function(ply,mdl,wsid)
+	return ply:PS_HasItem("outfitter")
+end)
+
+
+
+PS_ItemProduct({
 	class = "inflater",
 	price = 200000,
 	name = 'Inflater',
