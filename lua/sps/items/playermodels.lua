@@ -9,8 +9,18 @@ PS_ItemProduct({
 	never_equip = true
 })
 
+if SERVER then
+timer.Create("syncoutfitter", 1, 0, function()
+for k,v in pairs(player.GetAll()) do
+	if v:GetNWBool("oufitr") ~= v:PS_HasItem("outfitter") then
+		v:SetNWBool("oufitr", v:PS_HasItem("outfitter"))
+	end
+end
+end)
+end
+
 hook.Add("CanOutfit","ps_outfitter",function(ply,mdl,wsid)
-	return ply:PS_HasItem("outfitter")
+	return ply:GetNWBool("oufitr")
 end)
 
 
