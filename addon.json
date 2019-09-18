@@ -4,9 +4,10 @@
 	"tags"		:	[ "roleplay", "realism" ], 
 	"ignore"	:
 	[
+		".git/*",
 		"*.lua",
-		"*.psd", 
-		"*.vcproj", 
-		"*.svn*"
+		"*.txt",
+		"*.md",
+		"*.json"
 	]
 }
