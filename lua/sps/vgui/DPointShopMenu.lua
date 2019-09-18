@@ -89,11 +89,6 @@ local UNOWNED_ITEMS = 3
 
 PS_ColorWhite = Color(255,255,255)
 PS_ColorBlack = Color(0,0,0)
-PS_SwitchableColor = Color(200, 200, 200)
-
-PS_TileBGColor = Color(37, 37, 37)
-PS_GridBGColor = Color(33, 33, 33)
-PS_BotBGColor = Color(33, 33, 33)
 
 PS_PaintTileBG = function(pnl, w, h) surface.SetDrawColor(PS_TileBGColor) surface.DrawRect(0, 0, w, h) end
 PS_PaintGridBG = function(pnl, w, h) surface.SetDrawColor(PS_GridBGColor) surface.DrawRect(0, 0, w, h) end
@@ -188,7 +183,7 @@ function PANEL:Init()
 	p:SetTooltip("Toggle dark mode/light mode")
 	p:Dock(RIGHT)
 	p.DoClick = function()
-		RunConsoleCommand("ps_toggletheme")
+		GetConVar("ps_darkmode"):SetBool(!PS_DarkMode) --activates the callback function
 	end
 
 	local btns = {}
