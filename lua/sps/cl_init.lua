@@ -15,7 +15,7 @@ end)
 
 concommand.Add("ps_togglemenu", function(ply, cmd, args) PS_ToggleMenu() end)
 
-CreateClientConVar("ps_darkmode", "1", true)
+CreateClientConVar("ps_darkmode", "0", true)
 
 function SetPointshopTheme(dark)
 	PS_DarkMode = dark
