@@ -134,7 +134,7 @@ function PANEL:Paint()
 	if PS_CustomizerPanel:IsVisible() then
 		if ValidPanel(XRSL) then
 			if IsValid(PS_HoverCSModel) then
-				draw.SimpleText("RMB + drag to rotate", "PS_DESCFONT", self:GetWide() / 2, 14, Color(0,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)	
+				draw.SimpleText("RMB + drag to rotate", "PS_DESCFONT", self:GetWide() / 2, 14, PS_SwitchableColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)	
 			end
 		end
 	end
