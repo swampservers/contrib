@@ -163,7 +163,6 @@ PS_Categories = {
 					"catears",
 					"buckethat",
 					"santahat",
-					"swampyhat",
 					"sombrero",
 					"tinfoilhat",
 					"clownshoe",
