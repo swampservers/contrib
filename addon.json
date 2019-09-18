@@ -1,0 +1,12 @@
+{
+	"title"		:	"10 gigs of crap", 
+	"type"		:	"ServerContent", 
+	"tags"		:	[ "roleplay", "realism" ], 
+	"ignore"	:
+	[
+		"*.lua",
+		"*.psd", 
+		"*.vcproj", 
+		"*.svn*"
+	]
+}
