@@ -469,22 +469,3 @@ PS_ItemProduct({
 	}
 })
 
-PS_ItemProduct({
-	class = 'swampyhat',
-	price = 25000,
-	name = 'Krusty Hat',
-	description = "Crubsty fcrab beemschugger fri",
-	model = 'models/milaco/swampyhat/swampyhat.mdl',
-	maxscale = 2.0,
-	wear = {
-		attach = "eyes",
-		scale = 1.0,
-		translate = Vector(0,0,0),
-		rotate = Angle(0,-90,0),
-		pony = {
-			scale = 1.0,
-			translate = Vector(0,0,0),
-			rotate = Angle(0,0,0),
-		}
-	}
-})
