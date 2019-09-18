@@ -16,15 +16,9 @@ end)
 concommand.Add("ps_togglemenu", function(ply, cmd, args) PS_ToggleMenu() end)
 
 CreateClientConVar("ps_darkmode", "1", true)
+
 function SetPointshopTheme(dark)
 	PS_DarkMode = dark
-	RunConsoleCommand("ps_toggletheme")
-end
-SetPointshopTheme(!GetConVar("ps_darkmode"):GetBool())
-
-concommand.Add("ps_toggletheme", function(ply, cmd, args)
-	PS_DarkMode = !PS_DarkMode
-	GetConVar("ps_darkmode"):SetBool(PS_DarkMode)
 	if PS_DarkMode then
 		PS_TileBGColor = Color(37, 37, 37)
 		PS_GridBGColor = Color(33, 33, 33)
@@ -53,7 +47,12 @@ concommand.Add("ps_toggletheme", function(ply, cmd, args)
 			PS_ShopMenu:SetVisible(false)
 		end
 	end
-end, function() end)
+end
+SetPointshopTheme(GetConVar("ps_darkmode"):GetBool())
+
+cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
+	SetPointshopTheme(tobool(new))
+end)
 
 concommand.Add("ps_destroymenu", function( ply, cmd, args )
 	if IsValid(PS_CustomizerPanel) then
