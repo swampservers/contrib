@@ -371,14 +371,14 @@ function PANEL:Think()
 		end
 		self.textcolor = PS_SwitchableColor
 		if self:IsSelected() then
-			self.BGColor = PS_DarkMode and Color(43, 43, 43, 255) or Color(192,192,255,255)
+			self.BGColor = PS_DarkMode and Color(53, 53, 53, 255) or Color(192,192,255,255)
 			if self.hovered then
 				self.barheight = 30
 				self.textfont = "PS_Price"
 				self.text = self.item.eq and "HOLSTER" or "EQUIP"
 			end
 		elseif self.hovered then
-			self.BGColor = PS_DarkMode and Color(53, 53, 53, 255) or Color(216,216,248,255)
+			self.BGColor = PS_DarkMode and Color(43, 43, 43, 255) or Color(216,216,248,255)
 		end
 	end
 end
