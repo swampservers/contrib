@@ -8,8 +8,6 @@ Contribute to swamp servers here! How to:
 
 Don't worry about workshop addons or any of that. All files in here will be automatically uploaded to workshop. (Except lua which isn't run off of workshop)
 
-If the files should go to all swamp servers (cinema, fatkid, spades), add the paths to commonlua.txt for lua or commonfiles.txt for anything else. Otherwise the files will only go to cinema.
-
 # how tos
 
 ## Shop Weapons:
