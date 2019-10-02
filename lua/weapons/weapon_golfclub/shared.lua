@@ -253,11 +253,12 @@ function SWEP:Reload()
 		
 			--timing glitch
 			if self.ActiveBall.FineHole then return end
-		timer.Simple(0.001, function()
+		
 			self:SetClip1(1)
-			self:FailStroke("hole",true) end)
+			self:FailStroke("hole",true)
 		
 			self.ActiveBall:Remove()
+self.ActiveBall.removing=true
 			self.ActiveBall = nil
 		end
 	
