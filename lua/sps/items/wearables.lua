@@ -2,7 +2,7 @@
 PS_ItemProduct({
 	class = 'trumphatfree',
 	name = 'Unstumpable',
-	description = "Daring, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
+	description = "Bold, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
 	model = 'models/swamponions/colorabletrumphat.mdl',
 	color = Vector(1.0, 0.1, 0.1),
 	maxscale = 2.0,
