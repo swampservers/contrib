@@ -639,7 +639,7 @@ function PANEL:Init()
 	p.Paint = function(panel, w, h)
 	    if panel.Depressed then
 	    	panel:SetTextColor(PS_ColorWhite)
-	        draw.RoundedBox(4, 0, 0, w, h, Color(35, 135, 37))
+	        draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
 	    else
 	    	panel:SetTextColor(PS_SwitchableColor)
 	        draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
@@ -666,7 +666,7 @@ function PANEL:Init()
 	p.Paint = function(panel, w, h)
 	    if panel.Depressed then
 	    	panel:SetTextColor(PS_ColorWhite)
-	        draw.RoundedBox(4, 0, 0, w, h, Color(35, 135, 37))
+	        draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
 	    else
 	    	panel:SetTextColor(PS_SwitchableColor)
 	        draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
