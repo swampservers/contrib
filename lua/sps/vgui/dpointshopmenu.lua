@@ -680,12 +680,12 @@ function PANEL:Init()
 			local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Minecraft skin.", "", function(text)
 				RunConsoleCommand("say", "!minecraftskin "..text)
 			end, function() end, "Change Skin", "Cancel")
-			--local srdx, srdy = mderma:GetSize()
-			--local mdermacredits = Label("Minecraft Skin Picker by Milaco and Chev", mderma) --Leave this out for now until we KNOW it's working
-			--mdermacredits:Dock(BOTTOM)
-			--mdermacredits:SetContentAlignment(2)
-			--mderma:SetSize(srdx, srdy + 15)
-			--mderma:SetIcon("icon16/user.png")
+			local srdx, srdy = mderma:GetSize()
+			local mdermacredits = Label("Minecraft Skins by Milaco and Chev for Swamp Servers", mderma)
+			mdermacredits:Dock(BOTTOM)
+			mdermacredits:SetContentAlignment(2)
+			mderma:SetSize(srdx, srdy + 15)
+			mderma:SetIcon("icon16/user.png")
 		else
 			RunConsoleCommand("customize")
 		end
