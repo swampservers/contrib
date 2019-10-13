@@ -29,24 +29,29 @@ Angle(7.5, 161.9, -0.1)}
 function ENT:Initialize()
     self:SetModel(table.Random({"models/props_halloween/jackolantern_01.mdl", "models/props_halloween/jackolantern_02.mdl"}))
     self:SetMoveType(MOVETYPE_NONE)
-	self:PhysicsInitStatic(SOLID_VPHYSICS)
+    self:PhysicsInitStatic(SOLID_VPHYSICS)
+    self:SetSolid(SOLID_VPHYSICS)
 
     self:DrawShadow(false)
     if SERVER then
-        self:SetTrigger(true) 
         self:SetUseType(SIMPLE_USE)
     end
-	
-    self:SetSolid(SOLID_VPHYSICS)
-
-	local phys = self:GetPhysicsObject()
-	if IsValid(phys) then
+    
+    local phys = self:GetPhysicsObject()
+    if IsValid(phys) then
         phys:EnableMotion(false)
-	end
+    end
 end
 
 function ENT:Draw()
     self:DrawModel()
+end
+
+function ENT:Use(act, cal)
+    if math.random(0, 50) < 1 then --random chance to play a noise
+        self:ExtEmitSound("squee.wav", {pitch = math.random(80, 120)})
+        act:ChatPrint("[orange]Happy Halloween!")
+    end
 end
 
 if SERVER then
