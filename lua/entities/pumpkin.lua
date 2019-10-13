@@ -14,7 +14,10 @@ Vector(606.7, -1932.4, 0),
 Vector(326, -1064.7, -101.8),
 Vector(-651, -1813.3, -5.7),
 Vector(-2167.7, 612.5, 5.4),
-Vector(-2742.5, 164.8, -7.9)}
+Vector(-2742.5, 164.8, -7.9),
+Vector(2801, -610, 8),
+Vector(698.3, 1797.4, -31.9),
+Vector(-2574.4, 1144.8, -37.3)}
 local angtable = {Angle(0, -128, 0),
 Angle(0, -45, 0),
 Angle(0, 135, 0),
@@ -24,7 +27,10 @@ Angle(0, 154.4, 0),
 Angle(-1, -148.4, 0.6),
 Angle(5.8, -147.4, -1.8),
 Angle(3.2, -72.6, 0.9),
-Angle(7.5, 161.9, -0.1)}
+Angle(7.5, 161.9, -0.1),
+Angle(0, -179.4, 0),
+Angle(0, -58.1, 0),
+Angle(0, -166.8, 10.9)}
 
 function ENT:Initialize()
     self:SetModel(table.Random({"models/props_halloween/jackolantern_01.mdl", "models/props_halloween/jackolantern_02.mdl"}))
@@ -56,7 +62,7 @@ end
 
 if SERVER then
     hook.Add("InitPostEntity", "spawnpumpkins", function()
-        for i=1, 10, 1 do
+        for i=1, #vectable, 1 do
             local pumpkin = ents.Create("pumpkin")
             pumpkin:SetPos(vectable[i])
             pumpkin:SetAngles(angtable[i])
