@@ -2,7 +2,7 @@ SERVICE = {}
 
 SERVICE.Name 	= "Twitch"
 
-SERVICE.NeedsFlash = true
+SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 
 function SERVICE:GetKey( url )
