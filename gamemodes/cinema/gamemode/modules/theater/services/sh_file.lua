@@ -4,7 +4,7 @@ SERVICE.Name 		= "File"
 
 SERVICE.Mature = true
 
-SERVICE.NeedsFlash = true
+SERVICE.NeedsCodecs = true
 
 SERVICE.LivestreamCacheLife = 0
 
