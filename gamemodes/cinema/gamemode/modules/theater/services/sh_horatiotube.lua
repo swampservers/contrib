@@ -9,13 +9,13 @@ SERVICE.NeedsFlash = true
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
-	if url.host == "horatiotube.stream" then
+	--[[if url.host == "horatiotube.stream" then
 		local pt = url.path
 		if not pt then return false end
 		pt = pt:gsub("/cat/%a+","")
 		local key = string.match(pt, "^/video/(.+)")
 		if key then return key end
-	end
+	end]]
 	return false
 end
 
