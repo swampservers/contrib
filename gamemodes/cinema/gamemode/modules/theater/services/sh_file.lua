@@ -10,6 +10,9 @@ SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
 	if url.scheme == "rtmp" then return url.encoded end 
+	if string.sub( url.path, -5) == ".webm" then
+		return url.encoded
+	end
 	if string.sub( url.path, -4) == ".mp4" then
 		if string.match( url.host, "dropbox.com" ) then
 			return "https://www.dropbox.com"..url.path.."?dl=1"
