@@ -27,8 +27,10 @@ PS_UniqueModelProduct({
 	description = "Rest in peace Billy Herrington, you will be missed.",
 	model = 'models/vinrax/player/billy_herrington.mdl',
 	OnBuy = function(self, ply)
-		ply:Give("weapon_billyh")
-		ply:SelectWeapon("weapon_billyh")
+		if SERVER then
+			ply:Give("weapon_billyh")
+			ply:SelectWeapon("weapon_billyh")
+		end
 	end
 })
 
