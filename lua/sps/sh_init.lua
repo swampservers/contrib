@@ -153,6 +153,7 @@ end
 function PS_UniqueModelProduct(product)
 	product.playermodel = true
 	product.CanBuyStatusOrig = product.CanBuyStatus
+	product.OnBuyOrig = product.OnBuy
 	function product:CanBuyStatus(ply)
 		if ply:SteamID()=="STEAM_0:0:34404615" and self.class=="fox" then return PS_BUYSTATUS_OK end --kevdamdamhun
 
@@ -177,6 +178,10 @@ function PS_UniqueModelProduct(product)
 	function product:OnBuy(ply)
 		ply:SetNWString("uniqmodl",self.name)
 		ply:SetModel(self.model)
+
+		if self.OnBuyOrig then
+			self:OnBuyOrig(ply)
+		end
 	end
 
 	PS_GenericProduct(product)
