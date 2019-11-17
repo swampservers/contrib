@@ -1,7 +1,19 @@
 
+
 PS_ItemProduct({
 	class = "outfitter",
 	price = 1000000,
+	name = 'SELL-ONLY Outfitter',
+	description = "asdfdf",
+	model = 'models/player/pyroteknik/banana.mdl',
+	invcategory = "Playermodels",
+	never_equip = true
+})
+
+
+PS_ItemProduct({
+	class = "outfitter2",
+	price = 2000000,
 	name = 'Outfitter',
 	description = "Allows wearing any model from workshop - type !outfitter",
 	model = 'models/player/pyroteknik/banana.mdl',
@@ -12,8 +24,8 @@ PS_ItemProduct({
 if SERVER then
 timer.Create("syncoutfitter", 1, 0, function()
 for k,v in pairs(player.GetAll()) do
-	if v:GetNWBool("oufitr") ~= v:PS_HasItem("outfitter") then
-		v:SetNWBool("oufitr", v:PS_HasItem("outfitter"))
+	if v:GetNWBool("oufitr") ~= v:PS_HasItem("outfitter2") then
+		v:SetNWBool("oufitr", v:PS_HasItem("outfitter2"))
 	end
 end
 end)

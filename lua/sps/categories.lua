@@ -119,7 +119,7 @@ PS_Categories = {
 					"crusadermodel",
 					"minecraftmodel",
 					"ponymodel",
-					"outfitter"
+					"outfitter2"
 				}
 			},
 			{
