@@ -24,7 +24,7 @@ end
 
 if CLIENT then
 	function SERVICE:GetVideoInfoClientside(key, callback)
-		--EmbeddedCheckFlash(function()
+		EmbeddedCheckCodecs(function()
 			vpanel = vgui.Create("DHTML")
 
 			vpanel:SetSize(100,100)
@@ -69,11 +69,11 @@ if CLIENT then
 			end
 
 			vpanel:OpenURL( urll..key )
-		--end,
-		--function()
-		--	chat.AddText("You need flash to request this. Press F2.")
-		--	return callback()
-		--end)
+		end,
+		function()
+			chat.AddText("You need codecs to request this. Press F2.")
+			return callback()
+		end)
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
