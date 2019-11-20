@@ -2,7 +2,7 @@
 PS_ItemProduct({
 	class = 'trumphatfree',
 	name = 'Unstumpable',
-	description = "Daring, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
+	description = "Bold, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
 	model = 'models/swamponions/colorabletrumphat.mdl',
 	color = Vector(1.0, 0.1, 0.1),
 	maxscale = 2.0,
@@ -413,7 +413,7 @@ PS_ItemProduct({
 	price = 1450,
 	name = 'Cat Ears',
 	description = "Become your favorite neko e-girl gamer!",
-	model = 'models/milaco/CatEars/CatEars.mdl',
+	model = 'models/milaco/catears/catears.mdl',
 	maxscale = 2.0,
 	wear = {
 		attach = "eyes",
@@ -433,7 +433,7 @@ PS_ItemProduct({
 	price = 50000,
 	name = 'uwu Mask',
 	description = "The apparel of one who notices.",
-	model = 'models/milaco/OWOMask/OWOMask.mdl',
+	model = 'models/milaco/owomask/owomask.mdl',
 	maxscale = 2.0,
 	wear = {
 		attach = "eyes",
@@ -453,7 +453,7 @@ PS_ItemProduct({
 	price = 300000,
 	name = 'Top Hat',
 	description = "Feel like a sir",
-	model = 'models/Quattro/TopHat/TopHat.mdl',
+	model = 'models/quattro/tophat/tophat.mdl',
 	maxscale = 2.0,
 	wear = {
 		attach = "eyes",

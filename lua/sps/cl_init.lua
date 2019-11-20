@@ -15,6 +15,45 @@ end)
 
 concommand.Add("ps_togglemenu", function(ply, cmd, args) PS_ToggleMenu() end)
 
+CreateClientConVar("ps_darkmode", "0", true)
+
+function SetPointshopTheme(dark)
+	PS_DarkMode = dark
+	if PS_DarkMode then
+		PS_TileBGColor = Color(37, 37, 37)
+		PS_GridBGColor = Color(33, 33, 33)
+		PS_BotBGColor = Color(33, 33, 33)
+		PS_SwitchableColor = Color(200, 200, 200)
+		pointshopJewImage = Material("pointshop/merchant_white.png")
+	else
+		PS_TileBGColor = Color(234, 234, 234)
+		PS_GridBGColor = Color(200, 200, 200)
+		PS_BotBGColor = Color(64, 64, 64)
+		PS_SwitchableColor = Color(0, 0, 0)
+		pointshopJewImage = Material("pointshop/merchant.png")
+	end
+
+	if IsValid(PS_CustomizerPanel) then
+		PS_CustomizerPanel:Remove()
+	end
+	if IsValid(PS_ShopMenu) then
+		if PS_ShopMenu:IsVisible() then
+			PS_ShopMenu:Remove()
+			PS_ShopMenu = vgui.Create('DPointShopMenu')
+			PS_ShopMenu:Show()
+		else
+			PS_ShopMenu:Remove()
+			PS_ShopMenu = vgui.Create('DPointShopMenu')
+			PS_ShopMenu:SetVisible(false)
+		end
+	end
+end
+SetPointshopTheme(GetConVar("ps_darkmode"):GetBool())
+
+cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
+	SetPointshopTheme(tobool(new))
+end)
+
 concommand.Add("ps_destroymenu", function( ply, cmd, args )
 	if IsValid(PS_CustomizerPanel) then
 		PS_CustomizerPanel:Close()
@@ -22,7 +61,7 @@ concommand.Add("ps_destroymenu", function( ply, cmd, args )
 	if IsValid(PS_ShopMenu) then
 		PS_ShopMenu:Remove()
 	end
-end )
+end)
 
 function PS_ToggleMenu()
 	if not IsValid(PS_ShopMenu) then
@@ -239,6 +278,13 @@ local function AddScaleRecursive(ent, b, scn, recurse, safety)
 	sco.x = sco.x * scn.x
 	sco.y = sco.y * scn.y
 	sco.z = sco.z * scn.z
+	
+	if ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
+		sco.x = math.min(sco.x,1)
+		sco.y = math.min(sco.y,1)
+		sco.z = math.min(sco.z,1)
+	end
+	
 	ent:ManipulateBoneScale(b, sco)
 
 	if recurse then

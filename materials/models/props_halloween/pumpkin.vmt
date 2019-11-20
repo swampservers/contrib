@@ -1,0 +1,28 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/props_halloween/pumpkin"
+
+	"$detail" "models/props_halloween/pumpkin_detail"
+	"$detailscale" "1"
+	"$detailblendfactor" 1
+	"$detailblendmode" 5
+
+	"$phong" "1"
+	"$phongexponent" "3"
+	"$phongboost" ".25"	
+	"$phongfresnelranges"	"[2 0 2]"
+	"$basemapalphaphongmask" "1"
+
+	"$rimlight" "0"
+
+	"Proxies" //"Glow" feature
+	{
+ 		"Sine"
+ 		{
+  			"sinemax" "1"
+ 	 		"sinemin" ".25"
+  			"sineperiod" "2"
+ 	 		"resultvar" "$detailblendfactor"
+ 		}
+	}
+}

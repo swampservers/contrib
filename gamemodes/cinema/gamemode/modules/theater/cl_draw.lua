@@ -478,7 +478,7 @@ hook.Add("HUDPaint", "DrawNoFlashWarning", function()
 		if (not EmbeddedIsReady()) then return end
 		local needschromium = Theater._Video:Service().NeedsChromium and (not EmbeddedHasChromium())
 		local needsflash = Theater._Video:Service().NeedsFlash and (not EmbeddedHasFlash())
-		local needscodecs = Theater._Video:Duration()==0 and Theater._Video:Service().LivestreamNeedsCodecs and (not EmbeddedHasCodecs())
+		local needscodecs = ((Theater._Video:Duration()==0 and Theater._Video:Service().LivestreamNeedsCodecs) or Theater._Video:Service().NeedsCodecs) and (not EmbeddedHasCodecs())
 
 		if needschromium or needsflash or needscodecs then
 			local plural = (needschromium and 1 or 0) + (needsflash and 1 or 0) + (needscodecs and 1 or 0) > 1 and "them" or "it"

@@ -1,4 +1,0 @@
-sps/categories.lua
-sps/items/wearables.lua
-sps/items/primitives.lua
-sps/items/slots.lua

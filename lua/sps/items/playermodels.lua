@@ -1,4 +1,42 @@
 
+
+PS_ItemProduct({
+	class = "outfitter",
+	price = 1000000,
+	name = 'SELL-ONLY Outfitter',
+	description = "asdfdf",
+	model = 'models/player/pyroteknik/banana.mdl',
+	invcategory = "Playermodels",
+	never_equip = true
+})
+
+
+PS_ItemProduct({
+	class = "outfitter2",
+	price = 2000000,
+	name = 'Outfitter',
+	description = "Allows wearing any model from workshop - type !outfitter",
+	model = 'models/player/pyroteknik/banana.mdl',
+	invcategory = "Playermodels",
+	never_equip = true
+})
+
+if SERVER then
+timer.Create("syncoutfitter", 1, 0, function()
+for k,v in pairs(player.GetAll()) do
+	if v:GetNWBool("oufitr") ~= v:PS_HasItem("outfitter2") then
+		v:SetNWBool("oufitr", v:PS_HasItem("outfitter2"))
+	end
+end
+end)
+end
+
+hook.Add("CanOutfit","ps_outfitter",function(ply,mdl,wsid)
+	return ply:GetNWBool("oufitr")
+end)
+
+
+
 PS_ItemProduct({
 	class = "inflater",
 	price = 200000,
@@ -57,6 +95,14 @@ PS_PlayermodelItemProduct({
 	name = 'The Joker',
 	description = "Now yuo see...",
 	model = 'models/player/bobert/aojoker.mdl',
+	PlayerSetModel = function(self, ply) end
+})
+
+PS_PlayermodelItemProduct({
+	class = 'minecraftmodel',
+	price = 400064,
+	name = 'Block Man',
+	model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
 	PlayerSetModel = function(self, ply) end
 })
 

@@ -258,6 +258,7 @@ function SWEP:Reload()
 			self:FailStroke("hole",true)
 		
 			self.ActiveBall:Remove()
+self.ActiveBall.removing=true
 			self.ActiveBall = nil
 		end
 	
@@ -307,7 +308,7 @@ function SWEP:PrimaryAttack()
 				self:SetClip1(0)
 				self.ActiveBall = ball
 			else
-				self:GetOwner():ChatPrint("Cannot place ball here!")
+				self:GetOwner():ChatPrint("[red]Cannot place ball here!")
 			end
 			
 		end
@@ -391,7 +392,7 @@ function SWEP:FinishStroke(hole)
 				self:GetOwner():SetPData("golf_"..hole, tostring(strk))
 			end
 		end
-		if !joke then GolfNotify("[yellow]"..self:GetOwner():Nick() .." completed hole '"..hole.. "' with "..endm) end
+		if !joke then GolfNotify("[yellow]"..self:GetOwner():Nick() .." completed hole '[gold]"..hole.. "[yellow]' with "..endm) end
 		if SERVER then
 			local iwonsomething = false
 			local strokes = " strokes"
@@ -455,7 +456,7 @@ function SWEP:FailStroke(hole,nan)
 	local snd = "hl1/fvox/bell.wav"
 	self:GetOwner():EmitSound(snd,100,75)
 	if nan then else
-		GolfNotify(self:GetOwner():Nick() .." Failed Hole")
+		GolfNotify("[red]"..self:GetOwner():Nick() .." failed a hole")
 	end
 	
 	self:SetCurrentStroke(0)

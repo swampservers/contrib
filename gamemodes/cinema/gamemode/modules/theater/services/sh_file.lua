@@ -4,12 +4,15 @@ SERVICE.Name 		= "File"
 
 SERVICE.Mature = true
 
-SERVICE.NeedsFlash = true
+SERVICE.NeedsCodecs = true
 
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
 	if url.scheme == "rtmp" then return url.encoded end 
+	if string.sub( url.path, -5) == ".webm" then
+		return url.encoded
+	end
 	if string.sub( url.path, -4) == ".mp4" then
 		if string.match( url.host, "dropbox.com" ) then
 			return "https://www.dropbox.com"..url.path.."?dl=1"
@@ -21,7 +24,7 @@ end
 
 if CLIENT then
 	function SERVICE:GetVideoInfoClientside(key, callback)
-		EmbeddedCheckFlash(function()
+		EmbeddedCheckCodecs(function()
 			vpanel = vgui.Create("DHTML")
 
 			vpanel:SetSize(100,100)
@@ -68,7 +71,7 @@ if CLIENT then
 			vpanel:OpenURL( urll..key )
 		end,
 		function()
-			chat.AddText("You need flash to request this. Press F2.")
+			chat.AddText("You need codecs to request this. Press F2.")
 			return callback()
 		end)
 	end

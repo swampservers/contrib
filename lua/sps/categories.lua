@@ -117,7 +117,9 @@ PS_Categories = {
 					"jokermodel",
 					"neckbeardmodel",
 					"crusadermodel",
-					"ponymodel"
+					"minecraftmodel",
+					"ponymodel",
+					"outfitter2"
 				}
 			},
 			{

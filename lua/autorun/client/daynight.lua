@@ -35,6 +35,8 @@ if IsValid(LocalPlayer()) and LocalPlayer():Nick()=="Swamp" then
 end
 ]]
 
+RunConsoleCommand("pp_colormod","0")
+
 matproxy.Add({
 	name = "cm_dn",
 	init = function( self, mat, values )
