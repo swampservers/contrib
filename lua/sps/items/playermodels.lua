@@ -102,6 +102,7 @@ PS_PlayermodelItemProduct({
 	class = 'minecraftmodel',
 	price = 400064,
 	name = 'Block Man',
+	description = "A Minecraft player model capable of applying custom skins.",
 	model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
 	PlayerSetModel = function(self, ply) end
 })
