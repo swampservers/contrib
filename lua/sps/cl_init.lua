@@ -338,8 +338,8 @@ function PS_ApplyBoneMods(ent, mods)
 	--clamp the amount of stacking
 	for x=0,(ent:GetBoneCount()-1) do
 		local old = ent:GetManipulateBoneScale(x)
-		local mn = 0.5*0.5
-		local mx = 1.5*1.5
+		local mn = 0.125 --0.5*0.5*0.5
+		local mx = 3.375 --1.5*1.5*1.5
 		old.x = math.Clamp(old.x, mn, mx)
 		old.y = math.Clamp(old.y, mn, mx)
 		old.z = math.Clamp(old.z, mn, mx)
