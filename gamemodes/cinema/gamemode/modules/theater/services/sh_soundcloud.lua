@@ -9,7 +9,7 @@ end
 
 if CLIENT then
 	function SERVICE:GetVideoInfoClientside(key, callback)
-		EmbeddedCheckFlash(function()
+		EmbeddedCheckChromium(function()
 			local vpanel = vgui.Create("DHTML")
 			
 			vpanel:SetSize(100,100)
