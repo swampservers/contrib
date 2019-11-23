@@ -56,17 +56,27 @@ if SERVER then
 		end
 	end)
 	
-	hook.Add("PlayerDeath","DeathInPit",function(ply)
+	hook.Add("PlayerDeath","DeathInPitGym",function(ply)
 		if ply:GetLocationName() == "The Pit" then
 			ply.PitDeath = true
 		end
+		if ply:GetLocationName() == "Gym" then
+			ply.DodgeballDeath = true
+		end
 	end)
 
-	hook.Add("PlayerSpawn","SpawnNextToPit",function(ply)
+	hook.Add("PlayerSpawn","SpawnNextToPitGym",function(ply)
 		if ply.PitDeath then
 			ply.PitDeath = false
 			timer.Simple(0,function()
 				ply:SetPos(Vector(math.random(-256,256),-256,0))
+				ply:SetEyeAngles(Angle(0,-90,0))
+			end)
+		end
+		if ply.DodgeballDeath then
+			ply.DodgeballDeath = false
+			timer.Simple(0,function()
+				ply:SetPos(Vector(math.random(2160, 1903), -1185, -32))
 				ply:SetEyeAngles(Angle(0,-90,0))
 			end)
 		end
