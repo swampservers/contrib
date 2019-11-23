@@ -160,6 +160,7 @@ function PANEL:Select()
 		if self.data.configurable then
 			p = vgui.Create('DButton', PS_DescriptionPanel)
 			p:SetText("Customize")
+			p:SetTextColor(PS_SwitchableColor)
 			p:DockMargin(16,12,16,4)
 			p:Dock(TOP)
 			p.DoClick = function(butn)
@@ -169,10 +170,20 @@ function PANEL:Select()
 					PS_CustomizerPanel:Open(self.item)
 				end
 			end
+			p.Paint = function(panel, w, h)
+			    if panel.Depressed then
+			    	panel:SetTextColor(PS_ColorWhite)
+			        draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
+			    else
+			    	panel:SetTextColor(PS_SwitchableColor)
+			        draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+			    end
+			end
 		end
 
 		p = vgui.Create('DButton', PS_DescriptionPanel)
 		p:SetText("Sell for "..tostring(PS_CalculateSellPrice(LocalPlayer(), self.data)).." points")
+		p:SetTextColor(PS_SwitchableColor)
 		p:DockMargin(16,12,16,12)
 		p:Dock(TOP)
 		p.DoClick = function(butn)
@@ -181,6 +192,15 @@ function PANEL:Select()
 			else
 				butn:SetText("CONFIRM?")
 			end
+		end
+		p.Paint = function(panel, w, h)
+		    if panel.Depressed then
+		    	panel:SetTextColor(PS_ColorWhite)
+		        draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
+		    else
+		    	panel:SetTextColor(PS_SwitchableColor)
+		        draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+		    end
 		end
 
 	end
@@ -401,7 +421,7 @@ function PANEL:PaintOver(w,h)
 		surface.DrawTexturedRect( w-20, 4, 16, 16 )
 
 		if self.icontext then
-			draw.SimpleText(self.icontext, "PS_ProductName", self:GetWide() - 22, 11, PS_ColorBlack, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)				
+			draw.SimpleText(self.icontext, "PS_ProductName", self:GetWide() - 22, 11, PS_SwitchableColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)				
 		end
 	end
 
