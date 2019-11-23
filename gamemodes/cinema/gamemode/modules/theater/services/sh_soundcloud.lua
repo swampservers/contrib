@@ -4,7 +4,10 @@ SERVICE.Name 		  = "Soundcloud"
 SERVICE.NeedsChromium = true
 
 function SERVICE:GetKey(url)
-	return string.match(url.host,"soundcloud.com")
+	if string.match(url.host,"soundcloud.com") then
+		return url.encoded
+	end
+	return false
 end
 
 if CLIENT then
@@ -27,35 +30,24 @@ if CLIENT then
 			end)
 	
 			function vpanel:ConsoleMessage(msg)
-				if msg:StartWith("DURATION:") then
-					local duration = math.ceil(tonumber(string.sub(msg,10)))/1000
+                                local splitmsg = string.Explode(":", msg, false)
+				if table.remove(splitmsg, 0) == "DURATIONTITLE" then
+                                        local duration = math.ceil(tonumber(table.remove(splitmsg,0))/1000)
+                                        local title = table.concat(splitmsg, ":")
 					print("Duration: "..duration)
+                                        print("Title: "..title)
 					self:Remove()
 					print("Success!")
-					callback({duration=duration})
+					callback({duration=duration,title=title})
 				end
 			end
 			
-			vpanel:OpenURL("http://swampservers.net/cinema/soundcloud.html?url="..string.JavascriptSafe(key))
+			vpanel:OpenURL("https://swampservers.net/cinema/soundcloud.html?url="..string.JavascriptSafe(key))
 		end,
 		function()
-			chat.AddText("You need flash to request this. Press F2.")
+			chat.AddText("You need chromium to request this. Press F2.")
 			return callback()
 		end)
-	end
-
-	function SERVICE:LoadVideo( Video, panel )
-		local url = "http://swampservers.net/cinema/soundcloud.html?url="..string.JavascriptSafe(Video:Key())
-		panel:OpenURL(url)
-	
-		local startTime = CurTime() - Video:StartTime()
-		
-		function panel:ConsoleMessage(msg)
-			if msg:StartWith("READY") then
-				panel:QueueJavascript("th_volume("..theater.GetVolume()..");")
-				panel:QueueJavascript("th_seek("..startTime..");")
-			end
-		end
 	end
 end
 
