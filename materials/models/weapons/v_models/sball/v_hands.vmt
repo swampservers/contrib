@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\weapons\v_models\sball\v_hands"
+	"$bumpmap" "models\weapons\v_models\sball\v_hands_normal"
+	"$normalmapalphaenvmapmask" "0"
+}
