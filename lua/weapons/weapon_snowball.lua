@@ -24,8 +24,6 @@ SWEP.Primary.Automatic = true
 SWEP.ThrowSound = Sound("weapons/iceaxe/iceaxe_swing1.wav")
 SWEP.ReloadSound = Sound("weapons/weapon_snowball/crunch.ogg")
 
-if SERVER then for k, v in pairs(player.GetAll()) do v:Give("weapon_357") end end
-
 local ti = os.date("%B", os.time())
 if ti == "December" then --only activate during December
 	hook.Add("PlayerChangeLocation", "ChristmasSnowballs", function(ply, loc, old) --auto equip the snowball when outside
