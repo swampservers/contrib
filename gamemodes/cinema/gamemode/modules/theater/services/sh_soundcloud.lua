@@ -30,19 +30,19 @@ if CLIENT then
 			end)
 	
 			function vpanel:ConsoleMessage(msg)
-                                local splitmsg = string.Explode(":", msg, false)
+				local splitmsg = string.Explode(":", msg, false)
 				if table.remove(splitmsg, 0) == "DURATIONTITLE" then
-                                        local duration = math.ceil(tonumber(table.remove(splitmsg,0))/1000)
-                                        local title = table.concat(splitmsg, ":")
+					local duration = math.ceil(tonumber(table.remove(splitmsg,0))/1000)
+					local title = table.concat(splitmsg, ":")
 					print("Duration: "..duration)
-                                        print("Title: "..title)
+					print("Title: "..title)
 					self:Remove()
 					print("Success!")
 					callback({duration=duration,title=title})
 				end
 			end
 			
-			vpanel:OpenURL("https://swampservers.net/cinema/soundcloud.html?url="..string.JavascriptSafe(key))
+			vpanel:OpenURL("http://swampservers.net/cinema/soundcloud.html?url="..string.JavascriptSafe(key))
 		end,
 		function()
 			chat.AddText("You need chromium to request this. Press F2.")
