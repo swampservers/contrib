@@ -39,28 +39,15 @@ end
 
 if SERVER then --network the player's new color
 	util.AddNetworkString("CLtoSVSnowballColor")
-	util.AddNetworkString("SVtoCLSnowballColor")
 	net.Receive("CLtoSVSnowballColor", function(len, ply)
 		local col = net.ReadTable()
-		ply.currentcolor = col
-		net.Start("SVtoCLSnowballColor")
-			net.WriteTable(col)
-			net.WriteEntity(ply)
-			net.Broadcast()
-	end)
-else
-	net.Receive("SVtoCLSnowballColor", function()
-		local col = net.ReadTable()
-		local ply = net.ReadEntity()
-		if !IsValid(ply) then return end
-		ply.currentcolor = col
+		ply:SetNWVector("SnowballColor", Color(col.r, col.g, col.b):ToVector())
 	end)
 end
 
 function SWEP:Initialize()
 	self:SetWeaponHoldType(self.HoldType)
 	self.Weapon:SetClip1(1)
-	self.Owner.currentcolor = self.Owner.currentcolor or Color(255, 255, 255)
 end
 
 function SWEP:PrimaryAttack()
@@ -106,9 +93,9 @@ function SWEP:SecondaryAttack() --custom color select menu
 		local m = vgui.Create("DColorMixer", f)
 		m:Dock(FILL)
 		m:SetPalette(true)
-		m:SetAlphaBar(true)
+		m:SetAlphaBar(false)
 		m:SetWangs(true)
-		m:SetColor(self.Owner.currentcolor)
+		m:SetColor(self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor())
 		
 		local b = vgui.Create("DButton", f)
 		b:SetSize(100, 25)
@@ -116,7 +103,6 @@ function SWEP:SecondaryAttack() --custom color select menu
 		b:SetText("Change trail color")
 		b.DoClick = function()
 			f:Close()
-			self.Owner.currentcolor = m:GetColor()
 			net.Start("CLtoSVSnowballColor")
 				net.WriteTable(m:GetColor())
 				net.SendToServer()

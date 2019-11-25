@@ -18,7 +18,9 @@ function ENT:Initialize()
 		phys:EnableGravity(true)
 	end
 
-	self.Trail = util.SpriteTrail(self.Entity, 0, self:GetOwner().currentcolor, false, 15, 0, 0.8, 1/(15+0)*0.5, "trails/laser.vmt") --color trail
+	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
+
+	self.Trail = util.SpriteTrail(self.Entity, 0, plycol, false, 15, 0, 0.8, 1/(15+0)*0.5, "trails/laser.vmt") --color trail
 end
 
 function ENT:PhysicsCollide(data)
