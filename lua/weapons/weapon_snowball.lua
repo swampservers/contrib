@@ -21,7 +21,7 @@ SWEP.Spawnable = true
 SWEP.Primary.ClipSize = 1
 
 SWEP.Primary.Automatic = true
-SWEP.ThrowSound = Sound("weapons/iceaxe/iceaxe_swing1.wav")
+SWEP.ThrowSound = Sound("Weapon_Crowbar.Single")
 SWEP.ReloadSound = Sound("weapons/weapon_snowball/crunch.ogg")
 
 local ti = os.date("%B", os.time())
