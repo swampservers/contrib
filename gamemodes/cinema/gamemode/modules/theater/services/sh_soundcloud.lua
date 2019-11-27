@@ -31,8 +31,8 @@ if CLIENT then
 	
 			function vpanel:ConsoleMessage(msg)
 				local splitmsg = string.Explode(":", msg, false)
-				if table.remove(splitmsg, 0) == "DURATIONTITLE" then
-					local duration = math.ceil(tonumber(table.remove(splitmsg,0))/1000)
+				if table.remove(splitmsg, 1) == "DURATIONTITLE" then
+					local duration = math.ceil(tonumber(table.remove(splitmsg,1))/1000)
 					local title = table.concat(splitmsg, ":")
 					print("Duration: "..duration)
 					print("Title: "..title)
