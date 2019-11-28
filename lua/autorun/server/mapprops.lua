@@ -6,9 +6,6 @@ function GetMapPropTable()
     math.randomseed(1337)
 
 	local stuff = {
-        --{class="prop_physics",pos=Vector(0,576,0),ang=Angle(0,90,5),model="models/unconid/xmas/xmas_tree.mdl", scale=1.2},
-
-        --{class="prop_physics",pos=Vector(-562, -5264, 0),ang=Angle(0,0,0),model="models/unconid/xmas/xmas_tree.mdl"},
         {class="gmt_instrument_piano",pos=Vector(-2480,-700,0),ang=Angle(0,0,0)},
         {class="gmt_instrument_piano",pos=Vector(480,1680,160),ang=Angle(0,0,0)},
         
@@ -39,7 +36,12 @@ function GetMapPropTable()
         {class="slotmachine",betamt=1000000,pos=Vector(2000+math.random(-arcadexposrnd,arcadexposrnd),1500+math.random(-arcadeyposrnd,arcadeyposrnd),0),ang=Angle(0,270+math.random(-arcadeanglernd,arcadeanglernd),0)},
 
         --{class="arcade_doom",pos=Vector(1720,1320,0),ang=Angle(0,0,0)},
-	}
+    }
+    
+    if os.date("%B", os.time()) == "December" then
+        table.insert(stuff, {class="prop_physics",pos=Vector(0,576,0),ang=Angle(0,90,5),model="models/unconid/xmas/xmas_tree.mdl", scale=1.2})
+        table.insert(stuff, {class="prop_physics",pos=Vector(-562, -5264, 0),ang=Angle(0,0,0),model="models/unconid/xmas/xmas_tree.mdl"})
+    end
 
     math.randomseed(os.time())
     
