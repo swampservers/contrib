@@ -21,7 +21,7 @@ end
 
 hook.Add("KeyRelease","DoMonsterHook",function(ply, key)
 	if key == IN_ATTACK and !ply.cantStartmonster and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_monster" then
-		if ply.monsterCount < 10 then ply.cantStartmonster=false end
+		if ply.monsterCount and ply.monsterCount < 10 then ply.cantStartmonster=false end
 		ReleaseMonster(ply)
 	end
 end)
