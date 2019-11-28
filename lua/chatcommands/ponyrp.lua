@@ -12,7 +12,7 @@ RegisterChatCommand({'ponyrp'}, function(ply, arg)
 end, {global=false, throttle=true})
 
 hook.Add("PlayerSay", "TreatmentRoomChat", function(ply, text, team)
-	if ply:GetLocationName() == "Treatment Room" then
+	if ply:GetLocationName() == "Treatment Room" and text != "/tpa" and text != "!tpa" then
 		return "i like ponies"
 	end
 end)
