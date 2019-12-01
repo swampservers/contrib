@@ -29,7 +29,7 @@ if ti == "December" then --only activate during December
 	hook.Add("PlayerChangeLocation", "ChristmasSnowballs", function(ply, loc, old) --auto equip the snowball when outside
 		if !IsValid(ply) then return end
 		
-		local locname = GetLocationNameByIndex(loc)
+		local locname = ply:GetLocationName()
 
 		if locname == "Outside" or locname == "Golf" and !ply:HasWeapon("weapon_snowball") then
 			ply:Give("weapon_snowball")
