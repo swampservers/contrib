@@ -19,5 +19,5 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnRemove()
-	if self.Owner and self.Owner:IsValid() then self:ExtEmitSound("billyh/spank.ogg", {shared=true}) end
+	if self.Owner and self.Owner:IsValid() then self:ExtEmitSound("billyh/spank.ogg", {shared=true, channel=CHAN_AUTO}) end
 end
