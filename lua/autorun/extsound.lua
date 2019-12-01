@@ -27,7 +27,7 @@ end
 meta = FindMetaTable("Entity")
 
 function meta:ExtEmitSound(sound, options)
-	if IsValid(self.Owner) then
+	if IsValid(self) and IsValid(self.Owner) then
 		options = options or {}
 		options.ent = self
 		options.channel = options.channel or CHAN_WEAPON
