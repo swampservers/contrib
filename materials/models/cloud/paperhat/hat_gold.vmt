@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\cloud\paperhat\hat_gold"
+	"$surfaceprop" "plastic"
+}

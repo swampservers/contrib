@@ -1,0 +1,76 @@
+"vertexlitgeneric"
+{
+	"$basetexture"	 "models\unconid\xmas\top_star"
+	"$bumpmap"	 "models\unconid\xmas\Ornament_normal_1"
+
+
+	"$phong"     "1"
+	"$phongexponent"  "8"
+	"$phongboost"   "1"
+	"$phongfresnelranges"   "[7 9 3]"
+	"$phongalbedotint" "1"
+	$PhongWarpTexture	 "models\unconid\butterfly\butterfly_warp"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "30"
+	"$rimlightboost" "0.2"
+
+	 $envmap			env_cubemap
+	 $envmaptint "[.07 .07 .07]"	
+
+
+	"$blendtintbybasealpha"		"1"
+	"$blendtintcoloroverbase"		"0"
+	"$colortint_base"		"{ 215 187 7 }"
+	"$color2" "{ 215 187 7 }"
+	"$colortint_tmp"		"[0 0 0]"
+	"$bumpmapalphaphongmask"		"1"
+	"$cloakPassEnabled"		"1"
+	"$detail"		"effects/tiledfire/fireLayeredSlowTiled512"
+	"$detailscale"		"5"
+	"$detailblendfactor"		"0"
+	"$detailblendmode"		"6"
+	"$yellow"		"0"
+	">=DX90"
+	{
+		"$selfillum"		"0"
+	}
+	"proxies"
+	{
+		"invis"
+		{
+		}
+		"AnimatedTexture"
+		{
+			"animatedtexturevar"		"$detail"
+			"animatedtextureframenumvar"		"$detailframe"
+			"animatedtextureframerate"		"30"
+		}
+		"BurnLevel"
+		{
+			"resultVar"		"$detailblendfactor"
+		}
+		"ItemTintColor"
+		{
+			"resultVar"		"$colortint_tmp"
+		}
+		"SelectFirstIfNonZero"
+		{
+			"srcVar1"		"$colortint_tmp"
+			"srcVar2"		"$colortint_base"
+			"resultVar"		"$color2"
+		}
+		"YellowLevel"
+		{
+			"resultVar"		"$yellow"
+		}
+		"Multiply"
+		{
+			"srcVar1"		"$color2"
+			"srcVar2"		"$yellow"
+			"resultVar"		"$color2"
+		}
+	}
+	
+	
+}

@@ -1,0 +1,31 @@
+"vertexlitgeneric"
+{
+	"$basetexture"	 "models\unconid\xmas\lights_2"
+	"$bumpmap"	 "models\unconid\xmas\lights_normal"
+	 
+	 $selfillum 1
+	
+
+	"$phong" "1"
+	"$phongexponent" "5"
+	"$phongboost" "1"	
+	"$phongfresnelranges"	"[.25 .5 2]"
+	
+	
+	"$rimlight" "1"												
+	"$rimlightexponent" "1"				
+	"$rimlightboost" ".3"
+
+
+	"$surfaceprop" "Default"
+
+	"Proxies"
+	{
+	"AnimatedTexture"
+	{
+	"animatedTextureVar" "$basetexture"
+	"animatedTextureFrameNumVar" "$frame"
+	"animatedTextureFrameRate" "3"
+	}
+
+}
