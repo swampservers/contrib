@@ -79,7 +79,7 @@ function SWEP:PrimaryAttack()
 		end
 	end
 	self.Weapon:SetNextPrimaryFire(CurTime() + 1.2)
-	timer.Simple(0.6, function() self:Reload() end)
+	timer.Simple(0.6, function() if IsValid(self) then self:Reload() end end)
 end
 
 function SWEP:SecondaryAttack() --custom color select menu
