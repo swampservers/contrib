@@ -16,10 +16,6 @@
 	"$PhongAlbedoTint" "1"
 	"$phongtint" "[.6 .7 .65]"
 
-	"$rimlight" "1"
-	"$rimlightexponent" "16"
-	"$rimlightboost" ".4"
-	
 	"$surfaceprop" "Metal"
 	"$nocull" 1
 
