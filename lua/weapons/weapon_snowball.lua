@@ -10,7 +10,8 @@ SWEP.SlotPos = 1
 
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
-SWEP.ViewModelFOV = 68
+SWEP.ViewModelFOV = 80
+SWEP.ViewModelFlip = true
 
 SWEP.AutoSwitchTo = false
 SWEP.HoldType = "grenade"
@@ -46,13 +47,14 @@ if SERVER then --network the player's new color
 end
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType(self.HoldType)
+	self:SetHoldType(self.HoldType)
 	self.Weapon:SetClip1(1)
 end
 
 function SWEP:PrimaryAttack()
-	if !IsFirstTimePredicted() then return end
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
+	self.Weapon:SendWeaponAnim(ACT_VM_THROW)
+	if !IsFirstTimePredicted() then return end
 	self.Weapon:EmitSound(self.ThrowSound, 75, 100, 0.4, CHAN_WEAPON)
 
 	if SERVER then
@@ -77,7 +79,7 @@ function SWEP:PrimaryAttack()
 		end
 	end
 	self.Weapon:SetNextPrimaryFire(CurTime() + 1.2)
-	self:Reload()
+	timer.Simple(0.6, function() if IsValid(self) then self:Reload() end end)
 end
 
 function SWEP:SecondaryAttack() --custom color select menu

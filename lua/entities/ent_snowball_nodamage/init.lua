@@ -31,6 +31,10 @@ function ENT:PhysicsCollide(data)
 		data.HitEntity:SetVelocity(Vector(fwd * 100))
 	end
 
+	local p1 = data.HitPos + data.HitNormal
+	local p2 = data.HitPos - data.HitNormal
+	util.Decal("Splash.Large", p1, p2)
+
 	effectdata:SetOrigin(pos)
 	effectdata:SetScale(1.5)
 	self:EmitSound(hitsnd)
