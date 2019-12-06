@@ -95,6 +95,7 @@ function SWEP:SecondaryAttack() --custom color select menu
 		f:Center()
 		f:MakePopup()
 		f:SetTitle("Trail Color Picker")
+		f:SetIcon("icon16/color_wheel")
 
 		local m = vgui.Create("DColorMixer", f)
 		m:Dock(FILL)

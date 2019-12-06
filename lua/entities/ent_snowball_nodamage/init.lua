@@ -10,7 +10,7 @@ function ENT:Initialize()
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
-	self:PhysicsInitSphere(10, "ice")
+	self:PhysicsInitSphere(3, "ice")
 
 	local phys = self:GetPhysicsObject()
 	if phys:IsValid() then
@@ -31,8 +31,8 @@ function ENT:PhysicsCollide(data)
 		data.HitEntity:SetVelocity(Vector(fwd * 100))
 	end
 
-	local p1 = data.HitPos + data.HitNormal
-	local p2 = data.HitPos - data.HitNormal
+	local p1 = data.HitPos + (data.HitNormal * 2)
+	local p2 = data.HitPos - (data.HitNormal * 2)
 	util.Decal("Splash.Large", p1, p2)
 
 	effectdata:SetOrigin(pos)
@@ -40,5 +40,5 @@ function ENT:PhysicsCollide(data)
 	self:EmitSound(hitsnd)
 	util.Effect("WheelDust", effectdata)
 	util.Effect("GlassImpact", effectdata)
-	SafeRemoveEntityDelayed(self, 0.01)
-end 
+	SafeRemoveEntityDelayed(self, 0.1)
+end
