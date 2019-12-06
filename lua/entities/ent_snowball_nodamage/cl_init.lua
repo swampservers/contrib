@@ -5,3 +5,8 @@ function ENT:Draw()
 end
 
 function ENT:Think() end
+
+function ENT:Initialize() --debug
+	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
+	print("Spawning snowball, plycol is "..tostring(plycol))
+end
