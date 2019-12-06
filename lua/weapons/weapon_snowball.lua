@@ -58,8 +58,9 @@ end
 function SWEP:PrimaryAttack()
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	self.Weapon:SendWeaponAnim(ACT_VM_THROW)
-	if !IsFirstTimePredicted() then return end
+	self.Weapon:SetNextPrimaryFire(CurTime() + 1)
 	self.Weapon:EmitSound(self.ThrowSound, 75, 100, 0.4, CHAN_WEAPON)
+	if !IsFirstTimePredicted() then return end
 
 	if SERVER then
 		local front = self.Owner:GetAimVector()
@@ -82,7 +83,6 @@ function SWEP:PrimaryAttack()
 			end
 		end
 	end
-	self.Weapon:SetNextPrimaryFire(CurTime() + 1.2)
 	timer.Simple(0.6, function() if IsValid(self) then self:Reload() end end)
 end
 
