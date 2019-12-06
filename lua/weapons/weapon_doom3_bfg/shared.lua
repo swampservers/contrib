@@ -198,7 +198,7 @@ function SWEP:BfgFire(charge)
 	self:SetCannotHolster(CurTime() +.7)
 	if SERVER then
 		--strip after firing
-		timer.Simple(0.5, function() self:Remove() end)
+		timer.Simple(0.5, function() if IsValid(self) then self:Remove() end end)
 
 		local pos = self.Owner:GetShootPos()
 		local ang = self.Owner:GetAimVector():Angle()

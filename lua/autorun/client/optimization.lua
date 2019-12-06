@@ -64,7 +64,6 @@ DontRenderSkyboxHere = {
 	["Sewer Theater"]=true,
 	["Maintenance Room"]=true,
 	["Potassium Palace"]=true,
-	["Hell"]=true,
 	["Sewer Tunnels"]=true
 }
 
