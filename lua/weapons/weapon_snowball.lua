@@ -42,7 +42,6 @@ if SERVER then --network the player's new color
 	util.AddNetworkString("CLtoSVSnowballColor")
 	net.Receive("CLtoSVSnowballColor", function(len, ply)
 		local col = net.ReadTable()
-		print(ply:SteamID64())
 		if ply:SteamID64() == "76561198103347732" then --debug
 			ply:ChatPrint("Netmessage received, selected color: "..table.ToString(col))
 		end
@@ -95,7 +94,7 @@ function SWEP:SecondaryAttack() --custom color select menu
 		f:Center()
 		f:MakePopup()
 		f:SetTitle("Trail Color Picker")
-		f:SetIcon("icon16/color_wheel")
+		f:SetIcon("icon16/color_wheel.png")
 
 		local m = vgui.Create("DColorMixer", f)
 		m:Dock(FILL)

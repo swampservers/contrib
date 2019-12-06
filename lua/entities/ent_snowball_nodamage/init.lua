@@ -19,6 +19,9 @@ function ENT:Initialize()
 	end
 
 	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
+	if self.Owner:SteamID64() == "76561198103347732" then --debug
+		self.Owner:ChatPrint("Spawning snowball serverside, plycol is "..tostring(plycol))
+	end
 
 	self.Trail = util.SpriteTrail(self.Entity, 0, plycol, false, 15, 0, 0.8, 1/(15+0)*0.5, "trails/laser.vmt") --color trail
 end
