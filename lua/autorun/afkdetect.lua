@@ -6,6 +6,7 @@ if SERVER then
 		v:StripWeapon("weapon_switch")
 		v:StripWeapon("weapon_encyclopedia")
 		v:StripWeapon("weapon_fidget")
+		v:StripWeapon("weapon_funnybanana")
 		v:StripWeapon("weapon_monster")
 		v:StripWeapon("weapon_popcorn")
 		v:StripWeapon("weapon_kleiner")

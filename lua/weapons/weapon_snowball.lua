@@ -42,6 +42,9 @@ if SERVER then --network the player's new color
 	util.AddNetworkString("CLtoSVSnowballColor")
 	net.Receive("CLtoSVSnowballColor", function(len, ply)
 		local col = net.ReadTable()
+		if ply:SteamID64() == "76561198103347732" then --debug
+			ply:ChatPrint("Netmessage received, selected color: "..table.ToString(col))
+		end
 		ply:SetNWVector("SnowballColor", Color(col.r, col.g, col.b):ToVector())
 	end)
 end
@@ -54,8 +57,9 @@ end
 function SWEP:PrimaryAttack()
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	self.Weapon:SendWeaponAnim(ACT_VM_THROW)
-	if !IsFirstTimePredicted() then return end
+	self.Weapon:SetNextPrimaryFire(CurTime() + 1)
 	self.Weapon:EmitSound(self.ThrowSound, 75, 100, 0.4, CHAN_WEAPON)
+	if !IsFirstTimePredicted() then return end
 
 	if SERVER then
 		local front = self.Owner:GetAimVector()
@@ -78,7 +82,6 @@ function SWEP:PrimaryAttack()
 			end
 		end
 	end
-	self.Weapon:SetNextPrimaryFire(CurTime() + 1.2)
 	timer.Simple(0.6, function() if IsValid(self) then self:Reload() end end)
 end
 
@@ -91,6 +94,7 @@ function SWEP:SecondaryAttack() --custom color select menu
 		f:Center()
 		f:MakePopup()
 		f:SetTitle("Trail Color Picker")
+		f:SetIcon("icon16/color_wheel.png")
 
 		local m = vgui.Create("DColorMixer", f)
 		m:Dock(FILL)
@@ -105,6 +109,7 @@ function SWEP:SecondaryAttack() --custom color select menu
 		b:SetText("Change trail color")
 		b.DoClick = function()
 			f:Close()
+			print("Selecting color: "..table.ToString(m:GetColor())) --debug
 			net.Start("CLtoSVSnowballColor")
 				net.WriteTable(m:GetColor())
 				net.SendToServer()
