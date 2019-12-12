@@ -62,23 +62,20 @@ function SWEP:PrimaryAttack()
 	if !IsFirstTimePredicted() then return end
 
 	if SERVER then
-		local front = self.Owner:GetAimVector()
+		local ball = ents.Create("ent_snowball_nodamage")
 
-		if SERVER then 
-			local ball = ents.Create("ent_snowball_nodamage")
+		if IsValid(ball) then
+			local front = self.Owner:GetAimVector()
+			ball:SetOwner(self.Owner)
+			ball:SetPos(self.Owner:GetShootPos() + front * 10 + self.Owner:EyeAngles():Up() * -5)
+			ball:Spawn()
+			ball:Activate()
 
-			if IsValid(ball) then
-				ball:SetOwner(self.Owner)
-				ball:SetPos(self.Owner:GetShootPos() + front * 10 + self.Owner:EyeAngles():Up() * -5)
-				ball:Spawn()
-				ball:Activate()
-
-				local phys = ball:GetPhysicsObject()
-				if IsValid(phys) then
-					local rand = front:Angle()
-					rand = rand:Forward()
-					phys:ApplyForceCenter(rand * 1069)
-				end
+			local phys = ball:GetPhysicsObject()
+			if IsValid(phys) then
+				local rand = front:Angle()
+				rand = rand:Forward()
+				phys:ApplyForceCenter(rand * 1069)
 			end
 		end
 	end

@@ -49,10 +49,10 @@ PS_WeaponProduct({
 
 PS_GenericProduct({
 	class = 'mystery',
-	price = 5000, --5000,3000
-	name = 'Mystery Box', --'Mystery Box','Present'
+	price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
+	name = (os.date("%B", os.time()) == "December" and 'Present') or 'Mystery Box', --'Mystery Box','Present'
 	description = "Contains a random weapon or other item.",
-	model = 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
+	model = (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
 	OnBuy = function(self, ply)
 		if ply.cantmakepresent then
 			ply:PS_GivePoints(self.price)

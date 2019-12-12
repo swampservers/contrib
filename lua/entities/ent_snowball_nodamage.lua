@@ -1,29 +1,46 @@
-AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("shared.lua")
-include('shared.lua')
+AddCSLuaFile()
+
+ENT.Type = "anim"
+DEFINE_BASECLASS("base_gmodentity")
+
+ENT.Model = Model("models/weapons/w_snowball_thrown.mdl")
 
 local hitsnd = Sound("weapons/weapon_snowball/snowhit.ogg")
 
 function ENT:Initialize()
+	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
+
+	if CLIENT then
+		print("Spawning snowball clientside, plycol is "..tostring(plycol)) --debug
+	end
+
 	self.Entity:SetModel(self.Model)
 	self.Entity:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
-	self.Entity:PhysicsInit(SOLID_VPHYSICS)
+	
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
+	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self:PhysicsInitSphere(3, "ice")
 
+	if CLIENT then return end
+
 	local phys = self:GetPhysicsObject()
-	if phys:IsValid() then
+	if IsValid(phys) then
 		phys:Wake()
 		phys:EnableGravity(true)
 	end
-
-	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
+	
 	if self.Owner:SteamID64() == "76561198103347732" then --debug
 		self.Owner:ChatPrint("Spawning snowball serverside, plycol is "..tostring(plycol))
 	end
 
-	self.Trail = util.SpriteTrail(self.Entity, 0, plycol, false, 15, 0, 0.8, 1/(15+0)*0.5, "trails/laser.vmt") --color trail
+	self.Trail = util.SpriteTrail(self.Entity, 0, plycol, false, 4, 0, 0.8, 1/(15+0)*0.5, "trails/smoke.vmt") --color trail
+end
+
+function ENT:Think() end
+
+function ENT:Draw()
+	self.Entity:DrawModel()
 end
 
 function ENT:PhysicsCollide(data)
@@ -43,5 +60,5 @@ function ENT:PhysicsCollide(data)
 	self:EmitSound(hitsnd)
 	util.Effect("WheelDust", effectdata)
 	util.Effect("GlassImpact", effectdata)
-	SafeRemoveEntityDelayed(self, 0.1)
+	SafeRemoveEntityDelayed(self, 0.05)
 end
