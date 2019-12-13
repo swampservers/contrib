@@ -61,7 +61,7 @@ function SWEP:PrimaryAttack()
 	self.Weapon:EmitSound(self.ThrowSound, 75, 100, 0.4, CHAN_WEAPON)
 	if !IsFirstTimePredicted() then return end
 
-	if SERVER then
+	if false then
 		local ball = ents.Create("ent_snowball_nodamage")
 
 		if IsValid(ball) then
