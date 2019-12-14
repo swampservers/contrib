@@ -10,10 +10,6 @@ local hitsnd = Sound("weapons/weapon_snowball/snowhit.ogg")
 function ENT:Initialize()
 	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
 
-	if CLIENT then
-		print("Spawning snowball clientside, plycol is "..tostring(plycol)) --debug
-	end
-
 	self.Entity:SetModel(self.Model)
 	self.Entity:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
 	
@@ -29,10 +25,6 @@ function ENT:Initialize()
 		phys:Wake()
 		phys:EnableGravity(true)
 		phys:SetBuoyancyRatio(0) --make the snowball pass straight through water
-	end
-	
-	if self.Owner:SteamID64() == "76561198103347732" then --debug
-		self.Owner:ChatPrint("Spawning snowball serverside, plycol is "..tostring(plycol))
 	end
 
 	self.Trail = util.SpriteTrail(self.Entity, 0, plycol, false, 4, 0, 0.8, 1/(15+0)*0.5, "trails/smoke.vmt") --color trail
