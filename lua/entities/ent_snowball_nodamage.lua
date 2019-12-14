@@ -28,6 +28,7 @@ function ENT:Initialize()
 	if IsValid(phys) then
 		phys:Wake()
 		phys:EnableGravity(true)
+		phys:SetBuoyancyRatio(0) --make the snowball pass straight through water
 	end
 	
 	if self.Owner:SteamID64() == "76561198103347732" then --debug
@@ -35,6 +36,7 @@ function ENT:Initialize()
 	end
 
 	self.Trail = util.SpriteTrail(self.Entity, 0, plycol, false, 4, 0, 0.8, 1/(15+0)*0.5, "trails/smoke.vmt") --color trail
+	SafeRemoveEntityDelayed(self, 10) --remove the entity automatically in a case where it gets stuck
 end
 
 function ENT:Think() end
