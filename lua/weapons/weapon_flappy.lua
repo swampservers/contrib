@@ -23,6 +23,18 @@ function SWEP:Deploy()
 	if not self.Owner:InTheater() then
 		self:EmitSound("mlady.ogg")
 	end
+	if CLIENT then return end
+	self.FedoraPoint = ents.Create("ent_fedora_point")
+	self.FedoraPoint:SetOwner(self.Owner)
+	self.FedoraPoint:Spawn()
+	self.FedoraPoint:Activate()
+	--self.FedoraPoint:SetPreventTransmit(self.Owner, true)
+end
+
+function SWEP:Holster()
+	if CLIENT then return end
+	if self and self.FedoraPoint then self.FedoraPoint:Remove() end
+	return true
 end
 
 function SWEP:OnRemove()
@@ -31,7 +43,7 @@ function SWEP:OnRemove()
 	end
 end
 
-function SWEP:OwnerChanged( )
+function SWEP:OwnerChanged()
 	if SERVER then
 		self:ExtEmitSound("mlady.ogg", {speech=0.8})
 	end
@@ -96,7 +108,7 @@ function SWEP:DrawWorldModel()
 		else
 			oang:RotateAroundAxis(oang:Right(),-90)
 			oang:RotateAroundAxis(oang:Up(),180)
-			opos = opos + (oang:Right()*-0.3) + (oang:Up()*6.5)
+			opos = opos + (oang:Right()*-0.5) + (oang:Up()*6.5)
 		end
 		self:SetupBones()
 
