@@ -42,9 +42,6 @@ if SERVER then --network the player's new color
 	util.AddNetworkString("CLtoSVSnowballColor")
 	net.Receive("CLtoSVSnowballColor", function(len, ply)
 		local col = net.ReadTable()
-		if ply:SteamID64() == "76561198103347732" then --debug
-			ply:ChatPrint("Netmessage received, selected color: "..table.ToString(col))
-		end
 		ply:SetNWVector("SnowballColor", Color(col.r, col.g, col.b):ToVector())
 	end)
 end
@@ -106,7 +103,6 @@ function SWEP:SecondaryAttack() --custom color select menu
 		b:SetText("Change trail color")
 		b.DoClick = function()
 			f:Close()
-			print("Selecting color: "..table.ToString(m:GetColor())) --debug
 			net.Start("CLtoSVSnowballColor")
 				net.WriteTable(m:GetColor())
 				net.SendToServer()
