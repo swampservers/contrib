@@ -10,12 +10,16 @@ function ENT:Initialize()
 		self.Trail = util.SpriteTrail(self, 0, Color(255, 255, 255), false, 4, 4, 0.2, 1/8, "chev/rainbowdashtrail") --trail is parented to this entity
 	end
 
+	self:AddEFlags(EFL_FORCE_CHECK_TRANSMIT)
 	self.Owner = self:GetOwner()
+end
+
+function ENT:UpdateTransmitState()
+	return TRANSMIT_ALWAYS
 end
 
 function ENT:Think()
 	local ply = self.Owner
-	self:SetPos(self.Owner:GetPos())
 	if SERVER then return end
 
 	if !IsValid(ply) then return end
