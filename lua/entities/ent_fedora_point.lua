@@ -9,11 +9,14 @@ function ENT:Initialize()
 	else
 		self.Trail = util.SpriteTrail(self, 0, Color(255, 255, 255), false, 4, 4, 0.2, 1/8, "chev/rainbowdashtrail") --trail is parented to this entity
 	end
+
+	self.Owner = self:GetOwner()
 end
 
 function ENT:Think()
+	local ply = self.Owner
+	self:SetPos(self.Owner:GetPos())
 	if SERVER then return end
-	local ply = self:GetOwner()
 
 	if !IsValid(ply) then return end
 	if (ply == LocalPlayer() and THIRDPERSON) or ply != LocalPlayer() then --only move the entity if in thirdperson, or the player isn't the localplayer
