@@ -1,5 +1,5 @@
-
-RunConsoleCommand("r_decals","2048")
+local cvar = GetConVar("r_decals"):GetInt()
+RunConsoleCommand("r_decals",tostring(math.max(cvar, 2048)))
 --RunConsoleCommand("r_maxmodeldecal","32")
 
 SWEP.PrintName			= "Spraypaint"	
