@@ -321,7 +321,11 @@ function LoadVideo( Video )
 	Msg("Loaded Video\n")
 	Msg("\tTitle:\t\t"..tostring(Video:Title()).."\n")
 	Msg("\tType:\t\t"..tostring(Video:Type()).."\n")
-	Msg("\tKey:\t\t"..tostring(Video:Key():gsub("159.203.76.65","proximity"):gsub("104.236.161.132","cocojack")).."\n")
+	local vkey = tostring(Video:Key())
+	if string.find(vkey, "horatio.tube") then
+		vkey = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+	end
+	Msg("\tKey:\t\t"..vkey.."\n")
 	Msg("\tDuration:\t"..tostring(Video:Duration()).."\n")
 	Msg( string.format("\tRequested by %s (%s)", Video:GetOwnerName(), Video:GetOwnerSteamID() ) .."\n" )
 end
