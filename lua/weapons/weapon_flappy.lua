@@ -41,7 +41,7 @@ end
 
 function SWEP:Holster()
 	if CLIENT then return end
-	if self and self.FedoraPoint then self.FedoraPoint:Remove() end
+	if IsValid(self) and IsValid(self.FedoraPoint) then self.FedoraPoint:Remove() end
 	return true
 end
 
