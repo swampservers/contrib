@@ -49,6 +49,7 @@ function SWEP:OnRemove()
 	if CLIENT then
 		if self.Owner and self.Owner:IsValid() then sound.Play( "friendzoned.ogg", self.Owner:GetPos(), 75, 100, 1) end
 	end
+	self:Holster()
 end
 
 function SWEP:OwnerChanged()
