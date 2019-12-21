@@ -41,7 +41,7 @@ end
 
 function SWEP:Holster()
 	if CLIENT then return end
-	if self and self.FedoraPoint then self.FedoraPoint:Remove() end
+	if IsValid(self) and IsValid(self.FedoraPoint) then self.FedoraPoint:Remove() end
 	return true
 end
 
@@ -49,6 +49,7 @@ function SWEP:OnRemove()
 	if CLIENT then
 		if self.Owner and self.Owner:IsValid() then sound.Play( "friendzoned.ogg", self.Owner:GetPos(), 75, 100, 1) end
 	end
+	self:Holster()
 end
 
 function SWEP:OwnerChanged()
