@@ -7,7 +7,7 @@ function ENT:Initialize()
 	if CLIENT then
 		self.Entity:SetNoDraw(true)
 	else
-		self.Trail = util.SpriteTrail(self, 0, Color(255, 255, 255), false, 4, 4, 0.2, 1/8, "chev/rainbowdashtrail") --trail is parented to this entity
+		self.Trail = util.SpriteTrail(self, 0, Color(255, 255, 255, 90), false, 4, 4, 0.2, 1/8, "chev/rainbowdashtrail") --trail is parented to this entity
 	end
 
 	self:DrawShadow(false)
