@@ -52,12 +52,6 @@ hook.Add("PlayerSay", "ChatOwOifier",function(ply, text, team)
 end)
 
 RegisterChatCommand({'owo', 'uwu', 'toggleowo', 'toggleuwu'}, function(ply, arg)
-	ply.OwOEnabled = ply.OwOEnabled or false
-	if ply.OwOEnabled == false then --Enable OwO
-		ply.OwOEnabled = true
-		ply:ChatPrint("[pink]owo enabled")
-	elseif ply.OwOEnabled == true then --Disable OwO
-		ply.OwOEnabled = false
-		ply:ChatPrint("[pink]owo disabled")
-	else end
+	ply.OwOEnabled = !ply.OwOEnabled
+	ply:ChatPrint("[pink]owo "..(ply.OwOEnabled and "enabled" or "disabled"))
 end, {global=true, throttle=true})
