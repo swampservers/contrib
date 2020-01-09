@@ -60,7 +60,7 @@ end
 
 hook.Add("PlayerSay", "ChatPonyspeak", function(ply, text, team)
 	if ply.PonyspeakEnabled then
-		ply:ExtEmitSound(randsnd[math.random(#randsnd)])
+		ply:ExtEmitSound(randsnd[math.random(#randsnd)], {level=60})
 		return PonyspeakConvert(text)
 	end
 end)
