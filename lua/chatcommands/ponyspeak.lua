@@ -2,7 +2,7 @@ local ponyreplace = {
 	["hand"] = "hoof",
 	["hands"] = "hooves",
 	["foot"] = "hoof",
-	["feet"] = "hooves",
+	["feet"] = "hoof",
 	["toe"] = "hoof",
 	["toes"] = "hooves",
 	["finger"] = "hoof",
@@ -13,6 +13,8 @@ local ponyreplace = {
 	["girl"] = "mare",
 	["woman"] = "mare",
 	["women"] = "mares",
+	["lady"] = "filly",
+	["ladies"] = "fillies",
 	["kid"] = "filly",
 	["kids"] = "fillies",
 	["earth"] = "equestria",
@@ -41,6 +43,8 @@ local ponyreplace = {
 	["hell"] = "hay",
 }
 
+randsnd = {"squee.wav", "squee2.ogg", "squee3.ogg"}
+
 local function PonyspeakConvert(txt)
 	local split = string.Split(txt, " ")
 	for k, v in pairs(split) do
@@ -56,6 +60,7 @@ end
 
 hook.Add("PlayerSay", "ChatPonyspeak", function(ply, text, team)
 	if ply.PonyspeakEnabled then
+		ply:ExtEmitSound(randsnd[math.random(#randsnd)])
 		return PonyspeakConvert(text)
 	end
 end)
