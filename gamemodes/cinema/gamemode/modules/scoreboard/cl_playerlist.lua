@@ -181,8 +181,8 @@ function PLAYER:Init()
 
 	self.FriendIcon = vgui.Create("DImage", self)
 	self.FriendIcon:SetSize(16, 16)
-	self.FriendIcon:SetPos(320, 12)
-	self.FriendIcon:CenterVertical()
+	self.FriendIcon:SetPos(30, 27)
+	self.FriendIcon:SetZPos(2)
 
 	self.Ping = vgui.Create( "ScoreboardPlayerPing", self )
 	self.Ping:SetPos(402, 11)
