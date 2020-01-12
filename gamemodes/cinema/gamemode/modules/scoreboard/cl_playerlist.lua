@@ -216,10 +216,6 @@ function PLAYER:UpdatePlayer()
 		self.ChatMute:SetImage( "theater/chatmuted.png" )
 	else
 		self.ChatMute:SetImage( "theater/chatunmuted.png" )
-	end	
-
-	if self.Player:GetFriendStatus() == "friend" then
-		self.FriendIcon:SetImage("chev/icon/friend.png")
 	end
 
 	self.Mute.DoClick = function() 
@@ -267,6 +263,10 @@ function PLAYER:SetPlayer( ply )
 
 	self.Avatar:SetPlayer( ply, 64 )
 	self.Avatar:SetVisible( true )
+
+	if ply:GetFriendStatus() == "friend" then
+		self.FriendIcon:SetImage("chev/icon/friend.png")
+	end
 
 	self.Ping:SetPlayer( ply )
 
