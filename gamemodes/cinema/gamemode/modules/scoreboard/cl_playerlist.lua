@@ -183,6 +183,7 @@ function PLAYER:Init()
 	self.FriendIcon:SetSize(16, 16)
 	self.FriendIcon:SetPos(30, 27)
 	self.FriendIcon:SetZPos(2)
+	self.FriendIcon:SetImage("chev/icon/friend.png")
 
 	self.Ping = vgui.Create( "ScoreboardPlayerPing", self )
 	self.Ping:SetPos(402, 11)
@@ -265,7 +266,9 @@ function PLAYER:SetPlayer( ply )
 	self.Avatar:SetVisible( true )
 
 	if ply:GetFriendStatus() == "friend" then
-		self.FriendIcon:SetImage("chev/icon/friend.png")
+		self.FriendIcon:Show()
+	else
+		self.FriendIcon:Hide()
 	end
 
 	self.Ping:SetPlayer( ply )
