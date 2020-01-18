@@ -179,9 +179,14 @@ function PLAYER:Init()
 	self.ChatMute:SetImage("theater/chatunmuted.png")
 	self.ChatMute:CenterVertical()
 
+	self.FriendIcon = vgui.Create("DImage", self)
+	self.FriendIcon:SetSize(16, 16)
+	self.FriendIcon:SetPos(30, 27)
+	self.FriendIcon:SetZPos(2)
+	self.FriendIcon:SetImage("chev/icon/friend.png")
+
 	self.Ping = vgui.Create( "ScoreboardPlayerPing", self )
 	self.Ping:SetPos(402, 11)
-
 
 	self.Country = vgui.Create("DImage", self)	
 	self.Country:SetSize(16,11)
@@ -212,7 +217,7 @@ function PLAYER:UpdatePlayer()
 		self.ChatMute:SetImage( "theater/chatmuted.png" )
 	else
 		self.ChatMute:SetImage( "theater/chatunmuted.png" )
-	end	
+	end
 
 	self.Mute.DoClick = function() 
 		self.Player.ClickMuted = not (self.Player.ClickMuted or false)
@@ -259,6 +264,12 @@ function PLAYER:SetPlayer( ply )
 
 	self.Avatar:SetPlayer( ply, 64 )
 	self.Avatar:SetVisible( true )
+
+	if ply:GetFriendStatus() == "friend" then
+		self.FriendIcon:Show()
+	else
+		self.FriendIcon:Hide()
+	end
 
 	self.Ping:SetPlayer( ply )
 

@@ -8,6 +8,7 @@ SWEP.Slot               = 0
 SWEP.SlotPos            = 0
 SWEP.DrawAmmo           = false
 SWEP.DrawCrosshair      = true
+SWEP.m_WeaponDeploySpeed = 999
 
 SWEP.ViewModel              = "models/swamp/v_infinitygauntlet.mdl"
 SWEP.WorldModel             = "models/swamp/v_infinitygauntlet.mdl"
