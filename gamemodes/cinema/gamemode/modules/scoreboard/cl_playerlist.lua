@@ -89,7 +89,7 @@ function PLAYERLIST:Think()
 		self.ServerName:Update()
 		self:InvalidateLayout(true)
 
-		self.NextUpdate = RealTime() + 3.0
+		self.NextUpdate = RealTime() + 1.0
 
 	end
 
