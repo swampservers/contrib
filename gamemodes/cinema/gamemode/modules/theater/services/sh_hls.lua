@@ -33,6 +33,13 @@ if CLIENT then
 					callback()
 				end
 			end)
+			
+			timer.Simple(2,function() 
+				if IsValid(vpanel) then
+					local str = string.format( "th_video('%s');", string.JavascriptSafe(key) )
+					vpanel:QueueJavascript( str )
+				end
+			end)
 
 			function vpanel:ConsoleMessage(msg)
 				if msg:StartWith("LIVE") then
@@ -42,7 +49,7 @@ if CLIENT then
 				end
 			end
 
-			vpanel:OpenURL( "http://swampservers.net/cinema/hls.html?url="..string.JavascriptSafe(key) )
+			vpanel:OpenURL( "http://swampservers.net/cinema/hls.html" )
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")

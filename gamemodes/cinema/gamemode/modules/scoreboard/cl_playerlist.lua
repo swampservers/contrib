@@ -87,15 +87,17 @@ function PLAYERLIST:Think()
 		end
 		
 		self.ServerName:Update()
-		self:InvalidateLayout()
+		self:InvalidateLayout(true)
 
-		self.NextUpdate = RealTime() + 3.0
+		self.NextUpdate = RealTime() + 1.0
 
 	end
 
 end
 
 function PLAYERLIST:PerformLayout()
+
+	if RealTime() < self.NextUpdate then return end
 
 	table.sort( self.PlayerList.Items, function( a, b ) 
 
