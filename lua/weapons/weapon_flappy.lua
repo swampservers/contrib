@@ -32,31 +32,38 @@ function SWEP:Deploy()
 		self:EmitSound("mlady.ogg")
 	end
 	if CLIENT then return end
-	self.FedoraPoint = ents.Create("ent_fedora_point")
-	self.FedoraPoint:SetOwner(self.Owner)
-	self.FedoraPoint:Spawn()
-	self.FedoraPoint:Activate()
-	--self.FedoraPoint:SetPreventTransmit(self.Owner, true)
+
+	local ply = self:GetOwner()
+	if !IsValid(ply.FedoraPoint) then --if ply already has a trail, don't create a new one
+		ply.FedoraPoint = ents.Create("ent_fedora_point")
+		ply.FedoraPoint:SetOwner(ply)
+		ply.FedoraPoint:Spawn()
+		ply.FedoraPoint:Activate()
+	end
+end
+
+local function FedoraTrailDelete(ply)
+	if CLIENT then return end
+	if IsValid(ply) and IsValid(ply.FedoraPoint) then ply.FedoraPoint:Remove() end
 end
 
 function SWEP:Holster()
-	if CLIENT then return end
-	if IsValid(self) and IsValid(self.FedoraPoint) then self.FedoraPoint:Remove() end
+	FedoraTrailDelete(self:GetOwner())
 	return true
 end
 
 function SWEP:OnRemove()
 	if CLIENT then
-		if self.Owner and self.Owner:IsValid() then sound.Play( "friendzoned.ogg", self.Owner:GetPos(), 75, 100, 1) end
+		if self.Owner and self.Owner:IsValid() then sound.Play("friendzoned.ogg", self.Owner:GetPos(), 75, 100, 1) end
 	end
-	self:Holster()
+	FedoraTrailDelete(self:GetOwner())
 end
 
 function SWEP:OwnerChanged()
 	if SERVER then
 		self:ExtEmitSound("mlady.ogg", {speech=0.8})
 	end
-	self:Holster()
+	FedoraTrailDelete(self:GetOwner())
 end
 
 function SWEP:Reload()
@@ -138,4 +145,14 @@ function SWEP:GetViewModelPosition( pos, ang )
 	ang:RotateAroundAxis(ang:Up(),-90)
 	ang:RotateAroundAxis(ang:Forward(),-8+(math.Clamp((CurTime()-self.jumptimer)*4,0,1)*8))
 	return pos, ang 
+end
+
+if SERVER then
+	timer.Create("CheckFedoraTrailDisable", 10, 0, function() --backup in case all other remove checks fail
+		for k, v in pairs(player.GetAll()) do
+			if v:GetActiveWeapon():GetClass() != "weapon_flappy" then
+				FedoraTrailDelete(v)
+			end
+		end
+	end)
 end
