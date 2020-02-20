@@ -21,7 +21,13 @@ end
 
 function ENT:Think()
 	local ply = self.Owner
-	if SERVER then return end
+	if SERVER then
+		if !IsValid(self:GetOwner()) then
+			self:Remove()
+		elseif self:GetOwner():GetActiveWeapon():GetClass() != "weapon_flappy" then
+			self:Remove()
+		end
+	return end
 	if !FLAPPYFEDORATRAIL then return end
 
 	if !IsValid(ply) then return end

@@ -146,13 +146,3 @@ function SWEP:GetViewModelPosition( pos, ang )
 	ang:RotateAroundAxis(ang:Forward(),-8+(math.Clamp((CurTime()-self.jumptimer)*4,0,1)*8))
 	return pos, ang 
 end
-
-if SERVER then
-	timer.Create("CheckFedoraTrailDisable", 10, 0, function() --backup in case all other remove checks fail
-		for k, v in pairs(player.GetAll()) do
-			if v:GetActiveWeapon():GetClass() != "weapon_flappy" then
-				FedoraTrailDelete(v)
-			end
-		end
-	end)
-end
