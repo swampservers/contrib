@@ -42,13 +42,7 @@ function SWEP:Deploy()
 	end
 end
 
-local function FedoraTrailDelete(ply)
-	if CLIENT then return end
-	if IsValid(ply) and IsValid(ply.FedoraPoint) then ply.FedoraPoint:Remove() end
-end
-
 function SWEP:Holster()
-	FedoraTrailDelete(self:GetOwner())
 	return true
 end
 
@@ -56,14 +50,12 @@ function SWEP:OnRemove()
 	if CLIENT then
 		if self.Owner and self.Owner:IsValid() then sound.Play("friendzoned.ogg", self.Owner:GetPos(), 75, 100, 1) end
 	end
-	FedoraTrailDelete(self:GetOwner())
 end
 
 function SWEP:OwnerChanged()
 	if SERVER then
 		self:ExtEmitSound("mlady.ogg", {speech=0.8})
 	end
-	FedoraTrailDelete(self:GetOwner())
 end
 
 function SWEP:Reload()
