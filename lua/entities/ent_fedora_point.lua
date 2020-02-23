@@ -24,7 +24,7 @@ function ENT:Think()
 	if SERVER then
 		if !IsValid(self:GetOwner()) then
 			self:Remove()
-		elseif self:GetOwner():GetActiveWeapon():GetClass() != "weapon_flappy" then
+		elseif IsValid(self:GetOwner():GetActiveWeapon()) and self:GetOwner():GetActiveWeapon():GetClass() != "weapon_flappy" then
 			self:Remove()
 		end
 	return end
