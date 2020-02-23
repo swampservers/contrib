@@ -22,9 +22,9 @@ end
 function ENT:Think()
 	local ply = self:GetOwner()
 	if SERVER then
-		if !IsValid(ply) or (IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() != "weapon_flappy") then
+		if !IsValid(ply) or !IsValid(ply:GetActiveWeapon()) or ply:GetActiveWeapon():GetClass() != "weapon_flappy" then
 			self:Remove()
-		end --if owner isn't valid, or owner has a weapon but it's not the fedora
+		end --if owner isn't valid, or owner's active weapon isn't valid, or owner has a weapon but it's not the fedora
 	return end
 	if !FLAPPYFEDORATRAIL then return end
 
