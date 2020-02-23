@@ -20,8 +20,12 @@ function ENT:UpdateTransmitState()
 end
 
 function ENT:Think()
-	local ply = self.Owner
-	if SERVER then return end
+	local ply = self:GetOwner()
+	if SERVER then
+		if !IsValid(ply) or !IsValid(ply:GetActiveWeapon()) or ply:GetActiveWeapon():GetClass() != "weapon_flappy" then
+			self:Remove()
+		end --if owner isn't valid, or owner's active weapon isn't valid, or owner has a weapon but it's not the fedora
+	return end
 	if !FLAPPYFEDORATRAIL then return end
 
 	if !IsValid(ply) then return end

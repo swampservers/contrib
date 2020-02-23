@@ -32,31 +32,30 @@ function SWEP:Deploy()
 		self:EmitSound("mlady.ogg")
 	end
 	if CLIENT then return end
-	self.FedoraPoint = ents.Create("ent_fedora_point")
-	self.FedoraPoint:SetOwner(self.Owner)
-	self.FedoraPoint:Spawn()
-	self.FedoraPoint:Activate()
-	--self.FedoraPoint:SetPreventTransmit(self.Owner, true)
+
+	local ply = self:GetOwner()
+	if !IsValid(ply.FedoraPoint) then --if ply already has a trail, don't create a new one
+		ply.FedoraPoint = ents.Create("ent_fedora_point")
+		ply.FedoraPoint:SetOwner(ply)
+		ply.FedoraPoint:Spawn()
+		ply.FedoraPoint:Activate()
+	end
 end
 
 function SWEP:Holster()
-	if CLIENT then return end
-	if IsValid(self) and IsValid(self.FedoraPoint) then self.FedoraPoint:Remove() end
 	return true
 end
 
 function SWEP:OnRemove()
 	if CLIENT then
-		if self.Owner and self.Owner:IsValid() then sound.Play( "friendzoned.ogg", self.Owner:GetPos(), 75, 100, 1) end
+		if self.Owner and self.Owner:IsValid() then sound.Play("friendzoned.ogg", self.Owner:GetPos(), 75, 100, 1) end
 	end
-	self:Holster()
 end
 
 function SWEP:OwnerChanged()
 	if SERVER then
 		self:ExtEmitSound("mlady.ogg", {speech=0.8})
 	end
-	self:Holster()
 end
 
 function SWEP:Reload()
