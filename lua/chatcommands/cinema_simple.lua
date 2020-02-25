@@ -22,6 +22,14 @@ end, {global=true, throttle=true})
 RegisterChatConsoleCommand({'drop','dropweapon'}, "drop")
 RegisterChatConsoleCommand('dropall', "dropall")
 
+timer.Create("discordspam",100,0,function()
+	if math.random()<0.1 then
+		for k,v in pairs(player.GetAll()):
+			v:ChatPrint("[gold]Join our discord chat at https://swampservers.net/discord but don't be mean!"	
+		end
+	end
+end)
+
 concommand.Add("drop", function(ply, cmd, args)
 	ply.LastWepDropTime = ply.LastWepDropTime or 0
 	if (CurTime() - ply.LastWepDropTime) < 2 then return end
