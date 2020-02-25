@@ -24,7 +24,7 @@ RegisterChatConsoleCommand('dropall', "dropall")
 
 timer.Create("discordspam",100,0,function()
 	if math.random()<0.1 then
-		for k,v in pairs(player.GetAll()):
+		for k,v in pairs(player.GetAll()) do
 			v:ChatPrint("[gold]Join our discord chat at https://swampservers.net/discord but don't be mean!"	
 		end
 	end
