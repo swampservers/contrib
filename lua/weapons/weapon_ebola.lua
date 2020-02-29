@@ -1,5 +1,5 @@
 
-SWEP.PrintName			= "Ebola"	
+SWEP.PrintName			= "Coronavirus"	
 SWEP.DrawAmmo 			= false
 SWEP.DrawCrosshair 		= true
 SWEP.DrawWeaponInfoBox  = true
@@ -46,17 +46,17 @@ if SERVER then
 		for k,v in pairs(EbolaAllPlayerCache) do
 			if v:HasWeapon("weapon_ebola") then
 				if v:Health()<3 then
-					v:ChatPrint("[red]you died of ebola")
+					v:ChatPrint("[red]you died of coronavirus")
 					v:Kill()
 				else
 					if math.random()<0.25 then
 						v:GetWeapon("weapon_ebola"):PrimaryAttack()
 					end
 					if math.random()<0.01 then
-						v:ChatPrint("[green]ebola healed")
+						v:ChatPrint("[green]coronavirus healed")
 						v:StripWeapon("weapon_ebola")
 					else
-						if ebprint then v:ChatPrint("[red]you have ebola") end
+						if ebprint then v:ChatPrint("[red]you have coronavirus") end
 						v:SetHealth(v:Health()-2)
 					end
 				end
