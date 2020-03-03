@@ -311,7 +311,7 @@ function PLAYER:Paint( w, h )
 
 	surface.SetDrawColor( 255, 255, 255, 255 )
 
-	local xp = 344
+	local xp = 310
 
 	if self.Player:GetNWBool("afk") and (showAFKs or LocalPlayer():IsStaff()) then
 		surface.SetDrawColor( 255, 255, 255, 120 )
