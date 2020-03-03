@@ -311,21 +311,23 @@ function PLAYER:Paint( w, h )
 
 	surface.SetDrawColor( 255, 255, 255, 255 )
 
-	local xp = 320
+	local xp = 370
 
 	if self.Player:GetNWBool("afk") and (showAFKs or LocalPlayer():IsStaff()) then
 		surface.SetDrawColor( 255, 255, 255, 120 )
 		surface.SetMaterial(afkClockMaterial)
 		surface.DrawTexturedRect(360, 16, 16,16 )
-		xp = xp - 20
+		xp = xp - 24
 	end
 
 	if self.Player:IsStaff() then
 		--local xp = ({self.Name:GetPos()})[1] + self.Name:GetWide() + 4
+		
 		local str=self.Player:GetRankName()
-
 		surface.SetDrawColor( 255, 255, 255, 255 )
 		surface.SetFont("DermaDefault")
+
+		xp = xp - ({surface.GetTextSize(str)})[1]
 		surface.DrawRect( xp, 17, ({surface.GetTextSize(str)})[1] + 4, 13) 
 		draw.SimpleText(str, "DermaDefault", xp+2, 17, Color( 0,0,0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 	end
