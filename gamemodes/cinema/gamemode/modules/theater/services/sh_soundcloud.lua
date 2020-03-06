@@ -4,7 +4,7 @@ SERVICE.Name 		  = "Soundcloud"
 SERVICE.NeedsChromium = true
 
 function SERVICE:GetKey(url)
-	if string.match(url.host,"soundcloud.com") then
+	if url.host and string.match(url.host,"soundcloud.com") then
 		return url.encoded
 	end
 	return false
