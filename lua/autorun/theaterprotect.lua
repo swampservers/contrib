@@ -6,7 +6,7 @@ timer.Create("iteratePTs",1,0,function()
 		protectedTheaterTable[k]["time"]=math.floor(math.max(protectedTheaterTable[k]["time"]-1,0))
 		if SERVER then
 			local l = theater.GetByLocation(k)
-			if protectedTheaterTable[k]["time"]>0 and (protectedTheaterTable[k]["owner"]~=l:GetOwner() or protectedTheaterTable[k]["video"]~=l:VideoData()) then	
+			if protectedTheaterTable[k]["time"]>0 and (protectedTheaterTable[k]["owner"]~=l:GetOwner() or protectedTheaterTable[k]["video"]~=l:VideoKey()) then	
 				protectedTheaterTable[k]["time"]=0
 				net.Start("protectPTdata")
 				net.WriteTable(protectedTheaterTable)
