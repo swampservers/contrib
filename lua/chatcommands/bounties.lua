@@ -5,7 +5,6 @@ hook.Add("PlayerDeath","BountyDeath",function(ply,infl,atk)
 	local bounty = GetPlayerBounty(ply)
 	if bounty > 0 and ply != atk and atk:IsPlayer() then
 		SetPlayerBounty(ply,0)
-		BountyLimit[ply:SteamID()] = math.max((BountyLimit[ply:SteamID()] or 0) - bounty,0)
 		atk:PS_GivePoints(bounty)
 		BotSayGlobal("[edgy]"..atk:Nick().." [fbc]has claimed [gold]"..ply:Nick().."'s [fbc]bounty of [rainbow]"..bounty.." [fbc]points!")
 	end

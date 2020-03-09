@@ -43,6 +43,7 @@ TrashLocationOverrides = {
 	['Moon']=TRASHLOC_BUILD,
 
 	['Hell']=TRASHLOC_BUILD,
+	['Void']=TRASHLOC_BUILD,
 
 	['The Underworld']=TRASHLOC_BUILD,
 
