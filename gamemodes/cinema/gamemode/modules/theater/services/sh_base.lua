@@ -23,8 +23,10 @@ CinemaHttpHeaders = {
 	["Cache-Control"] = "no-cache",
 	["Connection"] = "keep-alive",
 
+	["Referer"] = "https://swampservers.net/"
+
 	-- Required for Google API requests; uses browser API key.
-	["Referer"] = "http://cinema.pixeltailgames.com/"--,
+	--["Referer"] = "http://cinema.pixeltailgames.com/"--,
 
 	-- Don't use improperly formatted GMod user agent in case anything actually
 	-- checks the user agent.
@@ -33,7 +35,8 @@ CinemaHttpHeaders = {
 
 function SERVICE:Fetch( url, onReceive, onFailure, useragent )
 
-	CinemaHttpHeaders["User-Agent"] = useragent or "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36"
+	CinemaHttpHeaders["User-Agent"] = useragent or "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"
+	--"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36"
 	
 	local request = {
 		url			= url,
@@ -46,15 +49,15 @@ function SERVICE:Fetch( url, onReceive, onFailure, useragent )
 			if code == 200 or code == 0 then
 				onReceive( body, body:len(), headers, code )			
 			else
-				print( "FAILURE: " .. code )
+				print( "HTTP FAIL CODE: " .. code .. " URL " .. url)
 				pcall( onFailure, code )
 			end
 		end,
 
 		failed = function( err )
-			print( "FAILURE2: " .. err )
+			print( "HTTP FAILED: " .. err .. " URL " .. url )
 			if isfunction( onFailure ) then
-				pcall( onFailure, err )
+				pcall( onFailure, err ) 
 			end
 		end
 	}
