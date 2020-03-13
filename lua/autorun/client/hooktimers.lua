@@ -624,7 +624,11 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 		target = "http://swampservers.net/bgmusic.php?t=vapor"
 	end
 	if LocalPlayer():GetLocationName()=="Upper Caverns" or LocalPlayer():GetLocationName()=="Lower Caverns" then
-		target = "http://swampservers.net/bgmusic.php?t=cavern"
+		if GetGlobalBool("DAY", true) then
+			target = "http://swampservers.net/bgmusic.php?t="..table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
+		else
+			target = "http://swampservers.net/bgmusic.php?t=cavernnight" --night theme - https://youtu.be/QT8vuiS0cpQ
+		end
 	end
 	if LocalPlayer():GetLocationName()=="Treatment Room" then
 		target = "http://swampservers.net/bgmusic.php?t=treatment"
