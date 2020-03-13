@@ -43,8 +43,8 @@ end
 
 function getPTProtectionCost(time)
 	if time==0 then return 0 end
-	time = math.max(time,1800)
-	return math.floor(time/18)*50
+	time = math.max(time,10*60)
+	return math.floor(time/60)*200
 end
 
 if CLIENT then

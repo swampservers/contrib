@@ -39,6 +39,7 @@ function THEATER:Init( locId, info )
 		end
 
 		o._Queue = {}
+		o._NextId = 0
 
 		o._SkipVotes = {}
 
@@ -521,7 +522,8 @@ if SERVER then
 	end
 
 	function THEATER:QueueVideo( video )
-		video.id = #(self._Queue)
+		video.id = self._NextId
+		self._NextId = self._NextId + 1
 		video.theaterId = self.Id
 		table.insert(self._Queue, video)
 	end
