@@ -9,27 +9,10 @@ SERVICE.NeedsCodecs = true
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
-	if string.sub( url.path, -5) == ".m3u8" then
+	if string.sub( url.path, -5) == ".m3u8" or string.find(url.host,"streamwat.ch") then
 		return url.encoded
 	end
-	match = string.match(url.encoded,"streamwat.ch/(%w+)/*$")
-	if match != nil and string.find(url.host,"streamwat.ch") then
-		http.Fetch("http://streamwat.ch/"..match.."/player.min.js",
-			function(body,length,headers,code)
-				match2 = string.match(body,"(http.+%.m3u8)")
-				if match2 != nil then
-					return match2
-				end
-				return false
-			end,
-			function(err)
-				print("Failed to reach streamwatch")
-				return false
-			end
-		)
-	else
-		return false
-	end
+	return false
 end
 
 if CLIENT then

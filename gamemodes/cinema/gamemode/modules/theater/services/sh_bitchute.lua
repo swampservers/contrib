@@ -62,22 +62,13 @@ if CLIENT then
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
-		http.Fetch("https://www.bitchute.com/embed/"..Video:Key(),
-			function(body,length,headers,code)
-				match = string.match(body,"source src=\"(.+)\" type")
-				if match != nil then
-					local url = "http://swampservers.net/cinema/file.html"
-					panel:OpenURL(url)
-					
-					local k = Video:Key()
-					local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
-					panel:QueueJavascript( str )
-				end
-			end,
-			function(err)
-				print("Failed to reach bitchute page while loading video")
-			end
-		)
+		local url = "http://swampservers.net/cinema/file.html"
+		panel:OpenURL(url)
+		
+		local k = Video:Data()
+		
+		local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
+		panel:QueueJavascript( str )
 	end
 end
 
