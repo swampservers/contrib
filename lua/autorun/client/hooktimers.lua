@@ -620,25 +620,28 @@ end )
 timer.Create("AreaMusicController", 0.5, 0, function()
 	if LocalPlayer().GetLocationName == nil then return end
 	local target = ""
-	if LocalPlayer():GetLocationName()=="Vapor Lounge" then
-		target = "http://swampservers.net/bgmusic.php?t=vapor"
+	local loc = LocalPlayer():GetLocationName()
+	if loc=="Vapor Lounge" then
+		target = "vapor"
 	end
-	if LocalPlayer():GetLocationName()=="Upper Caverns" or LocalPlayer():GetLocationName()=="Lower Caverns" then
+	if loc=="Upper Caverns" or loc=="Lower Caverns" then
 		if GetGlobalBool("DAY", true) then
-			target = "http://swampservers.net/bgmusic.php?t="..table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
+			target = table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
 		else
-			target = "http://swampservers.net/bgmusic.php?t=cavernnight" --night theme - https://youtu.be/QT8vuiS0cpQ
+			target = "cavernnight" --night theme - https://youtu.be/QT8vuiS0cpQ
 		end
 	end
-	if LocalPlayer():GetLocationName()=="Treatment Room" then
-		target = "http://swampservers.net/bgmusic.php?t=treatment"
+	if loc=="Treatment Room" then
+		target = "treatment"
 	end
-	if LocalPlayer():GetLocationName()=="Gym" then
-		target = "http://swampservers.net/bgmusic.php?t=gym"
+	if loc=="Gym" then
+		target = "gym"
 	end
 	if MusicPagePanel then
 		if target~=MusicPagePanel.target then
-			MusicPagePanel:Remove() 
+			if (target == "cavern" or target == "cavernalt") and (MusicPagePanel.target == "cavern" or MusicPagePanel.target == "cavernalt") then return end
+			--don't remove panel for caverns themes
+			MusicPagePanel:Remove()
 			MusicPagePanel = nil
 		end 
 	else
@@ -651,8 +654,9 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 				MusicPagePanel:SetMouseInputEnabled(false)
 				function MusicPagePanel:ConsoleMessage(msg) end
 				MusicPagePanel.target=target
-				MusicPagePanel:OpenURL(target.."&v="..GetConVar("cinema_volume"):GetString())
+				MusicPagePanel:OpenURL("http://swampservers.net/bgmusic.php?t="..target.."&v="..GetConVar("cinema_volume"):GetString())
 			end
 		end
 	end
 end)
+
