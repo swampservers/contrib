@@ -5,7 +5,7 @@ function CreateRentWindow()
 
 	local desc = vgui.Create("DLabel", window)
 	desc:SetWrap(true)
-	desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for one video.")
+	desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for 20 minutes.")
 	desc:SetFont("Trebuchet24")
 	desc:SetContentAlignment( 5 )
 	desc:SetSize(window:GetWide() - 16, 60)
@@ -19,8 +19,9 @@ function CreateRentWindow()
 	rentButton:CenterHorizontal()
 	
 	rentButton.DoClick = function(btn)
-		net.Start("protectPT")
-		net.SendToServer()
+		-- net.Start("protectPT")
+		-- net.SendToServer()
+		RunConsoleCommand("say","/protect")
 		window:Remove()
 	end
 

@@ -22,6 +22,13 @@ end, {global=true, throttle=true})
 RegisterChatConsoleCommand({'drop','dropweapon'}, "drop")
 RegisterChatConsoleCommand('dropall', "dropall")
 
+
+RegisterChatCommand({'rent','protect'}, function(ply, arg)
+	TryProtectTheater(ply)
+end)
+
+
+
 timer.Create("discordspam",100,0,function()
 	if math.random()<0.1 then
 		for k,v in pairs(player.GetAll()) do
