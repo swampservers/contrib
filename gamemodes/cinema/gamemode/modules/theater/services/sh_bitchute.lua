@@ -63,7 +63,7 @@ if CLIENT then
 	
 	function SERVICE:LoadVideo( Video, panel )
 		local url = "http://swampservers.net/cinema/file.html"
-		panel:OpenURL(url)
+		panel:EnsureURL(url)
 		
 		local k = Video:Data()
 		

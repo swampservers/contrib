@@ -3,7 +3,7 @@ sv_GetVideoInfo = sv_GetVideoInfo or {}
 
 sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 
-	local match = string.match(key,"streamwat.ch/(%w+)/*$")
+	local streamwatch_key = string.match(key,"streamwat.ch/(%w+)/*$")
 	
 	local onReceive = function(info)
 	
@@ -17,15 +17,15 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 	
 	local onFetchReceive = function( body, length, headers, code )
 		
-		local match2 = string.match(body,"(http.+%.m3u8)")
+		local streamwatch_url = string.match(body,"(http.+%.m3u8)")
 		
-		if match2 != nil then
+		if streamwatch_url != nil then
 		
 			theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
 				http.Post( "https://swampservers.net/fedorabot/gis.php", {q=info.title}, 
 					function(body2) 
 						info.thumb="http://swampservers.net/cinema/contain.php?i="..body2
-						info.data = match2
+						info.data = streamwatch_url
 						onSuccess(info)
 					end, onFailure)
 			end, onFailure)
@@ -35,8 +35,8 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 		onFailure( 'Theater_RequestFailed' )
 	end
 	
-	if match != nil then
-		self:Fetch( "http://streamwat.ch/"..match.."/player.min.js", onFetchReceive, onFailure )
+	if streamwatch_key != nil then
+		self:Fetch( "http://streamwat.ch/"..streamwatch_key.."/player.min.js", onFetchReceive, onFailure )
 	else
 		theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure)
 	end
