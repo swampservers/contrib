@@ -7,6 +7,7 @@ SERVICE.NeedsCodecs = true
 function SERVICE:GetKey( url )
 	match = string.match(url.path,"/.+/(.+[^/])")
 	if match != nil and string.find(url.host,"bitchute.com") then
+		print(url.encoded)
 		return match
 	end
 	return false
@@ -46,6 +47,8 @@ if CLIENT then
 					match = string.match(body,"source src=\"(.+)\" type")
 					if match != nil then
 						vpanel:OpenURL("http://swampservers.net/cinema/filedata.php?file="..match)
+					else
+						print("bitchute body fetch failed: "..match)
 					end
 				end,
 				function(err)

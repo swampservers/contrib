@@ -8,12 +8,18 @@ sv_GetVideoInfo.bitchute = function(self, key, ply, onSuccess, onFailure)
 		local bitchute_url = string.match(body,"source src=\"(.+)\" type")
 		
 		if bitchute_url != nil then
+		
+			ServerDebug("bitchute fetch recieve: "..bitchute_url)
 			theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
 				info.title = string.match(body,"<title>(.*)</title>") or "(Unknown)"
 				info.data = bitchute_url
+				ServerDebug("bitchute fetch sucess")
 				onSuccess(info)
 			end, onFailure)
+			
 		end
+		
+		ServerDebug("bitchute fetch failed: "..bitchute_url)
 		
 		onFailure( 'Theater_RequestFailed' )
 	end
