@@ -9,7 +9,8 @@ SERVICE.NeedsCodecs = true
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
-	if string.sub( url.path, -5) == ".m3u8" then
+	if string.sub( url.path, -5) == ".m3u8" or string.find(url.host,"streamwat.ch") then
+		print(url.encoded)
 		return url.encoded
 	end
 	return false

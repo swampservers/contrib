@@ -97,4 +97,3 @@ function table.Lookup( tbl, key, default )
 
 	return value
 end
-
