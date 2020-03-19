@@ -21,7 +21,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 		
 		if streamwatch_url != nil then
 			ServerDebug("streamwatch fetch recieve: "..streamwatch_url)
-			theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
+			theater.GetVideoInfoClientside(self:GetClass(), streamwatch_url, ply, function(info)
 				http.Post( "https://swampservers.net/fedorabot/gis.php", {q=info.title}, 
 					function(body2) 
 						info.thumb="http://swampservers.net/cinema/contain.php?i="..body2
@@ -30,10 +30,11 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 						onSuccess(info)
 					end, onFailure)
 			end, onFailure)
-		
+			
+		else
+			onFailure( 'Theater_RequestFailed' )
 		end
 		
-		onFailure( 'Theater_RequestFailed' )
 	end
 	
 	if streamwatch_key != nil then
