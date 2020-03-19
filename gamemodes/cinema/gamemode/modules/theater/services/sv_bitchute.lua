@@ -10,7 +10,7 @@ sv_GetVideoInfo.bitchute = function(self, key, ply, onSuccess, onFailure)
 		if bitchute_url != nil then
 		
 			ServerDebug("bitchute fetch recieve: "..bitchute_url)
-			theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
+			theater.GetVideoInfoClientside(self:GetClass(), bitchute_url, ply, function(info)
 				info.title = string.match(body,"<title>(.*)</title>") or "(Unknown)"
 				info.data = bitchute_url
 				ServerDebug("bitchute fetch sucess")
