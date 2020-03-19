@@ -30,10 +30,11 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 						onSuccess(info)
 					end, onFailure)
 			end, onFailure)
-		
+			
+		else
+			onFailure( 'Theater_RequestFailed' )
 		end
 		
-		onFailure( 'Theater_RequestFailed' )
 	end
 	
 	if streamwatch_key != nil then

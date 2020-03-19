@@ -17,11 +17,11 @@ sv_GetVideoInfo.bitchute = function(self, key, ply, onSuccess, onFailure)
 				onSuccess(info)
 			end, onFailure)
 			
+		else
+			ServerDebug("bitchute fetch failed: "..bitchute_url)
+			onFailure( 'Theater_RequestFailed' )
 		end
 		
-		ServerDebug("bitchute fetch failed: "..bitchute_url)
-		
-		onFailure( 'Theater_RequestFailed' )
 	end
 
 	self:Fetch( "https://www.bitchute.com/embed/"..key, onReceive, onFailure )
