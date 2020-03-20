@@ -10,7 +10,6 @@ SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
 	if string.sub( url.path, -5) == ".m3u8" or string.find(url.host,"streamwat.ch") then
-		print(url.encoded)
 		return url.encoded
 	end
 	return false
@@ -56,6 +55,16 @@ if CLIENT then
 			chat.AddText("You need codecs to request this. Press F2.")
 			return callback()
 		end)
+	end
+	
+	function SERVICE:LoadVideo( Video, panel )
+		local url = "http://swampservers.net/cinema/file.html"
+		panel:EnsureURL(url)
+		
+		local k = Video:Data() or Video:Key()
+		
+		local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
+		panel:QueueJavascript( str )
 	end
 end
 
