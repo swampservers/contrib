@@ -7,7 +7,6 @@ SERVICE.NeedsCodecs = true
 function SERVICE:GetKey( url )
 	match = string.match(url.path,"/.+/(.+[^/])")
 	if match != nil and string.find(url.host,"bitchute.com") then
-		print(url.encoded)
 		return match
 	end
 	return false
@@ -42,7 +41,21 @@ if CLIENT then
 				end
 			end
 			
-			vpanel:OpenURL("http://swampservers.net/cinema/filedata.php?file="..key)
+			http.Fetch("https://www.bitchute.com/embed/"..key,
+				function(body,length,headers,code)
+					match = string.match(body,"source src=\"(.+)\" type")
+					if match != nil then
+						vpanel:OpenURL("http://swampservers.net/cinema/filedata.php?file="..match)
+					else
+						print("bitchute body fetch failed: "..match)
+					end
+				end,
+				function(err)
+					print("Failed to reach bitchute page while fetching duration")
+					vpanel:Remove()
+					callback()
+				end
+			)
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")
