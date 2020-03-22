@@ -58,11 +58,10 @@ if CLIENT then
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
-		local url = "http://swampservers.net/cinema/file.html"
+		local url = "http://swampservers.net/cinema/hls.html"
 		panel:EnsureURL(url)
 		
 		local k = Video:Data() or Video:Key()
-		print(Video:Data(),Video:Key(),k)
 		
 		local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
 		panel:QueueJavascript( str )
