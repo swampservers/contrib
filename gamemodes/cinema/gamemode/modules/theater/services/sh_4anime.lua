@@ -69,7 +69,7 @@ if CLIENT then
 							self.title = msg:sub(7,-1)
 						end
 						if (self.data != nil and self.duration != nil and self.title != nil) then
-							self.duration = math.floor(tonumber(msg))
+							self.duration = math.floor(tonumber(self.duration))
 							print("Duration: "..self.duration)
 							callback({title=self.title,data=self.data,duration=self.duration})
 							self:Remove()
