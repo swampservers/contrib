@@ -63,4 +63,4 @@ global function: Safe(player or entity): is the player/entity in a safe/protecte
 
 ---
 
-everything in here (except stuff I downloaded eg. from workshop) is copyrighted by Swamp Servers
+Most things in here are copyrighted and owned by Swamp Servers. Anything not owned by us is, to the best of our knowledge, used under license.
