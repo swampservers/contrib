@@ -1,6 +1,6 @@
 # swampservers/contrib
 
-**CONTRIBUTOR LICENSE AGREEMENT/TERMS OF USE: This repository is solely for game assets/code used by [Swamp Servers](https://swampservers.net/) to operate our online games. By submitting your work to this repository (via commit or pull request), you agree that we have a PERMANENT, IRREVOCABLE, TRANSFERABLE LICENSE to use, modify, and distribute all submitted work as we see fit. By submitting work created by a third party, you attest that the creator of that work also agrees that we have a permanent, irrevocable, transferable license to use, modify, and distribute the work as we see fit. Do not submit work from a third party without their agreement to these terms. Note that work publicly available on sites like "Steam Workshop" may already be distributed under agreements conducive to this. If your copyrighted work is here without permission, please contact the email shown [here](https://swampservers.net/contact). This repository DOES NOT license its contents to be used for other purposes, nor does its existence on GitHub imply such a license.**
+**CONTRIBUTOR LICENSE AGREEMENT/COPYRIGHT: This repository is solely for game assets/code used by [Swamp Servers](https://swampservers.net/) to operate our online games. By submitting your work to this repository (via commits/pull requests), you agree that we have a PERMANENT, IRREVOCABLE, TRANSFERABLE LICENSE to use, modify, and distribute all of your submitted work as we see fit. By submitting work created by a third party, you attest that the creator of that work also agrees that we have a permanent, irrevocable, transferable license to use, modify, and distribute their submitted work as we see fit. Do not submit work from a third party without their agreement to these terms. Note that work publicly available on sites like "Steam Workshop" may already be distributed under agreements conducive to this. If your copyrighted work is here without permission, please contact the email shown [here](https://swampservers.net/contact). This repository and most of its content is copyrighted and owned by Swamp Servers. The remaining content is, to the best of our knowledge, used under license. This repository DOES NOT license its contents to be used for other purposes, nor does its existence on GitHub imply such a license.**
 
 # Overview
 
@@ -60,7 +60,3 @@ player:GetLocation(): returns a integer for what location they are at
 player:GetLocationName(): gets the location name (look at the cinema gamemode for more on this, the swamp version is similar)
 
 global function: Safe(player or entity): is the player/entity in a safe/protected area or otherwise safe
-
----
-
-Most things in here are copyrighted and owned by Swamp Servers. Anything not owned by us is, to the best of our knowledge, used under license.
