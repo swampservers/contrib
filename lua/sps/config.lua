@@ -130,6 +130,7 @@ PS_Attachments = {
 
 
 function PS_CalculateSellPrice(ply, item)
+	if item.class=="ponymodel" then return item.price*0.5 end
 	return math.Round(item.price * 0.8)
 end
 
