@@ -194,7 +194,7 @@ function SETTINGS:Create()
 	--addCheckbox('Hide chat completely','radiobutton1','Hide all distractions on your screen; show chat while typing only')
 	--addCheckbox('Hide everything','radiobutton0','')
 
-	addLabel('Mature Content (18+)')
+	addLabel('Adult Content (18+)')
 	addCheckbox('Videos & sprays (toggle: F6)',"swamp_mature_content",'Show potentially mature videos & sprays')
 	addCheckbox('Chatbox images (toggle: F7)',"swamp_mature_chatbox",'Show potentially mature chatbox images')
 
