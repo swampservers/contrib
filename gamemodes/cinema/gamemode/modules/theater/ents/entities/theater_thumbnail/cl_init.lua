@@ -142,10 +142,50 @@ function ENT:DrawThumbnail()
 
 	-- Thumbnail isn't set yet
 	if self:GetThumbnail() == "" then
+
+		if self:GetService() == "" then
 		
-		surface.SetDrawColor( 80, 80, 80 )
-		surface.SetMaterial( DefaultThumbnail )
-		surface.DrawTexturedRect( 0, 0, ThumbWidth - 1, ThumbHeight - 1 )
+			surface.SetDrawColor( 80, 80, 80 )
+			surface.SetMaterial( DefaultThumbnail )
+			surface.DrawTexturedRect( 0, 0, ThumbWidth - 1, ThumbHeight - 1 )
+		else
+
+			surface.SetDrawColor( 0, 0, 0 )
+			surface.DrawRect( 0, 0, ThumbWidth - 1, ThumbHeight - 1 )
+
+			local str = self:GetService():upper()
+			local hhh = 150 +  math.sin(SysTime()) * 30.0
+			local www = math.sin(SysTime()*0.5) * 30.0
+			--bunch of copy pasted garbage
+			surface.SetFont( "TheaterInfoMedium" )
+			-- Get text dimensions
+			tw, th = surface.GetTextSize( str )
+			tw = tw + tw * 0.05 -- add additional padding
+		
+			-- Calculate hangs
+			if string.findFromTable( str, hangs ) then th = th + ( th / 6 ) end
+		
+			-- Calculate scale for fitting text
+			scale = tw / ThumbWidth
+			scale = math.max( scale, 0.88 )
+		
+			-- Calculate subtitle bar dimensions
+			bw, bh = (ThumbWidth * scale), (ThumbHeight * scale) * 0.16
+			bh = math.max( bh, th )
+			
+			-- Calculate height offset for bar
+			by = hhh * scale
+			by = math.min( by, (ThumbHeight * scale) - bh )
+		
+			-- Calculate height offset for text
+			ty = (hhh * scale) + (bh / 2)
+			ty = math.min( ty, (ThumbHeight * scale) - bh/2 )
+		
+			cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / scale ) * RenderScale )
+				draw.TheaterText(str, "TheaterInfoLarge", www+((ThumbWidth * scale) / 2), ty, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			cam.End3D2D() 
+			--end of copy pasted garbage
+		end
 
 		return
 

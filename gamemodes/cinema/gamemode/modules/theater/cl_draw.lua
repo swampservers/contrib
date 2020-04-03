@@ -461,7 +461,7 @@ function ExplicitVideoWarning()
 	if GetConVar("swamp_mature_content"):GetBool() then return false end
 
 	local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater()
-	if Theater and Theater._Video and Theater._Video:Service().Mature then
+	if Theater and Theater._Video and Theater._Video:IsMature() then
 		if Theater._Name=="Movie Theater" and IsValid(Theater._Video:GetOwner()) and Theater._Video:GetOwner():IsStaff() then
 			return false
 		end

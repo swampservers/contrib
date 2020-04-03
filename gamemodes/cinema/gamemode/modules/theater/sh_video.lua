@@ -83,6 +83,10 @@ function VIDEO:Data()
 	return self._VideoData
 end
 
+function VIDEO:IsMature()
+	return self:Service():IsMature(self)
+end
+
 /*
 	Owner
 */

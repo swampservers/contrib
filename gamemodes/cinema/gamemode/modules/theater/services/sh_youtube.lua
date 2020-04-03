@@ -5,6 +5,12 @@ SERVICE.Name 	= "YouTube"
 SERVICE.NeedsChromium = true
 SERVICE.LivestreamNeedsCodecs = true
 
+SERVICE.CacheLife = 3600*24*14
+
+function SERVICE:IsMature(video)
+	return video:Data()=="adult"
+end
+
 function SERVICE:GetKey( url )
 	if not string.match( url.host or "", "youtu.?be[.com]?" ) then
 		return false

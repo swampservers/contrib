@@ -19,6 +19,10 @@ function SERVICE:GetKey( url )
 	return false
 end
 
+function SERVICE:IsMature(video)
+	return self.Mature
+end
+
 CinemaHttpHeaders = {
 	["Cache-Control"] = "no-cache",
 	["Connection"] = "keep-alive",
