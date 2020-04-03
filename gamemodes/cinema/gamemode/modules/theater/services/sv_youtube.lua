@@ -1,4 +1,13 @@
 
+-- -- For porn stuff, so it's not popping up without a warning.
+-- function YoutubeVideoIsAdult(info)
+-- 	if string.find(info.title:lower(), "condom") then
+-- 		return true
+-- 	end
+-- 	return false
+-- end
+
+
 sv_GetVideoInfo = sv_GetVideoInfo or {}
 
 local function convertISO8601Time( duration )
@@ -45,6 +54,7 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
 	local onReceive = function( body, length, headers, code )
 
 		local resp = util.JSONToTable( body )
+
 		if not resp then
 			return onFailure( 'Theater_RequestFailed' )
 		end
@@ -62,18 +72,23 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
 		if not table.Lookup( item, 'status.embeddable' ) then
 			return onFailure( 'Service_EmbedDisabled' )
 		end
-		
+
 		local info = {}
 		info.title = table.Lookup( item, 'snippet.title' )
- 
-		-- Medium Size doesn't have a letterbox
-		info.thumb = table.Lookup( item, 'snippet.thumbnails.medium.url' )
 
 		if ( table.Lookup( item, 'snippet.liveBroadcastContent' ) ~= 'none' ) then
 			info.duration = 0
 		else
 			local durStr = table.Lookup( item, 'contentDetails.duration', '' )
 			info.duration = math.max(1, convertISO8601Time( durStr ))
+		end
+
+		if table.Lookup(item, "status.privacyStatus") == "unlisted" or table.Lookup(item, "contentDetails.contentRating.ytRating") == "ytAgeRestricted" then
+			info.data = "adult"
+		else
+			info.data = ""
+			-- Medium Size doesn't have a letterbox
+			info.thumb = table.Lookup( item, 'snippet.thumbnails.medium.url' )
 		end
 
 		onSuccess(info)

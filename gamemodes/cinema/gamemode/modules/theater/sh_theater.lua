@@ -281,6 +281,7 @@ if SERVER then
 		self._ThumbEnt:SetTheaterName( self:Name() )
 		self._ThumbEnt:SetTitle( self:VideoTitle() )
 		self._ThumbEnt:SetThumbnail( self:VideoThumbnail() )
+		self._ThumbEnt:SetService(self._Video and self._Video:Service().ClassName or "")
 	end
 
 	/*

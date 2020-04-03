@@ -21,12 +21,8 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 		
 		if streamwatch_url != nil then
 			theater.GetVideoInfoClientside(self:GetClass(), streamwatch_url, ply, function(info)
-				http.Post( "https://swampservers.net/fedorabot/gis.php", {q=info.title}, 
-					function(body2) 
-						info.thumb="http://swampservers.net/cinema/contain.php?i="..body2
-						info.data = streamwatch_url
-						onSuccess(info)
-					end, onFailure)
+				info.data = streamwatch_url
+				onSuccess(info)
 			end, onFailure)
 			
 		else
