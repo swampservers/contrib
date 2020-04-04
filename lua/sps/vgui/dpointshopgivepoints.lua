@@ -2,7 +2,7 @@ local PANEL = {}
 
 function PANEL:Init()
 	self:SetTitle("Give Points")
-	self:SetSize(300, 144)
+	self:SetSize(300, 200)
 	
 	self:SetDeleteOnClose(true)
 	self:SetBackgroundBlur(true)
@@ -33,6 +33,13 @@ function PANEL:Init()
 	pointsselector:SetTall(24)
 	pointsselector:Dock(TOP)
 	self.pselector = pointsselector
+
+	
+	local l3 = vgui.Create("DLabel", self)
+	l3:SetText("WARNING: Sending points is not reversable!\nIf you were promised something in exchange for points,\nit might be a scam!")
+	l3:Dock(TOP)
+	l3:DockMargin(8, 8, 8, 8)
+	l3:SizeToContents()
 	
 	local btnlist = vgui.Create("DPanel", self)
 	btnlist:SetDrawBackground(false)
