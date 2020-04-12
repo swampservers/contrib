@@ -9,7 +9,7 @@ SERVICE.NeedsCodecs = true
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
-	if string.sub( url.path, -5) == ".m3u8" or string.find(url.host,"streamwat.ch") then
+	if string.sub( url.path, -5) == ".m3u8" or string.find(url.encoded,"streamwat.ch/(.+)") then
 		return url.encoded
 	end
 	return false
@@ -65,6 +65,20 @@ if CLIENT then
 		
 		local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
 		panel:QueueJavascript( str )
+		
+		success = false
+		timer.Simple(2,function() 
+			if IsValid(panel) and not success then
+				local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
+				panel:QueueJavascript( str )
+			end
+		end)
+		
+		function panel:ConsoleMessage(msg)
+			if msg:StartWith("LIVE") then
+				success = true
+			end
+		end
 	end
 end
 

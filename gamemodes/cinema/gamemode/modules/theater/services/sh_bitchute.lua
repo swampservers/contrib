@@ -6,7 +6,7 @@ SERVICE.NeedsCodecs = true
 
 function SERVICE:GetKey( url )
 	match = string.match(url.path,"/.+/(.+[^/])")
-	if match != nil and string.find(url.host,"bitchute.com") then
+	if match != nil and string.find(url.encoded,"bitchute.com/video/(.+)") then
 		return match
 	end
 	return false
