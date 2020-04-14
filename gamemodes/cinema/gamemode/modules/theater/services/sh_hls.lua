@@ -75,6 +75,7 @@ if CLIENT then
 		end)
 		
 		function panel:ConsoleMessage(msg)
+			print(msg)
 			if msg:StartWith("LIVE") then
 				success = true
 			end
