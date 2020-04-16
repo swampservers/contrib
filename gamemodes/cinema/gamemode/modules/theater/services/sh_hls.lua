@@ -65,21 +65,6 @@ if CLIENT then
 		
 		local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
 		panel:QueueJavascript( str )
-		
-		success = false
-		timer.Simple(2,function() 
-			if IsValid(panel) and not success then
-				local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
-				panel:QueueJavascript( str )
-			end
-		end)
-		
-		function panel:ConsoleMessage(msg)
-			print(msg)
-			if msg:StartWith("LIVE") then
-				success = true
-			end
-		end
 	end
 end
 

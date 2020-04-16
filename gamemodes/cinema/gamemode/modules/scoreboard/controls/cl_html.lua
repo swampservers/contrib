@@ -226,6 +226,7 @@ function PANEL:ConsoleMessage( msg, func )
 
 	if ( !isstring( msg ) ) then msg = "*js variable*" end
 
+	print(msg,msg:StartWith("HREF:"),self.urlLoading)
 	if msg:StartWith("HREF:") then
 		local url =msg:sub(6)
 		self:SetURL( url )
