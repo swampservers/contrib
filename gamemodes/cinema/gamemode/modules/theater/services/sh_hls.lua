@@ -63,12 +63,12 @@ if CLIENT then
 		
 		local k = Video:Data() or Video:Key()
 		
-			timer.Simple(2,function()
-				if IsValid(panel) then
-					local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
-					panel:QueueJavascript( str )
-				end
-			end)
+		timer.Simple(2,function()
+			if IsValid(panel) then
+				local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
+				panel:QueueJavascript( str )
+			end
+		end)
 	end
 end
 
