@@ -28,7 +28,7 @@ surface.CreateFont( "PS_Donate1", {
 
 surface.CreateFont( "PS_Donate2", {
 	font = "Roboto",
-	size = 28, weight = 800, antialias = true,
+	size = 28-4, weight = 800, antialias = true,
 })
 
 surface.CreateFont( "PS_Models", {
@@ -601,14 +601,15 @@ function PANEL:Init()
 			end
 		end
 
-		PS_Jewishness = math.max(alpha-0.5,0)*80
+		PS_Jewishness = math.max(alpha-0.5,0)*30
 
 		local tc = PS_ColorWhite
 		--[[if self:IsHovered() then
 			tc = Color(175,230,69)
 		end]]
 		draw.SimpleText('Need more points?', 'PS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		draw.SimpleText('Click here to donate!', 'PS_Donate2', w/2, (h/2)+20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText('Click here to donate! Now supports PayPal', 'PS_Donate2', w/2, (h/2)+20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		--draw.SimpleText('Need more points?', 'PS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 
@@ -618,7 +619,7 @@ function PANEL:Init()
 	p:SetZPos(1000)
 	p:SetMouseInputEnabled(false)
 	p.Paint = function(self,w,h)
-		surface.SetDrawColor(255, 255, 255, PS_Jewishness or 0)
+		surface.SetDrawColor(0,0,0, PS_Jewishness or 0)
 		surface.SetMaterial( pointshopJewImage)
 		surface.DrawTexturedRectUV( 0, 0, w, h, 0,0,1,0.38 )
 	end
