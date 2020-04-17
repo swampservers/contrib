@@ -222,9 +222,16 @@ end
 PANEL.QueueJavaScript = PANEL.QueueJavascript
 PANEL.Call = PANEL.QueueJavascript
 
+concommand.Add("cinema_video_debug",function(ply)
+	ply.videoDebug = not ply.videoDebug
+	print("video debug set to "..tostring(ply.videoDebug))
+end)
+
 function PANEL:ConsoleMessage( msg, func )
 
 	if ( !isstring( msg ) ) then msg = "*js variable*" end
+	
+	if (LocalPlayer().videoDebug) then print(msg) end
 
 	if msg:StartWith("HREF:") then
 		local url =msg:sub(6)
