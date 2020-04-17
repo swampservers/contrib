@@ -139,20 +139,11 @@ function PS_BaseIncome(ply)
 end
 
 function PS_BaseIncomeMultiplier(ply)
-	local mult = ply.HasHalfPoints and 0.5 or 1.0
-
-	local don = ply:PS_GetDonation()
-	if don>=1000 then
-		mult = mult + 0.25
-	end
-	if don>=2000 then
-		mult = mult + 0.25
-	end
-
-	mult = mult+(math.floor(math.min(don,500000)/12500)*0.25)
-
-	--mult = math.min(mult, 5.5)
-
+	local cash = ply:PS_GetDonation()
+	local incomelevel = math.min(math.floor(math.min(cash,2000)/1000) + math.floor(cash/10000) + 1, 42)
+	
+	local mult = ((ply.HasHalfPoints and 1 or 3) + incomelevel) * 0.25
+	
 	if ply:IsAFK() then
 		mult = mult/2
 	else
