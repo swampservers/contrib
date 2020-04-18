@@ -42,6 +42,7 @@ if CLIENT then
 			end)
 
 			function vpanel:ConsoleMessage(msg)
+				if (LocalPlayer().videoDebug) then print(msg) end
 				if msg:StartWith("LIVE") then
 					self:Remove()
 					print("Success!")
@@ -49,7 +50,7 @@ if CLIENT then
 				end
 			end
 
-			vpanel:OpenURL( "http://swampservers.net/cinema/hls.html" )
+			vpanel:OpenURL( string.sub(key,0,5) == "https" and "https://swampservers.net/cinema/hls.html" or "http://swampservers.net/cinema/hls.html" )
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")
@@ -58,10 +59,9 @@ if CLIENT then
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
-		local url = "http://swampservers.net/cinema/hls.html"
-		panel:EnsureURL(url)
-		
 		local k = Video:Data() or Video:Key()
+		local url = string.sub(k,0,5) == "https" and "https://swampservers.net/cinema/hls.html" or "http://swampservers.net/cinema/hls.html"
+		panel:EnsureURL(url)
 		
 		timer.Simple(2,function()
 			if IsValid(panel) then
