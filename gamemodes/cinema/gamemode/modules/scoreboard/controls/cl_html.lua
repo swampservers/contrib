@@ -222,9 +222,29 @@ end
 PANEL.QueueJavaScript = PANEL.QueueJavascript
 PANEL.Call = PANEL.QueueJavascript
 
-concommand.Add("cinema_video_debug",function(ply)
+concommand.Add("cinema_debug_video",function(ply)
 	ply.videoDebug = not ply.videoDebug
 	print("video debug set to "..tostring(ply.videoDebug))
+end)
+
+concommand.Add("cinema_debug_setvideo",function(ply,cmd,str)
+	if not ply:InTheater() or str[1] == nil then return end
+	if IsValid(ply.theaterPanel) then
+		print("no valid theater panel")
+		return
+	end
+	print("video set to "..str[1])
+	ply.theaterPanel:EnsureURL(str[1])
+end)
+
+concommand.Add("cinema_debug_videojavascript",function(ply,cmd,str)
+	if not ply:InTheater() or str[1] == nil then return end
+	if IsValid(ply.theaterPanel) then
+		print("no valid theater panel")
+		return
+	end
+	print("javascript ("..str[1]..") sent to "..ply.theaterPanel:GetURL())
+	ply.theaterPanel:QueueJavascript(string.JavascriptSafe(str[1]))
 end)
 
 function PANEL:ConsoleMessage( msg, func )

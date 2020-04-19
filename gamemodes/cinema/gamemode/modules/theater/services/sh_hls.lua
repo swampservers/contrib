@@ -61,7 +61,13 @@ if CLIENT then
 	function SERVICE:LoadVideo( Video, panel )
 		local k = Video:Data() or Video:Key()
 		local url = string.sub(k,0,5) == "https" and "https://swampservers.net/cinema/hls.html" or "http://swampservers.net/cinema/hls.html"
+		if (LocalPlayer().videoDebug) then
+			print("KEY: "..k)
+			print("URL: "..url)
+		end
 		panel:EnsureURL(url)
+		
+		LocalPlayer().theaterPanel = panel
 		
 		timer.Simple(2,function()
 			if IsValid(panel) then
