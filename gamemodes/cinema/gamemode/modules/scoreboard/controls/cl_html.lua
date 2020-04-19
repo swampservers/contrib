@@ -229,7 +229,7 @@ end)
 
 concommand.Add("cinema_debug_setvideo",function(ply,cmd,str)
 	if not ply:InTheater() or str[1] == nil then return end
-	if IsValid(ply.theaterPanel) then
+	if not IsValid(ply.theaterPanel) then
 		print("no valid theater panel")
 		return
 	end
@@ -239,7 +239,7 @@ end)
 
 concommand.Add("cinema_debug_videojavascript",function(ply,cmd,str)
 	if not ply:InTheater() or str[1] == nil then return end
-	if IsValid(ply.theaterPanel) then
+	if not IsValid(ply.theaterPanel) then
 		print("no valid theater panel")
 		return
 	end
