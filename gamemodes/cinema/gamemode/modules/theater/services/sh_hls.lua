@@ -59,17 +59,14 @@ if CLIENT then
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
-		local k = Video:Data() or Video:Key()
+		local k = string.len(Video:Data())>5 and Video:Data() or Video:Key()
 		local url = string.sub(k,0,5) == "https" and "https://swampservers.net/cinema/hls.html" or "http://swampservers.net/cinema/hls.html"
 		if (LocalPlayer().videoDebug) then
-			print("K: "..k)
-			print("KEY: "..Video:Key())
-			print("DATA: "..Video:Data())
+			print("K: "..k,string.len(k))
+			print("KEY: "..Video:Key(),string.len(Video:Key()))
+			print("DATA: "..Video:Data(),string.len(Video:Data()))
 			print("URL: "..url)
 		end
-		
-		url = url.."?url="..k
-		
 		panel:EnsureURL(url)
 		
 		LocalPlayer().theaterPanel = panel
