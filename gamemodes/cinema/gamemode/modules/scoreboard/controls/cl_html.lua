@@ -243,8 +243,9 @@ concommand.Add("cinema_debug_videojavascript",function(ply,cmd,str)
 		print("no valid theater panel")
 		return
 	end
-	print("javascript ("..str[1]..") sent to "..ply.theaterPanel:GetURL())
-	ply.theaterPanel:QueueJavascript(string.JavascriptSafe(str[1]))
+	st = string.JavascriptSafe(str[1])
+	print("javascript ("..st..") sent to "..ply.theaterPanel:GetURL())
+	ply.theaterPanel:RunJavascript(st)
 end)
 
 function PANEL:ConsoleMessage( msg, func )

@@ -62,9 +62,14 @@ if CLIENT then
 		local k = Video:Data() or Video:Key()
 		local url = string.sub(k,0,5) == "https" and "https://swampservers.net/cinema/hls.html" or "http://swampservers.net/cinema/hls.html"
 		if (LocalPlayer().videoDebug) then
-			print("KEY: "..k)
+			print("K: "..k)
+			print("KEY: "..Video:Key())
+			print("DATA: "..Video:Data())
 			print("URL: "..url)
 		end
+		
+		url = url.."?url="..k
+		
 		panel:EnsureURL(url)
 		
 		LocalPlayer().theaterPanel = panel
