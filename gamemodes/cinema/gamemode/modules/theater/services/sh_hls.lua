@@ -50,7 +50,7 @@ if CLIENT then
 				end
 			end
 
-			vpanel:OpenURL( string.sub(key,0,5) == "https" and "https://swampservers.net/cinema/hls.html" or "http://swampservers.net/cinema/hls.html" )
+			vpanel:OpenURL( "http://swampservers.net/cinema/hls.html" )
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")
@@ -59,10 +59,12 @@ if CLIENT then
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
-		local k = Video:Data() or Video:Key()
-		local url = string.sub(k,0,5) == "https" and "https://swampservers.net/cinema/hls.html" or "http://swampservers.net/cinema/hls.html"
+		local k = string.len(Video:Data())>5 and Video:Data() or Video:Key()
+		local url = "http://swampservers.net/cinema/hls.html"
 		if (LocalPlayer().videoDebug) then
-			print("KEY: "..k)
+			print("K: "..k,string.len(k))
+			print("KEY: "..Video:Key(),string.len(Video:Key()))
+			print("DATA: "..Video:Data(),string.len(Video:Data()))
 			print("URL: "..url)
 		end
 		panel:EnsureURL(url)
