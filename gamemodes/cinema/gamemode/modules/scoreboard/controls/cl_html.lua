@@ -243,16 +243,17 @@ concommand.Add("cinema_debug_videojavascript",function(ply,cmd,str)
 		print("no valid theater panel")
 		return
 	end
-	st = string.JavascriptSafe(str[1])
+	st = str[1] --string.JavascriptSafe(str[1])
 	print("javascript ("..st..") sent to "..ply.theaterPanel:GetURL())
 	ply.theaterPanel:RunJavascript(st)
 end)
 
 function PANEL:ConsoleMessage( msg, func )
 
-	if ( !isstring( msg ) ) then msg = "*js variable*" end
+	if (LocalPlayer().videoDebug and !isstring(msg)) then print("[JS] "..msg) end
+	if (!isstring(msg)) then msg = "*js variable*" end
 	
-	if (LocalPlayer().videoDebug) then print(msg) end
+	if (LocalPlayer().videoDebug and not msg:StartWith("HREF:") and isstring(msg)) then print(msg) end
 
 	if msg:StartWith("HREF:") then
 		local url =msg:sub(6)

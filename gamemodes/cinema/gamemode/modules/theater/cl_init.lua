@@ -306,6 +306,12 @@ function LoadVideo( Video )
 	end
 
 	ActivePanel.OnFinishLoading = function() end
+	
+	LocalPlayer().theaterPanel = ActivePanel
+	if (LocalPlayer().videoDebug) then
+		print("KEY: "..Video:Key(),string.len(Video:Key()))
+		print("DATA: "..Video:Data(),string.len(Video:Data()))
+	end
 
 	local svc = Video:Service()
 	svc:LoadVideo(Video, ActivePanel)
