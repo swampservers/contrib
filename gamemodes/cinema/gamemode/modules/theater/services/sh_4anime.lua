@@ -58,15 +58,18 @@ if CLIENT then
 					elseif self.phase == 1 then
 						if string.StartWith(msg,"URL:") then
 							self.data = msg:sub(5,-1)
+							print("URL: "..self.data)
 						end
 						if string.StartWith(msg,"DURATION:") then
 							self.duration = msg:sub(10,-1)
+							print("DURATION: "..self.duration)
 							if self.duration == "0" then
 								self.duration = nil
 							end
 						end
 						if string.StartWith(msg,"TITLE:") then
 							self.title = msg:sub(7,-1)
+							print("TITLE: "..self.title)
 						end
 						if (self.data != nil and self.duration != nil and self.title != nil) then
 							self.duration = math.floor(tonumber(self.duration))

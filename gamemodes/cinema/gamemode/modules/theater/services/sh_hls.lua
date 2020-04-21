@@ -59,17 +59,9 @@ if CLIENT then
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
-		local k = string.len(Video:Data())>5 and Video:Data() or Video:Key()
+		local k = string.len(Video:Data())>1 and Video:Data() or Video:Key()
 		local url = "http://swampservers.net/cinema/hls.html"
-		if (LocalPlayer().videoDebug) then
-			print("K: "..k,string.len(k))
-			print("KEY: "..Video:Key(),string.len(Video:Key()))
-			print("DATA: "..Video:Data(),string.len(Video:Data()))
-			print("URL: "..url)
-		end
 		panel:EnsureURL(url)
-		
-		LocalPlayer().theaterPanel = panel
 		
 		timer.Simple(2,function()
 			if IsValid(panel) then
