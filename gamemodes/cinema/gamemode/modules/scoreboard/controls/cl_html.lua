@@ -250,7 +250,7 @@ end)
 
 function PANEL:ConsoleMessage( msg, func )
 
-	if (LocalPlayer().videoDebug and !isstring(msg)) then print("[JS] "..msg) end
+	if (LocalPlayer().videoDebug and !isstring(msg)) then print("[JS] "..tostring(msg),type(msg)) end
 	if (!isstring(msg)) then msg = "*js variable*" end
 	
 	if (LocalPlayer().videoDebug and not msg:StartWith("HREF:") and isstring(msg)) then print(msg) end
