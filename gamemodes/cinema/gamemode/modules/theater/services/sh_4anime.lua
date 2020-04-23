@@ -43,7 +43,8 @@ if CLIENT then
 					elseif vpanel.phase == 1 then
 						vpanel:RunJavascript("var vid = document.getElementsByTagName('video');console.log('URL:'+vid.item(0).src);")
 						vpanel:RunJavascript("console.log('TITLE:'+document.title);")
-						vpanel:RunJavascript("vid1.volume(0);vid1.play();console.log('DURATION:'+vid1.duration());")
+						vpanel:RunJavascript("vid1.volume(0);vid1.play();console.log('DURATION:'+vid1.duration());") --videojs player
+						vpanel:RunJavascript("var jwp = jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());") --jwplayer
 						return
 					end
 				end
@@ -56,18 +57,18 @@ if CLIENT then
 						self.phase = 1
 						return
 					elseif self.phase == 1 then
-						if string.StartWith(msg,"URL:") then
+						if string.StartWith(msg,"URL:") and not self.data then
 							self.data = msg:sub(5,-1)
 							print("URL: "..self.data)
 						end
-						if string.StartWith(msg,"DURATION:") then
+						if string.StartWith(msg,"DURATION:") and not self.duration then
 							self.duration = msg:sub(10,-1)
-							print("DURATION: "..self.duration)
 							if self.duration == "0" then
 								self.duration = nil
 							end
+							if self.duration then print("DURATION: "..self.duration) end
 						end
-						if string.StartWith(msg,"TITLE:") then
+						if string.StartWith(msg,"TITLE:") and not self.title then
 							self.title = msg:sub(7,-1)
 							print("TITLE: "..self.title)
 						end
