@@ -173,16 +173,7 @@ Map =
 			Height = 27
 		}
 	},
-	{
-		Name="Upper Caverns",
-		Min = Vector(686,-2048,-1792),
-		Max = Vector(6400,3584,-256)
-	},
-	{
-		Name="Lower Caverns",
-		Min = Vector(686,-2048,-4096),
-		Max = Vector(8000,3584,-1792)
-	},
+
 	{
 		Name="Kool Kids Klub",
 		Min = Vector(2048,256,-16),
@@ -294,23 +285,7 @@ Map =
 		}
 	},
 
-	{
-		Name="Office of the Vice President",
-		Min = Vector(-2992,-800,-144),
-		Max = Vector(-2784,-560,-16)
-	},
 
-	{
-		Name="Elevator Shaft",
-		Min = Vector(-2784,-688,-144),
-		Max = Vector(-2576,-560,2048)
-	},
-
-	{ --after office of the vice president & elevator shaft
-		Name="Trump Lobby",
-		Min = Vector(-3008,-1296,-128),
-		Max = Vector(-1952,-496,240)
-	},
 
 	{
 		Name="Church",
@@ -381,6 +356,18 @@ Map =
 		Name="MOBILE",
 	},
 
+	
+	{
+		Name="Upper Caverns",
+		Min = Vector(686,-2048,-1792),
+		Max = Vector(6400,3584,-256)
+	},
+	{
+		Name="Lower Caverns",
+		Min = Vector(686,-2048,-4096),
+		Max = Vector(8000,3584,-1792)
+	},
+	
 	{
 		Name="AFK Corral",
 		Min = Vector(1680,704,-128),
@@ -405,6 +392,27 @@ Map =
 		Min = Vector(-2976,-160,-128),
 		Max = Vector(-2368,2048,192)
 	},
+	
+	
+	
+	{
+		Name="Office of the Vice President",
+		Min = Vector(-2992,-800,-144),
+		Max = Vector(-2784,-560,-16)
+	},
+
+	{
+		Name="Elevator Shaft",
+		Min = Vector(-2784,-688,-144),
+		Max = Vector(-2576,-560,2048)
+	},
+
+	{ --after office of the vice president & elevator shaft
+		Name="Trump Lobby",
+		Min = Vector(-3008,-1296,-128),
+		Max = Vector(-1952,-496,240)
+	},
+	
 	{
 		Name="Throne Room",
 		Min = Vector(-2592,-1280,784),
