@@ -28,7 +28,7 @@ surface.CreateFont( "PS_Donate1", {
 
 surface.CreateFont( "PS_Donate2", {
 	font = "Roboto",
-	size = 28-4, weight = 800, antialias = true,
+	size = 28, weight = 800, antialias = true,
 })
 
 surface.CreateFont( "PS_Models", {
@@ -608,7 +608,7 @@ function PANEL:Init()
 			tc = Color(175,230,69)
 		end]]
 		draw.SimpleText('Need more points?', 'PS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		draw.SimpleText('Click here to donate! Now supports PayPal', 'PS_Donate2', w/2, (h/2)+20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText('Click here to donate!', 'PS_Donate2', w/2, (h/2)+20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		--draw.SimpleText('Need more points?', 'PS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
