@@ -56,6 +56,7 @@ PS_Categories = {
 					"weapon_sniper",
 					"weapon_rpg",
 					"weapon_gauntlet",
+					"weapon_tag",
 					"weapon_jihad",
 					"weapon_doom3_bfg",
 					"weapon_bigbomb"
