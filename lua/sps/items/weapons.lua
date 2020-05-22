@@ -107,6 +107,8 @@ PS_WeaponProduct({
 	name = 'Tag',
 	description = 'Remember that find childhood game, tag? Well that but with death.',
 	price = 9000,
+	model = 'models/props_phx/misc/egg.mdl',
+	class = 'weapon_tag'
 })
 
 PS_WeaponAndAmmoProduct({
