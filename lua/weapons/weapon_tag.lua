@@ -146,5 +146,5 @@ function SWEP:DealDamage()
 end
 
 function SWEP:OnDrop()
-	self:Remove()
+
 end
