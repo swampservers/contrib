@@ -33,14 +33,23 @@ SWEP.HitDistance = 48
 
 
 local justReloaded = 0
-local initializeTime = 0
 local tagTimer = 35
 function SWEP:Initialize()
 	self:SetHoldType( "fist" )
-	initializeTime = CurTime()
 	if SERVER then
+		self:SetNWFloat("initTime", CurTime()) 
 		timer.Simple(5,function() if IsValid(self) and self.Owner:IsFrozen() then self.Owner:UnLock() end end)
-		timer.Simple(tagTimer,function() if IsValid(self) then self:Remove() self.Owner:Kill() end end)
+		timer.Simple(tagTimer,
+		function()
+			if IsValid(self) then
+				local effectdata = EffectData()
+				effectdata:SetOrigin(self:GetPos() )
+				effectdata:SetMagnitude(0)
+				util.Effect( "Explosion", effectdata, true, true )
+				self:Remove()
+				self.Owner:Kill()
+			end
+		end)
 	end
 end
 
@@ -64,7 +73,7 @@ function SWEP:Tick()
 end
 
 
-function TagPlayer(self,target,attacker)
+function SWEP:TagPlayer(self,target,attacker)
 	if SERVER then
 		if (target:InVehicle()) then target:ExitVehicle() end
 		target:Lock()
@@ -75,20 +84,20 @@ function TagPlayer(self,target,attacker)
 	end
 end
 
-function TestTagPlayer(self,target,attacker)
+function SWEP:TestTagPlayer(self,target,attacker)
 	 if not Safe(target) then
-		 TagPlayer(self,target,attacker)
+		 self.TagPlayer(self,target,attacker)
 	 elseif attacker:GetTheater() and attacker:GetTheater():IsPrivate() and attacker:GetTheater():GetOwner() == attacker and attacker:GetLocationName() == target:GetLocationName() then
-		 TagPlayer(self,target,attacker)
+		 self.TagPlayer(self,target,attacker)
 	 else return end
 end
 
 
 function SWEP:DrawHUD()
-local TextWidth = surface.GetTextSize("Trebuchet24")
-	local displayTime = math.Round(tagTimer - (CurTime() - initializeTime), 1)
+	local displayTime = math.Round(tagTimer - (CurTime() - self:GetNWFloat("initTime", CurTime())), 1)
 	local displayString = "You have " .. displayTime .. " Seconds to tag someone else"
-	draw.WordBox(8, ScrW()/2 - TextWidth * (#displayString / 23), ScrH()/2, displayString, "Trebuchet24", Color(0,0,0,128), Color(255,255,255,255))
+	local TextWidth = surface.GetTextSize(displayString)
+	draw.WordBox(8, ScrW()/2 - TextWidth/2, ScrH()/2, displayString, "Trebuchet24", Color(0,0,0,128), Color(255,255,255,255))
 
 end
 function SWEP:PrimaryAttack( right )
@@ -129,16 +138,14 @@ function SWEP:PrimaryAttack( right )
 				end
 			end
 			if (target[2] < 50) then
-				TestTagPlayer(self,target[1],self.Owner)
+				self.TestTagPlayer(self,target[1],self.Owner)
 			end
 		end
 	end
 end
 
 function SWEP:SecondaryAttack()
-
 	self:PrimaryAttack( true )
-
 end
 
 function SWEP:DealDamage()
