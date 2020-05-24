@@ -73,7 +73,7 @@ function SWEP:Tick()
 end
 
 
-function SWEP:TagPlayer(self,target,attacker)
+function SWEP:TagPlayer(target,attacker)
 	if SERVER then
 		if (target:InVehicle()) then target:ExitVehicle() end
 		target:Lock()
@@ -84,11 +84,11 @@ function SWEP:TagPlayer(self,target,attacker)
 	end
 end
 
-function SWEP:TestTagPlayer(self,target,attacker)
+function SWEP:TestTagPlayer(target,attacker)
 	 if not Safe(target) then
-		 self.TagPlayer(self,target,attacker)
+		 self:TagPlayer(target,attacker)
 	 elseif attacker:GetTheater() and attacker:GetTheater():IsPrivate() and attacker:GetTheater():GetOwner() == attacker and attacker:GetLocationName() == target:GetLocationName() then
-		 self.TagPlayer(self,target,attacker)
+		 self:TagPlayer(target,attacker)
 	 else return end
 end
 
@@ -116,7 +116,7 @@ function SWEP:PrimaryAttack( right )
 	
 	if eyetrace.Hit then
 		if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) then
-			TestTagPlayer(self,eyetrace.Entity,self.Owner)
+			self:TestTagPlayer(eyetrace.Entity,self.Owner)
 		else
 			local target = {nil,50}
 			local allply = player.GetAll()
@@ -138,7 +138,7 @@ function SWEP:PrimaryAttack( right )
 				end
 			end
 			if (target[2] < 50) then
-				self.TestTagPlayer(self,target[1],self.Owner)
+				self:TestTagPlayer(target[1],self.Owner)
 			end
 		end
 	end
