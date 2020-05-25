@@ -1,4 +1,4 @@
-CoinFlips = CoinFlips pr {}
+CoinFlips = CoinFlips or {}
 RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	if arg:lower() == "accept" then checkCoinFlipRequest(ply) return end
 	local t = string.Explode(" ",arg)
@@ -10,7 +10,7 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 		if c == 1 then
 			if ply == to then
 				ply:ChatPrint("[red]You can't coinflip yourself!")
-			elseif p >= 1000 then
+			elseif p >= 1000 then -- minimum 1000 point coinflip
 				initCointFlip(ply,to,p)
 			else
 				ply:ChatPrint("[red]A coin flip must be a minimum of 1000 points. No pussy bets!")
@@ -26,7 +26,7 @@ function initCointFlip(ply,target,amount)
 		-- Both players have enough points AND an existing coinflip doesn't exist.
 		ply:ChatPrint("[orange]"..to:Nick().." is receiving your coinflip request.")
 		CoinFlips[ply:SteamID()] = {target:SteamID(), amount}
-		timer.Simple(120, CoinFlipRequestTimeout, ply, target)
+		timer.Simple(120, CoinFlipRequestTimeout, ply, target) -- 2 minutes for the timeout.
 	elseif CoinFlips[ply:SteamID()] ~= nil then
 		ply:ChatPrint("[red]What the hell r yeh doing bruv? yeh already hae a filp goin!")
 	elseif not ply:PS_HasPoints(amount) then
@@ -44,6 +44,7 @@ local function CoinFlipRequestTimeout(ply, target)
 end
 
 function checkCoinFlipRequest(target)
+	-- There is probably a better way to do this. I have always found this kind of coding nasty once you get a sip of Java 8.
 	coinflipFound = false
 	for i,j in pairs(CoinFlips) do
 		if j[1] == target:SteamID() then
@@ -58,6 +59,7 @@ function checkCoinFlipRequest(target)
 end
 
 function finishCoinFlip(fromID, to)
+	-- Self explanatory, 'from' is the initiator player who's ID is the key in the table, 'to' is the other player.
 	local from = nil
 	local amount = CoinFlips[fromID][2]
 	-- Get Player from ID
@@ -65,7 +67,7 @@ function finishCoinFlip(fromID, to)
 		if(ply:SteamID() == fromID) then from = ply end
 	end
 	if(from == nil) then
-		to:ChatPrint("[red]The other bruv left, gotta cancel this coin flip!")
+		to:ChatPrint("[red]The other bruv left, gotta cancel this coinflip!")
 	elseif from:PS_HasPoints(amount) and to:PS_HasPoints(amount) then
 		-- Final Check, make sure they have funds still
 		local heads = math.random(0, 1) -- the "request from" player is always Heads.
