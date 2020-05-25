@@ -8,7 +8,9 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	else
 		local to,c = PlyCount(string.Implode(" ",t))
 		if c == 1 then
-			if p >= 1000 then
+			if ply == to then
+				ply:ChatPrint("[red]You can't coinflip yourself!")
+			elseif p >= 1000 then
 				initCointFlip(ply,to,p)
 			else
 				ply:ChatPrint("[red]A coin flip must be a minimum of 1000 points. No pussy bets!")
