@@ -71,7 +71,7 @@ function finishCoinFlip(fromID, to)
 	elseif from:PS_HasPoints(amount) and to:PS_HasPoints(amount) then
 		-- Final Check, make sure they have funds still
 		local heads = math.random(0, 1) -- the "request from" player is always Heads.
-		BotSayGlobal("[fbc]"..from:Nick().." flipped a coin worth [rainbow]"..(amount * 2).."[fbc] against "..to:Nick().." and...... " .. ((heads == 1) and "Won" or "Lost") .."!")
+		BotSayGlobal("[edgy]" .. from:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. to:Nick().. "[fbc] and...... [rainbow]" .. ((heads == 1) and "Won" or "Lost") .."!")
 		from:ChatPrint("[fbc]You " .. ((heads == 1) and "Won" or "Lost") .. " " .. amount .. ".")
 		to:ChatPrint("[fbc]You " .. ((heads == 0) and "Won" or "Lost") .. " " .. amount .. ".")
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
