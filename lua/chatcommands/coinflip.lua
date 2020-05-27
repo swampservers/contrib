@@ -32,15 +32,14 @@ function initCointFlip(ply,target,amount)
 	elseif not ply:PS_HasPoints(amount) then
 		ply:ChatPrint("[red]What the hell r yeh doing bruv? yeh don't hae dooze points!")
 	elseif not target:PS_HasPoints(amount) then
-		-- Should a player be told another player doesn't have enough points?
-		ply:ChatPrint("[red]y'r bruv doesn't hae dooze points to coinflip with yeh!")
+		-- Target doesn't have the required funds. Nothing happens, CoinFlipRequestTimeout will be called and timeout the roll.
 	end
 end
 
 local function CoinFlipRequestTimeout(ply, target)
 	table.remove(CoinFlips, ply:SteamID())
-	ply:ChatPrint("[fbc]The other bruv don't want to play. Try again lates.")
-	target:ChatPrint("[fbc]Missed out on a coinflip from " .. ply:Nick() .. ".")
+	ply:ChatPrint("[edgy]" .. target:Nick() .. "[fbc] don't want to play. Try again lates.")
+	target:ChatPrint("[fbc]You missed out on a coinflip from [edgy]" .. ply:Nick() .. "[fbc].")
 end
 
 function checkCoinFlipRequest(target)
@@ -51,6 +50,7 @@ function checkCoinFlipRequest(target)
 			-- Coinflip Request Found
 			coinflipFound = true
 			finishCoinFlip(i, target)
+			break -- Only do the first request found.
 		end
 	end
 	if not coinflipFound then
@@ -67,23 +67,36 @@ function finishCoinFlip(fromID, to)
 		if(ply:SteamID() == fromID) then from = ply end
 	end
 	if(from == nil) then
+		table.remove(CoinFlips, fromID) -- Remove request from CoinFlip because initiator left the server
 		to:ChatPrint("[red]The other bruv left, gotta cancel this coinflip!")
-	elseif from:PS_HasPoints(amount) and to:PS_HasPoints(amount) then
-		-- Final Check, make sure they have funds still
-		local heads = math.random(0, 1) -- the "request from" player is always Heads.
-		BotSayGlobal("[edgy]" .. from:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. to:Nick().. "[fbc] and...... [rainbow]" .. ((heads == 1) and "Won" or "Lost") .."!")
-		from:ChatPrint("[fbc]You " .. ((heads == 1) and "Won" or "Lost") .. " " .. amount .. ".")
-		to:ChatPrint("[fbc]You " .. ((heads == 0) and "Won" or "Lost") .. " " .. amount .. ".")
+	elseif from:PS_HasPoints(amount) and to:PS_HasPoints(amount) then -- Final Check, make sure they have funds still
+		table.remove(CoinFlips, fromID) -- Remove request because roll is starting
+		local heads = math.random() < 0.5 -- the "request from" player is always Heads.
+		BotSayGlobal("[edgy]" .. from:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. to:Nick().. "[fbc] and...... [rainbow]" .. (heads and "Won" or "Lost") .."!")
+		from:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " " .. amount .. ".")
+		to:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " " .. amount .. ".")
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
-		if heads == 1 then
-			from:PS_GivePoints(amount)
+		if heads then
 			to:PS_TakePoints(amount)
+			from:PS_GivePoints(amount)
 		else
 			from:PS_TakePoints(amount)
 			to:PS_GivePoints(amount)
 		end
-	else
-		from:ChatPrint("[red]One of you no longer have the funds required for this coinflip!");
-		to:ChatPrint("[red]One of you no longer have the funds required for this coinflip!");
+	elseif not from:PS_HasPoints(amount) then
+		-- Initiator suddenly doesn't have the required funds. Nothing happens, show it off as an error.
+		-- Alternativly, we can show no messages, and don't remove the coinflip from table and have it timeout through CoinFlipRequestTimeout
+		table.remove(CoinFlips, fromID)
+		from:ChatPrint("[red]What the hell r yeh doing bruv? yeh don't hae dooze points!")
+		-- Make it look like an error for both players.
+		to:ChatPrint("[red]ERROR: No points have been taken. Coinflip cancelled.")
+		from:ChatPrint("[red]ERROR: No points have been taken. Coinflip cancelled.")
+	elseif not to:PS_HasPoints(amount) then
+		-- Target suddenly doesn't have the required funds. Nothing happens, show it off as an error.
+		table.remove(CoinFlips, fromID)
+		to:ChatPrint("[red]What the hell r yeh doing bruv? yeh don't hae dooze points!")
+		-- Make it look like an error for both players.
+		to:ChatPrint("[red]ERROR: No points have been taken. Coinflip cancelled.")
+		from:ChatPrint("[red]ERROR: No points have been taken. Coinflip cancelled.")
 	end
 end
