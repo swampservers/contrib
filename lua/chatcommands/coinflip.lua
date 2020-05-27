@@ -1,10 +1,16 @@
 CoinFlips = CoinFlips or {}
+
 RegisterChatCommand({'coin','coinflip'},function(ply,arg)
-	if arg:lower() == "accept" then checkCoinFlipRequest(ply) return end
 	local t = string.Explode(" ",arg)
 	local p = tonumber(table.remove(t))
+	if #t == 1 and t[1]:lower() == "accept" then checkCoinFlipRequest(ply, p) return end
+
 	if p == nil then
-		ply:ChatPrint("[orange]!coinflip player points")
+		if #t == 1 and t[1]:lower() == "accept" then
+			ply:ChatPrint("[orange]!coinflip accept points")
+		else
+			ply:ChatPrint("[orange]!coinflip player points")
+		end
 	else
 		local to,c = PlyCount(string.Implode(" ",t))
 		if c == 1 then
@@ -13,7 +19,7 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 			elseif hasCoinflipRequest(to) then
 				ply:ChatPrint("[red]That player currently has a coinflip request active!")
 			elseif p >= 1000 then -- minimum 1000 point coinflip
-				initCointFlip(ply,to,p)
+				initCoinFlip(ply,to,p)
 			else
 				ply:ChatPrint("[red]A coin flip must be a minimum of 1000 points. No pussy bets!")
 			end
@@ -23,12 +29,36 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	end
 end,{global=true,throttle=true})
 
-function initCointFlip(ply,target,amount)
+timer.Create( "CoinFlip", 1, 0,
+function()
+	local usedID = nil
+	for fromID,coinflip in pairs(CoinFlips) do
+		if((coinFlip[3] + 60) <= CurTime()) then -- If 60 seconds have elapsed
+			usedID = fromID -- Grab only 1 per timer itteration, prevents from having to table.remove inside of a loop.
+			break
+		end
+	end
+	if(usedID ~= nil) then
+		local coinflipData = CoinFlips[usedID]
+		local fromPlayer = player.GetBySteamID(usedID)
+		local toPlayer = player.GetBySteamID(coinflipData[1])
+		if(fromPlayer ~= nil and toPlayer ~= nil) then
+			fromPlayer:ChatPrint("[edgy]" .. toPlayer:Nick() .. "[fbc] don't want to play. Try again lates.")
+			toPlayer:ChatPrint("[fbc]You missed out on a coinflip from [edgy]" .. fromPlayer:Nick() .. "[fbc].")
+		elseif(fromPlayer == nil and toPlayer ~= nil) then
+			toPlayer:ChatPrint("[fbc]You missed out on a coinflip.")
+		elseif(fromPlayer ~= nil and toPlayer == nil) then
+			fromPlayer:ChatPrint("[fbc]The player you requested a coinflip to has left. Try again lates.")
+		end
+		table.remove(CoinFlips, usedID)
+	end
+end)
+
+function initCoinFlip(ply,target,amount)
 	if ply:PS_HasPoints(amount) and target:PS_HasPoints(amount) and CoinFlips[ply:SteamID()] == nil then
 		-- Both players have enough points AND an existing coinflip doesn't exist.
 		ply:ChatPrint("[orange]"..to:Nick().." is receiving your coinflip request.")
-		CoinFlips[ply:SteamID()] = {target:SteamID(), amount}
-		timer.Create( "CoinFlip" .. ply:SteamID(), 120, 1, CoinFlipRequestTimeout, ply, target) -- 2 minutes for the timeout.
+		CoinFlips[ply:SteamID()] = {target:SteamID(), amount, CurTime()}
 	elseif CoinFlips[ply:SteamID()] ~= nil then
 		ply:ChatPrint("[red]What the hell r yeh doing bruv? yeh already hae a filp goin!")
 	elseif not ply:PS_HasPoints(amount) then
@@ -38,31 +68,35 @@ function initCointFlip(ply,target,amount)
 	end
 end
 
-function CoinFlipRequestTimeout(ply, target)
-	if CoinFlips[ply:SteamID()] == nil then return end
-	table.remove(CoinFlips, ply:SteamID())
-	ply:ChatPrint("[edgy]" .. target:Nick() .. "[fbc] don't want to play. Try again lates.")
-	target:ChatPrint("[fbc]You missed out on a coinflip from [edgy]" .. ply:Nick() .. "[fbc].")
-end
-
 function CoinFlipRemove(id)
 	timer.Destroy("CoinFlip" .. id)
 	table.remove(CoinFlips, id)
 end
 
-function checkCoinFlipRequest(target)
-	-- There is probably a better way to do this. I have always found this kind of coding nasty once you get a sip of Java 8.
-	coinflipFound = false
-	for i,j in pairs(CoinFlips) do
-		if j[1] == target:SteamID() then
+function checkCoinFlipRequest(toPlayer, points)
+	local coinflipFound = false
+	for fromID,j in pairs(CoinFlips) do
+		if j[1] == toPlayer:SteamID() and j[2] == points then
 			-- Coinflip Request Found
 			coinflipFound = true
-			finishCoinFlip(i, target)
+			finishCoinFlip(fromID, toPlayer)
 			break -- Only do the first request found.
 		end
 	end
 	if not coinflipFound then
-		ply:ChatPrint("[red]What the hell r yeh doing bruv? yeh don't hae a coinflip request!")
+		ply:ChatPrint("[red]Yeh don't hae a coinflip request for tha amount!")
+		ply:ChatPrint("[orange]COINFLIPS:")
+		local index = 1
+		for fromID,j in pairs(CoinFlips) do
+			if j[1] == toPlayer:SteamID() then
+				local fromPlayer =  player.GetBySteamID(fromID)
+				local points = j[2]
+				if fromPlayer ~= nil then
+					ply:ChatPrint("[orange]" .. index .. ") [rainbow]" .. points .. "[fbc] from [gold]" .. fromPlayer:Nick())
+				end
+				index = index + 1
+			end
+		end
 	end
 end
 
