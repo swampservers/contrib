@@ -43,8 +43,6 @@ function()
 			elseif(fromPlayer ~= nil and toPlayer == nil) then
 				fromPlayer:ChatPrint("[fbc]The player you requested a coinflip to has left. Try again lates.")
 			end
-			table.remove(CoinFlips, usedID)
-
 		else
 			NewCoinFlips[fromID] = coinflip
 		end
