@@ -31,7 +31,7 @@ SWEP.Secondary.Ammo = "none"
 
 SWEP.DrawAmmo = false
 
-SWEP.HitDistance = 48
+SWEP.HitDistance = 58
 
 
 local justReloaded = 0
@@ -41,7 +41,7 @@ function SWEP:Initialize()
 	self:SetHoldType( "fist" )
 	if SERVER then
 		self:SetNWFloat("initTime", CurTime())
-		timer.Simple(5,function() if IsValid(self) and self.Owner:IsFrozen() then self.Owner:UnLock() end end)
+		timer.Simple(5,function() if IsValid(self) and self.Owner:IsFrozen() then self.Owner:Freeze(false) end end)
 		timer.Simple(tagTimer,
 		function()
 			if IsValid(self) then
@@ -78,7 +78,7 @@ end
 
 function SWEP:TagPlayer(target,attacker)
 	if SERVER then
-		target:Freeze()
+		target:Freeze(true)
 		target:Give( "weapon_tag" )
 		self:ExtEmitSound("tag/frozen.wav", {volume=0.6})
 		self:ExtEmitSound("tag/slap.wav", {volume=0.9})
@@ -87,7 +87,9 @@ function SWEP:TagPlayer(target,attacker)
 end
 
 function SWEP:TestTagPlayer(target,attacker)
-	 if not Safe(target) then
+	 if not Safe(target) and not target:InVehicle() then
+		 self:TagPlayer(target,attacker)
+	 elseif not target:IsAFK() and target:InVehicle() then
 		 self:TagPlayer(target,attacker)
 	 elseif attacker:GetTheater() and attacker:GetTheater():IsPrivate() and attacker:GetTheater():GetOwner() == attacker and attacker:GetLocationName() == target:GetLocationName() then
 		 self:TagPlayer(target,attacker)
@@ -118,7 +120,7 @@ function SWEP:PrimaryAttack( right )
 		if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) then
 			self:TestTagPlayer(eyetrace.Entity,self.Owner)
 		else
-			local target = {nil,50}
+			local target = {nil,58}
 			local allply = player.GetAll()
 			local tracepos = self.Owner:GetEyeTrace().HitPos
 			for k,v in pairs(allply) do
@@ -137,20 +139,11 @@ function SWEP:PrimaryAttack( right )
 					end
 				end
 			end
-			if (target[2] < 50) then
+			if (target[2] < 58) then
 				self:TestTagPlayer(target[1],self.Owner)
 			end
 		end
 	end
-end
-
-function SWEP:CreateWorldModel()
-   if not IsValid(self.WModel) then
-      self.WModel = ClientsideModel(self.WorldModel,RENDERGROUP_OPAQUE)
-      self.WModel:SetNoDraw(true)
-      self.WModel:SetBodygroup(1,1)
-   end
-   return self.WModel
 end
 
 function SWEP:DrawWorldModel()
