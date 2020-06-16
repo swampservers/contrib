@@ -44,6 +44,7 @@ concommand.Add("drop", function(ply, cmd, args)
 	if IsValid(ply:GetActiveWeapon()) then
 		local cl = ply:GetActiveWeapon():GetClass()
 		if cl=="weapon_ebola" then return end
+		if cl=="weapon_tag" then return end
 		ply:StripWeapon(cl)
 	end
 end)
@@ -56,7 +57,7 @@ concommand.Add("dropall", function(ply, cmd, args)
 	ply.LastWepDropTime = CurTime()
 	for k,v in pairs(ply:GetWeapons()) do
 		local cl = v:GetClass()
-		if cl~="weapon_ebola" then
+		if cl~="weapon_ebola" or cl~="weapon_tag" then
 			ply:StripWeapon(cl)
 		end
 	end

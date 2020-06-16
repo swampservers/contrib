@@ -6,7 +6,7 @@
 
 # Overview
 
-Contribute to swamp servers here! How to:
+Contribute to Swamp Cinema here! How to:
 
 - 'Fork' this repo. This creates a copy of it you have edit permissions of.
 - Clone your forked repo, edit it, and push it back. You'll need the Github desktop or commandline client. Look up GitHub tutorials for that.
