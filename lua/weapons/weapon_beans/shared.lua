@@ -60,7 +60,7 @@ end
 
 function SWEP:PrimaryAttack()
 	if SERVER then
-        self.Owner:ExtEmitSound("beans/eating.wav", {level=60})
+        self.Owner:EmitSound("beans/eating.wav",60)
 		self.Owner.BiteStart = 0
 		self.Owner.BitesRem = 3
 		net.Start("Beans_Eat_Start")
@@ -75,6 +75,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+	local pitch = 100 + (self.SoundPitchMod or 0) + (self.Owner:Crouching() and 40 or 0)
 	self:ExtEmitSound("beans/niggaeatingbeans.wav", {speech=1.5, pitch=math.random(90,110),crouchpitch=math.random(150,170)})
 	self.Weapon:SetNextSecondaryFire(CurTime() + 3)
 end
