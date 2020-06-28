@@ -60,6 +60,8 @@ end
 
 function GM:EntityTakeDamage( target, dmginfo )
 
+	att = dmginfo:GetAttacker()
+
 	if ( dmginfo:GetInflictor() and dmginfo:GetInflictor():IsValid() and dmginfo:GetInflictor():GetClass()=="npc_grenade_frag") then
  
 		dmginfo:ScaleDamage( 100 )
@@ -76,6 +78,10 @@ function GM:EntityTakeDamage( target, dmginfo )
  
 		dmginfo:ScaleDamage( 1.5 )
 
+	end
+
+	if IsValid(att) and att:GetClass()=="player" and IsValid(att:GetActiveWeapon()) and att:GetActiveWeapon():GetClass() == "weapon_crowbar" then
+		dmginfo:SetDamage(25) --gmod june 2020 update sets crowbar damage to 10, set it back to 25
 	end
 
 end
