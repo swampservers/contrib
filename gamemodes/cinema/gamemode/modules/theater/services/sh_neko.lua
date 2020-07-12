@@ -17,7 +17,7 @@ if CLIENT then
 		Derma_StringRequest("Neko Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({duration=0,title=title}) end, function() callback() end)
 	end
 	
-	function SERVICE:LoadVideo( Video, panel )
+	function SERVICE:LoadVideo(Video, panel)
 		panel:EnsureURL(Video:Key())
 		panel:QueueJavascript("document.getElementsByClassName('header-container')[0].style.display='none';document.getElementsByClassName('room-container')[0].style.display='none';document.getElementsByClassName('video-menu')[0].style.display='none';document.getElementsByClassName('neko-menu')[0].style.display='none';document.getElementsByClassName('connect')[0].style.display='none';document.getElementsByClassName('vue-notification-group')[0].style.display='none';") --hide ui
 		panel.phase = 0
@@ -60,6 +60,11 @@ if CLIENT then
 				end
 			end
 		end
+	end
+	
+	function SERVICE:SetVolume(vol, panel)
+		local str = string.format("document.getElementsByTagName('input')[1].value=%s;document.getElementsByTagName('input')[1].dispatchEvent(new Event('input'));",vol)
+		panel:QueueJavascript(str)
 	end
 end
 
