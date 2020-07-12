@@ -63,7 +63,7 @@ if CLIENT then
 						end
 						if string.StartWith(msg,"DURATION:") and not self.duration then
 							self.duration = msg:sub(10,-1)
-							if self.duration == "0" then
+							if self.duration == "0" or tonumber(self.duration) == nil then
 								self.duration = nil
 							end
 							if self.duration then print("DURATION: "..self.duration) end
