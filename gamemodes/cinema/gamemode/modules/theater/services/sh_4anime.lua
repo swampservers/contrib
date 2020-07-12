@@ -43,8 +43,8 @@ if CLIENT then
 					elseif vpanel.phase == 1 then
 						vpanel:RunJavascript("console.log('URL:'+document.getElementsByClassName('mirror_dl').item(0).href);")
 						vpanel:RunJavascript("console.log('TITLE:'+document.title);")
-						vpanel:RunJavascript("vid1.volume(0);vid1.play();console.log('DURATION:'+vid1.duration());") --videojs player
-						vpanel:RunJavascript("var jwp = jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());") --jwplayer
+						vpanel:RunJavascript("var swampvid=document.getElementById('example_video_1_html5_api');swampvid.volume=0;swampvid.play();console.log('DURATION:'+swampvid.duration);") --videojs player
+						vpanel:RunJavascript("var jwp=jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());") --jwplayer
 						return
 					end
 				end
