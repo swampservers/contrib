@@ -35,7 +35,7 @@ if CLIENT then
 					panel:RunJavascript("nekoparent=document.getElementById('neko');var inputevent=new Event('input');nekoparent.getElementsByTagName('input')[2].value='"..LocalPlayer():SteamID().."';nekoparent.getElementsByTagName('input')[3].value='tgclub';nekoparent.getElementsByTagName('input')[2].dispatchEvent(inputevent);nekoparent.getElementsByTagName('input')[3].value='tgclub';nekoparent.getElementsByTagName('input')[3].dispatchEvent(inputevent);nekoparent.getElementsByTagName('button')[0].click();")
 					panel:RunJavascript("console.log('LOGIN:'+nekoparent.getElementsByClassName('message').length);")
 					return
-				elseif html.phase == 2 then
+				elseif panel.phase == 2 then
 					panel:RunJavascript("if(document.getElementsByClassName('fa-volume-mute fas').length>0)document.getElementsByClassName('fa-volume-mute fas')[0].click();") --unmute player
 					return
 				end
