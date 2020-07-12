@@ -36,7 +36,7 @@ if CLIENT then
 					panel:RunJavascript("console.log('LOGIN:'+nekoparent.getElementsByClassName('message').length);")
 					return
 				elseif html.phase == 2 then
-					html:RunJavascript("if(document.getElementsByClassName('fa-volume-mute fas').length>0)document.getElementsByClassName('fa-volume-mute fas')[0].click();") --unmute player
+					panel:RunJavascript("if(document.getElementsByClassName('fa-volume-mute fas').length>0)document.getElementsByClassName('fa-volume-mute fas')[0].click();") --unmute player
 					return
 				end
 			end
