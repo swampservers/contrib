@@ -103,11 +103,7 @@ function SWEP:Deploy()
 end
 
 function SWEP:SprintMod()
-	return ((math.cos(((self.SprintNess or 0)+1)*math.pi)+1)*0.5)
-end
-
-function SWEP:IsSprinting()
-	return self.Owner:GetVelocity():Length() > (self.Owner:GetWalkSpeed()+self.Owner:GetRunSpeed())*0.5
+	return ((math.cos((1)*math.pi)+1)*0.5)
 end
 
 function SWEP:DrawWorldModel()
@@ -115,12 +111,12 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:GetViewModelPosition(pos,ang)
-	pos= pos + (0*ang:Up()) + (1*ang:Right()) + (0*ang:Forward())
+	pos = pos + (0*ang:Up()) + (1*ang:Right()) + (0*ang:Forward())
 	ang:RotateAroundAxis(ang:Right(),-2)
 
 	local sm = self:SprintMod()
 
-	pos= pos + (0*sm*ang:Up()) + (1*sm*ang:Right())
+	pos = pos + (0*sm*ang:Up()) + (1*sm*ang:Right())
 	ang:RotateAroundAxis(ang:Up(),sm*20)
 	ang:RotateAroundAxis(ang:Right(),sm*-20)
 
@@ -152,14 +148,6 @@ if CLIENT then
 		ply = self.Owner
 		if LocalPlayer():GetActiveWeapon()~=self then return end
 
-		local changesprintness = 2.2*RealFrameTime()
-	
-		if self:IsSprinting() then
-			changesprintness = -1*changesprintness
-		end
-
-		self.SprintNess = math.Clamp((self.SprintNess or 0) - changesprintness,0,1)
-
 	end
 end
 
@@ -169,7 +157,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:GetCone()
-	local mc = math.max(((self.Owner:GetVelocity():LengthSqr()+(20000))*0.000005)-0.01,0)
+	local mc = math.max(((math.Clamp((self.Owner:GetVelocity():LengthSqr()+(20000)),0,70000))*0.000005)-0.01,0)
 	return mc + 0.005 -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 end
 
@@ -184,7 +172,6 @@ function SWEP:PrimaryAttack()
 	end
 
 	if ( !self:CanPrimaryAttack() ) then return end
-	if self:IsSprinting() then return end
 	local bullet = {}
 		bullet.Num = self.Primary.NumberofShots
 		bullet.Src = self.Owner:GetShootPos()
@@ -223,7 +210,6 @@ function SWEP:SecondaryAttack()
 	end
 
 	if ( !self:CanPrimaryAttack() ) then return end
-	if self:IsSprinting() then return end
 	local bullet = {}
 		bullet.Num = self.Primary.NumberofShots*2
 		bullet.Src = self.Owner:GetShootPos()
