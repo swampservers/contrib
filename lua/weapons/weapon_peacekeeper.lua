@@ -103,7 +103,7 @@ function SWEP:Deploy()
 end
 
 function SWEP:SprintMod()
-	return ((math.cos((1)*math.pi)+1)*0.5)
+	return (math.cos((math.pi)+1)*0.5)
 end
 
 function SWEP:DrawWorldModel()
