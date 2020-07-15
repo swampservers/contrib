@@ -10,7 +10,7 @@ SWEP.UseHands 				= false
 SWEP.Spawnable 				= true
 SWEP.AdminSpawnable 		= false
 
-SWEP.ViewModelFOV 			= 75
+SWEP.ViewModelFOV 			= 70
 SWEP.ViewModel				= "models/weapons/v_sawed.mdl"
 SWEP.WorldModel				= "models/weapons/w_sawed-off.mdl"
 
@@ -102,25 +102,8 @@ function SWEP:Deploy()
 	return true
 end
 
-function SWEP:SprintMod()
-	return (math.cos((math.pi)+1)*0.5)
-end
-
 function SWEP:DrawWorldModel()
 	self:DrawModel()
-end
-
-function SWEP:GetViewModelPosition(pos,ang)
-	pos = pos + (0*ang:Up()) + (1*ang:Right()) + (0*ang:Forward())
-	ang:RotateAroundAxis(ang:Right(),-2)
-
-	local sm = self:SprintMod()
-
-	pos = pos + (0*sm*ang:Up()) + (1*sm*ang:Right())
-	ang:RotateAroundAxis(ang:Up(),sm*20)
-	ang:RotateAroundAxis(ang:Right(),sm*-20)
-
-	return pos,ang
 end
 
 function SWEP:DrawHUD()
