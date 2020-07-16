@@ -72,7 +72,7 @@ if CLIENT then
 							self.title = msg:sub(7,-1)
 							print("TITLE: "..self.title)
 						end
-						if (self.data != nil and self.duration != nil and self.title != nil) then
+						if (self.data != nil and type(tonumber(self.duration)) == "number" and self.title != nil) then
 							self.duration = math.floor(tonumber(self.duration))
 							print("Duration: "..self.duration)
 							callback({title=self.title,data=self.data,duration=self.duration})
