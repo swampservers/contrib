@@ -340,7 +340,7 @@ function PS_ApplyBoneMods(ent, mods)
 		local old = ent:GetManipulateBoneScale(x)
 		local mn = 0.125 --0.5*0.5*0.5
 		local mx = 3.375 --1.5*1.5*1.5
-		if ent.GetNetData and ent:GetNetData('OF') ~= nil then mx=1.0 end
+		if ent.GetNetData and ent:GetNetData('OF') ~= nil then mx=1.5 end
 		old.x = math.Clamp(old.x, mn, mx)
 		old.y = math.Clamp(old.y, mn, mx)
 		old.z = math.Clamp(old.z, mn, mx)
