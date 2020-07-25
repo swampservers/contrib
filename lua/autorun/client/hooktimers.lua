@@ -660,3 +660,14 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 	end
 end)
 
+timer.Create("RandomCaveAmbientSound", 60, 0, function()
+	if math.random(0, 250) >= 5 then return end --rare chance to trigger
+	if string.find(LocalPlayer():GetLocationName(), "Sewer") and !LocalPlayer():InTheater() then --any sewer location that isn't a theater
+		sound.PlayFile("sound/sewers/cave0"..tostring(math.random(1, 6))..".ogg", "3d noplay", function(snd, errid, errnm)
+			if !IsValid(snd) then return end
+			snd:SetPos(LocalPlayer():GetPos() + VectorRand(-500, 500)) --set in a random location near the player
+			snd:Play()
+			snd:Set3DFadeDistance(600, 100000)
+		end)
+	end
+end)
