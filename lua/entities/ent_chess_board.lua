@@ -1515,6 +1515,8 @@ if CLIENT then
 		end
 		local InChessGame = (IsValid(LocalPlayer():GetVehicle()) or LocalPlayer():GetNWBool("IsInChess",false))
 		
+		if InChessGame and ActiveBoard==self then render.DepthRange(0,0) end
+
 		if InChessGame or self.SpectatingTable or (not (self.LowFPSCheck and self.LowFPSCheck>CurTime())) then
 			local i=0
 			for let,column in pairs( self.Pieces ) do
@@ -1564,6 +1566,7 @@ if CLIENT then
 			self.Highlight = nil
 			self.Selected = nil
 			self.Moves = nil
+			render.DepthRange(0,1)
 			return
 		end
 		
@@ -1610,6 +1613,7 @@ if CLIENT then
 			self.Selected[1]=(-1) self.Selected[2]=(-1)
 			self.Highlight[1]=(-1) self.Highlight[2]=(-1)
 			self.Moves = {}
+			render.DepthRange(0,1)
 			return
 		end
 		
@@ -1640,6 +1644,8 @@ if CLIENT then
 		
 		
 		self.WasMouseDown = input.IsMouseDown( MOUSE_LEFT )
+
+		render.DepthRange(0,1)
 	end
 	
 	function ENT:GetSpectateUse(ply,key)
