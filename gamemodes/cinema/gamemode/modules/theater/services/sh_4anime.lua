@@ -43,8 +43,8 @@ if CLIENT then
 					elseif vpanel.phase == 1 then
 						vpanel:RunJavascript("console.log('URL:'+document.getElementsByClassName('mirror_dl').item(0).href);")
 						vpanel:RunJavascript("console.log('TITLE:'+document.title);")
-						vpanel:RunJavascript("vid1.volume(0);vid1.play();console.log('DURATION:'+vid1.duration());") --videojs player
-						vpanel:RunJavascript("var jwp = jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());") --jwplayer
+						vpanel:RunJavascript("var swampvid=document.getElementById('example_video_1_html5_api');swampvid.volume=0;swampvid.play();console.log('DURATION:'+swampvid.duration);") --videojs player
+						vpanel:RunJavascript("var jwp=jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());") --jwplayer
 						return
 					end
 				end
@@ -63,7 +63,7 @@ if CLIENT then
 						end
 						if string.StartWith(msg,"DURATION:") and not self.duration then
 							self.duration = msg:sub(10,-1)
-							if self.duration == "0" then
+							if self.duration == "0" or tonumber(self.duration) == nil then
 								self.duration = nil
 							end
 							if self.duration then print("DURATION: "..self.duration) end
@@ -72,7 +72,7 @@ if CLIENT then
 							self.title = msg:sub(7,-1)
 							print("TITLE: "..self.title)
 						end
-						if (self.data != nil and self.duration != nil and self.title != nil) then
+						if (self.data != nil and type(tonumber(self.duration)) == "number" and self.title != nil) then
 							self.duration = math.floor(tonumber(self.duration))
 							print("Duration: "..self.duration)
 							callback({title=self.title,data=self.data,duration=self.duration})
