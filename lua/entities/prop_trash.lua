@@ -94,7 +94,7 @@ function ENT:Initialize()
 				effectdata:SetOrigin(self:GetPos())
 		 		effectdata:SetMagnitude(0)
 				util.Effect( "Explosion", effectdata, true, true )
-				util.BlastDamage(self, self, self:GetPos(), 256, 80)
+				util.BlastDamage(self, self, self:GetPos(), 500, 500)
 			end
 		end
 	end
