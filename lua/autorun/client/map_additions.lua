@@ -56,7 +56,7 @@ hook.Add( "PostDrawTranslucentRenderables", "dirtmike",function(depth, sky)
 end )
 
 clockARMS = Material("tools/toolsblack")
-clockCenter = Vector(0,1038.8-40,192-8)
+clockCenter = Vector(0,1038.8+155,192-4) --Vector(0,1038.8-40,192-8)
 clockScale = 0.1
 hook.Add( "PostDrawTranslucentRenderables", "lobbyclock",function(depth, sky)
 	if sky then
@@ -67,7 +67,7 @@ hook.Add( "PostDrawTranslucentRenderables", "lobbyclock",function(depth, sky)
 		return
 	end
 
-	if EyePos().y > 1010 then return end
+	if EyePos().y > clockCenter.y+20 then return end
 	
 	render.SetMaterial(clockARMS)
 

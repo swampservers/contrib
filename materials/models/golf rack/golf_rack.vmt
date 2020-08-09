@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/golf rack/golf_rack"
+	"$surfaceprop" "Metal"
+}

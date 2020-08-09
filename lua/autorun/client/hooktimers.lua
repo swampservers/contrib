@@ -263,7 +263,10 @@ FullRefractLocation = {
 SKYBOXLOC = -1
 
 hook.Add("PreDrawOpaqueRenderables","PlayerVisPreDraw",function(depth, sky)	
+	if true then return end
+
 	if depth or sky then return end
+	if not Location then return end
 
 	SKYBOXLOC = Location.GetLocationIndexByName("Way Outside")
 
@@ -624,13 +627,13 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 	if loc=="Vapor Lounge" then
 		target = "vapor"
 	end
-	if loc=="Upper Caverns" or loc=="Lower Caverns" then
-		if GetGlobalBool("DAY", true) then
-			target = table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
-		else
-			target = "cavernnight" --night theme - https://youtu.be/QT8vuiS0cpQ
-		end
-	end
+	-- if loc=="Mines" then
+	-- 	if GetGlobalBool("DAY", true) then
+	-- 		target = table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
+	-- 	else
+	-- 		target = "cavernnight" --night theme - https://youtu.be/QT8vuiS0cpQ
+	-- 	end
+	-- end
 	if loc=="Treatment Room" then
 		target = "treatment"
 	end

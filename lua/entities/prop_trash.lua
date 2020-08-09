@@ -11,42 +11,47 @@ TRASHACT_PAINT = 4
 TRASHACT_UNPAINT = 5
 
 TrashLocationOverrides = {
-	['Golf']=TRASHLOC_NOSPAWN,
-	['Arcade']=TRASHLOC_NOSPAWN,
-	['Upper Caverns']=TRASHLOC_NOSPAWN,
-	['Lower Caverns']=TRASHLOC_NOSPAWN,
-	['Elevator Shaft']=TRASHLOC_NOSPAWN,
-
-	["Bone Zone"]=TRASHLOC_BUILD,
-	["Kamp Kleiner"]=TRASHLOC_BUILD,
-	['Tree']=TRASHLOC_BUILD,
-	['The Pit']=TRASHLOC_BUILD,
-	['Locker Room']=TRASHLOC_BUILD,
-	['Gym']=TRASHLOC_BUILD,
-	['Pool']=TRASHLOC_BUILD,
-	['SportZone']=TRASHLOC_BUILD,
-
-	['Chromozone']=TRASHLOC_BUILD,
-	["Rat's Lair"]=TRASHLOC_BUILD,
-	['Sewer Theater']=TRASHLOC_BUILD,
+	['Vapor Lounge']=TRASHLOC_BUILD,
+	['Furnace']=TRASHLOC_NOSPAWN,
+	['AFK Corral']=TRASHLOC_BUILD,
+	['Reddit']=TRASHLOC_BUILD,
 	['Maintenance Room']=TRASHLOC_BUILD,
-	['Crawl Space']=TRASHLOC_BUILD,
-
-	['Potassium Palace']=TRASHLOC_BUILD,
-
-	["Office of the Vice President"]=TRASHLOC_BUILD,
-	["Throne Room"]=TRASHLOC_BUILD,
-	["Trump Tower"]=TRASHLOC_BUILD,
-
-
+	['Rat\'s Lair']=TRASHLOC_BUILD,
+	['Sewer Theater']=TRASHLOC_BUILD,
 	['Moon Base']=TRASHLOC_BUILD,
-	['Moon']=TRASHLOC_BUILD,
-
-	['Hell']=TRASHLOC_BUILD,
-	['Void']=TRASHLOC_BUILD,
-
+	['Office of the Vice President']=TRASHLOC_BUILD,
+	['Situation Monitoring Room']=TRASHLOC_BUILD,
+	['Stairwell']=TRASHLOC_NOSPAWN,
+	['Elevator Shaft']=TRASHLOC_NOSPAWN,
+	['Trump Lobby']=TRASHLOC_BUILD,
+	['SushiTheater']=TRASHLOC_NOSPAWN,
+	['SushiTheater Basement']=TRASHLOC_NOSPAWN,
+	['SushiTheater Second Floor']=TRASHLOC_NOSPAWN,
+	['SushiTheater Attic']=TRASHLOC_BUILD,
+	['Auditorium']=TRASHLOC_BUILD,
+	['The Pit']=TRASHLOC_BUILD,
+	['Control Room']=TRASHLOC_BUILD,
+	['Cemetery']=TRASHLOC_BUILD,
+	['Power Plant']=TRASHLOC_BUILD,
 	['The Underworld']=TRASHLOC_BUILD,
-
+	['Void']=TRASHLOC_BUILD,
+	['The Box']=TRASHLOC_BUILD,
+	['Throne Room']=TRASHLOC_BUILD,
+	['Trump Tower']=TRASHLOC_BUILD,
+	['SportZone']=TRASHLOC_BUILD,
+	['Gym']=TRASHLOC_BUILD,
+	['Locker Room']=TRASHLOC_BUILD,
+	['Janitor\'s Closet']=TRASHLOC_BUILD,
+	['Outdoor Pool']=TRASHLOC_BUILD,
+	['Golf']=TRASHLOC_NOSPAWN,
+	['Mines']=TRASHLOC_BUILD,
+	['Tree']=TRASHLOC_BUILD,
+	['Shooting Range']=TRASHLOC_NOSPAWN,
+	['Temple of Kek']=TRASHLOC_BUILD,
+	['Labyrinth']=TRASHLOC_BUILD,
+	['Moon']=TRASHLOC_BUILD,
+	['Deep Space']=TRASHLOC_BUILD,
+	['Potassium Palace']=TRASHLOC_BUILD,
 	['Sewer Tunnels']=TRASHLOC_BUILD,
 	['Outside']=TRASHLOC_BUILD,
 	['Way Outside']=TRASHLOC_BUILD,
@@ -94,7 +99,7 @@ function ENT:Initialize()
 				effectdata:SetOrigin(self:GetPos())
 		 		effectdata:SetMagnitude(0)
 				util.Effect( "Explosion", effectdata, true, true )
-				util.BlastDamage(self, self, self:GetPos(), 500, 500)
+				util.BlastDamage(self, self, self:GetPos(), 256, 80)
 			end
 		end
 	end

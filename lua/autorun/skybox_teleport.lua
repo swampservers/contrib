@@ -4,7 +4,7 @@ if SERVER then
 	net.Receive("SkyboxTP",function(len,ply)
 		if SkyboxPortalEnabled then
 			if SkyboxPortalCenter:Distance(ply:GetPos()) < 100 then
-				ply:SetPos(Vector(173,-4640,225))
+				ply:SetPos(Vector(146, 537, 15136))
 				ply:SetEyeAngles(Angle(0, -100, 0))
 			end
 		end

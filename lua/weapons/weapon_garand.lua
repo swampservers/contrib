@@ -90,46 +90,16 @@ function SWEP:IsSprinting()
 end
 
 function SWEP:DrawWorldModel()
-	local ply = self:GetOwner()
+	--self:SetupBones()
 
-	if(IsValid(ply))then
-
-		local bn = "ValveBiped.Bip01_R_Hand"
-		local bon = ply:LookupBone(bn) or 0
-
-		local opos = self:GetPos()
-		local oang = self:GetAngles()
-		local bp,ba = ply:GetBonePosition(bon)
-		if(bp)then opos = bp end
-		if(ba)then oang = ba end
-		oang:RotateAroundAxis(oang:Up(),-90)
-		oang:RotateAroundAxis(oang:Forward(),-92)
-
-		oang:RotateAroundAxis(oang:Right(),12)
-		oang:RotateAroundAxis(oang:Forward(),-5)
-		oang:RotateAroundAxis(oang:Up(),15)
-		opos = opos + oang:Right()*-2
-
-		if ply:Crouching() then
-			oang:RotateAroundAxis(oang:Forward(),5)
-			opos = opos + oang:Right()*5
-		end
-		--oang:RotateAroundAxis(oang:Right(),180)
-		self:SetupBones()
-
-		self:SetModelScale(1.25,0)
-		local mrt = self:GetBoneMatrix(0)
-		if(mrt)then
-		mrt:SetTranslation(opos)
-		mrt:SetAngles(oang)
-
-		self:SetBoneMatrix(0, mrt )
-		end
+	local mrt = self:GetBoneMatrix(0)
+	if(mrt)then
+		--mrt:SetTranslation(mrt:GetTranslation()+(mrt:GetUp()*-0.8))
+		--self:SetBoneMatrix(0, mrt )
 	end
 		
 	self:DrawModel()
 end
-
 
 function SWEP:GetViewModelPosition(pos,ang)
 	pos= pos + (0*ang:Up()) + (1*ang:Right()) + (0*ang:Forward())
@@ -188,14 +158,14 @@ end
 
 function SWEP:GetCone()
 	local mc = math.max((self.Owner:GetVelocity():LengthSqr()*0.000005)-0.01,0)
-	return mc + 0.004 -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
+	return mc + 0.005 -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 end
 
 local BOLTACTIONSPEED = 1
 
 function SWEP:PrimaryAttack() 
 
-	-- self.Owner:SetAmmo(80,"garand")
+	self.Owner:SetAmmo(80,"garand")
 
 	if self:Clip1()==0 then
 		self:Reload()
@@ -254,7 +224,7 @@ local wep = self.Weapon
 local owner = self.Owner
 
 --if wep:Clip1() == 8 then return false end
--- if not InGarandZone(self.Owner) then if SERVER then self.Owner:Notify("There's no ammo here!") end return false end
+if not InGarandZone(self.Owner) then if SERVER then self.Owner:Notify("There's no ammo here!") end return false end
 
 		self:DefaultReload( ACT_VM_RELOAD )
 		owner:DoReloadEvent()
@@ -275,21 +245,9 @@ function InGarandZone(v)
 end
 
 hook.Add("ScalePlayerDamage", "garandthing", function(ply, hg, dmg)
--- 	if dmg:GetAmmoType() == game.GetAmmoID("garand") then
--- 		if ply:GetLocationName() ~= "The Pit" and ply:GetLocationName() ~= "Crawl Space" then
--- 			dmg:SetDamage(10)
--- 		end
--- 	end
 	if dmg:GetAmmoType() == game.GetAmmoID("garand") then
-		--and hg==HITGROUP_HEAD 
-		local ap = ply:GetAttachment(ply:LookupAttachment("eyes"))
-		if ap then
-			if ap.Pos:Distance(dmg:GetDamagePosition()) < 9 then
-				--print("HS")
-				dmg:SetDamage(1000)
-			end
+		if ply:GetLocationName() ~= "The Pit" and ply:GetLocationName() ~= "Crawl Space" then
+			dmg:SetDamage(10)
 		end
-		-- print(dmg:GetDamagePosition().z-ply:GetPos().z)
-
 	end
 end)

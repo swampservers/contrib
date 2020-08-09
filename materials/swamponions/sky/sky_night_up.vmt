@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+"$basetexture" "swamponions/sky/sky_night_up"
+	"$nofog" 1
+	"$nocull" "1"
+	"$ignorez" "1"
+	"$basetexturetransform" "center 0 0 scale 1 1 rotate 0 translate 0 0"
+}

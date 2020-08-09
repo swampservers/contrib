@@ -5,8 +5,8 @@ CreateClientConVar("cinema_lightfx", 0, true, false )
 CreateClientConVar("cinema_volume", 50, true, false )
 CreateClientConVar("cinema_muteall", 0, true, true )
 MuteAFKConVar = CreateClientConVar("cinema_muteafk", 0, true, true )
---CreateClientConVar("cinema_mutegame", 0, true, true )
-CreateClientConVar("cinema_gamevolume", 1, true, false )
+MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true )
+GameVolumeConVar = CreateClientConVar("cinema_game_volume", 1, true, false )
 CreateClientConVar("cinema_hd", 0, true, false )
 CreateClientConVar("cinema_cc", 0, true, false )
 CreateClientConVar("cinema_hideinterface", 0, true, false )
@@ -36,6 +36,17 @@ cvars.AddChangeCallback( "cinema_mutegame", function(cmd, old, new)
 		Derma_Message( "If you leave the game while in a theater with this enabled, your game stay muted! Go to Options > Audio and drag Game Volume back up to fix this.", "Warning", "OK" )
 	end
 end)]]
+
+hook.Add("EntityEmitSound","CinemaMuteGame",function(s)
+	if IsValid(LocalPlayer()) and LocalPlayer():InTheater() then 
+		if MuteGameConVar:GetBool() then return false end
+		local f = GameVolumeConVar:GetFloat()
+		if f < 1 then 
+			s.Volume = s.Volume * f
+			return true
+		end
+	end
+end)
 
 concommand.Add("cinema_requestlast", function()
 	if LastURLRequested then

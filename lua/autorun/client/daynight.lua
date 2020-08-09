@@ -65,11 +65,12 @@ matproxy.Add({
 	end
 })
 
-local sky_day_bk = Material( "swamponions/sky/sky_day_bk" )
-local sky_day_ft = Material( "swamponions/sky/sky_day_ft" )
-local sky_day_lf = Material( "swamponions/sky/sky_day_lf" )
-local sky_day_rt = Material( "swamponions/sky/sky_day_rt" )
-local sky_day_up = Material( "swamponions/sky/sky_day_up" ) 
+
+-- local sky_day_bk = Material( "swamponions/sky/sky_day_bk" )
+-- local sky_day_ft = Material( "swamponions/sky/sky_day_ft" )
+-- local sky_day_lf = Material( "swamponions/sky/sky_day_lf" )
+-- local sky_day_rt = Material( "swamponions/sky/sky_day_rt" )
+-- local sky_day_up = Material( "swamponions/sky/sky_day_up" ) 
 
 local sky_night_bk = Material( "swamponions/sky/sky_night_bk" )
 local sky_night_ft = Material( "swamponions/sky/sky_night_ft" )
@@ -86,6 +87,7 @@ hook.Add( "PostDraw2DSkyBox", "DrawDayNightSky", function()
 	cam.Start3D(Vector(0, 0, 0))
 
 	if GetGlobalBool("DAY") then
+		--[[
 		render.SetMaterial(sky_day_rt)
 		render.DrawQuadEasy(Vector(32, 0, 12), Vector(-1, 0, 0), 64, 40, Color(255, 255, 255), 0)
 		render.SetMaterial(sky_day_bk)
@@ -95,7 +97,7 @@ hook.Add( "PostDraw2DSkyBox", "DrawDayNightSky", function()
 		render.SetMaterial(sky_day_ft)
 		render.DrawQuadEasy(Vector(0, 32, 12), Vector(0, -1, 0), 64, 40, Color(255, 255, 255), 0)
 		render.SetMaterial(sky_day_up)
-		render.DrawQuadEasy(Vector(0, 0, 32), Vector(0, 0, -1), 64, 64, Color(255, 255, 255), 0)
+		render.DrawQuadEasy(Vector(0, 0, 32), Vector(0, 0, -1), 64, 64, Color(255, 255, 255), 0)]]
 	else
 		render.SetMaterial(sky_night_rt)
 		render.DrawQuadEasy(Vector(32, 0, 12), Vector(-1, 0, 0), 64, 40, Color(255, 255, 255), 0)
@@ -126,7 +128,7 @@ hook.Add( "PostDrawSkyBox", "DrawMoonStars", function()
 		return
 	end
 
-	local alpha = IsValid(LocalPlayer()) and math.Clamp((LocalPlayer():GetPos().z-7500)/3500,0,1) or 0
+	local alpha = IsValid(LocalPlayer()) and math.Clamp((LocalPlayer():GetPos().z-3700)/3500,0,1) or 0
 	if alpha<=0 then return end
 
 	sky_space_rt:SetFloat("$alpha", alpha)

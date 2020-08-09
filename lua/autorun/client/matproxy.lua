@@ -1,3 +1,9 @@
+
+function render.DrawingScreen()
+	local t = render.GetRenderTarget()
+	return (t==nil) or (tostring(t)=="[NULL Texture]")
+end
+
 --[[
 local op = Material('swamponions/wall/orangeplaster')
 op:SetFloat('$detailscale', 1)
@@ -73,5 +79,35 @@ matproxy.Add( {
 		else
 			mat:SetVector( self.ResultTo, Vector( 62 / 255, 88 / 255, 106 / 255 ) )
 		end
+	end
+} )
+
+
+matproxy.Add( {
+	name = "ToggleSelfillum",
+	init = function( self, mat, values )
+		self.light = values.lightname.."_on"
+	end,
+	bind = function( self, mat, ent )
+		local on = GetGlobalBool(self.light, true)
+		local flags = mat:GetInt("$flags")
+		if (bit.band(flags,64)>0)~=on then
+			mat:SetInt("$flags", bit.bxor(flags,64))
+		end
+	end
+} )
+
+matproxy.Add( {
+	name = "ToggleEmissiveBlend",
+	init = function( self, mat, values )
+		self.light = values.lightname.."_on"
+	end,
+	bind = function( self, mat, ent )
+		local on = GetGlobalBool(self.light, true)
+		mat:SetInt("$emissiveBlendEnabled", on and 1 or 0)
+		-- local flags = mat:GetInt("$flags")
+		-- if (bit.band(flags,64)>0)~=on then
+		-- 	mat:SetInt("$flags", bit.bxor(flags,64))
+		-- end
 	end
 } )

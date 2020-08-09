@@ -93,6 +93,19 @@ GolfPrizeTargets = {
 		{ 1, 13000 },
 		{ 2, 1000 }
 	},
+	["U curve"] = {
+		{ 1, 10000 },
+		{ 2, 3000 }
+	},
+	["The Vent"] = {
+		{ 1, 20000 },
+		{ 2, 5000 }
+	},
+	["Cave Explorer"] = {
+		{ 1, 200000 },
+		{ 3, 100000 },
+		{ 10, 10000 }
+	}
 }
 
 
@@ -358,6 +371,7 @@ end
 function SWEP:FinishStroke(hole)
 	local joke = (hole=="Srsly2hard4u")
 	local strk = self:GetCurrentStroke()
+	if strk==0 then strk=10 end
 	if(hole)then
 		local endm = strk.." strokes!"
 		
@@ -465,12 +479,12 @@ end
  
 function SWEP:Deploy()
 	self:SetHoldType("normal")
-	return true;
+	return true
 end
 
 function SWEP:Holster()
 	self:Reload()
-	return true;
+	return true
 end
 
 local function makeCircle( x, y, radius, seg )
