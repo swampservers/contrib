@@ -33,7 +33,7 @@ game.AddAmmoType( {
 	maxsplash = 5
 } )
 
-SWEP.Primary.Damage 		= 10
+SWEP.Primary.Damage 		= 15
 SWEP.Primary.ClipSize 		= 2
 SWEP.Primary.Ammo 			= "peaceshot"
 SWEP.Primary.Automatic 		= false
@@ -42,7 +42,7 @@ SWEP.Primary.Force 			= 2000
 SWEP.Primary.Spread 		= 0
 SWEP.Primary.Recoil 		= 2
 SWEP.Primary.Delay 			= 0.25
-SWEP.Primary.NumberofShots 	= 18
+SWEP.Primary.NumberofShots 	= 30
 
 SWEP.Secondary.ClipSize 	= 1 
 SWEP.Secondary.Ammo 		= "none" 
@@ -54,7 +54,7 @@ SWEP.Secondary.Damage 		= 0
 sound.Add({
 	name = 			"Double_Barrel.Single",
 	channel = 		CHAN_USER_BASE+10,
-	volume = 		1.0,
+	volume = 		2.0,
 	sound = 			"weapons/peacekeeper/peacekeeper_fire.wav"
 })
 
@@ -141,7 +141,7 @@ end
 
 function SWEP:GetCone()
 	local mc = math.max(((math.Clamp((self.Owner:GetVelocity():LengthSqr()+(20000)),0,70000))*0.000005)-0.01,0)
-	return mc + 0.005 -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
+	return mc + 0.1 -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 end
 
 function SWEP:PrimaryAttack()
@@ -175,7 +175,7 @@ function SWEP:PrimaryAttack()
 		vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence( ACT_VM_PRIMARYATTACK ))
 
 		self.Owner:FireBullets( bullet )
-		self:EmitSound("Double_Barrel.Single")
+		self:EmitSound("Double_Barrel.Single",90)
 	
 		self:TakePrimaryAmmo(1)
 		self.Owner:ViewPunch( Angle( rnda,rndb,rnda ) )
