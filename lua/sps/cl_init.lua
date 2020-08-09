@@ -532,6 +532,7 @@ end
 
 concommand.Add("ps_buy", function( ply, cmd, args )
 	if #args < 1 then print("usage: ps_buy product") return end
+	if LocalPlayer():HasWeapon(args[1]) then input.SelectWeapon(LocalPlayer():GetWeapon(args[1])) return end
 	PS_BuyProduct(args[1])
 end )
 
