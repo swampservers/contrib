@@ -8,5 +8,6 @@ function ENT:Initialize()
 end
 
 function ENT:StartTouch(other)
+    if other:GetClass()=="func_brush" then return end
 	SendFromPonyWorld(other, false)
 end

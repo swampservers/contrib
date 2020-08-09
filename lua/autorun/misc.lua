@@ -12,7 +12,7 @@ function Safe(ent)
 		return false
 	end
 
-	if (name=="Movie Theater" and ent:GetPos().x < -1648) or (name=="Arcade") or (name=="Bomb Shelter") then
+	if (name=="Movie Theater" and ent:GetPos().y > 1400 or ent:GetPos().z > 150) then
 		return true
 	end
 	if name=="Golf" or name=="Upper Caverns" or name=="Lower Caverns" then

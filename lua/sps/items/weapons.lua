@@ -103,15 +103,15 @@ PS_WeaponProduct({
 	class = 'weapon_gauntlet'
 })
 
-PS_WeaponAndAmmoProduct({
-	name = 'Anti-Kleiner Rifle',
-	description = "This specialty weapon is capable of massacring Kleiners, but is harmless to anyone else. Re-purchase for more ammo.",
-	price = 2000,
-	model = 'models/weapons/w_IRifle.mdl',
-	class = 'weapon_ar2',
-	ammotype = "AR2",
-	amount = 30
-})
+-- PS_WeaponAndAmmoProduct({
+-- 	name = 'Anti-Kleiner Rifle',
+-- 	description = "This specialty weapon is capable of massacring Kleiners, but is harmless to anyone else. Re-purchase for more ammo.",
+-- 	price = 2000,
+-- 	model = 'models/weapons/w_IRifle.mdl',
+-- 	class = 'weapon_ar2',
+-- 	ammotype = "AR2",
+-- 	amount = 30
+-- })
 
 PS_WeaponAndAmmoProduct({
 	name = 'S.L.A.M. x3',
@@ -130,5 +130,15 @@ PS_WeaponAndAmmoProduct({
 	model = 'models/weapons/w_rocket_launcher.mdl',
 	class = 'weapon_rpg',
 	ammotype = "RPG_Round",
+	amount = 2
+})
+
+PS_WeaponAndAmmoProduct({
+	name = 'Peacekeeper',
+	description = "Peacekeeper (Re-buy for more shots)",
+	price = 4000,
+	model = 'models/weapons/w_sawed-off.mdl',
+	class = 'weapon_peacekeeper',
+	ammotype = "peaceshot",
 	amount = 2
 })

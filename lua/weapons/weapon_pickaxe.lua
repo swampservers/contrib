@@ -124,6 +124,8 @@ function SWEP:PrimaryAttack()
 						-- todo apply protection field here
 						ch = ch-0.22
 
+						if self.Owner:GetMoveType()==MOVETYPE_NOCLIP then ch=0 end
+
 						if ch <=0 then
 							self.HitBlock = nil --self:SetNWVector("HitBlock", Vector(-1,-1,-1))
 							if SERVER then

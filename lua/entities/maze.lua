@@ -96,7 +96,7 @@ function ENT:Initialize()
     local hwalls = DecodeMazePart2D(self:GetHWalls(), self:GetMazeXS(), self:GetMazeYS())	
     local vwalls = DecodeMazePart2D(self:GetVWalls(), self:GetMazeXS(), self:GetMazeYS())
 
-
+    --copied below
     local sc = 128
     local sch = 128
     local th = 3.6
@@ -173,7 +173,7 @@ function ENT:Initialize()
     end
 
     if CLIENT then 
-        self:SetRenderBoundsWS(self:GetMazeOrigin(),self:GetMazeOrigin()+Vector(self:GetMazeXS()*sc,self:GetMazeYS()*sc,sch))
+        self:FixRenderBounds()
     end
 
 	self:PhysicsInitMultiConvex(phys)
@@ -188,6 +188,19 @@ function ENT:Initialize()
     end
 end
 
+function ENT:FixRenderBounds()
+    --copied above
+    local sc = 128
+    local sch = 128
+    self:SetRenderBoundsWS(self:GetMazeOrigin(),self:GetMazeOrigin()+Vector(self:GetMazeXS()*sc,self:GetMazeYS()*sc,sch))
+end
+
+-- crappy fix for reinitialization issues, better to do something like cvx
+if CLIENT then
+function ENT:Think()
+    self:FixRenderBounds()
+end
+end
 
 MAZEWALLMATERIAL = Material("models/swamponions/maze")
 

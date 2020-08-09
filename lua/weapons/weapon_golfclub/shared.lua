@@ -1,109 +1,54 @@
 GolfPrizeTargets = {
-	["Cheap tricks"] = {
-		{ 2, 10000 },
-		{ 3, 2000 }
-	},
-	["Updog"] = {
-		{ 1, 2000 }
-	},
-	["Conveyor"] = {
-		{ 2, 6200 },
-		{ 3, 1000 }
-	},
-	["Chasm"] = {
-		{ 2, 5000 },
-		{ 4, 1000 }
-	},
-	["Elevator"] = {
-		{ 1, 5000 },
-		{ 2, 2000 }
-	},
-	["Twirlies"] = {
-		{ 1, 40000 },
-		{ 3, 6000 }
-	},
-	["Blindmans cave"] = {
-		{ 3, 80000 },
-		{ 5, 5000 }
-	},
-	["Hopscotch islands"] = {
-		{ 1, 10000 },
-		{ 4, 4000 }
-	},
-	["Boundary swap"] = {
-		{ 1, 19000 },
-		{ 3, 3000 }
-	},
-	["Reset roundabout"] = {
-		{ 1, 16000 },
-		{ 3, 1000 }
-	},
-	["House on a hill"] = {
-		{ 3, 15000 }
-	},
-	["Gears"] = {
-		{ 1, 12000 },
-		{ 3, 3000 }
-	},
-	["Srsly2hard4u"] = {
-		{ 0, 0 }
-	},
-	["Big hole"] = {
-		{ 1, 20000 },
-		{ 2, 2000 },
-	},
 	["The easy one"] = {
 		{ 1, 100 }
 	},
 	["The windmill"] = {
-		{ 1, 500 }
+		{ 1, 1000 }
 	},
 	["U bend"] = {
 		{ 1, 2000 }
 	},
 	["The eight game"] = {
-		{ 1, 1600 },
-		{ 2, 800 }
+		{ 1, 8000 },
+		{ 2, 1000 }
 	},
 	["Frustration hill"] = {
-		{ 1, 1500 }
+		{ 1, 3000 }
 	},
 	["Curved bridge"] = {
 		{ 1, 1000 }
 	},
-	["The moon"] = {
-		{ 1, 1969 }
-	},
 	["The loop"] = {
 		{ 1, 3000 },
-		{ 2, 500 }
+		{ 2, 1000 }
 	},
 	["Border crossing"] = {
-		{ 1, 2020 }
+		{ 1, 4500 },
+		{ 2, 2020 }
 	},
 	["Minge world"] = {
-		{ 1, 8000 },
-		{ 2, 1000 }
+		{ 1, 10000 },
+		{ 2, 2000 }
 	},
 	["L pond"] = {
-		{ 1, 18000 },
-		{ 2, 1000 }
+		{ 1, 20000 },
+		{ 2, 2000 }
 	},
 	["Anger bridge"] = {
-		{ 1, 13000 },
-		{ 2, 1000 }
+		{ 1, 8000 },
+		{ 2, 2000 }
 	},
 	["U curve"] = {
-		{ 1, 10000 },
+		{ 1, 20000 },
 		{ 2, 3000 }
 	},
 	["The Vent"] = {
 		{ 1, 20000 },
-		{ 2, 5000 }
+		{ 2, 10000 }
 	},
 	["Cave Explorer"] = {
-		{ 1, 200000 },
-		{ 3, 100000 },
+		{ 1, 100000 },
+		{ 3, 50000 },
 		{ 10, 10000 }
 	}
 }
@@ -390,17 +335,17 @@ function SWEP:FinishStroke(hole)
 		local record = 10
 		if SERVER then
 			record = tonumber(self:GetOwner():GetPData("golf_"..hole, 10))
-			monthlyrecord = tonumber(self:GetOwner():GetPData("monthly_golf_"..hole, 10))
+			periodicrecord = tonumber(self:GetOwner():GetPData("periodic_golf_"..hole, 10))
 			local curdate = os.date("*t",os.time())
-			curdate = curdate["year"]*12 + curdate["month"]
-			if curdate > tonumber(self:GetOwner():GetPData("monthly_reset",0)) then
+			curdate = math.floor((curdate["year"]*365+ curdate["yday"] - curdate["wday"] )/7) --curdate["year"]*12 + curdate["month"]
+			if curdate > tonumber(self:GetOwner():GetPData("periodic_reset",0)) then
 				for h,_ in pairs(GolfPrizeTargets) do
-					self:GetOwner():SetPData("monthly_golf_"..h,10)
+					self:GetOwner():SetPData("periodic_golf_"..h,10)
 				end
-				self:GetOwner():SetPData("monthly_reset",curdate)
+				self:GetOwner():SetPData("periodic_reset",curdate)
 			end
-			if strk<monthlyrecord then
-				self:GetOwner():SetPData("monthly_golf_"..hole, tostring(strk))
+			if strk<periodicrecord then
+				self:GetOwner():SetPData("periodic_golf_"..hole, tostring(strk))
 			end
 			if strk<record then
 				self:GetOwner():SetPData("golf_"..hole, tostring(strk))
@@ -417,13 +362,13 @@ function SWEP:FinishStroke(hole)
 				alltime = true
 			end
 			strokes = " strokes"
-			if strk<monthlyrecord then
+			if strk<periodicrecord then
 				if strk==1 then strokes = " stroke" end
-				if not alltime then self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your monthly record! New record: [orange]"..tostring(strk)..strokes ) end
+				if not alltime then self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]You beat your weekly record! New record: [orange]"..tostring(strk)..strokes ) end
 				local t = GolfPrizeTargets[hole]
 				if t then
 					for k,v in pairs(t) do
-						if monthlyrecord > v[1] and strk <= v[1] then
+						if periodicrecord > v[1] and strk <= v[1] then
 							if self:GetOwner().familyshared then
 								self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Sorry, you're not eligible for this prize ;hahaha;" )
 							else
@@ -435,12 +380,12 @@ function SWEP:FinishStroke(hole)
 					end
 				end
 			else
-				if monthlyrecord==1 then strokes = " stroke" end
-				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your all-time record for this hole is: [orange]"..tostring(record)..strokes.." [red]([orange]"..tostring(monthlyrecord)..strokes.." [red]this month)" )
+				if periodicrecord==1 then strokes = " stroke" end
+				self:GetOwner():PrintMessage( HUD_PRINTTALK, "[red]Your all-time record for this hole is: [orange]"..tostring(record)..strokes.." [red]([orange]"..tostring(periodicrecord)..strokes.." [red]this week)" )
 			end
 			local t = GolfPrizeTargets[hole]
 			if t then
-				local got = math.min(strk,monthlyrecord)
+				local got = math.min(strk,periodicrecord)
 				local nex = nil
 				for k,v in pairs(t) do
 					if got > v[1] then

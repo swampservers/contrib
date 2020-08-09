@@ -1,12 +1,16 @@
 
 hook.Add( "Think", "UndergroundEyeGlow", function()
-    local pp = LocalPlayer():GetShootPos()
+
+	--if true then return end
+	if not IsValid(LocalPlayer()) then return end
+
+    local pp = LocalPlayer():EyePos()
 
     if pp.z > -290 then return end
 
     if pp.x > 724 or pp.y < -768 or (pp.y<-312 and pp.x>242) then else return end
 
-	local dlight = DynamicLight(-201) -- LocalPlayer():EntIndex() )
+	local dlight = DynamicLight( LocalPlayer():EntIndex() )
 	if ( dlight ) then
 		dlight.pos = pp
 		dlight.r = 10

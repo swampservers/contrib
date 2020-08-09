@@ -48,7 +48,8 @@ PS_Categories = {
 				products = {
 					"weapon_shotgun",
 					"weapon_slitter",
-					"weapon_ar2",
+					--"weapon_ar2",
+					"weapon_peacekeeper",
 					"weapon_357",
 					"weapon_smg1",
 					"weapon_crossbow",
