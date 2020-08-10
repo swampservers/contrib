@@ -67,7 +67,7 @@ function ReleaseVape(ply)
 	if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass():sub(1,11) == "weapon_vape" then
 		if ply.vapeCount >= 5 then
 			local loc=Location.GetLocationNameByIndex(Location.Find(ply)):lower()
-			if (ply:InTheater() and not (ply:GetTheater()._AllowItems)) or loc=="trump lobby" or loc=="golf" or loc=="upper caverns" or loc=="lower caverns" or loc=="arcade" then
+			if (ply:InTheater() and not (ply:GetTheater()._AllowItems)) or loc=="trump lobby" or loc=="golf" then
 				ply:PrintMessage( HUD_PRINTTALK, "[red] Take it outside, degenerate filth. ;authority;" )
 			else 
 				net.Start("Vape")
