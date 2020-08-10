@@ -1,0 +1,12 @@
+"vertexlitgeneric"
+{
+	// original shader: basetimeslightmap
+	"$basetexture" "metal/metalhull010b"
+	"$surfaceprop"  "metal"
+	"$detail" "detail\metal_detail_01"
+	"$detailscale" "4.283"
+	"$detailblendfactor" .65
+	"$detailblendmode" "0"
+
+	"%keywords" "borealis"
+}

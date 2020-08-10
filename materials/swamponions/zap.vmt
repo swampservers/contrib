@@ -1,0 +1,18 @@
+"UnlitGeneric"
+{
+	"$baseTexture" "sprites/bluelight1"
+	
+	"$additive" 1
+
+	"$translucent" 1
+
+	Proxies
+	{
+		TextureScroll
+		{
+			texturescrollvar $basetexturetransform
+			texturescrollrate 10
+			texturescrollangle 270.00
+		}
+	}
+}

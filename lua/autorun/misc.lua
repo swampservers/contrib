@@ -1,13 +1,18 @@
 
 function Safe(ent) 
-	local loc = ent:IsPlayer() and ent:GetLocation() or Location.Find(ent)
-	local name = Location.GetLocationNameByIndex(loc)
+	local loc = 0
+	local name = "Unknown"
+
+	if Location then
+		loc = ent:IsPlayer() and ent:GetLocation() or Location.Find(ent)
+		name = Location.GetLocationNameByIndex(loc)
+	end
 
 	if HumanTeamName~=nil and name~="Movie Theater" then
 		return false
 	end
 
-	if (name=="Movie Theater" and ent:GetPos().x < -1648) or (name=="Arcade") or (name=="Bomb Shelter") then
+	if (name=="Movie Theater" and ent:GetPos().y > 1400 or ent:GetPos().z > 150) then
 		return true
 	end
 	if name=="Golf" or name=="Upper Caverns" or name=="Lower Caverns" then
@@ -42,7 +47,7 @@ end
 util.PrecacheModel("models/ppm/pony_anims.mdl")
 
 SkyboxPortalEnabled = SkyboxPortalEnabled or false
-SkyboxPortalCenter = Vector(0,-256,0)
+SkyboxPortalCenter = Vector(290, -418, -8)
 
 if SERVER then
 	util.AddNetworkString("bounce")
@@ -69,7 +74,7 @@ if SERVER then
 		if ply.PitDeath then
 			ply.PitDeath = false
 			timer.Simple(0,function()
-				ply:SetPos(Vector(math.random(-256,256),-256,0))
+				ply:SetPos(Vector(math.random(-256,256),-256,30))
 				ply:SetEyeAngles(Angle(0,-90,0))
 			end)
 		end

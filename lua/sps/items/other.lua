@@ -15,13 +15,13 @@ PS_WeaponProduct({
 	class = 'weapon_magicmissile'
 })
 
-PS_WeaponProduct({
-	name = 'Admin Abuse',
-	description = "The physgun. You can pick up and fling around players. If you get killed while you own it, your killer will get 10,000 points.",
-	price = 25000,
-	model = 'models/weapons/w_physics.mdl',
-	class = 'weapon_physgun'
-})
+-- PS_WeaponProduct({
+-- 	name = 'Admin Abuse',
+-- 	description = "The physgun. You can pick up and fling around players. If you get killed while you own it, your killer will get 10,000 points.",
+-- 	price = 25000,
+-- 	model = 'models/weapons/w_physics.mdl',
+-- 	class = 'weapon_physgun'
+-- })
 
 PS_WeaponProduct({
 	name = 'Sandcorn',

@@ -263,7 +263,10 @@ FullRefractLocation = {
 SKYBOXLOC = -1
 
 hook.Add("PreDrawOpaqueRenderables","PlayerVisPreDraw",function(depth, sky)	
+	if true then return end
+
 	if depth or sky then return end
+	if not Location then return end
 
 	SKYBOXLOC = Location.GetLocationIndexByName("Way Outside")
 
@@ -624,13 +627,13 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 	if loc=="Vapor Lounge" then
 		target = "vapor"
 	end
-	if loc=="Upper Caverns" or loc=="Lower Caverns" then
-		if GetGlobalBool("DAY", true) then
-			target = table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
-		else
-			target = "cavernnight" --night theme - https://youtu.be/QT8vuiS0cpQ
-		end
-	end
+	-- if loc=="Mines" then
+	-- 	if GetGlobalBool("DAY", true) then
+	-- 		target = table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
+	-- 	else
+	-- 		target = "cavernnight" --night theme - https://youtu.be/QT8vuiS0cpQ
+	-- 	end
+	-- end
 	if loc=="Treatment Room" then
 		target = "treatment"
 	end
@@ -660,14 +663,3 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 	end
 end)
 
-timer.Create("RandomCaveAmbientSound", 60, 0, function()
-	if math.random(0, 250) >= 5 then return end --rare chance to trigger
-	if string.find(LocalPlayer():GetLocationName(), "Sewer") and !LocalPlayer():InTheater() then --any sewer location that isn't a theater
-		sound.PlayFile("sound/sewers/cave0"..tostring(math.random(1, 6))..".ogg", "3d noplay", function(snd, errid, errnm)
-			if !IsValid(snd) then return end
-			snd:SetPos(LocalPlayer():GetPos() + VectorRand(-500, 500)) --set in a random location near the player
-			snd:Play()
-			snd:Set3DFadeDistance(600, 100000)
-		end)
-	end
-end)

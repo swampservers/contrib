@@ -32,31 +32,8 @@ hook.Add("PostDrawTranslucentRenderables", "DrawArenaBorder", function(dep,sky)
 
 end) ]]--
 
-hook.Add( "PostDrawTranslucentRenderables", "dirtmike",function(depth, sky)
-	if sky then
-		return
-	end
-
-	if EyePos():DistToSqr(Vector(-2488, 576,7)) > 1000000 then
-		return
-	end
-
-	cam.Start3D2D(Vector(-2488, 576,7), Angle(0,0,82), 0.35 )
-		surface.SetFont( "DebugFixed" )
-		surface.SetTextColor( 0, 0, 0, 255 )
-		surface.SetTextPos( 3, 3 )
-		surface.DrawText( "Here Lies" )
-		surface.SetTextPos( 0, 15 )
-		surface.DrawText( "Dirty Mike" )
-		surface.SetTextPos( 6, 32 )
-		surface.DrawText( "He Never" )
-		surface.SetTextPos( 10, 44 )
-		surface.DrawText( "Scored" )
-	cam.End3D2D()
-end )
-
 clockARMS = Material("tools/toolsblack")
-clockCenter = Vector(0,1038.8-40,192-8)
+clockCenter = Vector(0,1038.8+155,192-4) --Vector(0,1038.8-40,192-8)
 clockScale = 0.1
 hook.Add( "PostDrawTranslucentRenderables", "lobbyclock",function(depth, sky)
 	if sky then
@@ -67,7 +44,7 @@ hook.Add( "PostDrawTranslucentRenderables", "lobbyclock",function(depth, sky)
 		return
 	end
 
-	if EyePos().y > 1010 then return end
+	if EyePos().y > clockCenter.y+20 then return end
 	
 	render.SetMaterial(clockARMS)
 
@@ -108,3 +85,21 @@ end
 function XYToClock(v)
 	return clockCenter + Vector(v.x*clockScale,0,-v.y*clockScale)
 end
+
+local hevmaterial = Material("models/hevsuit/hevsuit_sheet")
+timer.Simple(0, function()
+	hevmaterial:SetInt("$flags", 0)
+end)
+
+local lanternmaterial = Material("models/dojo/lantern/lantern")
+timer.Create("lanternswitcher",100,0,function()
+	if GetGlobalBool("DAY", true) then
+		lanternmaterial:SetTexture("$basetexture", "models/dojo/lantern/lantern")
+		lanternmaterial:SetInt("$flags", 0)
+	else
+		lanternmaterial:SetTexture("$basetexture", "models/dojo/lantern/lantern_night")
+		lanternmaterial:SetInt("$flags", 64)
+	end
+end)
+
+

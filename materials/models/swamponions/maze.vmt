@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"egypt\flat_wall_02"
+	"$bumpmap"	"egypt\flat_wall_normal"
+	"$surfaceprop" "rock"
+
+	//"$phong"     "1"
+	//"$halflambert"	1
+ 	//"$phongexponent"   "60"
+ 	//"$phongboost"   "0"
+ 	//"$phongfresnelranges"   "[.5 .8 1]"
+}
