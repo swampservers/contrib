@@ -15,8 +15,8 @@ SWEP.Instructions	= "Primary: Use"
 SWEP.Spawnable				= false
 SWEP.AdminSpawnable			= false
 
-SWEP.ViewModel 				= Model("models/staticprop/props_junk/flare.mdl")
-SWEP.WorldModel 			= Model("models/staticprop/props_junk/flare.mdl")
+SWEP.ViewModel 				= Model("models/brian/flare.mdl")
+SWEP.WorldModel 			= Model("models/brian/flare.mdl")
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
@@ -78,9 +78,9 @@ if CLIENT then
 		dlight.r = 255
 		dlight.g = 50
 		dlight.b = 50
-		dlight.brightness = math.random(10,22)*0.1
+		dlight.brightness = 0.5 --math.random(10,22)*0.1
 		dlight.Decay = 1000
-		dlight.Size = 208
+		dlight.Size = 2000
 		dlight.DieTime = CurTime() + 0.05
 	end
 end
@@ -122,7 +122,7 @@ flarefxpos = Vector()
 flaresprite = Material("sprites/glow04_noz")
 
 function SWEP:GetViewModelPosition( pos, ang )
-	pos = pos + ang:Right()*22
+	pos = pos + ang:Right()*19
 	pos = pos + ang:Up()*-15
 	pos = pos + ang:Forward()*25
 	flarefxpos:Set(pos)

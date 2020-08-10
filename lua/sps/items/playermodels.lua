@@ -32,7 +32,6 @@ end)
 end
 
 hook.Add("CanOutfit","ps_outfitter",function(ply,mdl,wsid)
-	if HumanTeamName then return false end
 	return ply:GetNWBool("oufitr")
 end)
 

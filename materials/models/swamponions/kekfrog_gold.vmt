@@ -1,0 +1,20 @@
+VertexLitGeneric
+{
+	$basetexture "swamponions/metal/worncopper"
+	$bumpmap "swamponions/metal/worncopper_n_p"
+	$surfaceprop Metal
+
+	$envmap "swamponions/cm_d"
+	$envmaptint "[0.80 0.53 0.12]"
+
+	$basetexturetransform "center 0.5 0.5 scale 0.5 0.5 rotate 0 translate 0 0"
+
+	$color2 "[0.20 0.13 0.02]"
+
+	Proxies
+	{
+		cm_d
+		{
+		}
+	}
+}

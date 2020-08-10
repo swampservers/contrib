@@ -1,9 +1,0 @@
-"vertexlitgeneric"
-{
-	"$vertexcolor" "1"
-	"$vertexalpha" "1"
-	// original shader: decalbasetimeslightmapalphablend
-	"$translucent" 1
-	"$basetexture" "decals/decalmetalhatch002a"
-	"%keywords" "c17downtown"
-}

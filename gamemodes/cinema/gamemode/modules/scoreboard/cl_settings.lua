@@ -171,7 +171,7 @@ function SETTINGS:Create()
 	addLabel('Sound')
 	addCheckbox('Mute voice chat in theater', "cinema_muteall" ,'Mute stupid micspammers')
 	addCheckbox('Mute AFK voice chat', "cinema_muteafk" ,'Mute stupid micspammers 2')
-	--addCheckbox('Mute game sound in theater', "cinema_mutegame",'Mute all sounds but video [WARNING - may mess with your volume setting in options]')
+	addCheckbox('Mute game sound in theater', "cinema_mutegame",'If this doesn\'t work, run "volume 0" in console. Also try "cinema_game_volume 0.1" if you want the sounds quieter but not muted.')
 	addCheckbox('Mute audio while alt-tabbed', "cinema_mute_nofocus",'No background noise')
 
 	addLabel('Display')
@@ -210,3 +210,4 @@ function SETTINGS:Create()
 end
 
 vgui.Register( "ScoreboardSettings", SETTINGS )
+

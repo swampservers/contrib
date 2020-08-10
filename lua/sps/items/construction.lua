@@ -58,7 +58,7 @@ PS_GenericProduct({
 
 PS_GenericProduct({
 	class = 'trashlight',
-	price = 2000,
+	price = 1000,
 	name = 'Lights',
 	description = "Lights up while taped",
 	model = 'models/maxofs2d/light_tubular.mdl',

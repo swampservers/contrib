@@ -77,7 +77,7 @@ hook.Add( "KeyPress", "keypress_flappy", function( ply, key )
 
 	if not IsValid(self) or self:GetClass()~="weapon_flappy" then return end
 
-	if (not self.Owner:InTheater() or self.jumptimer<CurTime()-1) then
+	if ((not self.Owner:InTheater() or self.jumptimer<CurTime()-1) and self.Owner:GetLocationName() != "Movie Theater") then
 		if self.Owner:IsOnGround() then
 			--self.Owner:SetPos(self.Owner:GetPos()+Vector(0,0,1))
 		end

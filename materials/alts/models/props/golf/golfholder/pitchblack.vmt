@@ -1,0 +1,6 @@
+"vertexlitgeneric"
+{
+	"$basetexture" "swamponions/metal/metal1"
+	"$color2" "[0.1 0.1 0.1]"
+	"$surfaceprop" "metal"
+}

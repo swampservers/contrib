@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "swamponions/meinkraft/ore"
+	"$translucent" 1
+    $color "[0.8 0.7 0.6]"
+}

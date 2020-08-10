@@ -103,15 +103,15 @@ PS_WeaponProduct({
 	class = 'weapon_gauntlet'
 })
 
-PS_WeaponAndAmmoProduct({
-	name = 'Anti-Kleiner Rifle',
-	description = "This specialty weapon is capable of massacring Kleiners, but is harmless to anyone else. Re-purchase for more ammo.",
-	price = 6000,
-	model = 'models/weapons/w_IRifle.mdl',
-	class = 'weapon_ar2',
-	ammotype = "AR2",
-	amount = 30
-})
+-- PS_WeaponAndAmmoProduct({
+-- 	name = 'Anti-Kleiner Rifle',
+-- 	description = "This specialty weapon is capable of massacring Kleiners, but is harmless to anyone else. Re-purchase for more ammo.",
+-- 	price = 2000,
+-- 	model = 'models/weapons/w_IRifle.mdl',
+-- 	class = 'weapon_ar2',
+-- 	ammotype = "AR2",
+-- 	amount = 30
+-- })
 
 PS_WeaponAndAmmoProduct({
 	name = 'S.L.A.M. x3',
