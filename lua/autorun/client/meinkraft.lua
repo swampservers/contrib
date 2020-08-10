@@ -44,9 +44,10 @@ function cvx_pre_draw_leaf(ent)
     local lights={}
 
     local ep = ent:GetPos()
-    table.sort(CVX_SORTABLE_DLIGHTS, function(a,b)
-        return a[2]:Distance(ep)*a[1] < b[2]:Distance(ep)*b[1]
-    end)
+
+    --if ep:Distance(EyePos()) < 3000 then
+        cvx_sort_dlights(ep)
+    --end
 
     for i,v in ipairs(CVX_SORTABLE_DLIGHTS) do
         table.insert(lights, v[3])
@@ -72,6 +73,11 @@ function cvx_pre_draw_leaf(ent)
     -- render.SetModelLighting(5,0.1*gm,0.1*gm,0.1*gm)
 end
 
+function cvx_sort_dlights(ep)
+    table.sort(CVX_SORTABLE_DLIGHTS, function(a,b)
+        return a[2]:Distance(ep)*a[1] < b[2]:Distance(ep)*b[1]
+    end)
+end
 
 function cvx_post_draw_leaf(e) 
     render.SuppressEngineLighting(false)

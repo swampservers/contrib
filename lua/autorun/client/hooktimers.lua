@@ -263,7 +263,10 @@ FullRefractLocation = {
 SKYBOXLOC = -1
 
 hook.Add("PreDrawOpaqueRenderables","PlayerVisPreDraw",function(depth, sky)	
-	if true then return end
+	if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0)>0 then 
+		for k,ply in ipairs(player.GetAll()) do DisableNoDraw(ply) end
+		return
+	end
 
 	if depth or sky then return end
 	if not Location then return end

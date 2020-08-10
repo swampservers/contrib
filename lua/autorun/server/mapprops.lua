@@ -16,7 +16,7 @@ function GetMapPropTable()
         {class="prop_physics",pos=Vector(-88,1265,2),ang=Angle(0,-90,0),model="models/jigsaw/shits'n'giggles/donald_trump_cutout.mdl",unfrozen=true},
         {class="prop_physics",pos=Vector(158,1752,2),ang=Angle(0,-90,0),model="models/jigsaw/shits'n'giggles/donald_trump_cutout.mdl",unfrozen=true},
 
-        {class="prop_physics",pos=Vector(724+(64*40),-436,-2880+(32*40)),ang=Angle(0,180,0),model="models/swamponions/mineslimits.mdl",noshadows=true},
+        {class="prop_physics",pos=Vector(724+(64*40),-436 - 1,-2880+(32*40)),ang=Angle(0,180,0),model="models/swamponions/mineslimits.mdl",noshadows=true},
         --{class="prop_physics",pos=Vector(724+(64*40),-436,-2880+(32*40)),ang=Angle(0,-90,0),model="models/swamponions/mineslimits.mdl",noshadows=true},
 
         {class="slotmachine",betamt=1000000,pos=Vector(-2600+math.random(-arcadeyposrnd,arcadeyposrnd),-150+math.random(-arcadexposrnd,arcadexposrnd),480),ang=Angle(0,-90+math.random(-arcadeanglernd,arcadeanglernd),0)},

@@ -122,7 +122,7 @@ function SWEP:PrimaryAttack()
 						end
 
 						-- todo apply protection field here
-						ch = ch-0.22
+						ch = ch-0.28 --0.22
 
 						if self.Owner:GetMoveType()==MOVETYPE_NOCLIP then ch=0 end
 

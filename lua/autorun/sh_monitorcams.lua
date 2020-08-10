@@ -3,9 +3,8 @@ if CLIENT then
     SituationMonitorRT = nil
 
     hook.Add("PreRender", "MonitorTheSituation", function()
-        if IsValid(LocalPlayer()) and LocalPlayer():GetNWBool("MON", false) then
+        if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0)>0 then
             if SituationMonitorRT==nil then
-                print("MAKE")
                 SituationMonitorRT = GetRenderTarget( cvx_anonymous_name(),1024,1024,false)
                 SituationMonitorMaterial = CreateMaterial(cvx_anonymous_name(), "UnlitTwoTexture", {
                     ["$basetexture"] = SituationMonitorRT:GetName(),
@@ -14,17 +13,31 @@ if CLIENT then
                 })
             end
 
+--            print(CurTime())
+
             render.PushRenderTarget(SituationMonitorRT)
             -- MONITORINGTHESITUATION = true
-            render.RenderView( {
-                origin = GetGlobalVector("MONP", Vector(0,0,0)),
-                angles = GetGlobalAngle("MONA", Angle(0,0,0)),
-                x = 0, y = 0,
-                w = 1024, h = 640,
-                fov=90,
-                drawmonitors=false,
-                drawhud=false,
-            })
+            if LocalPlayer():GetNWInt("MONZ", 0) == 1 then
+                render.RenderView( {
+                    origin = GetGlobalVector("MON1P", Vector(0,0,0)),
+                    angles = GetGlobalAngle("MON1A", Angle(0,0,0)),
+                    x = 0, y = 0,
+                    w = 1024, h = 640,
+                    fov=90,
+                    drawmonitors=false,
+                    drawhud=false,
+                })
+            else
+                render.RenderView( {
+                    origin = GetGlobalVector("MON2P", Vector(0,0,0)),
+                    angles = GetGlobalAngle("MON2A", Angle(0,0,0)),
+                    x = 0, y = 0,
+                    w = 1024, h = 1024,
+                    fov=80,
+                    drawmonitors=false,
+                    drawhud=false,
+                })
+            end
             -- MONITORINGTHESITUATION = false
             render.PopRenderTarget()
         end

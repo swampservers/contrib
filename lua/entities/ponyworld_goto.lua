@@ -42,5 +42,6 @@ function SendToTeleport(p, v, e, reverse)
 		e:SetVelocity(v-e:GetVelocity())
 	else
 		e:SetVelocity(v)
+		if IsValid(e:GetPhysicsObject()) then e:GetPhysicsObject():SetVelocity(v) end
 	end
 end
