@@ -241,7 +241,13 @@ end
 ]]
 
 function InGarandZone(v)
-	return v:GetPos():WithinAABox(Vector(-378,-1928,252.803558), Vector(-40,-1735.276245,435.631256))
+	if v:GetPos():WithinAABox(Vector(-959, -1732, 332), Vector(-276, -1048, 431)) then
+	    if v:GetPos():DistToSqr(Vector(-618, -1390, 382)) < 168*168 then
+	        return true
+	    end
+	end
+
+	return false
 end
 
 hook.Add("ScalePlayerDamage", "garandthing", function(ply, hg, dmg)
