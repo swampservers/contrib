@@ -15,7 +15,7 @@ function Safe(ent)
 	if name=="Movie Theater" and (ent:GetPos().y > 1400 or ent:GetPos().z > 150) then
 		return true
 	end
-	if name=="Golf" or name=="Upper Caverns" or name=="Lower Caverns" then
+	if name=="Golf" then
 		if ent:IsPlayer() then
 			local w = ent:GetActiveWeapon()
 			if IsValid(w) and w:GetClass()=="weapon_golfclub" then

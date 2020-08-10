@@ -252,7 +252,7 @@ end
 
 hook.Add("ScalePlayerDamage", "garandthing", function(ply, hg, dmg)
 	if dmg:GetAmmoType() == game.GetAmmoID("garand") then
-		if ply:GetLocationName() ~= "The Pit" and ply:GetLocationName() ~= "Crawl Space" then
+		if ply:GetLocationName() ~= "The Pit" then
 			dmg:SetDamage(10)
 		end
 	end
