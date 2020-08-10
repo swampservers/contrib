@@ -14,7 +14,7 @@ function ENT:Initialize()
 
     self:DrawShadow(false)
 
-    self:SetAngles(self:GetAngles() + Angle(0, 0, -90))
+    self:SetAngles(self:GetAngles() + Angle(0, -90, 0))
 
     local phys = self:GetPhysicsObject()
     if IsValid(phys) then
