@@ -58,7 +58,7 @@ function ENT:ProtectionRadius()
 	local field_size = TrashFieldModelToRadius[self:GetModel()]
 	local locid = self:GetLocation()
 	local ln = Location.GetLocationNameByIndex(locid)
-	if ln=="The Pit" or ln=="Crawl Space" then
+	if ln=="The Pit" then
 		field_size=field_size/2
 	end
 	return field_size

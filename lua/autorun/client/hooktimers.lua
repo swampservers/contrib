@@ -247,13 +247,9 @@ end
 LatestReflectionDraw = 0
 
 FullRefractLocation = {
-["Pool"]=true,
-["Jacuzzi"]=true,
 ["Locker Room"]=true,
 ["SportZone"]=true,
 ["Golf"]=true,
-["Upper Caverns"]=true,
-["Lower Caverns"]=true,
 ["The Pit"]=true,
 ["Maintenance Room"]=true,
 ["The Underworld"]=true,
@@ -417,12 +413,6 @@ hook.Add("PrePlayerDraw","PlayerVisControl",function(ply)
 
 	if !ply:InVehicle() then 
 		local transhide = false
-
-		if LocalPlayer():GetLocationName()=="Arcade" then
-			if LocalPlayer():InVehicle() then
-				transhide = true
-			end
-		end
 			
 		if LocalPlayer():InVehicle() and LocalPlayer():GetVehicle():GetNWBool("IsChessSeat", false) then
 			if ChessLocalHideSpectators then transhide = true end

@@ -70,6 +70,7 @@ if CLIENT then
 		weapon_physgun=true,
 		weapon_slitter=true,
 		weapon_gauntlet=true,
+		weapon_peacekeeper=true
 	}
 
 	hook.Add("HUDPaint", "drawSAFENOTIFY", function()
