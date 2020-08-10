@@ -434,7 +434,7 @@ Map =
 	},
 
 	{
-		Name="Dr. Kleiner\'s Lab",
+		Name="Kleiner's Lab",
 		Min = Vector(5824, 2752, -400),
 		Max = Vector(6464, 3712, 92),
 		Filter = function(pos) return pos.x > 5887 or pos.y < 3472 end
@@ -551,7 +551,7 @@ Map =
 	},
 
 	{
-		Name="Mines",
+		Name="Minecraft",
 		Min = Vector(672, -2996, -2844),
 		Max = Vector(5844, 2443, -128),
 		Filter = function(pos) return pos.x < 5600 or pos.y < 2164 end
