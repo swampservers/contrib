@@ -8,6 +8,7 @@ function ENT:Initialize()
 end
 
 function ENT:StartTouch(other)
+	if CurTime() - (other.PonyTPCooldown or 0) < 2 then return end other.PonyTPCooldown=CurTime()
 	if other:IsPlayer() and !other:IsPony() then
 		SendFromPonyWorld(other, true)
 		other:ChatPrint("[red]Only the condemned may enter this realm.")

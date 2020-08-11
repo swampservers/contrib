@@ -142,7 +142,7 @@ function SWEP:PrimaryAttack()
 									self.Owner:SetAmmo(0,"blocks")
 								end
 								if self.Owner:GetAmmoCount("blocks")<100 then
-									self.Owner:GiveAmmo(1,"blocks",true)
+									self.Owner:GiveAmmo(5,"blocks",true)
 								end
 							end
 							cvx_set_vox(x,y,z,CVX_VALUE_AIR)

@@ -8,6 +8,7 @@ function ENT:Initialize()
 end
 
 function ENT:StartTouch(other)
+    if CurTime() - (other.PonyTPCooldown or 0) < 2 then return end other.PonyTPCooldown=CurTime()
     if other:GetClass()=="func_brush" then return end
 	SendFromPonyWorld(other, false)
 end
