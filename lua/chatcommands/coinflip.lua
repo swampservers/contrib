@@ -31,7 +31,7 @@ timer.Create( "CoinFlip", 1, 0,
 function()
 	local NewCoinFlips = {}
 	for fromID,coinflip in pairs(CoinFlips) do
-		if((coinFlip[3] + 60) <= CurTime()) then
+		if((coinFlip[3] + 20) <= CurTime()) then
 
 			local fromPlayer = player.GetBySteamID(fromID)
 			local toPlayer = player.GetBySteamID(coinflip[1])
@@ -63,7 +63,7 @@ end
 
 function CoinFlipRemove(id)
 	timer.Destroy("CoinFlip" .. id)
-	table.remove(CoinFlips, id)
+	CoinFlips[id] = nil
 end
 
 function checkCoinFlipRequest(toPlayer, points)
