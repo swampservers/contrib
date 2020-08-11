@@ -532,6 +532,10 @@ end
 
 concommand.Add("ps_buy", function( ply, cmd, args )
 	if #args < 1 then print("usage: ps_buy product") return end
+	if LocalPlayer():HasWeapon(args[1]) and !PS_Products[args[1]]['ammotype'] then -- if they have the wep and the wep is not a single-use e.g. peacekeeper
+        input.SelectWeapon(LocalPlayer():GetWeapon(args[1]))
+        return
+    end
 	PS_BuyProduct(args[1])
 end )
 
