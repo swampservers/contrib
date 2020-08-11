@@ -32,7 +32,8 @@ GM.CrosshairWeapons = {
 }
 
 GM.AmmoWeapons = {
-	"weapon_boltaction"
+	"weapon_boltaction",
+	"cvx_blocks",
 }
 
 --[[---------------------------------------------------------
