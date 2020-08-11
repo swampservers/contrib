@@ -39,23 +39,24 @@ function cvx_pre_draw_leaf(ent)
     --     render.SetModelLighting(i,0,0,0)
     -- end
 
-    
-    -- I do not like this
-    local lights={}
 
     local ep = ent:GetPos()
 
     --if ep:Distance(EyePos()) < 3000 then
-        cvx_sort_dlights(ep)
+    cvx_sort_dlights(ep)
     --end
 
-    for i,v in ipairs(CVX_SORTABLE_DLIGHTS) do
-        table.insert(lights, v[3])
-        if #lights==4 then break end
-    end
+    local lights={}
 
-    while #lights < 4 do
-        table.insert(lights, DUMMYLOCALLIGHT)
+   -- print(#CVX_SORTABLE_DLIGHTS)
+
+    for i=1,4 do
+        local l = CVX_SORTABLE_DLIGHTS[i]
+        if l then
+            lights[i] = l[3]
+        else
+            lights[i] = DUMMYLOCALLIGHT
+        end
     end
 
     render.SetLocalModelLights({})
@@ -74,10 +75,51 @@ function cvx_pre_draw_leaf(ent)
 end
 
 function cvx_sort_dlights(ep)
-    table.sort(CVX_SORTABLE_DLIGHTS, function(a,b)
-        return a[2]:Distance(ep)*a[1] < b[2]:Distance(ep)*b[1]
-    end)
+    local t = CVX_SORTABLE_DLIGHTS
+
+    if #t <= 4 then return end
+
+    for k,v in ipairs(t) do 
+        v[4] = v[2]:Distance(ep)*v[1]
+    end
+
+    -- table.sort(CVX_SORTABLE_DLIGHTS, function(a,b)
+    --     return a[4]<b[4]
+    -- end)
+
+    -- move up the 4 smallest elements, which is much faster than fully sorting the array
+    local function moveup(from,to)
+        local v = t[from]
+        for i=from,to+1,-1 do
+            t[i] = t[i-1]
+        end
+        t[to] = v
+    end
+    for i=2,4 do
+        for j=1,i-1 do
+            if t[i][4] < t[j][4] then
+                moveup(i,j)
+                break
+            end
+        end
+    end
+    for i=5,#t do
+        if t[i][4] < t[4][4] then
+            t[i],t[4] = t[4],t[i]
+            for j=1,3 do
+                if t[4][4] < t[j][4] then
+                    moveup(4,j)
+                    break
+                end
+            end
+        end
+    end
+
+    -- for i=2,#t do
+    --     assert(t[math.min(i-1,4)][4] < t[i][4])
+    -- end
 end
+
 
 function cvx_post_draw_leaf(e) 
     render.SuppressEngineLighting(false)

@@ -28,12 +28,19 @@ if CLIENT then
                     drawhud=false,
                 })
             else
+                local a = LocalPlayer():EyePos() - KLEINERPORTALPOS
+                a.z = -a.z
+                local l = math.max(a:Length()*0.02,1)
+                a:Rotate(GetGlobalAngle("MON2A", Angle(0,0,0)))
+                a = a:Angle()
+                --a = GetGlobalAngle("MON2A", Angle(0,0,0))
+                local fov = 70 + 50/l
                 render.RenderView( {
                     origin = GetGlobalVector("MON2P", Vector(0,0,0)),
-                    angles = GetGlobalAngle("MON2A", Angle(0,0,0)),
+                    angles = a,
                     x = 0, y = 0,
                     w = 1024, h = 1024,
-                    fov=80,
+                    fov=fov,
                     drawmonitors=false,
                     drawhud=false,
                 })
@@ -53,7 +60,7 @@ if CLIENT then
 local mat2 = Material( "models/wireframe" )
 
     hook.Add("PostDrawOpaqueRenderables", "MonitorDraw", function()
-        if IsValid(LocalPlayer()) and LocalPlayer():GetNWBool("MON", false) then
+        if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0) == 1 then
 
             SituationMonitorMaterial:SetMatrix("$texture2transform", Matrix({{1.5, 0, 0, math.Rand(0,1)}, {0, 1, 0, math.Rand(0,1)}, {0, 0, 1, 0}, {0, 0, 0, 1}}))
             local v = 0.97

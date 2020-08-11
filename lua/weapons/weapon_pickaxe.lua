@@ -16,6 +16,8 @@ SWEP.WorldModel 			= Model("models/staticprop/props_mining/pickaxe01.mdl")
 SWEP.Primary.Automatic = true
 
 SWEP.SWINGINTERVAL = 0.3
+SWEP.TARGETDISTANCE = 120
+
 
 function SWEP:Initialize() 
 	self:SetHoldType("melee2") 
@@ -66,7 +68,7 @@ end)
 function SWEP:GetTargetingBlock()
 	local tr = util.TraceLine( {
 		start = self.Owner:EyePos(),
-		endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 115,
+		endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * self.TARGETDISTANCE,
 		filter = function( ent ) if ent:GetClass() == "cvx_leaf" then return true end end, 
 		--ignoreworld=false,
 		mask = MASK_ALL,
@@ -102,7 +104,7 @@ function SWEP:PrimaryAttack()
 		bullet.Attacker = self.Owner
 		bullet.Src 	= self.Owner:GetShootPos()
 		bullet.Dir 	= self.Owner:GetAimVector()
-		bullet.Distance = 150
+		bullet.Distance = self.TARGETDISTANCE
 		bullet.Tracer	= 0
 		bullet.Force	= 1
 		bullet.Damage	= 1
@@ -140,7 +142,7 @@ function SWEP:PrimaryAttack()
 									self.Owner:SetAmmo(0,"blocks")
 								end
 								if self.Owner:GetAmmoCount("blocks")<100 then
-									self.Owner:GiveAmmo(1,"blocks")
+									self.Owner:GiveAmmo(1,"blocks",true)
 								end
 							end
 							cvx_set_vox(x,y,z,CVX_VALUE_AIR)
@@ -226,8 +228,8 @@ function SWEP:GetViewModelPosition( pos, ang )
 end
 
 function SWEP:DrawHUD()
-	surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0,0,0,25))
-	surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255,10))
+	surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0,0,0,100))
+	surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255,100))
 	local ptlrp = CurTime() - pickaxepointtime
 	if ptlrp < 0.9 then
 		draw.DrawText( "+"..tostring(pickaxepointamount), "TargetID", (ScrW() * 0.5) + (pickaxepointdirx * ptlrp * 100),( ScrH() * 0.5)-(50+(ptlrp*100)), Color( 255, 200, 50, 255*(0.9-ptlrp) ), TEXT_ALIGN_CENTER )

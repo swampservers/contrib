@@ -3,6 +3,8 @@ ENT.Base = "base_anim"
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+KLEINERPORTALPOS = Vector(5980,2880,-200)
+
 -- todo: some sort of color lerp, maybe portal particles when the player teleports
 
 function ENT:Initialize()

@@ -42,11 +42,11 @@ GolfPrizeTargets = {
 		{ 1, 20000 },
 		{ 2, 3000 }
 	},
-	["The Vent"] = {
+	["The vent"] = {
 		{ 1, 20000 },
 		{ 2, 10000 }
 	},
-	["Cave Explorer"] = {
+	["Cave explorer"] = {
 		{ 1, 100000 },
 		{ 3, 50000 },
 		{ 10, 10000 }

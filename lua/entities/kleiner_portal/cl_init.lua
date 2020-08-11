@@ -25,7 +25,7 @@ function ENT:DrawTranslucent()
     
 
     render.SetMaterial(KLEINERPORTALMATERIAL1)
-    render.DrawQuadEasy(self:GetPos(), EyePos() - self:GetPos(), 70, 70, Color(255,255,255), SysTime()*500)
+    render.DrawQuadEasy(self:GetPos(), EyePos() - self:GetPos(), 60, 60, Color(255,255,255), SysTime()*500)
 
     local matt = Matrix()
     matt:Translate(Vector(0.5,0.5,0))

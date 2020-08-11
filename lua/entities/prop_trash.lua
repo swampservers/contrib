@@ -44,7 +44,7 @@ TrashLocationOverrides = {
 	['Janitor\'s Closet']=TRASHLOC_BUILD,
 	['Outdoor Pool']=TRASHLOC_BUILD,
 	['Golf']=TRASHLOC_NOSPAWN,
-	['Mines']=TRASHLOC_BUILD,
+	['Minecraft']=TRASHLOC_BUILD,
 	['Tree']=TRASHLOC_BUILD,
 	['Shooting Range']=TRASHLOC_NOSPAWN,
 	['Temple of Kek']=TRASHLOC_BUILD,
@@ -143,7 +143,7 @@ if CLIENT then
 	function ENT:Think()
 		local light = PropTrashLightData[self:GetModel()]
 		if light and (self:GetTaped() or light.untaped) then
-			if EyePos():Distance(self:GetPos()) > (self:GetPos().z>-48 and 1000 or 2000) then return end
+			if EyePos():Distance(self:GetPos()) > (self:GetPos().z>-48 and 1000 or 3000) then return end
 			local dlight = DynamicLight(self:EntIndex())
 			if dlight then
 				dlight.pos = self:LocalToWorld(light.pos)

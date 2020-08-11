@@ -88,7 +88,7 @@ end
 
 local hevmaterial = Material("models/hevsuit/hevsuit_sheet")
 timer.Simple(0, function()
-	hevmaterial:SetInt("$flags", 0)
+	hevmaterial:SetInt("$flags", 8192+65536)
 end)
 
 local lanternmaterial = Material("models/dojo/lantern/lantern")
@@ -103,3 +103,23 @@ timer.Create("lanternswitcher",100,0,function()
 end)
 
 
+BARBRIGHTFADE = BARBRIGHTFADE or 0
+
+hook.Add("RenderScreenspaceEffects","BarBrightness",function()
+	if IsValid(LocalPlayer()) and LocalPlayer():GetLocationName()=="Drunken Clam" then
+		BARBRIGHTFADE=math.min(BARBRIGHTFADE+FrameTime(),1)
+	else
+		BARBRIGHTFADE=math.max(BARBRIGHTFADE-FrameTime()*2,0)
+	end
+
+	if BARBRIGHTFADE > 0 then
+		--if not LocalPlayer():SteamID()=="STEAM_0:0:38422842" then return end
+		local thing = -(BARBRIGHTFADE*0.06)
+		local tab = {}
+		tab[ "$pp_colour_colour" ] =   1 + thing
+		tab[ "$pp_colour_contrast" ] = 1/(1 + thing*0.5)
+		tab[ "$pp_colour_brightness" ] = thing
+		DrawColorModify(tab)
+
+	end
+end)
