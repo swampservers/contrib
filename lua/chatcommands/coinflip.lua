@@ -95,8 +95,10 @@ function finishCoinFlip(fromID, toPlayer)
 		CoinFlips[fromID] = nil
 		local heads = math.random() < 0.5 -- the "request from" player is always Heads.
 		BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. string.Comma((amount * 2)) .. "[fbc] against [gold]".. toPlayer:Nick().. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .."[fbc]!")
-		fromPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. string.Comma(amount) .. "[fbc] points.")
-		toPlayer:ChatPrint("[fbc]You " .. (heads and "Lost" or "Won") .. " [gold]" .. string.Comma(amount) .. "[fbc] points.")
+		local fromcol = heads and "green" or "edgy"
+		fromPlayer:ChatPrint("["..fromcol.."]You " .. (heads and "won" or "lost") .. " [gold]" .. string.Comma(amount) .. "["..fromcol.."] points.")
+		local tocol = heads and "edgy" or "green"
+		toPlayer:ChatPrint("["..tocol.."]You " .. (heads and "lost" or "won") .. " [gold]" .. string.Comma(amount) .. "["..tocol.."] points.")
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
 		if heads then
 			toPlayer:PS_TakePoints(amount)
