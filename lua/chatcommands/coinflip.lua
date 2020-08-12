@@ -32,7 +32,7 @@ timer.Create( "CoinFlip", 1, 0,
 function()
 	local NewCoinFlips = {}
 	for fromID,j in pairs(CoinFlips) do
-		if((j[3] + 20) <= CurTime()) then
+		if((j[3] + 30) <= CurTime()) then
 			local fromPlayer = player.GetBySteamID(fromID)
 			local toPlayer = player.GetBySteamID(j[1])
 			if(fromPlayer != nil and toPlayer != nil) then -- This whole nonsense is because I want to show the from/to's name if possible, but otherwise show a different message.
@@ -54,7 +54,7 @@ end)
 function initCoinFlip(ply,target,amount)
 	if ply:PS_HasPoints(amount) and CoinFlips[ply:SteamID()] == nil then
 		ply:ChatPrint("[orange]"..target:Nick().." is receiving your coinflip request.")
-		target:ChatPrint("[orange]"..ply:Nick().." is sending you a coinflip request for [rainbow]"..amount.."[orange]. Say !coinflip accept [confirm number of points] to accept.")
+		target:ChatPrint("[orange]"..ply:Nick().." is sending you a coinflip request for [rainbow]"..string.Comma(amount).."[orange]. Say !coinflip accept [confirm number of points] to accept.")
 		CoinFlips[ply:SteamID()] = {target:SteamID(), amount, CurTime()}
 	elseif CoinFlips[ply:SteamID()] != nil then
 		ply:ChatPrint("[red]You already have a coinflip in progress.")
@@ -78,7 +78,7 @@ function checkCoinFlipRequest(toPlayer, points)
 		if j[1] == toPlayer:SteamID() then
 			local fromPlayer = player.GetBySteamID(fromID)
 			if fromPlayer != nil then
-				toPlayer:ChatPrint("[orange](" .. index .. ") [gold]" .. j[2] .. "[orange] from [edgy]" .. fromPlayer:Nick())
+				toPlayer:ChatPrint("[orange](" .. index .. ") [gold]" .. string.Comma(j[2]) .. "[orange] from [edgy]" .. fromPlayer:Nick())
 			end
 			index = index + 1
 		end
@@ -94,9 +94,9 @@ function finishCoinFlip(fromID, toPlayer)
 	elseif fromPlayer:PS_HasPoints(amount) and toPlayer:PS_HasPoints(amount) then -- Final Check, make sure they have funds still
 		CoinFlips[fromID] = nil
 		local heads = math.random() < 0.5 -- the "request from" player is always Heads.
-		BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. toPlayer:Nick().. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .."[fbc]!")
-		fromPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc] points.")
-		toPlayer:ChatPrint("[fbc]You " .. (heads and "Lost" or "Won") .. " [gold]" .. amount .. "[fbc] points.")
+		BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. string.Comma((amount * 2)) .. "[fbc] against [gold]".. toPlayer:Nick().. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .."[fbc]!")
+		fromPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. string.Comma(amount) .. "[fbc] points.")
+		toPlayer:ChatPrint("[fbc]You " .. (heads and "Lost" or "Won") .. " [gold]" .. string.Comma(amount) .. "[fbc] points.")
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
 		if heads then
 			toPlayer:PS_TakePoints(amount)
