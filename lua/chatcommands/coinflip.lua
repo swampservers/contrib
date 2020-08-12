@@ -3,6 +3,7 @@ CoinFlips = CoinFlips or {}
 RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local p = tonumber(t[#t])
+	p = (p != nil and math.floor(p) or nil)
 	if #t == 1 and t[1]:lower() == "accept" and p != nil then checkCoinFlipRequest(ply, p) return end
 
 	if p == nil then
