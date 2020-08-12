@@ -85,7 +85,7 @@ function checkCoinFlipRequest(toPlayer, points)
 				local fromPlayer =  player.GetBySteamID(fromID)
 				local points = j[2]
 				if fromPlayer ~= nil then
-					ply:ChatPrint("[orange](" .. index .. ") [rainbow]" .. points .. "[fbc] from [gold]" .. fromPlayer:Nick())
+					ply:ChatPrint("[fbc](" .. index .. ") [rainbow]" .. points .. "[fbc] from [gold]" .. fromPlayer:Nick())
 				end
 				index = index + 1
 			end
@@ -106,7 +106,7 @@ function finishCoinFlip(fromID, toPlayer)
 	elseif fromPlayer:PS_HasPoints(amount) and toPlayer:PS_HasPoints(amount) then -- Final Check, make sure they have funds still
 		CoinFlipRemove(fromID)
 		local heads = math.random() < 0.5 -- the "request from" player is always Heads.
-		BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. toPlayer:Nick().. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .."!")
+		BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. toPlayer:Nick().. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .."[fbc]!")
 		fromPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc].")
 		toPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc].")
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
