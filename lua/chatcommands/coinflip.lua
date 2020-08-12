@@ -36,12 +36,12 @@ function()
 			local fromPlayer = player.GetBySteamID(fromID)
 			local toPlayer = player.GetBySteamID(j[1])
 			if(fromPlayer != nil and toPlayer != nil) then -- This whole nonsense is because I want to show the from/to's name if possible, but otherwise show a different message.
-				fromPlayer:ChatPrint("[edgy]" .. toPlayer:Nick() .. "[fbc] doesn't want to play. Try again later.")
-				toPlayer:ChatPrint("[fbc]You missed out on a coinflip from [edgy]" .. fromPlayer:Nick() .. "[fbc].")
+				fromPlayer:ChatPrint("[edgy]" .. toPlayer:Nick() .. "[orange] doesn't want to play. Try again later.")
+				toPlayer:ChatPrint("[orange]You missed out on a coinflip from [edgy]" .. fromPlayer:Nick() .. "[orange].")
 			elseif(fromPlayer == nil and toPlayer != nil) then
-				toPlayer:ChatPrint("[fbc]You missed out on a coinflip.")
+				toPlayer:ChatPrint("[orange]You missed out on a coinflip.")
 			elseif(fromPlayer != nil and toPlayer == nil) then
-				fromPlayer:ChatPrint("[fbc]The player you requested a coinflip to has left. Try again later.")
+				fromPlayer:ChatPrint("[red]The player you requested a coinflip to has left. Try again later.")
 			end
 			CoinFlips[fromID] = nil
 		else
