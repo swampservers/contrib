@@ -78,7 +78,7 @@ function checkCoinFlipRequest(toPlayer, points)
 	for fromID,j in pairs(CoinFlips) do
 		if j[1] == toPlayer:SteamID() then
 			local fromPlayer = player.GetBySteamID(fromID)
-			if fromPlayer != nil then
+			if fromPlayer then
 				toPlayer:ChatPrint("[orange](" .. index .. ") [gold]" .. string.Comma(j[2]) .. "[orange] from [edgy]" .. fromPlayer:Nick())
 			end
 			index = index + 1
@@ -89,7 +89,7 @@ end
 function finishCoinFlip(fromID, toPlayer)
 	local fromPlayer = player.GetBySteamID(fromID)
 	local amount = CoinFlips[fromID][2]
-	if(fromPlayer == nil) then
+	if(not fromPlayer) then
 		CoinFlips[fromID] = nil -- Remove request from CoinFlip because initiator left the server
 		toPlayer:ChatPrint("[red]The initiator left, coinflip cancelled.")
 	elseif fromPlayer:PS_HasPoints(amount) and toPlayer:PS_HasPoints(amount) then -- Final Check, make sure they have funds still
