@@ -1,13 +1,12 @@
--- Encyclopedia SWEP by swamponions - STEAM_0:0:38422842
+-- Microphone SWEP by swamponions - STEAM_0:0:38422842
 
 AddCSLuaFile()
 
-SWEP.PrintName			= "Encyclopedia"	
+SWEP.PrintName			= "Microphone"	
 
 SWEP.Author = "swamponions"
 
---They actually do. That's the joke.
-SWEP.Purpose = "It's bulletproof. Bullets don't go through it."
+SWEP.Purpose = "Speak your mind."
 
 SWEP.Slot				= 1
 SWEP.SlotPos			= 99
