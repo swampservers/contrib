@@ -3,7 +3,7 @@ CoinFlips = CoinFlips or {}
 RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local p = tonumber(table.remove(t))
-	if #t == 1 and t[1]:lower() == "accept" then checkCoinFlipRequest(ply, p) return end
+	if #t == 1 and t[1]:lower() == "accept" and p != nil then checkCoinFlipRequest(ply, p) return end
 
 	if p == nil then
 		if #t == 1 and t[1]:lower() == "accept" then
@@ -62,38 +62,30 @@ function initCoinFlip(ply,target,amount)
 end
 
 function checkCoinFlipRequest(toPlayer, points)
-	local coinflipFound = false
 	for fromID,j in pairs(CoinFlips) do
 		if j[1] == toPlayer:SteamID() and j[2] == points then
 			-- Coinflip Request Found
-			coinflipFound = true
 			finishCoinFlip(fromID, toPlayer)
+			return
 		end
 	end
-	if not coinflipFound then
-		ply:ChatPrint("[red]You don't have a coinflip request for that amount!")
-		ply:ChatPrint("[orange]COINFLIPS:")
-		local index = 1
-		for fromID,j in pairs(CoinFlips) do
-			if j[1] == toPlayer:SteamID() then
-				local fromPlayer = player.GetBySteamID(fromID)
-				local points = j[2]
-				if fromPlayer != nil then
-					ply:ChatPrint("[fbc](" .. index .. ") [rainbow]" .. points .. "[fbc] from [gold]" .. fromPlayer:Nick())
-				end
-				index = index + 1
+	ply:ChatPrint("[red]You don't have a coinflip request for that amount!")
+	ply:ChatPrint("[orange]COINFLIPS:")
+	local index = 1
+	for fromID,j in pairs(CoinFlips) do
+		if j[1] == toPlayer:SteamID() then
+			local fromPlayer = player.GetBySteamID(fromID)
+			if fromPlayer != nil then
+				ply:ChatPrint("[fbc](" .. index .. ") [gold]" .. j[2] .. "[fbc] from [edgy]" .. fromPlayer:Nick())
 			end
+			index = index + 1
 		end
 	end
 end
 
 function finishCoinFlip(fromID, toPlayer)
-	local fromPlayer = nil
+	local fromPlayer = player.GetBySteamID(fromID)
 	local amount = CoinFlips[fromID][2]
-	-- Get Player from ID
-	for _,ply in ipairs( player.GetAll() ) do
-		if(ply:SteamID() == fromID) then fromPlayer = ply end
-	end
 	if(fromPlayer == nil) then
 		CoinFlips[fromID] = nil -- Remove request from CoinFlip because initiator left the server
 		toPlayer:ChatPrint("[red]The initiator left, coinflip cancelled.")
@@ -101,8 +93,8 @@ function finishCoinFlip(fromID, toPlayer)
 		CoinFlips[fromID] = nil
 		local heads = math.random() < 0.5 -- the "request from" player is always Heads.
 		BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. toPlayer:Nick().. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .."[fbc]!")
-		fromPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc].")
-		toPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc].")
+		fromPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc] points.")
+		toPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc] points.")
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
 		if heads then
 			toPlayer:PS_TakePoints(amount)
