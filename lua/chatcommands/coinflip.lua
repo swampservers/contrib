@@ -2,7 +2,7 @@ CoinFlips = CoinFlips or {}
 
 RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	local t = string.Explode(" ",arg)
-	local p = tonumber(table.remove(t))
+	local p = tonumber(t[#t])
 	if #t == 1 and t[1]:lower() == "accept" and p != nil then checkCoinFlipRequest(ply, p) return end
 
 	if p == nil then
@@ -12,6 +12,7 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 			ply:ChatPrint("[orange]!coinflip player points")
 		end
 	else
+		table.remove(t)
 		local to,c = PlyCount(string.Implode(" ",t))
 		if c == 1 then
 			if ply == to then
@@ -19,7 +20,7 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 			elseif p >= 1000 then -- minimum 1000 point coinflip
 				initCoinFlip(ply,to,p)
 			else
-				ply:ChatPrint("[red]A coin flip must be a minimum of 1000 points.")
+				ply:ChatPrint("[red]A coinflip must be a minimum of 1000 points.")
 			end
 		else
 			ply:ChatPrint("[red]Player "..string.Implode(" ",t).." not found.")
@@ -53,6 +54,7 @@ end)
 function initCoinFlip(ply,target,amount)
 	if ply:PS_HasPoints(amount) and CoinFlips[ply:SteamID()] == nil then
 		ply:ChatPrint("[orange]"..target:Nick().." is receiving your coinflip request.")
+		target:ChatPrint("[orange]"..ply:Nick().." is sending you a coinflip request for [rainbow]"..amount.."[orange]. Say !coinflip accept [confirm number of points] to accept.")
 		CoinFlips[ply:SteamID()] = {target:SteamID(), amount, CurTime()}
 	elseif CoinFlips[ply:SteamID()] != nil then
 		ply:ChatPrint("[red]You already have a coinflip in progress.")
@@ -69,14 +71,14 @@ function checkCoinFlipRequest(toPlayer, points)
 			return
 		end
 	end
-	ply:ChatPrint("[red]You don't have a coinflip request for that amount!")
-	ply:ChatPrint("[orange]COINFLIPS:")
+	toPlayer:ChatPrint("[red]You don't have a coinflip request for that amount!")
+	toPlayer:ChatPrint("[orange]COINFLIPS:")
 	local index = 1
 	for fromID,j in pairs(CoinFlips) do
 		if j[1] == toPlayer:SteamID() then
 			local fromPlayer = player.GetBySteamID(fromID)
 			if fromPlayer != nil then
-				ply:ChatPrint("[fbc](" .. index .. ") [gold]" .. j[2] .. "[fbc] from [edgy]" .. fromPlayer:Nick())
+				toPlayer:ChatPrint("[orange](" .. index .. ") [gold]" .. j[2] .. "[orange] from [edgy]" .. fromPlayer:Nick())
 			end
 			index = index + 1
 		end
@@ -94,7 +96,7 @@ function finishCoinFlip(fromID, toPlayer)
 		local heads = math.random() < 0.5 -- the "request from" player is always Heads.
 		BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. (amount * 2) .. "[fbc] against [gold]".. toPlayer:Nick().. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .."[fbc]!")
 		fromPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc] points.")
-		toPlayer:ChatPrint("[fbc]You " .. (heads and "Won" or "Lost") .. " [gold]" .. amount .. "[fbc] points.")
+		toPlayer:ChatPrint("[fbc]You " .. (heads and "Lost" or "Won") .. " [gold]" .. amount .. "[fbc] points.")
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
 		if heads then
 			toPlayer:PS_TakePoints(amount)
