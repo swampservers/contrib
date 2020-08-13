@@ -18,8 +18,8 @@ SWEP.AdminSpawnable		= true
 SWEP.ViewModelFOV = 85
 SWEP.ViewModelFlip = false
 
-SWEP.ViewModel 				= Model("models/props_lab/bindergreen.mdl")
-SWEP.WorldModel 			= Model("models/props_lab/bindergreen.mdl")
+SWEP.ViewModel 				= Model("models/props_fairgrounds/mic_stand.mdl")
+SWEP.WorldModel 			= Model("models/props_fairgrounds/mic_stand.mdl")
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
@@ -52,11 +52,11 @@ function SWEP:DrawWorldModel()
 		if(ba)then oang = ba end
 
 
-			oang:RotateAroundAxis(oang:Forward(), 20)
-			oang:RotateAroundAxis(oang:Up(), 90)
-			opos = opos + oang:Right()*3
-			opos = opos + oang:Forward()*-7
-			opos = opos + oang:Up()*-10
+			oang:RotateAroundAxis(oang:Forward(), 180)
+			oang:RotateAroundAxis(oang:Right(), -20)
+			opos = opos + oang:Right()*-2
+			opos = opos + oang:Forward()*2
+			opos = opos + oang:Up()*-35
 
 		self:SetupBones()
 
@@ -73,15 +73,18 @@ end
 
 
 function SWEP:GetViewModelPosition( pos, ang )
-	pos = pos + ang:Right()*6
-	pos = pos + ang:Up()*-20
-	pos = pos + ang:Forward()*16
+	pos = pos + ang:Right()*8
+	pos = pos + ang:Up()*-60
+	pos = pos + ang:Forward()*18
 	ang:RotateAroundAxis(ang:Forward(), -3)
-	ang:RotateAroundAxis(ang:Up(), -105)
+	ang:RotateAroundAxis(ang:Up(), -30)
 	pos = pos + ang:Forward()*0.2
 	return pos, ang 
 end
 
+function SWEP:DrawHUD()
+	draw.DrawText("You have the mic! Everyone else's voice is muted. Reload to drop.", "TargetID", ScrW() * 0.5, ScrH() * 0.93, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+end
 
 function SWEP:Initialize() 
 	self:SetHoldType("slam") 	 
@@ -96,5 +99,23 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
+	if SERVER then self:Remove() end
+end
 
+function SWEP:Holster()
+	if SERVER then self:Remove() end
+end
+
+function SWEP:OnRemove()
+	if SERVER then self.SourceMic:SetSpeaker(NULL) end
+end
+
+function SWEP:Think()
+	if SERVER then
+		if self.Owner:InVehicle() or
+			self.Owner:GetPos():Distance(self.SourceMic:GetPos()) > 250 or
+			self.Owner:GetPos().x>-2680 then
+				self:Remove()
+		end
+	end
 end

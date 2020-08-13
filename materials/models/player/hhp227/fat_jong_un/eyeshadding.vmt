@@ -1,8 +1,0 @@
-"vertexlitgeneric"
-{
-	"$baseTexture" "models\player\hhp227\fat_jong_un/eyeshadding"
-	"$translucent" 1
-	"$halflambert" 1
-	"$nocull" 1 
-	"$nodecal" "1"
-}

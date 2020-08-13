@@ -16,10 +16,10 @@ function cvx_pre_draw_leaf(ent)
 
     local a,b,c,d,e,f = 0.4,0.25,0.5,0.2,0.7,0.15
 
-    local red,green,blue = 0.9,0.35,0.05
+    local red,green,blue = 0.6,0.2,0.02 --0.9,0.35,0.05
 
     local howfarup = (EyePos().z-CVX_ORIGIN.z)/(CVX_WORLD_ZS * CVX_SCALE) --ent:GetPos().z
-    local p = 1-math.min(howfarup*5,1)
+    local p = 1-math.min(howfarup*4,1)
 
     --p = math.pow(p, 2)
 
@@ -134,7 +134,9 @@ CVX_DLIGHT_PROXY_META = {
     end,
     __newindex = function(t,k,v)
         k = string.lower(k)
-        t._light[k]=v
+        if k~="sortrgb" then
+            t._light[k]=v
+        end
         t._data[k]=v
     end
 }
@@ -148,6 +150,11 @@ CVX_SORTABLE_DLIGHTS = {}
 
 DynamicLight = function(idx, elight)
     CVX_TRACKED_DLIGHTS[idx] = setmetatable({_data={},_light=BASE_DYNAMIC_LIGHT(idx, elight)}, CVX_DLIGHT_PROXY_META)
+    return CVX_TRACKED_DLIGHTS[idx]
+end
+
+CVXDynamicLight = function(idx, elight)
+    CVX_TRACKED_DLIGHTS[idx] = {}
     return CVX_TRACKED_DLIGHTS[idx]
 end
 
@@ -182,7 +189,7 @@ hook.Add("Think","DlightCleanup",function()
             --Don't double count the eyeglow one
             if not IsValid(LocalPlayer()) or k~=LocalPlayer():EntIndex() then
                 table.insert(CVX_SORTABLE_DLIGHTS,
-                    {1/(math.max(v.r,v.g,v.b)*v.brightness*v.size),
+                    {1/((v.sortrgb or math.max(v.r,v.g,v.b))*v.brightness*v.size),
                     v.pos,
                     {
                         color=Vector(v.r,v.g,v.b)*0.000015*v.brightness*v.size,
@@ -200,6 +207,176 @@ end)
 
 
 
+local function ReadOre()
+    local idx = net.ReadUInt(24)
+    local v = net.ReadUInt(8)
+    if v==0 then
+        local old =  MINECRAFT_EXPOSED_ORES[idx]
+        if old~=nil then
+            if MINECRAFTOREMESHES[old] then
+                MINECRAFTOREMESHES[old]:Destroy()
+                MINECRAFTOREMESHES[old]=nil
+            end
+        end
+        MINECRAFT_EXPOSED_ORES[idx] = nil
+    else
+        if MINECRAFTOREMESHES[v] then
+            MINECRAFTOREMESHES[v]:Destroy()
+            MINECRAFTOREMESHES[v]=nil
+        end
+        MINECRAFT_EXPOSED_ORES[idx] = v
+    end
+end
+
+net.Receive("cvxOres",function(len)
+    local c = net.ReadUInt(24)
+    MINECRAFT_EXPOSED_ORES = {}
+    for i=1,c do
+        ReadOre()
+    end
+end)
+
+net.Receive("cvxOre",function(len)
+    ReadOre()
+end)
+
+REQUESTED_ORES = nil
+
+
+local ma = Material("swamponions/meinkraft/iron_ore")
+local mb = Material("swamponions/meinkraft/gold_ore")
+local mc = Material("swamponions/meinkraft/diamond_ore")
+local md = Material("lights/white")
+
+MINECRAFTOREMATERIALS = {
+    ma,mb,mc,md
+}
+
+MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
+
+hook.Add("PostDrawOpaqueRenderables","MinecraftOres",function()
+    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName()=="Minecraft") then return end
+
+    MINECRAFT_OREANGLE = Angle(0,0,0)
+    MINECRAFT_OREMINS = -Vector(0.51,0.51,0.51)*CVX_SCALE
+    MINECRAFT_OREMAXS = Vector(0.51,0.51,0.51)*CVX_SCALE
+
+    for i,mat in ipairs(MINECRAFTOREMATERIALS) do
+        if isnumber(mat) then
+            print("NUMBER BUG") 
+            continue end
+    
+        if MINECRAFTOREMESHES[i]==nil then
+            local m = Mesh(mat) -- Create the IMesh object
+
+            local count = 0
+            for k,v in pairs(MINECRAFT_EXPOSED_ORES or {}) do
+                if v==i then count=count+1 end
+            end
+
+
+            
+            mesh.Begin( m, MATERIAL_QUADS, count*6 )
+
+            for k,v in pairs(MINECRAFT_EXPOSED_ORES or {}) do
+                if v==i then
+                    
+
+                    local x,y,z = cvx_from_world_index(k)
+                    local origin = cvx_to_game_coord_vec(Vector(x,y,z))
+
+                    for face=1,6 do
+                        local normal = CVX_QUAD_NORMALS[face]
+
+                        local even = (face%2==0)
+
+                        mesh.Position(origin + CVX_QUAD_VERTEX0[face])
+                        mesh.TexCoord(0, 0, 0)
+                        mesh.Normal(normal)
+                        mesh.AdvanceVertex()
+                
+                        if even then
+                            mesh.Position(origin + CVX_QUAD_VERTEX1[face])
+                            mesh.TexCoord(0,1,0)
+                        else
+                            mesh.Position(origin + CVX_QUAD_VERTEX2[face])
+                            mesh.TexCoord(0,0,1)		
+                        end
+                        mesh.Normal(normal)
+                        mesh.AdvanceVertex()
+                
+                        mesh.Position(origin + CVX_QUAD_VERTEX3[face])
+                        mesh.TexCoord(0, 1,1)
+                        mesh.Normal(normal)
+                        mesh.AdvanceVertex()
+                
+                        if even then
+                            mesh.Position(origin + CVX_QUAD_VERTEX2[face])
+                            mesh.TexCoord(0,0,1)
+                        else
+                            mesh.Position(origin + CVX_QUAD_VERTEX1[face])
+                            mesh.TexCoord(0, 1,0)
+                        end
+                        mesh.Normal(normal)
+                        mesh.AdvanceVertex()
+                    end
+                end
+            end
+            mesh.End()
+
+            MINECRAFTOREMESHES[i] = m
+        end
+
+        if mat:GetInt("$flags") ~= 2097152 then mat:SetInt("$flags",2097152) end
+        render.SetMaterial(mat)
+        MINECRAFTOREMESHES[i]:Draw() 
+    end
+
+end)
+
+hook.Add("Think","MinecraftOreUpdates",function()
+    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName()=="Minecraft") then return end
+
+    if not REQUESTED_ORES then
+        net.Start("cvxOres")
+        net.SendToServer()
+        REQUESTED_ORES = true
+        return
+    end
+
+    for k,v in pairs(MINECRAFT_EXPOSED_ORES or {}) do
+        if v>=3 then
+            local idx = k
+
+            local dlight = DynamicLight(idx)
+            if dlight then
+
+                local x,y,z = cvx_from_world_index(k)
+                local center = cvx_to_game_coord_vec(Vector(x+0.5,y+0.5,z+0.5))
+                dlight.pos = center
+
+                if v==4 then
+                    local s = idx*0.771
+                    local c = HSVToColor(idx,math.sqrt(s-math.floor(s)),1)
+                    local b = 1
+                    if math.mod(idx,2)==0 then b=0.5+math.sin(SysTime()*2+idx)*0.5 end
+                    dlight.r = c.r*b
+                    dlight.g = c.g*b
+                    dlight.b = c.b*b
+                else
+                    dlight.r = 0
+                    dlight.g = 100
+                    dlight.b = 130
+                end
+                dlight.sortrgb = 255
+                dlight.brightness = 1
+                dlight.size = 600
+                dlight.decay = 1000
+                dlight.dietime = CurTime() + 0.1
+            end
+        end
+    end
+end)
 
 -- TODO: this doesn't quite work because of min z distance, they can be outside a vox and still see thru
 local BLACKBOXMAT =  Material( "tools/toolsblack" )
