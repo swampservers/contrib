@@ -102,8 +102,8 @@ function SWEP:PrimaryAttack()
 
 		bullet.Num 	= 1
 		bullet.Attacker = self.Owner
-		bullet.Src 	= self.Owner:GetShootPos()
-		bullet.Dir 	= self.Owner:GetAimVector()
+		bullet.Src 	= self.Owner:EyePos() --self.Owner:GetShootPos()
+		bullet.Dir 	= self.Owner:EyeAngles():Forward() --self.Owner:GetAimVector()
 		bullet.Distance = self.TARGETDISTANCE
 		bullet.Tracer	= 0
 		bullet.Force	= 1
@@ -132,17 +132,14 @@ function SWEP:PrimaryAttack()
 							self.HitBlock = nil --self:SetNWVector("HitBlock", Vector(-1,-1,-1))
 							if SERVER then
 								local idx = cvx_world_index(x,y,z)
-								if isentity(MINECRAFT_ORES[idx]) then
-									MINECRAFT_ORES[idx]:Mine(self.Owner)
-								end
-								MINECRAFT_ORES[idx]=nil
+								Minecraft_Mine(idx, self.Owner)
 
 								if not self.Owner:HasWeapon("cvx_blocks") then
 									self.Owner:Give("cvx_blocks")
 									self.Owner:SetAmmo(0,"blocks")
 								end
 								if self.Owner:GetAmmoCount("blocks")<100 then
-									self.Owner:GiveAmmo(5,"blocks",true)
+									self.Owner:GiveAmmo(2,"blocks",true)
 								end
 							end
 							cvx_set_vox(x,y,z,CVX_VALUE_AIR)

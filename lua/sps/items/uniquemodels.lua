@@ -42,12 +42,12 @@ PS_UniqueModelProduct({
 	OnBuy = function(self, ply) end
 })
 
-PS_UniqueModelProduct({
-	class = 'ketchupdemon',
-	name = 'Mortally Challenged',
-	description = '"Demon" is an offensive term.',
-	model = 'models/momot/momot.mdl'
-})
+-- PS_UniqueModelProduct({
+-- 	class = 'ketchupdemon',
+-- 	name = 'Mortally Challenged',
+-- 	description = '"Demon" is an offensive term.',
+-- 	model = 'models/momot/momot.mdl'
+-- })
 
 PS_UniqueModelProduct({
 	class = 'fatbastard',
@@ -81,12 +81,12 @@ PS_UniqueModelProduct({
 	model = 'models/player/kermit.mdl'
 })
 
-PS_UniqueModelProduct({
-	class = 'kim',
-	name = 'Rocket Man',
-	description = "Won't be around much longer.",
-	model = 'models/player/hhp227/kim_jong_un.mdl'
-})
+-- PS_UniqueModelProduct({
+-- 	class = 'kim',
+-- 	name = 'Rocket Man',
+-- 	description = "Won't be around much longer.",
+-- 	model = 'models/player/hhp227/kim_jong_un.mdl'
+-- })
 
 PS_UniqueModelProduct({
 	class = 'minion',
@@ -94,11 +94,11 @@ PS_UniqueModelProduct({
 	model = 'models/player/minion/minion5/minion5.mdl'
 })
 
-PS_UniqueModelProduct({
-	class = 'moonman',
-	name = 'Mac Tonight',
-	model = 'models/player/moonmankkk.mdl'
-})
+-- PS_UniqueModelProduct({
+-- 	class = 'moonman',
+-- 	name = 'Mac Tonight',
+-- 	model = 'models/player/moonmankkk.mdl'
+-- })
 
 PS_UniqueModelProduct({
 	class = 'nicestmeme',

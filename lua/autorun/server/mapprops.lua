@@ -40,7 +40,7 @@ function GetMapPropTable()
         --{class="arcade_doom",pos=Vector(1720,1320,0),ang=Angle(0,0,0)},
 
         {class="prop_dynamic",pos=Vector(31, -392, -5),ang=Angle(0,-90,0),model="models/swamponions/dedicationplaque.mdl"},
-        {class="prop_dynamic",pos=Vector(-2720, -1601, 24),ang=Angle(0,0,0),model="models/props_fairgrounds/mic_stand.mdl"}, //temporary
+        --{class="prop_dynamic",pos=Vector(-2720, -1601, 24),ang=Angle(0,0,0),model="models/props_fairgrounds/mic_stand.mdl"}, //temporary
     }
     
     if os.date("%B", os.time()) == "December" then
