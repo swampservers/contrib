@@ -4,10 +4,10 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local p = tonumber(t[#t])
 	p = (p != nil and math.floor(p) or nil)
-	if #t == 1 and t[1]:lower() == "accept" and p != nil then checkCoinFlipRequest(ply, p) return end
+	if t[1]:lower() == "accept" and p != nil then checkCoinFlipRequest(ply, p) return end
 
 	if p == nil then
-		if #t == 1 and t[1]:lower() == "accept" then
+		if t[1]:lower() == "accept" then
 			ply:ChatPrint("[orange]!coinflip accept [confirm number of points]")
 		else
 			ply:ChatPrint("[orange]!coinflip player points")
