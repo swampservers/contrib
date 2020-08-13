@@ -248,9 +248,16 @@ local mb = Material("swamponions/meinkraft/gold_ore")
 local mc = Material("swamponions/meinkraft/diamond_ore")
 local md = Material("lights/white")
 
+print(ma)
+print(mb)
+print(mc)
+print(md)
+
 MINECRAFTOREMATERIALS = {
     ma,mb,mc,md
 }
+
+PrintTable(MINECRAFTOREMATERIALS)
 
 MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
 
@@ -264,6 +271,7 @@ hook.Add("PostDrawOpaqueRenderables","MinecraftOres",function()
     for i,mat in ipairs(MINECRAFTOREMATERIALS) do
         if isnumber(mat) then
             print("NUMBER BUG") 
+            PrintTable(MINECRAFTOREMATERIALS)
             continue end
     
         if MINECRAFTOREMESHES[i]==nil then
