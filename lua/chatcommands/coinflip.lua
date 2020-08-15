@@ -4,10 +4,10 @@ RegisterChatCommand({'coin','coinflip'},function(ply,arg)
 	local t = string.Explode(" ",arg)
 	local p = tonumber(t[#t])
 	p = (p != nil and math.floor(p) or nil)
-	if #t == 1 and t[1]:lower() == "accept" and p != nil then checkCoinFlipRequest(ply, p) return end
+	if t[1]:lower() == "accept" and p != nil then checkCoinFlipRequest(ply, p) return end
 
 	if p == nil then
-		if #t == 1 and t[1]:lower() == "accept" then
+		if t[1]:lower() == "accept" then
 			ply:ChatPrint("[orange]!coinflip accept [confirm number of points]")
 		else
 			ply:ChatPrint("[orange]!coinflip player points")
@@ -36,12 +36,12 @@ function()
 		if((j[3] + 30) <= CurTime()) then
 			local fromPlayer = player.GetBySteamID(fromID)
 			local toPlayer = player.GetBySteamID(j[1])
-			if(fromPlayer != nil and toPlayer != nil) then -- This whole nonsense is because I want to show the from/to's name if possible, but otherwise show a different message.
+			if(fromPlayer and toPlayer) then -- This whole nonsense is because I want to show the from/to's name if possible, but otherwise show a different message.
 				fromPlayer:ChatPrint("[edgy]" .. toPlayer:Nick() .. "[orange] doesn't want to play. Try again later.")
 				toPlayer:ChatPrint("[orange]You missed out on a coinflip from [edgy]" .. fromPlayer:Nick() .. "[orange].")
-			elseif(fromPlayer == nil and toPlayer != nil) then
+			elseif(not fromPlayer and toPlayer) then
 				toPlayer:ChatPrint("[orange]You missed out on a coinflip.")
-			elseif(fromPlayer != nil and toPlayer == nil) then
+			elseif(fromPlayer and not toPlayer) then
 				fromPlayer:ChatPrint("[red]The player you requested a coinflip to has left. Try again later.")
 			end
 			CoinFlips[fromID] = nil
@@ -78,7 +78,7 @@ function checkCoinFlipRequest(toPlayer, points)
 	for fromID,j in pairs(CoinFlips) do
 		if j[1] == toPlayer:SteamID() then
 			local fromPlayer = player.GetBySteamID(fromID)
-			if fromPlayer != nil then
+			if fromPlayer then
 				toPlayer:ChatPrint("[orange](" .. index .. ") [gold]" .. string.Comma(j[2]) .. "[orange] from [edgy]" .. fromPlayer:Nick())
 			end
 			index = index + 1
@@ -89,7 +89,7 @@ end
 function finishCoinFlip(fromID, toPlayer)
 	local fromPlayer = player.GetBySteamID(fromID)
 	local amount = CoinFlips[fromID][2]
-	if(fromPlayer == nil) then
+	if(not fromPlayer) then
 		CoinFlips[fromID] = nil -- Remove request from CoinFlip because initiator left the server
 		toPlayer:ChatPrint("[red]The initiator left, coinflip cancelled.")
 	elseif fromPlayer:PS_HasPoints(amount) and toPlayer:PS_HasPoints(amount) then -- Final Check, make sure they have funds still
