@@ -71,10 +71,12 @@ function SWEP:Think() -- Called every frame
     -- end
 end
 
-
+function SWEP:WeirdGolf()
+    return true --self.Owner:GetNWBool("weirdgolf")
+end
 
 function SWEP:PrimaryAttack()
-    if self:GetStage()== 2 and self.Owner:GetNWBool("weirdgolf") then
+    if self:GetStage()== 2 and self:WeirdGolf() then
         if CLIENT and LocalPlayer()==self.Owner and IsFirstTimePredicted() then
 
             if GOLFCAMVECTOR then  ENDGOLFSHOT() return end
@@ -89,7 +91,7 @@ function SWEP:PrimaryAttack()
                 Vector(0, 0, 1)
             )
     
-            if p1:Distance(self.Owner:GetPos())<150 and p2 then
+            if p1:Distance(self.Owner:GetPos())<80 and p2 then
                 local vec = p2-p1
                 vec.z = 0
 
@@ -134,5 +136,5 @@ function HitGolfball(ball, speed)
         speed = speed:GetNormalized()*500
     end
     print(ball, speed)
-    ball:GetPhysicsObject():ApplyForceCenter(speed*50)
+    ball:GetPhysicsObject():ApplyForceCenter(speed*40)
 end

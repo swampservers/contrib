@@ -4,7 +4,7 @@ SWEP.Purpose = "Wage jihad against the infidel"
 
 GOLFSWINGFRAMES = {}
 function ADDGOLFFRAME()
-    while #GOLFSWINGFRAMES > 1 and GOLFSWINGFRAMES[1][3] < SysTime()-0.1 do
+    while #GOLFSWINGFRAMES > 1 and GOLFSWINGFRAMES[1][3] < SysTime()-0.05 do
         table.remove(GOLFSWINGFRAMES, 1)
     end
     table.insert(GOLFSWINGFRAMES, {GOLFSWINGX,GOLFSWINGY,SysTime()})
@@ -42,12 +42,6 @@ function ENDGOLFSHOT()
     OLDGOLFCAMVECTOR = GOLFCAMVECTOR
     GOLFCAMINTTIME = SysTime()
     GOLFCAMVECTOR = nil
-
-    local a = OLDGOLFCAMVECTOR:Angle()
-    a:RotateAroundAxis(Vector(0,0,1),-10)
-    a:RotateAroundAxis(a:Right(),-20)
-
-    LocalPlayer():SetEyeAngles(a)
 end
 
 
@@ -56,13 +50,14 @@ function SWEP:GolfCamViewTargets(vec)
     local p = self:GetBall()
     if not IsValid(p) then return end
 
-    p,a = LocalToWorld(Vector(0,20,60), Angle(60,-90,0), p:GetPos(), vec:Angle())
+    p,a = LocalToWorld(Vector(0,24,64), Angle(60,-80,0), p:GetPos(), vec:Angle())
 
     a:RotateAroundAxis(a:Up(),20)
 
     return p,a
 end
 
+GOLFCAMFOV = 90
 function SWEP:CalcView(ply, pos, ang, fov)
     if GOLFCAMVECTOR and self:GetStage() ~= 2 then 
         ENDGOLFSHOT()
@@ -77,7 +72,7 @@ function SWEP:CalcView(ply, pos, ang, fov)
         p = LerpVector(lerp, GOLFCAMINTPOS, p)
         a = LerpAngle(lerp, GOLFCAMINTANG, a)
 
-        return p,a,Lerp(lerp, fov, 80)
+        return p,a,Lerp(lerp, fov, GOLFCAMFOV)
     elseif OLDGOLFCAMVECTOR then
         p,a = self:GolfCamViewTargets(OLDGOLFCAMVECTOR)
         if not p then return end
@@ -87,7 +82,7 @@ function SWEP:CalcView(ply, pos, ang, fov)
         p = LerpVector(lerp, p, pos)
         a = LerpAngle(lerp, a, ang)
 
-        return p,a,Lerp(lerp, 80, fov) 
+        return p,a,Lerp(lerp, GOLFCAMFOV, fov) 
     end
 end
 
@@ -115,8 +110,8 @@ hook.Add("Think","golfswinger2",function()
         local xm = math.AngleDifference(a.yaw, target.yaw)
         local ym = math.AngleDifference(a.pitch, target.pitch)
 
-        GOLFSWINGX = GOLFSWINGX+xm*0.6
-        GOLFSWINGY = GOLFSWINGY+ym*0.6
+        GOLFSWINGX = GOLFSWINGX+xm*0.3
+        GOLFSWINGY = GOLFSWINGY+ym*0.3
 
         local scale = GOLFMAXDIST/math.max(GOLFMAXDIST, math.sqrt(GOLFSWINGX*GOLFSWINGX + GOLFSWINGY*GOLFSWINGY))
         GOLFSWINGX = GOLFSWINGX*scale
@@ -146,16 +141,28 @@ hook.Add("Think","golfswinger2",function()
 
                 local speed = localvel.x * GOLFCAMVECTOR - localvel.y * GOLFCAMVECTOR:Angle():Right()
 
-                local realball = LocalPlayer():GetActiveWeapon():GetBall()
+                local realclub = LocalPlayer():GetActiveWeapon()
+                local realball = realclub:GetBall()
                 realball:InterpolateHit(speed)
 
                 net.Start("GolfShot")
                 net.WriteVector(speed)
                 net.SendToServer()
                 ENDGOLFSHOT()
+
+                --local p,a = realclub:GolfCamViewTargets(OLDGOLFCAMVECTOR)
+                local p = LocalPlayer():EyePos()
+                -- local a = OLDGOLFCAMVECTOR:Angle()
+                -- a:RotateAroundAxis(Vector(0,0,1),-10)
+                -- a:RotateAroundAxis(a:Right(),-20)
+                -- POSTGOLFVIEWANGLE = a
+
+                POSTGOLFVIEWANGLE = ((realball:GetPos() + speed*1.5) - p):Angle()
+                LocalPlayer():SetEyeAngles(POSTGOLFVIEWANGLE)
             end
         end
-
+    elseif POSTGOLFVIEWANGLE and SysTime()-GOLFCAMINTTIME < 0.5 then
+        LocalPlayer():SetEyeAngles(POSTGOLFVIEWANGLE)
     end
 end)
 
@@ -274,7 +281,7 @@ function SWEP:DrawHUD()
 
     GOLFHUDSCALE = 10
 
-    if GOLFCAMVECTOR then
+    if GOLFCAMVECTOR and false then
         local xc = ScrW()/2
         local yc = ScrH()*3/4
         surface.SetDrawColor(255,255,255)
@@ -298,8 +305,6 @@ function SWEP:DrawHUD()
         --     xc - GOLFBALLRADIUS*GOLFHUDSCALE,yc,
         --     xc - GOLFSWINGX*GOLFHUDSCALE, yc + GOLFSWINGY*GOLFHUDSCALE + offset*GOLFHUDSCALE
         -- )
-        
-
 
     end
 
@@ -322,7 +327,7 @@ function SWEP:DrawHUD()
             p1 = (p1 - p2)
             p1 = p2 + (p1:GetNormalized() * 200)
         end
-        local dist = p1:Distance(p2)
+        local dist = 5 --p1:Distance(p2)
 
         local cpos = p1
         local bpos = ball:GetPos() + Vector(-5, 5, 0)
@@ -330,34 +335,43 @@ function SWEP:DrawHUD()
         --pos.z = ball:GetPos().z
         local angle = Angle(0, 0, 0)
         local a2 = Angle(0, 0, 0)
-        a2:RotateAroundAxis(Vector(0, 0, 1), math.deg(math.atan2(p2.x - p1.x, p1.y - p2.y)))
+        a2:RotateAroundAxis(Vector(0, 0, 1), math.deg(math.atan2(p1.x - p2.x, p2.y - p1.y)))
 
         local tv = Vector(-5, 5, 0)
         tv:Rotate(a2)
-        if (stage == 2) then
-            cam.Start3D2D(cpos + tv, a2, 1)
+        if (stage == 2) and not GOLFCAMVECTOR then
+            local off = 5
+
+            cam.Start3D2D(ball:GetPos()-a2:Forward()*off, a2, 1) 
             local c = HSVToColor(120 - ((dist / 200) * 120), 1, 1)
             surface.SetDrawColor(c.r, c.g, c.b, 100)
             draw.NoTexture()
 
-            local off = 5
+            
             local cir = {}
-            table.insert(cir, {x = off, y = off - 1, u = 0.5, v = 0.5})
-            table.insert(cir, {x = off + 2, y = 5 + off - 3, u = 0.5, v = 0.5})
-            table.insert(cir, {x = off - 2, y = 5 + off - 3, u = 0.5, v = 0.5})
+            table.insert(cir, {x = off, y = 25, u = 0.5, v = 0.5})
+            table.insert(cir, {x = off - 1.5, y = 5, u = 0.5, v = 0.5})
+            table.insert(cir, {x = off + 1.5, y = 5, u = 0.5, v = 0.5})
             surface.DrawPoly(cir)
-            if dist > 4.5 then
-                cir = {}
-                table.insert(cir, {x = off - 1, y = 5 + off - 3, u = 0, v = 1})
-                table.insert(cir, {x = off + 1, y = dist + off - 2.5, u = 1, v = 0})
-                table.insert(cir, {x = off - 1, y = dist + off - 2.5, u = 1, v = 1})
-                surface.DrawPoly(cir)
-                cir = {}
-                table.insert(cir, {x = off + 1, y = 5 + off - 3, u = 0, v = 1})
-                table.insert(cir, {x = off + 1, y = dist + off - 2.5, u = 1, v = 0})
-                table.insert(cir, {x = off - 1, y = 5 + off - 3, u = 1, v = 1})
-                surface.DrawPoly(cir)
-            end
+
+            -- local off = 5
+            -- local cir = {}
+            -- table.insert(cir, {x = off, y = off - 1, u = 0.5, v = 0.5})
+            -- table.insert(cir, {x = off + 2, y = 5 + off - 3, u = 0.5, v = 0.5})
+            -- table.insert(cir, {x = off - 2, y = 5 + off - 3, u = 0.5, v = 0.5})
+            -- surface.DrawPoly(cir)
+            -- if dist > 4.5 then
+            --     cir = {}
+            --     table.insert(cir, {x = off - 1, y = 5 + off - 3, u = 0, v = 1})
+            --     table.insert(cir, {x = off + 1, y = dist + off - 2.5, u = 1, v = 0})
+            --     table.insert(cir, {x = off - 1, y = dist + off - 2.5, u = 1, v = 1})
+            --     surface.DrawPoly(cir)
+            --     cir = {}
+            --     table.insert(cir, {x = off + 1, y = 5 + off - 3, u = 0, v = 1})
+            --     table.insert(cir, {x = off + 1, y = dist + off - 2.5, u = 1, v = 0})
+            --     table.insert(cir, {x = off - 1, y = 5 + off - 3, u = 1, v = 1})
+            --     surface.DrawPoly(cir)
+            -- end
 
             cam.End3D2D()
         end
@@ -382,6 +396,8 @@ function SWEP:DrawHUD()
 
         cam.End3D()
     end
+
+    
 
     if (stage == 0) then
         cam.Start3D()
@@ -409,10 +425,12 @@ function SWEP:DrawHUD()
 
         cam.End3D()
     end
+
     local stg = "Place the ball"
     local clr = Color(255, 255, 255)
     local fnd = false
     local rdy = nil
+
     if (stage == 1) then
         for k, v in pairs(ents.FindByClass("golfball")) do
             if (v:GetNWEntity("BallOwner") == LocalPlayer()) then
@@ -451,7 +469,7 @@ function SWEP:DrawHUD()
 
         local dist = math.Clamp(p1:Distance(p2), 0, 200)
 
-        stg = "Power: " .. math.ceil(dist / 2) .. "%"
+        stg = "Click to start swinging" --"Power: " .. math.ceil(dist / 2) .. "%"
         clr = HSVToColor(120 - ((dist / 200) * 120), 1, 1)
         if (medist > 150) then
             stg = "Move closer to the ball"
