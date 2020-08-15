@@ -19,7 +19,7 @@ function Safe(ent)
 		if ent:IsPlayer() then
 			local w = ent:GetActiveWeapon()
 			if IsValid(w) and w:GetClass()=="weapon_golfclub" then
-				if IsValid(w:GetBallToShoot()) then
+				if IsValid(w:GetBall()) then
 					return true
 				end
 			end
