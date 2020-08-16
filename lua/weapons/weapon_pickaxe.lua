@@ -81,6 +81,22 @@ function SWEP:GetTargetingBlock()
 	end
 end
 
+function cvx_player_can_edit_vox(builder,x,y,z)
+	return not cvx_is_protected_spot(x,y,z,builder)
+end
+
+function cvx_is_protected_spot(x,y,z,builder)
+	if builder then builder = builder:SteamID() end
+	local pt = cvx_to_game_coord_vec(Vector(x+0.5,y+0.5,z+0.5))
+	for k,v in pairs(GetTrashFields()) do
+		if builder ~= v:GetOwnerID() and v:ProtectsPoint(pt) then
+			return true
+		end
+	end
+	return false
+end
+
+
 function SWEP:PrimaryAttack()
 	self:SetNextPrimaryFire(CurTime() + self.SWINGINTERVAL)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
@@ -124,7 +140,10 @@ function SWEP:PrimaryAttack()
 						end
 
 						-- todo apply protection field here
-						ch = ch-0.28 --0.22
+						local dmg = 0.28
+						if cvx_is_protected_spot(x,y,z,self.Owner) then dmg = 0.04 end
+
+						ch = ch-dmg
 
 						if self.Owner:GetMoveType()==MOVETYPE_NOCLIP then ch=0 end
 

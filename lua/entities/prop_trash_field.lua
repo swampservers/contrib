@@ -61,6 +61,9 @@ function ENT:ProtectionRadius()
 	if ln=="The Pit" then
 		field_size=field_size/2
 	end
+	if ln=="Minecraft" then
+		field_size=field_size*1.5
+	end
 	return field_size
 end
 
@@ -70,6 +73,10 @@ function ENT:ProtectsIfTaped(other)
 		field_size = field_size + other:ProtectionRadius()
 	end
 	return other:GetPos():Distance(self:GetPos()) < field_size
+end
+
+function ENT:ProtectsPoint(pos)
+	return self:GetTaped() and pos:Distance(self:GetPos()) < self:ProtectionRadius()
 end
 
 function ENT:Protects(other)

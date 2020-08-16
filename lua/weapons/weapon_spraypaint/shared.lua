@@ -17,6 +17,9 @@ lastSprayType = ""
 lastSprayPosition = Vector(0,0,0)
 lastFiredWhite = 0
 
+-- game.AddDecal( "SPWhite", "decals/sp_white" )
+-- game.AddDecal( "SPBlack", "decals/sp_black" )
+
 local function doSpray(decal,self) 
 
 	local trace = self.Owner:GetEyeTrace()

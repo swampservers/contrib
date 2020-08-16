@@ -40,6 +40,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "Stage")
     self:NetworkVar("Int", 1, "Stroke")
     self:NetworkVar("Entity", 0, "Ball")
+    self:NetworkVar("Bool", 1, "Controls")
 end
 
 function SWEP:Think() -- Called every frame
@@ -72,7 +73,7 @@ function SWEP:Think() -- Called every frame
 end
 
 function SWEP:WeirdGolf()
-    return true --self.Owner:GetNWBool("weirdgolf")
+    return self:GetBall():GetControls()
 end
 
 function SWEP:PrimaryAttack()
@@ -114,11 +115,18 @@ end
 
 
 function SWEP:SecondaryAttack()
-    self:PrimaryAttack()
+    if SERVER then self:CancelShot() end
 end
 
 function SWEP:Reload()
-    if SERVER then self:CancelShot() end
+    if SERVER then
+        if CurTime() - (self.ReloadTime or 0) < 0.5 then return end
+        self.ReloadTime = CurTime()
+        
+        self:CancelShot()
+        self:SetControls(not self:GetControls())
+        self.Owner:SendLua([[surface.PlaySound('weapons/smg1/switch_single.wav')]])
+    end
 end
 
 function SWEP:Holster()
@@ -135,6 +143,5 @@ function HitGolfball(ball, speed)
     if speed:Length() > 500 then
         speed = speed:GetNormalized()*500
     end
-    print(ball, speed)
     ball:GetPhysicsObject():ApplyForceCenter(speed*40)
 end

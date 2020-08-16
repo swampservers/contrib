@@ -4,7 +4,7 @@ SWEP.Purpose = "Wage jihad against the infidel"
 
 GOLFSWINGFRAMES = {}
 function ADDGOLFFRAME()
-    while #GOLFSWINGFRAMES > 1 and GOLFSWINGFRAMES[1][3] < SysTime()-0.05 do
+    while #GOLFSWINGFRAMES > 1 and GOLFSWINGFRAMES[1][3] < SysTime()-0.1 do
         table.remove(GOLFSWINGFRAMES, 1)
     end
     table.insert(GOLFSWINGFRAMES, {GOLFSWINGX,GOLFSWINGY,SysTime()})
@@ -45,7 +45,7 @@ function ENDGOLFSHOT()
 end
 
 
-GOLFCAMLERPTIME = 0.8
+GOLFCAMLERPTIME = 0.6
 function SWEP:GolfCamViewTargets(vec)
     local p = self:GetBall()
     if not IsValid(p) then return end
@@ -104,6 +104,8 @@ end)
 
 hook.Add("Think","golfswinger2",function()
     if GOLFCAMVECTOR then
+        if not IsValid(LocalPlayer()) or not IsValid(LocalPlayer():GetActiveWeapon()) or LocalPlayer():GetActiveWeapon():GetClass()~="weapon_golfclub" then GOLFCAMVECTOR=nil return end
+
         local target = GOLFCAMVECTOR:Angle()
         local a = LocalPlayer():EyeAngles()
 
@@ -139,6 +141,10 @@ hook.Add("Think","golfswinger2",function()
             if hit1 or hit2 then
                 local localvel = v1v2 / (SysTime()-GOLFSWINGFRAMES[1][3])
 
+                local angg = localvel:Angle().yaw
+                if angg>180 then angg=angg-360 end
+
+                chat.AddText(string.format("Hit power: %G, angle %G", localvel:Length(), angg))
                 local speed = localvel.x * GOLFCAMVECTOR - localvel.y * GOLFCAMVECTOR:Angle():Right()
 
                 local realclub = LocalPlayer():GetActiveWeapon()
@@ -243,6 +249,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 
+
 local function makeCircle(x, y, radius, seg)
     local cir = {}
 
@@ -273,8 +280,6 @@ local function makeCircle(x, y, radius, seg)
 
     surface.DrawPoly(cir)
 end
-
-
 
 
 function SWEP:DrawHUD()
@@ -327,7 +332,7 @@ function SWEP:DrawHUD()
             p1 = (p1 - p2)
             p1 = p2 + (p1:GetNormalized() * 200)
         end
-        local dist = 5 --p1:Distance(p2)
+        local dist = p1:Distance(p2)
 
         local cpos = p1
         local bpos = ball:GetPos() + Vector(-5, 5, 0)
@@ -339,41 +344,64 @@ function SWEP:DrawHUD()
 
         local tv = Vector(-5, 5, 0)
         tv:Rotate(a2)
-        if (stage == 2) and not GOLFCAMVECTOR then
-            local off = 5
+        if (stage == 2) then
+            if self:WeirdGolf() then
+                if not GOLFCAMVECTOR then
+                    local off = 5
 
-            cam.Start3D2D(ball:GetPos()-a2:Forward()*off, a2, 1) 
-            local c = HSVToColor(120 - ((dist / 200) * 120), 1, 1)
-            surface.SetDrawColor(c.r, c.g, c.b, 100)
-            draw.NoTexture()
+                    cam.Start3D2D(ball:GetPos()-a2:Forward()*off, a2, 1) 
+                    local c = HSVToColor(120, 1, 1)
+                    surface.SetDrawColor(c.r, c.g, c.b, 100)
+                    draw.NoTexture()
+                    
+                    local cir = {}
+                    table.insert(cir, {x = off, y = 25, u = 0.5, v = 0.5})
+                    table.insert(cir, {x = off - 1.5, y = 5, u = 0.5, v = 0.5})
+                    table.insert(cir, {x = off + 1.5, y = 5, u = 0.5, v = 0.5})
+                    if bpos.z > EyePos().z then cir[1],cir[2] = cir[2],cir[1] end
+                    surface.DrawPoly(cir)
+                    cam.End3D2D()
 
-            
-            local cir = {}
-            table.insert(cir, {x = off, y = 25, u = 0.5, v = 0.5})
-            table.insert(cir, {x = off - 1.5, y = 5, u = 0.5, v = 0.5})
-            table.insert(cir, {x = off + 1.5, y = 5, u = 0.5, v = 0.5})
-            surface.DrawPoly(cir)
+                end
+            else
 
-            -- local off = 5
-            -- local cir = {}
-            -- table.insert(cir, {x = off, y = off - 1, u = 0.5, v = 0.5})
-            -- table.insert(cir, {x = off + 2, y = 5 + off - 3, u = 0.5, v = 0.5})
-            -- table.insert(cir, {x = off - 2, y = 5 + off - 3, u = 0.5, v = 0.5})
-            -- surface.DrawPoly(cir)
-            -- if dist > 4.5 then
-            --     cir = {}
-            --     table.insert(cir, {x = off - 1, y = 5 + off - 3, u = 0, v = 1})
-            --     table.insert(cir, {x = off + 1, y = dist + off - 2.5, u = 1, v = 0})
-            --     table.insert(cir, {x = off - 1, y = dist + off - 2.5, u = 1, v = 1})
-            --     surface.DrawPoly(cir)
-            --     cir = {}
-            --     table.insert(cir, {x = off + 1, y = 5 + off - 3, u = 0, v = 1})
-            --     table.insert(cir, {x = off + 1, y = dist + off - 2.5, u = 1, v = 0})
-            --     table.insert(cir, {x = off - 1, y = 5 + off - 3, u = 1, v = 1})
-            --     surface.DrawPoly(cir)
-            -- end
+                a2 = Angle(0,0,0)
+                a2:RotateAroundAxis( Vector(0,0,1), math.deg(math.atan2(  p2.x-p1.x, p1.y-p2.y )) )
+                tv = Vector(-5,5,0)
+                tv:Rotate(a2)
 
-            cam.End3D2D()
+
+                cam.Start3D2D( cpos + tv, a2, 1 )
+                local c = HSVToColor(120 - ((dist/200)*120),1,1)
+                surface.SetDrawColor( c.r, c.g, c.b, 100 )
+                draw.NoTexture()
+        
+                local off=5
+                local cir = {}
+                table.insert( cir, { x = off, y = off-1, u = 0.5, v = 0.5 } )
+                table.insert( cir, { x = off+2, y = 5+off-3, u = 0.5, v = 0.5 } )
+                table.insert( cir, { x = off-2, y = 5+off-3, u = 0.5, v = 0.5 } )
+                if bpos.z > EyePos().z then cir[1],cir[2] = cir[2],cir[1] end
+                surface.DrawPoly( cir )
+                if dist>4.5 then
+                    
+                    cir = {}
+                    table.insert( cir, { x = off-1, y = 5+off-3, u = 0, v = 1 } )
+                    table.insert( cir, { x = off+1, y = dist+off-2.5, u = 1, v = 0 } )
+                    table.insert( cir, { x = off-1, y = dist+off-2.5, u = 1, v = 1 } )
+                    if bpos.z > EyePos().z then cir[1],cir[2] = cir[2],cir[1] end
+                    surface.DrawPoly( cir )
+                    cir = {}
+                    table.insert( cir, { x = off+1, y = 5+off-3, u = 0, v = 1 } )
+                    table.insert( cir, { x = off+1, y = dist+off-2.5, u = 1, v = 0 } )
+                    table.insert( cir, { x = off-1, y = 5+off-3, u = 1, v = 1 } )
+                    if bpos.z > EyePos().z then cir[1],cir[2] = cir[2],cir[1] end
+                    surface.DrawPoly( cir )
+                        
+                end
+        
+                cam.End3D2D()
+            end
         end
 
         local ball = self:GetBall()
@@ -432,21 +460,7 @@ function SWEP:DrawHUD()
     local rdy = nil
 
     if (stage == 1) then
-        for k, v in pairs(ents.FindByClass("golfball")) do
-            if (v:GetNWEntity("BallOwner") == LocalPlayer()) then
-                fnd = true
-                if (v:GetNWBool("shootable")) then
-                    rdy = true
-                else
-                    rdy = false
-                end
-            end
-        end
-        if (fnd and rdy) then
-            stg = "Click anywhere to start shot"
-        else
-            stg = "Ball is moving..."
-        end
+        stg = "Ball is moving..."
     end
 
     if (stage == 2 and IsValid(self:GetBall())) then
@@ -469,8 +483,18 @@ function SWEP:DrawHUD()
 
         local dist = math.Clamp(p1:Distance(p2), 0, 200)
 
-        stg = "Click to start swinging" --"Power: " .. math.ceil(dist / 2) .. "%"
+        stg = "Power: " .. math.ceil(dist / 2) .. "%"
         clr = HSVToColor(120 - ((dist / 200) * 120), 1, 1)
+
+        if self:WeirdGolf() then
+            stg = "Click to start swinging"
+            clr = HSVToColor(120, 1, 1)
+
+            if GOLFCAMVECTOR then
+                stg = "Use your mouse to hit the ball"
+            end
+        end
+
         if (medist > 150) then
             stg = "Move closer to the ball"
             clr = Color(255, 0, 0, 255)
@@ -499,6 +523,7 @@ function SWEP:DrawHUD()
 
     local bw, bh = 384, 64
     local marg = 8
+    local bh2 = 48
     local mix, miy = ScrW() - bw / 2 - marg, ScrH() - bh / 2 - marg
     draw.RoundedBox(8, ScrW() - bw - marg, ScrH() - bh - marg, bw, bh, Color(25, 25, 25, 200))
     if (stage == 0 or strom == "") then
@@ -507,6 +532,11 @@ function SWEP:DrawHUD()
         draw.SimpleText(strom, "Trebuchet24", mix, miy - 16, clr2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         draw.SimpleText(stg, "Trebuchet24", mix, miy + 16, clr, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
+
+    clr = Color(255,255,255,255)
+    draw.RoundedBox(8, ScrW() - bw - marg -bw -marg, ScrH() - bh2 - marg, bw, bh2, Color(25, 25, 25, 200))
+    draw.SimpleText("Controls: "..(self:GetControls() and "SIMULATION (higher reward)" or "Easy (lower reward)"), "Trebuchet24", mix -bw -marg, ScrH() - marg - bh2/2 - 8, clr, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    draw.SimpleText("Press R to change (right click to reset ball without changing)", "Trebuchet18", mix -bw -marg, ScrH() - marg - bh2/2 + 12, clr, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
 function SWEP:CustomAmmoDisplay()

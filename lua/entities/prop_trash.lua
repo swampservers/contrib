@@ -264,6 +264,20 @@ end
 TrashFieldEntsCache = {}
 TrashFieldEntsCacheTime = 0
 
+function GetTrashFields()
+	if TrashFieldEntsCacheTime + 0.2 < CurTime() then
+		TrashFieldEntsCacheTime = CurTime()
+		TrashFieldEntsCache = {}
+		for i,v in ipairs(ents.GetAll()) do
+			local c = v:GetClass()
+			if c=="prop_trash_field" or c=="prop_trash_theater" then
+				table.insert(TrashFieldEntsCache, v)
+			end
+		end
+	end
+	return TrashFieldEntsCache
+end
+
 function ENT:GetLocationOwner()
 	local class = self:GetLocationClass()
 	local t = theater.GetByLocation(self:GetLocation())
@@ -274,11 +288,7 @@ function ENT:GetLocationOwner()
 
 	if class ~= TRASHLOC_BUILD then return nil end --The only way to own a non build area is with a theater. Not a field.
 
-	if TrashFieldEntsCacheTime + 0.1 < CurTime() then
-		TrashFieldEntsCacheTime = CurTime()
-		TrashFieldEntsCache = ents.FindByClass("prop_trash_field")
-	end
-	for k,v in ipairs(TrashFieldEntsCache) do
+	for k,v in ipairs(GetTrashFields()) do
 		if IsValid(v) and v:Protects(self) then
 			return v:GetOwnerID()
 		end

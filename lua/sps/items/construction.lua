@@ -14,7 +14,7 @@ PS_GenericProduct({
 	class = 'trashfield',
 	price = 200,
 	name = 'Medium Protection Field',
-	description = "While taped, prevents other players from building in your space",
+	description = "While taped, prevents other players from building in your space. Also makes blocks stronger in the mines.",
 	model = 'models/maxofs2d/hover_classic.mdl',
 	OnBuy = function(self, ply)
 		for k,v in pairs(ents.FindByClass("prop_trash_field")) do
@@ -37,7 +37,7 @@ PS_GenericProduct({
 	class = 'trashfieldlarge',
 	price = 3000,
 	name = 'Large Protection Field',
-	description = "While taped, prevents other players from building in your space",
+	description = "While taped, prevents other players from building in your space. Also makes blocks stronger in the mines.",
 	model = 'models/dav0r/hoverball.mdl',
 	OnBuy = function(self, ply)
 		for k,v in pairs(ents.FindByClass("prop_trash_field")) do

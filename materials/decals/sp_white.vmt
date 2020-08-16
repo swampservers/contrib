@@ -1,0 +1,10 @@
+"LightmappedGeneric"
+{
+	"$translucent" "1"
+	"$basetexture" "decals/sp_white"
+	"$decal" "1"
+	"$decalscale" "0.1"
+	"$vertexcolor" "1"
+
+	"$modelmaterial" "decals/sp_white_model"
+}
