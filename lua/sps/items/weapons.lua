@@ -136,7 +136,7 @@ PS_WeaponAndAmmoProduct({
 PS_WeaponAndAmmoProduct({
 	name = 'Peacekeeper',
 	description = "Peacekeeper (Re-buy for more shots)",
-	price = 4000,
+	price = 5000,
 	model = 'models/weapons/w_sawed-off.mdl',
 	class = 'weapon_peacekeeper',
 	ammotype = "peaceshot",

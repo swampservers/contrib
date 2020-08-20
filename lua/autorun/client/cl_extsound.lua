@@ -11,6 +11,7 @@ net.Receive("ExtSound",function(len)
 end)
 
 function ExtSoundEmitSound(ply, sound, pitch, options)
+	if IsValid(LocalPlayer()) and LocalPlayer():InTheater() and GetConVar("cinema_mutegame"):GetBool() then return end
 	if IsValid(options.ent) then ply=options.ent end
 	if IsValid(ply) then
 		ply:EmitSound(sound, options.level or 75, pitch, options.volume or 1, options.channel or CHAN_AUTO)
