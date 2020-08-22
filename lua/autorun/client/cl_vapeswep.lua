@@ -95,31 +95,6 @@ function vape_interpolate_arm(ply, mult, mouth_delay)
 	if mult==1 then ply.vapeArmFullyUp=true else ply.vapeArmFullyUp=false end
 end
 
---this makes the mouth opening work without clobbering other addons
-hook.Add("InitPostEntity", "VapeMouthMoveSetup", function()
-	timer.Simple(1, function()
-		if Vape_OriginalMouthMove ~= nil then return end
-
-		Vape_OriginalMouthMove = GAMEMODE.MouthMoveAnimation
-	 
-		function GAMEMODE:MouthMoveAnimation(ply)
-			--run the base MouthMoveAnimation if player isn't vaping/vapetalking
-			if ((ply.vapeMouthOpenAmt or 0) == 0) and ((ply.vapeTalkingEndtime or 0) < CurTime()) then
-				return Vape_OriginalMouthMove(GAMEMODE, ply)
-			end
-
-			local FlexNum = ply:GetFlexNum() - 1
-			if ( FlexNum <= 0 ) then return end
-			for i = 0, FlexNum - 1 do
-				local Name = ply:GetFlexName(i)
-				if ( Name == "jaw_drop" || Name == "right_part" || Name == "left_part" || Name == "right_mouth_drop" || Name == "left_mouth_drop" ) then
-					ply:SetFlexWeight(i, math.max(((ply.vapeMouthOpenAmt or 0)*0.5), math.Clamp(((ply.vapeTalkingEndtime or 0)-CurTime())*3.0, 0, 1)*math.Rand(0.1,0.8) ))
-				end
-			end
-		end
-	end)
-end)
-
 function vape_do_pulse(ply, amt, spreadadd, fx)
 	if !IsValid(ply) then return end
 

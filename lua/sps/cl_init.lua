@@ -453,7 +453,7 @@ hook.Add("DrawOpaqueAccessories", 'PS_DrawPlayerAccessories', function(ply)
 	
 	--in SPADES, the renderboost.lua is disabled!
 
-	for _, prop in pairs(ply:PS_GetCSModels()) do
+	for _, prop in ipairs(ply:PS_GetCSModels()) do
 		PS_DrawWornCSModel(prop.itm, prop.cfg, prop.mdl, ply)
 	end
 end)

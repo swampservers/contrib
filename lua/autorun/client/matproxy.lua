@@ -1,8 +1,8 @@
 
-function render.DrawingScreen()
-	local t = render.GetRenderTarget()
-	return (t==nil) or (tostring(t)=="[NULL Texture]")
-end
+-- function render.DrawingScreen()
+-- 	local t = render.GetRenderTarget()
+-- 	return (t==nil) or (tostring(t)=="[NULL Texture]")
+-- end
 
 --[[
 local op = Material('swamponions/wall/orangeplaster')
