@@ -244,7 +244,7 @@ function DisableNoDraw(ply)
 	end
 end
 
-LatestReflectionDraw = 0
+-- LatestReflectionDraw = 0
 
 FullRefractLocation = {
 ["Locker Room"]=true,
@@ -258,7 +258,19 @@ FullRefractLocation = {
 
 SKYBOXLOC = -1
 
+
+
+PLAYERVISDISABLED = false
+
+concommand.Add("playervis", function( ply, cmd, args )
+	for k,ply in ipairs(player.GetAll()) do DisableNoDraw(ply) end
+	PLAYERVISDISABLED = not PLAYERVISDISABLED
+	chat.AddText(PLAYERVISDISABLED and "disabled" or "enabled")
+end)
+
 hook.Add("PreDrawOpaqueRenderables","PlayerVisPreDraw",function(depth, sky)	
+	if PLAYERVISDISABLED then return end
+
 	if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0)>0 then 
 		for k,ply in ipairs(player.GetAll()) do DisableNoDraw(ply) end
 		return
@@ -274,15 +286,15 @@ hook.Add("PreDrawOpaqueRenderables","PlayerVisPreDraw",function(depth, sky)
 		if nam=="_rt_waterreflection" then
 			LatestReflectionDraw = FrameNumber()
 		end
-		if nam=="_rt_waterrefraction" then
-			local nom = LocalPlayer():GetLocationName()
-			local th = LocalPlayer():GetTheater()
-			if FullRefractLocation[nom] or ((th and th._PermanentOwnerID)~=nil) or (nom=="Outside" and EyePos().x>2160 and EyePos().y<-1040) then
-				return
-			else
-				return true
-			end
-		end
+		-- if nam=="_rt_waterrefraction" then
+		-- 	local nom = LocalPlayer():GetLocationName()
+		-- 	local th = LocalPlayer():GetTheater()
+		-- 	if FullRefractLocation[nom] or ((th and th._PermanentOwnerID)~=nil) or (nom=="Outside" and EyePos().x>2160 and EyePos().y<-1040) then
+		-- 		return
+		-- 	else
+		-- 		return true
+		-- 	end
+		-- end
 		return
 	end
 
@@ -297,15 +309,15 @@ hook.Add("PreDrawOpaqueRenderables","PlayerVisPreDraw",function(depth, sky)
 		end
 	end
 
-	if LatestReflectionDraw == FrameNumber() then
-		for k,ply in ipairs(player.GetAll()) do
-			if not ply:IsDormant() then
-				ply.LastDrawFrame = FrameNumber()
-				DisableNoDraw(ply)
-			end
-		end
-		return
-	end
+	-- if LatestReflectionDraw == FrameNumber() then
+	-- 	for k,ply in ipairs(player.GetAll()) do
+	-- 		if not ply:IsDormant() then
+	-- 			ply.LastDrawFrame = FrameNumber()
+	-- 			DisableNoDraw(ply)
+	-- 		end
+	-- 	end
+	-- 	return
+	-- end
 
 	if DebugOutput then
 		local test = util.TraceLine( {
@@ -408,8 +420,15 @@ end)
 --local PlayerRenderShadowDistSq = 450*450
 local undomodelblend = false
 local matWhite = Material("models/debug/debugwhite")
+
+local HIDEALLPLAYERS = false
+
+hook.Add("Think","CinemaHidePlayersUpdate",function()
+	HIDEALLPLAYERS = IsValid(LocalPlayer()) and LocalPlayer().InTheater and LocalPlayer():InTheater() and (theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool())
+end)
+
 hook.Add("PrePlayerDraw","PlayerVisControl",function(ply)
-	if ply:GetNoDraw() then return true end
+	if HIDEALLPLAYERS or ply:GetNoDraw() then return true end
 
 	if !ply:InVehicle() then 
 		local transhide = false
