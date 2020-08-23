@@ -47,8 +47,7 @@ if CLIENT then
 					if duration==0 then
 						duration=1
 					end
-					--what jwplayer says a livestream is
-					if duration==-1 then
+					if duration<0 then
 						duration=0
 					end
 					print("Duration: "..duration)
