@@ -48,6 +48,10 @@ if CLIENT then
 						duration=1
 					end
 					if duration<0 then
+						if duration~=-1 then
+							callback()
+							return
+						end
 						duration=0
 					end
 					print("Duration: "..duration)
