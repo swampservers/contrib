@@ -1,4 +1,4 @@
-
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 SWEP.PrintName = "Golf Club"
 SWEP.ViewModel = "models/pyroteknik/putter.mdl"

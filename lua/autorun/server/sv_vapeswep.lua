@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- autorun/server/sv_vapeswep.lua
 -- Defines serverside globals for Vape SWEP
 

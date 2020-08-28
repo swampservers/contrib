@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 local VAPORSEEMIN = Vector(1726, 282, 0)
 local VAPORSEEMAX = Vector(2544, 1523, 229)
@@ -29,4 +30,4 @@ timer.Create("VaporVis",0.2,0,function()
 			end
 		end
 	end
-end) 
+end)

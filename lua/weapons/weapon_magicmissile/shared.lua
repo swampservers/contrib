@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 if (SERVER) then
 function SWEP:Deploy()
 	self.Owner:DrawViewModel( false )
@@ -18,4 +20,3 @@ end
 function SWEP:SecondaryAttack()
 	self:ExtEmitSound("magicmissile.wav",{speech=0.9, shared=true})
 end
-

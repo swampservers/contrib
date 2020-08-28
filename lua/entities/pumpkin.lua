@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 if SERVER then AddCSLuaFile() end
 ENT.Type = "anim"
 DEFINE_BASECLASS("base_gmodentity")

@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 local MCSPmodel = "models/milaco/minecraft_pm/minecraft_pm.mdl"
 
 hook.Add("PrePlayerDraw", "MCSPRenderSkin", function(ply) --Material ID 0 is the hat layer, ID 1 is the base layer

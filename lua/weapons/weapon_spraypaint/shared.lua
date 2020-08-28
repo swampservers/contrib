@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 local cvar = GetConVar("r_decals"):GetInt()
 RunConsoleCommand("r_decals",tostring(math.max(cvar, 2048)))
 --RunConsoleCommand("r_maxmodeldecal","32")

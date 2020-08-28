@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 PS_GenericProduct({
 	class = 'trash',
 	name = 'Trash',
@@ -182,4 +184,3 @@ PS_WeaponProduct({
 	description = "Use this to tape (freeze) and un-tape props.",
 	model='models/swamponions/ducktape.mdl'
 })
-

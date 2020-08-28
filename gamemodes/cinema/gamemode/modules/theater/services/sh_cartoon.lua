@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- www.watchcartoononline.io support for cinema by Swamp
 
 local SERVICE = {}

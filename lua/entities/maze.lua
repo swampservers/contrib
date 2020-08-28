@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 function DecodeMazePart2D(st, d1, d2)
     st = util.Base64Decode(st)
@@ -208,4 +209,3 @@ MAZEWALLMATERIAL = Material("models/swamponions/maze")
 function ENT:GetRenderMesh()
     return { Mesh = self.Mesh, Material = MAZEWALLMATERIAL }
 end
-

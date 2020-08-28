@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --doesn't work because per current design AFKS cant hear micspam
 --[[
 timer.Create("AFK_Unmicspam",1,0,function()

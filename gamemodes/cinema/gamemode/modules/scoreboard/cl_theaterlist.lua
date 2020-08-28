@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 surface.CreateFont( "ScoreboardTheaterName", { font = "Lato", size = 30, weight = 200 } )
 surface.CreateFont( "ScoreboardTheaterPlayers", { font = "Lato-Light", size = 32, weight = 200 } )
 surface.CreateFont( "ScoreboardTheaterVideo", { font = "Lato-Light", size = 20, weight = 200 } )
@@ -190,7 +192,7 @@ function THEATER:Update()
 	local th = self.th
 	if not th then return end
 
-	self.Title:SetText( string.upper( th.name ):gsub(" THEATER",""):gsub("KOOL KIDS ","") )
+	self.Title:SetText( string.upper( th.name ):gsub(" THEATER",""):gsub("KOOL KIDS ",""):gsub("DRUNKEN ","") )
 
 	if th.players == 0 then
 		self.Players:SetText( "Empty" )

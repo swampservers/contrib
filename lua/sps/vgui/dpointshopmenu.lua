@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 surface.CreateFont('PS_Heading', { font = 'coolvetica', size = 64 })
 surface.CreateFont('PS_Heading2', { font = 'coolvetica', size = 24 })
 surface.CreateFont('PS_Heading3', { font = 'coolvetica', size = 19 })

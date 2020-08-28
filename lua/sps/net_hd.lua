@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --sendtable with higher bit vectors/angles
 
 AddCSLuaFile()

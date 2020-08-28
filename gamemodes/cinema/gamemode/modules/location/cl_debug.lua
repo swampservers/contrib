@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 module( "Location", package.seeall )
 
 DebugEnabled = CreateClientConVar( "cinema_debug_locations", "0", false, false )

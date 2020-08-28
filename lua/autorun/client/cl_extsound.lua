@@ -1,4 +1,4 @@
-
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 net.Receive("ExtSound",function(len)
 	local ply = net.ReadEntity()

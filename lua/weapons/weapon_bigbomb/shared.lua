@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 SWEP.PrintName = "Big Bomb"
 
 SWEP.Slot = 4
@@ -33,5 +35,3 @@ end
 function SWEP:Deploy()
     self:SendWeaponAnim(ACT_SLAM_THROW_DRAW)
 end
- 
- 

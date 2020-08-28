@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 THEATER_NONE = 0 		-- Default theater
 THEATER_PRIVATE = 1 	-- Private theater which can be rented
 THEATER_REPLICATED = 2 	-- Theater that should be networked

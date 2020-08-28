@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 SWEP.PrintName = "KEK Frog Idol"
 SWEP.Purpose = "An ancient artifact of unknown origin. Very likely to fetch a reasonable sum of money."
 SWEP.Spawnable = true

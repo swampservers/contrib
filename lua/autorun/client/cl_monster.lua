@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 net.Receive("MonsterZero",function()
 	local ply = net.ReadEntity()
 	if not IsValid(ply) then return end

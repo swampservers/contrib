@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- weapon_vape_juicy.lua
 -- Defines a vape with selectable cloud colors
 

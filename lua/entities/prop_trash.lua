@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 -- shared globals for building system
 TRASHLOC_BUILD = 1

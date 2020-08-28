@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --[[
 if IsValid(LocalPlayer()) and LocalPlayer():Nick()=="Swamp" then
 	
