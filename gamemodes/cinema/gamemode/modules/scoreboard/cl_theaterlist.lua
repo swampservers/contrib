@@ -190,7 +190,7 @@ function THEATER:Update()
 	local th = self.th
 	if not th then return end
 
-	self.Title:SetText( string.upper( th.name ):gsub(" THEATER",""):gsub("KOOL KIDS ","") )
+	self.Title:SetText( string.upper( th.name ):gsub(" THEATER",""):gsub("KOOL KIDS ",""):gsub("DRUNKEN ","") )
 
 	if th.players == 0 then
 		self.Players:SetText( "Empty" )
