@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 ENT.Type = "anim"
 DEFINE_BASECLASS("base_gmodentity")
 ENT.Model = Model("models/swamponions/kekfrog.mdl")

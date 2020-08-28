@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 AF_CITYMAT = AF_CITYMAT or Material("swamponions/af/city")
 
 local c0 = Vector(-2385, 96, 763) --left edge of window

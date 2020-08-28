@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 PS_WeaponProduct({
 	class="weapon_anonymous",
 	name="Anonymous Mask",

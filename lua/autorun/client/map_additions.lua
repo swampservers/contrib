@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --[[
 SLITPOINTS=nil
 SLITPOINTSMAT = Material( "effects/tool_tracer" )

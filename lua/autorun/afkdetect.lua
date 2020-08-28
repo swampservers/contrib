@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 if SERVER then
 	hook.Add("OnPlayerAFK","afkwepstrip",function(v)
 		--Strip freebie weapons to improve performance

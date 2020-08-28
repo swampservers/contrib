@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- Chat colors
 ColDefault = Color( 200, 200, 200 )
 ColHighlight = Color( 158, 37, 33 )

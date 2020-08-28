@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 CVX_LIMITED_BLOCKS = true
 CVX_DISABLE_LINE = true

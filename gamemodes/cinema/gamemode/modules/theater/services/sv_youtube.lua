@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 -- -- For porn stuff, so it's not popping up without a warning.
 -- function YoutubeVideoIsAdult(info)

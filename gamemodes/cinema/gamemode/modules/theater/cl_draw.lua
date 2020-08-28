@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 surface.CreateFont( "VideoInfoLarge", {
 	font      = "Open Sans Condensed",
 	size      = 148,

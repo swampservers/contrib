@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --[[   _                                
 	( )                               
    _| |   __   _ __   ___ ___     _ _ 

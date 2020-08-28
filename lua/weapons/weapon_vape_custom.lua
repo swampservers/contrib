@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- weapon_vape_custom.lua
 -- Defines a vape with changeable accent color
 

@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 ENT.Base		= "base_anim"
 ENT.Type		= "anim"
 ENT.PrintName	= "Instrument Base"
@@ -96,4 +98,4 @@ end )
 // Returns the approximate "fitted" number based on linear regression.
 function math.Fit( val, valMin, valMax, outMin, outMax )
 	return ( val - valMin ) * ( outMax - outMin ) / ( valMax - valMin ) + outMin
-end	
+end

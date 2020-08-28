@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 surface.CreateFont( "LabelBigger", { font = "Lato-Light", size = 24, weight = 200 } )
 surface.CreateFont( "LabelSmaller", { font = "Lato-Light", size = 20, weight = 200 } )
@@ -210,4 +211,3 @@ function SETTINGS:Create()
 end
 
 vgui.Register( "ScoreboardSettings", SETTINGS )
-

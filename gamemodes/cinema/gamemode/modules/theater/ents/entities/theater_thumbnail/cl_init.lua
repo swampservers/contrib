@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 include('sh_init.lua')
 
 ENT.RenderGroup = RENDERGROUP_BOTH

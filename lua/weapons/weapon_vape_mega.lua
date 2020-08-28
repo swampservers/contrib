@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- weapon_vape_mega.lua
 -- Defines a big vape that makes massive clouds (admin only recommended)
 

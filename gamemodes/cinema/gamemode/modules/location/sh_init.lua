@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 module( "Location", package.seeall )
 
 local THEATER_NONE = 0 --default/public theater

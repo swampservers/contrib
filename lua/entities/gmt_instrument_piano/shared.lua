@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 ENT.Base			= "gmt_instrument_base"
 ENT.Type			= "anim"
 ENT.PrintName		= "Piano"

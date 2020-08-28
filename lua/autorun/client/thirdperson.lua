@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 local wasf4down = false
 hook.Add("Think", "ThirdPersonToggler", function()

@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 function GetMapPropTable()
 	local arcadeanglernd = 3
 	local arcadexposrnd = 4

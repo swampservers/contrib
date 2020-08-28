@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --[[ DETAILS_RENDER_ALL = 1200
 DETAILS_RENDER_SKYBOX = 200
 
