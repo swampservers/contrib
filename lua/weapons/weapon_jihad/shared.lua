@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 SWEP.PrintName = "Suicide Bombing"
 
 SWEP.Slot = 4

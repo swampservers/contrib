@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 SWEP.PrintName = "Dr. Isaac Kleiner"
 
 SWEP.Slot = 2

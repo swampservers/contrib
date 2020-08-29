@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 SWEP.Author        = "Noz"
 SWEP.Instructions  = "Eat while watching Cars 2"

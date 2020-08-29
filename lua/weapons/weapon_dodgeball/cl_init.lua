@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 include("shared.lua")
 
 SWEP.Instructions = "Primary: Throw hard\nSecondary: Throw soft\nReload: Pass"

@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- weapon_vape/shared.lua
 -- Defines common shared code/defaults for Vape SWEP
 

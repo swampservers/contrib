@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 PS_WeaponProduct({
 	name = 'Crossbow',
 	description = "Kills players in one shot, and is capable of hitting distant targets. Also unfreezes props.",

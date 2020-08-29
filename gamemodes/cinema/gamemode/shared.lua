@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 GM.Name 		= "Cinema"
 GM.Author		= "Swamp(STEAM_0:0:38422842) and pixelTail Games"
 GM.Email 		= "swampservers@gmail.com"

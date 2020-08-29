@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 function GetMapPropTable()
 	local arcadeanglernd = 3
 	local arcadexposrnd = 4
@@ -39,7 +41,8 @@ function GetMapPropTable()
 
         --{class="arcade_doom",pos=Vector(1720,1320,0),ang=Angle(0,0,0)},
 
-        {class="prop_dynamic",pos=Vector(31, -392, -5),ang=Angle(0,-90,0),model="models/swamponions/dedicationplaque.mdl"},
+        --{class="prop_dynamic",pos=Vector(31, -392, -5),ang=Angle(0,-90,0),model="models/swamponions/dedicationplaque.mdl"},
+	{class="prop_dynamic",pos=Vector(-25,-386,76),ang=Angle(-1,-116,37),model="models/swamponions/trumphat.mdl"},
         --{class="prop_dynamic",pos=Vector(-2720, -1601, 24),ang=Angle(0,0,0),model="models/props_fairgrounds/mic_stand.mdl"}, //temporary
     }
     

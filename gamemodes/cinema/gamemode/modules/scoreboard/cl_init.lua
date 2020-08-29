@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 SCOREBOARD = {}
 SCOREBOARD.TheaterHeight = 456

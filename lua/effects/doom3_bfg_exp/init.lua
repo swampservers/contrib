@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 function EFFECT:Init(data)
 	self.Pos = data:GetOrigin()
 	if cvars.Bool("doom3_firelight") then

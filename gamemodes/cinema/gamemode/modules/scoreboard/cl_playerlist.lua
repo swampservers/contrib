@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 surface.CreateFont( "ScoreboardTitle", { font = "Righteous", size = 52, weight = 400 } )
 surface.CreateFont( "ScoreboardTitleSmall", { font = "Righteous", size = 36, weight = 400 } )
 surface.CreateFont( "ScoreboardServerName", { font = "Lato-Light", size = 22, weight = 200 } )

@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 function CreateRentWindow()
 	local window = vgui.Create("CinemaRentalsWindow")
 	window:SetSize(450, 125)

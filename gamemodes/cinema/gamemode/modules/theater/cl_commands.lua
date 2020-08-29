@@ -1,4 +1,4 @@
-
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 CreateClientConVar("cinema_drawnames", 1, true, false )
 CreateClientConVar("cinema_lightfx", 0, true, false )
@@ -139,4 +139,3 @@ hook.Add( "Think", "TheaterMuteOnFocusChange", function()
 	end
 
 end )
-

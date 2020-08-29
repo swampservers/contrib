@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- weapon_vape/init.lua
 -- Defines common serverside code/defaults for Vape SWEP
 

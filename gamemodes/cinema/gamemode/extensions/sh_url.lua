@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -----------------------------------------------------------------------------
 -- URI parsing, composition and relative URL resolution
 -- LuaSocket toolkit.

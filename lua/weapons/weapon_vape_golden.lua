@@ -1,3 +1,5 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 -- weapon_vape_golden.lua
 -- Defines a vape with gold accent and shaded tank
 
