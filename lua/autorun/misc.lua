@@ -87,6 +87,22 @@ if SERVER then
 			end)
 		end
 	end)
+	
+	hook.Add("InitPostEntity","FindSwampJeeps",function()
+		local swamp_jeeps = ents.FindByModel("models/buggy.mdl")
+	
+		-- NOOOOO YOU CANT JUST LIMIT THE JEEPS TO ONE AREA!!!
+		-- haha jeeps go weee
+		if IsValid(swamp_jeeps) then
+			hook.Add("Tick","JeepTeleporter",function()
+				for k,v in pairs(swamp_jeeps) do
+					if IsValid(v) and v:GetLocation() != "Moon" then
+						v:SetPos(Vector(math.random(3073,5029),math.random(-774,-2762),12047))
+					end
+				end
+			end)
+		end
+	end)
 else
 	net.Receive("bounce", function()
 		local t = net.ReadTable()
