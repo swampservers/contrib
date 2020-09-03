@@ -163,6 +163,7 @@ NoPointAltIds = {
 function PS_Income(ply)
 	if NoPointAltIds[ply:SteamID()] then return 0 end
 	local income = math.floor(PS_BaseIncome(ply) * PS_BaseIncomeMultiplier(ply))
-	if GAMEMODE.FolderName=="spades" then income=income*2 end
+	--if GAMEMODE.FolderName=="spades" then income=income*2 end
+	if os.time() < 1599350400 then income=income*2 end
 	return income
 end

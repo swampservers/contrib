@@ -624,3 +624,33 @@ end
 concommand.Add("ps_prop_autorefresh", function()
 	timer.Create("ppau",0.05,0,function() LocalPlayer():PS_ClearCSModels() end)
 end)
+
+
+function SendPointsCmd(cmd)
+	cmd = string.Explode(" ",cmd)
+	local fail = true
+	if #cmd >= 2 then
+		local amt = tonumber(cmd[#cmd])
+		if amt~=nil then
+			table.remove(cmd)
+			local ply,cnt = PlyCount(string.Implode(" ", cmd))
+			fail = false
+			if cnt==0 then
+				chat.AddText("[orange]No player found")
+			else
+				if cnt==1 then
+					net.Start("PS_SendPoints")
+					net.WriteEntity(ply)
+					net.WriteInt(amt,32)
+					net.SendToServer()
+				else
+					chat.AddText("[orange]Multiple found")
+				end
+			end
+
+		end
+	end
+	if fail then
+		chat.AddText("[orange]Usage: !givepoints player amount")
+	end
+end

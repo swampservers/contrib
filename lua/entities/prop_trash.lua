@@ -266,16 +266,24 @@ TrashFieldEntsCache = {}
 TrashFieldEntsCacheTime = 0
 
 function GetTrashFields()
+	local it = TrashFieldEntsCache
+	TrashFieldEntsCache = {}
+
 	if TrashFieldEntsCacheTime + 0.2 < CurTime() then
 		TrashFieldEntsCacheTime = CurTime()
-		TrashFieldEntsCache = {}
-		for i,v in ipairs(ents.GetAll()) do
+		it = ents.GetAll()
+	end
+
+	-- Ensures invalid ents can't be returned from the cache
+	for i,v in ipairs(it) do
+		if IsValid(v) then
 			local c = v:GetClass()
 			if c=="prop_trash_field" or c=="prop_trash_theater" then
 				table.insert(TrashFieldEntsCache, v)
 			end
 		end
 	end
+
 	return TrashFieldEntsCache
 end
 
