@@ -34,7 +34,7 @@ PS_Categories = {
 					"wheelchair",
 					"rocketwheelchair",
 					"mystery",
-                    "weapon_taser",
+					"weapon_taser",
 					"spacehat",
 					"weapon_popcorn_spam",
 					"weapon_sandcorn",
