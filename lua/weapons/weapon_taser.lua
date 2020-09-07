@@ -28,9 +28,6 @@ if CLIENT then
         ply:ManipulateBoneAngles(0, Angle(0, 0, -90))
 
         for i=1, ply:GetBoneCount(), 1 do
-            local vec, ang = ply:GetBonePosition(i)
-            if !vec then vec = vector_origin end
-            if !ang then ang = angle_zero end
             if i > 22 then continue end
             ply:ManipulateBonePosition(i, VectorRand(-1, 1))
             ply:ManipulateBoneAngles(i, AngleRand(-10, 10))
@@ -47,8 +44,7 @@ if CLIENT then
     end)
 else -- server code 
     hook.Add("PlayerSwitchWeapon", "DisableWeaponSwitchingTaser", function(ply) -- ply:Freeze() doesn't account for weapon switching
-        if IsValid(ply.IsTaseredBy) then return true end
-        return false
+        return ply:IsFrozen()
     end)
 
     hook.Add("DoPlayerDeath", "OnPlayerTaserDeath", function(ply, att, dmg)
@@ -91,7 +87,7 @@ function SWEP:PrimaryAttack() -- attempt attach to a player
     end
 end
 
-function SWEP:SecondaryAttack()
+function SWEP:SecondaryAttack() -- tase a player, if one is attached
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     self.Weapon:SendWeaponAnim(ACT_VM_DRYFIRE)
 
@@ -106,7 +102,7 @@ function SWEP:SecondaryAttack()
     self:TasePlayer(self.AttachedPlayer)
 end
 
-function SWEP:Reload()
+function SWEP:Reload() -- remove the attachment
     self:RemoveWire()
 end
 
@@ -135,6 +131,8 @@ function SWEP:TasePlayer()
         ply:SendLua("THIRDPERSON = true")
         --ply:DropToFloor()
 
+        self.Rope:SetKeyValue("EndOffset", tostring(Vector(0, 0, 0)))
+
         ply:ExtEmitSound("weapon_taser/taser.ogg")
     end
 
@@ -157,8 +155,10 @@ function SWEP:UnTasePlayer()
 
     if SERVER then
         ply:Freeze(false)
-        ply:SendLua("THIDPERSON = false")
+        ply:SendLua("THIRDPERSON = false")
         --ply:UnSpectate()
+
+        self.Rope:SetKeyValue("EndOffset", tostring(Vector(0, 0, 48)))
     end
 end
 
@@ -190,5 +190,5 @@ function SWEP:RemoveWire()
 end
 
 function SWEP:Holster()
-    return !IsValid(self.AttachedPlayer)
+    return !IsValid(self.AttachedPlayer) -- if a player is attached, prevent holster
 end
