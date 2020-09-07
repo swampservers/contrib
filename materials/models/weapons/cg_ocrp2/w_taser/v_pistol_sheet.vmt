@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	
+	"$basetexture" "models/weapons/cg_ocrp2/v_taser/v_pistol_sheet"
+	$selfillum 1
+}
