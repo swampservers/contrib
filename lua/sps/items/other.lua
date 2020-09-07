@@ -49,6 +49,14 @@ PS_WeaponProduct({
 	class = 'weapon_bodypillow'
 })
 
+PS_WeaponProduct({
+	name = 'Police Taser',
+	description = "An electroshock weapon capable of paralyzing other players for up to 20 seconds.",
+	price = 4000,
+	model = 'models/weapons/cg_ocrp2/w_taser.mdl',
+	class = 'weapon_taser'
+})
+
 PS_GenericProduct({
 	class = 'mystery',
 	price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
