@@ -106,11 +106,14 @@ function SWEP:Reload() -- remove the attachment
     self:RemoveWire()
 end
 
-function SWEP:Think() -- remove the rope if the player goes too far
+function SWEP:Think() -- remove the rope if the player goes too far and untases people not being tased
     if IsValid(self.AttachedPlayer) then
         if self.Owner:GetPos():DistToSqr(self.AttachedPlayer:GetPos()) > self.MaxHoldDist*self.MaxHoldDist or !self.AttachedPlayer:Alive() then
             self:RemoveWire()
         end
+    end
+    if !IsValid(ply.IsTaseredBy) then
+        self:UnTasePlayer()
     end
 end
 
