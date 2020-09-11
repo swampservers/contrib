@@ -24,7 +24,11 @@ if CLIENT then
         if !IsValid(ply) or !IsValid(ply.IsTaseredBy) then return end
 
         local originvec, originang = ply:GetBonePosition(1)
-        ply:ManipulateBonePosition(0, Vector(0, 0, -math.abs(ply:GetViewOffset().z)))
+        if ply:IsPony() then
+            ply:ManipulateBonePosition(0, Vector(0,0,-13))
+        else
+            ply:ManipulateBonePosition(0, Vector(0, 0, -35))
+        end
         ply:ManipulateBoneAngles(0, Angle(0, 0, -90))
 
         for i=1, ply:GetBoneCount(), 1 do
@@ -73,8 +77,8 @@ function SWEP:PrimaryAttack() -- attempt attach to a player
 
     local trc = self.Owner:GetEyeTrace()
 
-    if IsValid(trc.Entity) and trc.Entity:IsPlayer() and self.Owner:GetPos():DistToSqr(trc.Entity:GetPos()) < self.MaxTaseDist*self.MaxTaseDist then
-        UnTasePlayer()
+    if IsValid(trc.Entity) and trc.Entity:IsPlayer() and self.Owner:GetPos():DistToSqr(trc.Entity:GetPos()) < self.MaxTaseDist*self.MaxTaseDist and !Safe(trc.Entity) and !trc.Entity:InVehicle() then
+        self:UnTasePlayer()
         self.Owner:ExtEmitSound("ambient/energy/zap8.wav")
 
         self:AttachWire(trc.Entity)
