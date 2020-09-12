@@ -105,10 +105,10 @@ function finishCoinFlip(fromID, toPlayer)
 		-- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
 		if heads then
 			toPlayer:PS_TakePoints(amount)
-			fromPlayer:PS_GivePoints(math.floor(amount*0.99))
+			fromPlayer:PS_GivePoints(amount) --math.floor(amount*0.99))
 		else
 			fromPlayer:PS_TakePoints(amount)
-			toPlayer:PS_GivePoints(math.floor(amount*0.99))
+			toPlayer:PS_GivePoints(amount) --math.floor(amount*0.99))
 		end
 	else
 		CoinFlips[fromID] = nil
