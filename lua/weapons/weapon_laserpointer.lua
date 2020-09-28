@@ -2,7 +2,7 @@
 
 SWEP.PrintName = "Laser Pointer"
 SWEP.Author = "Britain1944"
-SWEP.Instructions = "Left click: Turn on and off the Laser.\nRight click: Changes laser power\nRebuy to reload the battery."
+SWEP.Instructions = "Left click: Turn on and off the laser.\nRight click: Change laser power\nRepurchase for more ammo."
 
 SWEP.Category = "Other"
 
