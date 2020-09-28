@@ -61,7 +61,7 @@ PS_WeaponProduct({
 	name = 'Laser Pointer',
 	description = "A cool little pen that shoots a blinding laser.",
 	price = 2000,
-	model = 'models/brian/pointer.mdl',
+	model = 'models/brian/laserpointer.mdl',
 	class = 'weapon_laserpointer'
 })
 
