@@ -33,6 +33,7 @@ PS_Categories = {
 					"weapon_magicmissile",
 					"wheelchair",
 					"rocketwheelchair",
+					"weapon_laserpointer",
 					"mystery",
 					"weapon_taser",
 					"spacehat",
