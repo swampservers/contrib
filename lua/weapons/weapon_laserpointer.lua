@@ -177,7 +177,11 @@ function SWEP:DrawWorldModel()
 				--render.SetMaterial(Material("sprites/bluelaser1"))
 				render.SetMaterial(Material("cable/new_cable_lit"))
 				render.DrawBeam(self.laserorgpos+self.laserorgang:Up()*6, tr.HitPos, 0.1, 0, 12.5, lsrclr, false)
+				render.SetMaterial(Material("cable/new_cable_lit_back"))
+				lsrclr.a = 0
+				render.DrawBeam(self.laserorgpos+self.laserorgang:Up()*6, tr.HitPos, 0.2, 0, 12.5, lsrclr, false)
 				render.SetMaterial(Material("sprites/light_glow02_add"))
+				lsrclr.a = 255
 				render.DrawQuadEasy(tr.HitPos, tr.HitNormal, size, size, lsrclr)
 			cam.End3D()
 		end
