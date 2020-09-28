@@ -252,18 +252,19 @@ end
 
 function SWEP:PrimaryAttack()--shoots the laser
 	if (!self:CanPrimaryAttack()) then return end
-	--[[local loc = Location.GetLocationNameByIndex(Location.Find(self.Owner)):lower()
-	local lctn = Location.GetLocationNameByIndex(Location.Find(trc.Entity)):lower()
-	if (self.Owner:InTheater() and not (self.Owner:GetTheater()._AllowItems)) or loc=="trump lobby" or loc=="golf" then
-	self.Owner:PrintMessage(HUD_PRINTTALK, "[red] Stop right there! Lasers are not allowed in this area. ;authority;")
-	end]]
 
 	local trc = self.Owner:GetEyeTrace()
+	local lctn = Location.GetLocationNameByIndex(Location.Find(trc.Entity)):lower()
+	local loc = Location.GetLocationNameByIndex(Location.Find(self.Owner)):lower()
+
+	if (self.Owner:InTheater() and not (self.Owner:GetTheater()._AllowItems)) or loc=="trump lobby" or loc=="golf" then
+		self.Owner:PrintMessage(HUD_PRINTTALK, "[red] Stop right there! Lasers are not allowed in this area. ;authority;")
+	end
 
 	self:DrawLaser()
 	self.Weapon:TakePrimaryAmmo(self.LaserPower/2+0.1)
 
-	if IsValid(trc.Entity) and trc.Entity:IsPlayer() and trc.HitBox == 0 --[[and not -Safe(trc.Entity) and (trc.Entity:InTheater() and not (trc.Entity:GetTheater()._AllowItems)) or lctn=="trump lobby" or lctn=="golf"]] then
+	if IsValid(trc.Entity) and trc.Entity:IsPlayer() and trc.HitBox == 0 and not -Safe(trc.Entity) and (trc.Entity:InTheater() and not (trc.Entity:GetTheater()._AllowItems)) or lctn=="trump lobby" or lctn=="golf" then
 		self:BlindPlayer(trc.Entity)
 		self:SetNextPrimaryFire(CurTime() + 0.1)
 	else
