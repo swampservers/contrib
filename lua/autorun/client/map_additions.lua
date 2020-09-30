@@ -93,6 +93,11 @@ timer.Simple(0, function()
 	hevmaterial:SetInt("$flags", 8192+65536)
 end)
 
+local resetmaterial = Material("swamponions/reset")
+timer.Simple(0, function()
+	resetmaterial:SetInt("$flags", 0)
+end)
+
 local lanternmaterial = Material("models/dojo/lantern/lantern")
 timer.Create("lanternswitcher",100,0,function()
 	if GetGlobalBool("DAY", true) then

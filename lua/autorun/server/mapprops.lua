@@ -42,7 +42,7 @@ function GetMapPropTable()
         --{class="arcade_doom",pos=Vector(1720,1320,0),ang=Angle(0,0,0)},
 
         --{class="prop_dynamic",pos=Vector(31, -392, -5),ang=Angle(0,-90,0),model="models/swamponions/dedicationplaque.mdl"},
-	{class="prop_dynamic",pos=Vector(-25,-386,76),ang=Angle(-1,-116,37),model="models/swamponions/trumphat.mdl"},
+	    {class="prop_physics",pos=Vector(-26.000000,-386.343750,75.5),ang=Angle(7.031,-115.884,38.408),model="models/swamponions/trumphat.mdl",noshadows=true},
         --{class="prop_dynamic",pos=Vector(-2720, -1601, 24),ang=Angle(0,0,0),model="models/props_fairgrounds/mic_stand.mdl"}, //temporary
     }
     
