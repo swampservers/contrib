@@ -190,7 +190,7 @@ function ENT:Draw()
 		local cr,cg,cb = render.GetColorModulation()
 		render.SetColorModulation((cr*1.6)+0.3,(cg*1.6)+0.3,(cb*1.6)+0.3)
 	end
-	BaseClass.Draw(self, true)
+	BaseClass.Draw(self) --, true)
 end
 
 function ENT:Use(ply)
