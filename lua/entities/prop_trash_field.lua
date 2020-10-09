@@ -18,7 +18,7 @@ function ENT:Initialize()
 end
 
 function ENT:Draw()
-	BaseClass.Draw( self, true )
+	BaseClass.Draw(self) --, true)
 	TrashDrawProtectionOutlines(self)
 end
 

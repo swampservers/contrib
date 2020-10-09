@@ -51,7 +51,7 @@ function ENT:Draw()
 		render.MaterialOverride(ImgurMaterial(url, own, self:GetPos(), false))
 	end
 
-	BaseClass.Draw( self, true )
+	BaseClass.Draw(self) --, true)
 
 	if url then
 		render.MaterialOverride()
