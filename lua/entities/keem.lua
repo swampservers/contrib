@@ -160,7 +160,7 @@ end
 
 
 function ENT:Draw()
-	BaseClass.Draw( self, true )
+	BaseClass.Draw(self) --, true)
 end
 
 --[[---------------------------------------------------------
