@@ -1,7 +1,7 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 SWEP.PrintName = "Laser Pointer"
-SWEP.Author = "Britain1944"
+SWEP.Author = "Grate Brittan"--Swamp helped a little
 SWEP.Instructions = "Left click: Hold to shoot a laser.\nRight click: Change laser power.\nRepurchase for more ammo."
 
 SWEP.Category = "Other"
@@ -58,31 +58,45 @@ if CLIENT then
 		end
 	end)
 	hook.Add("HUDPaintBackground", "BlindnessDraw", function()
-		local ply = LocalPlayer()
-		if IsValid(ply) then
-			surface.SetDrawColor(255,255,255,blind)
-			surface.DrawRect(0, 0, ScrW(), ScrH())
+		for ent,_ in next, ON_LASERS do
+			if not IsValid(ent) then SetLaser(ent, nil) continue end
+			if ent:GetClass() ~= "weapon_laserpointer" or not ent:IsOn() or ent:GetOwner() ~= LocalPlayer() then continue end
+			pos, ang, dist = ent:GetBeam()
+			dir = ang:Forward()
+			if (pos + dir*dist):Distance(EyePos()) < 20 then
+				alpha = (2-dir:Dot(EyeAngles():Forward()))/2
+				alpha = math.pow(alpha, 0.5)
+				surface.SetDrawColor(255,255,255,alpha*255)
+				surface.SetMaterial(Material("sprites/light_glow02_add"))
+				sp = pos:ToScreen()
+				local sz = ScrH()
+				if sp.visible then
+				    surface.DrawTexturedRect(sp.x - sz/2,sp.y - sz/2,sz,sz)
+				end
+			end
 		end
+		print("a")
+		PrintTable(ON_LASERS)
+		print("b")
 	end)
 	hook.Add("PostDrawTranslucentRenderables", "DrawAllLasers", function()
 		for ent,_ in next, ON_LASERS do
-			if not IsValid(ent) then ON_LASERS[ent] = nil continue end
-			local wep = ent.Owner:GetActiveWeapon()
+			--if not IsValid(ent) or not ent:IsOn() or ent:GetOwner() == LocalPlayer() then continue end
+			if IsValid(ent) and ent:GetClass() == "weapon_laserpointer" and ent:GetNWBool("LaserBeamOn") and ent:IsOn() and ent:GetNWBool("CanDrawLaser") and ent:GetOwner() ~= LocalPlayer() then
+				local pos, ang, dist = ent:GetBeam()
+				local threevar = pos+ang:Up()*dist--pos+ang:Up()*6 
 
-			if IsValid(wep) and wep:GetClass() == "weapon_laserpointer" and wep:GetNWBool("LaserBeamOn") and wep:GetNWBool("CanDrawLaser") and ent.Owner ~= LocalPlayer() then
-				local threevar = wep:GetNWVector("laserorgpos",Vector(0,0,0,0))+wep:GetNWVector("laserorgang",Angle(0,0,0)):Up()*6
-
-				wep:LaserDrawer(ent,wep,threevar,"sprites/bluelaser1","sprites/light_glow02_add",2)
+				ent:LaserDrawer(ent:GetOwner(),ent,threevar,"sprites/bluelaser1","sprites/light_glow02_add",2)
 			end
 		end
 	end)
-	timer.Create("BlindnessUpdater", 0.1, 0, function()
+	--[[timer.Create("BlindnessUpdater", 0.1, 0, function()
 		local ply = LocalPlayer()
-    	if IsValid(ply) then
-			if math.clamp(ply.blind,0,255) > 0 then ply.blind = ply.blind-2 end
+    	if IsValid(ply) and ply.blind ~= nil then
+			if math.Clamp(ply.blind,0,255) > 0 then ply.blind = ply.blind-2 end
 			if ply.blind < 0 then ply.blind = 0 end
 		end
-	end)
+	end)]]
 else--server code
 	hook.Add("WeaponEquip", "MakeSureAmmoIs100", function(wep, ply)
 		if IsValid(wep) and wep:GetClass() == "weapon_laserpointer" then
@@ -106,19 +120,32 @@ hook.Add("KeyRelease","RemoveBeam", function(ply, key)
 	end
 end)
 
+function SWEP:Initialize()
+    ON_LASERS[self] = true
+    self.Initialized = true
+end
+
+function SWEP:IsOn()
+    if self ~= self then
+        return false
+    end
+
+    return self:Clip1() > 0
+end
+
 function SWEP:LaserDrawer(ply, wep, origin, amat, bmat, ls)
 	local trc = ply:GetEyeTrace()
 	local lsrclr = wep.LaserColors[ply:GetNWFloat("LaserPower", 0)+1]
-	local lctn = Location.GetLocationNameByIndex(Location.Find(trc.Entity)):lower()
+	--local lctn = Location.GetLocationNameByIndex(Location.Find(trc.Entity)):lower()
 
 	cam.Start3D(EyePos(), EyeAngles())
 		--local maxbounce = maxbounce or 0
 		local size = math.random()*10
 
 		render.SetMaterial(Material(amat))
-		render.DrawBeam(origin, tr.HitPos, ls, 0, 12.5, lsrclr, false)
+		render.DrawBeam(origin, trc.HitPos, ls, 0, 12.5, lsrclr, false)
 		render.SetMaterial(Material(bmat))
-		render.DrawQuadEasy(tr.HitPos, tr.HitNormal, size, size, lsrclr)
+		render.DrawQuadEasy(trc.HitPos, trc.HitNormal, size, size, lsrclr)
 
 		--[[if tr.Entity:GetMaterial() == "func_reflective_glass" and maxbounce <= 1 then--this is for the refelcted laser
 			local vec = origin-trc.HitPos
@@ -139,18 +166,70 @@ function SWEP:LaserDrawer(ply, wep, origin, amat, bmat, ls)
 		end]]
 	cam.End3D()
 	
-	if IsValid(trc.Entity) and trc.Entity:IsPlayer() and trc.HitBox == 0 and not Safe(trc.Entity) and (trc.Entity:InTheater() and not (trc.Entity:GetTheater()._AllowItems)) or lctn=="trump lobby" or lctn=="golf" then
-		if (origin-trc.Entity:EyePos()):GetNormalized():Dot(ply:EyeAngles()) < 0.3 then
-			blind = math.clamp(ply.blind,0,255)+(1+wep.LaserPower)*15
-			if math.clamp(blind,0,255) > 0 then
-				if blind > 255 then blind = 255 end
-			end
-		end
-	end
+	--if IsValid(trc.Entity) and trc.Entity:IsPlayer() and trc.HitBox == 0 --[[and not Safe(trc.Entity) and (trc.Entity:InTheater() and not (trc.Entity:GetTheater()._AllowItems)) or lctn=="trump lobby" or lctn=="golf"]] then
+		--if (origin-trc.Entity:EyePos()):GetNormalized():Dot(ply:EyeAngles()) < 0.3 then
+			--blind = math.Clamp(ply.blind,0,255)+(1+wep.LaserPower)*15
+			--if math.Clamp(blind,0,255) > 0 then
+				--if blind > 255 then blind = 255 end
+			--end
+		--end
+	--end
+end
+
+function SetLaser(ent, to)
+	ON_LASERS[ent] = to
+	--print("SET", ent, to)
+end
+
+-- use the first two returns for DrawWorldModel and GetViewModelPosition as well
+function SWEP:GetBeam()
+    local endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * 10000
+    local tr = util.TraceLine({
+        start = self:GetOwner():EyePos(),
+        endpos = endpos,
+    })
+
+    if tr.Hit then
+        endpos = tr.HitPos
+    end
+
+    local orgpos = self:HandPos()
+    local dir = (endpos - self:HandPos())
+    return self:HandPos(), dir:GetNormalized():Angle(), dir:Length()
+end
+
+function SWEP:HandPos()
+    if self:GetOwner() == LocalPlayer() and LocalPlayer():EyePos():Distance(EyePos()) < 1 then
+        pos,ang = EyePos(), EyeAngles()
+        pos = pos + ang:Right()*2
+        pos = pos + ang:Up()*-3
+        pos = pos + ang:Forward()*5
+        ang:RotateAroundAxis(ang:Forward(), -3)
+        ang:RotateAroundAxis(ang:Right(), -90)
+        ang:RotateAroundAxis(ang:Up(), -105)
+        pos = pos + ang:Forward()*0.1
+        return pos
+    end
+
+    local bn = "ValveBiped.Bip01_R_Hand"
+    local bon = self:GetOwner():LookupBone(bn) or 0
+
+    local opos = self:GetPos()
+    local oang = self:GetAngles()
+    local bp,ba = self:GetOwner():GetBonePosition(bon)
+    if(bp)then opos = bp end
+    if(ba)then oang = ba end
+
+    oang:RotateAroundAxis(oang:Right(), -90)
+    oang:RotateAroundAxis(oang:Up(), 90)
+    opos = opos + oang:Forward()*-2
+    opos = opos + oang:Right()*1.25
+    opos = opos + oang:Up()*1.5
+    return opos
 end
 
 function SWEP:DrawWorldModel()
-	local ply = self.Owner
+	local ply = self:GetOwner()
 
 	if(IsValid(ply))then
 		local bn = "ValveBiped.Bip01_R_Hand"
@@ -175,8 +254,8 @@ function SWEP:DrawWorldModel()
 
 		self:SetupBones()
 
-		if IsValid(self) and self:GetClass() == "weapon_laserpointer" and self.LaserBeamOn and self.Weapon:Clip1() > 0  then
-			self:LaserDrawer(self.Owner,self,self.laserorgpos+self.laserorgang:Up()*6,"cable/new_cable_lit","sprites/light_glow02_add",0.1)
+		if IsValid(self) and self:GetClass() == "weapon_laserpointer" and self.LaserBeamOn and self:Clip1() > 0  then
+			self:LaserDrawer(self:GetOwner(),self,self.laserorgpos+self.laserorgang:Up()*6,"cable/new_cable_lit","sprites/light_glow02_add",0.1)
 		end
 
 		local mrt = self:GetBoneMatrix(0)
@@ -203,17 +282,17 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 function SWEP:PreDrawViewModel()
-	if IsValid(self) and self:GetClass() == "weapon_laserpointer" and self.LaserBeamOn and self.Weapon:Clip1() > 0  then
-		local varthree = self.Owner:GetViewModel():GetAttachment(self.Owner:GetViewModel():LookupAttachment("tip")).Pos
+	if IsValid(self) and self:GetClass() == "weapon_laserpointer" and self.LaserBeamOn and self:Clip1() > 0  then
+		local varthree = self:GetOwner():GetViewModel():GetAttachment(self:GetOwner():GetViewModel():LookupAttachment("tip")).Pos
 
-		self:LaserDrawer(self.Owner,self,varthree,"sprites/bluelaser1","sprites/light_glow02_add_noz",2)
+		self:LaserDrawer(self:GetOwner(),self,varthree,"sprites/bluelaser1","sprites/light_glow02_add_noz",2)
 	end
 end
 
 function SWEP:Deploy()
 	self:RemoveLaser()
 	self:SetHoldType("pistol")
-    self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
+    self:SendWeaponAnim(ACT_VM_DRAW)
 end
 
 function SWEP:OnRemove()
@@ -223,48 +302,53 @@ end
 function SWEP:PrimaryAttack()--shoots the laser
 	if (!self:CanPrimaryAttack()) then return end
 
-	local trc = self.Owner:GetEyeTrace()
-	local loc = Location.GetLocationNameByIndex(Location.Find(self.Owner)):lower()
+	local trc = self:GetOwner():GetEyeTrace()
+	--[[local loc = Location.GetLocationNameByIndex(Location.Find(self:GetOwner())):lower()
 
-	if (self.Owner:InTheater() and not (self.Owner:GetTheater()._AllowItems)) or loc=="trump lobby" or loc=="golf" then
-		self.Owner:PrintMessage(HUD_PRINTTALK, "[red] Stop right there! Lasers are not allowed in this area. ;authority;")
-	end
+	if (self:GetOwner():InTheater() and not (self:GetOwner():GetTheater()._AllowItems)) or loc=="trump lobby" or loc=="golf" then
+		self:GetOwner():PrintMessage(HUD_PRINTTALK, "[red] Stop right there! Lasers are not allowed in this area. ;authority;")
+	end]]
 
 	self:DrawLaser()
-	self.Weapon:TakePrimaryAmmo(self.LaserPower/2+0.1)
+	self:TakePrimaryAmmo(self.LaserPower/2+0.1)
 	self:SetNextPrimaryFire(CurTime() + 0.1)
 end
 
 function SWEP:SecondaryAttack()--changes laser color
 	if (!IsFirstTimePredicted()) then return end
 
-    if not self.LaserPower then self.LaserPower = 0 end
-    self.LaserPower = (self.LaserPower+1) % (#self.LaserColors)
-    self.Owner:SetNWFloat("LaserPower",self.LaserPower)
+    self.LaserPower = ((self.LaserPower or 0) + 1) % (#self.LaserColors)
+    self:GetOwner():SetNWFloat("LaserPower",self.LaserPower)
 end
 
 function SWEP:Reload()--reloads the batteries
-	if (!IsValid(self)) or timer.Exists("Reload"..self.Owner:SteamID64()) or self.Weapon:Clip1() >= self.Primary.ClipSize or self.Owner:GetAmmoCount(self.Primary.Ammo) == 0 then return end
+	if (!IsValid(self)) or timer.Exists("Reload"..self:GetOwner():SteamID64()) or self:Clip1() >= self.Primary.ClipSize or self:GetOwner():GetAmmoCount(self.Primary.Ammo) == 0 then return end
 
-	timer.Create("Reload"..self.Owner:SteamID64(), 0.1, 0, function()
-		self.Owner:RemoveAmmo(100-self.Weapon:Clip1(), self.Primary.Ammo, false)
-		self.Weapon:SetClip1(100)
-		self.Owner:EmitSound("items/ammo_pickup.wav")
-		timer.Remove("Reload"..self.Owner:SteamID64())
+	timer.Create("Reload"..self:GetOwner():SteamID64(), 0.1, 0, function()
+		self:GetOwner():RemoveAmmo(100-self:Clip1(), self.Primary.Ammo, false)
+		self:SetClip1(100)
+		self:GetOwner():EmitSound("items/ammo_pickup.wav")
+		timer.Remove("Reload"..self:GetOwner():SteamID64())
 	end)
 end
 
 function SWEP:Think()
-	self:SetNWBool("CanDrawLaser",self:Clip1() > 0)
-	ON_LASERS[self] = self:GetNWBool("LaserBeamOn", false) and true or nil
-end
+	if not self.Initialized then
+        self:Initialize()
+    end
 
-function SWEP:DrawLaser()
+	SetLaser(self, self:GetNWBool("LaserBeamOn") and true or nil)
+	self:SetNWBool("CanDrawLaser",self:Clip1() > 0)
 	self.LaserBeamOn = true
 	self:SetNWBool("LaserBeamOn", true)
 end
 
+function SWEP:DrawLaser()
+	--self.LaserBeamOn = true
+	--self:SetNWBool("LaserBeamOn", true)
+end
+
 function SWEP:RemoveLaser()
-	self.LaserBeamOn = false
-	self:SetNWBool("LaserBeamOn", false)
+	--self.LaserBeamOn = false
+	--self:SetNWBool("LaserBeamOn", false)
 end
