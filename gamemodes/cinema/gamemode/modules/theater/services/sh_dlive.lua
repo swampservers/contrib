@@ -18,7 +18,7 @@ if CLIENT then
 		EmbeddedCheckCodecs(function()
 			vpanel = vgui.Create("DHTML")
 
-			vpanel:SetSize(100,100)
+			vpanel:SetSize(1000,100) --dlive hides title if screen is too small
 
 			vpanel:SetAlpha(0)
 
