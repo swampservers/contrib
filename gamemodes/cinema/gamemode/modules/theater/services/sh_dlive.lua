@@ -61,7 +61,7 @@ if CLIENT then
 		
 		panel:QueueJavascript("var volume=0;setInterval(function(){document.getElementsByClassName('dplayer-video dplayer-video-current')[0].volume=volume*0.01});")
 		timer.Create("dliveupdate"..tostring(math.random(1,100000)),1,45,function()
-			if IsVaid(panel) then
+			if IsValid(panel) then
 				panel:RunJavascript("document.getElementsByClassName('chatroom-right')[0].style.display='none';")
 				panel:RunJavascript("document.getElementsByClassName('application--wrap')[0].children[0].style.display='none';")
 				panel:RunJavascript("document.getElementsByClassName('channel-header flex-justify-between flex-align-center bg-grey-darken-5 paddinglr-4')[0].style.display='none';")
