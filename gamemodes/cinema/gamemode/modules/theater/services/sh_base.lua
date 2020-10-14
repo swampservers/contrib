@@ -81,7 +81,7 @@ if CLIENT then
 		error("Can't get video info for "..self:GetClass())
 	end
 
-	function SERVICE:LoadVideo( Video, panel )
+	function SERVICE:LoadVideo(Video, panel)
 		panel:EnsureURL("http://swampservers.net/cinema/"..self:GetClass()..".html")
 
 		-- Let the webpage handle loading a video
@@ -90,8 +90,10 @@ if CLIENT then
 	end
 
 	function SERVICE:SetVolume(vol, panel)
-		local str = string.format("th_volume(%s);", vol)
-		panel:RunJavascript( str ) --QueueJavascript is unreliable
+		function panel:OnDocumentReady()
+			local str = string.format("th_volume(%s);", vol)
+			panel:RunJavascript( str ) --QueueJavascript is unreliable
+		end
 	end
 
 	function SERVICE:SeekTo(time, panel)
