@@ -91,7 +91,7 @@ if CLIENT then
 
 	function SERVICE:SetVolume(vol, panel)
 		local str = string.format("th_volume(%s);", vol)
-		panel:QueueJavascript( str )
+		panel:RunJavascript( str ) --QueueJavascript is unreliable
 	end
 
 	function SERVICE:SeekTo(time, panel)
