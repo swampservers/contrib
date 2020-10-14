@@ -27,7 +27,7 @@ if CLIENT then
 		timer.Create("nekoupdate"..tostring(math.random(1,100000)),1,45,function()
 			if IsValid(panel) then
 				panel:RunJavascript("document.getElementsByClassName('vue-notification-group')[0].style.display='none';document.getElementsByClassName('header-container')[0].style.display='none';document.getElementsByClassName('room-container')[0].style.display='none';document.getElementsByClassName('video-menu')[0].style.display='none';document.getElementsByClassName('neko-menu')[0].style.display='none';document.getElementsByClassName('connect')[0].style.display='none';") --failsafe hide ui
-				--panel:RunJavascript("function th_volume(vol){document.getElementsByTagName('input')[1].value=vol;document.getElementsByTagName('input')[1].dispatchEvent(new Event('input'));}") --volume control
+				panel:RunJavascript("function th_volume(vol){document.getElementsByTagName('input')[1].value=vol;document.getElementsByTagName('input')[1].dispatchEvent(new Event('input'));}") --volume control
 				if panel.phase == 0 then
 					panel:RunJavascript("var nekoparent=document.getElementById('neko');console.log(nekoparent.getElementsByTagName('input').length);console.log('LOGIN:'+document.getElementsByClassName('connect').length);") --check if already logged in
 					panel:RunJavascript("if(document.getElementsByClassName('neko-menu').length==0){document.getElementsByTagName('i')[1].click();}document.getElementsByClassName('tabs-container')[0].getElementsByTagName('i')[1].click();") --switch to settings tab
@@ -62,11 +62,6 @@ if CLIENT then
 				end
 			end
 		end
-	end
-	
-	function SERVICE:SetVolume(vol, panel)
-		local str = string.format("document.getElementsByTagName('input')[1].value=%s;document.getElementsByTagName('input')[1].dispatchEvent(new Event('input'));",vol)
-		panel:QueueJavascript(str)
 	end
 end
 
