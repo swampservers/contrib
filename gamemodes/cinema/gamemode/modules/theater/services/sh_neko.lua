@@ -14,7 +14,6 @@ function SERVICE:GetKey( url )
 end
 
 if CLIENT then
-
 	function SERVICE:GetVideoInfoClientside(key, callback)
 		Derma_StringRequest("Neko Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({duration=0,title=title}) end, function() callback() end)
 	end
@@ -61,6 +60,13 @@ if CLIENT then
 					return
 				end
 			end
+		end
+	end
+	
+	function SERVICE:SetVolume(vol, panel)
+		function panel:OnDocumentReady()
+			local str = string.format("th_volume(%s);", vol)
+			panel:RunJavascript( str ) --QueueJavascript is unreliable
 		end
 	end
 end
