@@ -93,6 +93,13 @@ if CLIENT then
 			if (LocalPlayer().videoDebug and not msg:StartWith("HREF:")) then print(msg) end
 		end
 	end
+	
+	function SERVICE:SetVolume(vol, panel)
+		function panel:OnDocumentReady()
+			local str = string.format("th_volume(%s);", vol)
+			panel:RunJavascript( str ) --QueueJavascript is unreliable
+		end
+	end
 end
 
 theater.RegisterService( 'dlive', SERVICE )

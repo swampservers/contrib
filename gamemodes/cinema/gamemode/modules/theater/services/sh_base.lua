@@ -88,16 +88,14 @@ if CLIENT then
 		local str = string.format( "th_video('%s');", string.JavascriptSafe(Video:Key()) )
 		panel:QueueJavascript( str )
 	end
-
+	
 	function SERVICE:SetVolume(vol, panel)
-		function panel:OnDocumentReady()
-			local str = string.format("th_volume(%s);", vol)
-			panel:RunJavascript( str ) --QueueJavascript is unreliable
-		end
+		local str = string.format("th_volume(%s);", vol)
+		panel:QueueJavascript( str )
 	end
 
 	function SERVICE:SeekTo(time, panel)
-		local str = string.format('th_seek(%s);', time)
+		local str = string.format("th_seek(%s);", time)
 		panel:QueueJavascript( str )
 	end
 end
