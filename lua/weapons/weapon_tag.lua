@@ -118,7 +118,7 @@ function SWEP:PrimaryAttack( right )
 	self:SetNextSecondaryFire( CurTime() + 0.9 )
 		local eyetrace = self.Owner:GetEyeTrace()
 	if eyetrace.Hit then
-		if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) then
+		if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) and not Safe(eyetrace.Entity) then
 			self:TestTagPlayer(eyetrace.Entity,self.Owner)
 		else
 			local target = {nil,58}
