@@ -59,36 +59,45 @@ if CLIENT then
 	function SERVICE:LoadVideo(Video, panel)
 		panel:EnsureURL(Video:Key())
 		
-		panel:QueueJavascript([[
-		VOLUME = 0;
-		function th_volume(vol){VOLUME=vol;}
-	
-		setInterval(function(){
-			document.getElementsByClassName('dplayer-video dplayer-video-current')[0].volume=VOLUME*0.01;
+		function panel:OnDocumentReady()
+			panel:RunJavascript([[
+				VOLUME = 0;
+				function th_volume(vol){VOLUME=vol;}
 			
-			if(document.getElementsByClassName('chatroom-right').length)document.getElementsByClassName('chatroom-right')[0].style.display='none';
-			if(document.getElementsByClassName('application--wrap').length)document.getElementsByClassName('application--wrap')[0].children[0].style.display='none';
-			if(document.getElementsByClassName('channel-header flex-justify-between flex-align-center bg-grey-darken-5 paddinglr-4').length)document.getElementsByClassName('channel-header flex-justify-between flex-align-center bg-grey-darken-5 paddinglr-4')[0].style.display='none';
-			if(document.getElementsByClassName('height-100 position-relative sidebar').length)document.getElementsByClassName('height-100 position-relative sidebar')[0].style.display='none';
-			if(document.getElementsByClassName('livestream-info').length)document.getElementsByClassName('livestream-info')[0].style.display='none';
-			
-			dliveparent=document.getElementsByClassName('height-100 flex-auto overflow-y-auto flex-all-center bg-grey-darken-6')[0].children[0].children;
-			if(dliveparent.length==2){
-				dliveparent[1].style.display='none';
-				dliveparent[0].children[1].classList='';
-			}
-			
-			if(dliveparent.length==1){
-				dliveparent2=document.getElementsByClassName('bg-grey-darken-5 mobile-page')[0].children;
-				dliveparent2[1].style.display='none';
-				dliveparent2[2].style.display='none';
-				dliveparent[0].children[0].classList='';
-			}
-		}, 200);
-		]])
+				setInterval(function(){
+					document.getElementsByClassName('dplayer-video dplayer-video-current')[0].volume=VOLUME*0.01;
+					
+					if(document.getElementsByClassName('chatroom-right').length)document.getElementsByClassName('chatroom-right')[0].style.display='none';
+					if(document.getElementsByClassName('application--wrap').length)document.getElementsByClassName('application--wrap')[0].children[0].style.display='none';
+					if(document.getElementsByClassName('channel-header flex-justify-between flex-align-center bg-grey-darken-5 paddinglr-4').length)document.getElementsByClassName('channel-header flex-justify-between flex-align-center bg-grey-darken-5 paddinglr-4')[0].style.display='none';
+					if(document.getElementsByClassName('height-100 position-relative sidebar').length)document.getElementsByClassName('height-100 position-relative sidebar')[0].style.display='none';
+					if(document.getElementsByClassName('livestream-info').length)document.getElementsByClassName('livestream-info')[0].style.display='none';
+					
+					dliveparent=document.getElementsByClassName('height-100 flex-auto overflow-y-auto flex-all-center bg-grey-darken-6')[0].children[0].children;
+					if(dliveparent.length==2){
+						dliveparent[1].style.display='none';
+						dliveparent[0].children[1].classList='';
+					}
+					
+					if(dliveparent.length==1){
+						dliveparent2=document.getElementsByClassName('bg-grey-darken-5 mobile-page')[0].children;
+						dliveparent2[1].style.display='none';
+						dliveparent2[2].style.display='none';
+						dliveparent[0].children[0].classList='';
+					}
+				}, 200);
+			]])
+		end
 		
 		function panel:ConsoleMessage(msg)
 			if (LocalPlayer().videoDebug and not msg:StartWith("HREF:")) then print(msg) end
+		end
+	end
+	
+	function SERVICE:SetVolume(vol, panel)
+		function panel:OnDocumentReady()
+			local str = string.format("th_volume(%s);", vol)
+			panel:RunJavascript( str ) --QueueJavascript is unreliable
 		end
 	end
 end
