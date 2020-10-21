@@ -61,8 +61,7 @@ if CLIENT then
 		
 		function panel:OnDocumentReady()
 			panel:RunJavascript([[
-				VOLUME = 0;
-				function th_volume(vol){VOLUME=vol;}
+				if(typeof VOLUME=="undefined")VOLUME=]]..theater.GetVolume()..[[;
 			
 				setInterval(function(){
 					document.getElementsByClassName('dplayer-video dplayer-video-current')[0].volume=VOLUME*0.01;
@@ -85,7 +84,7 @@ if CLIENT then
 						dliveparent2[2].style.display='none';
 						dliveparent[0].children[0].classList='';
 					}
-				}, 200);
+				},200);
 			]])
 		end
 		
@@ -95,10 +94,8 @@ if CLIENT then
 	end
 	
 	function SERVICE:SetVolume(vol, panel)
-		function panel:OnDocumentReady()
-			local str = string.format("th_volume(%s);", vol)
-			panel:RunJavascript( str ) --QueueJavascript is unreliable
-		end
+		local str = string.format("VOLUME=%s;", vol)
+		panel:RunJavascript(str) --QueueJavascript is unreliable
 	end
 end
 
