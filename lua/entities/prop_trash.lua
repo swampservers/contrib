@@ -59,15 +59,15 @@ TrashLocationOverrides = {
 }
 
 TrashNoFreezeNodes = {
- {Vector(-2040,-60,80),120},
- {Vector(-1970,-1120,100),150}
- --{Vector(660,-1860,36),100},
+	{Vector(-2040,-60,80),120},
+	{Vector(-1970,-1120,100),150}
+	--{Vector(660,-1860,36),100},
 }
 
 AddCSLuaFile()
-DEFINE_BASECLASS( "base_gmodentity" )
+DEFINE_BASECLASS("base_gmodentity")
 
-ENT.Spawnable			= false
+ENT.Spawnable = false
 
 ENT.CanChangeTrashOwner = true
 
@@ -77,19 +77,21 @@ function ENT:SetupDataTables()
 end
 
 PropTrashExplosiveModels = {
-	["models/props_c17/oildrum001_explosive.mdl"]=true,
-	["models/props_phx/oildrum001_explosive.mdl"]=true,
-	["models/props_phx/ww2bomb.mdl"]=true,
+	["models/props_c17/oildrum001_explosive.mdl"] = true,
+	["models/props_phx/oildrum001_explosive.mdl"] = true,
+	["models/props_phx/ww2bomb.mdl"] = true
 }
 
 function ENT:Initialize()
 	if SERVER then
-		self:SetUseType( SIMPLE_USE )
+		self:SetUseType(SIMPLE_USE)
 
-		self:PhysicsInit( SOLID_VPHYSICS )
-		self:SetMoveType( MOVETYPE_VPHYSICS )
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
 
 		self:UnTape()
+
+		self.ProtectedPropShot = 0
 
 		if PropTrashExplosiveModels[self:GetModel()] then
 			self.OnShoot = function(this)
@@ -124,20 +126,20 @@ function ENT:DrawOutline()
 end
 
 PropTrashLightData = {
-["models/props_interiors/furniture_lamp01a.mdl"] = {
-	untaped = false,
-	size = 500,
-	brightness = 2,
-	style = 0,
-	pos = Vector(0,0,27)
-},
-["models/maxofs2d/light_tubular.mdl"] = {
-	untaped = false,
-	size = 300,
-	brightness = 2,
-	style = -1,
-	pos = Vector(0,0,0)
-}
+	["models/props_interiors/furniture_lamp01a.mdl"] = {
+		untaped = false,
+		size = 500,
+		brightness = 2,
+		style = 0,
+		pos = Vector(0,0,27)
+	},
+	["models/maxofs2d/light_tubular.mdl"] = {
+		untaped = false,
+		size = 300,
+		brightness = 2,
+		style = -1,
+		pos = Vector(0,0,0)
+	}
 }
 
 if CLIENT then
@@ -167,6 +169,9 @@ if CLIENT then
 			end
 		end
 	end
+	if IsValid((self.UseTable or {})[1]) then
+		(self.UseTable or {})[1]:ExitVehicle()
+	end
 end
 
 function ENT:Draw()
@@ -190,7 +195,7 @@ function ENT:Draw()
 		local cr,cg,cb = render.GetColorModulation()
 		render.SetColorModulation((cr*1.6)+0.3,(cg*1.6)+0.3,(cb*1.6)+0.3)
 	end
-	BaseClass.Draw(self) --, true)
+	BaseClass.Draw(self, true)
 end
 
 function ENT:Use(ply)
@@ -316,8 +321,6 @@ else
 		--vec.x = math.abs(vec.x)
 		--if vec:DistToSqr(Vector(160,160,80)) < 65536 then return false end --theater enterance
 
-		--someone sitting in the seat
-		if IsValid((self.UseTable or {})[1]) then return true end
 		return not (self:GetLocationClass() == TRASHLOC_NOSPAWN and self:GetOwnerID() ~= self:GetLocationOwner())
 	end
 end
@@ -340,5 +343,13 @@ function ENT:CanTape(userid)
 end
 
 function ENT:OnShoot()
-	self:UnTape()
+	if Safe(self) then
+		self.ProtectedPropShot = self.ProtectedPropShot + 1
+	end
+
+	if self.ProtectedPropShot == 6 and Safe(self) then
+		self:UnTape()
+	else
+		self:UnTape()
+	end
 end
