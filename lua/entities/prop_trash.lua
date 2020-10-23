@@ -195,7 +195,7 @@ function ENT:Draw()
 		local cr,cg,cb = render.GetColorModulation()
 		render.SetColorModulation((cr*1.6)+0.3,(cg*1.6)+0.3,(cb*1.6)+0.3)
 	end
-	BaseClass.Draw(self, true)
+	BBaseClass.Draw(self) --, true)
 end
 
 function ENT:Use(ply)
@@ -349,7 +349,7 @@ function ENT:OnShoot()
 
 	if self.ProtectedPropShot == 6 and Safe(self) then
 		self:UnTape()
-	else
+	elseif not Safe(self)
 		self:UnTape()
 	end
 end
