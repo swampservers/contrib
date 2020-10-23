@@ -24,6 +24,7 @@ if CLIENT then
         if !IsValid(ply) or !IsValid(ply.IsTaseredBy) then return end
 
         local originvec, originang = ply:GetBonePosition(1)
+        
         if ply:IsPony() then
             ply:ManipulateBonePosition(0, Vector(0,0,-13))
         else
@@ -116,6 +117,9 @@ function SWEP:Think() -- remove the rope if the player goes too far
         if self.Owner:GetPos():DistToSqr(self.AttachedPlayer:GetPos()) > self.MaxHoldDist*self.MaxHoldDist or !self.AttachedPlayer:Alive() then
             self:RemoveWire()
         end
+    end
+    if self.Owner:InVehicle() then
+        self:RemoveWire()
     end
 end
 
