@@ -349,7 +349,7 @@ function ENT:OnShoot()
 
 	if self.ProtectedPropShot == 6 and Safe(self) then
 		self:UnTape()
-	elseif not Safe(self)
+	elseif not Safe(self) then
 		self:UnTape()
 	end
 end
