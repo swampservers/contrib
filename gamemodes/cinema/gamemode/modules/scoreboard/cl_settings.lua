@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 surface.CreateFont( "LabelBigger", { font = "Lato-Light", size = 24, weight = 200 } )
 surface.CreateFont( "LabelSmaller", { font = "Lato-Light", size = 20, weight = 200 } )

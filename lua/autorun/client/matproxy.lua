@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 -- function render.DrawingScreen()
 -- 	local t = render.GetRenderTarget()

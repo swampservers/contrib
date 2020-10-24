@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 local SprayThumbnails = {}
 local SprayList,SprayMeshManagerBase,selected,selectedbutton,page,pagecount

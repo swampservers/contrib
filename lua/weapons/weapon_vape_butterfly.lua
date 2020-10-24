@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 -- weapon_vape_buttefly.lua
 -- Defines a vape that flips like a butterfly knife

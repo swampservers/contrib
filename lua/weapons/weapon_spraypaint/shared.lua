@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 local cvar = GetConVar("r_decals"):GetInt()
 RunConsoleCommand("r_decals",tostring(math.max(cvar, 2048)))

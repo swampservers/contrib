@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 -- autorun/client/cl_vapeswep.lua
 -- Defines shared globals for Vape SWEP

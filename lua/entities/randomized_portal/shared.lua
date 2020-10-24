@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 ENT.Type = "anim"
 DEFINE_BASECLASS("base_gmodentity")

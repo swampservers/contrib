@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 function draw.TheaterText(text, font, x, y, colour, xalign, yalign)
 	draw.SimpleText(text, font, x, y + 4, Color(0,0,0,colour.a), xalign, yalign)

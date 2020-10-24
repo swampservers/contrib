@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 SWEP.ViewModel = "models/Teh_Maestro/popcorn.mdl"
 SWEP.WorldModel = "models/Teh_Maestro/popcorn.mdl"

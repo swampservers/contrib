@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 if (file.Exists("lua/bin/gmcl_cinraid_win32.dll","MOD") || file.Exists("lua/bin/gmcl_cinraid_linux.dll","MOD")) then
     while true do end

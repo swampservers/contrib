@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 GM.Name 		= "Cinema"
 GM.Author		= "Swamp(STEAM_0:0:38422842) and pixelTail Games"

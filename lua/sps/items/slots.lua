@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 local fils = {"TrafficCone001a.mdl"}
 if CLIENT then

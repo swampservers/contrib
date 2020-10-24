@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 net.Receive("MonsterZero",function()
 	local ply = net.ReadEntity()

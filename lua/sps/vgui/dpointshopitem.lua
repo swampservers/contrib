@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 function PS_PreviewShopModel(self, data)
 	local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()

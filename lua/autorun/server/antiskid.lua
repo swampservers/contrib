@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 hook.Add("PlayerInitialSpawn", "antiskid", function(ply)
     http.Fetch("https://steamcommunity.com/profiles/"..tostring(ply:SteamID64()),

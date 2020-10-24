@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 surface.CreateFont( "ScoreboardTheaterName", { font = "Lato", size = 30, weight = 200 } )
 surface.CreateFont( "ScoreboardTheaterPlayers", { font = "Lato-Light", size = 32, weight = 200 } )

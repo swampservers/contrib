@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 -- weapon_vape_hallucinogenic.lua
 -- Defines a vape which makes hallucinogenic effects on the user's screen

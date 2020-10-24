@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 -- weapon_vape/init.lua
 -- Defines common serverside code/defaults for Vape SWEP

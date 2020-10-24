@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 RegisterChatCommand({'ponyrp'}, function(ply, arg)
 	if IsValid(ply) and !Safe(ply) and !ply:InVehicle() and ply:Alive() then

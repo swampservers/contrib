@@ -1,4 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
 --[[__                                       _     
  / _| __ _  ___ ___ _ __  _   _ _ __   ___| |__  
