@@ -143,8 +143,8 @@ PropTrashLightData = {
 	}
 }
 
-if CLIENT then
-	function ENT:Think()
+function ENT:Think()
+	if CLIENT then
 		local light = PropTrashLightData[self:GetModel()]
 		if light and (self:GetTaped() or light.untaped) then
 			if EyePos():Distance(self:GetPos()) > (self:GetPos().z>-48 and 1000 or 3000) then return end
@@ -169,9 +169,10 @@ if CLIENT then
 				dlight.DieTime = CurTime() + 1
 			end
 		end
-	end
-	if IsChairEntity(self) and not self:CanExist() then
-		self:GetDriver():ExitVehicle()
+	else
+		if IsChairEntity(self) and not self:CanExist() then
+			self:GetDriver():ExitVehicle()
+		end
 	end
 end
 
