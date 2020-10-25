@@ -170,8 +170,8 @@ if CLIENT then
 			end
 		end
 	end
-	if IsValid((self.UseTable or {})[1]:GetDriver()) and not self:CanExist() then
-		(self.UseTable or {})[1]:GetDriver():ExitVehicle()
+	if IsChairEntity(self) and not self:CanExist() then
+		self:GetDriver():ExitVehicle()
 	end
 end
 
