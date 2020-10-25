@@ -170,31 +170,6 @@ net.Receive('PS_Row', function(length)
 	SetLoadingPlayerProperty(pi, "PS_Donation", net.ReadUInt(32))
 end)
 
-PointShopLatestNotification = ""
-PointShopLatestNotificationTime = -10
-
-net.Receive('PS_Notify', function(length)
-	LocalPlayerNotify(net.ReadString())
-end)
-
-function LocalPlayerNotify(str)
-	print(str)
-	PointShopLatestNotification = str
-	PointShopLatestNotificationTime = CurTime()
-end
-
-
-hook.Add( "PostRenderVGUI", "HUDPaint_PSNotification", function()
-	local dt = CurTime() - PointShopLatestNotificationTime
-	local a = math.Clamp(math.min(dt*4, 5-dt),0,1)
-	if a>0 then
-		surface.SetFont("ChatFont")
-		local w,h = surface.GetTextSize(PointShopLatestNotification)
-		draw.WordBox(8, (ScrW()-(16+w))*0.5, ScrH()-50, PointShopLatestNotification, "ChatFont", Color(0,0,0,150*a), Color(255,255,255,255*a))
-	end
-end )
-
-
 PS_CSModels = PS_CSModels or {}
 
 hook.Add('Think', 'PS_Cleanup', function()
