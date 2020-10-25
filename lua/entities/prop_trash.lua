@@ -170,8 +170,8 @@ if CLIENT then
 			end
 		end
 	end
-	if IsValid((self.UseTable or {})[1]) and not self:CanExist() then
-		(self.UseTable or {})[1]:ExitVehicle()
+	if IsValid((self.UseTable or {})[1]:GetDriver()) and not self:CanExist() then
+		(self.UseTable or {})[1]:GetDriver():ExitVehicle()
 	end
 end
 
