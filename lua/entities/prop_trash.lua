@@ -91,7 +91,7 @@ function ENT:Initialize()
 
 		self:UnTape()
 
-		self.ProtectedPropShot = 0
+		self.Shots = 6
 
 		if PropTrashExplosiveModels[self:GetModel()] then
 			self.OnShoot = function(this)
@@ -342,12 +342,15 @@ function ENT:CanTape(userid)
 	return ((self:GetOwnerID() == userid) and (lown == nil) and (self:GetLocationClass() == TRASHLOC_BUILD)) or (lown == userid)
 end
 
-function ENT:OnShoot()
+function ENT:OnShoot(att)
 	if Safe(self) then
-		self.ProtectedPropShot = self.ProtectedPropShot + 1
+		self.Shots = self.Shots - 1
 	end
-
-	if self.ProtectedPropShot == 6 or not Safe(self) then
+	if self.Shots < 1 or not Safe(self) then
 		self:UnTape()
+	else
+		if IsValid(att) then att:Notify(tostring(self.Shots)) end
 	end
+	
+	timer.Simple(10, function() if IsValid(self) then self.Shots = self.Shots+1 end end)
 end
