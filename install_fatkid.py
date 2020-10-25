@@ -14,7 +14,7 @@ for f in os.listdir():
         shutil.rmtree(f)
 
 for srcroot in list(os.listdir()):
-    if f.startswith("src_"):
+    if srcroot.startswith("src_"):
         os.chdir(os.path.join(basedir, srcroot))
         for root, dirs, files in os.walk(".", topdown=False):
             if root == "." or ".git" in root:
