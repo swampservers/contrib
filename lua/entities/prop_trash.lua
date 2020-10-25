@@ -169,7 +169,7 @@ if CLIENT then
 			end
 		end
 	end
-	if IsValid((self.UseTable or {})[1]) then
+	if IsValid((self.UseTable or {})[1]) and not self:CanExist() then
 		(self.UseTable or {})[1]:ExitVehicle()
 	end
 end
