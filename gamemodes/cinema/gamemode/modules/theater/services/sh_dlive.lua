@@ -63,9 +63,13 @@ if CLIENT then
 		function panel:OnDocumentReady()
 			panel:RunJavascript([[
 				if(typeof VOLUME=="undefined")VOLUME=]]..theater.GetVolume()..[[;
+				barhidden = false;
 			
 				setInterval(function(){
-					document.getElementsByClassName('dplayer-video dplayer-video-current')[0].volume=VOLUME*0.01;
+					if(document.getElementsByClassName('dplayer-video dplayer-video-current').length)document.getElementsByClassName('dplayer-video dplayer-video-current')[0].volume=VOLUME*0.01;
+					
+					var bar = document.getElementsByClassName('dplayer dplayer-no-danmaku dplayer-live dplayer-playing');
+					if(bar.length && !bar[0].classList.contains('dplayer-hide-controller') && !barhidden)bar[0].classList.add('dplayer-hide-controller');barhidden=true;
 					
 					if(document.getElementsByClassName('chatroom-right').length)document.getElementsByClassName('chatroom-right')[0].style.display='none';
 					if(document.getElementsByClassName('application--wrap').length)document.getElementsByClassName('application--wrap')[0].children[0].style.display='none';

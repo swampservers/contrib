@@ -46,8 +46,8 @@ if CLIENT then
 					elseif vpanel.phase == 1 then
 						vpanel:RunJavascript("console.log('URL:'+document.getElementsByClassName('mirror_dl').item(0).href);")
 						vpanel:RunJavascript("console.log('TITLE:'+document.title);")
-						vpanel:RunJavascript("var swampvid=document.getElementById('example_video_1_html5_api');swampvid.volume=0;swampvid.play();console.log('DURATION:'+swampvid.duration);function ReloadIfNeed(){};") --videojs player
-						vpanel:RunJavascript("var jwp=jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());") --jwplayer
+						vpanel:RunJavascript("if(!swampvid){var swampvid=document.getElementById('example_video_1_html5_api');}if(swampvid){swampvid.volume=0;swampvid.play();console.log('DURATION:'+swampvid.duration);function ReloadIfNeed(){};}") --videojs player
+						vpanel:RunJavascript("if(typeof jwplayer === 'function'){var jwp=jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());}") --jwplayer
 						return
 					end
 				end
@@ -55,6 +55,7 @@ if CLIENT then
 			
 			function vpanel:ConsoleMessage(msg)
 				if msg then
+					if (LocalPlayer().videoDebug) then print(msg) end
 					if self.phase == 0 and msg != 'Title:Just a moment...' then
 						print("Passed Cloudflare...")
 						self.phase = 1
@@ -63,6 +64,15 @@ if CLIENT then
 						if string.StartWith(msg,"URL:") and not self.data then
 							self.data = msg:sub(5,-1)
 							print("URL: "..self.data)
+							http.Fetch(self.data,function(body,size,headers,code) --for whatever reason, 4anime just has completely inaccessible anime eps that won't ever load in the player
+								if (code == 403) then
+									LocalPlayer():PrintMessage(HUD_PRINTTALK,"[red]The video file is currently inaccessible")
+									print("File returned a 403 error")
+									print("Failed")
+									callback()
+									self:Remove()
+								end
+							end,function() end)
 						end
 						if string.StartWith(msg,"DURATION:") and not self.duration then
 							self.duration = msg:sub(10,-1)
