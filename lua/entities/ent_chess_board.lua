@@ -706,8 +706,8 @@ function ENT:Think()
 			self:SetBlackWager( -1 )
 		end
 		if (not self.NextUnlock) or (CurTime()>self.NextUnlock) then
-			self.WhiteSeat:Fire( "Unlock", 0, "" )
-			self.BlackSeat:Fire( "Unlock", 0, "" )
+			self.WhiteSeat:Fire( "Unlock", 0, 0 )
+			self.BlackSeat:Fire( "Unlock", 0, 0 )
 			self.NextUnlock = CurTime()+10
 		end
 		
