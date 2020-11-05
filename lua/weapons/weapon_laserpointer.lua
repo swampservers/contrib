@@ -323,8 +323,10 @@ function LaserPointer_DrawBeam(ply,wep,origin,dir,color,phase,startoverride)
 		if(startoverride and type(startoverride) == "Vector")then beamstart = startoverride end 
 		if(phase == 0 or beammode)then	
 			local viewnormal = (EyePos() - beamstart):GetNormal()
-			render.DrawQuadEasy( beamstart + viewnormal*(basesize/2), viewnormal, basesize/2,basesize/2, color,  math.Rand(0,360) )						
-			render.DrawQuadEasy( beamstart, viewnormal*(basesize/2), basesize/4,basesize/4, cwh,  math.Rand(0,360) )			
+			local startsize = basesize / 2
+			--if(phase == 0)then startsize = startsize / 3 end
+			render.DrawQuadEasy( beamstart + viewnormal*(basesize/2), viewnormal, startsize/2,startsize/2, color,  math.Rand(0,360) )						
+			render.DrawQuadEasy( beamstart, viewnormal*(basesize/2), startsize/4,startsize/4, cwh,  math.Rand(0,360) )			
 		end
 		render.SetMaterial(beam_material)
 		local dist = math.Rand(0.45,0.55)
@@ -352,7 +354,6 @@ function LaserPointer_DrawBeam(ply,wep,origin,dir,color,phase,startoverride)
 				local viewnormal = (EyePos() - beamend):GetNormal()
 				render.DrawQuadEasy( beamend + (viewnormal * 4), tr.HitNormal, basesize,basesize, color,  math.Rand(0,360) )						
 				render.DrawQuadEasy( beamend + (viewnormal * 4), tr.HitNormal, basesize/2,basesize/2, cwh,  math.Rand(0,360) )						
-				
 				render.DrawQuadEasy( beamend + (viewnormal * 4), viewnormal, basesize,basesize, color,  math.Rand(0,360) )						
 				render.DrawQuadEasy( beamend + (viewnormal * 4), viewnormal, basesize/2,basesize/2, cwh,  math.Rand(0,360) )						
 				--put the above 4 lines in else for if(reflect) if you want it to only place a dot on the end 
