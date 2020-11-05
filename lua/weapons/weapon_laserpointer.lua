@@ -151,6 +151,7 @@ function SWEP:SecondaryAttack()
 	if(can != false)then 
 	self:SetBeamMode(!self:GetBeamMode())
 	self:ButtonSound(true)
+	self.LastRightClick = true
 	end
 	self:SetNextSecondaryFire(CurTime() + 0.2)
 end
@@ -173,16 +174,19 @@ function SWEP:Reload()
 end
 
 hook.Add( "KeyPress", "LaserColorPicker", function( ply, key )
-if(key == IN_RELOAD and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_laserpointer")then
-ply:GetActiveWeapon():ChangeColor()
-ply:GetActiveWeapon():ButtonSound(true)
-end
+	if(key == IN_RELOAD and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_laserpointer")then
+		ply:GetActiveWeapon():ChangeColor()
+		ply:GetActiveWeapon():ButtonSound(true)
+	end
 end )
 
 hook.Add( "KeyRelease", "LaserColorPicker", function( ply, key )
-if((key == IN_RELOAD or key == IN_ATTACK2) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_laserpointer")then
-ply:GetActiveWeapon():ButtonSound(false)
-end
+	if((key == IN_RELOAD or key == IN_ATTACK2) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_laserpointer")then
+		if(ply:GetActiveWeapon().LastRightClick)then
+		ply:GetActiveWeapon().LastRightClick = nil
+			ply:GetActiveWeapon():ButtonSound(false)
+		end
+	end
 end )
 
 
@@ -613,14 +617,15 @@ end
 
 
 function SWEP:UpdateVMFOV()
+
 end
 
 function SWEP:CalcView(ply,pos,ang,fov)
 LaserPointer_FOV_CVar = LaserPointer_FOV_CVar or GetConVar( "fov_desired" )
 		if(self.FOVVar)then 
-			self.ViewModelFOV = LaserPointer_FOV_CVar:GetFloat() 
-		end
---self.ViewModelFOV = fov
+			self.ViewModelFOV = LaserPointer_FOV_CVar:GetFloat() --this one seems to fail sometimes?
+		end 
+--self.ViewModelFOV = fov -- this one seems to disconnect while suit zooming
 end
 
 function SWEP:GetViewModelPosition(epos, eang)
