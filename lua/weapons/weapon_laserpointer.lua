@@ -623,9 +623,9 @@ end
 function SWEP:CalcView(ply,pos,ang,fov)
 LaserPointer_FOV_CVar = LaserPointer_FOV_CVar or GetConVar( "fov_desired" )
 		if(self.FOVVar)then 
-			self.ViewModelFOV = LaserPointer_FOV_CVar:GetFloat() --this one seems to fail sometimes?
+			--self.ViewModelFOV = LaserPointer_FOV_CVar:GetFloat() --this one seems to fail sometimes?
 		end 
---self.ViewModelFOV = fov -- this one seems to disconnect while suit zooming
+self.ViewModelFOV = fov -- this one seems to disconnect while suit zooming
 end
 
 function SWEP:GetViewModelPosition(epos, eang)
