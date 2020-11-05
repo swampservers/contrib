@@ -46,6 +46,16 @@ PS_WeaponProduct({
 
 ]]
 
+local meta = FindMetaTable("Entity")
+if meta.LaserPointerOrigSetMaterial == nil then
+	meta.LaserPointerOrigSetMaterial = meta.SetMaterial
+	meta.SetMaterial = function(self, materialName, forceMaterial)
+		if self:GetClass():sub(1,19)=="weapon_laserpointer" and materialName=="Models/effects/vol_light001" then return end
+		self:LaserPointerOrigSetMaterial(materialName, forceMaterial)
+	end
+end
+--haha what if we made this into a hook
+
 
 hook.Add("PlayerCanHaveLaserBeams","DisableBeamModeInTheaters",function(ply,wep)
 	--if(ply.InTheater and ply.InTheater())then return false	end
@@ -292,7 +302,7 @@ function LaserPointer_DrawBeam(ply,wep,origin,dir,color,phase,startoverride)
 		local bigstart = false
 		local basesize = 8
 		local beammode = wep:GetBeamMode()
-		if(beammode)then basesize = 16 end
+		if(beammode)then basesize = 12 end
 		local tr = util.TraceLine( trace )
 		local beamstart = origin
 		local beamend = tr.HitPos
@@ -300,8 +310,6 @@ function LaserPointer_DrawBeam(ply,wep,origin,dir,color,phase,startoverride)
 			local dot = dir:Dot(LocalPlayer():GetAimVector()*-1) 
 			if(tr.Entity:IsPlayer() and math.deg(math.acos(dot)) < 45)then
 				local hitply = tr.Entity
-				--print(hitply:GetHitBoxHitGroup(tr.HitBox,hitply:GetHitboxSet()))
-				--print(hitply:GetBoneName(hitply:GetHitBoxBone(tr.HitBox,hitply:GetHitboxSet())))
 				if(hitply:GetHitBoxHitGroup(tr.HitBox,hitply:GetHitboxSet()) == HITGROUP_HEAD or pony_head_hitbones[hitply:GetBoneName(hitply:GetHitBoxBone(tr.HitBox,hitply:GetHitboxSet()))])then 
 					if(!tr.Entity:ShouldDrawLocalPlayer())then
 						beamend = EyePos() + (origin-EyePos()):GetNormalized()*16
@@ -315,8 +323,8 @@ function LaserPointer_DrawBeam(ply,wep,origin,dir,color,phase,startoverride)
 		if(startoverride and type(startoverride) == "Vector")then beamstart = startoverride end 
 		if(phase == 0 or beammode)then	
 			local viewnormal = (EyePos() - beamstart):GetNormal()
-			render.DrawQuadEasy( beamstart, viewnormal, basesize/2,basesize/2, color,  math.Rand(0,360) )						
-			render.DrawQuadEasy( beamstart, viewnormal, basesize/4,basesize/4, cwh,  math.Rand(0,360) )			
+			render.DrawQuadEasy( beamstart + viewnormal*(basesize/2), viewnormal, basesize/2,basesize/2, color,  math.Rand(0,360) )						
+			render.DrawQuadEasy( beamstart, viewnormal*(basesize/2), basesize/4,basesize/4, cwh,  math.Rand(0,360) )			
 		end
 		render.SetMaterial(beam_material)
 		local dist = math.Rand(0.45,0.55)
@@ -328,8 +336,9 @@ function LaserPointer_DrawBeam(ply,wep,origin,dir,color,phase,startoverride)
 				local dir2 = (beamend-beamstart):GetNormal()
 				local bdist = math.min(16,beamstart:Distance(beamend))
 				local bcut = 1-(bdist / 16)
-				render.DrawBeam( beamstart, beamstart+dir2*bdist, basesize/8, dist, 1-math.Clamp(bcut,0,1)*0.5, color)
-				render.DrawBeam( beamstart, beamstart+dir2*bdist, basesize/16, dist, 1-math.Clamp(bcut,0,1)*0.5, cwh)
+				local viewnormal = (EyePos() - beamstart):GetNormal()
+				render.DrawBeam( beamstart + viewnormal*(basesize/2), beamstart+dir2*bdist, basesize/8, dist, 1-math.Clamp(bcut,0,1)*0.5, color)
+				render.DrawBeam( beamstart + viewnormal*(basesize/2), beamstart+dir2*bdist, basesize/16, dist, 1-math.Clamp(bcut,0,1)*0.5, cwh)
 			end
 		end	
 		render.SetMaterial(laser_material)
@@ -340,11 +349,12 @@ function LaserPointer_DrawBeam(ply,wep,origin,dir,color,phase,startoverride)
 				local dir3 = tr.Normal - 2* tr.Normal:Dot(tr.HitNormal)*tr.HitNormal	
 				LaserPointer_DrawBeam(ply,wep,newstart,dir3,color,phase+1,nil)
 			else
-				render.DrawQuadEasy( beamend + ((EyePos() - beamend):GetNormal() * 4), tr.HitNormal, basesize,basesize, color,  math.Rand(0,360) )						
-				render.DrawQuadEasy( beamend + ((EyePos() - beamend):GetNormal() * 4), tr.HitNormal, basesize/2,basesize/2, cwh,  math.Rand(0,360) )						
 				local viewnormal = (EyePos() - beamend):GetNormal()
-				render.DrawQuadEasy( beamend + ((EyePos() - beamend):GetNormal() * 4), viewnormal, basesize,basesize, color,  math.Rand(0,360) )						
-				render.DrawQuadEasy( beamend + ((EyePos() - beamend):GetNormal() * 4), viewnormal, basesize/2,basesize/2, cwh,  math.Rand(0,360) )						
+				render.DrawQuadEasy( beamend + (viewnormal * 4), tr.HitNormal, basesize,basesize, color,  math.Rand(0,360) )						
+				render.DrawQuadEasy( beamend + (viewnormal * 4), tr.HitNormal, basesize/2,basesize/2, cwh,  math.Rand(0,360) )						
+				
+				render.DrawQuadEasy( beamend + (viewnormal * 4), viewnormal, basesize,basesize, color,  math.Rand(0,360) )						
+				render.DrawQuadEasy( beamend + (viewnormal * 4), viewnormal, basesize/2,basesize/2, cwh,  math.Rand(0,360) )						
 				--put the above 4 lines in else for if(reflect) if you want it to only place a dot on the end 
 			end
 		end
