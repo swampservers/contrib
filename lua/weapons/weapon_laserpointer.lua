@@ -158,7 +158,7 @@ hook.Add("EntityRemoved","LaserPointerRemove",function(ent)
 end)
 
 function SWEP:SecondaryAttack() 
-	local can = hook.Call("PlayerCanHaveLaserBeams",self:GetOwner(),self)
+	local can = hook.Call("PlayerCanHaveLaserBeams",nil,self:GetOwner(),self)
 	if(can != false)then 
 	self:SetBeamMode(!self:GetBeamMode())
 	self:ButtonSound(true)
@@ -213,7 +213,7 @@ end
 function SWEP:PrimaryAttack( )
 	if(self:Clip1() <= 0)then return true end
 		if(self:GetOnState() != true)then
-			local can = hook.Call("PlayerCanHaveLaserBeams",self:GetOwner(),self)
+			local can = hook.Call("PlayerCanHaveLaserBeams",nil,self:GetOwner(),self)
 			if(can == false)then self:SetBeamMode(false) end
 			self:SetOnState(true)
 			self:ButtonSound(true)
@@ -587,12 +587,14 @@ function SWEP:DrawWorldModel(query)
 				oang:RotateAroundAxis(oang:Forward(),12)
 				oang:RotateAroundAxis(oang:Up(),20)
 			end	
-		else		
-			oang:RotateAroundAxis(oang:Forward(),90)
-			oang:RotateAroundAxis(oang:Right(),90)
-			opos = opos + (oang:Forward()*1) + (oang:Up()*-3) + (oang:Right()*1.5)
-			oang:RotateAroundAxis(oang:Forward(),69)
-			oang:RotateAroundAxis(oang:Up(),10)	
+		else	
+			if(bn!= 0)then
+				oang:RotateAroundAxis(oang:Forward(),90)
+				oang:RotateAroundAxis(oang:Right(),90)
+				opos = opos + (oang:Forward()*1) + (oang:Up()*-3) + (oang:Right()*1.5)
+				oang:RotateAroundAxis(oang:Forward(),69)
+				oang:RotateAroundAxis(oang:Up(),10)	
+			end
 		end
 		oang = (ply:GetEyeTrace().HitPos - opos):Angle()
 		oang:RotateAroundAxis(oang:Right(),-90)
