@@ -392,8 +392,21 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     render.SetMaterial(beam_material)
     local dist = math.Rand(0.45, 0.55)
     if (beammode) then
-        render.DrawBeam(beamstart, beamend, basesize / 4, dist, dist, color)
-        render.DrawBeam(beamstart, beamend, basesize / 8, dist, dist, cwh)
+        render.DrawBeam(beamstart,
+			beamend,
+			basesize / 4,
+			dist,
+			dist,
+			color
+		)
+        render.DrawBeam(
+			beamstart,
+			beamend,
+			basesize / 8,
+			dist,
+			dist,
+			cwh
+		)
     else
         if (phase == 0) then -- only the first beam is rendered in low beam mode, only a certain distance
             local dir2 = (beamend - beamstart):GetNormal()
@@ -428,7 +441,12 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
         else
             --put the above 4 lines in else for if(reflect) if you want it to only place a dot on the end
             local viewnormal = (EyePos() - beamend):GetNormal()
-            render.DrawQuadEasy(beamend + (viewnormal * 4), tr.HitNormal, basesize, basesize, color, math.Rand(0, 360))
+			render.DrawQuadEasy(beamend + (viewnormal * 4),
+				tr.HitNormal,
+				basesize, 
+				basesize, color,
+				math.Rand(0, 360)
+			)
             render.DrawQuadEasy(
                 beamend + (viewnormal * 4),
                 tr.HitNormal,
@@ -437,7 +455,14 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
                 cwh,
                 math.Rand(0, 360)
             )
-            render.DrawQuadEasy(beamend + (viewnormal * 4), viewnormal, basesize, basesize, color, math.Rand(0, 360))
+            render.DrawQuadEasy(
+				beamend + (viewnormal * 4),
+				viewnormal, 
+				basesize,
+				basesize,
+				color,
+				math.Rand(0, 360)
+			)
             render.DrawQuadEasy(
                 beamend + (viewnormal * 4),
                 viewnormal,
