@@ -222,6 +222,7 @@ end
 
 function SWEP:PrimaryAttack()
     if (self:Clip1() <= 0) then
+		self:Remove()
         return true
     end
     if (self:GetOnState() ~= true) then
@@ -434,7 +435,7 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     end
     render.SetMaterial(laser_material)
     if ((tr.HitWorld or tr.Hit) and not tr.HitSky) then
-        local reflect = tr.Entity:GetClass() == "func_reflective_glass"
+        local reflect = tr.Entity:GetClass() == "func_reflective_glass" or tr.MatType == MAT_GLASS
         if (reflect) then
             local newstart = tr.HitPos
             local dir3 = tr.Normal - 2 * tr.Normal:Dot(tr.HitNormal) * tr.HitNormal
@@ -496,7 +497,7 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase) -- for damagenot
         wep:MakePlane(tr.HitPos + (origin - tr.HitPos):GetNormal() * 1000, ply:GetPos())
     end
     if (tr.HitWorld or tr.Hit) then
-        local reflect = tr.Entity:GetClass() == "func_reflective_glass"
+        local reflect = tr.Entity:GetClass() == "func_reflective_glass"  or tr.MatType == MAT_GLASS
         if (reflect) then
             local newstart = tr.HitPos
             local dir3 = tr.Normal - 2 * tr.Normal:Dot(tr.HitNormal) * tr.HitNormal
