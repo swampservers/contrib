@@ -58,6 +58,14 @@ PS_WeaponProduct({
 	class = 'weapon_taser'
 })
 
+PS_WeaponProduct({
+	name = 'Laser Pointer',
+	description = "Makes a funny dot. Keep away from eyes. Right click for lethal beam. Re-buy for battery refill.",
+	price = 350,
+	model = 'models/brian/laserpointer.mdl',
+	class = 'weapon_laserpointer'
+})
+
 PS_GenericProduct({
 	class = 'mystery',
 	price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
