@@ -505,7 +505,7 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase) -- for damagenot
                     d:SetDamage(1)
                     d:SetAttacker(ply)
                     d:SetInflictor(wep)
-                    d:SetDamageType(DMG_ENERGYBEAM)
+                    d:SetDamageType(DMG_DISSOLVE)
                     tr.Entity:TakeDamageInfo(d)
                 end
             end
