@@ -332,7 +332,7 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     end
     local trace = {}
     trace.start = origin
-    trace.endpos = origin + (dir * 20000)
+    trace.endpos = origin + (dir * 60000)
 	trace.mask = MASK_OPAQUE_AND_NPCS
     if (phase == 0) then
         trace.filter = ply
