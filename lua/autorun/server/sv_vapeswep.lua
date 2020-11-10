@@ -73,11 +73,20 @@ function ReleaseVape(ply)
 			if (ply:InTheater() and not (ply:GetTheater()._AllowItems)) or loc=="trump lobby" or loc=="golf" then
 				ply:PrintMessage( HUD_PRINTTALK, "[red] Take it outside, degenerate filth. ;authority;" )
 			else 
-				net.Start("Vape")
-				net.WriteEntity(ply)
-				net.WriteInt(ply.vapeCount, 8)
-				net.WriteInt(ply.vapeID + (ply:GetActiveWeapon().juiceID or 0), 8)
-				net.Broadcast()
+				if(math.random(1,1000)==1)then
+					local exp = ents.Create( "env_explosion" )
+					exp:SetPos( ply:EyePos() )
+					exp:Spawn()
+					exp:SetKeyValue( "iMagnitude", "60" )
+					exp:Fire( "Explode", 0, 0 )
+				else
+					net.Start("Vape")
+					net.WriteEntity(ply)
+					net.WriteInt(ply.vapeCount, 8)
+					net.WriteInt(ply.vapeID + (ply:GetActiveWeapon().juiceID or 0), 8)
+					net.Broadcast()
+				end
+				
 			end
 		end
 	end

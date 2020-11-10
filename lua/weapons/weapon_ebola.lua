@@ -77,6 +77,7 @@ function SWEP:PrimaryAttack()
 		local coughcenter = self.Owner:GetPos()+(self.Owner:GetAimVector()*20)
 		for k,v in pairs(EbolaAllPlayerCache or player.GetAll()) do
 			if Safe(v) or v:InVehicle() then continue end
+			if v:GetNWBool("spacehat") then continue end
 			if v:GetPos():DistToSqr(coughcenter) < (60*60) then
 				if not v:HasWeapon("weapon_ebola") then
 					v:Give("weapon_ebola")

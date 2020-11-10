@@ -69,6 +69,8 @@ function SWEP:PrimaryAttack()
 			net.WriteEntity(self.Owner)
 		net.Broadcast()
 		self.Owner:SetHealth(math.min(self.Owner:Health() + 10,self.Owner:GetMaxHealth()))
+		self.Owner.BeansEaten = self.Owner.BeansEaten or 0
+		self.Owner.BeansEaten = self.Owner.BeansEaten + 1
 	end
 	self.Owner.ChewScale = 1
 	self.Owner.ChewStart = CurTime()

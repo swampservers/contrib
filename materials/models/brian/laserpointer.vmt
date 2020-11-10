@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	$basetexture "models/brian/laserpointer"
+
+	$bumpmap "models/brian/laserpointer_mask"
+	$phong "1"
+	$phongboost "1"
+	$phongfresnelranges "[0.05 0.5 1]"
+}
