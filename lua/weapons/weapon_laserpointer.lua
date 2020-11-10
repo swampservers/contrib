@@ -336,6 +336,7 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     local trace = {}
     trace.start = origin
     trace.endpos = origin + (dir * 20000)
+	trace.mask = MASK_VISIBLE
     if (phase == 0) then
         trace.filter = ply
     end
@@ -486,6 +487,7 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase) -- for damagenot
     local trace = {}
     trace.start = origin
     trace.endpos = origin + (dir * 60000)
+	trace.mask = MASK_VISIBLE
     if (phase == 0) then
         trace.filter = ply
     end
