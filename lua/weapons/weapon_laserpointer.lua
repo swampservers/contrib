@@ -221,6 +221,9 @@ function SWEP:ChangeColor()
 end
 
 function SWEP:PrimaryAttack()
+    if (self:Clip1() <= 0) then
+        return true
+    end
     if (self:GetOnState() ~= true) then
         local can = hook.Call("PlayerCanHaveLaserBeams", nil, self:GetOwner(), self)
         if (can == false) then
@@ -484,7 +487,7 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase) -- for damagenot
     local trace = {}
     trace.start = origin
     trace.endpos = origin + (dir * 60000)
-	trace.mask = MASK_OPAQUE_AND_NPCS 
+  	trace.mask = MASK_OPAQUE_AND_NPCS 
     if (phase == 0) then
         trace.filter = ply
     end
