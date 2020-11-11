@@ -35,7 +35,7 @@ function SWEP:PrimaryAttack()
 		local stime = SoundDuration("fart/shitpants.wav")
 		self:SetNextPrimaryFire(CurTime() +10000)
 		self:SetNextSecondaryFire(CurTime() +10000)
-		self:EmitSound("fart/shitpants.wav")
+		self:EmitSound("fart/shitpants.wav",200,math.random(90,110),1)
 		local point = self:GetOwner():GetPos()
 		
 		if(IsValid(self) and SERVER)then self:MakeStink(self:GetOwner(),point) end
