@@ -61,7 +61,7 @@ PS_WeaponProduct({
 PS_WeaponProduct({
 	name = 'Laser Pointer',
 	description = "Makes a funny dot. Keep away from eyes. Right click for lethal beam. Re-buy for battery refill.",
-	price = 350,
+	price = 500,
 	ammotype = "weapon_laserpointer",
 	model = 'models/brian/laserpointer.mdl',
 	class = 'weapon_laserpointer'
