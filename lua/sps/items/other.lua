@@ -58,13 +58,14 @@ PS_WeaponProduct({
 	class = 'weapon_taser'
 })
 
-PS_WeaponProduct({
+PS_WeaponAndAmmoProduct({
 	name = 'Laser Pointer',
 	description = "Makes a funny dot. Keep away from eyes. Right click for lethal beam. Re-buy for battery refill.",
 	price = 500,
-	ammotype = "weapon_laserpointer",
+	ammotype = "laserpointer",
 	model = 'models/brian/laserpointer.mdl',
-	class = 'weapon_laserpointer'
+	class = 'weapon_laserpointer',
+	amount = 1000
 })
 
 PS_GenericProduct({
