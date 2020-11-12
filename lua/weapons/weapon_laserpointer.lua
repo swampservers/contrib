@@ -17,9 +17,9 @@ SWEP.WorldModel = Model("models/brian/laserpointer.mdl")
 SWEP.UseHands = false
 
 SWEP.Primary.ClipSize = 1000
-SWEP.Primary.DefaultClip = 1000
+SWEP.Primary.DefaultClip = 2000
 SWEP.Primary.Automatic = true
-SWEP.Primary.Ammo = "none"
+SWEP.Primary.Ammo = "laserpointer"
 
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
@@ -32,7 +32,8 @@ SWEP.ClickSound = Sound("Weapon_Pistol.Empty")
 SWEP.UnClickSound = Sound("Weapon_AR2.Empty")
 SWEP.DrawCrosshair = false
 SWEP.BounceWeaponIcon = false
-SWEP.LaserMask = MASK_SHOT
+SWEP.LaserMask = nil --MASK_SHOT
+
 -- PlayerCanHaveLaserBeams is a hook used for this. the argument is just ply
 -- return false on this one and players won't be able to make their laser beam fully visible and lethal using right mouse
 hook.Add("PlayerCanHaveLaserBeams","DisableBeamModeInTheaters",function(ply, wep)
@@ -60,6 +61,21 @@ if (CLIENT) then
 end
 
 
+hook.Add("Initialize","AddLaserAmmo",function()
+
+game.AddAmmoType( {
+	name = "laserpointer",
+	dmgtype = DMG_DISSOLVE,
+	tracer = TRACER_NONE,
+	plydmg = 0,
+	npcdmg = 0,
+	force = 2000,
+	maxcarry = 10000,
+	minsplash = 10,
+	maxsplash = 5
+} )
+
+end)
 
 function SWEP:ButtonSound(state)
 	local clicksound = self.ClickSound
@@ -138,8 +154,34 @@ hook.Add("KeyRelease","LaserColorPicker",function(ply, key)
 	end
 end)
 
+function SWEP:GetBattery()
+	if(IsValid(self:GetOwner()))then return self:GetOwner():GetAmmoCount("laserpointer") end
+	return 0
+end
+
+function SWEP:SetBattery(num)
+	if(IsValid(self:GetOwner()))then
+	self:GetOwner():SetAmmo( num, "laserpointer" )
+	end
+end
+
+
+function SWEP:AddBattery(num)
+	if(IsValid(self:GetOwner()))then
+	self:SetBattery(self:GetBattery() + num)
+	end
+end
+
+function SWEP:GetFullBattery()
+	return self.Primary.ClipSize
+end
+
+function SWEP:EquipAmmo(ply)
+	ply:SetAmmo(ply:GetAmmoCount("laserpointer")+self:GetFullBattery(),"laserpointer")
+end
+
 function SWEP:PrimaryAttack()
-	if (self:Clip1() <= 0) then
+	if (self:GetBattery() <= 0) then
 		return true
 	end
 	if (self:GetOnState() ~= true) then
@@ -156,7 +198,7 @@ function SWEP:PrimaryAttack()
 	if (self:GetBeamMode()) then
 		take = 4
 	end
-	self:SetClip1(math.max(self:Clip1() - take, 0))
+	self:SetBattery(math.max(self:GetBattery() - take, 0))
 	if (self:GetBeamMode()) then
 		LaserPointer_SVBeam(ply, self, ply:EyePos(), ply:GetAimVector())
 	end
@@ -537,13 +579,6 @@ function SWEP:GetLaserColor()
 	return Color(255, 0, 0)
 end
 
-function SWEP:EquipAmmo(ply)
-	local wpn = ply:GetWeapon("weapon_laserpointer")
-	if (IsValid(wpn)) then
-		wpn:SetClip1(math.min(wpn:Clip1() + self:GetMaxClip1(), self:GetMaxClip1() * 9.99))
-	end
-end
-
 if (CLIENT) then
 	function draw.Circle(x, y, radius, seg)
 		local cir = {}
@@ -577,6 +612,25 @@ if (CLIENT) then
 	end
 end
 
+if(CLIENT)then
+surface.CreateFont( "laserpointer_display15", {
+	font = "Roboto", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+	extended = false,
+	size = 20,
+	weight = 1500,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false,
+})
+
 function SWEP:PostDrawViewModel(vm, weapon, ply)
 	local pos, ang = vm:GetPos(), vm:GetAngles()
 	render.SetMaterial(laser_material)
@@ -589,28 +643,23 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 	surface.SetDrawColor(color_black)
 	local w, h = 54, 40
 	surface.DrawRect(-w / 2, -h / 2, w, h)
-	if (self:Clip1() > self:GetMaxClip1() * 0.1 or math.sin(math.rad(CurTime() * 720)) > 0) then
-		draw.SimpleText(
-			math.Round((self:Clip1() / self:GetMaxClip1()) * 100, 0) .. "%",
-			"Trebuchet24",
-			0,
-			9,
-			self:GetLaserColor(),
-			TEXT_ALIGN_CENTER,
-			TEXT_ALIGN_CENTER
-		)
-	else
-		local indcolor = table.Copy(self:GetLaserColor())
-		draw.SimpleText(
-			math.Round((self:Clip1() / self:GetMaxClip1()) * 100, 0) .. "%",
-			"Trebuchet24",
+	local indcolor = table.Copy(self:GetLaserColor())
+	local font = "laserpointer_display15"
+	local psuf = "%"
+	local pval = math.Round((self:GetBattery() / self:GetFullBattery()) * 100, 0)
+	if(pval > 999)then font = "laserpointer_display15"  end
+	if (pval < 15 and math.sin(math.rad(CurTime() * 720)) > 0) then
+	indcolor.a = 128
+	end
+	draw.SimpleText(
+			pval .. psuf,
+			font,
 			0,
 			9,
 			indcolor,
 			TEXT_ALIGN_CENTER,
 			TEXT_ALIGN_CENTER
 		)
-	end
 	surface.SetDrawColor(self:GetLaserColor())
 	local indcolor = table.Copy(self:GetLaserColor())
 	if (not self:GetBeamMode()) then
