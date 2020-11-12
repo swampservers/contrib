@@ -33,6 +33,7 @@ SWEP.UnClickSound = Sound("Weapon_AR2.Empty")
 SWEP.DrawCrosshair = false
 SWEP.BounceWeaponIcon = false
 SWEP.LaserMask = nil --MASK_SHOT
+
 -- PlayerCanHaveLaserBeams is a hook used for this. the argument is just ply
 -- return false on this one and players won't be able to make their laser beam fully visible and lethal using right mouse
 hook.Add("PlayerCanHaveLaserBeams","DisableBeamModeInTheaters",function(ply, wep)
@@ -59,6 +60,7 @@ if (CLIENT) then
 	end
 end
 
+
 hook.Add("Initialize","AddLaserAmmo",function()
 
 game.AddAmmoType( {
@@ -74,7 +76,6 @@ game.AddAmmoType( {
 } )
 
 end)
-
 
 function SWEP:ButtonSound(state)
 	local clicksound = self.ClickSound
@@ -578,7 +579,6 @@ function SWEP:GetLaserColor()
 	return Color(255, 0, 0)
 end
 
-
 if (CLIENT) then
 	function draw.Circle(x, y, radius, seg)
 		local cir = {}
@@ -630,7 +630,6 @@ surface.CreateFont( "laserpointer_display15", {
 	additive = false,
 	outline = false,
 })
-end
 
 function SWEP:PostDrawViewModel(vm, weapon, ply)
 	local pos, ang = vm:GetPos(), vm:GetAngles()
@@ -661,7 +660,6 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 			TEXT_ALIGN_CENTER,
 			TEXT_ALIGN_CENTER
 		)
-
 	surface.SetDrawColor(self:GetLaserColor())
 	local indcolor = table.Copy(self:GetLaserColor())
 	if (not self:GetBeamMode()) then
