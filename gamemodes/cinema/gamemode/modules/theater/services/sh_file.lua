@@ -13,7 +13,7 @@ SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
 	if url.scheme == "rtmp" then return url.encoded end 
-	if string.sub( url.path, -5) == ".webm" then
+	if string.sub( url.path, -5) == ".webm" or string.sub( url.path, -4) == ".mov" then
 		return url.encoded
 	end
 	if string.sub( url.path, -4) == ".mp4" then
