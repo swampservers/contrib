@@ -36,13 +36,6 @@ if CLIENT then
 					callback()
 				end
 			end)
-			
-			timer.Simple(2,function() 
-				if IsValid(vpanel) then
-					local str = string.format( "th_video('%s');", string.JavascriptSafe(key) )
-					vpanel:QueueJavascript( str )
-				end
-			end)
 
 			function vpanel:ConsoleMessage(msg)
 				if (LocalPlayer().videoDebug) then print(msg) end
@@ -54,6 +47,8 @@ if CLIENT then
 			end
 
 			vpanel:OpenURL( "http://swampservers.net/cinema/hls.html" )
+			local str = string.format( "th_video('%s');", string.JavascriptSafe(key) )
+			vpanel:QueueJavascript( str )
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")
@@ -66,7 +61,7 @@ if CLIENT then
 		local url = "http://swampservers.net/cinema/hls.html"
 		panel:EnsureURL(url)
 		
-		timer.Simple(2,function()
+		timer.Simple(2,function() --using a 2 second delay is the fastest way to load the video, sending th_video any quicker is much much slower for whatever reason
 			if IsValid(panel) then
 				local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
 				panel:QueueJavascript( str )

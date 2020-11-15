@@ -86,7 +86,7 @@ if CLIENT then
 		panel:EnsureURL("http://swampservers.net/cinema/"..self:GetClass()..".html")
 
 		-- Let the webpage handle loading a video
-		local str = string.format( "th_video('%s');", string.JavascriptSafe(Video:Key()) )
+		local str = string.format("th_video('%s');", string.JavascriptSafe(Video:Key()))
 		panel:QueueJavascript( str )
 	end
 	
