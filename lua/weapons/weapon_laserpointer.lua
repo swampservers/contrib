@@ -630,163 +630,165 @@ if(CLIENT)then
 		additive = false,
 		outline = false,
 	})
+end
 
-	function SWEP:PostDrawViewModel(vm, weapon, ply)
-		local pos, ang = vm:GetPos(), vm:GetAngles()
-		render.SetMaterial(laser_material)
-		local color = self:GetLaserColor()
+function SWEP:PostDrawViewModel(vm, weapon, ply)
+	local pos, ang = vm:GetPos(), vm:GetAngles()
+	render.SetMaterial(laser_material)
+	local color = self:GetLaserColor()
 
-		pos = pos + ang:Up() * -0.02
-		ang:RotateAroundAxis(ang:Up(), 90)
-		ang:RotateAroundAxis(ang:Forward(), 180)
-		cam.Start3D2D(pos, ang, 0.008)
-		surface.SetDrawColor(color_black)
-		local w, h = 54, 40
-		surface.DrawRect(-w / 2, -h / 2, w, h)
-		local indcolor = table.Copy(self:GetLaserColor())
-		local font = "laserpointer_display15"
-		local psuf = "%"
-		local pval = math.Round((self:GetBattery() / self:GetFullBattery()) * 100, 0)
-		if(pval > 999)then font = "laserpointer_display15"  end
-		if (pval < 15 and math.sin(math.rad(CurTime() * 720)) > 0) then
-		indcolor.a = 128
-		end
-		draw.SimpleText(
-				pval .. psuf,
-				font,
-				0,
-				9,
-				indcolor,
-				TEXT_ALIGN_CENTER,
-				TEXT_ALIGN_CENTER
-			)
-		surface.SetDrawColor(self:GetLaserColor())
-		local indcolor = table.Copy(self:GetLaserColor())
-		if (not self:GetBeamMode()) then
-			indcolor.a = 64
-		end
-		surface.SetDrawColor(indcolor)
-		draw.NoTexture()
-		draw.Circle(0, -10, 6, 8)
-		cam.End3D2D()
+	pos = pos + ang:Up() * -0.02
+	ang:RotateAroundAxis(ang:Up(), 90)
+	ang:RotateAroundAxis(ang:Forward(), 180)
+	cam.Start3D2D(pos, ang, 0.008)
+	surface.SetDrawColor(color_black)
+	local w, h = 54, 40
+	surface.DrawRect(-w / 2, -h / 2, w, h)
+	local indcolor = table.Copy(self:GetLaserColor())
+	local font = "laserpointer_display15"
+	local psuf = "%"
+	local pval = math.Round((self:GetBattery() / self:GetFullBattery()) * 100, 0)
+	if(pval > 999)then font = "laserpointer_display15"  end
+	if (pval < 15 and math.sin(math.rad(CurTime() * 720)) > 0) then
+	indcolor.a = 128
 	end
+	draw.SimpleText(
+			pval .. psuf,
+			font,
+			0,
+			9,
+			indcolor,
+			TEXT_ALIGN_CENTER,
+			TEXT_ALIGN_CENTER
+		)
+	surface.SetDrawColor(self:GetLaserColor())
+	local indcolor = table.Copy(self:GetLaserColor())
+	if (not self:GetBeamMode()) then
+		indcolor.a = 64
+	end
+	surface.SetDrawColor(indcolor)
+	draw.NoTexture()
+	draw.Circle(0, -10, 6, 8)
+	cam.End3D2D()
+end
 
-	function SWEP:DrawWorldModel(query)
-		local ply = self:GetOwner()
-		self:SetModelScale(1, 0)
-		self:SetSubMaterial()
-		local mrt
-		local horn = false
-		if IsValid(ply) then
-			local modelStr = ply:GetModel():sub(1, 17)
-			local isPony =
-				modelStr == "models/ppm/player" or modelStr == "models/mlp/player" or modelStr == "models/cppm/playe"
-			if (isPony and self.HornBG == nil) then
-				self.HornBG = ply:FindBodygroupByName("Horn")
-				if (self.HornBG == -1) then
-					self.HornBG = ply:FindBodygroupByName("horn")
-				end
+function SWEP:DrawWorldModel(query)
+	local ply = self:GetOwner()
+	self:SetModelScale(1, 0)
+	self:SetSubMaterial()
+	local mrt
+	local horn = false
+	if IsValid(ply) then
+		local modelStr = ply:GetModel():sub(1, 17)
+		local isPony =
+			modelStr == "models/ppm/player" or modelStr == "models/mlp/player" or modelStr == "models/cppm/playe"
+		if (isPony and self.HornBG == nil) then
+			self.HornBG = ply:FindBodygroupByName("Horn")
+			if (self.HornBG == -1) then
+				self.HornBG = ply:FindBodygroupByName("horn")
 			end
-			if (self.HornBG ~= nil and self.HornBG ~= -1 and ply:GetBodygroup(self.HornBG) == 0) then
-				horn = true
-			end
-			local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-			local bon = ply:LookupBone(bn) or 0
-			local opos = self:GetPos()
-			local oang = self:GetAngles()
-			local bp, ba = ply:GetBonePosition(bon)
-			if bp then
-				opos = bp
-			end
-			if ba then
-				oang = ba
-			end
-			if isPony then
-				if (horn) then
-					opos = opos + (oang:Forward() * 7) + (oang:Right() * 15.5) + (oang:Up() * 0)
-					oang:RotateAroundAxis(oang:Right(), 80)
-					oang:RotateAroundAxis(oang:Forward(), 12)
-					oang:RotateAroundAxis(oang:Up(), 20)
-				else
-					opos = opos + (oang:Forward() * 6.4) + (oang:Right() * -1.8) + (oang:Up() * 0)
-					oang:RotateAroundAxis(oang:Right(), 80)
-					oang:RotateAroundAxis(oang:Forward(), 12)
-					oang:RotateAroundAxis(oang:Up(), 20)
-				end
+		end
+		if (self.HornBG ~= nil and self.HornBG ~= -1 and ply:GetBodygroup(self.HornBG) == 0) then
+			horn = true
+		end
+		local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+		local bon = ply:LookupBone(bn) or 0
+		local opos = self:GetPos()
+		local oang = self:GetAngles()
+		local bp, ba = ply:GetBonePosition(bon)
+		if bp then
+			opos = bp
+		end
+		if ba then
+			oang = ba
+		end
+		if isPony then
+			if (horn) then
+				opos = opos + (oang:Forward() * 7) + (oang:Right() * 15.5) + (oang:Up() * 0)
+				oang:RotateAroundAxis(oang:Right(), 80)
+				oang:RotateAroundAxis(oang:Forward(), 12)
+				oang:RotateAroundAxis(oang:Up(), 20)
 			else
-				if (bn ~= 0) then
-					oang:RotateAroundAxis(oang:Forward(), 90)
-					oang:RotateAroundAxis(oang:Right(), 90)
-					opos = opos + (oang:Forward() * 1) + (oang:Up() * -3) + (oang:Right() * 1.5)
-					oang:RotateAroundAxis(oang:Forward(), 69)
-					oang:RotateAroundAxis(oang:Up(), 10)
-				end
+				opos = opos + (oang:Forward() * 6.4) + (oang:Right() * -1.8) + (oang:Up() * 0)
+				oang:RotateAroundAxis(oang:Right(), 80)
+				oang:RotateAroundAxis(oang:Forward(), 12)
+				oang:RotateAroundAxis(oang:Up(), 20)
 			end
-			oang = (ply:GetEyeTrace().HitPos - opos):Angle()
-			oang:RotateAroundAxis(oang:Right(), -90)
-			opos = opos + oang:Up() * -2
-			if (isPony) then
-				if (horn) then
-					opos = opos - oang:Up() * 5
-				else
-					opos = opos + oang:Up() * 3
-				end
-			end
-			self:SetupBones()
-			mrt = self:GetBoneMatrix(0)
-			if mrt then
-				mrt:SetTranslation(opos)
-				mrt:SetAngles(oang)
-				if (query ~= true) then
-					self:SetBoneMatrix(0, mrt)
-				end
+		else
+			if (bn ~= 0) then
+				oang:RotateAroundAxis(oang:Forward(), 90)
+				oang:RotateAroundAxis(oang:Right(), 90)
+				opos = opos + (oang:Forward() * 1) + (oang:Up() * -3) + (oang:Right() * 1.5)
+				oang:RotateAroundAxis(oang:Forward(), 69)
+				oang:RotateAroundAxis(oang:Up(), 10)
 			end
 		end
-		if (query ~= true and not horn) then
-			render.MaterialOverride()
-			draw.NoTexture()
-			render.SetBlend(1)
-			self:DrawModel()
+		oang = (ply:GetEyeTrace().HitPos - opos):Angle()
+		oang:RotateAroundAxis(oang:Right(), -90)
+		opos = opos + oang:Up() * -2
+		if (isPony) then
+			if (horn) then
+				opos = opos - oang:Up() * 5
+			else
+				opos = opos + oang:Up() * 3
+			end
 		end
-		if (query == true) then
-			return mrt
+		self:SetupBones()
+		mrt = self:GetBoneMatrix(0)
+		if mrt then
+			mrt:SetTranslation(opos)
+			mrt:SetAngles(oang)
+			if (query ~= true) then
+				self:SetBoneMatrix(0, mrt)
+			end
 		end
 	end
-
-	function SWEP:OnRemove()
-		return true
+	if (query ~= true and not horn) then
+		render.MaterialOverride()
+		draw.NoTexture()
+		render.SetBlend(1)
+		self:DrawModel()
 	end
-
-	function SWEP:Think()
+	if (query == true) then
+		return mrt
 	end
+end
 
-	function SWEP:UpdateVMFOV()
-	end
+function SWEP:OnRemove()
+	return true
+end
 
-	function SWEP:CalcView(ply, pos, ang, fov)
-		self.ViewModelFOV = fov -- this one seems to disconnect while suit zooming, i'll do another pr once i figure out a workaround that isn't buggy
-	end
+function SWEP:Think()
+end
 
-	function SWEP:GetViewModelPosition(epos, eang)
-		local leftright = 1
-		local tr = {}
-		tr.start = epos
-		tr.endpos = epos + self:GetOwner():GetAimVector() * 60000
-		tr.filter = LocalPlayer()
-		local trace = util.TraceLine(tr)
+function SWEP:UpdateVMFOV()
+end
 
-		epos, eang = self:GetOwner():EyePos(), self:GetOwner():EyeAngles()
-		local fov = self.ViewModelFOV
-		epos = epos + eang:Forward() * (10 + (15 - math.Clamp(fov - 70, 0, 15)) * 0.25)
-		epos = epos + eang:Right() * 4 * leftright
-		epos = epos + eang:Up() * -4
+function SWEP:CalcView(ply, pos, ang, fov)
+	self.ViewModelFOV = fov -- this one seems to disconnect while suit zooming, i'll do another pr once i figure out a workaround that isn't buggy
+end
 
-		eang = (epos - trace.HitPos):Angle()
-		eang:RotateAroundAxis(eang:Right(), 90)
-		epos = epos + eang:Up() * -4
-		return epos, eang
-	end
+function SWEP:GetViewModelPosition(epos, eang)
+	local leftright = 1
+	local tr = {}
+	tr.start = epos
+	tr.endpos = epos + self:GetOwner():GetAimVector() * 60000
+	tr.filter = LocalPlayer()
+	local trace = util.TraceLine(tr)
 
+	epos, eang = self:GetOwner():EyePos(), self:GetOwner():EyeAngles()
+	local fov = self.ViewModelFOV
+	epos = epos + eang:Forward() * (10 + (15 - math.Clamp(fov - 70, 0, 15)) * 0.25)
+	epos = epos + eang:Right() * 4 * leftright
+	epos = epos + eang:Up() * -4
+
+	eang = (epos - trace.HitPos):Angle()
+	eang:RotateAroundAxis(eang:Right(), 90)
+	epos = epos + eang:Up() * -4
+	return epos, eang
+end
+
+if CLIENT then
 	CreateConVar( "cl_customlasercolor", "0.35 0 1.0", FCVAR_ARCHIVE, "The value is a Vector - so between 0-1 - not between 0-255" )
 
 	CustomLaserFrame = nil
