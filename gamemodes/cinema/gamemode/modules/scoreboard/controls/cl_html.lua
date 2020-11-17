@@ -132,7 +132,7 @@ function PANEL:Think()
 		if self.JS then
 			for k, v in pairs( self.JS ) do
 				if (LocalPlayer().videoDebug) then print("(JS)",v) end
-				self:RunJavascript( string.format( "window.addEventListener('load',function(){%s});if(document.readyState=='complete'){%s};", v, v ) )
+				self:RunJavascript( string.format( "if(document.readyState=='complete'){%s}else{window.addEventListener('load',function(){%s})};", v, v ) )
 			end
 			self.JS = {}
 		end
