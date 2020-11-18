@@ -65,9 +65,9 @@ if CLIENT then
 							self.data = msg:sub(5,-1)
 							print("URL: "..self.data)
 							http.Fetch(self.data,function(body,size,headers,code) --for whatever reason, 4anime just has completely inaccessible anime eps that won't ever load in the player
-								if (code == 403) then
+								if (code == 403 or code == 503) then
 									LocalPlayer():PrintMessage(HUD_PRINTTALK,"[red]The video file is currently inaccessible")
-									print("File returned a 403 error")
+									print("File returned a "..code.." error")
 									print("Failed")
 									callback()
 									self:Remove()
