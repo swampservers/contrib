@@ -52,7 +52,7 @@ function ENT:PhysicsCollide(data)
 	--local p1 = data.HitPos + (data.HitNormal * 2)
 	--local p2 = data.HitPos - (data.HitNormal * 2)
 	--util.Decal("Splash.Large", p1, p2)
-	util.DecalEx("Splash.Large", nil, data.HitPos, data.HitNormal, plycol, 1, 1)
+	util.DecalEx(Material("Splash.Large"), nil, data.HitPos, data.HitNormal, plycol, 1, 1)
 
 	effectdata:SetOrigin(pos)
 	effectdata:SetScale(1.5)
