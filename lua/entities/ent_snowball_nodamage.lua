@@ -9,6 +9,7 @@ DEFINE_BASECLASS("base_gmodentity")
 ENT.Model = Model("models/weapons/w_snowball_thrown.mdl")
 
 local hitsnd = Sound("weapons/weapon_snowball/snowhit.ogg")
+local snowmat = util.DecalMaterial("Splash.Large")
 
 function ENT:Initialize()
 	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
@@ -52,7 +53,7 @@ function ENT:PhysicsCollide(data)
 	--local p1 = data.HitPos + (data.HitNormal * 2)
 	--local p2 = data.HitPos - (data.HitNormal * 2)
 	--util.Decal("Splash.Large", p1, p2)
-	util.DecalEx(Material("Splash.Large"), nil, data.HitPos, data.HitNormal, plycol, 1, 1)
+	util.DecalEx(snowmat, nil, data.HitPos, data.HitNormal, plycol, 1, 1)
 
 	effectdata:SetOrigin(pos)
 	effectdata:SetScale(1.5)
