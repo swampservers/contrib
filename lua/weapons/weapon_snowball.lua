@@ -104,7 +104,7 @@ function SWEP:SecondaryAttack() --custom color select menu
 		local b = vgui.Create("DButton", f)
 		b:SetSize(100, 25)
 		b:Dock(BOTTOM)
-		b:SetText("Change trail color")
+		b:SetText("Change snowball color")
 		b.DoClick = function()
 			f:Close()
 			net.Start("CLtoSVSnowballColor")
