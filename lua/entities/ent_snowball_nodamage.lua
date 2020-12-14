@@ -41,6 +41,7 @@ function ENT:Draw()
 end
 
 function ENT:PhysicsCollide(data)
+	local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
 	local pos = self.Entity:GetPos()
 	local effectdata = EffectData()
 	local fwd = self:GetOwner():GetAimVector()
@@ -48,12 +49,14 @@ function ENT:PhysicsCollide(data)
 		data.HitEntity:SetVelocity(Vector(fwd * 100))
 	end
 
-	local p1 = data.HitPos + (data.HitNormal * 2)
-	local p2 = data.HitPos - (data.HitNormal * 2)
-	util.Decal("Splash.Large", p1, p2)
+	--local p1 = data.HitPos + (data.HitNormal * 2)
+	--local p2 = data.HitPos - (data.HitNormal * 2)
+	--util.Decal("Splash.Large", p1, p2)
+	util.DecalEx("Splash.Large", nil, data.HitPos, data.HitNormal, plycol, 1, 1)
 
 	effectdata:SetOrigin(pos)
 	effectdata:SetScale(1.5)
+	effectdata:SetColor(plycol)
 	self:EmitSound(hitsnd)
 	util.Effect("WheelDust", effectdata)
 	util.Effect("GlassImpact", effectdata)
