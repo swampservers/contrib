@@ -68,7 +68,7 @@ function SWEP:PrimaryAttack()
 			local front = self.Owner:GetAimVector()
 			ball:SetOwner(self.Owner)
 			ball:SetPos(self.Owner:GetShootPos() + front * 10 + self.Owner:EyeAngles():Up() * -5)
-			Ball:SetColor(self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor())
+			ball:SetColor(self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor())
 			ball:Spawn()
 			ball:Activate()
 
