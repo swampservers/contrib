@@ -88,7 +88,7 @@ end) ]]
 
 timer.Simple(1, function()
 	net.Start("setcntry")
-	net.WriteString(system.GetCountry())
+	net.WriteString(string.lower(system.GetCountry()))
 	net.SendToServer()
 end)
 		
