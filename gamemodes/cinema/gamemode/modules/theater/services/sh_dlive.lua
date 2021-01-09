@@ -35,7 +35,7 @@ if CLIENT then
 			
 			timer.Create("dliveupdate"..tostring(math.random(1,100000)),1,45,function()
 				if IsValid(vpanel) then
-					vpanel:RunJavascript("console.log('TITLE:'+document.getElementsByClassName('dlive-name text-14-medium text-white')[4].innerText+': '+document.getElementsByClassName('text-14-medium text-white overflow-hidden')[0].innerText);")
+					vpanel:RunJavascript("console.log('TITLE:'+document.getElementsByClassName('dlive-name text-16-medium text-white')[0].innerText.trim()+': '+document.getElementsByClassName('text-14-medium text-white overflow-hidden')[0].innerText);")
 					vpanel:RunJavascript("document.getElementsByClassName('dplayer-video dplayer-video-current')[0].volume=0;")
 				end
 			end)
