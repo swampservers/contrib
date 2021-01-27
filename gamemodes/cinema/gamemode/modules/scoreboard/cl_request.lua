@@ -67,6 +67,15 @@ function PANEL:Init()
 
 	self.History = vgui.Create( "RequestHistory", self )
 	self.History:SetPaintBackgroundEnabled(false)
+	
+	self.Browser.OnDocumentReady = function( panel, url )
+		self.Controls.AddressBar:SetText(url)
+		if theater.ExtractURLInfo( url ) then
+			self.Controls.RequestButton:SetDisabled( false )
+		else
+			self.Controls.RequestButton:SetDisabled( true )
+		end
+	end
 
 end
 
