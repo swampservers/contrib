@@ -109,14 +109,14 @@ function PANEL:SetHTML( html )
 	self.AddressBar:SetText( self.HomeURL )
 	self:UpdateHistory( self.HomeURL )
 	
-	self.HTML.OnFinishLoading = function( panel )
+	--[[self.HTML.OnFinishLoading = function( panel )
 
 		local url = self.HTML:GetURL()
-
+		
 		self.AddressBar:SetText( url )
 		self:FinishedLoading()
 	
-	end
+	end]]
 
 	self.HTML.OnURLChanged = function ( panel, url )
 
