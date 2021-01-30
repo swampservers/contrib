@@ -5,6 +5,8 @@ local SERVICE = {}
 
 SERVICE.Name 		= "Native"
 
+SERVICE.Mature = true
+
 function SERVICE:GetKey( url )
 	if string.sub( url.path, -5) == ".webm" or string.sub( url.path, -4) == ".mov" then
 		return url.encoded
