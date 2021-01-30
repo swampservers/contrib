@@ -9,6 +9,7 @@ sv_GetVideoInfo.soundcloud = function(self, key, ply, onSuccess, onFailure)
 		local t = util.JSONToTable(body)
 		
 		if (type(t) == "table") and t["duration"] != nil and t["title"]	!= nil then
+			local info = {}
 			info.title = t["title"]
 			info.duration = math.ceil(tonumber(t["duration"])/1000)
 			if (t["artwork_url"] != nil) then

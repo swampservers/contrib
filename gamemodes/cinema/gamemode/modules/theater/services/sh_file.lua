@@ -24,6 +24,7 @@ end
 
 if CLIENT then
 	function SERVICE:GetVideoInfoClientside(key, callback)
+		if (LocalPlayer().videoDebug and string.match(key,"dropbox.com")) then print("Dropbox Failsafe Activated") end
 		EmbeddedCheckCodecs(function()
 			vpanel = vgui.Create("DHTML")
 
