@@ -13,9 +13,6 @@ SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
 	if url.scheme == "rtmp" then return url.encoded end 
-	if string.sub( url.path, -5) == ".webm" or string.sub( url.path, -4) == ".mov" then
-		return url.encoded
-	end
 	if string.sub( url.path, -4) == ".mp4" then
 		if string.match( url.host, "dropbox.com" ) then
 			return "https://www.dropbox.com"..url.path.."?dl=1"
@@ -45,6 +42,7 @@ if CLIENT then
 			end)
 
 			function vpanel:ConsoleMessage(msg)
+				if (LocalPlayer().videoDebug) then print(msg) end
 				if msg:StartWith("DURATION:") then
 					local duration = math.ceil(tonumber(string.sub(msg,10)))
 					if duration==0 then
@@ -68,7 +66,7 @@ if CLIENT then
 					end
 				end
 			end
-				
+
 			local urll = "http://swampservers.net/cinema/filedata.php?file="
 			if string.StartWith(key:lower(), "rtmp") then
 				urll = "http://swampservers.net/cinema/filedatavjs.php?file="
@@ -97,11 +95,11 @@ if CLIENT then
 		else
 			cc="us"
 		end
- 
+		
 		local k = Video:Key()
 		
 		k = string.Replace(k, "relay.horatio.tube", cc..".horatio.tube")
-
+		
 		-- Let the webpage handle loading a video
 		local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
 		panel:QueueJavascript( str )
