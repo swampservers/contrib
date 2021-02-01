@@ -27,13 +27,11 @@ function SetPointshopTheme(dark)
 		PS_GridBGColor = Color(33, 33, 33)
 		PS_BotBGColor = Color(33, 33, 33)
 		PS_SwitchableColor = Color(200, 200, 200)
-		pointshopJewImage = Material("pointshop/merchant_white.png")
 	else
 		PS_TileBGColor = Color(234, 234, 234)
 		PS_GridBGColor = Color(200, 200, 200)
 		PS_BotBGColor = Color(64, 64, 64)
 		PS_SwitchableColor = Color(0, 0, 0)
-		pointshopJewImage = Material("pointshop/merchant.png")
 	end
 
 	if IsValid(PS_CustomizerPanel) then

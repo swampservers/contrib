@@ -14,10 +14,8 @@ surface.CreateFont('PS_DESCTITLEFONT', { font = 'Righteous', size = 32 })
 surface.CreateFont('PS_DESCFONT', { font = 'Lato', size = 18 })
 surface.CreateFont('PS_DESCINSTFONT', { font = 'Lato', size = 20 })
 
-pointshopJewImage = Material( "pointshop/merchant_white.png" ) 
 pointshopDollarImage = Material("icon16/money_dollar.png")
 pointshopMoneyImage = Material("icon16/money.png")
-pointshopJewStarImage = Material("countries/il.png")
 
 surface.CreateFont( "PS_Default", {
 	font = system.IsLinux() and "Arial" or "Tahoma",
@@ -585,7 +583,7 @@ function PANEL:Init()
 				sinmag=math.Rand(0,20),
 				sinfreq=math.Rand(1,2),
 				sinofs=math.Rand(0,6.3),
-				material=pointshopDollarImage --math.Rand(0,1)>0.99 and pointshopJewStarImage or pointshopDollarImage
+				material=pointshopDollarImage
 			})
 			PointshopDollarParticlePoints = PointshopDollarParticlePoints-0.12
 		end
@@ -604,8 +602,6 @@ function PANEL:Init()
 			end
 		end
 
-		PS_Jewishness = math.max(alpha-0.5,0)*30
-
 		local tc = PS_ColorWhite
 		--[[if self:IsHovered() then
 			tc = Color(175,230,69)
@@ -614,19 +610,6 @@ function PANEL:Init()
 		draw.SimpleText('Click here to donate!', 'PS_Donate2', w/2, (h/2)+20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		--draw.SimpleText('Need more points?', 'PS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
-
-
-	p = vgui.Create("DPanel", self)
-	p:SetSize(170*2,90*2)
-	p:SetPos(((self:GetWide()-p:GetWide())*0.5)-20, self:GetTall()-(PS_BOTBARHEIGHT + p:GetTall()))
-	p:SetZPos(1000)
-	p:SetMouseInputEnabled(false)
-	p.Paint = function(self,w,h)
-		surface.SetDrawColor(0,0,0, PS_Jewishness or 0)
-		surface.SetMaterial( pointshopJewImage)
-		surface.DrawTexturedRectUV( 0, 0, w, h, 0,0,1,0.38 )
-	end
-
 
 	local cont = vgui.Create("DPanel", self.botbar )
 	cont:SetWide(PS_RPANEWIDTH)
