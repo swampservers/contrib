@@ -42,8 +42,12 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
 			info.title = t.filename or "(Unknown)"
 			info.thumb = t.preview.content.poster_url_tmpl or ""
 			http.Fetch(t.preview.content.metadata_url or "",function(body2) 
-				info.duration = math.ceil(tonumber(body2.duration))
-				onReceive(info)
+				if (type(util.JSONToTable(body2)) == "table") then
+					info.duration = math.ceil(tonumber(util.JSONToTable(body2).duration))
+					onReceive(info)
+				else
+					theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure) --failsafe
+				end
 			end,function()
 				theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure) --failsafe
 			end)
