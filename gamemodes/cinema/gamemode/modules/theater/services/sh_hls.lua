@@ -29,6 +29,8 @@ if CLIENT then
 
 			vpanel:SetMouseInputEnabled(false)
 			
+			local streamwatch_key = string.match(key,"streamwat.ch/(%w+)/*$")
+			
 			timer.Simple(20,function() 
 				if IsValid(vpanel) then
 					vpanel:Remove() 
@@ -39,6 +41,11 @@ if CLIENT then
 
 			function vpanel:ConsoleMessage(msg)
 				if (LocalPlayer().videoDebug) then print(msg) end
+				if msg:StartWith("STREAMWATCHURL:") then
+					vpanel:OpenURL( "http://swampservers.net/cinema/hls.html" )
+					local str = string.format( "th_video('%s');", string.JavascriptSafe(string.sub(msg,16)) )
+					timer.Simple(1,function() vpanel:QueueJavascript( str ) end) --delayed so page can load
+				end
 				if msg:StartWith("LIVE") then
 					self:Remove()
 					print("Success!")
@@ -46,8 +53,8 @@ if CLIENT then
 				end
 			end
 
-			vpanel:OpenURL( "http://swampservers.net/cinema/hls.html" )
-			local str = string.format( "th_video('%s');", string.JavascriptSafe(key) )
+			vpanel:OpenURL( (streamwatch_key and key) or "http://swampservers.net/cinema/hls.html" )
+			local str = string.format( (streamwatch_key and "console.log('STREAMWATCHURL:'+document.title);") or "th_video('%s');", string.JavascriptSafe(key) )
 			vpanel:QueueJavascript( str )
 		end,
 		function()

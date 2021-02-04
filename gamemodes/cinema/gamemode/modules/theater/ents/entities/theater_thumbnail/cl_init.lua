@@ -144,7 +144,7 @@ end
 function ENT:DrawThumbnail()
 
 	-- Thumbnail isn't set yet
-	if self:GetThumbnail() == "" then
+	if self:GetThumbnail() == "" or (self:GetService() == "file" and not GetConVar("swamp_mature_content"):GetBool()) then
 
 		if self:GetService() == "" then
 		

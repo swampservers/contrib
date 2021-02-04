@@ -21,12 +21,11 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 		
 		local streamwatch_url = string.match(body,"(http.+%.m3u8)")
 		
-		if streamwatch_url != nil then
-			theater.GetVideoInfoClientside(self:GetClass(), streamwatch_url, ply, function(info)
+		if streamwatch_url != nil or code == 0 then
+			theater.GetVideoInfoClientside(self:GetClass(), (code==0 and key) or streamwatch_url, ply, function(info)
 				info.data = streamwatch_url
 				onSuccess(info)
 			end, onFailure)
-			
 		else
 			onFailure( 'Theater_RequestFailed' )
 		end
@@ -34,7 +33,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 	end
 	
 	if streamwatch_key != nil then
-		self:Fetch( "http://streamwat.ch/"..streamwatch_key.."/player.min.js", onFetchReceive, onFailure )
+		self:Fetch( "https://streamwat.ch/"..streamwatch_key.."/player.min.js", onFetchReceive, onFailure )
 	else
 		theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure)
 	end
