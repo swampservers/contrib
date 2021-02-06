@@ -39,8 +39,9 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 				end
 				onReceive(info)
 			end, onFailure)
+		else
+			onFailure( 'Theater_RequestFailed' )
 		end
-		onFailure( 'Theater_RequestFailed' )
 		
 	end
 	
