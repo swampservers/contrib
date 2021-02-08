@@ -30,7 +30,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 				timed = true
 			end
 		end
-		if (string.Split(body,"\n")[1] == "#EXTM3U") then
+		if (string.TrimRight(string.Split(body,"\n")[1]) == "#EXTM3U") then
 			theater.GetVideoInfoClientside(self:GetClass(), "TITLE", ply, function(info) --use player to get the title
 				info.duration = 0
 				if timed then
