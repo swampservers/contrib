@@ -406,6 +406,7 @@ function PANEL:Think()
 end
 
 function PANEL:Paint(w,h)
+	if (self:GetChild(0):GetModel() == nil) then self:GetChild(0):SetModel(self.data.model) end
 	surface.SetDrawColor(self.BGColor)
 	surface.DrawRect(0, 0, w,h)
 end
