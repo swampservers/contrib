@@ -140,7 +140,7 @@ function PANEL:Init()
 	self:SetSize( math.Clamp( PS_MENUWIDTH, 0, ScrW() ), math.Clamp( PS_MENUHEIGHT, 0, ScrH() ) )
 	self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
 
-	self.navbar = vgui.Create("DPanel", self)	
+	self.navbar = vgui.Create("DPanel", self)
 	self.navbar:SetTall(PS_NAVBARHEIGHT)
 	self.navbar:Dock(TOP)
 	self.navbar:SetBackgroundColor(BrandColorAlternate)
@@ -412,7 +412,7 @@ function PANEL:Init()
 				if categorizeditems[cat] then
 					NewSubCategoryTitle(self, cat)
 					local sc = NewSubCategory(self)
-					
+
 					for _, ITEM in pairs(categorizeditems[cat]) do
 						local model = vgui.Create('DPointShopItem')
 						model:SetItem(PS_Items[ITEM.class], ITEM)
