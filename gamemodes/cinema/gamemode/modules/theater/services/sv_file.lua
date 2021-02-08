@@ -5,9 +5,9 @@ sv_GetVideoInfo = sv_GetVideoInfo or {}
 
 sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
 	
-    local onReceive = function(info)
-
-        if info.duration>0 or info.title=="" then
+	local onReceive = function(info)
+	
+		if info.duration>0 or info.title=="" then
 			info.title = key
 			local ext = string.Explode(".",info.title)
 			info.title = string.TrimRight(info.title,"."..ext[#ext])
@@ -20,16 +20,16 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
 			for i = 1,info.title:len()-1 do
 				if info.title:sub(i,i)==" " then info.title = info.title:sub(1,i)..info.title:sub(i+1,i+1):upper()..info.title:sub(i+2) end
 			end
-            info.title = string.Trim(info.title," ")
-        end
-
-        --add a bit for buffering
-        if info.duration>0 then
-            info.duration = info.duration+2
-        end
-
-        onSuccess(info)
-    end
+			info.title = string.Trim(info.title," ")
+		end
+	
+		--add a bit for buffering
+		if info.duration>0 then
+			info.duration = info.duration+2
+		end
+	
+		onSuccess(info)
+	end
 	
 	local onFetchReceive = function(body,length,headers,code)
 		
