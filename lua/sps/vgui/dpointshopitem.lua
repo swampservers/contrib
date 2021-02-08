@@ -246,7 +246,7 @@ end
 
 function PANEL:Setup()
 	local DModelPanel = vgui.Create('DModelPanel', self)
-	DModelPanel:SetModel(self.data.model)
+	--DModelPanel:SetModel(self.data.model)
 
 	DModelPanel:Dock(FILL)
 

@@ -97,6 +97,8 @@ PS_PaintDarkenOnHover = function(pnl, w, h) if pnl:IsHovered() then surface.SetD
 
 
 local PANEL = {}
+DPointShopItemTable = {}
+DPointShopItemTable = {}
 
 PS_MENUWIDTH = 1203
 PS_MENUHEIGHT = 808
@@ -117,11 +119,29 @@ net.Receive("PS_PointOutInventory", function()
 	PS_INVENTORY_POINT_OUT = RealTime()
 end)
 
+local function LoadDModels(cat)
+	local counter = 0 --sync DPointShopItemTable with PS_Categories's layout 
+	for _,CATEGORY in pairs(PS_Categories) do
+		for _,LAYOUT in pairs(CATEGORY.layout) do
+			counter = counter + 1
+			if (counter > #DPointShopItemTable) then continue end --first pass has DPointShopItemTable with only 2 keys
+			if (CATEGORY.name != DPointShopItemTable[counter].name or CATEGORY.name != cat) then continue end
+			local p = 0
+			for _,PRODUCT in pairs(LAYOUT.products) do
+				if PS_Products[PRODUCT]==nil then continue end
+				p = p + 1
+				if DPointShopItemTable[counter][p]:GetChild(0):GetModel()!=nil then continue end
+				DPointShopItemTable[counter][p]:GetChild(0):SetModel(PS_Products[PRODUCT].model)
+			end
+		end
+	end
+end
+
 function PANEL:Init()
 	self:SetSize( math.Clamp( PS_MENUWIDTH, 0, ScrW() ), math.Clamp( PS_MENUHEIGHT, 0, ScrH() ) )
 	self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
 
-	self.navbar = vgui.Create("DPanel", self)
+	self.navbar = vgui.Create("DPanel", self)	
 	self.navbar:SetTall(PS_NAVBARHEIGHT)
 	self.navbar:Dock(TOP)
 	self.navbar:SetBackgroundColor(BrandColorAlternate)
@@ -259,6 +279,7 @@ function PANEL:Init()
 			panel:SetZPos(1)
 		end
 		btn.OnActivate = function()
+			LoadDModels(catname)
 			panel:SetVisible(true)
 			panel:SetZPos(100)
 		end
@@ -319,6 +340,8 @@ function PANEL:Init()
 		for _, LAYOUT in pairs(CATEGORY.layout) do
 			if LAYOUT.title then NewSubCategoryTitle(cat, LAYOUT.title) end
 			local scat = NewSubCategory(cat)
+			table.insert(DPointShopItemTable,{})
+			DPointShopItemTable[#DPointShopItemTable].name = CATEGORY.name
 			for _, PRODUCT in pairs(LAYOUT.products) do
 				pdata = PS_Products[PRODUCT]
 				if pdata==nil then print("Undefined product: "..PRODUCT) continue end
@@ -328,10 +351,12 @@ function PANEL:Init()
 				model:SetSize(PS_TILESIZE, PS_TILESIZE)
 				
 				scat:Add(model)
+				table.insert(DPointShopItemTable[#DPointShopItemTable],model)
 			end
 		end
 
 		FinishCategory(cat)
+		if (_ == 1) then LoadDModels(CATEGORY.name) end --load only the default category
 	end
 	
 	PS_InventoryPanel = NewCategory("My Inventory", 'icon16/basket.png', RIGHT)
@@ -388,10 +413,11 @@ function PANEL:Init()
 				if categorizeditems[cat] then
 					NewSubCategoryTitle(self, cat)
 					local sc = NewSubCategory(self)
-
+					
 					for _, ITEM in pairs(categorizeditems[cat]) do
 						local model = vgui.Create('DPointShopItem')
 						model:SetItem(PS_Items[ITEM.class], ITEM)
+						model:GetChild(0):SetModel(PS_Items[ITEM.class].model)
 						model:SetSize(PS_TILESIZE, PS_TILESIZE)
 						
 						sc:Add(model)
