@@ -35,7 +35,7 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
 		
 		local info = {}
 		local t = string.match(body,"InitReact.mountComponent%(mod, ({.+ViewerContainer\"})")
-		info.data = body --debug
+		info.data = string.sub(body,1,128) --debug
 		
 		if t != nil then
 			t = util.JSONToTable(t).props.file or {}
