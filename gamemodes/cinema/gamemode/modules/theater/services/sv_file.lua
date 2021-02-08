@@ -35,10 +35,10 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
 		
 		local info = {}
 		local t = string.match(body,"InitReact.mountComponent%(mod, ({.+ViewerContainer\"})")
+		info.data = body --debug
 		
 		if t != nil then
 			t = util.JSONToTable(t).props.file or {}
-			info.title = t.filename or "(Unknown)"
 			info.thumb = (t.preview.content.poster_url_tmpl and t.preview.content.poster_url_tmpl.."?size=1280x960&size_mode=2") or ""
 			http.Fetch(t.preview.content.metadata_url or "",function(body2) 
 				if (type(util.JSONToTable(body2)) == "table") then
