@@ -6,7 +6,6 @@ sv_GetVideoInfo = sv_GetVideoInfo or {}
 sv_GetVideoInfo.native = function(self, key, ply, onSuccess, onFailure)
 	
 	local onReceive = function(info)
-	
 		info.title = key
 		local ext = string.Explode(".",info.title)
 		info.title = string.TrimRight(info.title,"."..ext[#ext])

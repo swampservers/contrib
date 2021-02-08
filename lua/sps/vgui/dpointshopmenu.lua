@@ -97,8 +97,7 @@ PS_PaintDarkenOnHover = function(pnl, w, h) if pnl:IsHovered() then surface.SetD
 
 
 local PANEL = {}
-DPointShopItemTable = {}
-DPointShopItemTable = {}
+local DPointShopItemTable = {}
 
 PS_MENUWIDTH = 1203
 PS_MENUHEIGHT = 808
