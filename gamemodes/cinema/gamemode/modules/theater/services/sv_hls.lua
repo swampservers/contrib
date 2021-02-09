@@ -66,6 +66,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 	if streamwatch_key != nil then
 		self:Fetch( "http://streamwat.ch/"..streamwatch_key.."/player.min.js", onFetchReceiveStreamWatch, function()
 			theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info) --use player to get the hls link due to serverside http issue
+				info.data = streamwatch_url
 				info.duration = 0
 				onReceive(info)
 			end, onFailure)
