@@ -25,5 +25,5 @@ sv_GetVideoInfo.native = function(self, key, ply, onSuccess, onFailure)
 		onSuccess(info)
 	end
 	
-	theater.GetVideoInfoClientside(self:GetClass(), key, ply, onSuccess, onFailure)
+	theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure)
 end

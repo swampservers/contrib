@@ -31,6 +31,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 			end
 		end
 		if (string.TrimRight(string.Split(body,"\n")[1]) == "#EXTM3U") then
+			ply:PrintMessage(HUD_PRINTCONSOLE,"#EXTM3U") --debug
 			theater.GetVideoInfoClientside(self:GetClass(), "TITLE", ply, function(info) --use player to get the title
 				info.duration = 0
 				if timed then
@@ -40,6 +41,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 				onReceive(info)
 			end, onFailure)
 		else
+			ply:PrintMessage(HUD_PRINTCONSOLE,body) --debug
 			onFailure( 'Theater_RequestFailed' )
 		end
 		
@@ -57,7 +59,8 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 			end, onFailure)
 		elseif streamwatch_url != nil then
 			self:Fetch( string.Replace(streamwatch_url,"https://cors.oak.re/",""), onFetchReceive, onFailure )
-		end
+		else
+			ply:PrintMessage(HUD_PRINTCONSOLE,body) --debug
 			onFailure( 'Theater_RequestFailed' )
 		end
 
