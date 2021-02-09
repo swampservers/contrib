@@ -50,13 +50,13 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 		local streamwatch_url = string.match(body,"(http.+%.m3u8)")
 
 		if streamwatch_url == nil or code == 0 then
-			theater.GetVideoInfoClientside(self:GetClass(), (code==0 and key) or streamwatch_url, ply, function(info) --use player to get the hls link due to serverside http issue
+			theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info) --use player to get the hls link due to serverside http issue
 				info.data = streamwatch_url
 				info.duration = 0
 				onReceive(info)
 			end, onFailure)
 		elseif streamwatch_url != nil then
-			self:Fetch( streamwatch_url, onFetchReceive, onFailure )
+			self:Fetch( string.Replace(streamwatch_url,"https://cors.oak.re/",""), onFetchReceive, onFailure )
 		end
 			onFailure( 'Theater_RequestFailed' )
 		end

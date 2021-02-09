@@ -247,6 +247,7 @@ end
 function PANEL:Setup()
 	local DModelPanel = vgui.Create('DModelPanel', self)
 	--DModelPanel:SetModel(self.data.model)
+	DModelPanel.model2set = self.data.model
 
 	DModelPanel:Dock(FILL)
 
@@ -271,9 +272,14 @@ function PANEL:Setup()
 	end
 
 	DModelPanel.Paint = function(dmp,w,h)
-		PS_PreRender(self.data, (self.item or {}).cfg)
+		if dmp.model2set then
+			dmp:SetModel(dmp.model2set)
+			dmp.model2set = nil
+		end
 		
 		if ( !IsValid( dmp.Entity ) ) then return end
+		
+		PS_PreRender(self.data, (self.item or {}).cfg)
 
 		local x, y = dmp:LocalToScreen( 0, 0 )
 
@@ -406,7 +412,6 @@ function PANEL:Think()
 end
 
 function PANEL:Paint(w,h)
-	if (self:GetChild(0):GetModel() == nil) then self:GetChild(0):SetModel(self.data.model) end
 	surface.SetDrawColor(self.BGColor)
 	surface.DrawRect(0, 0, w,h)
 end
