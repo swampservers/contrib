@@ -233,14 +233,18 @@ function PS_PostRender()
 end
 
 hook.Add("PrePlayerDraw","PS_BoneMods",function(ply)
-	if ply.PS_BoneModsLastModel ~= ply:GetModel() then
+
+	-- will be "false" if the model is not mounted yet
+	local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
+
+	if ply.PS_BoneModsLastModel ~= mounted_model then
 		ply.PS_BoneModsClean = false
 		--seems to have issues if you apply the bone mods as soon as the model changes...
 		--timer.Simple(1, function() if IsValid(ply) then ply.PS_BoneModsClean = false end end)
 	end
 	if not ply.PS_BoneModsClean then
 		ply.PS_BoneModsClean = PS_ApplyBoneMods(ply, ply:PS_GetActiveBonemods())
-		ply.PS_BoneModsLastModel = ply:GetModel()
+		ply.PS_BoneModsLastModel = mounted_model
 	end
 end)
 
