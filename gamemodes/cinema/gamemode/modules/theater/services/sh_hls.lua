@@ -32,6 +32,8 @@ if CLIENT then
 	
 				vpanel:SetMouseInputEnabled(false)
 				
+				local link = nil
+				
 				timer.Simple(20,function() 
 					if IsValid(vpanel) then
 						vpanel:Remove() 
@@ -44,13 +46,14 @@ if CLIENT then
 					if (LocalPlayer().videoDebug) then print(msg) end
 					if msg:StartWith("STREAMWATCHURL:") then
 						vpanel:OpenURL( "http://swampservers.net/cinema/hls.html" )
-						local str = string.format( "th_video('%s');", string.JavascriptSafe(string.sub(msg,16)) )
+						link = string.sub(msg,16)
+						local str = string.format( "th_video('%s');", string.JavascriptSafe(link) )
 						timer.Simple(1,function() vpanel:QueueJavascript( str ) end) --delayed so page can load
 					end
 					if msg:StartWith("LIVE") then
 						self:Remove()
 						print("Success!")
-						Derma_StringRequest("HLS Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({title=title}) end, function() callback() end)
+						Derma_StringRequest("HLS Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({data=link,title=title}) end, function() callback() end)
 					end
 				end
 	

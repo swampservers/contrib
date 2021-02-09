@@ -62,6 +62,9 @@ if CLIENT then
 
 					if duration>0 then
 						callback({duration=duration})
+					elseif duration<2147483647 then
+						print("Duration is too long")
+						callback()
 					else
 						Derma_StringRequest("RTMP Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({duration=duration,title=title}) end, function() callback() end)
 					end
