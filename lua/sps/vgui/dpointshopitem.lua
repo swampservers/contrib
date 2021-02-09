@@ -273,6 +273,7 @@ function PANEL:Setup()
 
 	DModelPanel.Paint = function(dmp,w,h)
 		if dmp.model2set then
+			-- might be a workshop model, will be an error till user clicks it and it appears in the preview
 			dmp:SetModel(dmp.model2set)
 			dmp.model2set = nil
 		end

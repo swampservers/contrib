@@ -131,6 +131,7 @@ PS_Categories = {
 			{
 				title = "One-Life, Unique",
 				products = {
+					"jokerjoker",
 					"celestia",
 					"billyherrington",
 					"doomguy",

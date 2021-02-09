@@ -19,6 +19,13 @@ end
 function PS_GenericProduct(product)
 	product.price = product.price or 0
 	PS_Products[product.class] = product
+
+	if product.model then
+		util.PrecacheModel(product.model)
+		if product.workshop then
+			register_workshop_model(product.model, product.workshop)
+		end
+	end
 end
 
 function PS_ProductlessItem(item)
@@ -56,8 +63,6 @@ end
 
 --ITEMS are stuff that is saved in the database
 function PS_ItemProduct(item)
-	util.PrecacheModel(item.model)
-
 	if item.wear then
 		local itmcw = (item.configurable or {}).wear or {}
 		local xscale = itmcw.xs or {max=(item.maxscale or 1.0)}

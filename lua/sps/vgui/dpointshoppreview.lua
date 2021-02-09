@@ -69,6 +69,7 @@ function PANEL:Paint()
 		mdl = PS_HoverData.model
 	end
 
+	require_workshop_model(mdl)
 	self:SetModelCaching(mdl)
 
 	if isPonyModel(self.Entity:GetModel()) then
