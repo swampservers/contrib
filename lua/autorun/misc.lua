@@ -104,7 +104,7 @@ if SERVER then
 	end)
 else
 	hook.Add("EntityEmitSound","BasedDepartmentPhone",function(s) --can't change material type and has loud damage sounds so just mute it
-		if (s.Entity:GetClass() == "func_physbox" and s.Entity:GetBrushSurfaces()[1]:GetMaterial():GetName() == "swamponions/af/baseddepartment") then
+		if (IsValid(s.Entity) and s.Entity:GetClass() == "func_physbox" and s.Entity:GetBrushSurfaces()[1]:GetMaterial():GetName() == "swamponions/af/baseddepartment") then
 			return false
 		end
 	end)
