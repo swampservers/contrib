@@ -20,7 +20,7 @@ end
 
 if CLIENT then
 	function SERVICE:GetVideoInfoClientside(key, callback)
-		if (key == "TITLE") then
+		if (string.EndsWith(key,".m3u8")) then
 			Derma_StringRequest("HLS Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({title=title}) end, function() callback() end)
 		else
 			EmbeddedCheckCodecs(function()

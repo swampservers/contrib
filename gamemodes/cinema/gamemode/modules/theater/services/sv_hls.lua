@@ -6,6 +6,7 @@ sv_GetVideoInfo = sv_GetVideoInfo or {}
 sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 
 	local streamwatch_key = string.match(key,"streamwat.ch/(%w+)/*$")
+	local streamwatch_link = nil
 	
 	local onReceive = function(info)
 		
@@ -32,13 +33,14 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 		end
 		if (string.TrimRight(string.Split(body,"\n")[1]) == "#EXTM3U") then
 			ply:PrintMessage(HUD_PRINTCONSOLE,"#EXTM3U") --debug
-			theater.GetVideoInfoClientside(self:GetClass(), "TITLE", ply, function(info) --use player to get the title
+			theater.GetVideoInfoClientside(self:GetClass(), streamwatch_link or key, ply, function(info) --use player to get the title
 				info.duration = 0
+				info.data = streamwatch_link or ""
 				if timed then
 					info.duration = math.ceil(duration)
 					info.data = "true"
 				end
-				onReceive(info)
+				onSuccess(info)
 			end, onFailure)
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE,body) --debug
@@ -58,6 +60,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 				onReceive(info)
 			end, onFailure)
 		elseif streamwatch_url != nil then
+			streamwatch_link = streamwatch_url
 			self:Fetch( string.Replace(streamwatch_url,"https://cors.oak.re/",""), onFetchReceive, onFailure )
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE,body) --debug
