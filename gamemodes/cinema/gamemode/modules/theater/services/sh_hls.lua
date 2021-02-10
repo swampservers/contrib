@@ -11,6 +11,8 @@ SERVICE.NeedsCodecs = true
 
 SERVICE.LivestreamCacheLife = 0
 
+SERVICE.CacheLife = 0
+
 function SERVICE:GetKey( url )
 	if string.sub( url.path, -5) == ".m3u8" or string.find(url.encoded,"streamwat.ch/(.+)") then
 		return url.encoded
@@ -70,7 +72,7 @@ if CLIENT then
 	
 	function SERVICE:LoadVideo( Video, panel )
 		local k = Video:Key()
-		if (string.len(Video:Data())>1 and Video:Data() != "true") then
+		if (not isbool(Video:Data()) and string.len(Video:Data())>1) then
 			k = Video:Data()
 		end
 		local url = "http://swampservers.net/cinema/hls.html"
@@ -78,7 +80,7 @@ if CLIENT then
 		
 		timer.Simple(2,function() --using a 2 second delay is the fastest way to load the video, sending th_video any quicker is much much slower for whatever reason
 			if IsValid(panel) then
-				local str = string.format( "th_video('%s',%s);", string.JavascriptSafe(k), (Video:Data() == "true") )
+				local str = string.format( "th_video('%s',%s);", string.JavascriptSafe(k), (Video:Data() == true) )
 				panel:QueueJavascript( str )
 			end
 		end)
