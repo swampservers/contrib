@@ -41,7 +41,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 				info.data = datalink or ""
 				if timed then
 					info.duration = math.ceil(duration)
-					info.data = true
+					info.data = "true"
 				end
 				onSuccess(info)
 			end, onFailure)
