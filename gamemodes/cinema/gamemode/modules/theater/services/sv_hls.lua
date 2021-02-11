@@ -6,7 +6,7 @@ sv_GetVideoInfo = sv_GetVideoInfo or {}
 sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 
 	local streamwatch_key = string.match(key,"streamwat.ch/(%w+)/*$")
-	local streamwatch_link = nil
+	local datalink = nil
 	
 	local onReceive = function(info)
 		
@@ -20,6 +20,9 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 	
 	local onFetchReceive = function( body, length, headers, code )
 		
+		if (headers["Access-Control-Allow-Origin"] and headers["Access-Control-Allow-Origin"] != "*") then
+			datalink = "https://cors.oak.re/"..(datalink or key)
+		end
 		local info = {}
 		local duration = 0
 		local timed = false
@@ -33,9 +36,9 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 		end
 		if (string.TrimRight(string.Split(body,"\n")[1]) == "#EXTM3U") then
 			ply:PrintMessage(HUD_PRINTCONSOLE,"#EXTM3U") --debug
-			theater.GetVideoInfoClientside(self:GetClass(), streamwatch_link or key, ply, function(info) --use player to get the title
+			theater.GetVideoInfoClientside(self:GetClass(), datalink or key, ply, function(info) --use player to get the title
 				info.duration = 0
-				info.data = streamwatch_link or ""
+				info.data = datalink or ""
 				if timed then
 					info.duration = math.ceil(duration)
 					info.data = "true"
@@ -60,8 +63,8 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 				onReceive(info)
 			end, onFailure)
 		elseif streamwatch_url != nil then
-			streamwatch_link = streamwatch_url
-			self:Fetch( string.Replace(streamwatch_url,"https://cors.oak.re/",""), onFetchReceive, onFailure )
+			datalink = string.Replace(streamwatch_url,"https://cors.oak.re/","")
+			self:Fetch( datalink, onFetchReceive, onFailure )
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE,body) --debug
 			onFailure( 'Theater_RequestFailed' )
@@ -72,9 +75,8 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 	if streamwatch_key != nil then
 		self:Fetch( "http://streamwat.ch/"..streamwatch_key.."/player.min.js", onFetchReceiveStreamWatch, function()
 			theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info) --use player to get the hls link due to serverside http issue
-				info.data = streamwatch_url
 				info.duration = 0
-				onReceive(info)
+				onSuccess(info)
 			end, onFailure)
 		end)
 	else

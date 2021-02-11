@@ -9,7 +9,10 @@ function RequestVideoURL( url )
 
 	LastURLRequested = url
 	
-	RunConsoleCommand( "cinema_video_request", url )
+	--RunConsoleCommand( "cinema_video_request", url )
+	net.Start("VideoRequest")
+		net.WriteString(url)
+	net.SendToServer()
 end
 
 local PANEL = {}

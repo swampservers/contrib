@@ -102,12 +102,13 @@ if SERVER then
 			end
 		end)
 	end)
-else
-	hook.Add("EntityEmitSound","BasedDepartmentPhone",function(s) --can't change material type and has loud damage sounds so just mute it
-		if (IsValid(s.Entity) and s.Entity:GetClass() == "func_physbox" and s.Entity:GetBrushSurfaces()[1]:GetMaterial():GetName() == "swamponions/af/baseddepartment") then
-			return false
+	
+	hook.Add("EntityTakeDamage","BasedDepartmentPhone",function(target,dmg)
+		if (IsValid(target) and target:GetClass() == "func_physbox" and target:GetBrushSurfaces()[1]:GetMaterial():GetName() == "swamponions/af/baseddepartment") then
+			return true
 		end
 	end)
+else
 	net.Receive("bounce", function()
 		local t = net.ReadTable()
 		PrintTable(t)

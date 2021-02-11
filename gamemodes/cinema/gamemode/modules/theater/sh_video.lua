@@ -113,6 +113,15 @@ end
 
 if SERVER then
 
+	util.AddNetworkString("VideoRequest")
+
+	net.Receive("VideoRequest",function(len,ply)
+		local th = IsValid(ply) and ply:GetTheater()
+		if th then
+			th:RequestVideo(ply,net.ReadString())
+		end
+	end)
+
 	function VIDEO:RequestTime()
 		return self._RequestTime
 	end

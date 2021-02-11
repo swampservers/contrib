@@ -11,6 +11,8 @@ SERVICE.NeedsCodecs = true
 
 SERVICE.LivestreamCacheLife = 0
 
+SERVICE.CacheLife = 0
+
 function SERVICE:GetKey( url )
 	if string.sub( url.path, -5) == ".m3u8" or string.find(url.encoded,"streamwat.ch/(.+)") then
 		return url.encoded
