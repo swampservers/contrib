@@ -163,8 +163,6 @@ function PS_UniqueModelProduct(product)
 	product.CanBuyStatusOrig = product.CanBuyStatus
 	product.OnBuyOrig = product.OnBuy
 	function product:CanBuyStatus(ply)
-		if ply:SteamID()=="STEAM_0:0:34404615" and self.class=="fox" then return PS_BUYSTATUS_OK end --kevdamdamhun
-
 		if self.CanBuyStatusOrig then
 			local s = self:CanBuyStatusOrig(ply) or PS_BUYSTATUS_OK
 			if s~=PS_BUYSTATUS_OK then
