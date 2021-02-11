@@ -44,7 +44,7 @@ if CLIENT then
 
 			function vpanel:ConsoleMessage(msg)
 				if (LocalPlayer().videoDebug) then print(msg) end
-				if msg:StartWith("DURATION:") then
+				if (msg:StartWith("DURATION:") and msg != "DURATION:NaN") then
 					local duration = math.ceil(tonumber(string.sub(msg,10)))
 					if duration==0 then
 						duration=1
@@ -71,12 +71,14 @@ if CLIENT then
 				end
 			end
 
-			local urll = "http://swampservers.net/cinema/filedata.php?file="
+			local urll = "http://swampservers.net/cinema/file.html"
 			if string.StartWith(key:lower(), "rtmp") then
-				urll = "http://swampservers.net/cinema/filedatavjs.php?file="
+				urll = "http://swampservers.net/cinema/filedatavjs.php?file="..key
 			end
 
-			vpanel:OpenURL( urll..key )
+			vpanel:OpenURL( urll )
+			vpanel:QueueJavascript( string.format( "th_video('%s');", string.JavascriptSafe(key) ) )
+			vpanel:QueueJavascript( "to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration(),100)});" )
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")
