@@ -303,7 +303,8 @@ function CinemaResourceMonitor(html)
 				pair = string.Split(smsg,"|")
 				m = pair[2]
 			end
-			if ((string.find(smsg,"|") or theater.ExtractURLInfo(smsg)) and not urls[m] and (pair and tonumber(pair[1])>1)) then
+			if ((string.find(smsg,"|") or theater.ExtractURLInfo(smsg)) and not urls[m]) then
+				if (pair and tonumber(pair[1])<2) then return end
 				local p = LinkList:Add("DButton")
 				p:SetText(m)
 				p:SetTooltip(m)
