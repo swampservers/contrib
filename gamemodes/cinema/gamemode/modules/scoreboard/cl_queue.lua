@@ -190,7 +190,7 @@ end
 function VIDEO:Update()
 
 	self.Title:SetText( self.Video.ttl )
-	self.Title:SetTooltip( self.Video.ttl )
+	self:SetTooltip( self.Video.ttl )
 	self.Duration:SetText( string.FormatSeconds(self.Video.dur) )
 	self.Controls:Update()
 
