@@ -27,13 +27,11 @@ function SetPointshopTheme(dark)
 		PS_GridBGColor = Color(33, 33, 33)
 		PS_BotBGColor = Color(33, 33, 33)
 		PS_SwitchableColor = Color(200, 200, 200)
-		pointshopJewImage = Material("pointshop/merchant_white.png")
 	else
 		PS_TileBGColor = Color(234, 234, 234)
 		PS_GridBGColor = Color(200, 200, 200)
 		PS_BotBGColor = Color(64, 64, 64)
 		PS_SwitchableColor = Color(0, 0, 0)
-		pointshopJewImage = Material("pointshop/merchant.png")
 	end
 
 	if IsValid(PS_CustomizerPanel) then
@@ -235,14 +233,18 @@ function PS_PostRender()
 end
 
 hook.Add("PrePlayerDraw","PS_BoneMods",function(ply)
-	if ply.PS_BoneModsLastModel ~= ply:GetModel() then
+
+	-- will be "false" if the model is not mounted yet
+	local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
+
+	if ply.PS_BoneModsLastModel ~= mounted_model then
 		ply.PS_BoneModsClean = false
 		--seems to have issues if you apply the bone mods as soon as the model changes...
 		--timer.Simple(1, function() if IsValid(ply) then ply.PS_BoneModsClean = false end end)
 	end
 	if not ply.PS_BoneModsClean then
 		ply.PS_BoneModsClean = PS_ApplyBoneMods(ply, ply:PS_GetActiveBonemods())
-		ply.PS_BoneModsLastModel = ply:GetModel()
+		ply.PS_BoneModsLastModel = mounted_model
 	end
 end)
 

@@ -131,3 +131,8 @@ hook.Add("RenderScreenspaceEffects","BarBrightness",function()
 
 	end
 end)
+
+local flagmaterial = Material("models/props_fairgrounds/fairgrounds_flagpole01")
+timer.Simple(0, function()
+	flagmaterial:SetTexture("$basetexture", "models/props_fairgrounds/fairgrounds_flagpole01_alternate")
+end)

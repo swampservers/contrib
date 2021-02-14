@@ -18,6 +18,7 @@ SWEP.UseHands = false
 
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = 1000
+
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "laserpointer"
 
@@ -33,6 +34,7 @@ SWEP.UnClickSound = Sound("Weapon_AR2.Empty")
 SWEP.DrawCrosshair = false
 SWEP.BounceWeaponIcon = false
 SWEP.LaserMask = nil --MASK_SHOT
+
 -- PlayerCanHaveLaserBeams is a hook used for this. the argument is just ply
 -- return false on this one and players won't be able to make their laser beam fully visible and lethal using right mouse
 hook.Add("PlayerCanHaveLaserBeams","DisableBeamModeInTheaters",function(ply, wep)
@@ -76,6 +78,21 @@ game.AddAmmoType( {
 
 end)
 
+hook.Add("Initialize","AddLaserAmmo",function()
+
+game.AddAmmoType( {
+	name = "laserpointer",
+	dmgtype = DMG_DISSOLVE,
+	tracer = TRACER_NONE,
+	plydmg = 0,
+	npcdmg = 0,
+	force = 2000,
+	maxcarry = 10000,
+	minsplash = 10,
+	maxsplash = 5
+} )
+
+end)
 
 function SWEP:ButtonSound(state)
 	local clicksound = self.ClickSound
@@ -643,6 +660,26 @@ surface.CreateFont( "laserpointer_display15", {
 })
 end
 
+if(CLIENT)then
+	surface.CreateFont( "laserpointer_display15", {
+		font = "Roboto", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+		extended = false,
+		size = 20,
+		weight = 1500,
+		blursize = 0,
+		scanlines = 0,
+		antialias = true,
+		underline = false,
+		italic = false,
+		strikeout = false,
+		symbol = false,
+		rotary = false,
+		shadow = false,
+		additive = false,
+		outline = false,
+	})
+end
+
 function SWEP:PostDrawViewModel(vm, weapon, ply)
 	local pos, ang = vm:GetPos(), vm:GetAngles()
 	render.SetMaterial(laser_material)
@@ -800,9 +837,7 @@ function SWEP:GetViewModelPosition(epos, eang)
 	return epos, eang
 end
 
-
 if CLIENT then
-
 	CreateConVar( "cl_customlasercolor", "0.35 0 1.0", FCVAR_ARCHIVE, "The value is a Vector - so between 0-1 - not between 0-255" )
 
 	CustomLaserFrame = nil

@@ -131,7 +131,8 @@ function PANEL:Think()
 		-- Run queued javascript
 		if self.JS then
 			for k, v in pairs( self.JS ) do
-				self:RunJavascript( v )
+				if (LocalPlayer().videoDebug) then print("(JS)",v) end
+				self:RunJavascript( string.format( "if(document.readyState=='complete'){%s}else{if(typeof queuedJS=='undefined'){var queuedJS=[];window.addEventListener('load',function(){for(i in queuedJS){queuedJS[i]()}})};queuedJS.push(function(){%s})};", v, v ) )
 			end
 			self.JS = {}
 		end

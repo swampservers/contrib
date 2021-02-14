@@ -9,7 +9,10 @@ function RequestVideoURL( url )
 
 	LastURLRequested = url
 	
-	RunConsoleCommand( "cinema_video_request", url )
+	--RunConsoleCommand( "cinema_video_request", url )
+	net.Start("VideoRequest")
+		net.WriteString(url)
+	net.SendToServer()
 end
 
 local PANEL = {}
@@ -67,6 +70,15 @@ function PANEL:Init()
 
 	self.History = vgui.Create( "RequestHistory", self )
 	self.History:SetPaintBackgroundEnabled(false)
+	
+	self.Browser.OnDocumentReady = function( panel, url )
+		self.Controls.AddressBar:SetText(url)
+		if theater.ExtractURLInfo( url ) then
+			self.Controls.RequestButton:SetDisabled( false )
+		else
+			self.Controls.RequestButton:SetDisabled( true )
+		end
+	end
 
 end
 
@@ -151,8 +163,10 @@ function HISTORY:Init()
 	local ClearButton = vgui.Create( "TheaterButton" )
 	ClearButton:SetText( T'Request_Clear' )
 	ClearButton.DoClick = function()
-		theater.ClearRequestHistory()
-		self.VideoList:Clear(true)
+		Derma_Query("Are you sure you want to clear your video history?","","Yes",function()
+			theater.ClearRequestHistory()
+			self.VideoList:Clear(true)
+		end,"No",function() end)
 	end
 	self.Options:AddItem(ClearButton)
 

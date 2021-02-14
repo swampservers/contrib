@@ -246,7 +246,8 @@ end
 
 function PANEL:Setup()
 	local DModelPanel = vgui.Create('DModelPanel', self)
-	DModelPanel:SetModel(self.data.model)
+	--DModelPanel:SetModel(self.data.model)
+	DModelPanel.model2set = self.data.model
 
 	DModelPanel:Dock(FILL)
 
@@ -271,9 +272,15 @@ function PANEL:Setup()
 	end
 
 	DModelPanel.Paint = function(dmp,w,h)
-		PS_PreRender(self.data, (self.item or {}).cfg)
+		if dmp.model2set then
+			-- might be a workshop model, will be an error till user clicks it and it appears in the preview
+			dmp:SetModel(dmp.model2set)
+			dmp.model2set = nil
+		end
 		
 		if ( !IsValid( dmp.Entity ) ) then return end
+		
+		PS_PreRender(self.data, (self.item or {}).cfg)
 
 		local x, y = dmp:LocalToScreen( 0, 0 )
 

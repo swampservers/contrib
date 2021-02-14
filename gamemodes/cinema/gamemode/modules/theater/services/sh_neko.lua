@@ -65,7 +65,7 @@ if CLIENT then
 	end
 	
 	function SERVICE:SetVolume(vol, panel)
-		local str = string.format("document.getElementsByTagName('input')[1].value=%s;document.getElementsByTagName('input')[1].dispatchEvent(new Event('input'));}", vol)
+		local str = string.format("document.getElementsByTagName('input')[1].value=%s;document.getElementsByTagName('input')[1].dispatchEvent(new Event('input'));", vol)
 		panel:RunJavascript( str ) --QueueJavascript is unreliable
 	end
 end

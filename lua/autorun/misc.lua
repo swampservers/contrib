@@ -102,6 +102,12 @@ if SERVER then
 			end
 		end)
 	end)
+	
+	hook.Add("EntityTakeDamage","BasedDepartmentPhone",function(target,dmg)
+		if (IsValid(target) and target:GetClass() == "func_physbox" and target:GetBrushSurfaces()[1]:GetMaterial():GetName() == "swamponions/af/baseddepartment") then
+			return true
+		end
+	end)
 else
 	net.Receive("bounce", function()
 		local t = net.ReadTable()

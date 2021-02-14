@@ -56,7 +56,7 @@ function SWEP:OnRemove()
 end
 
 function SWEP:OwnerChanged()
-	if SERVER then
+	if SERVER and IsValid(self.Owner) then
 		self:ExtEmitSound("mlady.ogg", {speech=0.8})
 	end
 end

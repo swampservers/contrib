@@ -144,7 +144,7 @@ end
 function ENT:DrawThumbnail()
 
 	-- Thumbnail isn't set yet
-	if self:GetThumbnail() == "" then
+	if self:GetThumbnail() == "" or ((theater.Services[self:GetService()] and theater.Services[self:GetService()].Mature) and not GetConVar("swamp_mature_content"):GetBool()) then
 
 		if self:GetService() == "" then
 		

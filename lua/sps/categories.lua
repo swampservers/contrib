@@ -30,13 +30,13 @@ PS_Categories = {
 				title = "Expensive Toys",
 				products = {
 					"weapon_airhorn",
+					"weapon_laserpointer",
 					"weapon_bodypillow",
 					"weapon_magicmissile",
 					"wheelchair",
 					"rocketwheelchair",
 					"mystery",
 					"weapon_taser",
-					"weapon_laserpointer",
 					"spacehat",
 					"weapon_popcorn_spam",
 					"weapon_sandcorn",
@@ -131,6 +131,7 @@ PS_Categories = {
 			{
 				title = "One-Life, Unique",
 				products = {
+					"jokerjoker",
 					"celestia",
 					"billyherrington",
 					"doomguy",

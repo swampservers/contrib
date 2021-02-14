@@ -86,16 +86,12 @@ end) ]]
 
 
 
-
-
-
-
-
-
-
-
-
-
+timer.Simple(1, function()
+	net.Start("setcntry")
+	net.WriteString(string.lower(system.GetCountry()))
+	net.SendToServer()
+end)
+		
 
 
 hook.Add("DrawTranslucentAccessories", "DrawSpacehat", function(ply)

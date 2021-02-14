@@ -13,7 +13,7 @@ sv_GetVideoInfo.bitchute = function(self, key, ply, onSuccess, onFailure)
 		
 			theater.GetVideoInfoClientside(self:GetClass(), bitchute_url, ply, function(info)
 				info.title = string.match(body,"<title>(.*)</title>") or "(Unknown)"
-				info.thumb = string.match(body,'poster="(.+.jpg)"')
+				info.thumb = string.match(body,'poster="(.+.jpg)"') or ""
 				info.data = bitchute_url
 				onSuccess(info)
 			end, onFailure)

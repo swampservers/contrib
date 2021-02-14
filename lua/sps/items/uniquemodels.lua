@@ -136,3 +136,12 @@ PS_UniqueModelProduct({
 	description = "Two nukes wasn't enough.",
 	model = 'models/tsumugi.mdl'
 })
+
+-- TODO: make them download/mount on the server, make sure there is not a lua backdoor!
+PS_UniqueModelProduct({
+	class = 'jokerjoker',
+	name = 'Joker from JOKER',
+	description = "A test for now...",
+	model = 'models/kemot44/models/joker_pm.mdl',
+	workshop = "1899345304",
+})

@@ -13,9 +13,6 @@ SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
 	if url.scheme == "rtmp" then return url.encoded end 
-	if string.sub( url.path, -5) == ".webm" then
-		return url.encoded
-	end
 	if string.sub( url.path, -4) == ".mp4" then
 		if string.match( url.host, "dropbox.com" ) then
 			return "https://www.dropbox.com"..url.path.."?dl=1"
@@ -27,6 +24,7 @@ end
 
 if CLIENT then
 	function SERVICE:GetVideoInfoClientside(key, callback)
+		if (LocalPlayer().videoDebug and string.match(key,"dropbox.com")) then print("Dropbox Failsafe Activated") end
 		EmbeddedCheckCodecs(function()
 			vpanel = vgui.Create("DHTML")
 
@@ -45,7 +43,8 @@ if CLIENT then
 			end)
 
 			function vpanel:ConsoleMessage(msg)
-				if msg:StartWith("DURATION:") then
+				if (LocalPlayer().videoDebug) then print(msg) end
+				if (msg:StartWith("DURATION:") and msg != "DURATION:NaN") then
 					local duration = math.ceil(tonumber(string.sub(msg,10)))
 					if duration==0 then
 						duration=1
@@ -63,18 +62,23 @@ if CLIENT then
 
 					if duration>0 then
 						callback({duration=duration})
+					elseif duration>2147483647 then
+						print("Duration is too long")
+						callback()
 					else
 						Derma_StringRequest("RTMP Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({duration=duration,title=title}) end, function() callback() end)
 					end
 				end
 			end
-				
-			local urll = "http://swampservers.net/cinema/filedata.php?file="
+
+			local urll = "http://swampservers.net/cinema/file.html"
 			if string.StartWith(key:lower(), "rtmp") then
-				urll = "http://swampservers.net/cinema/filedatavjs.php?file="
+				urll = "http://swampservers.net/cinema/filedatavjs.php?file="..key
 			end
 
-			vpanel:OpenURL( urll..key )
+			vpanel:OpenURL( urll )
+			vpanel:QueueJavascript( string.format( "th_video('%s');", string.JavascriptSafe(key) ) )
+			vpanel:QueueJavascript( "to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration())},100);" )
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")
@@ -97,11 +101,11 @@ if CLIENT then
 		else
 			cc="us"
 		end
- 
+		
 		local k = Video:Key()
 		
 		k = string.Replace(k, "relay.horatio.tube", cc..".horatio.tube")
-
+		
 		-- Let the webpage handle loading a video
 		local str = string.format( "th_video('%s');", string.JavascriptSafe(k) )
 		panel:QueueJavascript( str )
