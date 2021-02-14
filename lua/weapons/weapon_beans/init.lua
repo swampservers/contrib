@@ -42,5 +42,4 @@ function BeanFart(ply)
 				v:TakeDamageInfo( d )
 		end	
 	end
-	self:Remove()
 end
