@@ -571,9 +571,18 @@ function SWEP:GetLaserColor()
 	if (IsValid(ply)) then
 		local wpncolor = self:GetCustomColor()
 		local ch, cs, cv = ColorToHSV(Color(wpncolor.r * 255, wpncolor.g * 255, wpncolor.b * 255))
+		local lasercolor
+		if(cv == 0)then
+		self.RandomPhase = self.RandomPhase or math.Rand(0,360)
+		
+		cv = 1
+		cs = 1
+		ch = 180 + math.NormalizeAngle(self.RandomPhase + CurTime()*720)
+		else
 		cv = 1
 		cs = math.Clamp(cs, 0, 1)
-		local lasercolor = HSVToColor(ch, cs, cv)
+		end
+		lasercolor = HSVToColor(ch, cs, cv)
 		return lasercolor
 	end
 	return Color(255, 0, 0)
