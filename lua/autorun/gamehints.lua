@@ -22,7 +22,7 @@ function SwampHint(message,delay)
 	if(SwampHints[message])then message = SwampHints[message] end
 	timer.Create("delayswamphint"..message,delay,1,function()
 		if(showmessage)then
-			notification.AddLegacy( message.." (disable this hint in the scoreboard)", NOTIFY_GENERIC, 5 )
+			notification.AddLegacy( message, NOTIFY_GENERIC, 5 )
 		end
 	end)
 end
