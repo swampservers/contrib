@@ -207,3 +207,128 @@ hook.Add( "GUIMousePressed", "RequestClose", function( key )
 	end
 
 end )
+
+local function InjectResourceMonitor(panel)
+	panel:RunJavascript([[
+		function RestoreConsole(){ //skids disabling the console
+			console.log=null;
+			console.log;
+			delete console.log;
+			var i=document.createElement('iframe');
+			i.style.display='none';
+			document.body.appendChild(i);
+			window.console=i.contentWindow.console;
+		}
+		var resource_list=[];
+		setInterval(function(){
+			var priority = [];
+			var iframes=document.getElementsByTagName("iframe");
+			for(var i=0;i<iframes.length;i++){
+				if(iframes[i].src){
+					priority[iframes[i].src]=1;
+					if(iframes[i].getAttribute("mozallowfullscreen") || iframes[i].allowFullscreen)priority[iframes[i].src]++;
+				}
+			}
+			var videos=document.getElementsByTagName("video");
+			for(var i=0;i<videos.length;i++){
+				if(videos[i].src){
+					priority[videos[i].src]=5;
+					if(videos[i].muted) priority[videos[i].src]=0;
+				}
+			}
+			for(var key in priority)console.log(priority[key]+"|"+key);
+			console.log(location.href);
+			if(performance===undefined){return}
+			var resources=performance.getEntriesByType("resource");
+			if(resources===undefined || resources.length<=0){return}
+			RestoreConsole();
+			var il=resource_list.length;
+			for(var i=il;i<resources.length;i++){console.log(resources[i].name)}
+			resource_list=resources;
+		},100);
+	]])
+end
+
+function CinemaResourceMonitor(html)
+	
+	html.f = vgui.Create("DFrame",html)
+	html.f:SetSize(500,500)
+	html.f:MakePopup()
+	html.f:SetTitle("")
+	
+	function html.f:Close() --cleanup and return parent html panel's functions to normal
+		html.f:Remove()
+		html.f = nil
+		html.Browser.OnDocumentReady = function(panel,url)
+			html.Controls.AddressBar:SetText(url)
+			if theater.ExtractURLInfo(url) then
+				html.Controls.RequestButton:SetDisabled(false)
+			else
+				html.Controls.RequestButton:SetDisabled(true)
+			end
+		end
+		function html.Browser:ConsoleMessage(msg)
+		end
+		return
+	end
+	
+	local LinkList = vgui.Create("DScrollPanel",html.f)
+	LinkList:Dock(FILL)
+	
+	local manualpage = nil
+	
+	html.Browser.OnDocumentReady = function(panel,url)
+		if (not manualpage) then
+			LinkList:Clear()
+			urls = {}
+			InjectResourceMonitor(html.Browser)
+			html.Controls.AddressBar:SetText(url)
+		end
+		if theater.ExtractURLInfo(url) then
+			html.Controls.RequestButton:SetDisabled(false)
+		else
+			html.Controls.RequestButton:SetDisabled(true)
+		end
+		manualpage = false
+	end
+	
+	local urls = {}
+	function html.Browser:ConsoleMessage(msg)
+		local col = Color(255,255,255)
+		local smsg = tostring(msg)
+		if (url.parse2(smsg)) then
+			local m = smsg
+			local pair = nil
+			if (string.find(smsg,"|")) then
+				pair = string.Split(smsg,"|")
+				m = pair[2]
+			end
+			if ((string.find(smsg,"|") or theater.ExtractURLInfo(smsg)) and not urls[m]) then
+				if (pair and tonumber(pair[1])<2) then return end
+				local p = LinkList:Add("DButton")
+				p:SetText(m)
+				p:SetTooltip(m)
+				p:Dock(TOP)
+				p:SetContentAlignment(4)
+				p:SetFont("ScoreboardVidDuration")
+				p:SetColor((theater.ExtractURLInfo(m) and Color(0,255,0)) or Color(255,255,0))
+				function p:DoClick()
+					if (theater.ExtractURLInfo(m)) then
+						RequestVideoURL(m)
+						html:Remove()
+					else
+						html.Browser:RunJavascript("location.href='"..m.."'")
+					end
+				end
+				p.Paint = function(self,w,h)
+					if self:IsHovered() then
+						surface.SetDrawColor(0,0,0,100)
+						surface.DrawRect(0,0,w,h)
+					end
+				end
+				urls[m] = true
+			end
+		end
+	end
+	
+end

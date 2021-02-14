@@ -63,6 +63,13 @@ function PANEL:Init()
 		self.HTML:Stop()
 		self.HTML:OpenURL( self.HomeURL )
 	end
+	self.HomeButton.DoRightClick = function()
+		local menu = DermaMenu() 
+		menu:AddOption("Advanced User Mode",function()
+			if (not RequestPanel.f) then CinemaResourceMonitor(RequestPanel) end
+		end)
+		menu:Open()
+	end
 	
 	self.AddressBar = vgui.Create( "DTextEntry", self )
 	self.AddressBar:Dock( FILL )

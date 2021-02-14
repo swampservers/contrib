@@ -78,7 +78,7 @@ if CLIENT then
 
 			vpanel:OpenURL( urll )
 			vpanel:QueueJavascript( string.format( "th_video('%s');", string.JavascriptSafe(key) ) )
-			vpanel:QueueJavascript( "to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration(),100)});" )
+			vpanel:QueueJavascript( "to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration())},100);" )
 		end,
 		function()
 			chat.AddText("You need codecs to request this. Press F2.")

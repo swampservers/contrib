@@ -163,8 +163,10 @@ function HISTORY:Init()
 	local ClearButton = vgui.Create( "TheaterButton" )
 	ClearButton:SetText( T'Request_Clear' )
 	ClearButton.DoClick = function()
-		theater.ClearRequestHistory()
-		self.VideoList:Clear(true)
+		Derma_Query("Are you sure you want to clear your video history?","","Yes",function()
+			theater.ClearRequestHistory()
+			self.VideoList:Clear(true)
+		end,"No",function() end)
 	end
 	self.Options:AddItem(ClearButton)
 
