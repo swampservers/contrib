@@ -12,16 +12,15 @@ if SERVER then
 	timer.Create("BeansFart",1.7,0,function()
 		FunnyFart = player.GetHumans()
 		
-		for k,v in pairs(FunnyFart) do
-			if(v.BeansEaten != nil and v.BeansEaten > 0 and math.random(0,25) < v.BeansEaten)then
-					
+		for k,ply in pairs(FunnyFart) do
+			if(ply.BeansEaten != nil and ply.BeansEaten > 0 and math.random(0,25) < ply.BeansEaten)then
+				
 				local pit = math.random(90,105)
 	
-				self:EmitSound("fart/shitpants.wav",350,math.random(90,110),1)
-				local point = self:GetOwner():GetPos()
-				if(IsValid(self) and SERVER)then BeanFart(ply) end
+				ply:EmitSound("fart/shitpants.wav",350,math.random(90,110),1)
+				if(IsValid(ply) and SERVER)then BeanFart(ply) end
 					
-				v.BeansEaten = math.Clamp(v.BeansEaten - math.random(0,25),0,100000)
+				ply.BeansEaten = math.Clamp(ply.BeansEaten - math.random(0,25),0,100000)
 			end
 		end
 		FunnyFart = nil
