@@ -14,7 +14,7 @@ SERVICE.LivestreamCacheLife = 0
 SERVICE.CacheLife = 0
 
 function SERVICE:GetKey( url )
-	if string.sub( url.path, -5) == ".m3u8" or string.find(url.encoded,"streamwat.ch/(.+)") then
+	if string.sub( url.path, -5) == ".m3u8" or (string.find(url.encoded,"streamwat.ch/(.+)") and not string.find(url.path,"%.")) then
 		return url.encoded
 	end
 	return false
