@@ -8,7 +8,7 @@ SERVICE.Name 		= "4Anime"
 SERVICE.NeedsCodecs = true
 
 function SERVICE:GetKey( url )
-	if string.match( url.encoded, "4anime.to/(.+)" ) and not string.match( url.encoded, "4anime.to/anime/(.*)" ) then
+	if (string.match(url.encoded,"4anime.to/(.+)") and not string.match(url.encoded,"4anime.to/anime/(.*)") and not string.find(url.path,"%.")) then
 		return url.encoded
 	end
 	return false

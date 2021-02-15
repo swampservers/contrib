@@ -14,9 +14,9 @@ SERVICE.LivestreamCacheLife = 0
 SERVICE.CacheLife = 0
 
 function SERVICE:GetKey( url )
-	--if (util.JSONToTable(url.encoded)) then
-	--	return url.encoded
-	--end
+	if (util.JSONToTable(url.encoded)) then
+		return url.encoded
+	end
 	return false
 end
 
@@ -25,6 +25,9 @@ if CLIENT then
 	end
 	
 	function SERVICE:LoadVideo( Video, panel )
+	end
+	
+	function SERVICE:SetVolume( vol, panel )
 	end
 end
 
