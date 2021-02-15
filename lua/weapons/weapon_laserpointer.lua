@@ -6,8 +6,8 @@ SWEP.Category = "PYROTEKNIK"
 SWEP.Instructions = "Left Click to Blind People, Right Click to toggle lethal, Press R to change color"
 SWEP.Purpose = "Point it in someone's eye :)"
 
-SWEP.Slot = 0
-SWEP.SlotPos = 4
+SWEP.Slot = 1
+SWEP.SlotPos = 100
 
 SWEP.Spawnable = true
 
@@ -16,8 +16,9 @@ SWEP.WorldModel = Model("models/brian/laserpointer.mdl")
 
 SWEP.UseHands = false
 
-SWEP.Primary.ClipSize = 1000
-SWEP.Primary.DefaultClip = 2000
+SWEP.Primary.ClipSize = -1
+SWEP.Primary.DefaultClip = 1000
+
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "laserpointer"
 
@@ -27,7 +28,7 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.BobScale = 0
 SWEP.SwayScale = 0
-SWEP.DrawAmmo = false
+SWEP.DrawAmmo = true
 SWEP.ClickSound = Sound("Weapon_Pistol.Empty")
 SWEP.UnClickSound = Sound("Weapon_AR2.Empty")
 SWEP.DrawCrosshair = false
@@ -43,6 +44,7 @@ hook.Add("PlayerCanHaveLaserBeams","DisableBeamModeInTheaters",function(ply, wep
 end)
 
 if (CLIENT) then
+language.Add("laserpointer_ammo", "Laser Pointer Battery")
 	local wepicon = Material("laserpointer/laserpointer_icon.png", "smooth")
 
 	SWEP.WepSelectIcon = wepicon:GetTexture("$basetexture")
@@ -60,6 +62,21 @@ if (CLIENT) then
 	end
 end
 
+hook.Add("Initialize","AddLaserAmmo",function()
+
+game.AddAmmoType( {
+	name = "laserpointer",
+	dmgtype = DMG_DISSOLVE,
+	tracer = TRACER_NONE,
+	plydmg = 0,
+	npcdmg = 0,
+	force = 2000,
+	maxcarry = 10000,
+	minsplash = 10,
+	maxsplash = 5
+} )
+
+end)
 
 hook.Add("Initialize","AddLaserAmmo",function()
 
@@ -173,7 +190,7 @@ function SWEP:AddBattery(num)
 end
 
 function SWEP:GetFullBattery()
-	return self.Primary.ClipSize
+	return self.Primary.DefaultClip
 end
 
 function SWEP:EquipAmmo(ply)
@@ -302,7 +319,9 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
 		local dot = dir:Dot(LocalPlayer():GetAimVector() * -1)
 		if (tr.Entity:IsPlayer() and math.deg(math.acos(dot)) < 45) then
 			local hitply = tr.Entity
-			if(hitply:GetHitBoxHitGroup(tr.HitBox, hitply:GetHitboxSet()) == HITGROUP_HEAD or pony_head_hitbones[hitply:GetBoneName(hitply:GetHitBoxBone(tr.HitBox, hitply:GetHitboxSet()))])then
+			local bonehit = hitply:GetHitBoxBone(tr.HitBox, hitply:GetHitboxSet())
+			local bonename = (bonehit != nil and hitply:GetBoneName(bonehit)) or "LrigScull" --if we can't find a head bone on your model, every hitbox is your face. fuck you.
+			if(hitply:GetHitBoxHitGroup(tr.HitBox, hitply:GetHitboxSet()) == HITGROUP_HEAD or pony_head_hitbones[bonename])then
 				if (not tr.Entity:ShouldDrawLocalPlayer()) then
 					beamend = EyePos() + (origin - EyePos()):GetNormalized() * 16
 					tr.HitNormal = EyeAngles():Forward()
@@ -477,6 +496,9 @@ local laserhook = function(depth, skybox)
 			if (not IsValid(ply)) then
 				continue
 			end
+			if (wep:GetClass() ~= "weapon_laserpointer") then
+				continue
+			end
 			if (not IsValid(wep)) then
 				continue
 			end
@@ -571,6 +593,11 @@ function SWEP:GetLaserColor()
 	if (IsValid(ply)) then
 		local wpncolor = self:GetCustomColor()
 		local ch, cs, cv = ColorToHSV(Color(wpncolor.r * 255, wpncolor.g * 255, wpncolor.b * 255))
+		if(cv < 0.1 )then
+		self.RainbowRand = self.RainbowRand or math.Rand(0,360)
+		return HSVToColor(180+math.NormalizeAngle(-180 + self.RainbowRand + CurTime()*720),1,1)
+		end
+		
 		cv = 1
 		cs = math.Clamp(cs, 0, 1)
 		local lasercolor = HSVToColor(ch, cs, cv)
@@ -578,6 +605,7 @@ function SWEP:GetLaserColor()
 	end
 	return Color(255, 0, 0)
 end
+
 
 if (CLIENT) then
 	function draw.Circle(x, y, radius, seg)
@@ -610,6 +638,26 @@ if (CLIENT) then
 
 		surface.DrawPoly(cir)
 	end
+end 
+
+if(CLIENT)then
+surface.CreateFont( "laserpointer_display15", {
+	font = "Coolvetica", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+	extended = false,
+	size = 25,
+	weight = 1500,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false,
+})
 end
 
 if(CLIENT)then
@@ -661,6 +709,7 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 			TEXT_ALIGN_CENTER,
 			TEXT_ALIGN_CENTER
 		)
+
 	surface.SetDrawColor(self:GetLaserColor())
 	local indcolor = table.Copy(self:GetLaserColor())
 	if (not self:GetBeamMode()) then
@@ -819,7 +868,7 @@ if CLIENT then
 			local cvec = Mixer:GetVector()
 			RunConsoleCommand('cl_customlasercolor',tostring(cvec))
 			Frame:Remove()
-			timer.Simple(0.1, function()
+			timer.Simple(0.1, function() 
 				net.Start("LaserUpdateCustomColor")
 				net.WriteVector(cvec)
 				net.SendToServer()

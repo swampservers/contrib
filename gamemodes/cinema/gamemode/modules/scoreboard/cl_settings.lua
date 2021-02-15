@@ -183,10 +183,12 @@ function SETTINGS:Create()
 	--addCheckbox('Don\'t load chat images',"fedorachat_hideimg","Hides all images in chat")
 	addCheckbox('Hide interface', "cinema_hideinterface","Clean Your Screen")
 	addCheckbox('Hide players in theater', "cinema_hideplayers",'For when trolls stand in front of your screen')
+	addCheckbox('Display Hints',"swamp_showhints",'display occasional hints on how to play on the server')
 
 	addLabel('Performance')
 	addCheckbox('Turbo button', "swamp_fps_boost","Put your gaymergear PC into overdrive")
 	addCheckbox('Dynamic theater lighting',"cinema_lightfx",'Exclusive lighting effects (reduces fps)')
+	
 
 	--addLabel('Interface')
 	--RunConsoleCommand("radiobutton"..cinemainterface:GetInt(),"1")
