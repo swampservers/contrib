@@ -58,6 +58,22 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
 	if string.match(key,"dropbox.com") then
 		self:Fetch( string.Replace(key,"?dl=1",""), onFetchReceive, onFailure )
 	else
-		theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure)
+		theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
+			HTTP({ --don't accept links that can't be viewed by both the client and the server
+				method="HEAD",
+				url=key,
+				success=function(code)
+					if (code == 200) then
+						onReceive(info)
+					else
+						onFailure('File is only available to you')
+					end
+				end,
+				failed=function(err)
+					ply:PrintMessage(HUD_PRINTCONSOLE,err)
+					onFailure('File is only available to you')
+				end
+			})
+		end, onFailure)
 	end
 end
