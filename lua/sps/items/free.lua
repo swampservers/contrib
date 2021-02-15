@@ -23,6 +23,13 @@ PS_WeaponProduct({
 })
 
 PS_WeaponProduct({
+	class="weapon_monke",
+	name="Return to Monke",
+	description="Reject modernity, Embrace tradition.",
+	model="models/props/cs_italy/bananna.mdl"
+})
+
+PS_WeaponProduct({
 	class="gmod_camera",
 	name="Cringe Compiler",
 	description="*SNAP*",
