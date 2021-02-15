@@ -78,22 +78,6 @@ game.AddAmmoType( {
 
 end)
 
-hook.Add("Initialize","AddLaserAmmo",function()
-
-game.AddAmmoType( {
-	name = "laserpointer",
-	dmgtype = DMG_DISSOLVE,
-	tracer = TRACER_NONE,
-	plydmg = 0,
-	npcdmg = 0,
-	force = 2000,
-	maxcarry = 10000,
-	minsplash = 10,
-	maxsplash = 5
-} )
-
-end)
-
 function SWEP:ButtonSound(state)
 	local clicksound = self.ClickSound
 	if (not state) then

@@ -7,7 +7,7 @@ SwampHints["shop"] = "Press F3 to access the pointshop"
 SwampHints["disablehints"] = "To disable hints, open the scoreboard using tab and check the Display section"
 
 function SwampHint_InitVar()
-SWAMP_HINTVAR = SWAMP_HINTVAR or CreateClientConVar( "swamp_showhints", "1", true,false, "show me those pesky hints on how to play cinema" )
+SWAMP_HINTVAR = GetConVar("swamp_showhints") or CreateClientConVar( "swamp_showhints", "1", true,false, "show me those pesky hints on how to play cinema" )
 end
 SwampHint_InitVar()
 
