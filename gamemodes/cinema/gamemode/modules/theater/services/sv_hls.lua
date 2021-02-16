@@ -80,6 +80,25 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 			end, onFailure)
 		end)
 	else
-		self:Fetch( key, onFetchReceive, onFailure )
+		self:Fetch(key, function(body) --process the first link if it's a playlist/menu
+			local newurl = string.Split(url,"/")
+			local urlindex = nil
+			for k,v in ipairs(string.Split(body,"\n")) do
+				if (string.find(v,".m3u8") and not urlindex) then
+					urlindex = v
+				end
+			end
+			if (urlindex and not string.find(urlindex,"http.://")) then
+				local backcount = #string.Split(urlindex,"..")-1
+				for _=1,backcount do table.remove(newurl) end
+				newurl[#newurl] = string.sub(urlindex,backcount*3+1) or newurl[#newurl]
+				newurl = table.concat(newurl,"/")
+			elseif (urlindex and string.find(urlindex,"http.://")) then
+				newurl = urlindex
+			else
+				newurl = url
+			end
+			self:Fetch(newurl, onFetchReceive, onFailure)
+		end, onFailure)
 	end
 end
