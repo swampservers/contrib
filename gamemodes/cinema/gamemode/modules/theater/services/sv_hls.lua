@@ -30,7 +30,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 			if (v:StartWith("#EXTINF:")) then
 				duration = duration+tonumber(string.Split(string.sub(v,9),",")[1]) --split because it can be 1.0000,live instead of just 1.0000,
 			end
-			if (v == "#EXT-X-ENDLIST") then
+			if (v == "#EXT-X-ENDLIST" or v == "#EXT-X-PLAYLIST-TYPE:VOD") then
 				timed = true
 			end
 		end
