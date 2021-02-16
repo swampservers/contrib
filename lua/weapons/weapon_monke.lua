@@ -32,17 +32,6 @@ SWEP.SoundsSecondaryLength = {5.466,4.875}
 --i was going to use SoundDuration but it appears to be fucked
 
 
-meta = FindMetaTable("Entity")
-if meta.BananaOrigSetMaterial == nil then
-	meta.BananaOrigSetMaterial = meta.SetMaterial
-	meta.SetMaterial = function(self, materialName, forceMaterial)
-		if self:GetClass() =="weapon_monke" and materialName=="Models/effects/vol_light001" then self:BananaOrigSetMaterial("", forceMaterial) return end
-		self:BananaOrigSetMaterial(materialName, forceMaterial)
-	end
-end
-
-
-
 function SWEP:CanPrimaryAttack()
 
 	if ( self:GetNextPrimaryFire() > CurTime() ) then
