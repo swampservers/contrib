@@ -331,6 +331,10 @@ function LoadVideo( Video )
 	Msg("\tTitle:\t\t"..tostring(Video:Title()).."\n")
 	Msg("\tType:\t\t"..tostring(Video:Type()).."\n")
 	local vkey = tostring(Video:Key())
+	local t = util.JSONToTable(vkey)
+	if (t and t["referer"]) then
+		vkey = t["referer"]
+	end
 	if string.find(vkey, "horatio.tube") then
 		vkey = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 	end
