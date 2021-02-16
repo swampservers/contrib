@@ -63,7 +63,7 @@ function SWEP:Reload()
 	if(self.BananaEatNext and self.BananaEatNext > CurTime())then return end 
 	self:NetworkTaunt(3)
 	local ply = self:GetOwner()
-	if(SERVER)then ply:SetHealth(math.min(self.Owner:Health() + 10,self.Owner:GetMaxHealth())) end
+	if(SERVER)then ply:SetHealth(math.min(self.Owner:Health() + math.random(8,50),self.Owner:GetMaxHealth())) end
 	ply.ChewScale = 1
 	ply.ChewStart = CurTime()		
 	ply.ChewDur = 0.2
