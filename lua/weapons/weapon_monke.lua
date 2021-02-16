@@ -111,7 +111,6 @@ if(CLIENT)then
 end
 if(SERVER)then util.AddNetworkString("MonkyTaunt") end
 
-
 function SWEP:NetworkTaunt(tt)
 	if(SERVER)then
 		if(!IsValid(self:GetOwner()))then return end
