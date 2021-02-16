@@ -1,6 +1,5 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 --if(SERVER)then resource.AddWorkshop(2396963452) end
 
 SWEP.PrintName = "Return To Monke"
@@ -108,10 +107,10 @@ if(CLIENT)then
 		if(state == 1)then wep:PrimaryAttack() end
 		if(state == 2)then wep:SecondaryAttack() end
 		if(state == 3)then wep:Reload() end
-	
 	end)
 end
 if(SERVER)then util.AddNetworkString("MonkyTaunt") end
+
 
 function SWEP:NetworkTaunt(tt)
 	if(SERVER)then
