@@ -30,6 +30,17 @@ SWEP.SoundsSecondaryLength = {5.466,4.875}
 --i was going to use SoundDuration but it appears to be fucked
 
 
+meta = FindMetaTable("Entity")
+if meta.BananaOrigSetMaterial == nil then
+	meta.BananaOrigSetMaterial = meta.SetMaterial
+	meta.SetMaterial = function(self, materialName, forceMaterial)
+		if self:GetClass() =="weapon_monke" and materialName=="Models/effects/vol_light001" then self:BananaOrigSetMaterial("", forceMaterial) return end
+		self:BananaOrigSetMaterial(materialName, forceMaterial)
+	end
+end
+
+
+
 function SWEP:CanPrimaryAttack()
 
 	if ( self:GetNextPrimaryFire() > CurTime() ) then
@@ -67,7 +78,7 @@ function SWEP:Reload()
 	ply.ChewScale = 1
 	ply.ChewStart = CurTime()		
 	ply.ChewDur = 0.2
-	self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self.EatTaunt, true)
+	self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ply.IsPony and ply:IsPony() and ACT_LAND or self.EatTaunt, true)
 	ply:ExtEmitSound("beans/eating.wav", {level=60,shared=true})
 	self.BananaNextRender = CurTime() + 3
 	self.BananaEatNext = CurTime() + 3
@@ -78,12 +89,14 @@ end
 
 function SWEP:GetMonkeyTaunt(sec)
 	local ply = self:GetOwner()
+	if(ply.IsPony and ply:IsPony())then return ACT_LAND end
 	local choice = math.Round(util.SharedRandom( "MonkeyTaunt"..ply:UserID(), 1, #self.TauntsPrimary, self:GetRandomSeed() ),0)
 	return self.TauntsPrimary[choice] or ACT_GMOD_GESTURE_RANGE_FRENZY
 end
 
 function SWEP:GetMonkeyTaunt2(sec)
 	local ply = self:GetOwner()
+	if(ply.IsPony and ply:IsPony())then return ACT_LAND end
 	local choice = math.Round(util.SharedRandom( "MonkeyTaunt2"..ply:UserID(), 1, #self.TauntsSecondary, self:GetRandomSeed() ),0)
 	return self.TauntsSecondary[choice] or ACT_GMOD_GESTURE_TAUNT_ZOMBIE
 end
@@ -264,8 +277,8 @@ function SWEP:DrawWorldModel(flags,check)
 	local ply = self:GetOwner()
 	if IsValid(ply) then
 		
-		local bname = self.Owner.IsPony != nil and self.Owner:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-		local bone = self.Owner:LookupBone(bname) or 0
+		local bname = ply.IsPony != nil and ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+		local bone = ply:LookupBone(bname) or 0
 		local opos = self:GetPos()
 		local oang = self:GetAngles()
 		local bp,ba = self.Owner:GetBonePosition(bone)
@@ -273,10 +286,12 @@ function SWEP:DrawWorldModel(flags,check)
 		if (ba) then oang = ba end
 		
 		if bname == "LrigScull" then
-			opos = opos + oang:Right()*-3.25
-			opos = opos + oang:Forward()*6.75
-			opos = opos + oang:Up()
-			oang:RotateAroundAxis(oang:Up(),200)
+			opos = opos + oang:Right()*-2
+			opos = opos + oang:Forward()*9
+			opos = opos + oang:Up()*1
+			oang:RotateAroundAxis(oang:Forward(),90)
+			oang:RotateAroundAxis(oang:Right(),-135)
+			
 		else
 			opos = opos + oang:Right()*2
 			opos = opos + oang:Forward()*3
