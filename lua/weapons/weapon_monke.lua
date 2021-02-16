@@ -61,10 +61,12 @@ end
 function SWEP:Reload()
 	if(!self:CanPrimaryAttack() or !self:CanSecondaryAttack())then return end
 	if(self.BananaEatNext and self.BananaEatNext > CurTime())then return end 
+	self:NetworkTaunt(3)
 	local ply = self:GetOwner()
-	ply:SetHealth(math.min(self.Owner:Health() + 10,self.Owner:GetMaxHealth()))
+	if(SERVER)then ply:SetHealth(math.min(self.Owner:Health() + 10,self.Owner:GetMaxHealth())) end
 	ply.ChewScale = 1
-	ply.ChewStart = CurTime()		ply.ChewDur = 0.2
+	ply.ChewStart = CurTime()		
+	ply.ChewDur = 0.2
 	self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self.EatTaunt, true)
 	ply:ExtEmitSound("beans/eating.wav", {level=60,shared=true})
 	self.BananaNextRender = CurTime() + 3
@@ -72,6 +74,7 @@ function SWEP:Reload()
 	self:SetNextPrimaryFire(CurTime() + 3)
 	self:SetNextSecondaryFire(CurTime() + 3)
 end
+
 
 function SWEP:GetMonkeyTaunt(sec)
 	local ply = self:GetOwner()
@@ -96,29 +99,28 @@ if(CLIENT)then
 		if(!IsValid(wep))then return end
 		if(wep:GetClass() != "weapon_monke")then return end
 		if(!IsValid(wep:GetOwner()))then return end
-		local state = net.ReadBool()
-		if(state)then
-			wep:SecondaryAttack()
-		else
-			wep:PrimaryAttack()
-		end
+		local state = net.ReadInt(8)
+		if(state == 1)then wep:PrimaryAttack() end
+		if(state == 2)then wep:SecondaryAttack() end
+		if(state == 3)then wep:Reload() end
+	
 	end)
 end
 if(SERVER)then util.AddNetworkString("MonkyTaunt") end
 
-function SWEP:NetworkTaunt(secondary)
+function SWEP:NetworkTaunt(tt)
 	if(SERVER)then
 		if(!IsValid(self:GetOwner()))then return end
 		net.Start("MonkyTaunt")
 		net.WriteEntity(self)
-		net.WriteBool(secondary)
+		net.WriteInt(tt,8)
 		net.SendOmit(self:GetOwner())
 	end
 end
 
 
 function SWEP:PrimaryAttack()
-	self:NetworkTaunt()
+	self:NetworkTaunt(1)
 	local ply = self:GetOwner()
 	local soundindex = math.Round(util.SharedRandom( "MonkeyPrimary"..ply:UserID(), 1, #self.SoundsPrimary, self:GetRandomSeed() ),0)
 	local sound = self.SoundsPrimary[soundindex]
@@ -145,7 +147,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	self:NetworkTaunt(true)
+	self:NetworkTaunt(2)
 	local ply = self:GetOwner()
 	local soundindex = math.Round(util.SharedRandom( "MonkeySecondary"..ply:UserID(), 1, #self.SoundsSecondary, self:GetRandomSeed() ),0)
 	local sound = self.SoundsSecondary[soundindex]
