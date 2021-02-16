@@ -24,15 +24,13 @@ end
 
 function SWEP:Think()
     if (self.Owner.ChewScale or 0) > 0 then
-		if SERVER then
-			if (CurTime() >= self.Owner.BiteStart+0.625 and self.Owner.BitesRem > 0) then
-				self.Owner.BiteStart = CurTime()
-				self.Owner.BitesRem = self.Owner.BitesRem - 1
-				net.Start("Popcorn_Eat")
-					net.WriteEntity(self.Owner)
-					net.WriteFloat(math.Round(math.Rand(4,8)+self.Owner.BitesRem*8))
-				net.Broadcast()
-			end
+		if SERVER and self.Owner.BiteStart and CurTime() >= self.Owner.BiteStart+0.625 and self.Owner.BitesRem > 0 then
+			self.Owner.BiteStart = CurTime()
+			self.Owner.BitesRem = self.Owner.BitesRem - 1
+			net.Start("Popcorn_Eat")
+				net.WriteEntity(self.Owner)
+				net.WriteFloat(math.Round(math.Rand(4,8)+self.Owner.BitesRem*8))
+			net.Broadcast()
 		end
         self.Owner.ChewScale = math.Clamp((self.Owner.ChewStart+self.Owner.ChewDur - CurTime())/self.Owner.ChewDur,0,1)
     end
