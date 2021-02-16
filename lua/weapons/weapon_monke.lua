@@ -1,5 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
+--if(SERVER)then resource.AddWorkshop(2396963452) end
 
 SWEP.PrintName = "Return To Monke"
 SWEP.Author = "PYROTEKNIK"
@@ -10,6 +9,10 @@ SWEP.Slot = 1
 SWEP.ViewModel	= "models/props/cs_italy/bananna.mdl"
 SWEP.WorldModel = "models/props/cs_italy/bananna.mdl"
 SWEP.HoldType = "knife"
+SWEP.Primary.Ammo = "none"
+SWEP.Primary.ClipSize = -1
+SWEP.Secondary.Ammo = "none"
+SWEP.Secondary.ClipSize = -1
 SWEP.Primary.Automatic = true
 SWEP.Secondary.Automatic = true
 SWEP.DrawAmmo = false
@@ -87,15 +90,42 @@ local function SoundMul()
 	return  (SERVER and 2 or CLIENT and 4.3)
 end
 
+if(CLIENT)then
+	net.Receive("MonkyTaunt",function(len)
+		local wep = net.ReadEntity()
+		if(!IsValid(wep))then return end
+		if(wep:GetClass() != "weapon_monke")then return end
+		if(!IsValid(wep:GetOwner()))then return end
+		local state = net.ReadBool()
+		if(state)then
+			wep:SecondaryAttack()
+		else
+			wep:PrimaryAttack()
+		end
+	end)
+end
+if(SERVER)then util.AddNetworkString("MonkyTaunt") end
+
+function SWEP:NetworkTaunt(secondary)
+	if(SERVER)then
+		if(!IsValid(self:GetOwner()))then return end
+		net.Start("MonkyTaunt")
+		net.WriteEntity(self)
+		net.WriteBool(secondary)
+		net.SendOmit(self:GetOwner())
+	end
+end
+
 
 function SWEP:PrimaryAttack()
+	self:NetworkTaunt()
 	local ply = self:GetOwner()
 	local soundindex = math.Round(util.SharedRandom( "MonkeyPrimary"..ply:UserID(), 1, #self.SoundsPrimary, self:GetRandomSeed() ),0)
 	local sound = self.SoundsPrimary[soundindex]
 	local delay = self.SoundsPrimaryLength[soundindex]
 	if(delay == nil or delay == 0)then delay = 1 end
 	if(ply.ExtEmitSound)then
-		ply:ExtEmitSound(sound, {speech=0.1,pitch=100,crouchpitch=100})
+		ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
 	else
 		ply:EmitSound(sound)
 	end
@@ -115,6 +145,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+	self:NetworkTaunt(true)
 	local ply = self:GetOwner()
 	local soundindex = math.Round(util.SharedRandom( "MonkeySecondary"..ply:UserID(), 1, #self.SoundsSecondary, self:GetRandomSeed() ),0)
 	local sound = self.SoundsSecondary[soundindex]
