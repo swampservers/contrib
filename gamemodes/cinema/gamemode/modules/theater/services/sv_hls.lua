@@ -20,7 +20,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 	
 	local onFetchReceive = function( body, length, headers, code )
 		
-		if (headers["Access-Control-Allow-Origin"] and headers["Access-Control-Allow-Origin"] != "*") then
+		if (headers["Access-Control-Allow-Origin"] and headers["Access-Control-Allow-Origin"] != "*" and headers["Access-Control-Allow-Origin"] != "https://swampservers.net/") then
 			datalink = "https://cors.oak.re/"..(datalink or key)
 		end
 		local info = {}
