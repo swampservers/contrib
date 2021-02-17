@@ -264,10 +264,10 @@ function CinemaResourceMonitor(html)
 	
 	local urls = {}
 	
-	function html.f:Close() --cleanup and return parent html panel's functions to normal
+	function html.f:Close()
+		urls = {}
 		html.f:Remove()
 		html.f = nil
-		urls = {}
 		html.Browser.OnDocumentReady = function(panel,url)
 			html.Controls.AddressBar:SetText(url)
 			if theater.ExtractURLInfo(url) then
@@ -278,24 +278,16 @@ function CinemaResourceMonitor(html)
 		end
 		function html.Browser:ConsoleMessage(msg)
 		end
-		html.Controls.AddressBar.OnEnter = function()
-			html.HTML:Stop()
-			html.HTML:OpenURL(html.AddressBar:GetValue())
-		end
 		return
 	end
 	
 	local LinkList = vgui.Create("DScrollPanel",html.f)
 	LinkList:Dock(FILL)
 	
-	local manualpage = false
 	html.Browser.OnDocumentReady = function(panel,url)
-		if (not manualpage) then
-			LinkList:Clear()
-			urls = {}
-			InjectResourceMonitor(html.Browser)
-			manualpage = true
-		end
+		LinkList:Clear()
+		urls = {}
+		InjectResourceMonitor(html.Browser)
 		html.Controls.AddressBar:SetText(url)
 		if theater.ExtractURLInfo(url) then
 			html.Controls.RequestButton:SetDisabled(false)
@@ -303,6 +295,7 @@ function CinemaResourceMonitor(html)
 			html.Controls.RequestButton:SetDisabled(true)
 		end
 	end
+	
 	
 	function html.Browser:ConsoleMessage(msg)
 		local col = Color(255,255,255)
@@ -332,15 +325,6 @@ function CinemaResourceMonitor(html)
 						html:Remove()
 					else
 						html.Browser:RunJavascript("location.href='"..m.."'")
-						manualpage = false
-						timer.Simple(5,function() --failsafe
-							if (not manualpage) then
-								LinkList:Clear()
-								urls = {}
-								InjectResourceMonitor(html.Browser)
-								manualpage = true
-							end
-						end)
 					end
 				end
 				p.Paint = function(self,w,h)
