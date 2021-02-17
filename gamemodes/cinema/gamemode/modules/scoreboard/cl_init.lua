@@ -282,21 +282,12 @@ function CinemaResourceMonitor(html)
 	LinkList:Dock(FILL)
 	
 	local manualpage = false
-
-	timer.Simple(5,function() --failsafe
-		if (not manualpage) then
-			LinkList:Clear()
-			urls = {}
-			InjectResourceMonitor(html.Browser)
-		end
-		manualpage = true
-	end)
-	
 	html.Browser.OnDocumentReady = function(panel,url)
 		if (not manualpage) then
 			LinkList:Clear()
 			urls = {}
 			InjectResourceMonitor(html.Browser)
+			manualpage = true
 		end
 		html.Controls.AddressBar:SetText(url)
 		if theater.ExtractURLInfo(url) then
@@ -304,7 +295,6 @@ function CinemaResourceMonitor(html)
 		else
 			html.Controls.RequestButton:SetDisabled(true)
 		end
-		manualpage = true
 	end
 	
 	local urls = {}
@@ -336,6 +326,15 @@ function CinemaResourceMonitor(html)
 						html:Remove()
 					else
 						html.Browser:RunJavascript("location.href='"..m.."'")
+						manualpage = false
+						timer.Simple(5,function() --failsafe
+							if (not manualpage) then
+								LinkList:Clear()
+								urls = {}
+								InjectResourceMonitor(html.Browser)
+								manualpage = true
+							end
+						end)
 					end
 				end
 				p.Paint = function(self,w,h)
