@@ -262,9 +262,12 @@ function CinemaResourceMonitor(html)
 	html.f:MakePopup()
 	html.f:SetTitle("")
 	
+	local urls = {}
+	
 	function html.f:Close() --cleanup and return parent html panel's functions to normal
 		html.f:Remove()
 		html.f = nil
+		urls = {}
 		html.Browser.OnDocumentReady = function(panel,url)
 			html.Controls.AddressBar:SetText(url)
 			if theater.ExtractURLInfo(url) then
@@ -274,6 +277,10 @@ function CinemaResourceMonitor(html)
 			end
 		end
 		function html.Browser:ConsoleMessage(msg)
+		end
+		html.Controls.AddressBar.OnEnter = function()
+			html.HTML:Stop()
+			html.HTML:OpenURL(html.AddressBar:GetValue())
 		end
 		return
 	end
@@ -297,7 +304,6 @@ function CinemaResourceMonitor(html)
 		end
 	end
 	
-	local urls = {}
 	function html.Browser:ConsoleMessage(msg)
 		local col = Color(255,255,255)
 		local smsg = tostring(msg)
