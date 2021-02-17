@@ -314,6 +314,7 @@ function CinemaResourceMonitor(html)
 				p:SetContentAlignment(4)
 				p:SetFont("ScoreboardVidDuration")
 				p:SetColor((theater.ExtractURLInfo(m) and Color(0,255,0)) or Color(255,255,0))
+				if theater.ExtractURLInfo(m) then print(m) end
 				function p:DoClick()
 					if (theater.ExtractURLInfo(m)) then
 						RequestVideoURL(m)
