@@ -236,6 +236,12 @@ local function InjectResourceMonitor(panel)
 					if(videos[i].muted) priority[videos[i].src]=0;
 				}
 			}
+			var sources=document.getElementsByTagName("source");
+			for(var i=0;i<sources.length;i++){
+				if(sources[i].src){
+					priority[sources[i].src]=2;
+				}
+			}
 			for(var key in priority)console.log(priority[key]+"|"+key);
 			console.log(location.href);
 			if(performance===undefined){return}
@@ -275,7 +281,16 @@ function CinemaResourceMonitor(html)
 	local LinkList = vgui.Create("DScrollPanel",html.f)
 	LinkList:Dock(FILL)
 	
-	local manualpage = nil
+	local manualpage = false
+
+	timer.Simple(5,function() --failsafe
+		if (not manualpage) then
+			LinkList:Clear()
+			urls = {}
+			InjectResourceMonitor(html.Browser)
+			html.Controls.AddressBar:SetText(url)
+		end
+	end)
 	
 	html.Browser.OnDocumentReady = function(panel,url)
 		if (not manualpage) then
@@ -289,7 +304,7 @@ function CinemaResourceMonitor(html)
 		else
 			html.Controls.RequestButton:SetDisabled(true)
 		end
-		manualpage = false
+		manualpage = true
 	end
 	
 	local urls = {}
