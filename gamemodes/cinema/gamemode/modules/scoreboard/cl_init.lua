@@ -288,8 +288,8 @@ function CinemaResourceMonitor(html)
 			LinkList:Clear()
 			urls = {}
 			InjectResourceMonitor(html.Browser)
-			html.Controls.AddressBar:SetText(url)
 		end
+		manualpage = true
 	end)
 	
 	html.Browser.OnDocumentReady = function(panel,url)
@@ -297,8 +297,8 @@ function CinemaResourceMonitor(html)
 			LinkList:Clear()
 			urls = {}
 			InjectResourceMonitor(html.Browser)
-			html.Controls.AddressBar:SetText(url)
 		end
+		html.Controls.AddressBar:SetText(url)
 		if theater.ExtractURLInfo(url) then
 			html.Controls.RequestButton:SetDisabled(false)
 		else
