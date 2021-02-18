@@ -46,16 +46,17 @@ if CLIENT then
 		
 		function panel:ConsoleMessage(msg)
 			if msg then
-				if (LocalPlayer().videoDebug and not msg:StartWith("HREF:")) then print(msg) end --required for debug in this case
+				local smsg = tostring(msg)
+				if (LocalPlayer().videoDebug and not smsg:StartWith("HREF:")) then print(smsg) end --required for debug in this case
 				if self.phase == 0 then
 					if type(msg) == "number" and msg >= 4 then
 						self.phase = 1
-					elseif string.StartWith(msg,"LOGIN:") and msg:sub(7,-1) == "0" then
+					elseif string.StartWith(smsg,"LOGIN:") and smsg:sub(7,-1) == "0" then
 						self.phase = 2
 					end
 					return
 				elseif self.phase == 1 then
-					if string.StartWith(msg,"LOGIN:") and msg:sub(7,-1) == "0" then
+					if string.StartWith(smsg,"LOGIN:") and smsg:sub(7,-1) == "0" then
 						self.phase = 2
 					end
 					return
