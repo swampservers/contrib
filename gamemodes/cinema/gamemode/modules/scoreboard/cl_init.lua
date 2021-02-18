@@ -236,6 +236,12 @@ local function InjectResourceMonitor(panel)
 					if(videos[i].muted) priority[videos[i].src]=0;
 				}
 			}
+			var sources=document.getElementsByTagName("source");
+			for(var i=0;i<sources.length;i++){
+				if(sources[i].src){
+					priority[sources[i].src]=2;
+				}
+			}
 			for(var key in priority)console.log(priority[key]+"|"+key);
 			console.log(location.href);
 			if(performance===undefined){return}
@@ -256,7 +262,10 @@ function CinemaResourceMonitor(html)
 	html.f:MakePopup()
 	html.f:SetTitle("")
 	
-	function html.f:Close() --cleanup and return parent html panel's functions to normal
+	local urls = {}
+	
+	function html.f:Close()
+		urls = {}
 		html.f:Remove()
 		html.f = nil
 		html.Browser.OnDocumentReady = function(panel,url)
@@ -275,24 +284,19 @@ function CinemaResourceMonitor(html)
 	local LinkList = vgui.Create("DScrollPanel",html.f)
 	LinkList:Dock(FILL)
 	
-	local manualpage = nil
-	
 	html.Browser.OnDocumentReady = function(panel,url)
-		if (not manualpage) then
-			LinkList:Clear()
-			urls = {}
-			InjectResourceMonitor(html.Browser)
-			html.Controls.AddressBar:SetText(url)
-		end
+		LinkList:Clear()
+		urls = {}
+		InjectResourceMonitor(html.Browser)
+		html.Controls.AddressBar:SetText(url)
 		if theater.ExtractURLInfo(url) then
 			html.Controls.RequestButton:SetDisabled(false)
 		else
 			html.Controls.RequestButton:SetDisabled(true)
 		end
-		manualpage = false
 	end
 	
-	local urls = {}
+	
 	function html.Browser:ConsoleMessage(msg)
 		local col = Color(255,255,255)
 		local smsg = tostring(msg)
@@ -314,6 +318,7 @@ function CinemaResourceMonitor(html)
 				p:SetContentAlignment(4)
 				p:SetFont("ScoreboardVidDuration")
 				p:SetColor((theater.ExtractURLInfo(m) and Color(0,255,0)) or Color(255,255,0))
+				if theater.ExtractURLInfo(m) then print(m) end
 				function p:DoClick()
 					if (theater.ExtractURLInfo(m)) then
 						RequestVideoURL(m)
