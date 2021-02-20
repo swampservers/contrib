@@ -74,6 +74,13 @@ function PANEL:Init()
 	self.AddressBar = vgui.Create( "DTextEntry", self )
 	self.AddressBar:Dock( FILL )
 	self.AddressBar:DockMargin( Spacing, Margins * 3, Spacing, Margins * 3 )
+	self.AddressBar.OnChange = function()
+		if theater.ExtractURLInfo( self.AddressBar:GetValue() ) then
+			self.RequestButton:SetDisabled( false )
+		else
+			self.RequestButton:SetDisabled( true )
+		end
+	end
 	self.AddressBar.OnEnter = function()
 		self.HTML:Stop()
 		self.HTML:OpenURL( self.AddressBar:GetValue() )
@@ -88,7 +95,7 @@ function PANEL:Init()
 	self.RequestButton:DockMargin( 8, 4, 8, 4 )
 	self.RequestButton.BackgroundColor = Color(123, 32, 29)
 	self.RequestButton.DoClick = function()
-		RequestVideoURL( self.HTML.URL )
+		RequestVideoURL( self.AddressBar:GetValue() )
 	end
 
 	self:SetHeight( ButtonSize + Margins * 2 )

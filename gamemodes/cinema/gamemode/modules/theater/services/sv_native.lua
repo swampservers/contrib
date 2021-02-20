@@ -20,7 +20,7 @@ sv_GetVideoInfo.native = function(self, key, ply, onSuccess, onFailure)
 		end
 		info.title = string.Trim(info.title," ")
 		
-		if info.duration>2147483647 then
+		if info.duration>360000 then
 			onFailure( 'Theater_RequestFailed' )
 		end
 		info.duration = info.duration+2
