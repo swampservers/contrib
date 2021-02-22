@@ -62,7 +62,7 @@ if CLIENT then
 
 					if duration>0 then
 						callback({duration=duration})
-					elseif duration>2147483647 then
+					elseif duration>360000 then
 						print("Duration is too long")
 						callback()
 					else
@@ -72,9 +72,9 @@ if CLIENT then
 			end
 
 			local urll = "http://swampservers.net/cinema/file.html"
-			if string.StartWith(key:lower(), "rtmp") then
-				urll = "http://swampservers.net/cinema/filedatavjs.php?file="..key
-			end
+			--if string.StartWith(key:lower(), "rtmp") then
+			--	urll = "http://swampservers.net/cinema/filedatavjs.php?file="..key
+			--end
 
 			vpanel:OpenURL( urll )
 			vpanel:QueueJavascript( string.format( "th_video('%s');", string.JavascriptSafe(key) ) )
@@ -88,9 +88,9 @@ if CLIENT then
 	
 	function SERVICE:LoadVideo( Video, panel )
 		local urll = "http://swampservers.net/cinema/file.html"
-		if string.StartWith(Video:Key():lower(), "rtmp") then
-			urll = "http://swampservers.net/cinema/filevjs.html"
-		end
+		--if string.StartWith(Video:Key():lower(), "rtmp") then
+		--	urll = "http://swampservers.net/cinema/filevjs.html"
+		--end
 		panel:EnsureURL(urll)
 		
 		local cc = LocalPlayer():GetNetworkedString("cntry", "us")
