@@ -12,6 +12,7 @@ SERVICE.NeedsCodecs = true
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey( url )
+	if (util.JSONToTable(url.encoded)) then return false end
 	if url.scheme == "rtmp" then return url.encoded end 
 	if string.sub( url.path, -4) == ".mp4" then
 		if string.match( url.host, "dropbox.com" ) then
@@ -62,9 +63,6 @@ if CLIENT then
 
 					if duration>0 then
 						callback({duration=duration})
-					elseif duration>360000 then
-						print("Duration is too long")
-						callback()
 					else
 						Derma_StringRequest("RTMP Stream Title", "Name your livestream:", LocalPlayer():Nick().."'s Stream", function(title) callback({duration=duration,title=title}) end, function() callback() end)
 					end
