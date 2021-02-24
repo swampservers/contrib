@@ -36,7 +36,7 @@ Add to lua/sps/categories.lua
 
 Upload model, add to wearables.lua, add to categories.lua
 
-Add the uploaded files to commonfiles.txt because wearables are usable across servers
+To set up the default model position/scale, use **hatmaker.lua** (in the root of this repository; instructions are in the file)
 
 # api
 
