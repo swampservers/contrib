@@ -27,8 +27,12 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
 		if info.duration>0 then
 			info.duration = info.duration+2
 		end
-	
-		onSuccess(info)
+		
+		if info.duration>360000 then
+			onFailure( 'Theater_RequestFailed' )
+		else
+			onSuccess(info)
+		end
 	end
 	
 	local onFetchReceive = function(body,length,headers,code)
