@@ -17,7 +17,7 @@ SWEP.WorldModel 			= Model("models/staticprop/props_mining/pickaxe01.mdl")
 
 SWEP.Primary.Automatic = true
 
-SWEP.SWINGINTERVAL = 0.3
+SWEP.SWINGINTERVAL = 0.1
 SWEP.TARGETDISTANCE = 120
 
 
