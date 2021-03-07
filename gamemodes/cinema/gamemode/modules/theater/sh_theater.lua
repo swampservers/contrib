@@ -5,6 +5,8 @@ module( "theater", package.seeall )
 
 THEATER = {}
 
+if SERVER then util.AddNetworkString( "ThumbnailDelivery" ) end
+
 function THEATER:Init( locId, info )
 
 	local o = {}
