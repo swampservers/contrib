@@ -307,9 +307,9 @@ function VIDEO:SetVideo( vid )
 	self.Title:SetText( self.Video.title )
 
 	if tonumber(self.Video.duration) > 0 then
-		self.Duration:SetText( string.FormatSeconds(self.Video.duration) )
+		self.Duration:SetText( string.format("%s | %s", self.Video.type, string.FormatSeconds(self.Video.duration)) )
 	else
-		self.Duration:SetText( "" )
+		self.Duration:SetText( string.format("%s | %s", self.Video.type, "live") )
 	end
 
 	self.Requests:SetText( T('Request_PlayCount', self.Video.count) )

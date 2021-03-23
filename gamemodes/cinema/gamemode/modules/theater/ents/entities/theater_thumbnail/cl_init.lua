@@ -133,6 +133,11 @@ function ENT:DrawText()
 
 end
 
+net.Receive("ThumbnailDelivery", function(len)
+	local thumbent = net.ReadEntity()
+	if IsValid(thumbent) then thumbent.thumbnail = net.ReadString() end
+end)
+
 local DefaultThumbnail = Material( "theater/static.vmt" )
 
 function ENT:OnRemoveHTML()
@@ -143,8 +148,15 @@ end
 
 function ENT:DrawThumbnail()
 
+	if (self.thumbnail == nil) then
+		net.Start("ThumbnailDelivery")
+			net.WriteEntity(self)
+		net.SendToServer()
+		self.thumbnail = ""
+	end
+
 	-- Thumbnail isn't set yet
-	if self:GetThumbnail() == "" or ((theater.Services[self:GetService()] and theater.Services[self:GetService()].Mature) and not GetConVar("swamp_mature_content"):GetBool()) then
+	if self.thumbnail == "" or ((theater.Services[self:GetService()] and theater.Services[self:GetService()].Mature) and not GetConVar("swamp_mature_content"):GetBool()) then
 
 		if self:GetService() == "" then
 		
@@ -195,14 +207,14 @@ function ENT:DrawThumbnail()
 	else -- Thumbnail is valid
 		
 		-- URL has changed
-		if (!self.LastURL or self.LastURL != self:GetThumbnail()) then
+		if (!self.LastURL or self.LastURL != self.thumbnail) then
 
 			if ValidPanel( self.HTML ) then
 				self:OnRemoveHTML()
 				self.HTML:Remove()
 			end
 
-			self.LastURL = self:GetThumbnail()
+			self.LastURL = self.thumbnail
 			self.ThumbMat = nil
 
 		elseif self.LastURL and !self.ThumbMat then
@@ -218,7 +230,7 @@ function ENT:DrawThumbnail()
 				self.HTML:SetHTML([[
 				    <html>
 				    <body style="margin: 0;">
-				        <img src="]] .. string.JavascriptSafe(self:GetThumbnail()) .. [[" width="100%" height="100%"/>
+				        <img src="]] .. string.JavascriptSafe(self.thumbnail) .. [[" width="100%" height="100%"/>
 				    </body>
 				    </html>
 				]])
