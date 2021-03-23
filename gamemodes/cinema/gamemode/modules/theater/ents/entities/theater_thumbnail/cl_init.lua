@@ -153,6 +153,13 @@ end
 
 function ENT:DrawThumbnail()
 
+	if (ThumbnailTable[self] == nil) then
+		net.Start("ThumbnailDelivery")
+			net.WriteEntity(self)
+		net.SendToServer()
+		ThumbnailTable[self] = ""
+	end
+
 	-- Thumbnail isn't set yet
 	if GetThumbnail(self) == "" or ((theater.Services[self:GetService()] and theater.Services[self:GetService()].Mature) and not GetConVar("swamp_mature_content"):GetBool()) then
 
