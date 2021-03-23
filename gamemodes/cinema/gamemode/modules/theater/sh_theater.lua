@@ -114,8 +114,7 @@ function THEATER:SetVideo(Video)
 			self._Video:SetStartTime(CurTime())
 			
 			if IsValid( self._ThumbEnt ) then
-				ThumbnailTable = ThumbnailTable or {}
-				ThumbnailTable[self._ThumbEnt] = Video:Thumbnail()
+				self._ThumbEnt.thumbnail = Video:Thumbnail()
 			end
 		end
 
@@ -298,12 +297,11 @@ if SERVER then
 			net.WriteString(self:VideoThumbnail())
 		net.Broadcast()
 		
-		ThumbnailTable = ThumbnailTable or {}
 		net.Receive("ThumbnailDelivery", function(len, ply)
 			local e = net.ReadEntity()
 			net.Start("ThumbnailDelivery")
 				net.WriteEntity(e)
-				net.WriteString(ThumbnailTable[e] or "")
+				net.WriteString(e.thumbnail or "")
 			net.Send(ply)
 		end)
 	end
