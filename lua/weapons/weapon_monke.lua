@@ -34,23 +34,17 @@ SWEP.SoundsSecondaryLength = {5.466,4.875}
 
 
 function SWEP:CanPrimaryAttack()
-
 	if ( self:GetNextPrimaryFire() > CurTime() ) then
 		return false
 	end
-
 	return true
-
 end
 
 function SWEP:CanSecondaryAttack()
-
 	if ( self:GetNextSecondaryFire() > CurTime() ) then
 		return false
 	end
-
 	return true
-
 end
 
 function SWEP:Initialize()
@@ -61,7 +55,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Int",0,"RandomSeed")
 end
 
-function SWEP:Reload()
+function SWEP:Reload(networked)
 	if(!self:CanPrimaryAttack() or !self:CanSecondaryAttack())then return end
 	if(self.BananaEatNext and self.BananaEatNext > CurTime())then return end 
 	self:NetworkTaunt(3)
@@ -71,7 +65,11 @@ function SWEP:Reload()
 	ply.ChewStart = CurTime()		
 	ply.ChewDur = 0.2
 	self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ply.IsPony and ply:IsPony() and ACT_LAND or self.EatTaunt, true)
-	ply:ExtEmitSound("beans/eating.wav", {level=60,shared=true})
+	if(ply.ExtEmitSound)then
+		ply:ExtEmitSound("beans/eating.wav", {level=60,shared=true})
+	else
+		ply:EmitSound("beans/eating.wav",60)
+	end
 	self.BananaNextRender = CurTime() + 3
 	self.BananaEatNext = CurTime() + 3
 	self:SetNextPrimaryFire(CurTime() + 3)
@@ -105,16 +103,17 @@ if(CLIENT)then
 		if(wep:GetClass() != "weapon_monke")then return end
 		if(!IsValid(wep:GetOwner()))then return end
 		local state = net.ReadInt(8)
-		if(state == 1)then wep:PrimaryAttack() end
-		if(state == 2)then wep:SecondaryAttack() end
-		if(state == 3)then wep:Reload() end
+		if(state == 1 and wep.PrimaryAttack)then wep:PrimaryAttack(true) end
+		if(state == 2 and wep.PrimaryAttack)then wep:SecondaryAttack(true) end
+		if(state == 3 and wep.PrimaryAttack)then wep:Reload(true) end
+	
 	end)
 end
 if(SERVER)then util.AddNetworkString("MonkyTaunt") end
 
 function SWEP:NetworkTaunt(tt)
 	if(SERVER)then
-		if(!IsValid(self:GetOwner()))then return end
+		if(!IsValid(self:GetOwner()) or !IsValid(self))then return end
 		net.Start("MonkyTaunt")
 		net.WriteEntity(self)
 		net.WriteInt(tt,8)
@@ -122,8 +121,14 @@ function SWEP:NetworkTaunt(tt)
 	end
 end
 
+function SWEP:GetPlayerCurrentTauntActivity()
+local ply = self:GetOwner()
+if(!IsValid(ply))then return nil end
+local act = ply:GetSequenceInfo(ply:GetLayerSequence( 0 )).activityname
+return _G[act],act
+end
 
-function SWEP:PrimaryAttack()
+function SWEP:PrimaryAttack(networked)
 	self:NetworkTaunt(1)
 	local ply = self:GetOwner()
 	local soundindex = math.Round(util.SharedRandom( "MonkeyPrimary"..ply:UserID(), 1, #self.SoundsPrimary, self:GetRandomSeed() ),0)
@@ -131,18 +136,19 @@ function SWEP:PrimaryAttack()
 	local delay = self.SoundsPrimaryLength[soundindex]
 	if(delay == nil or delay == 0)then delay = 1 end
 	if(ply.ExtEmitSound)then
-		ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		if ( IsFirstTimePredicted() or networked) then
+			ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		end
 	else
 		ply:EmitSound(sound)
 	end
 	ply:ViewPunch( Angle( -2, 0, 0 ) )
-	if(self.MonkeyingAround != 1)then
-		self.MonkeyingAround = 1
-		self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self:GetMonkeyTaunt(), false)
+	local DesiredTaunt = self:GetMonkeyTaunt()
+	if(self:GetPlayerCurrentTauntActivity() != DesiredTaunt)then
+		self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt , false)
 	end
 	timer.Create(ply:EntIndex().."stopmonkeyingaround",delay+0.1,1,function()
-		if(IsValid(self))then self.MonkeyingAround = nil end
-		ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
+		if(IsValid(ply))then ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD) end
 	end)
 	
 	if(SERVER)then self:SetRandomSeed(math.random(1,8008135)) end
@@ -150,7 +156,7 @@ function SWEP:PrimaryAttack()
 	self:SetNextSecondaryFire(CurTime() + delay)
 end
 
-function SWEP:SecondaryAttack()
+function SWEP:SecondaryAttack(networked)
 	self:NetworkTaunt(2)
 	local ply = self:GetOwner()
 	local soundindex = math.Round(util.SharedRandom( "MonkeySecondary"..ply:UserID(), 1, #self.SoundsSecondary, self:GetRandomSeed() ),0)
@@ -158,13 +164,15 @@ function SWEP:SecondaryAttack()
 	local delay =  self.SoundsSecondaryLength[soundindex]
 	if(delay == nil or delay == 0)then delay = 4 end
 	if(ply.ExtEmitSound)then
-		ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		if ( IsFirstTimePredicted() or networked) then
+			ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		end
 	else
 		ply:EmitSound(sound)
 	end
-	if(self.MonkeyingAround != 2)then
-		self.MonkeyingAround = 2
-		self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self:GetMonkeyTaunt2(), false)
+	local DesiredTaunt = self:GetMonkeyTaunt2()
+	if(self:GetPlayerCurrentTauntActivity() != DesiredTaunt)then
+		self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt , false)
 	end
 	self.BeatingChest = true
 	timer.Create(ply:EntIndex().."stopmonkeyingaround",delay,1,function()
@@ -182,7 +190,7 @@ function SWEP:SecondaryAttack()
 			end
 		end)
 	end
-	if ( IsFirstTimePredicted()) then
+	if ( IsFirstTimePredicted() or networked) then
 		self:DropBanana(delay)
 	end
 	if(SERVER)then self:SetRandomSeed(math.random(1,8008135)) end
