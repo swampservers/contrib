@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/pyroteknik/jokleiner_face"
+	"$bumpmap" "models/pyroteknik/jokleiner_face_normal"
+
+	"$phong" "1"
+	"$phongexponent" "10"
+	"$phongboost" "2"
+	"$phongfresnelranges" "[0.1 0.4 1.0]"
+	// "$basemapalphaphongmask" "1"
+	
+	"$phongtint" "[0.9 0.8 0.7]"
+	
+	"$rimlight" "1"
+	"$rimlightboost" "1"
+	"$rimlightexponent" "4"
+}
