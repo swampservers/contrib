@@ -120,14 +120,12 @@ function ENT:FindSuitableCastOrigin()
 				table.insert(origins,trace)
 				local ext = area:GetExtentInfo()
 				local bnds = Vector(ext.SizeX,ext.SizeY,ext.SizeZ + 1)
-				print(bnds) 
 				debugoverlay.Box( area:GetCenter() + Vector(0,0,0.5) , bnds*-0.5, bnds*0.5, 60, Color( 0, 0, 255,0 ) )
 				else
 				--debugoverlay.SweptBox( tr.start, trace.HitPos, tr.mins, tr.maxs, Angle(), 60, Color( 255, 0, 255,0 ) )
 			end
 			
 		end
-		--print("AREA ANALYSIS DONE")
 		MAGICBUTTON_CACHED_ORIGINPOINTS = origins
 		picks = origins
 	else
@@ -250,10 +248,10 @@ function ENT:FindHidingSpot()
 	end
 	
 	if(trace1 and trace2)then
-		print("SUCCESS AFTER "..TOTAL_FAILURES.." ATTEMPTS!")
+		--print("SUCCESS AFTER "..TOTAL_FAILURES.." ATTEMPTS!")
 		return trace2,trace1
 	end
-	print("SUPER BIG FAILURE! HOW IS IT POSSIBLE?")
+	--print("SUPER BIG FAILURE! HOW IS IT POSSIBLE?")
 end
 
 function ENT:MoveToTraceResult(trace)
@@ -381,7 +379,7 @@ local function MagicOutcomeKleinerFanclub(ply)
 end
 
 local function MagicOutcomeKleinerHatred(ply)
-	KLEINER_BULLIES[ply:SteamID()] = 10000
+	KLEINER_BULLIES[ply:SteamID()] = 5000
 	return ""
 end
 
@@ -404,11 +402,20 @@ local MagicButtonOutcomes = {
 }
 
 
-
+--NOTE: On these functions, please return a string if there was a success, and nil if there was not.
 
 function ENT:Effect(ply)
-local effect = table.Copy(table.Random(MagicButtonOutcomes))
-local item = effect.func(ply,self)
+local effect
+local item
+local counter = 0
+while (item == nil and counter < 100) do
+	effect = table.Copy(table.Random(MagicButtonOutcomes))
+	if(effect.func and type(effect.func)=="function")then
+		item = effect.func(ply,self)
+	end
+	counter = counter + 1
+end
+
 if(type(item) == "number")then item = string.Comma(item) end
 local msg = string.format(effect.message, item,item)
 return msg
