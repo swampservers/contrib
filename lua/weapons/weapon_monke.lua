@@ -136,9 +136,7 @@ function SWEP:PrimaryAttack(networked)
 	local delay = self.SoundsPrimaryLength[soundindex]
 	if(delay == nil or delay == 0)then delay = 1 end
 	if(ply.ExtEmitSound)then
-		if ( IsFirstTimePredicted() or networked) then
-			ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
-		end
+		ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
 	else
 		ply:EmitSound(sound)
 	end
@@ -164,9 +162,7 @@ function SWEP:SecondaryAttack(networked)
 	local delay =  self.SoundsSecondaryLength[soundindex]
 	if(delay == nil or delay == 0)then delay = 4 end
 	if(ply.ExtEmitSound)then
-		if ( IsFirstTimePredicted() or networked) then
-			ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
-		end
+		ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
 	else
 		ply:EmitSound(sound)
 	end
@@ -191,7 +187,7 @@ function SWEP:SecondaryAttack(networked)
 		end)
 	end
 	if ( IsFirstTimePredicted() or networked) then
-		self:DropBanana(delay)
+		self:DropBanana(delay, networked)
 	end
 	if(SERVER)then self:SetRandomSeed(math.random(1,8008135)) end
 	self:SetNextPrimaryFire(CurTime() + delay)
@@ -245,9 +241,9 @@ function SWEP:OnRemove()
 	end
 end
 
-function SWEP:DropBanana(delay)
+function SWEP:DropBanana(delay,networked)
 delay = delay or 1
-if ( !IsFirstTimePredicted() ) then return end
+if ( !IsFirstTimePredicted() or networked ) then return end
 if ( self.BananaNextRender and self.BananaNextRender > CurTime() ) then self.BananaNextRender = CurTime() + delay return end
 if(SERVER)then return end
 		if(IsValid(self.BananaGib))then self.BananaGib:Remove() end
