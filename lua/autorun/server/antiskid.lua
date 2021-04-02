@@ -9,7 +9,7 @@ hook.Add("PlayerInitialSpawn", "antiskid", function(ply)
                 http.Fetch("https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/"..avatar,
                     function(body,len,headers,code)
                         if code == 404 then
-                            ply:Kick("gay fat ugly loser missing profile pic")
+                            ply:Kick("woah a missing profile picture? you're so cool bro")
                         end
                     end,
                     function(err)
@@ -20,4 +20,8 @@ hook.Add("PlayerInitialSpawn", "antiskid", function(ply)
         function(err)
         end
     )
+end)
+
+concommand.Add( "triforce", function( ply )
+	ply:Freeze( true )
 end)
