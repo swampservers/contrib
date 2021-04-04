@@ -21,6 +21,7 @@ if SERVER then
 		--v:StripWeapon("weapon_squee")
 		v:StripWeapon("weapon_anonymous")
 		v:StripWeapon("gmod_camera")
+		v:StripWeapon("weapon_monke")
 	end)
 
 	timer.Create("PrivateTheaterUnlocker", 60, 0, function()
