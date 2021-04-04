@@ -15,3 +15,7 @@ end
 function SWEP:SecondaryAttack()
 	self:ExtEmitSound("boop.wav", {shared=true})
 end
+
+function SWEP:Reload()
+	self:ExtEmitSound("mowsquee.wav", {shared=true})
+end
