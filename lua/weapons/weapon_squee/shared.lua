@@ -17,5 +17,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
+	if (self.SqueeReloadCooldown or 0) > CurTime() then return end
+	self.SqueeReloadCooldown = CurTime() + 0.2
 	self:ExtEmitSound("mowsquee.wav", {shared=true})
 end
