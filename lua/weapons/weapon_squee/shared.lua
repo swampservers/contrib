@@ -18,6 +18,6 @@ end
 
 function SWEP:Reload()
 	if (self.SqueeReloadCooldown or 0) > CurTime() then return end
-	self.SqueeReloadCooldown = CurTime() + 0.2
+	self.SqueeReloadCooldown = CurTime() + 0.7
 	self:ExtEmitSound("mowsquee.wav", {shared=true})
 end
