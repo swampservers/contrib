@@ -383,7 +383,12 @@ if SERVER then
 
 		-- Invalid request data
 		if !info then
-			return self:AnnounceToPlayer( ply, 'Theater_InvalidRequest' )
+			if ply:IsStaff() then
+				info = {type="website", key=url}
+				self:AnnounceToPlayer( ply, "Forcing URL request (staff only; do not post adult content with this)")
+			else
+				return self:AnnounceToPlayer( ply, 'Theater_InvalidRequest' )
+			end
 		end
 
 		-- Check for duplicate requests
