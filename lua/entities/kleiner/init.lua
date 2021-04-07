@@ -590,9 +590,13 @@ end
 function ENT:HandleStuck()
 	local spot = self:GetNextPathPoint()
 	if(spot)then
+		self:SetHealth(self:Health() - 5)
+		if(self:Health() <= 0 )then self:Remove() return end
 		self:Teleport(spot.pos)
 		self.loco:ClearStuck()
 	else
+		self:SetHealth(self:Health() - 5)
+		if(self:Health() <= 0 )then self:Remove() return end
 		self.loco:Jump()
 		self.loco:ClearStuck()
 	end
