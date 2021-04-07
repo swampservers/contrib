@@ -67,7 +67,6 @@ function SWEP:SecondaryAttack(undo)
 		self:SendWeaponAnim(ACT_VM_SECONDARYATTACK )
 		return 
 	end
-	print("cum")
 	local ply = self:GetOwner()
 
 	self:EmitSound( "Weapon_Bugbait.Splat" )
@@ -84,7 +83,6 @@ function SWEP:SecondaryAttack(undo)
 					else
 						ent:ResetBehavior()
 						ent:SetTarget(nil)
-						print("clearing target")
 					end
 				end
 			end
