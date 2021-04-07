@@ -35,11 +35,6 @@ hook.Add("OnEntityCreated","kleiner_npc_register",function(ent)
 	if(ent:GetClass() == "kleiner" or ent:IsPlayer())then
 		KLEINER_NPCS[ent] = ent:GetClass() == "kleiner" and true or nil
 		KLEINER_NPC_TARGETS[ent] =  ent:IsPlayer() and true or nil
-		
-		KLEINER_NPCS_FILTER = {}
-		for k,v in pairs(ents.FindByClass("kleiner"))do
-			table.insert(KLEINER_NPCS_FILTER,v)
-		end
 		KLEINER_NPCS_CURRENT_NUMBER = table.Count(KLEINER_NPCS)
 	end
 end)
@@ -49,14 +44,29 @@ end)
 --the value that the engine weapon uses to associate grenades to players appears to be engine-only.
 hook.Add( "EntityTakeDamage", "GrenadeAttribution", function( target, dmginfo ) 
 	local attacker = dmginfo:GetAttacker()
+	
+	--clear attacker from damage if it's attacker is a grenade, set inflictor to grenade instead
 	if(IsValid(attacker) and attacker:GetClass() == "npc_grenade_frag")then dmginfo:SetInflictor(attacker) dmginfo:SetAttacker(game.GetWorld()) end
+	
+	
+	
+	--if no attacker on damage inflicted by grenade, set attacker to the grenade's owner
 	local inflictor = dmginfo:GetInflictor()
-	if (IsValid(inflictor) and inflictor:GetClass() == "npc_grenade_frag" and dmginfo:GetAttacker() == game.GetWorld() and IsValid(inflictor:GetOwner())) then
+	if (IsValid(inflictor) and inflictor:GetClass() == "npc_grenade_frag" and dmginfo:GetAttacker() == game.GetWorld() and IsValid(inflictor:GetOwner())) then 
 		dmginfo:SetAttacker(dmginfo:GetInflictor():GetOwner())	
 	end
-	if(target:GetClass() == "npc_grenade_frag" and dmginfo:GetDamage() > 5 and !target.DamageTriggered)then
-	target.DamageTriggered = true
-	target:Fire("SetTimer",0.5)
+	
+	--if grenade is hit by high force damage from non-world, change grenade owner to attacker
+	if(target:GetClass() == "npc_grenade_frag" and dmginfo:GetDamage() > 5 and dmginfo:GetDamageForce():Length() > 200 and IsValid(dmginfo:GetAttacker()) and IsValid(dmginfo:GetInflictor()))then
+	if(dmginfo:GetDamageForce():Length() < 5000)then
+	dmginfo:SetDamageForce(dmginfo:GetDamageForce():GetNormalized()*5000)
+	end
+	target:SetOwner(dmginfo:GetAttacker())
+		if(!target.DamageTriggered)then
+			target.DamageTriggered = true	
+			target:Fire("SetTimer",0.5)
+		end
 	end
 	
 end )
+

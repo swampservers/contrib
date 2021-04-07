@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/pyroteknik/kleinerbait_sheet"
+	"$bumpmap" "Models/Weapons/V_bugbait/bugbait_sheet_normal"
+	"$selfillum" "1"
+	"$selfillumtint" "[1 1 3]" 
+	"$phong" "1"
+	"$phongboost" "1"
+	"$phongexponent" 10
+	"$phongfresnelranges"	"[.1 .5 1]"
+}
+ 

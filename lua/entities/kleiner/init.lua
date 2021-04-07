@@ -8,7 +8,7 @@ AddCSLuaFile("cl_init.lua")
 
 local RELEVANT_KLEINER
 ENT.LoseTargetDist = 3000
-ENT.SearchRadius = 1000
+ENT.SearchRadius = 1500
 ENT.KillReward = 100
 ENT.KillRewardBased = 10000
 ENT.TargetHeight = 2048
@@ -43,55 +43,54 @@ function ENT:Initialize()
 			if(math.random(1,100) == 1)then --hl2 style kleiner
 				self:SetSubMaterial(5,"")
 			end	
+			if(math.random(1,10) == 1)then 
+				self:SetSubMaterial(3,"models/pyroteknik/jokleiner_face")
+			end
 		end
-		if(math.random(1,25) == 1)then --remove glasses
-			self:SetSubMaterial(2,"engine/occlusionproxy")
-			self:SetSubMaterial(6,"engine/occlusionproxy")
-			self:SetSubMaterial(7,"engine/occlusionproxy")
-		elseif(math.random(1,25) == 1)then --epic sunglasses
-			self:SetSubMaterial(7,"tools/toolsblack")
-		end
+		
+			
+			
+			if(math.random(1,15) == 1)then --remove glasses
+				self:SetSubMaterial(2,"engine/occlusionproxy")
+				self:SetSubMaterial(6,"engine/occlusionproxy")
+				self:SetSubMaterial(7,"engine/occlusionproxy")
+			elseif(math.random(1,15) == 1)then --epic sunglasses
+				self:SetSubMaterial(7,"tools/toolsblack")
+			end
 	
 	self:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
 	self:ResetBehavior()
+	
 end
 
 
 
 
 function ENT:Use(ply)
-	if(self.NextUse and self.NextUse > CurTime())then return end
-	if(self.Suicidal)then
-		self:EmitSound("buttons/button10.wav")
-		self.NextUse = CurTime() + 0.5
-		return
-	end
-	if(self:GetTarget() == ply)then  --ResetBehavior will make kleiner select a new target. If the new target is the same, have a different reaction
-		self:ResetBehavior()
-		if(self:GetTarget() == ply)then
-			self:Speak("vo/k_lab/kl_hedyno03.wav")
-			self:EmitSound("buttons/button10.wav")
-			self.NextUse = CurTime() + 0.5
-			self.ManualTarget = true
-		else
-			self:Speak("vo/k_lab/kl_dearme.wav")
-			self:EmitSound("ui/buttonclickrelease.wav")
-			self.NextUse = CurTime() + 0.5
-		end
-	else
-		self:ResetBehavior()
-		self:SetTarget(ply)
-		self:Speak("vo/k_lab/kl_excellent.wav")
-		self:EmitSound("ui/buttonclickrelease.wav")
-		self.NextUse = CurTime() + 0.5
-		self.ManualTarget = true
-	end
+
 end
+
+function ENT:SpawnBait(vel)
+	local bait = ents.Create("weapon_kleinerbait")
+	if(!IsValid(bait))then return end
+		bait:SetPos(self:GetPos() + Vector(0,0,36))
+		bait:Spawn()
+		bait:EmitSound( "Weapon_Bugbait.Splat" )
+		local phys = bait:GetPhysicsObject()
+		phys:SetVelocity(vel or (Vector(0,0,233) + VectorRand()*Vector(55,55,0)))
+		timer.Simple(60,function()
+		if(IsValid(self) and !IsValid(self:GetOwner()))then
+		self:Remove()
+		end
+	end)
+end
+
+
 
 function ENT:Speak(snd)
 	if(self.Suicidal)then return end
 	if(self.LastSound)then self:StopSound(self.LastSound) end 
-	self:EmitSound(snd,60,nil,nil,nil,nil,56)
+	self:EmitSound(snd,50,nil,nil,nil,nil,56)
 	self.LastSound = snd
 	local dur = SoundDuration(snd)
 	self:SetTalking(CurTime() + dur - 0.2)
@@ -111,13 +110,22 @@ end
 
 function ENT:SayStuff(snd)
 	if(self:IsTalking())then return end
-	if(math.random(1,100) <= self:GetTargetViolence(self:GetTarget()) + (self:GetBased() and self:GetTargetViolence(self:GetTarget()) > 0 and 20 or 0))then   snd = "vo/k_lab/kl_initializing.wav" end
+	if(math.random(1,100) <= self:GetTargetViolence(self:GetTarget()))then   snd = "vo/k_lab/kl_initializing.wav" end --pull grenades
 	local gesture = true
 	snd = snd or table.Random(self.Chatter)
+	if(math.random(1,50) == 1)then
+		self:Speak("vo/k_lab/kl_ahhhh.wav")
+		self:SpawnBait(Vector(0,0,0)) --shit out a larvae and scream
+		return
+	end
+	
+	
 	local dur = self:Speak(snd)
 	if(snd == "vo/k_lab/kl_initializing.wav")then
 		self:PullGrenades()
 	end
+	
+	
 	
 	local delay = 0
 	if(gesture)then
@@ -132,20 +140,48 @@ function ENT:SayStuff(snd)
 	end
 end
 
+function ENT:BaitFollow(ply)
+	if(self:GetTarget() != ply and math.random(1,math.ceil(KLEINER_NPCS_CURRENT_NUMBER / 4)) == 1)then
+		self:Speak(table.Random(self.ShortChatter))
+	end
+	self:SetTarget(ply)
+	self.ManualTarget = true
+end
+
+function ENT:CheckBaitTargeting(ply) --Check for higher priority player and follow them
+	if(!self:CanBecomeTarget(ply))then return end
+	if(!self:GetTarget() == ply)then return end
+	if(IsValid(self:GetTarget()))then
+		if(self:GetTargetPriority(ply) >= self:GetTargetPriority(self:GetTarget()))then
+			self:ResetBehavior()
+			self:SetTarget(ply)
+		end 
+	else
+		self:ResetBehavior()
+		self:SetTarget(ply)
+	end
+end
+ 
 local PainSounds = {"vo/k_lab/kl_ahhhh.wav","vo/k_lab/kl_hedyno03.wav"}
 
 function ENT:OnInjured( damageinfo )
 	if(self.Suicidal)then return end
+	
 	if(damageinfo:GetDamage() > self:Health() / 20)then
 		local snd = table.Random(PainSounds)
 		self:Speak(snd)
 		self:AddGestureSequence(self:LookupSequence("fear_reaction_gesture"))
+	end
+	if(self:Health() < 0 and self.IsAlive != true)then
+	self:Remove()
 	end
 end
 
 function ENT:OnKilled( dmginfo )
 	self:StopSound(self.LastSound or "")
 	self:DropGrenades()
+	if(math.random(1,3) == 1)then self:SpawnBait() end
+	
 	
 	hook.Run( "OnNPCKilled", self, dmginfo:GetAttacker(), dmginfo:GetInflictor() )
 	if(SERVER)then
@@ -154,15 +190,11 @@ function ENT:OnKilled( dmginfo )
 		if(IsValid(attacker) and attacker:IsPlayer())then 
 		self:AddTargetViolence(attacker)
 			local reward = self:GetBased() and self.KillRewardBased or self.KillReward
-			if(attacker.PS_AddPoints)then attacker:PS_AddPoints(reward) end
+			if(attacker.PS_GivePoints)then attacker:PS_GivePoints(reward) end
 		end
 		self.IsAlive = false
 	end
-	
-	
-	
 	local rag = self:BecomeRagdoll( dmginfo )	
-
 end
 
 
@@ -212,7 +244,7 @@ function ENT:PullGrenades()
 		self.Grenade2 = gren
 		timer.Simple(1,function()
 			if(IsValid(self) )then
-			if(IsValid(self:GetTarget()) )then self:SetTargetViolence(self:GetTarget(),math.floor(self:GetTargetViolence(self:GetTarget())/1.15)) end
+			if(IsValid(self:GetTarget()) )then self:SetTargetViolence(self:GetTarget(),math.floor((self:GetTargetViolence(self:GetTarget())- 1 )/1.15) ) end
 				if(IsValid(self.Grenade1) and IsValid(self.Grenade1:GetParent()))then self.Grenade1.DamageTriggered = true self.Grenade1:Fire("SetTimer",3) end
 				if(IsValid(self.Grenade2) and IsValid(self.Grenade2:GetParent()))then self.Grenade1.DamageTriggered = true self.Grenade2:Fire("SetTimer",3) end
 			end
@@ -280,7 +312,7 @@ function ENT:CanBeTarget(ent)
 	if(ent.InVehicle and ent:InVehicle())then return false end
 	if(ent.Alive and !ent:Alive())then return false end
 	if(ent:GetMoveType() == MOVETYPE_FLY)then return false end
-	if(player.IsAFK and player:IsAFK())then return false end
+	if(ent.IsAFK and ent:IsAFK())then return false end
 	if(Safe and Safe(ent) and ent:IsPlayer())then return false end
 	if(self.TargetBlacklist and self.TargetBlacklist[ent] and self.TargetBlacklist[ent] > CurTime())then return false end
 	if(!self:PosInRange(ent:GetPos()))then return false end
@@ -288,7 +320,7 @@ function ENT:CanBeTarget(ent)
 end
 
 function ENT:CanBecomeTarget(ent) --use this if you want to add special requirements for the entity to become a target
-	if(self:GetRangeTo(ent) > self.SearchRadius and self:GetTargetPriority(ent) < 100 )then return false end
+	if(self:GetRangeTo(ent) > self.SearchRadius and self:GetTargetPriority(ent) < 200 )then return false end
 	return self:CanBeTarget(ent)
 end
 
@@ -301,20 +333,29 @@ end
 function ENT:GetTargetPriority(ent)
 	if(!IsValid(ent))then return 0 end
 	local priority = ent:IsPlayer() and 1 or 0.05 --base amount
-	if(ent == KLEINER_OVERRIDE_TARGET)then priority = 100 end
+	if(ent == KLEINER_OVERRIDE_TARGET)then priority = 25 end
+	if(ent.KleinerBaitPriority and ent.KleinerBaitPriority > CurTime())then priority = 100 end -- 100 if hit from bait
+	
+	if(GetPlayerBounty and GetPlayerBounty(ent) > 0)then priority = priority * (1+(GetPlayerBounty(ent)/10000)) end -- gain based on player bounty
 	if(self:GetTargetViolence(ent) > 0)then priority = priority * (1+(self:GetTargetViolence(ent)/10)) end -- 10% gain based on aggression towards kleiner
+	
 	priority = priority * (1  + (math.Clamp(self.LoseTargetDist - self:GetRangeTo(ent),0,self.LoseTargetDist) / self.LoseTargetDist)/5) --up to 20% gain based on proximity
+	if(ent:IsPlayer() and IsValid(ent:GetActiveWeapon()) and ent:GetActiveWeapon():GetClass() == "weapon_kleinerbait" )then return 1 end 
 	return priority
 end
 
 function ENT:GetTargetViolence(ent)
 	if(!IsValid(ent))then return -1 end
 	if(ent:GetClass() == "kleiner")then return -1 end
+	if(ent:IsPlayer() and IsValid(ent:GetActiveWeapon()) and ent:GetActiveWeapon():GetClass() == "weapon_kleinerbait" )then return 0 end 
 	if(ent:IsPlayer() and KLEINER_BULLIES[ent:SteamID()])then return KLEINER_BULLIES[ent:SteamID()] end 
+	
+	
 	return 0
 end
 
 function ENT:SetTargetViolence(ent,amount)
+	amount = math.max(amount,0)
 	if(!IsValid(ent))then return end
 	if(ent:IsPlayer())then 		
 			KLEINER_BULLIES[ent:SteamID()] = amount
@@ -339,15 +380,6 @@ function ENT:HaveTarget()
 	return self:FindTarget()
 end
 
-function ENT:GetTargetTable()
-	local tab = {}
-	if(KLEINER_NPC_TARGETS)then
-		for k,v in pairs(KLEINER_NPC_TARGETS)do
-			table.insert(tab,k)
-		end
-	end
-	return tab
-end
 
 function ENT:FindTarget()
 	if(self.Suicidal)then return true end --while holding grenades, cannot have target changed
@@ -361,7 +393,7 @@ function ENT:FindTarget()
 	local targetcount = 0
 	local playersum = 0
 	for ent,val in pairs( _ents ) do
-		if ( self:CanBecomeTarget(ent)) then
+		if ( self:CanBecomeTarget(ent) and self:GetTargetPriority(ent) > 0) then
 			if(ent:IsPlayer())then playersum = playersum + 1 end
 			table.insert(targets,ent)
 			targetsum = targetsum + self:GetTargetPriority(ent)
@@ -379,10 +411,8 @@ function ENT:FindTarget()
 	end
 
 	if(playersum == 0)then --slowly die if they end up somewhere where nobody is
-		local dmg = DamageInfo()
-		dmg:SetDamage(5)
-		dmg:SetAttacker(self)
-		self:TakeDamageInfo(dmg)
+		self:SetHealth(self:Health() - 5)
+		if(self:Health() <= 0 )then self:Remove() return end
 	end
 	self.NextTargetTime = CurTime() + 2
 	self:SetTarget(nil)
@@ -392,26 +422,38 @@ end
 function ENT:ResetBehavior()
 	if(self.Suicidal)then return end
 	self.shifted = nil
+	
 	if(self.path and IsValid(self.path))then 
 		self.path:Invalidate() 
 		self.path = nil 
 	end
 	self.ManualTarget = nil
-	self:FindTarget()
+	self.NeedsTarget = true
+	--self:FindTarget() 
 end
 
+function ENT:WanderToPos(pos)
+self:ResetBehavior()
+self.WanderForcePos = type(vector) and pos
 
+end
 
 function ENT:IgnoreTarget(target)
 	self.TargetBlacklist = self.TargetBlacklist or {}
-	self.TargetBlacklist[target] = CurTime() + 1
+	self.TargetBlacklist[target] = CurTime() + 5
 end
 
 function ENT:RunBehaviour()
 	-- This function is called when the entity is first spawned, it acts as a giant loop that will run as long as the NPC exists
 	while ( true ) do
-		
-		if ( IsValid(self:GetTarget()) ) then
+		if ( self.loco:IsStuck() ) then
+				self:HandleStuck()
+		end
+		if(self.NeedsTarget)then
+		self:FindTarget()
+		self.NeedsTarget = nil
+		end
+		if ( IsValid(self:GetTarget()) and self:CanBeTarget(self:GetTarget())) then
 				self.loco:SetDesiredSpeed( (self.Suicidal and 350) or (self:GetBased() and 500) or 200 )		
 				self.loco:SetAcceleration(self.Suicidal and 400 or 200)
 				self.loco:SetDeceleration(self.Suicidal and 400 or 500)
@@ -428,7 +470,7 @@ function ENT:RunBehaviour()
 				end
 				self.loco:FaceTowards(self:GetTarget():GetPos())
 				if(!self.shifted)then
-					local result = self:MoveToPos( self:GetTarget():GetPos() + VectorRand()*Vector(1,1,0):GetNormalized()*math.Rand(80,150), {maxage=5} )
+					local result = self:MoveToPos( self:GetTarget():GetPos() + VectorRand()*Vector(1,1,0):GetNormalized()*math.Rand(80,150), {maxage=50} )
 					if(result != "ok")then self:ResetBehavior() end 
 					--cheap method of keeping kleiners with similar targets from clumping together. i figure it's cheaper than some kind of avoidance.
 					self.shifted = true
@@ -447,25 +489,22 @@ function ENT:RunBehaviour()
 			self.loco:SetDesiredSpeed( self.Suicidal and 350 or 200 )		
 			self.loco:SetAcceleration(self.Suicidal and 400 or 200)
 			self.loco:SetDeceleration(self.Suicidal and 900 or 900)
-			local wanderpos = self:FindSpot("random",{type="hiding",pos=self:GetPos(),radius=4000,stepup=900,stepdown=900})
-			if(wanderpos != nil)then
-			self:MoveToPos( wanderpos, {maxage=5} )
-			end
-			coroutine.wait(5)
-			if ( self.loco:IsStuck() ) then
-				self:HandleStuck()
-			end
-			if(math.random(1,5) == 1)then
+			if(math.random(1,50) == 1)then
 				self:ResetBehavior()
+			else
+				local wanderpos 
+				if(self.WanderForcePos)then wanderpos = self.WanderForcePos + VectorRand()*Vector(1,1,0):GetNormalized()*math.Rand(80,150) end
+					wanderpos = wanderpos or self:FindSpot("random",{type="hiding",pos=self:GetPos(),radius=4000,stepup=900,stepdown=900})
+					if(wanderpos != nil)then
+						self.WanderForcePos = nil
+						self:MoveToPos( wanderpos, {maxage=5} )
+					end
 			end
-			
 		end
 		-- At this point in the code the bot has stopped chasing the player or finished walking to a random spot
 		-- Using this next function we are going to wait 2 seconds until we go ahead and repeat it 
 		coroutine.wait(0.4)
-		
 	end
-
 end
 
 
@@ -478,7 +517,7 @@ function ENT:MoveToPos( pos, options )
 	path:SetGoalTolerance( options.tolerance or 20 )
 	path:Compute( self, pos )
 	self.path = path
-	if ( !path:IsValid() ) then return "failed" end
+	if ( !path:IsValid() ) then self.path = nil return "failed" end
 
 	while ( path:IsValid() ) do
 		local shouldpath = self:WhilePathing(path)
@@ -502,7 +541,7 @@ function ENT:MoveToPos( pos, options )
 		-- If they set maxage on options then make sure the path is younger than it
 		--
 		if ( options.maxage ) then
-			if ( path:GetAge() > options.maxage ) then return "timeout" end
+			if ( path:GetAge() > options.maxage ) then self.path = nil  return "timeout" end
 		end
 
 		--
@@ -521,30 +560,6 @@ function ENT:MoveToPos( pos, options )
 end
 
 
-function ENT:DoorIsOpen( door )
-	if(!IsValid(door))then return true end
-	local doorClass = door:GetClass()
-
-	if ( doorClass == "func_door" or doorClass == "func_door_rotating" ) then
-
-		return door:GetInternalVariable( "m_toggle_state" ) == 0
-
-	elseif ( doorClass == "prop_door_rotating" ) then
-
-		return door:GetInternalVariable( "m_eDoorState" ) ~= 0
-
-	else
-
-		return false
-
-	end
-
-end
-
-
-function ENT:IsOpeningDoor()
-	return self.DoorPassage != nil and self.DoorPassage > CurTime()
-end
 
 function ENT:GetCurrentPathPoint()
 	if(self.path and self.path:IsValid())then
@@ -562,80 +577,49 @@ function ENT:GetCurrentPathPoint()
 end
 
 function ENT:GetNextPathPoint(ahead)
-if(!self.path or !self.path:IsValid())then return end
-ahead = ahead or 1
-local seg,index = self:GetCurrentPathPoint()
-if(index)then 
-return self.path:GetAllSegments()[index+ahead] 
-end
-
-
+	if(!self.path or !self.path:IsValid())then return end
+	ahead = ahead or 1
+	local seg,index = self:GetCurrentPathPoint()
+	if(index)then 
+		return self.path:GetAllSegments()[index+ahead] 
+	end
 end
 
 
 
 function ENT:HandleStuck()
-if(self.DoorPassage != nil and self.DoorPassage > CurTime())then
-self.loco:ClearStuck()
-return 
-end
-
-local spot = self:GetNextPathPoint()
-
-
-
-if(spot)then
-	self:Teleport(spot.pos)
-	self.loco:ClearStuck()
-else
-	self.loco:Jump()
-	self.loco:ClearStuck()
-end
-
+	local spot = self:GetNextPathPoint()
+	if(spot)then
+		self:Teleport(spot.pos)
+		self.loco:ClearStuck()
+	else
+		self.loco:Jump()
+		self.loco:ClearStuck()
+	end
 end
 
 function ENT:Teleport(newpos)
 	local caneffect = self.NextTeleport == nil or self.NextTeleport < CurTime() 
-	
 	if(caneffect)then
-	
-	local beam = EffectData()
-	beam:SetMagnitude(5)
-	beam:SetScale(5)
-	beam:SetNormal((newpos-self:GetPos()))
-	beam:SetStart( self:GetPos() + Vector(0,0,40) )
-	beam:SetOrigin( newpos + Vector(0,0,40))
-	util.Effect( "ToolTracer", beam ) --make a cool energy ball explosion
-	
-	
-	local effectdata = EffectData()
-	effectdata:SetMagnitude(5)
-	effectdata:SetNormal(Vector(0,0,1))
-	effectdata:SetOrigin( self:GetPos() + Vector(0,0,40) )
-	util.Effect( "cball_explode", effectdata ) --make a cool energy ball explosion
-	
-	
-	
-	self:SetPos(newpos)
-	
-	effectdata:SetOrigin( self:GetPos()  + Vector(0,0,40))
-	util.Effect( "cball_explode", effectdata ) -- make another one at the new spot
-	
-	self:EmitSound("Weapon_PhysCannon.Launch")	
-	
-	
-	
-	self.NextTeleport = CurTime() + 0.5
+		
+		-- deleting beam effect for now due to weird visual behavior.
+		local effectdata = EffectData()
+		effectdata:SetMagnitude(5)
+		effectdata:SetNormal(Vector(0,0,1))
+		effectdata:SetOrigin( self:GetPos() + Vector(0,0,40) )
+		util.Effect( "cball_explode", effectdata ) --make a cool energy ball explosion
+		self:SetPos(newpos)
+		effectdata:SetOrigin( self:GetPos()  + Vector(0,0,40))
+		util.Effect( "cball_explode", effectdata ) -- make another one at the new spot	
+		self:EmitSound("Weapon_PhysCannon.Launch")
+		self.NextTeleport = CurTime() + 1
 	else
 		self:SetPos(newpos)
-	
 	end
-	
 end
 
-
- local KLPATHGEN_ITERS
- local KLPATHGEN_ITERS_BUDGET
+local KLPATHGEN_ITERS
+local KLPATHGEN_ITERS_BUDGET
  
 function ENT:ChaseTarget( options )
 	local options = options or {}
@@ -681,34 +665,31 @@ function ENT:ChaseTarget( options )
 end
 
 function ENT:WhilePathing(path) --this function runs during the path movement. returning false will interrupt path movement, in case other actions are needed.
-if(path == nil or !path:IsValid() )then return true end
-if(self.loco == nil )then return true end
-if(!self:OnGround() and self:GetVelocity().z < -50)then return false end --attempting to move while falling seems to pause falling
-	local seg1,index = self:GetCurrentPathPoint() --this returns the first path segment we're closest to.
-	local seg2 = path:GetAllSegments()[index + 1]
-	local seg3 = path:GetAllSegments()[index + 2]
-
-	local dir = self:GetForward()
-	if(seg1 and seg2)then
-		dir =(seg2.pos  - seg1.pos):GetNormalized()
-	end
-
-
-	-- a quick fix to the broken ladder handling. If they are about to climb a ladder, teleport them instead
-	if(seg2 and seg2.ladder:IsValid())then --everything goes wrong when we use ladders so let's try to teleport over them.
-		self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
-		self.loco:ClearStuck()
-		return
-	end
-	
-	if(seg2 and seg2.area:HasAttributes(NAV_MESH_JUMP) and seg2.area:HasAttributes(NAV_MESH_AVOID))then --If any nav areas are marked as STOP and AVOID, we automatically teleport over them.
-		--self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
-		if(seg3 and seg3.area != seg1.area)then
-		self.loco:JumpAcrossGap((seg3 and seg3.pos) or (seg2 and seg2.pos),dir)
-		self.loco:ClearStuck()
-		return
+	if(path == nil or !path:IsValid() )then return true end
+	if(self.loco == nil )then return true end
+	if(!self:OnGround() and self:GetVelocity().z < -50)then return false end --attempting to move while falling seems to pause falling
+		local seg1,index = self:GetCurrentPathPoint() --this returns the first path segment we're closest to.
+		local seg2 = path:GetAllSegments()[index + 1]
+		local seg3 = path:GetAllSegments()[index + 2]
+		local dir = self:GetForward()
+		if(seg1 and seg2)then
+			dir =(seg2.pos  - seg1.pos):GetNormalized()
 		end
-	end
+		-- a quick fix to the broken ladder handling. If they are about to climb a ladder, teleport them instead
+		if(seg2 and seg2.ladder:IsValid())then --everything goes wrong when we use ladders so let's try to teleport over them.
+			self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
+			self.loco:ClearStuck()
+			return
+		end
+	
+		if(seg2 and seg2.area:HasAttributes(NAV_MESH_JUMP) and seg2.area:HasAttributes(NAV_MESH_AVOID))then --If any nav areas are marked as STOP and AVOID, we automatically teleport over them.
+			--self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
+			if(seg3 and seg3.area != seg1.area)then
+			self.loco:JumpAcrossGap((seg3 and seg3.pos) or (seg2 and seg2.pos),dir)
+			self.loco:ClearStuck()
+			return
+			end
+		end
 	
 	-- if they're on a ladder, their physics have been permanently broken so we'll just delete him.
 	if(self.loco:IsUsingLadder())then
@@ -716,31 +697,6 @@ if(!self:OnGround() and self:GetVelocity().z < -50)then return false end --attem
 	end
 	
 	
-	--ladder handling [CURRENTLY BROKEN]
-	--[[
-	self.ClimbDir = 0
-	if(seg2 and self.loco:IsUsingLadder())then
-		
-		if(seg2.how == 4)then --should climb up
-			self:SetPos(self:GetPos() + Vector(0,0,400*FrameTime()))
-			self.ClimbDir = 1
-			self.loco:ClearStuck()
-			return false
-		end
-		if(seg2.how == 5)then --should climb down
-			self:SetPos(self:GetPos() + Vector(0,0,-400*FrameTime()))
-			self.ClimbDir = -1
-			self.loco:ClearStuck()
-		return false
-		end
-		if(seg2.how <= 3)then 
-			self:SetMoveType(MOVETYPE_CUSTOM)
-			self.loco:JumpAcrossGap(seg2.pos,self:GetForward()) 
-			self.loco:ClearStuck()
-			return true
-		end
-	end
-	]]
 
 	-- Jumping handling
 	local ofs = (seg2.pos-self:GetPos())
@@ -758,47 +714,7 @@ if(!self:OnGround() and self:GetVelocity().z < -50)then return false end --attem
 			self.loco:Jump() 
 		end
 	end
-	
-	--NOTE: door use seems to be pretty expensive due to the tracing, i would like to optimize this so that it doesn't run unless the path contains a doorway.
-	--Disabling the following function will just make them get stuck and teleport past the door instead
-	--[[
-	if(seg1 and seg2)then -- door handling
-		if(self.DoorPassage != nil and self.DoorPassage > CurTime())then --back away from doors if we just tried to open them
-			local dir = (seg2.pos  - seg1.pos):GetNormalized()
-	
-			self.loco:FaceTowards( IsValid(self.CurrentDoor) and self.CurrentDoor:GetPos()  )
-			self.loco:Approach(seg1.pos + dir*-32,1)
-			return false
-		end
-		local dir = (seg2.pos  - seg1.pos):GetNormalized()
-		local tr = {}
-		tr.start = self:GetPos() + Vector(0,0,32)
-		tr.endpos = tr.start + dir*64
-		tr.filter = KLEINER_NPCS_FILTER
-		tr.mask = MASK_PLAYERSOLID
-		local trace = util.TraceLine(tr)
-		debugoverlay.Line( tr.start, trace.HitPos, 0.2, Color( 255, 0, 255,0 ) ,true)
-		local blocking = trace.Entity
-		local isdoor = IsValid(blocking) and string.sub(blocking:GetClass(),6,9) == "door"
-		
-		if(IsValid(blocking) and isdoor and (!self:IsOpeningDoor() or !self:DoorIsOpen( blocking )))then
-			if(blocking.kleinerdoortime == nil or blocking.kleinerdoortime <= CurTime())then 
-				if(!self:DoorIsOpen( blocking ) )then 
-					if(blocking:HasSpawnFlags( 256 ) or string.sub(blocking:GetClass(),1,4) == "prop")then
-						blocking:Use(self,nil,SIMPLE_USE)
-					else
-						self:Teleport(seg2.pos)
-					end
-				end
-				blocking.kleinerdoortime = CurTime() + 1
-			end
-			
-			self.DoorPassage = CurTime() + 1 --stop moving path and clear doorway for a sec
-			self.CurrentDoor = blocking
-		end
-	end
-	]]
-return true
+	return true
 end 
 
 
@@ -809,7 +725,6 @@ ENT.PathGen = function( area, fromArea, ladder, elevator, length )
 	if(!IsValid(self))then return -1 end
 	if ( !IsValid( fromArea ) ) then
 
-		// first area in path, no cost
 		return 0
 	
 	else
@@ -818,38 +733,29 @@ ENT.PathGen = function( area, fromArea, ladder, elevator, length )
 		end
 	
 		if ( !self.loco:IsAreaTraversable( area ) and !ladder:IsValid()) then
-			// our locomotor says we can't move here
 			return -1
 		end
-		
 		--if(!self:PosInRange(area:GetCenter()))then return -1 end
-		// compute distance traveled along path so far
 		local dist = 0
 
 		if ( IsValid( ladder ) ) then
 			dist = ladder:GetLength()
 		elseif ( length > 0 ) then
-			// optimization to avoid recomputing length
 			dist = length
 		else
 			dist = ( area:GetCenter() - fromArea:GetCenter() ):Length()
 		end
 
 		local cost = dist + fromArea:GetCostSoFar()
-		// check height change
 		local deltaZ = fromArea:ComputeAdjacentConnectionHeightChange( area )
 		if(!ladder:IsValid())then
 			if ( deltaZ >= self.loco:GetStepHeight() ) then
 				if ( deltaZ >= self.loco:GetMaxJumpHeight() ) then
-					// too high to reach
 					return -1
 				end
-
-				// jumping is slower than flat ground
 				local jumpPenalty = 2
 				cost = cost + jumpPenalty * dist
 			elseif ( deltaZ < -self.loco:GetDeathDropHeight() ) then
-				// too far to drop
 				return -1
 			end
 		end
@@ -864,6 +770,14 @@ ENT.PathGen = function( area, fromArea, ladder, elevator, length )
 end 
 
 
+ENT.ShortChatter = { 
+"vo/k_lab/kl_dearme.wav",
+"vo/k_lab/kl_excellent.wav",
+"vo/k_lab/kl_fiddlesticks.wav",
+"vo/k_lab/kl_mygoodness01.wav",
+"vo/k_lab/kl_ohdear.wav",
+"vo/k_lab2/kl_greatscott.wav",
+}
 
 
 ENT.Chatter = {
