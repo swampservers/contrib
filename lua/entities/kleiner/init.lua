@@ -180,7 +180,7 @@ end
 function ENT:OnKilled( dmginfo )
 	self:StopSound(self.LastSound or "")
 	self:DropGrenades()
-	if(math.random(1,3) == 1)then self:SpawnBait() end
+	if(math.random(1,10) == 1)then self:SpawnBait() end
 	
 	
 	hook.Run( "OnNPCKilled", self, dmginfo:GetAttacker(), dmginfo:GetInflictor() )
