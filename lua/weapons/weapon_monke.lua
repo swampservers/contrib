@@ -176,8 +176,11 @@ function SWEP:PrimaryAttack(networked)
 
     if (self.MonkeyingAround ~= 1) then
         self.MonkeyingAround = 1
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self:GetMonkeyTaunt(), false)
     end
+		local DesiredTaunt = self:GetMonkeyTaunt()
+		if (self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt) then
+			self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD,  DesiredTaunt, false)
+		end
 
     timer.Create(ply:EntIndex() .. "stopmonkeyingaround", delay + 0.1, 1, function()
         if (IsValid(self)) then
