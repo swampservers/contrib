@@ -136,7 +136,9 @@ function SWEP:PrimaryAttack(networked)
 	local delay = self.SoundsPrimaryLength[soundindex]
 	if(delay == nil or delay == 0)then delay = 1 end
 	if(ply.ExtEmitSound)then
-		ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		if ( IsFirstTimePredicted() or networked) then
+			ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		end
 	else
 		ply:EmitSound(sound)
 	end
@@ -162,7 +164,9 @@ function SWEP:SecondaryAttack(networked)
 	local delay =  self.SoundsSecondaryLength[soundindex]
 	if(delay == nil or delay == 0)then delay = 4 end
 	if(ply.ExtEmitSound)then
-		ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		if ( IsFirstTimePredicted() or networked) then
+			ply:ExtEmitSound(sound, {speech=0.1, shared=true,pitch=100,crouchpitch=100})
+		end
 	else
 		ply:EmitSound(sound)
 	end
@@ -187,7 +191,7 @@ function SWEP:SecondaryAttack(networked)
 		end)
 	end
 	if ( IsFirstTimePredicted() or networked) then
-		self:DropBanana(delay, networked)
+		self:DropBanana(delay)
 	end
 	if(SERVER)then self:SetRandomSeed(math.random(1,8008135)) end
 	self:SetNextPrimaryFire(CurTime() + delay)
@@ -241,9 +245,9 @@ function SWEP:OnRemove()
 	end
 end
 
-function SWEP:DropBanana(delay,networked)
+function SWEP:DropBanana(delay)
 delay = delay or 1
-if ( !IsFirstTimePredicted() or networked ) then return end
+if ( !IsFirstTimePredicted() ) then return end
 if ( self.BananaNextRender and self.BananaNextRender > CurTime() ) then self.BananaNextRender = CurTime() + delay return end
 if(SERVER)then return end
 		if(IsValid(self.BananaGib))then self.BananaGib:Remove() end
@@ -276,42 +280,49 @@ function SWEP:DrawWorldModel(flags,check)
 		local bone = ply:LookupBone(bname) or 0
 		local opos = self:GetPos()
 		local oang = self:GetAngles()
-		local bp,ba = self.Owner:GetBonePosition(bone)
-		if (bp) then opos = bp end
-		if (ba) then oang = ba end
+		if(bone != 0)then
+			local bp,ba = self.Owner:GetBonePosition(bone)
 		
-		if bname == "LrigScull" then
-			opos = opos + oang:Right()*-2
-			opos = opos + oang:Forward()*9
-			opos = opos + oang:Up()*1
-			oang:RotateAroundAxis(oang:Forward(),90)
-			oang:RotateAroundAxis(oang:Right(),-135)
-			
-		else
-			opos = opos + oang:Right()*2
-			opos = opos + oang:Forward()*3
-			opos = opos + oang:Up()*-1
-			
-			oang:RotateAroundAxis(oang:Forward(),90)
-			oang:RotateAroundAxis(oang:Right(),-90)
-			oang:RotateAroundAxis(oang:Up(),0)
-		end
-		self:SetupBones()
-		local banscale = self.BananaNextRender and 1- math.Clamp((self.BananaNextRender - CurTime())*4,0,1) or 1
-		local mrt = self:GetBoneMatrix(0)
-		if mrt then
-			mrt:SetTranslation(opos)
-			mrt:SetAngles(oang)
-			mrt:SetScale(Vector(.8,.8,.8)*banscale)
-			self:SetBoneMatrix(0,mrt)
-		end
+			if (bp) then opos = bp end
+			if (ba) then oang = ba end
 		
-		if(!check)then 
-			if(self.BananaNextRender == nil or (self.BananaNextRender != nil and banscale > 0))then
-				self:DrawModel()
+			if bname == "LrigScull" then
+				opos = opos + oang:Right()*-2
+				opos = opos + oang:Forward()*9
+				opos = opos + oang:Up()*1
+				oang:RotateAroundAxis(oang:Forward(),90)
+				oang:RotateAroundAxis(oang:Right(),-135)
+			
+			else
+				opos = opos + oang:Right()*2
+				opos = opos + oang:Forward()*3
+				opos = opos + oang:Up()*-1
+			
+				oang:RotateAroundAxis(oang:Forward(),90)
+				oang:RotateAroundAxis(oang:Right(),-90)
+				oang:RotateAroundAxis(oang:Up(),0)
 			end
-		end
+				self:SetupBones()
+				local banscale = self.BananaNextRender and 1- math.Clamp((self.BananaNextRender - CurTime())*4,0,1) or 1
+				local mrt = self:GetBoneMatrix(0)
+				if mrt then
+					mrt:SetTranslation(opos)
+					mrt:SetAngles(oang)
+					mrt:SetScale(Vector(.8,.8,.8)*banscale)
+					self:SetBoneMatrix(0,mrt)
+				end
 		
+				if(!check)then 
+					if(self.BananaNextRender == nil or (self.BananaNextRender != nil and banscale > 0))then
+						self:DrawModel()
+					end
+				end
+				else
+				if(!check)then
+				self:DrawModel()
+				return
+				end
+			end
 		if(check)then return mrt end
 		return
 	end
