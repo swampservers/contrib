@@ -22,7 +22,7 @@ function Safe(ent)
         end
     end
 
-    local pt = protectedTheaterTable[loc]
+    local pt = protectedTheaterTable and protectedTheaterTable[loc]
     if pt ~= nil and pt["time"] > 1 then return true end
 
     if ent:IsPlayer() then
