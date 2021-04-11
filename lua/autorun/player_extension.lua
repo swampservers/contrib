@@ -52,7 +52,7 @@ else
         if GAMEMODE.FolderName == "spades" then return end
 
         if isPonyModel(modelName) then
-            if PPM.setPonyValues then
+            if PPM and PPM.setPonyValues then
                 if self.ponydata == nil then
                     PPM.setupPony(self)
                 end
@@ -74,7 +74,7 @@ else
                 self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 47))
             end
         else
-            PPM:pi_UnequipAll(self)
+            if PPM then PPM:pi_UnequipAll(self) end
             --	if self.ponydata~=nil and IsValid(self.ponydata.clothes1) then
             --		self.ponydata.clothes1:Remove()
             --	end
@@ -110,6 +110,7 @@ else
     end
 
     function meta:PonyNoseOffsetBone(ang)
+        if PPM then
         local pd = PPM.PonyData[self]
 
         if pd then
@@ -121,11 +122,12 @@ else
         end
 
         if pd and pd.gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
-
+    end
         return Vector(0, 0, 0)
     end
 
     function meta:PonyNoseOffsetAttach(ang)
+        if PPM then
         local pd = PPM.PonyData[self]
 
         if pd then
@@ -137,7 +139,7 @@ else
         end
 
         if pd and pd.gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
-
+    end
         return Vector(0, 0, 0)
     end
 

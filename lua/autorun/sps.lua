@@ -2,6 +2,7 @@
 -- INSTALL: CINEMA
 if SERVER then
     AddCSLuaFile("sps/cl_init.lua")
+    if not file.Exists("sps/sv_init.lua", "LUA") then return end
     include("sps/sv_init.lua")
 end
 
