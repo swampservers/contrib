@@ -49,10 +49,6 @@ function ENT:GetStareTarget()
 end
 
 
-function ENT:Think()
-
-end
-
 function ENT:Draw()
 
 	
