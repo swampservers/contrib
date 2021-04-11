@@ -577,16 +577,12 @@ end
 
 if (CLIENT) then end -- --[[ hook.Add( "PreDrawHalos", "GolfHalo", function()
 
-	for k,v in pairs(ents.FindByClass("golfball"))do
-	if(v:GetNWEntity("BallOwner") == LocalPlayer())then
-	
-	if(v:GetNWBool("shootable"))then
-	halo.Add( {v}, Color( 100, 255, 100 ), 2, 2, 2 )
-	else
-	halo.Add( {v}, Color( 255, 100, 100 ), 2, 2, 2 )
-	end
-	
-	end
-	end
-	
-end ) ]]
+for k, v in pairs(ents.FindByClass("golfball")) do
+    if (v:GetNWEntity("BallOwner") == LocalPlayer()) then
+        if (v:GetNWBool("shootable")) then
+            halo.Add({v}, Color(100, 255, 100), 2, 2, 2)
+        else
+            halo.Add({v}, Color(255, 100, 100), 2, 2, 2)
+        end
+    end
+end

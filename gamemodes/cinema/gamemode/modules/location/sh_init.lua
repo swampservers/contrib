@@ -27,7 +27,8 @@ Map = {
         Name = "Restroom",
         Min = Vector(0, 1104, -64),
         Max = Vector(640, 1792, 128)
-    }, --after lobby, concessions
+    },
+    --after lobby, concessions
     {
         Name = "Attic",
         Min = Vector(-472, 1344, 152),
@@ -39,7 +40,8 @@ Map = {
             Width = 45,
             Height = 25
         }
-    }, --after lobby, concessions
+    },
+    --after lobby, concessions
     {
         Name = "Movie Theater",
         Min = Vector(-1776, 1120, -161),
@@ -58,7 +60,8 @@ Map = {
         Name = "West Hallway",
         Min = Vector(-1536, 1024, -32),
         Max = Vector(-512, 1792, 160)
-    }, --after vapor lounge
+    },
+    --after vapor lounge
     {
         Name = "East Hallway",
         Min = Vector(512, 512, -16),
@@ -192,7 +195,8 @@ Map = {
         Name = "Basement",
         Min = Vector(-512, 1536, -144),
         Max = Vector(0, 1792, -16)
-    }, --after server room
+    },
+    --after server room
     {
         Name = "Bedroom",
         Min = Vector(-736, 1536, -160),
@@ -204,7 +208,8 @@ Map = {
             Width = 32,
             Height = 18
         }
-    }, --after server room
+    },
+    --after server room
     {
         Name = "Reddit",
         Min = Vector(-450, 1210, -304),
@@ -221,7 +226,8 @@ Map = {
         Name = "Rat's Lair",
         Min = Vector(-220, 440, -304),
         Max = Vector(-72, 1440, -128)
-    }, --after chromozone
+    },
+    --after chromozone
     {
         Name = "Sewer Theater",
         Min = Vector(-1024, 1024, -1024),
@@ -234,7 +240,8 @@ Map = {
             Height = 376,
             AllowItems = true
         }
-    }, --after chromozone and rat's lair
+    },
+    --after chromozone and rat's lair
     {
         Name = "Maintenance Room",
         Min = Vector(-1536, -560, -540),
@@ -285,7 +292,8 @@ Map = {
         Name = "Trump Lobby",
         Min = Vector(-2992, -432, 0),
         Max = Vector(-1968, 336, 256)
-    }, --after office of the vice president & elevator shaft
+    },
+    --after office of the vice president & elevator shaft
     {
         Name = "Drunken Clam",
         Min = Vector(-2872, -1054, -10),
@@ -458,8 +466,8 @@ Map = {
         Name = "Trump Tower",
         Min = Vector(-2993, -419, 260),
         Max = Vector(-1958, 346, 992),
-    }, --after throne room
-    --Filter = function(pos) return (pos.x+pos.y) > -4080 and (pos.x+pos.y) < -3136 end,
+    },
+    --after throne room --Filter = function(pos) return (pos.x+pos.y) > -4080 and (pos.x+pos.y) < -3136 end,
     {
         Name = "SportZone",
         Min = Vector(1952, -1680, -24),
@@ -542,35 +550,40 @@ Map = {
         Name = "Moon",
         Min = Vector(-4000, -6000, 10400),
         Max = Vector(8000, 4000, 13500)
-    }, --after moon base
+    },
+    --after moon base
     {
         Name = "Deep Space",
         Min = Vector(5952, 4032, 6976),
         Max = Vector(16128, 16256, 16128)
-    }, --after moon
+    },
+    --after moon
     {
         Name = "Potassium Palace",
         Min = Vector(-1512, 584, -2420),
         Max = Vector(-760, 1336, -144)
-    }, --after everything except sewer tunnels
+    },
+    --after everything except sewer tunnels
     {
         Name = "Sewer Tunnels",
         Min = Vector(-4000, -4000, -4000),
         Max = Vector(4000, 4000, -128)
-    }, --after everything except outside
+    },
+    --after everything except outside
     {
         Name = "Outside",
         Min = Vector(-4000, -4000, -4000),
         Max = Vector(4000, 4700, 16000)
-    }, --after everything
+    },
+    --after everything
     {
         Name = "Way Outside",
         Min = Vector(-100000, -100000, -100000),
         Max = Vector(100000, 100000, 100000)
-    } --after everything
-    
+    }
 }
 
+--after everything
 --set up and index mobile theaters
 MobileLocations = {}
 

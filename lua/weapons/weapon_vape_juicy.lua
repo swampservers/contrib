@@ -43,10 +43,10 @@ JuicyVapeJuices = {
     {
         name = "Skittles",
         color = nil
-    }, --nil means rainbow
-    
+    },
 }
 
+--nil means rainbow
 if SERVER then
     function SWEP:Initialize()
         self.juiceID = 0

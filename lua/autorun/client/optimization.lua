@@ -49,7 +49,8 @@ DontRenderSkyboxHere = {
     ["The Box"] = true
 }
 
-hook.Add("PreDrawSkyBox", "SkyBoxRenderSkip", function() end) --[[if not LocalPlayer().GetLocationName then return end
+hook.Add("PreDrawSkyBox", "SkyBoxRenderSkip", function() end)
+--[[if not LocalPlayer().GetLocationName then return end
 	if DontRenderSkyboxHere[LocalPlayer():GetLocationName()] then
 		hook.Run("PostDraw2DSkyBox")
 		return true

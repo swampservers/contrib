@@ -18,7 +18,8 @@ function LOADMIDI()
             local MIDIKeys = {
                 [36] = {
                     Sound = "a1"
-                }, -- C
+                },
+                -- C
                 [37] = {
                     Sound = "b1"
                 },
@@ -54,7 +55,8 @@ function LOADMIDI()
                 },
                 [48] = {
                     Sound = "a8"
-                }, -- c
+                },
+                -- c
                 [49] = {
                     Sound = "b6"
                 },
@@ -90,7 +92,8 @@ function LOADMIDI()
                 },
                 [60] = {
                     Sound = "a15"
-                }, -- c'
+                },
+                -- c'
                 [61] = {
                     Sound = "b11"
                 },
@@ -126,7 +129,8 @@ function LOADMIDI()
                 },
                 [72] = {
                     Sound = "a22"
-                }, -- c''
+                },
+                -- c''
                 [73] = {
                     Sound = "b16"
                 },
@@ -162,7 +166,8 @@ function LOADMIDI()
                 },
                 [84] = {
                     Sound = "a29"
-                }, -- c'''
+                },
+                -- c'''
                 [85] = {
                     Sound = "b21"
                 },
