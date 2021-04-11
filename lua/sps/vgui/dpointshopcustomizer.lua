@@ -553,10 +553,51 @@ function PANEL:SetupControls()
         imgurinfo:SetWide(100)
         imgurinfo:SizeToContents()
     end
+
+    local rawzone = vgui.Create("Panel", colorzone)
+    rawzone:DockMargin(0, 8, 32, 0)
+    rawzone:Dock(TOP)
+    rawzone:SetTall(36)
+
+    if colorzone.AddItem then
+        colorzone:AddItem(rawzone)
+    end
+
+    local rawbutton = vgui.Create("DButton", rawzone)
+    rawbutton:SetText("Raw Data")
+    rawbutton:SetWide(160)
+    rawbutton:DockMargin(0,16,0,0)
+    rawbutton:Dock(RIGHT)
+    rawbutton:CenterHorizontal()
+    rawbutton.DoClick = function(btn)
+        RAWENTRY:SetVisible(true)
+        rawzone:SetTall(160)
+        btn:Remove()
+    end
+
+    RAWENTRY = vgui.Create("DTextEntry", rawzone)
+    RAWENTRY:SetMultiline(true)
+    RAWENTRY:DockMargin(32, 8, 0, 0)
+    RAWENTRY:Dock(FILL)
+    RAWENTRY:SetPaintBackground(true)
+
+    RAWENTRY.OnValueChange = function(textself, new)
+        if not textself.RECIEVE then
+            self.cfg = util.JSONToTable(new) or {}
+            self:UpdateCfg(true) -- TODO: sanitize input like on the server
+        end
+    end
+
+    RAWENTRY:SetUpdateOnType(true)
+    --RAWENTRY:SetValue("unset") --(self.cfg.imgur or {}).url or "")
+    RAWENTRY:SetVisible(false)
+
+    self:UpdateCfg()
 end
 
-function PANEL:UpdateCfg()
+function PANEL:UpdateCfg(skiptext)
     PS_HoverCfg = self.cfg
+    if IsValid(RAWENTRY) and not skiptext then RAWENTRY.RECIEVE=true RAWENTRY:SetValue(util.TableToJSON(self.cfg, true)) RAWENTRY.RECIEVE=nil end
 end
 
 vgui.Register('DPointShopCustomizer', PANEL, 'DPanel')
