@@ -1,65 +1,60 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- www.watchcartoononline.io support for cinema by Swamp
-
 local SERVICE = {}
-
 SERVICE.Name = "WatchCartoonOnline"
-
 SERVICE.NeedsFlash = true
 
-function SERVICE:GetKey( url )
-	if url.authority~="www.watchcartoononline.io" then return false end
-	if string.len(url.path or "") < 2 then return false end
-	local path = string.sub(url.path,2)
-	if string.find(path, "/", 1, true) then return false end
-	if path=="dubbed-anime-list" then return false end
-	if path=="cartoon-list" then return false end
-	if path=="subbed-anime-list" then return false end
-	if path=="movie-list" then return false end
-	if path=="ova-list" then return false end
-	if path=="contact" then return false end
-	return path
+function SERVICE:GetKey(url)
+    if url.authority ~= "www.watchcartoononline.io" then return false end
+    if string.len(url.path or "") < 2 then return false end
+    local path = string.sub(url.path, 2)
+    if string.find(path, "/", 1, true) then return false end
+    if path == "dubbed-anime-list" then return false end
+    if path == "cartoon-list" then return false end
+    if path == "subbed-anime-list" then return false end
+    if path == "movie-list" then return false end
+    if path == "ova-list" then return false end
+    if path == "contact" then return false end
+
+    return path
 end
 
 if CLIENT then
-	function SERVICE:GetVideoInfoClientside(key, callback)
-		EmbeddedCheckFlash(function()
-		    local file = "http://www.watchcartoononline.io/"..key
+    function SERVICE:GetVideoInfoClientside(key, callback)
+        EmbeddedCheckFlash(function()
+            local file = "http://www.watchcartoononline.io/" .. key
+            local vpanel = vgui.Create("DHTML")
+            vpanel:SetSize(1000, 1000)
+            vpanel:SetAlpha(0)
+            vpanel:SetMouseInputEnabled(false)
+            vpanel.failurecount = 0
+            vpanel.phase = 0 --0=cloudflare gate(shouldnt be there) 1=video page 2=video embed
+            vpanel.title = nil
+            vpanel.data = nil
+            vpanel.duration = nil
 
-			local vpanel = vgui.Create("DHTML")
+            timer.Simple(30.1, function()
+                if IsValid(vpanel) then
+                    vpanel:Remove()
+                    print("Failed")
+                    callback()
+                end
+            end)
 
-			vpanel:SetSize(1000,1000)
+            timer.Create("cartoonupdate" .. tostring(math.random(1, 100000)), 1, 35, function()
+                if IsValid(vpanel) then
+                    if vpanel.phase == 0 then
+                        vpanel:RunJavascript("console.log('Title:'+document.title);")
 
-			vpanel:SetAlpha(0)
+                        return
+                    end
 
-			vpanel:SetMouseInputEnabled(false)
-
-			vpanel.failurecount = 0
-			vpanel.phase = 0 --0=cloudflare gate(shouldnt be there) 1=video page 2=video embed
-
-			vpanel.title=nil
-			vpanel.data=nil
-			vpanel.duration=nil
-			timer.Simple(30.1,function() if IsValid(vpanel) then
-				vpanel:Remove() 
-				print("Failed")
-				callback()
-
-				end end)
-			timer.Create("cartoonupdate"..tostring(math.random(1,100000)),1,35,function()
-				if IsValid(vpanel) then
-					if vpanel.phase == 0 then
-						vpanel:RunJavascript("console.log('Title:'+document.title);")
-						return
-					end
-
-					if vpanel.phase == 1 then
-						if not vpanel.title then
-							vpanel:RunJavascript("console.log('VidTitle:'+(document.title.split(' |')[0]));")
-						else
-							vpanel:RunJavascript([[
+                    if vpanel.phase == 1 then
+                        if not vpanel.title then
+                            vpanel:RunJavascript("console.log('VidTitle:'+(document.title.split(' |')[0]));")
+                        else
+                            vpanel:RunJavascript([[
 								var list = document.getElementsByTagName("IFRAME");
 								for (var i = 0; i<list.length; i++) {
 									if (list[i].id && list[i].id.match("^frameNew") && list[i].id.toString().match('uploads.?$')) {
@@ -67,24 +62,26 @@ if CLIENT then
 									}
 								}
 							]])
-						end
-						return
-					end
+                        end
 
-					if vpanel.phase == 2 then
-						if not vpanel.jwplayed then
-							vpanel:RunJavascript([[
+                        return
+                    end
+
+                    if vpanel.phase == 2 then
+                        if not vpanel.jwplayed then
+                            vpanel:RunJavascript([[
 								$( "#r-reklam" ).remove();
 								$( "#r-player" ).show();
 								jwplayer('myJwVideo').play();
 							]])
-							vpanel.jwplayed = true
-							return
-						end
+                            vpanel.jwplayed = true
 
+                            return
+                        end
 
-						local sendback = true
-						--[[if not vpanel.data then
+                        local sendback = true
+
+                        --[[if not vpanel.data then
 
 							--install asp
 							vpanel:RunJavascript(
@@ -96,76 +93,86 @@ if CLIENT then
 								)
 							sendback = false
 						end]]
-						if not vpanel.duration then
-							vpanel:RunJavascript("console.log('VidDuration:'+jwplayer('myJwVideo').getDuration())")
-							sendback = false
-						end
-						if sendback then
-							callback({title=vpanel.title,data=vpanel.data,duration=vpanel.duration})
-							vpanel:Remove()
-							print("Success!")
-						end
-					end
-				end
-			end)
-			
-			function vpanel:ConsoleMessage(msg)
-				if msg then
-					if msg:sub(1,11)=="Unsafe Java" or msg:sub(1,18)=="Refused to display" or msg:sub(1,14)=="XMLHttpRequest" then return end
+                        if not vpanel.duration then
+                            vpanel:RunJavascript("console.log('VidDuration:'+jwplayer('myJwVideo').getDuration())")
+                            sendback = false
+                        end
 
-					--print(msg)
-					if self.phase == 0 then
-						if msg:sub(1,6)=='Title:' and msg:sub(1,17)~='Title:Please wait' then
-							print("Passed Cloudflare...")
-							self.phase = 1
-							return
-						end
-					end
-					if self.phase == 1 then
-						if msg:sub(1,9)=='VidTitle:' then
-							self.title=msg:sub(10,-1)
-							print("Title: "..self.title)
-							return
-						end
-						if msg:sub(1,9)=='EmbedURL:' then
-							self:OpenURL(msg:sub(10,-1))
-							self.data=msg:sub(10,-1)
-							print("Loading embed...")
-							self.phase=2
-							return
-						end
-					end
-					if self.phase == 2 then
-						--[[if msg:sub(1,8)=='VidData:' then
+                        if sendback then
+                            callback({
+                                title = vpanel.title,
+                                data = vpanel.data,
+                                duration = vpanel.duration
+                            })
+
+                            vpanel:Remove()
+                            print("Success!")
+                        end
+                    end
+                end
+            end)
+
+            function vpanel:ConsoleMessage(msg)
+                if msg then
+                    if msg:sub(1, 11) == "Unsafe Java" or msg:sub(1, 18) == "Refused to display" or msg:sub(1, 14) == "XMLHttpRequest" then return end
+
+                    --print(msg)
+                    if self.phase == 0 then
+                        if msg:sub(1, 6) == 'Title:' and msg:sub(1, 17) ~= 'Title:Please wait' then
+                            print("Passed Cloudflare...")
+                            self.phase = 1
+
+                            return
+                        end
+                    end
+
+                    if self.phase == 1 then
+                        if msg:sub(1, 9) == 'VidTitle:' then
+                            self.title = msg:sub(10, -1)
+                            print("Title: " .. self.title)
+
+                            return
+                        end
+
+                        if msg:sub(1, 9) == 'EmbedURL:' then
+                            self:OpenURL(msg:sub(10, -1))
+                            self.data = msg:sub(10, -1)
+                            print("Loading embed...")
+                            self.phase = 2
+
+                            return
+                        end
+                    end
+
+                    if self.phase == 2 then
+                        --[[if msg:sub(1,8)=='VidData:' then
 							self.data=msg:sub(9,-1)
 							print("Got data")
 							return
 						end]]
-						if msg:sub(1,12)=='VidDuration:' then
-							msg=msg:sub(13,-1)
-							if msg=="undefined" or tonumber(msg)<2 then return end
-							self.duration=math.floor(tonumber(msg))
-							print("Duration: "..self.duration)
-							return
-						end
-					end
+                        if msg:sub(1, 12) == 'VidDuration:' then
+                            msg = msg:sub(13, -1)
+                            if msg == "undefined" or tonumber(msg) < 2 then return end
+                            self.duration = math.floor(tonumber(msg))
+                            print("Duration: " .. self.duration)
 
-				end
-			end
+                            return
+                        end
+                    end
+                end
+            end
 
-			vpanel:OpenURL( file )
-		end,
-		function()
-			chat.AddText("You need flash to request this. Press F2.")
-			return callback()
-		end)
-	end
+            vpanel:OpenURL(file)
+        end, function()
+            chat.AddText("You need flash to request this. Press F2.")
 
-	function SERVICE:LoadVideo( Video, panel )
-		
-		panel:OpenURL( Video:Data() )
+            return callback()
+        end)
+    end
 
-		panel:QueueJavascript([[
+    function SERVICE:LoadVideo(Video, panel)
+        panel:OpenURL(Video:Data())
+        panel:QueueJavascript([[
 		function th_seek(time) { jwplayer("myJwVideo").seek(time); }
 		function th_volume(vol) { jwplayer("myJwVideo").setVolume(vol); }
 
@@ -191,8 +198,7 @@ if CLIENT then
 		$( ".alert" ).remove();
 		jwplayer("myJwVideo").play();
 		]])
-	end
+    end
 end
 
-
-theater.RegisterService( 'cartoon', SERVICE )
+theater.RegisterService('cartoon', SERVICE)

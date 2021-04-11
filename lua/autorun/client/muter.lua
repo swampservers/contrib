@@ -1,6 +1,5 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 --doesn't work because per current design AFKS cant hear micspam
 --[[
 timer.Create("AFK_Unmicspam",1,0,function()
@@ -22,20 +21,23 @@ timer.Create("AFK_Unmicspam",1,0,function()
 		end
 	end
 end) ]]
-
 hook.Add("HUDPaint", "DrawhealthBar", function()
-	if LocalPlayer():Alive() and LocalPlayer():Health()<LocalPlayer():GetMaxHealth() then
-		local col = Color(255,255,255,255)
-		if LocalPlayer():Health()<30 then col=Color(255,0,0,255) end
-		draw.WordBox( 8, ScrW() / 2 - 80, ScrH() - 80, "Health: "..tostring(LocalPlayer():Health()), "Trebuchet24", Color(0,0,0,100), col )
-	end
+    if LocalPlayer():Alive() and LocalPlayer():Health() < LocalPlayer():GetMaxHealth() then
+        local col = Color(255, 255, 255, 255)
+
+        if LocalPlayer():Health() < 30 then
+            col = Color(255, 0, 0, 255)
+        end
+
+        draw.WordBox(8, ScrW() / 2 - 80, ScrH() - 80, "Health: " .. tostring(LocalPlayer():Health()), "Trebuchet24", Color(0, 0, 0, 100), col)
+    end
 end)
 
-hook.Add( "HUDShouldDraw", "HideHUsddfD", function( name )
-	if GetConVarNumber("cinema_hideinterface") <= 0 then return end
-	if name=="CHudDeathNotice" then return false end
-end )
+hook.Add("HUDShouldDraw", "HideHUsddfD", function(name)
+    if GetConVarNumber("cinema_hideinterface") <= 0 then return end
+    if name == "CHudDeathNotice" then return false end
+end)
 
-hook.Add( "PlayerStartVoice", "Hidevoiceasd", function( name )
-	if GetConVarNumber("cinema_hideinterface") >0 then return false end
-end )
+hook.Add("PlayerStartVoice", "Hidevoiceasd", function(name)
+    if GetConVarNumber("cinema_hideinterface") > 0 then return false end
+end)
