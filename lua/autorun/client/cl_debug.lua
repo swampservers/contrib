@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 module("Location", package.seeall)
-DebugEnabled = CreateClientConVar("cinema_debug_locations", "0", false, false)
+local DebugEnabled = CreateClientConVar("cinema_debug_locations", "0", false, false)
 
 -- location visualizer for debugging
 hook.Add("PostDrawTranslucentRenderables", "CinemaDebugLocations", function()
