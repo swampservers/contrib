@@ -1,28 +1,18 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 local fils = {"TrafficCone001a.mdl"}
+
 if CLIENT then
-	local fils2, folds = file.Find("models/props_junk/*.mdl", "GAME")
-	fils = fils2
+    local fils2, folds = file.Find("models/props_junk/*.mdl", "GAME")
+    fils = fils2
 end
 
-local prices = {
-	0,
-	10000, --2nd item
-	15000, 
-	22000,
-	33000, 
-	50000, --6th
-	75000,
-	110000,
-	175000,
-	250000, --10th
-	375000,
-	560000,
-	840000,
-	1000000, --14th
-}
+local prices = {0, 10000, 15000, 22000, 33000, 50000, 75000, 110000, 175000, 250000, 375000, 560000, 840000, 1000000,}
+
+--2nd item
+--6th
+--10th
+--14th
 --[[
 
 
@@ -64,21 +54,18 @@ local prices = {
 	1000000,
 	1000000,
 }]]
-
-for n=2,14 do
-
-PS_ItemProduct({
-	class = "accslot_"..tostring(n),
-	price = prices[n],
-	name = 'Accessory Slot '..tostring(n),
-	description = "Allows equipping more accessories at once.",
-	model = 'models/props_junk/'..fils[math.random(#fils)],
-	material = 'models/debug/debugwhite',
-	invcategory = "Upgrades",
-	never_equip = true,
-	CanBuyStatus = function(itm, ply)
-		if ply:PS_AccessorySlots() < n-1 then return PS_BUYSTATUS_PREVIOUS_SLOTS end
-	end
-})
-
+for n = 2, 14 do
+    PS_ItemProduct({
+        class = "accslot_" .. tostring(n),
+        price = prices[n],
+        name = 'Accessory Slot ' .. tostring(n),
+        description = "Allows equipping more accessories at once.",
+        model = 'models/props_junk/' .. fils[math.random(#fils)],
+        material = 'models/debug/debugwhite',
+        invcategory = "Upgrades",
+        never_equip = true,
+        CanBuyStatus = function(itm, ply)
+            if ply:PS_AccessorySlots() < n - 1 then return PS_BUYSTATUS_PREVIOUS_SLOTS end
+        end
+    })
 end

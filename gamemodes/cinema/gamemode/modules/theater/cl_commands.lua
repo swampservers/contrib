@@ -1,21 +1,20 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-CreateClientConVar("cinema_drawnames", 1, true, false )
-CreateClientConVar("cinema_lightfx", 0, true, false )
-CreateClientConVar("cinema_volume", 50, true, false )
-CreateClientConVar("cinema_muteall", 0, true, true )
-MuteAFKConVar = CreateClientConVar("cinema_muteafk", 0, true, true )
-MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true )
-GameVolumeConVar = CreateClientConVar("cinema_game_volume", 1, true, false )
-CreateClientConVar("cinema_hd", 0, true, false )
-CreateClientConVar("cinema_cc", 0, true, false )
-CreateClientConVar("cinema_hideinterface", 0, true, false )
-CreateClientConVar("cinema_resolution", 720, true, false )
-local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false )
-local ScrollAmount = CreateClientConVar("cinema_scrollamount", 60, true, false )
-local HidePlayers = CreateClientConVar("cinema_hideplayers", 0, true, false )
-local HideAmount = CreateClientConVar("cinema_hide_amount", 0.11, true, false )
+CreateClientConVar("cinema_drawnames", 1, true, false)
+CreateClientConVar("cinema_lightfx", 0, true, false)
+CreateClientConVar("cinema_volume", 50, true, false)
+CreateClientConVar("cinema_muteall", 0, true, true)
+MuteAFKConVar = CreateClientConVar("cinema_muteafk", 0, true, true)
+MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true)
+GameVolumeConVar = CreateClientConVar("cinema_game_volume", 1, true, false)
+CreateClientConVar("cinema_hd", 0, true, false)
+CreateClientConVar("cinema_cc", 0, true, false)
+CreateClientConVar("cinema_hideinterface", 0, true, false)
+CreateClientConVar("cinema_resolution", 720, true, false)
+local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false)
+local ScrollAmount = CreateClientConVar("cinema_scrollamount", 60, true, false)
+local HidePlayers = CreateClientConVar("cinema_hideplayers", 0, true, false)
+local HideAmount = CreateClientConVar("cinema_hide_amount", 0.11, true, false)
 
 --[[
 timer.Simple(2,function()
@@ -37,106 +36,125 @@ cvars.AddChangeCallback( "cinema_mutegame", function(cmd, old, new)
 		Derma_Message( "If you leave the game while in a theater with this enabled, your game stay muted! Go to Options > Audio and drag Game Volume back up to fix this.", "Warning", "OK" )
 	end
 end)]]
+hook.Add("EntityEmitSound", "CinemaMuteGame", function(s)
+    if IsValid(LocalPlayer()) and LocalPlayer():InTheater() then
+        if MuteGameConVar:GetBool() then return false end
+        local f = GameVolumeConVar:GetFloat()
 
-hook.Add("EntityEmitSound","CinemaMuteGame",function(s)
-	if IsValid(LocalPlayer()) and LocalPlayer():InTheater() then 
-		if MuteGameConVar:GetBool() then return false end
-		local f = GameVolumeConVar:GetFloat()
-		if f < 1 then 
-			s.Volume = s.Volume * f
-			return true
-		end
-	end
+        if f < 1 then
+            s.Volume = s.Volume * f
+
+            return true
+        end
+    end
 end)
 
 concommand.Add("cinema_requestlast", function()
-	if LastURLRequested then
-		RequestVideoURL( LastURLRequested )
-	else
-		local thelastrequest = nil
-		local thevurl = nil
-		for _, request in pairs( theater.GetRequestHistory() ) do
-			if not thelastrequest then thelastrequest = request.lastRequest end
-			if thelastrequest < request.lastRequest then thevurl = request.url end
-			thelastrequest = request.lastRequest
-		end
-		if thevurl then
-			RequestVideoURL( thevurl )
-		end
-	end
+    if LastURLRequested then
+        RequestVideoURL(LastURLRequested)
+    else
+        local thelastrequest = nil
+        local thevurl = nil
+
+        for _, request in pairs(theater.GetRequestHistory()) do
+            if not thelastrequest then
+                thelastrequest = request.lastRequest
+            end
+
+            if thelastrequest < request.lastRequest then
+                thevurl = request.url
+            end
+
+            thelastrequest = request.lastRequest
+        end
+
+        if thevurl then
+            RequestVideoURL(thevurl)
+        end
+    end
 end)
 
-cvars.AddChangeCallback( "cinema_hd", function(cmd, old, new)
-	new = tonumber(new)
-	
-	if !new then
-		return
-	elseif new < 1 then
-		RunConsoleCommand( "cinema_resolution", "720" )
-	else
-		RunConsoleCommand( "cinema_resolution", "1080" )
-	end
+cvars.AddChangeCallback("cinema_hd", function(cmd, old, new)
+    new = tonumber(new)
+
+    if not new then
+        return
+    elseif new < 1 then
+        RunConsoleCommand("cinema_resolution", "720")
+    else
+        RunConsoleCommand("cinema_resolution", "1080")
+    end
 end)
 
-cvars.AddChangeCallback( "cinema_resolution", function(cmd, old, new)
-	new = tonumber(new)
-	
-	if !new then
-		return
-	elseif new < 2 then
-		RunConsoleCommand( "cinema_resolution", 2 )
-	elseif new > 1080 then
-		RunConsoleCommand( "cinema_resolution", 1080 )
-	else
-		theater.ResizePanel()
-	end
+cvars.AddChangeCallback("cinema_resolution", function(cmd, old, new)
+    new = tonumber(new)
+
+    if not new then
+        return
+    elseif new < 2 then
+        RunConsoleCommand("cinema_resolution", 2)
+    elseif new > 1080 then
+        RunConsoleCommand("cinema_resolution", 1080)
+    else
+        theater.ResizePanel()
+    end
 end)
 
-cvars.AddChangeCallback( "cinema_volume", function(cmd, old, new)
-	new = tonumber(new)
-	
-	if !new then
-		return
-	elseif new < 0 then
-		RunConsoleCommand( "cinema_volume", 0 )
-	elseif new > 100 then
-		RunConsoleCommand( "cinema_volume", 100 )
-	else
-		theater.SetVolume(new)
-		if MusicPagePanel then MusicPagePanel:RunJavascript("setVolume("..tostring(new)..");") end
-	end
+cvars.AddChangeCallback("cinema_volume", function(cmd, old, new)
+    new = tonumber(new)
+
+    if not new then
+        return
+    elseif new < 0 then
+        RunConsoleCommand("cinema_volume", 0)
+    elseif new > 100 then
+        RunConsoleCommand("cinema_volume", 100)
+    else
+        theater.SetVolume(new)
+
+        if MusicPagePanel then
+            MusicPagePanel:RunJavascript("setVolume(" .. tostring(new) .. ");")
+        end
+    end
 end)
 
-concommand.Add( "cinema_refresh", function()
-	theater.RefreshPanel(true)
-end )
+concommand.Add("cinema_refresh", function()
+    theater.RefreshPanel(true)
+end)
 
-concommand.Add( "cinema_fullscreen", function() theater.ToggleFullscreen() end)
+concommand.Add("cinema_fullscreen", function()
+    theater.ToggleFullscreen()
+end)
 
 -- Mute theater on losing focus to Garry's Mod window
 local FocusState, HasFocus, LastVolume = true, true, false
-hook.Add( "Think", "TheaterMuteOnFocusChange", function()
 
-	if LastVolume == false then LastVolume = theater.GetVolume() end
+hook.Add("Think", "TheaterMuteOnFocusChange", function()
+    if LastVolume == false then
+        LastVolume = theater.GetVolume()
+    end
 
-	if not MuteNoFocus:GetBool() then return end
+    if not MuteNoFocus:GetBool() then return end
+    HasFocus = system.HasFocus()
 
-	HasFocus = system.HasFocus()
+    if (LastState and not HasFocus) or (not LastState and HasFocus) then
+        if HasFocus == true then
+            theater.SetVolume(LastVolume)
 
-	if ( LastState and !HasFocus ) or ( !LastState and HasFocus ) then
-		
-		if HasFocus == true then
-			theater.SetVolume( LastVolume )
-			if MusicPagePanel then MusicPagePanel:RunJavascript("setVolume("..tostring(LastVolume)..");") end
-			LastVolume = nil
-		else
-			LastVolume = theater.GetVolume()
-			theater.SetVolume( 0 )
-			if MusicPagePanel then MusicPagePanel:RunJavascript("setVolume(0);") end
-		end
+            if MusicPagePanel then
+                MusicPagePanel:RunJavascript("setVolume(" .. tostring(LastVolume) .. ");")
+            end
 
-		LastState = HasFocus
+            LastVolume = nil
+        else
+            LastVolume = theater.GetVolume()
+            theater.SetVolume(0)
 
-	end
+            if MusicPagePanel then
+                MusicPagePanel:RunJavascript("setVolume(0);")
+            end
+        end
 
-end )
+        LastState = HasFocus
+    end
+end)

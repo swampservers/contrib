@@ -1,6 +1,5 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 AddCSLuaFile()
 
 --[[
@@ -116,55 +115,58 @@ Tail01
 Tail02
 Tail03
 ]]
-
 PS_Attachments = {
-	eyes = "I'm special",
-	head = {"ValveBiped.Bip01_Head1", "LrigScull"},
-	neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
-	upper_body = {"ValveBiped.Bip01_Spine4", "LrigSpine2"},
-	lower_body = {"ValveBiped.Bip01_Spine", "LrigSpine1"},
-	left_hand = {"ValveBiped.Bip01_L_Hand", "Lrig_LEG_FL_FrontHoof"},
-	right_hand = {"ValveBiped.Bip01_R_Hand", "Lrig_LEG_FR_FrontHoof"},
-	left_shoulder = {"ValveBiped.Bip01_L_Clavicle", "Lrig_LEG_FL_Humerus"},
-	right_shoulder = {"ValveBiped.Bip01_R_Clavicle", "Lrig_LEG_FR_Humerus"},
-	left_foot = {"ValveBiped.Bip01_L_Foot", "Lrig_LEG_BL_RearHoof"},
-	right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
+    eyes = "I'm special",
+    head = {"ValveBiped.Bip01_Head1", "LrigScull"},
+    neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
+    upper_body = {"ValveBiped.Bip01_Spine4", "LrigSpine2"},
+    lower_body = {"ValveBiped.Bip01_Spine", "LrigSpine1"},
+    left_hand = {"ValveBiped.Bip01_L_Hand", "Lrig_LEG_FL_FrontHoof"},
+    right_hand = {"ValveBiped.Bip01_R_Hand", "Lrig_LEG_FR_FrontHoof"},
+    left_shoulder = {"ValveBiped.Bip01_L_Clavicle", "Lrig_LEG_FL_Humerus"},
+    right_shoulder = {"ValveBiped.Bip01_R_Clavicle", "Lrig_LEG_FR_Humerus"},
+    left_foot = {"ValveBiped.Bip01_L_Foot", "Lrig_LEG_BL_RearHoof"},
+    right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
 }
 
-
 function PS_CalculateSellPrice(ply, item)
-	if item.class=="ponymodel" then return item.price*0.5 end
-	return math.Round(item.price * 0.8)
+    if item.class == "ponymodel" then return item.price * 0.5 end
+
+    return math.Round(item.price * 0.8)
 end
 
 function PS_BaseIncome(ply)
-	return math.floor(20+math.Clamp((ply:PS_GetPoints())/5000,0,80))
+    return math.floor(20 + math.Clamp((ply:PS_GetPoints()) / 5000, 0, 80))
 end
 
 function PS_BaseIncomeMultiplier(ply)
-	local cash = ply:PS_GetDonation()
-	local incomelevel = math.min(math.floor(math.min(cash,2000)/1000) + math.floor(cash/10000) + 1, 42)
-	
-	local mult = ((ply.HasHalfPoints and 1 or 3) + incomelevel) * 0.25
-	
-	if ply:IsAFK() then
-		mult = mult/2
-	else
-		mult = mult*2
-	end
+    local cash = ply:PS_GetDonation()
+    local incomelevel = math.min(math.floor(math.min(cash, 2000) / 1000) + math.floor(cash / 10000) + 1, 42)
+    local mult = ((ply.HasHalfPoints and 1 or 3) + incomelevel) * 0.25
 
-	return mult
+    if ply:IsAFK() then
+        mult = mult / 2
+    else
+        mult = mult * 2
+    end
+
+    return mult
 end
 
 NoPointAltIds = {
-["STEAM_0:1:149372369"]=true,
-["STEAM_0:0:183199559"]=true,
-["STEAM_0:0:179623822"]=true }
+    ["STEAM_0:1:149372369"] = true,
+    ["STEAM_0:0:183199559"] = true,
+    ["STEAM_0:0:179623822"] = true
+}
 
 function PS_Income(ply)
-	if NoPointAltIds[ply:SteamID()] then return 0 end
-	local income = math.floor(PS_BaseIncome(ply) * PS_BaseIncomeMultiplier(ply))
-	--if GAMEMODE.FolderName=="spades" then income=income*2 end
-	if os.time() < 1601402349 then income=income*2 end
-	return income
+    if NoPointAltIds[ply:SteamID()] then return 0 end
+    local income = math.floor(PS_BaseIncome(ply) * PS_BaseIncomeMultiplier(ply))
+
+    --if GAMEMODE.FolderName=="spades" then income=income*2 end
+    if os.time() < 1601402349 then
+        income = income * 2
+    end
+
+    return income
 end
