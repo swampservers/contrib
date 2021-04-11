@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 --if(SERVER)then resource.AddWorkshop(2396963452) end
 SWEP.PrintName = "Return To Monke"
@@ -52,6 +52,7 @@ end
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "RandomSeed")
 end
+
 
 function SWEP:Reload(networked)
     if (not self:CanPrimaryAttack() or not self:CanSecondaryAttack()) then return end
@@ -172,16 +173,18 @@ function SWEP:PrimaryAttack(networked)
     end
 
     ply:ViewPunch(Angle(-2, 0, 0))
-    local DesiredTaunt = self:GetMonkeyTaunt()
 
-    if (self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt) then
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt, false)
+    if (self.MonkeyingAround ~= 1) then
+        self.MonkeyingAround = 1
+        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self:GetMonkeyTaunt(), false)
     end
 
     timer.Create(ply:EntIndex() .. "stopmonkeyingaround", delay + 0.1, 1, function()
-        if (IsValid(ply)) then
-            ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
+        if (IsValid(self)) then
+            self.MonkeyingAround = nil
         end
+
+        ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
     end)
 
     if (SERVER) then
@@ -255,6 +258,7 @@ function SWEP:SecondaryAttack(networked)
     self:SetNextPrimaryFire(CurTime() + delay)
     self:SetNextSecondaryFire(CurTime() + delay)
 end
+
 
 function SWEP:SlapChest()
     local ply = self:GetOwner()
@@ -372,12 +376,13 @@ end
 
 function SWEP:DrawWorldModel(flags, check)
     local ply = self:GetOwner()
-
+	local mrt = self:GetBoneMatrix(0)
     if IsValid(ply) then
         local bname = ply.IsPony ~= nil and ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bone = ply:LookupBone(bname) or 0
         local opos = self:GetPos()
         local oang = self:GetAngles()
+		
 
         if (bone ~= 0) then
             local bp, ba = self.Owner:GetBonePosition(bone)
@@ -407,7 +412,7 @@ function SWEP:DrawWorldModel(flags, check)
 
             self:SetupBones()
             local banscale = self.BananaNextRender and 1 - math.Clamp((self.BananaNextRender - CurTime()) * 4, 0, 1) or 1
-            local mrt = self:GetBoneMatrix(0)
+           
 
             if mrt then
                 mrt:SetTranslation(opos)
@@ -424,7 +429,6 @@ function SWEP:DrawWorldModel(flags, check)
         else
             if (not check) then
                 self:DrawModel()
-
                 return
             end
         end
@@ -434,9 +438,9 @@ function SWEP:DrawWorldModel(flags, check)
         return
     end
 
-    self:DrawModel()
+    if (not check)then self:DrawModel() end
 
-    return
+    return mrt
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
