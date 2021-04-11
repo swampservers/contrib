@@ -2,6 +2,7 @@
 -- INSTALL: CINEMA
 hook.Add("PlayerInitialSpawn", "antiskid", function(ply)
     if not ply:SteamID64() then return end --singleplayer
+
     http.Fetch("https://steamcommunity.com/profiles/" .. tostring(ply:SteamID64()), function(body, len, headers, code)
         avatar = string.match(body, 'avatars/(%x+/%x+_full%.jpg)')
 

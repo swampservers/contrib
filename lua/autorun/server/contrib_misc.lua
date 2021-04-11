@@ -1,4 +1,4 @@
-util.AddNetworkString("setcntry")
+﻿util.AddNetworkString("setcntry")
 
 net.Receive("setcntry", function(len, ply)
     if ply:GetNWString("cntry", "UNSET") == "UNSET" then

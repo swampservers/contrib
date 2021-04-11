@@ -21,7 +21,7 @@ if CLIENT then
     MININGCRACKMATERIALS = {}
 
     for k = 1, 10 do
-        table.insert(MININGCRACKMATERIALS, CreateMaterial("mining_crack_"..tostring(k), "UnlitGeneric", {
+        table.insert(MININGCRACKMATERIALS, CreateMaterial("mining_crack_" .. tostring(k), "UnlitGeneric", {
             ["$basetexture"] = "swamponions/meinkraft/cracks",
             ["$alphatest"] = 1,
             -- ["$allowalphatocoverage"] = 1,

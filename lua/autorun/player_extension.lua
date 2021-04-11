@@ -4,11 +4,23 @@ local entity = FindMetaTable("Entity")
 
 if not meta then
 else
-    function meta:GetLocation()  return self:GetDTInt(0) or 0 end
-    function meta:GetLastLocation() return self.LastLocation or -1 end 
-    function meta:GetLocationName() return Location.GetLocationNameByIndex(self:GetLocation()) end
-    function meta:SetLocation(locationId) self.LastLocation = self:GetLocation() return self:SetDTInt(0, locationId) end
+    function meta:GetLocation()
+        return self:GetDTInt(0) or 0
+    end
 
+    function meta:GetLastLocation()
+        return self.LastLocation or -1
+    end
+
+    function meta:GetLocationName()
+        return Location.GetLocationNameByIndex(self:GetLocation())
+    end
+
+    function meta:SetLocation(locationId)
+        self.LastLocation = self:GetLocation()
+
+        return self:SetDTInt(0, locationId)
+    end
 
     if not meta.TrueName then
         meta.TrueName = meta.Nick
@@ -74,7 +86,10 @@ else
                 self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 47))
             end
         else
-            if PPM then PPM:pi_UnequipAll(self) end
+            if PPM then
+                PPM:pi_UnequipAll(self)
+            end
+
             --	if self.ponydata~=nil and IsValid(self.ponydata.clothes1) then
             --		self.ponydata.clothes1:Remove()
             --	end
@@ -111,35 +126,37 @@ else
 
     function meta:PonyNoseOffsetBone(ang)
         if PPM then
-        local pd = PPM.PonyData[self]
+            local pd = PPM.PonyData[self]
 
-        if pd then
-            pd = pd[2]
+            if pd then
+                pd = pd[2]
+            end
+
+            if pd == nil then
+                pd = self.ponydata
+            end
+
+            if pd and pd.gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
         end
 
-        if pd == nil then
-            pd = self.ponydata
-        end
-
-        if pd and pd.gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
-    end
         return Vector(0, 0, 0)
     end
 
     function meta:PonyNoseOffsetAttach(ang)
         if PPM then
-        local pd = PPM.PonyData[self]
+            local pd = PPM.PonyData[self]
 
-        if pd then
-            pd = pd[2]
+            if pd then
+                pd = pd[2]
+            end
+
+            if pd == nil then
+                pd = self.ponydata
+            end
+
+            if pd and pd.gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
         end
 
-        if pd == nil then
-            pd = self.ponydata
-        end
-
-        if pd and pd.gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
-    end
         return Vector(0, 0, 0)
     end
 

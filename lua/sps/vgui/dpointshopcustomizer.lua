@@ -566,9 +566,10 @@ function PANEL:SetupControls()
     local rawbutton = vgui.Create("DButton", rawzone)
     rawbutton:SetText("Raw Data")
     rawbutton:SetWide(160)
-    rawbutton:DockMargin(0,16,0,0)
+    rawbutton:DockMargin(0, 16, 0, 0)
     rawbutton:Dock(RIGHT)
     rawbutton:CenterHorizontal()
+
     rawbutton.DoClick = function(btn)
         RAWENTRY:SetVisible(true)
         rawzone:SetTall(160)
@@ -591,13 +592,17 @@ function PANEL:SetupControls()
     RAWENTRY:SetUpdateOnType(true)
     --RAWENTRY:SetValue("unset") --(self.cfg.imgur or {}).url or "")
     RAWENTRY:SetVisible(false)
-
     self:UpdateCfg()
 end
 
 function PANEL:UpdateCfg(skiptext)
     PS_HoverCfg = self.cfg
-    if IsValid(RAWENTRY) and not skiptext then RAWENTRY.RECIEVE=true RAWENTRY:SetValue(util.TableToJSON(self.cfg, true)) RAWENTRY.RECIEVE=nil end
+
+    if IsValid(RAWENTRY) and not skiptext then
+        RAWENTRY.RECIEVE = true
+        RAWENTRY:SetValue(util.TableToJSON(self.cfg, true))
+        RAWENTRY.RECIEVE = nil
+    end
 end
 
 vgui.Register('DPointShopCustomizer', PANEL, 'DPanel')
