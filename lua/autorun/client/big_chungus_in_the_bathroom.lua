@@ -1,3 +1,6 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
+
 BIG_CHUNGUS_LOCATION = Vector(0, 1598, 64)	
 BIG_CHUNGUS_NORMAL = Vector(1,0,0)
 
