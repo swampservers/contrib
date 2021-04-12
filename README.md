@@ -14,7 +14,9 @@ Contribute to Swamp Cinema here! How to:
 
 Don't worry about workshop addons or any of that. All files in here will be automatically uploaded to workshop. (Except lua which isn't run off of workshop)
 
-# how tos
+PLEASE FORMAT YOUR LUA CODE USING https://fptje.github.io/glualint-web/
+
+# How Tos
 
 ## Shop Weapons:
 
@@ -38,9 +40,9 @@ Upload model, add to wearables.lua, add to categories.lua
 
 To set up the default model position/scale, use **hatmaker.lua** (in the root of this repository; instructions are in the file)
 
-# api
+# API
 
-see lua/autorun/player_extension.lua:
+See lua/autorun/player_extension.lua:
 
 player:IsPony()
 

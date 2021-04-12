@@ -1,6 +1,5 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 --[[ DETAILS_RENDER_ALL = 1200
 DETAILS_RENDER_SKYBOX = 200
 
@@ -25,36 +24,34 @@ DETAIL_RENDER_TABLE = {
 timer.Create("cl detail controller",0.1,0,function()
 	RunConsoleCommand("cl_detaildist","0") --DETAIL_RENDER_TABLE[LocalPlayer().GetLocationName and LocalPlayer():GetLocationName()] or 0)
 end) ]]
-
 DontRenderSkyboxHere = {
-	["Private Theater 1"]=true,
-	["Private Theater 2"]=true,
-	["Private Theater 3"]=true,
-	["Private Theater 4"]=true,
-	["Vapor Lounge"]=true,
-	["Treatment Room"]=true,
-	["Server Room"]=true,
-	["Bedroom"]=true,
-	["Reddit"]=true,
-	["Rat's Lair"]=true,
-	["Maintenance Room"]=true,
-	["Potassium Palace"]=true,
-	["Void"]=true,
-	["Sewer Theater"]=true,
-	["Sewer Tunnels"]=true,
-	["Sushi Theater Second Floor"]=true,
-	["Sushi Theater Third Floor"]=true,
-	["Sauna"]=true,
-	["Underworld"]=true,
-	["Maze"]=true,
-	["Temple"]=true,
-	["The Box"]=true
+    ["Private Theater 1"] = true,
+    ["Private Theater 2"] = true,
+    ["Private Theater 3"] = true,
+    ["Private Theater 4"] = true,
+    ["Vapor Lounge"] = true,
+    ["Treatment Room"] = true,
+    ["Server Room"] = true,
+    ["Bedroom"] = true,
+    ["Reddit"] = true,
+    ["Rat's Lair"] = true,
+    ["Maintenance Room"] = true,
+    ["Potassium Palace"] = true,
+    ["Void"] = true,
+    ["Sewer Theater"] = true,
+    ["Sewer Tunnels"] = true,
+    ["Sushi Theater Second Floor"] = true,
+    ["Sushi Theater Third Floor"] = true,
+    ["Sauna"] = true,
+    ["Underworld"] = true,
+    ["Maze"] = true,
+    ["Temple"] = true,
+    ["The Box"] = true
 }
 
-hook.Add("PreDrawSkyBox", "SkyBoxRenderSkip", function()
-	--[[if not LocalPlayer().GetLocationName then return end
+hook.Add("PreDrawSkyBox", "SkyBoxRenderSkip", function() end)
+--[[if not LocalPlayer().GetLocationName then return end
 	if DontRenderSkyboxHere[LocalPlayer():GetLocationName()] then
 		hook.Run("PostDraw2DSkyBox")
 		return true
 	end]]
-end)

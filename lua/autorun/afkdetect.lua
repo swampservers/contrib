@@ -1,38 +1,37 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 if SERVER then
-	hook.Add("OnPlayerAFK","afkwepstrip",function(v)
-		--Strip freebie weapons to improve performance
-		v:StripWeapon("weapon_spraypaint")
-		v:StripWeapon("weapon_beans")
-		v:StripWeapon("weapon_switch")
-		v:StripWeapon("weapon_encyclopedia")
-		v:StripWeapon("weapon_fidget")
-		v:StripWeapon("weapon_funnybanana")
-		v:StripWeapon("weapon_monster")
-		v:StripWeapon("weapon_popcorn")
-		v:StripWeapon("weapon_kleiner")
-		v:StripWeapon("weapon_flappy")
-		v:StripWeapon("weapon_autism")
-		v:StripWeapon("weapon_trashtape")
-		v:StripWeapon("weapon_vape")
-		v:StripWeapon("weapon_pickaxe")
-		--v:StripWeapon("weapon_squee")
-		v:StripWeapon("weapon_anonymous")
-		v:StripWeapon("gmod_camera")
-	end)
+    hook.Add("OnPlayerAFK", "afkwepstrip", function(v)
+        --Strip freebie weapons to improve performance
+        v:StripWeapon("weapon_spraypaint")
+        v:StripWeapon("weapon_beans")
+        v:StripWeapon("weapon_switch")
+        v:StripWeapon("weapon_encyclopedia")
+        v:StripWeapon("weapon_fidget")
+        v:StripWeapon("weapon_funnybanana")
+        v:StripWeapon("weapon_monster")
+        v:StripWeapon("weapon_popcorn")
+        v:StripWeapon("weapon_kleiner")
+        v:StripWeapon("weapon_flappy")
+        v:StripWeapon("weapon_autism")
+        v:StripWeapon("weapon_trashtape")
+        v:StripWeapon("weapon_vape")
+        v:StripWeapon("weapon_pickaxe")
+        --v:StripWeapon("weapon_squee")
+        v:StripWeapon("weapon_anonymous")
+        v:StripWeapon("gmod_camera")
+        v:StripWeapon("weapon_monke")
+    end)
 
-	timer.Create("PrivateTheaterUnlocker", 60, 0, function()
-		for k,v in pairs(player.GetAll()) do
-			if (not Safe(v)) and (v.AFKTimeSeconds or 0) > 900 and isLockingPT(v) then
-				v:GetTheater():ResetOwner()
-			end
-		end
-	end)
-
+    timer.Create("PrivateTheaterUnlocker", 60, 0, function()
+        for k, v in pairs(player.GetAll()) do
+            if (not Safe(v)) and (v.AFKTimeSeconds or 0) > 900 and isLockingPT(v) then
+                v:GetTheater():ResetOwner()
+            end
+        end
+    end)
 else
-	--[[
+    --[[
 	afk_start_time = 0
 	hook.Add("HUDPaint", "DrawPTAFKwarning", function()
 		if LocalPlayer():GetNWBool("afk",false) then
@@ -50,7 +49,10 @@ else
 	end) ]]
 end
 
-
 function isLockingPT(v)
-	if v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner()==v then return true else return false end
+    if v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner() == v then
+        return true
+    else
+        return false
+    end
 end

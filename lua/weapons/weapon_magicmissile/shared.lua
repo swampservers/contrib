@@ -1,23 +1,26 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 if (SERVER) then
-function SWEP:Deploy()
-	self.Owner:DrawViewModel( false )
+    function SWEP:Deploy()
+        self.Owner:DrawViewModel(false)
+    end
+
+    SWEP.HoldType = "magic"
 end
-SWEP.HoldType			= "magic"
-end
+
 SWEP.PrintName = "Magic Missile"
-
 SWEP.Slot = 1
-
 SWEP.WorldModel = ""
 
 function SWEP:PrimaryAttack()
-	if SERVER then self:DoPrimaryAttack() end
+    if SERVER then
+        self:DoPrimaryAttack()
+    end
 end
 
-
 function SWEP:SecondaryAttack()
-	self:ExtEmitSound("magicmissile.wav",{speech=0.9, shared=true})
+    self:ExtEmitSound("magicmissile.wav", {
+        speech = 0.9,
+        shared = true
+    })
 end
