@@ -3,7 +3,6 @@
 AddCSLuaFile()
 include("net_hd.lua")
 include("config.lua")
-PS_Categories = PS_Categories or {}
 PS_Products = PS_Products or {}
 PS_Items = PS_Items or {}
 
@@ -12,44 +11,34 @@ SS_Layout = SS_Layout or {}
 SS_Products = SS_Products or {}
 SS_Items = SS_Items or {}
 
-local tsl_curname=""
-
 function SS_Tab(name, icon) -- add custom paint funcs here
-    tsl_curname=name
-
-    if name != nil then
-        --todo create tabs in order
-
-        SS_Layout[name] = {
-            name=name,
-            icon=icon,
-            sortby=sortby,
-            products={{name="",products={}}}
-        }
+    _SS_TABADDTARGET = nil
+    for _, tab in pairs(SS_Layout) do
+        if tab.name == name then
+            _SS_TABADDTARGET = tab
+        end
     end
+    if _SS_TABADDTARGET == nil then
+        table.insert(SS_Layout, {})
+        _SS_TABADDTARGET = SS_Layout[#SS_Layout]
+    end
+
+    _SS_TABADDTARGET.name=name
+    _SS_TABADDTARGET.icon=icon
+    _SS_TABADDTARGET.layout={{name="",products={}}}
 end
 
-function SS_Heading(name)
-    table.insert(SS_Layout[tsl_curname].products, {name=name,products={}} )
+function SS_Heading(title)
+    table.insert(_SS_TABADDTARGET.layout, {title=title,products={}} )
 end
 
 function SS_Product(product)
-    local tab = SS_Layout[tsl_curname].products
+    local tab = _SS_TABADDTARGET.layout
     table.insert(tab[#tab].products, product.class)
-    SS_Products[product.class] = product
-end
 
 
-
-function PS_AngleGen(func)
-    local ang = Angle()
-    func(ang)
-
-    return ang
-end
-
-function PS_GenericProduct(product)
     product.price = product.price or 0
+    SS_Products[product.class] = product
     PS_Products[product.class] = product
 
     if product.model then
@@ -59,6 +48,15 @@ function PS_GenericProduct(product)
             register_workshop_model(product.model, product.workshop)
         end
     end
+end
+
+
+
+function PS_AngleGen(func)
+    local ang = Angle()
+    func(ang)
+
+    return ang
 end
 
 function PS_ProductlessItem(item)
@@ -153,7 +151,7 @@ function PS_ItemProduct(item)
         net.Send(ply)
     end
 
-    PS_GenericProduct(product)
+    SS_Product(product)
 end
 
 function PS_DeathKeepnotice(product)
@@ -177,7 +175,7 @@ function PS_WeaponProduct(product)
         end
     end
 
-    PS_GenericProduct(product)
+    SS_Product(product)
 end
 
 function PS_WeaponAndAmmoProduct(product)
@@ -200,7 +198,7 @@ function PS_WeaponAndAmmoProduct(product)
         ply:SelectWeapon(self.class)
     end
 
-    PS_GenericProduct(product)
+    SS_Product(product)
 end
 
 function PS_AmmoProduct(product)
@@ -211,7 +209,7 @@ function PS_AmmoProduct(product)
         ply:GiveAmmo(self.amount, self.ammotype)
     end
 
-    PS_GenericProduct(product)
+    SS_Product(product)
 end
 
 function PS_UniqueModelProduct(product)
@@ -243,7 +241,7 @@ function PS_UniqueModelProduct(product)
         end
     end
 
-    PS_GenericProduct(product)
+    SS_Product(product)
 end
 
 function PS_Initialize()

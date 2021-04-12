@@ -115,6 +115,8 @@ Tail01
 Tail02
 Tail03
 ]]
+PS_InvCategories = {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"}
+
 PS_Attachments = {
     eyes = "I'm special",
     head = {"ValveBiped.Bip01_Head1", "LrigScull"},

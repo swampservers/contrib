@@ -20,7 +20,7 @@ PS_WeaponProduct({
     model = 'models/swamponions/ducktape.mdl'
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trash',
     name = 'Trash',
     description = "Spawn a random piece of junk for building stuff with",
@@ -34,7 +34,7 @@ PS_GenericProduct({
 
 SS_Heading("Props")
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashfield',
     price = 200,
     name = 'Medium Protection Field',
@@ -60,7 +60,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashfieldlarge',
     price = 3000,
     name = 'Large Protection Field',
@@ -86,7 +86,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashlight',
     price = 1000,
     name = 'Lights',
@@ -109,7 +109,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashseat',
     price = 2000,
     name = 'Chairs',
@@ -132,7 +132,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashtheater',
     price = 8000,
     name = 'Medium Theater Screen',
@@ -158,7 +158,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashtheatertiny',
     price = 4000,
     name = "Tiny Theater Screen",
@@ -184,7 +184,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashtheaterbig',
     price = 16000,
     name = 'Large Theater Screen',

@@ -388,7 +388,7 @@ function PANEL:Init()
     end
 
     -- items
-    for _, CATEGORY in pairs(PS_Categories) do
+    for _, CATEGORY in pairs(SS_Layout) do
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
 
         for _, LAYOUT in pairs(CATEGORY.layout) do
@@ -769,7 +769,7 @@ end
 local function BuildItemMenu(menu, ply, itemstype, callback)
 	local plyitems = ply:PS_GetItems()
 	
-	for category_id, CATEGORY in pairs(PS_Categories) do
+	for category_id, CATEGORY in pairs(SS_Layout) do
 		
 		local catmenu = menu:AddSubMenu(CATEGORY.Name)
 		

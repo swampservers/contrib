@@ -189,7 +189,7 @@ PS_WeaponAndAmmoProduct({
     amount = 1000
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'mystery',
     price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
     name = (os.date("%B", os.time()) == "December" and 'Present') or 'Mystery Box', --'Mystery Box','Present'
@@ -229,7 +229,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'wheelchair',
     price = 3000,
     name = 'Wheelchair',
@@ -250,7 +250,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'rocketwheelchair',
     price = 10000,
     name = 'Rocket Wheelchair',
@@ -273,7 +273,7 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'spacehat',
     price = 5000,
     name = 'Space Helmet',

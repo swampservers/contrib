@@ -3,27 +3,6 @@
 
 SS_Tab("Playermodels","user_suit")
 
-
-PS_ItemProduct({
-    class = "outfitter",
-    price = 1000000,
-    name = 'SELL-ONLY Outfitter',
-    description = "asdfdf",
-    model = 'models/player/pyroteknik/banana.mdl',
-    invcategory = "Playermodels",
-    never_equip = true
-})
-PS_ProductlessItem({
-    class = "whiteeyestest",
-    name = "white eyes",
-    description = "does nothing. sell me.",
-    price = 2000000,
-    model = "models/error.mdl",
-    material = "models/debug/debugwhite",
-})
-
-
-
 SS_Heading("Mods")
 
 PS_ItemProduct({
