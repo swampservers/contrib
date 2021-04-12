@@ -1,5 +1,25 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+
+SS_Tab("Construction","bricks")
+
+SS_Heading("Tools")
+
+PS_WeaponProduct({
+    class = "weapon_trash_paint",
+    name = 'Paint Tool',
+    description = "Paint a solid color onto props. Also changes the color of lights.",
+    model = 'models/props_junk/metal_paintcan001a.mdl',
+    price = 2000
+})
+
+PS_WeaponProduct({
+    class = "weapon_trash_tape",
+    name = 'Tape Tool',
+    description = "Use this to tape (freeze) and un-tape props.",
+    model = 'models/swamponions/ducktape.mdl'
+})
+
 PS_GenericProduct({
     class = 'trash',
     name = 'Trash',
@@ -11,6 +31,8 @@ PS_GenericProduct({
         end
     end
 })
+
+SS_Heading("Props")
 
 PS_GenericProduct({
     class = 'trashfield',
@@ -187,19 +209,4 @@ PS_GenericProduct({
             end)
         end)
     end
-})
-
-PS_WeaponProduct({
-    class = "weapon_trash_paint",
-    name = 'Paint Tool',
-    description = "Paint a solid color onto props. Also changes the color of lights.",
-    model = 'models/props_junk/metal_paintcan001a.mdl',
-    price = 2000
-})
-
-PS_WeaponProduct({
-    class = "weapon_trash_tape",
-    name = 'Tape Tool',
-    description = "Use this to tape (freeze) and un-tape props.",
-    model = 'models/swamponions/ducktape.mdl'
 })

@@ -1,19 +1,14 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+
+SS_Tab("Weapons","bomb")
+
 PS_WeaponProduct({
     name = 'Crossbow',
     description = "Kills players in one shot, and is capable of hitting distant targets. Also unfreezes props.",
     price = 5000,
     model = 'models/weapons/w_crossbow.mdl',
     class = 'weapon_crossbow'
-})
-
-PS_AmmoProduct({
-    name = 'Crossbow bolt x5',
-    price = 1500,
-    model = 'models/Items/CrossbowRounds.mdl',
-    ammotype = "XBowBolt",
-    amount = 5
 })
 
 PS_WeaponProduct({
@@ -32,29 +27,12 @@ PS_WeaponProduct({
     class = 'weapon_smg1'
 })
 
-PS_AmmoProduct({
-    name = 'SMG Magazine',
-    description = "45 rounds",
-    price = 1000,
-    model = 'models/Items/BoxSRounds.mdl',
-    ammotype = "SMG1",
-    amount = 45
-})
-
 PS_WeaponProduct({
     name = 'Sniper',
     description = "This powerful rifle kills any player in one shot and has a scope for long distance assassinations. Also unfreezes props.",
     price = 8000,
     model = 'models/weapons/w_barrett_m98b.mdl',
     class = 'weapon_sniper'
-})
-
-PS_AmmoProduct({
-    name = 'Sniper Ammo x 5',
-    price = 2500,
-    model = 'models/Items/sniper_round_box.mdl',
-    ammotype = "sniper",
-    amount = 5
 })
 
 PS_WeaponProduct({
@@ -73,13 +51,7 @@ PS_WeaponProduct({
     class = 'weapon_357'
 })
 
-PS_AmmoProduct({
-    name = '357 Ammo x 6',
-    price = 500,
-    model = 'models/Items/357ammo.mdl',
-    ammotype = "357",
-    amount = 6
-})
+
 
 PS_WeaponProduct({
     name = 'Suicide Bombing',
@@ -142,4 +114,41 @@ PS_WeaponAndAmmoProduct({
     class = 'weapon_peacekeeper',
     ammotype = "peaceshot",
     amount = 2
+})
+
+
+
+SS_Heading("Ammo")
+
+PS_AmmoProduct({
+    name = 'Crossbow bolt x5',
+    price = 1500,
+    model = 'models/Items/CrossbowRounds.mdl',
+    ammotype = "XBowBolt",
+    amount = 5
+})
+
+PS_AmmoProduct({
+    name = 'SMG Magazine',
+    description = "45 rounds",
+    price = 1000,
+    model = 'models/Items/BoxSRounds.mdl',
+    ammotype = "SMG1",
+    amount = 45
+})
+
+PS_AmmoProduct({
+    name = 'Sniper Ammo x 5',
+    price = 2500,
+    model = 'models/Items/sniper_round_box.mdl',
+    ammotype = "sniper",
+    amount = 5
+})
+
+PS_AmmoProduct({
+    name = '357 Ammo x 6',
+    price = 500,
+    model = 'models/Items/357ammo.mdl',
+    ammotype = "357",
+    amount = 6
 })

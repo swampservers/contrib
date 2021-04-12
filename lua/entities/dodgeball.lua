@@ -30,14 +30,16 @@ function ENT:Pickup(ply)
     self.removing = true
 
     timer.Simple(0, function()
-        if ply:HasWeapon("weapon_dodgeball") then return end
-        ply:Give("weapon_dodgeball")
+        if IsValid(self) then
+            if ply:HasWeapon("weapon_dodgeball") then return end
+            ply:Give("weapon_dodgeball")
 
-        if ply:GetLocationName():lower():find("gym") then
-            ply:SelectWeapon("weapon_dodgeball")
+            if ply:GetLocationName():lower():find("gym") then
+                ply:SelectWeapon("weapon_dodgeball")
+            end
+
+            self:Remove()
         end
-
-        self:Remove()
     end)
 end
 

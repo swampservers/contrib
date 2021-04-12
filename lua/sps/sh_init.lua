@@ -7,6 +7,40 @@ PS_Categories = PS_Categories or {}
 PS_Products = PS_Products or {}
 PS_Items = PS_Items or {}
 
+
+SS_Layout = SS_Layout or {}
+SS_Products = SS_Products or {}
+SS_Items = SS_Items or {}
+
+local tsl_curname=""
+
+function SS_Tab(name, icon) -- add custom paint funcs here
+    tsl_curname=name
+
+    if name != nil then
+        --todo create tabs in order
+
+        SS_Layout[name] = {
+            name=name,
+            icon=icon,
+            sortby=sortby,
+            products={{name="",products={}}}
+        }
+    end
+end
+
+function SS_Heading(name)
+    table.insert(SS_Layout[tsl_curname].products, {name=name,products={}} )
+end
+
+function SS_Product(product)
+    local tab = SS_Layout[tsl_curname].products
+    table.insert(tab[#tab].products, product.class)
+    SS_Products[product.class] = product
+end
+
+
+
 function PS_AngleGen(func)
     local ang = Angle()
     func(ang)
@@ -214,11 +248,11 @@ end
 
 function PS_Initialize()
     include('sps/categories.lua')
-    local files, _ = file.Find('sps/items/*', 'LUA')
-
+    local files, _ = file.Find('sps/tabs/*', 'LUA')
+    table.sort(files)
     for _, name in pairs(files) do
-        AddCSLuaFile('sps/items/' .. name)
-        include('sps/items/' .. name)
+        AddCSLuaFile('sps/tabs/' .. name)
+        include('sps/tabs/' .. name)
     end
 end
 
