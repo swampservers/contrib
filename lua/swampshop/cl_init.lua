@@ -1,11 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("sh_init.lua")
-include("vgui/DPointShopMenu.lua")
-include("vgui/DPointShopItem.lua")
-include("vgui/DPointShopPreview.lua")
-include("vgui/DPointShopCustomizer.lua")
-include("vgui/DPointShopGivePoints.lua")
+include("vgui/menu.lua")
+include("vgui/panels.lua")
+include("vgui/item.lua")
+include("vgui/preview.lua")
+include("vgui/customizer.lua")
+include("vgui/givepoints.lua")
 local wasf3down = false
 
 hook.Add("Think", "PSToggler", function()

@@ -3,8 +3,7 @@
 AddCSLuaFile()
 include("net_hd.lua")
 include("config.lua")
-SS_Products = SS_Products or {}
-SS_Items = SS_Items or {}
+
 SS_Layout = SS_Layout or {}
 SS_Products = SS_Products or {}
 SS_Items = SS_Items or {}
@@ -46,7 +45,6 @@ function SS_Product(product)
     local tab = _SS_TABADDTARGET.layout
     table.insert(tab[#tab].products, product.class)
     product.price = product.price or 0
-    SS_Products[product.class] = product
     SS_Products[product.class] = product
 
     if product.model then
