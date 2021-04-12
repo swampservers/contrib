@@ -1,9 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
-SS_Tab("Upgrades","lock_open")
-
+SS_Tab("Upgrades", "lock_open")
 SS_Heading("Accessory Slots")
 
 local fils = {"TrafficCone001a.mdl"}

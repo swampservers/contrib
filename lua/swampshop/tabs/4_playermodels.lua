@@ -1,8 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-SS_Tab("Playermodels","user_suit")
-
+SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
 SS_ItemProduct({
@@ -64,7 +62,6 @@ SS_ItemProduct({
     }
 })
 
-
 SS_Heading("Permanent")
 
 SS_ItemProduct({
@@ -88,8 +85,6 @@ if SERVER then
 end
 
 hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return ply:GetNWBool("oufitr") end)
-
-
 
 SS_PlayermodelItemProduct({
     class = 'crusadermodel',

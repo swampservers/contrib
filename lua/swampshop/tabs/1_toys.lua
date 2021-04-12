@@ -1,8 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-SS_Tab("Toys","star")
-
+SS_Tab("Toys", "star")
 SS_Heading("Free Toys")
 
 SS_WeaponProduct({
@@ -288,4 +286,3 @@ SS_Product({
         if ply:GetNWBool("spacehat") then return SS_BUYSTATUS_OWNED end
     end
 })
-

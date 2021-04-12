@@ -5,38 +5,46 @@ include("net_hd.lua")
 include("config.lua")
 SS_Products = SS_Products or {}
 SS_Items = SS_Items or {}
-
-
 SS_Layout = SS_Layout or {}
 SS_Products = SS_Products or {}
 SS_Items = SS_Items or {}
 
-function SS_Tab(name, icon) -- add custom paint funcs here
+-- add custom paint funcs here
+function SS_Tab(name, icon)
     _SS_TABADDTARGET = nil
+
     for _, tab in pairs(SS_Layout) do
         if tab.name == name then
             _SS_TABADDTARGET = tab
         end
     end
+
     if _SS_TABADDTARGET == nil then
         table.insert(SS_Layout, {})
         _SS_TABADDTARGET = SS_Layout[#SS_Layout]
     end
 
-    _SS_TABADDTARGET.name=name
-    _SS_TABADDTARGET.icon=icon
-    _SS_TABADDTARGET.layout={{name="",products={}}}
+    _SS_TABADDTARGET.name = name
+    _SS_TABADDTARGET.icon = icon
+
+    _SS_TABADDTARGET.layout = {
+        {
+            name = "",
+            products = {}
+        }
+    }
 end
 
 function SS_Heading(title)
-    table.insert(_SS_TABADDTARGET.layout, {title=title,products={}} )
+    table.insert(_SS_TABADDTARGET.layout, {
+        title = title,
+        products = {}
+    })
 end
 
 function SS_Product(product)
     local tab = _SS_TABADDTARGET.layout
     table.insert(tab[#tab].products, product.class)
-
-
     product.price = product.price or 0
     SS_Products[product.class] = product
     SS_Products[product.class] = product
@@ -49,8 +57,6 @@ function SS_Product(product)
         end
     end
 end
-
-
 
 function SS_AngleGen(func)
     local ang = Angle()
@@ -247,6 +253,7 @@ end
 function SS_Initialize()
     local files, _ = file.Find('swampshop/tabs/*', 'LUA')
     table.sort(files)
+
     for _, name in pairs(files) do
         AddCSLuaFile('swampshop/tabs/' .. name)
         include('swampshop/tabs/' .. name)

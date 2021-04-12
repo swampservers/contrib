@@ -1,7 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-SS_Tab("Weapons","bomb")
+SS_Tab("Weapons", "bomb")
 
 SS_WeaponProduct({
     name = 'Crossbow',
@@ -50,8 +49,6 @@ SS_WeaponProduct({
     model = 'models/weapons/w_357.mdl',
     class = 'weapon_357'
 })
-
-
 
 SS_WeaponProduct({
     name = 'Suicide Bombing',
@@ -115,8 +112,6 @@ SS_WeaponAndAmmoProduct({
     ammotype = "peaceshot",
     amount = 2
 })
-
-
 
 SS_Heading("Ammo")
 

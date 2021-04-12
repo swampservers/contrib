@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 SS_ProductlessItem({
     class = "outfitter",
     price = 1000000,
@@ -10,6 +9,7 @@ SS_ProductlessItem({
     invcategory = "Playermodels",
     never_equip = true
 })
+
 SS_ProductlessItem({
     class = "whiteeyestest",
     name = "white eyes",
@@ -18,4 +18,3 @@ SS_ProductlessItem({
     model = "models/error.mdl",
     material = "models/debug/debugwhite",
 })
-
