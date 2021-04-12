@@ -198,7 +198,7 @@ SS_Product({
     OnBuy = function(self, ply)
         if ply.cantmakepresent then
             ply:PS_GivePoints(self.price)
-            ply:PS_Notify("Cooldown...")
+            ply:Notify("Cooldown...")
 
             return
         end
@@ -209,7 +209,7 @@ SS_Product({
             ply.cantmakepresent = false
         end)
 
-        ply:PS_Notify("Press use (E) to open your crate!")
+        ply:Notify("Press use (E) to open your crate!")
         local presentCount = 0
 
         for k, v in pairs(ents.FindByClass("ent_mysterybox")) do
@@ -282,7 +282,7 @@ SS_Product({
     material = 'models/props_combine/portalball001_sheet',
     OnBuy = function(self, ply)
         ply:SetNWBool("spacehat", true)
-        ply:PS_Notify("This item lasts for one life!")
+        ply:Notify("This item lasts for one life!")
     end,
     CanBuyStatus = function(self, ply)
         if ply:GetNWBool("spacehat") then return PS_BUYSTATUS_OWNED end

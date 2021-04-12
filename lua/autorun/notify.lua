@@ -34,6 +34,4 @@ else
 
         net.Send(self)
     end
-
-    Player.PS_Notify = Player.Notify
 end
