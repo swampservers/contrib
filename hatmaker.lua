@@ -2,7 +2,7 @@
 -- IGNORE THIS LINE!!!!!
 PREVIEWITEMS = {}
 
-function PS_ItemProduct(itm)
+function SS_ItemProduct(itm)
     table.insert(PREVIEWITEMS, itm)
 end
 
@@ -21,7 +21,7 @@ To make props:
 - To get model names, hold q and right click the model, then "copy to clipboard"
 
 When you are done:
-- Add the PS_ItemProduct blocks in this file: https://github.com/swampservers/contrib/blob/master/lua/sps/items/wearables.lua
+- Add the SS_ItemProduct blocks in this file: https://github.com/swampservers/contrib/blob/master/lua/sps/items/wearables.lua
 	(more example items are in this file as well)
 - Add the classname to this file so it appears in the shop: https://github.com/swampservers/contrib/blob/master/lua/sps/categories.lua
 ]]
@@ -29,7 +29,7 @@ When you are done:
 SHOW_PONY = false
 
 -- Example item
-PS_ItemProduct({
+SS_ItemProduct({
     class = "buckethat",
     price = 10000,
     name = 'Bucket Head',
@@ -48,7 +48,7 @@ PS_ItemProduct({
     }
 })
 
--- Put more PS_ItemProduct({ .... }) blocks here...
+-- Put more SS_ItemProduct({ .... }) blocks here...
 ------------------------------------------
 -- IGNORE EVERYTHING BELOW THIS LINE !!!!!
 ------------------------------------------
@@ -81,11 +81,11 @@ hook.Add("PrePlayerDraw", "DrawTheStuff", function(ply)
             itm.mdl:SetNoDraw(true)
         end
 
-        PS_DrawWornCSModel(itm, {}, itm.mdl, ply, nil)
+        SS_DrawWornCSModel(itm, {}, itm.mdl, ply, nil)
     end
 end)
 
-PS_Attachments = {
+SS_Attachments = {
     eyes = "I'm special",
     head = {"ValveBiped.Bip01_Head1", "LrigScull"},
     neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
@@ -99,7 +99,7 @@ PS_Attachments = {
     right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
 }
 
-function PS_AngleGen(func)
+function SS_AngleGen(func)
     local ang = Angle()
     func(ang)
 
@@ -114,7 +114,7 @@ function isPonyModel(modelName)
     return false
 end
 
-function PS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
+function SS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
     local pone = isPonyModel(ent:GetModel())
     local attach = itm.wear.attach
     local scale = itm.wear.scale
@@ -166,7 +166,7 @@ function PS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
             end
         end
     else
-        local bone_id = ent:LookupBone(PS_Attachments[attach][pone and 2 or 1])
+        local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
 
         if bone_id then
             pos, ang = ent:GetBonePosition(bone_id)
@@ -207,13 +207,13 @@ function PS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
     mdl:SetupBones()
 
     if not dontactually then
-        PS_PreRender(itm, cfg, ent)
+        SS_PreRender(itm, cfg, ent)
         mdl:DrawModel()
-        PS_PostRender()
+        SS_PostRender()
     end
 end
 
-function PS_PreRender(data, cfg, ent)
+function SS_PreRender(data, cfg, ent)
     cfg = (cfg or {})
     local imgur = cfg.imgur
 
@@ -228,7 +228,7 @@ function PS_PreRender(data, cfg, ent)
         local mat = cfg.material or data.material
 
         if mat then
-            render.MaterialOverride(PS_GetMaterial(mat))
+            render.MaterialOverride(SS_GetMaterial(mat))
         end
     end
 
@@ -239,7 +239,7 @@ function PS_PreRender(data, cfg, ent)
     end
 end
 
-function PS_PostRender()
+function SS_PostRender()
     render.SetColorModulation(1, 1, 1)
     render.MaterialOverride()
     --render.OverrideDepthEnable(false)

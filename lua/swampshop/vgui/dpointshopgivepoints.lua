@@ -93,7 +93,7 @@ function PANEL:Submit()
     end
 
     if not other then return end -- player could have left
-    net.Start('PS_SendPoints')
+    net.Start('SS_SendPoints')
     net.WriteEntity(other)
     net.WriteInt(tonumber(self.pselector:GetValue()), 32)
     net.SendToServer()
@@ -106,7 +106,7 @@ function PANEL:Update()
         disabled = true
     end
 
-    if (self.pselector:GetValue() < 1) or (self.pselector:GetValue() > LocalPlayer():PS_GetPoints()) then
+    if (self.pselector:GetValue() < 1) or (self.pselector:GetValue() > LocalPlayer():SS_GetPoints()) then
         disabled = true
         self.pselector:SetTextColor(Color(180, 0, 0, 255))
     else

@@ -7,7 +7,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
 
     if bounty > 0 and ply ~= atk and atk:IsPlayer() then
         SetPlayerBounty(ply, 0)
-        atk:PS_GivePoints(bounty)
+        atk:SS_GivePoints(bounty)
         BotSayGlobal("[edgy]" .. atk:Nick() .. " [fbc]has claimed [gold]" .. ply:Nick() .. "'s [fbc]bounty of [rainbow]" .. bounty .. " [fbc]points!")
     end
 end)
@@ -30,7 +30,7 @@ function AddBounty(ply, targets, amount)
     local needed = amount * #targets
     local total = (BountyLimit[ply:SteamID()] or 0) + needed
 
-    if ply:PS_HasPoints(needed) and total <= 10000000 then
+    if ply:SS_HasPoints(needed) and total <= 10000000 then
         for k, v in ipairs(targets) do
             if not ply:IsPlayer() or not v:IsPlayer() or type(amount) ~= "number" then
                 ServerDebug("AddBounty: invalid arguments")
@@ -42,7 +42,7 @@ function AddBounty(ply, targets, amount)
             local add = GetPlayerBounty(v) + amount
             BountyLimit[ply:SteamID()] = (BountyLimit[ply:SteamID()] or 0) + amount
             SetPlayerBounty(v, add)
-            ply:PS_TakePoints(amount)
+            ply:SS_TakePoints(amount)
         end
 
         if #targets == 1 then
@@ -50,7 +50,7 @@ function AddBounty(ply, targets, amount)
         else
             BotSayGlobal("[fbc]" .. ply:Nick() .. " has increased everyone's bounty by [rainbow]" .. amount .. " [fbc]points!")
         end
-    elseif ply:PS_HasPoints(needed) then
+    elseif ply:SS_HasPoints(needed) then
         ply:ChatPrint("[red]You have reached your limit for today")
     else
         ply:ChatPrint("[red]You don't have enough points")

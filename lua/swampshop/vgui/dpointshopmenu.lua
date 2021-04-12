@@ -1,51 +1,51 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-surface.CreateFont('PS_Heading', {
+surface.CreateFont('SS_Heading', {
     font = 'coolvetica',
     size = 64
 })
 
-surface.CreateFont('PS_Heading2', {
+surface.CreateFont('SS_Heading2', {
     font = 'coolvetica',
     size = 24
 })
 
-surface.CreateFont('PS_Heading3', {
+surface.CreateFont('SS_Heading3', {
     font = 'coolvetica',
     size = 19
 })
 
-surface.CreateFont('PS_Heading4', {
+surface.CreateFont('SS_Heading4', {
     font = 'Arial',
     size = 14
 })
 
-surface.CreateFont('PS_POINTSFONT', {
+surface.CreateFont('SS_POINTSFONT', {
     font = 'Righteous',
     size = 42
 })
 
-surface.CreateFont('PS_INCOMEFONT', {
+surface.CreateFont('SS_INCOMEFONT', {
     font = 'Lato',
     size = 22
 })
 
-surface.CreateFont('PS_JOINFONT', {
+surface.CreateFont('SS_JOINFONT', {
     font = 'Lato',
     size = 18
 })
 
-surface.CreateFont('PS_DESCTITLEFONT', {
+surface.CreateFont('SS_DESCTITLEFONT', {
     font = 'Righteous',
     size = 32
 })
 
-surface.CreateFont('PS_DESCFONT', {
+surface.CreateFont('SS_DESCFONT', {
     font = 'Lato',
     size = 18
 })
 
-surface.CreateFont('PS_DESCINSTFONT', {
+surface.CreateFont('SS_DESCINSTFONT', {
     font = 'Lato',
     size = 20
 })
@@ -53,94 +53,94 @@ surface.CreateFont('PS_DESCINSTFONT', {
 pointshopDollarImage = Material("icon16/money_dollar.png")
 pointshopMoneyImage = Material("icon16/money.png")
 
-surface.CreateFont("PS_Default", {
+surface.CreateFont("SS_Default", {
     font = system.IsLinux() and "Arial" or "Tahoma",
     size = 13,
     weight = 500,
     antialias = true,
 })
 
-surface.CreateFont("PS_Donate1", {
+surface.CreateFont("SS_Donate1", {
     font = "Roboto",
     size = 36,
     weight = 800,
     antialias = true,
 })
 
-surface.CreateFont("PS_Donate2", {
+surface.CreateFont("SS_Donate2", {
     font = "Roboto",
     size = 28,
     weight = 800,
     antialias = true,
 })
 
-surface.CreateFont("PS_Models", {
+surface.CreateFont("SS_Models", {
     font = "Roboto",
     size = 24,
     weight = 800,
     antialias = true,
 })
 
-surface.CreateFont("PS_DefaultBold", {
+surface.CreateFont("SS_DefaultBold", {
     font = system.IsLinux() and "Arial" or "Tahoma",
     size = 13,
     weight = 800,
     antialias = true,
 })
 
-surface.CreateFont("PS_Heading1", {
+surface.CreateFont("SS_Heading1", {
     font = system.IsLinux() and "Arial" or "Tahoma",
     size = 18,
     weight = 500,
     antialias = true,
 })
 
-surface.CreateFont("PS_Heading1Bold", {
+surface.CreateFont("SS_Heading1Bold", {
     font = system.IsLinux() and "Arial" or "Tahoma",
     size = 18,
     weight = 800,
     antialias = true,
 })
 
-surface.CreateFont("PS_ButtonText1", {
+surface.CreateFont("SS_ButtonText1", {
     font = "Roboto",
     size = 22,
     weight = 700,
     antialias = true,
 })
 
-surface.CreateFont("PS_ItemText", {
+surface.CreateFont("SS_ItemText", {
     font = system.IsLinux() and "Arial" or "Tahoma",
     size = 11,
     weight = 500,
     antialias = true,
 })
 
-surface.CreateFont("PS_LargeTitle", {
+surface.CreateFont("SS_LargeTitle", {
     font = "Righteous",
     size = 48,
     weight = 900,
     antialias = true,
 })
 
-surface.CreateFont("PS_SubCategory", {
+surface.CreateFont("SS_SubCategory", {
     font = "Righteous",
     size = 36,
 })
 
-surface.CreateFont('PS_ProductName', {
+surface.CreateFont('SS_ProductName', {
     font = 'Lato',
     size = 17
 })
 
-surface.CreateFont("PS_Price", {
+surface.CreateFont("SS_Price", {
     font = "Righteous",
     size = 31,
     weight = 900,
     antialias = true,
 })
 
-surface.CreateFont("PS_Category", {
+surface.CreateFont("SS_Category", {
     font = "Lato",
     size = 18,
     weight = 200,
@@ -150,20 +150,20 @@ surface.CreateFont("PS_Category", {
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3
-PS_ColorWhite = Color(255, 255, 255)
-PS_ColorBlack = Color(0, 0, 0)
+SS_ColorWhite = Color(255, 255, 255)
+SS_ColorBlack = Color(0, 0, 0)
 
-PS_PaintTileBG = function(pnl, w, h)
-    surface.SetDrawColor(PS_TileBGColor)
+SS_PaintTileBG = function(pnl, w, h)
+    surface.SetDrawColor(SS_TileBGColor)
     surface.DrawRect(0, 0, w, h)
 end
 
-PS_PaintGridBG = function(pnl, w, h)
-    surface.SetDrawColor(PS_GridBGColor)
+SS_PaintGridBG = function(pnl, w, h)
+    surface.SetDrawColor(SS_GridBGColor)
     surface.DrawRect(0, 0, w, h)
 end
 
-PS_PaintDarkenOnHover = function(pnl, w, h)
+SS_PaintDarkenOnHover = function(pnl, w, h)
     if pnl:IsHovered() then
         surface.SetDrawColor(Color(0, 0, 0, 100))
         surface.DrawRect(0, 0, w, h)
@@ -171,71 +171,71 @@ PS_PaintDarkenOnHover = function(pnl, w, h)
 end
 
 local PANEL = {}
-PS_MENUWIDTH = 1203
-PS_MENUHEIGHT = 808
-PS_NAVBARHEIGHT = 56
-PS_BOTBARHEIGHT = 88
-PS_RPANEWIDTH = 360
-PS_PREVIEWHEIGHT = 470
-PS_TILESIZE = 156
-PS_AVATARPAD = 5
-PS_INVENTORY_POINT_OUT = -100
+SS_MENUWIDTH = 1203
+SS_MENUHEIGHT = 808
+SS_NAVBARHEIGHT = 56
+SS_BOTBARHEIGHT = 88
+SS_RPANEWIDTH = 360
+SS_PREVIEWHEIGHT = 470
+SS_TILESIZE = 156
+SS_AVATARPAD = 5
+SS_INVENTORY_POINT_OUT = -100
 
-net.Receive("PS_PointOutInventory", function()
-    PS_INVENTORY_POINT_OUT = RealTime()
+net.Receive("SS_PointOutInventory", function()
+    SS_INVENTORY_POINT_OUT = RealTime()
 end)
 
 function PANEL:Init()
-    self:SetSize(math.Clamp(PS_MENUWIDTH, 0, ScrW()), math.Clamp(PS_MENUHEIGHT, 0, ScrH()))
+    self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
     self.navbar = vgui.Create("DPanel", self)
-    self.navbar:SetTall(PS_NAVBARHEIGHT)
+    self.navbar:SetTall(SS_NAVBARHEIGHT)
     self.navbar:Dock(TOP)
     self.navbar:SetBackgroundColor(BrandColorAlternate)
     self.botbar = vgui.Create("DPanel", self)
-    self.botbar:SetTall(PS_BOTBARHEIGHT)
+    self.botbar:SetTall(SS_BOTBARHEIGHT)
     self.botbar:Dock(BOTTOM)
-    self.botbar:SetBackgroundColor(PS_BotBGColor)
+    self.botbar:SetBackgroundColor(SS_BotBGColor)
     self.rpane = vgui.Create('DPanel', self)
-    self.rpane:SetWide(PS_RPANEWIDTH)
+    self.rpane:SetWide(SS_RPANEWIDTH)
     self.rpane:Dock(RIGHT)
-    self.rpane:SetBackgroundColor(PS_TileBGColor)
-    PS_PreviewPane = self.rpane
+    self.rpane:SetBackgroundColor(SS_TileBGColor)
+    SS_PreviewPane = self.rpane
     self.lpane = vgui.Create('DPanel', self)
     self.lpane:Dock(FILL)
-    self.lpane:SetBackgroundColor(PS_GridBGColor)
+    self.lpane:SetBackgroundColor(SS_GridBGColor)
     local p = vgui.Create("DLabel", self.navbar)
     p:SetText("TOY SHOβ")
-    p:SetFont('PS_LargeTitle')
+    p:SetFont('SS_LargeTitle')
     p:SizeToContentsX()
     p:DockMargin(16, 0, 16, 0)
-    p:SetColor(PS_ColorWhite)
+    p:SetColor(SS_ColorWhite)
     --p:SetPaintBackground(false)
     p:Dock(LEFT)
     -- close button
     p = vgui.Create('DButton', self.navbar)
     p:SetFont('marlett')
     p:SetText('r')
-    p.Paint = PS_PaintDarkenOnHover
-    p:SetColor(PS_ColorWhite)
-    p:SetSize(PS_NAVBARHEIGHT, PS_NAVBARHEIGHT)
+    p.Paint = SS_PaintDarkenOnHover
+    p:SetColor(SS_ColorWhite)
+    p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
     p:Dock(RIGHT)
 
     p.DoClick = function()
-        PS_ToggleMenu()
+        SS_ToggleMenu()
     end
 
     -- help button
     p = vgui.Create('DButton', self.navbar)
     p:SetFont('marlett')
     p:SetText('s')
-    p.Paint = PS_PaintDarkenOnHover
-    p:SetColor(PS_ColorWhite)
-    p:SetSize(PS_NAVBARHEIGHT, PS_NAVBARHEIGHT)
+    p.Paint = SS_PaintDarkenOnHover
+    p:SetColor(SS_ColorWhite)
+    p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
     p:Dock(RIGHT)
 
     p.DoClick = function()
-        PS_ToggleMenu()
+        SS_ToggleMenu()
         ShowMotd("https://swampservers.net/points")
     end
 
@@ -243,13 +243,13 @@ function PANEL:Init()
     p = vgui.Create('DImageButton', self.navbar)
     p:SetImage("icon16/lightbulb.png")
     p:SetStretchToFit(false)
-    p.Paint = PS_PaintDarkenOnHover
-    p:SetSize(PS_NAVBARHEIGHT, PS_NAVBARHEIGHT)
+    p.Paint = SS_PaintDarkenOnHover
+    p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
     p:SetTooltip("Toggle dark mode/light mode")
     p:Dock(RIGHT)
 
     p.DoClick = function()
-        GetConVar("ps_darkmode"):SetBool(not PS_DarkMode) --activates the callback function
+        GetConVar("ps_darkmode"):SetBool(not SS_DarkMode) --activates the callback function
     end
 
     local btns = {}
@@ -273,7 +273,7 @@ function PANEL:Init()
         local btn = vgui.Create("DButton", self.navbar)
         btn:Dock(align or LEFT)
         btn:SetText(catname)
-        btn:SetFont("PS_Category")
+        btn:SetFont("SS_Category")
         btn:SetImage(icon)
 
         btn.Paint = function(pnl, w, h)
@@ -282,12 +282,12 @@ function PANEL:Init()
                 surface.DrawRect(0, 0, w, h)
                 --gradient drop down?
             else
-                PS_PaintDarkenOnHover(pnl, w, h)
+                SS_PaintDarkenOnHover(pnl, w, h)
             end
         end
 
         btn.UpdateColours = function(pnl)
-            pnl:SetTextColor(PS_ColorWhite)
+            pnl:SetTextColor(SS_ColorWhite)
         end
 
         btn.PerformLayout = function(pnl)
@@ -315,10 +315,10 @@ function PANEL:Init()
 
         btn.DoClick = function(pnl)
             --patch
-            PS_CustomizerPanel:Close()
+            SS_CustomizerPanel:Close()
 
-            if IsValid(PS_SelectedPanel) then
-                PS_SelectedPanel:Deselect()
+            if IsValid(SS_SelectedPanel) then
+                SS_SelectedPanel:Deselect()
             end
 
             for k, v in pairs(btns) do
@@ -351,18 +351,18 @@ function PANEL:Init()
         p2:SetPaintBackground(true)
 
         p2.Paint = function(p, w, h)
-            surface.SetDrawColor(PS_TileBGColor)
+            surface.SetDrawColor(SS_TileBGColor)
             surface.DrawRect(0, 0, w, h)
         end
 
         p2:DockMargin(8, 8, 8, 0)
         local p = vgui.Create("DLabel", p2)
         p:SetText(txt)
-        p:SetFont('PS_SubCategory')
+        p:SetFont('SS_SubCategory')
         p:Dock(TOP)
         local lp = 2
         p:DockMargin(lp * 2, lp, lp, lp)
-        p:SetColor(PS_SwitchableColor)
+        p:SetColor(SS_SwitchableColor)
         p:SizeToContentsY()
         p2:SetTall(p:GetTall() + lp * 2)
     end
@@ -399,7 +399,7 @@ function PANEL:Init()
             local scat = NewSubCategory(cat)
 
             for _, PRODUCT in pairs(LAYOUT.products) do
-                pdata = PS_Products[PRODUCT]
+                pdata = SS_Products[PRODUCT]
 
                 if pdata == nil then
                     print("Undefined product: " .. PRODUCT)
@@ -408,7 +408,7 @@ function PANEL:Init()
 
                 local model = vgui.Create('DPointShopItem')
                 model:SetProduct(pdata)
-                model:SetSize(PS_TILESIZE, PS_TILESIZE)
+                model:SetSize(SS_TILESIZE, SS_TILESIZE)
                 scat:Add(model)
             end
         end
@@ -416,11 +416,11 @@ function PANEL:Init()
         FinishCategory(cat)
     end
 
-    PS_InventoryPanel = NewCategory("My Inventory", 'icon16/basket.png', RIGHT)
-    PS_ValidInventory = false
+    SS_InventoryPanel = NewCategory("My Inventory", 'icon16/basket.png', RIGHT)
+    SS_ValidInventory = false
 
-    function PS_InventoryPanel:Think()
-        if not PS_ValidInventory then
+    function SS_InventoryPanel:Think()
+        if not SS_ValidInventory then
             if #self:GetCanvas():GetChildren() > 0 then
                 for k, v in pairs(self:GetCanvas():GetChildren()) do
                     v:Remove()
@@ -430,7 +430,7 @@ function PANEL:Init()
             end
 
             print("Items reloading")
-            local itemstemp = LocalPlayer().PS_Items or {}
+            local itemstemp = LocalPlayer().SS_Items or {}
 
             table.sort(itemstemp, function(a, b)
                 local a2 = a
@@ -438,12 +438,12 @@ function PANEL:Init()
                 a = a.class
                 b = b.class
 
-                if PS_Items[a] then
-                    a = PS_Items[a].name
+                if SS_Items[a] then
+                    a = SS_Items[a].name
                 end
 
-                if PS_Items[b] then
-                    b = PS_Items[b].name
+                if SS_Items[b] then
+                    b = SS_Items[b].name
                 end
 
                 local i = 0
@@ -464,22 +464,22 @@ function PANEL:Init()
             categorizeditems = {}
 
             for _, ITEM in pairs(itemstemp) do
-                pdata = PS_Items[ITEM.class]
+                pdata = SS_Items[ITEM.class]
                 if pdata == nil then continue end --print("Undefined item: "..ITEM.class)
                 local invcategory = pdata.invcategory or "Other"
                 categorizeditems[invcategory] = categorizeditems[invcategory] or {}
                 table.insert(categorizeditems[invcategory], ITEM)
             end
 
-            for _, cat in ipairs(PS_InvCategories) do
+            for _, cat in ipairs(SS_InvCategories) do
                 if categorizeditems[cat] then
                     NewSubCategoryTitle(self, cat)
                     local sc = NewSubCategory(self)
 
                     for _, ITEM in pairs(categorizeditems[cat]) do
                         local model = vgui.Create('DPointShopItem')
-                        model:SetItem(PS_Items[ITEM.class], ITEM)
-                        model:SetSize(PS_TILESIZE, PS_TILESIZE)
+                        model:SetItem(SS_Items[ITEM.class], ITEM)
+                        model:SetSize(SS_TILESIZE, SS_TILESIZE)
                         sc:Add(model)
                     end
                 end
@@ -487,15 +487,15 @@ function PANEL:Init()
 
             FinishCategory(self)
             self:InvalidateLayout()
-            PS_ValidInventory = true
+            SS_ValidInventory = true
         end
     end
 
-    PS_CustomizerPanel = vgui.Create('DPointShopCustomizer', PS_InventoryPanel:GetParent():GetParent():GetParent())
-    PS_CustomizerPanel:Dock(FILL)
-    PS_CustomizerPanel:Close()
+    SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent():GetParent())
+    SS_CustomizerPanel:Dock(FILL)
+    SS_CustomizerPanel:Close()
     local previewpanel = vgui.Create('DPointShopPreview', self.rpane)
-    previewpanel:SetTall(PS_PREVIEWHEIGHT)
+    previewpanel:SetTall(SS_PREVIEWHEIGHT)
     previewpanel:Dock(TOP)
     --- Drag Rotate
     previewpanel.Angles = Angle(0, 0, 0)
@@ -526,7 +526,7 @@ function PANEL:Init()
 
             --self.Angles = self.Angles - Angle( ( self.PressY or my ) - my, ( self.PressX or mx ) - mx, 0 )
             if self.PressButton == MOUSE_LEFT then
-                if PS_CustomizerPanel:IsVisible() then
+                if SS_CustomizerPanel:IsVisible() then
                     local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
                     self.Angles:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.6)
                     self.Angles:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.6)
@@ -537,15 +537,15 @@ function PANEL:Init()
             end
 
             if self.PressButton == MOUSE_RIGHT then
-                if PS_CustomizerPanel:IsVisible() then
+                if SS_CustomizerPanel:IsVisible() then
                     if ValidPanel(XRSL) then
-                        if IsValid(PS_HoverCSModel) then
+                        if IsValid(SS_HoverCSModel) then
                             clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
                             clangm = Matrix()
                             clangm:SetAngles(clang)
                             clangm:Invert()
                             clangi = clangm:GetAngles()
-                            cgang = PS_HoverCSModel:GetAngles()
+                            cgang = SS_HoverCSModel:GetAngles()
                             crangm = Matrix()
                             crangm:SetAngles(cgang)
                             crangm:Rotate(clangi)
@@ -572,10 +572,10 @@ function PANEL:Init()
             self.PressX, self.PressY = gui.MousePos()
         end
 
-        if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or PS_CustomizerPanel:IsVisible() then
+        if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
             thisEntity:SetAngles(self.Angles)
 
-            if not PS_CustomizerPanel:IsVisible() then
+            if not SS_CustomizerPanel:IsVisible() then
                 self.SPINAT = 4
             end
         else
@@ -586,37 +586,37 @@ function PANEL:Init()
         end
     end
 
-    PS_DescriptionPanel = vgui.Create('DPanel', self.rpane)
-    PS_DescriptionPanel:Dock(FILL)
-    PS_DescriptionPanel.Paint = function() end
+    SS_DescriptionPanel = vgui.Create('DPanel', self.rpane)
+    SS_DescriptionPanel:Dock(FILL)
+    SS_DescriptionPanel.Paint = function() end
     p = vgui.Create("AvatarImage", self.botbar)
     p:SetPlayer(LocalPlayer(), 184)
-    p:SetSize(PS_BOTBARHEIGHT - (PS_AVATARPAD * 2), PS_BOTBARHEIGHT - (PS_AVATARPAD * 2))
-    p:SetPos(PS_AVATARPAD, PS_AVATARPAD)
+    p:SetSize(SS_BOTBARHEIGHT - (SS_AVATARPAD * 2), SS_BOTBARHEIGHT - (SS_AVATARPAD * 2))
+    p:SetPos(SS_AVATARPAD, SS_AVATARPAD)
     p = vgui.Create("DPanel", self.botbar)
     p:SetWide(300)
-    p:DockMargin(PS_BOTBARHEIGHT, 0, 0, 0)
+    p:DockMargin(SS_BOTBARHEIGHT, 0, 0, 0)
     p:Dock(LEFT)
 
     p.Paint = function(pnl, w, h)
-        draw.SimpleText(string.Comma(LocalPlayer():PS_GetPoints()) .. ' Points', 'PS_POINTSFONT', 4, (h / 2) - 13, PS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-        draw.SimpleText("Income: " .. tostring(PS_Income(LocalPlayer())) .. ' Points/Minute', 'PS_INCOMEFONT', 4, (h / 2) + 16, PS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, (h / 2) - 13, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText("Income: " .. tostring(SS_Income(LocalPlayer())) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     end
 
-    local xo = p:GetWide() + PS_BOTBARHEIGHT
+    local xo = p:GetWide() + SS_BOTBARHEIGHT
 
     if LocalPlayer().HasHalfPoints then
         p = vgui.Create("DButton", self)
         p:SetZPos(1000)
-        p:SetPos(6, self:GetTall() - (52 + PS_BOTBARHEIGHT))
+        p:SetPos(6, self:GetTall() - (52 + SS_BOTBARHEIGHT))
         p:SetSize(200, 48)
         p:SetWrap(true)
         p:SetTextInset(16, 0)
-        p:SetFont("PS_JOINFONT")
+        p:SetFont("SS_JOINFONT")
         p:SetText("Click here to join our Steam group for double income!")
 
         p.UpdateColours = function(pnl)
-            pnl:SetTextColor(PS_ColorBlack)
+            pnl:SetTextColor(SS_ColorBlack)
         end
 
         p.Think = function(pnl)
@@ -633,9 +633,9 @@ function PANEL:Init()
     PointshopDollarParticlePoints = -0.2
     PointshopDollarParticles = {}
     p = vgui.Create("DButton", self.botbar)
-    p:SetWide(PS_MENUWIDTH - (xo * 2))
+    p:SetWide(SS_MENUWIDTH - (xo * 2))
     p:Dock(LEFT)
-    p:SetFont("PS_INCOMEFONT")
+    p:SetFont("SS_INCOMEFONT")
     p:SetText("")
 
     p.DoClick = function()
@@ -643,7 +643,7 @@ function PANEL:Init()
     end
 
     p.Paint = function(self, w, h)
-        PS_PaintDarkenOnHover(self, w, h)
+        SS_PaintDarkenOnHover(self, w, h)
         local alpha = 180
         local mousex, mousey = self:CursorPos()
         local distscale = 250
@@ -683,33 +683,33 @@ function PANEL:Init()
             end
         end
 
-        local tc = PS_ColorWhite
+        local tc = SS_ColorWhite
         --[[if self:IsHovered() then
 			tc = Color(175,230,69)
 		end]]
-        draw.SimpleText('Need more points?', 'PS_Donate1', w / 2, (h / 2) - 20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        draw.SimpleText('Click here to donate!', 'PS_Donate2', w / 2, (h / 2) + 20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText('Need more points?', 'SS_Donate1', w / 2, (h / 2) - 20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText('Click here to donate!', 'SS_Donate2', w / 2, (h / 2) + 20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
-    --draw.SimpleText('Need more points?', 'PS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    --draw.SimpleText('Need more points?', 'SS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     local cont = vgui.Create("DPanel", self.botbar)
-    cont:SetWide(PS_RPANEWIDTH)
+    cont:SetWide(SS_RPANEWIDTH)
     cont:Dock(RIGHT)
     cont.Paint = function() end
     -- give points button
     p = vgui.Create('DButton', cont)
     p:SetText("Give Points")
-    p:SetTextColor(PS_SwitchableColor)
+    p:SetTextColor(SS_SwitchableColor)
     p:DockMargin(12, 12, 12, 12)
     p:Dock(BOTTOM)
 
     p.Paint = function(panel, w, h)
         if panel.Depressed then
-            panel:SetTextColor(PS_ColorWhite)
+            panel:SetTextColor(SS_ColorWhite)
             draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
         else
-            panel:SetTextColor(PS_SwitchableColor)
-            draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+            panel:SetTextColor(SS_SwitchableColor)
+            draw.RoundedBox(4, 0, 0, w, h, SS_TileBGColor)
         end
     end
 
@@ -729,22 +729,22 @@ function PANEL:Init()
         end
     end
 
-    p:SetTextColor(PS_SwitchableColor)
+    p:SetTextColor(SS_SwitchableColor)
     p:DockMargin(12, 12, 12, 12)
     p:Dock(TOP)
 
     p.Paint = function(panel, w, h)
         if panel.Depressed then
-            panel:SetTextColor(PS_ColorWhite)
+            panel:SetTextColor(SS_ColorWhite)
             draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
         else
-            panel:SetTextColor(PS_SwitchableColor)
-            draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+            panel:SetTextColor(SS_SwitchableColor)
+            draw.RoundedBox(4, 0, 0, w, h, SS_TileBGColor)
         end
     end
 
     p.DoClick = function()
-        PS_ToggleMenu()
+        SS_ToggleMenu()
 
         if LocalPlayer():IsPony() then
             RunConsoleCommand("ppm_chared3")
@@ -767,13 +767,13 @@ end
 
 --[[
 local function BuildItemMenu(menu, ply, itemstype, callback)
-	local plyitems = ply:PS_GetItems()
+	local plyitems = ply:SS_GetItems()
 	
 	for category_id, CATEGORY in pairs(SS_Layout) do
 		
 		local catmenu = menu:AddSubMenu(CATEGORY.Name)
 		
-		for item_id, ITEM in pairs(PS_Items) do
+		for item_id, ITEM in pairs(SS_Items) do
 			if ITEM.Category == CATEGORY.Name then
 				if itemstype == ALL_ITEMS or (itemstype == OWNED_ITEMS and plyitems[item_id]) or (itemstype == UNOWNED_ITEMS and not plyitems[item_id]) then
 					catmenu:AddOption(ITEM.Name, function() callback(item_id) end)
@@ -799,7 +799,7 @@ function PANEL:Think()
 			end
 			
 			if not found then
-				self.ClientsList:AddLine(ply:GetName(), ply:PS_GetPoints(), table.Count(ply:PS_GetItems())).Player = ply
+				self.ClientsList:AddLine(ply:GetName(), ply:SS_GetPoints(), table.Count(ply:SS_GetItems())).Player = ply
 			end
 		end
 		
@@ -808,8 +808,8 @@ function PANEL:Think()
 				local ply = line.Player
 				
 				line:SetValue(1, ply:GetName())
-				line:SetValue(2, ply:PS_GetPoints())
-				line:SetValue(3, table.Count(ply:PS_GetItems()))
+				line:SetValue(2, ply:SS_GetPoints())
+				line:SetValue(3, table.Count(ply:SS_GetItems()))
 			else
 				self.ClientsList:RemoveLine(i)
 			end
@@ -822,12 +822,12 @@ function PANEL:Paint(w, h)
 end
 
 function PANEL:PaintOver(w, h)
-    local a = math.min(5.0 - ((RealTime() - PS_INVENTORY_POINT_OUT) * 1.0), 1.0, (RealTime() - PS_INVENTORY_POINT_OUT) * 4.0)
+    local a = math.min(5.0 - ((RealTime() - SS_INVENTORY_POINT_OUT) * 1.0), 1.0, (RealTime() - SS_INVENTORY_POINT_OUT) * 4.0)
 
     if a > 0 then
         surface.DisableClipping(true)
         draw.SimpleText("access new items here", "DermaLarge", w - 184, -30, Color(255, 255, 255, 255 * a), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-        draw.SimpleText("↓", "PS_LargeTitle", w - 164, (math.sin(RealTime() * 6.0) * 5.0) - 20.0, Color(255, 255, 255, 255 * a), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        draw.SimpleText("↓", "SS_LargeTitle", w - 164, (math.sin(RealTime() * 6.0) * 5.0) - 20.0, Color(255, 255, 255, 255 * a), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
         surface.DisableClipping(false)
     end
 end

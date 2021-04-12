@@ -5,91 +5,91 @@ SS_Tab("Toys","star")
 
 SS_Heading("Free Toys")
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_anonymous",
     name = "Anonymous Mask",
     description = "We are 9GAG. We are Legion.",
     model = "models/v/maskhq.mdl"
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_autism",
     name = "Autistic Outbursts",
     description = "HOI WOOWIE",
     model = 'models/props_junk/TrafficCone001a.mdl'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_funnybanana",
     name = "Funny Banana Picture",
     description = "Save the pic, it\'s all yours my friend :)",
     model = 'models/chev/bananaframe.mdl'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_monke",
     name = "Return to Monke",
     description = "Reject modernity, Embrace tradition.",
     model = "models/props/cs_italy/bananna.mdl"
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "gmod_camera",
     name = "Cringe Compiler",
     description = "*SNAP*",
     model = 'models/MaxOfS2D/camera.mdl'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_encyclopedia",
     name = "Bulletproof Book",
     description = "Hold up this encyclopedia to block incoming bullets, just like that one youtube video.",
     model = "models/props_lab/bindergreen.mdl"
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_switch",
     name = "Nintendo Switch",
     description = "Great for photos. Try to contain your excitement!",
     model = "models/swamponions/switchbox.mdl"
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_fidget",
     name = "Fidget Spinner",
     description = 'The correct term for a person with a fidget spinner is "helicopter tard".',
     model = 'models/props_workshop/fidget_spinner.mdl'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_flappy",
     name = "Flappy Fedora",
     description = "A dashing rainbow fedora. Tip it (press jump) to take flight.",
     model = 'models/fedora_rainbowdash/fedora_rainbowdash.mdl'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_kleiner",
     name = "Dr. Isaac Kleiner",
     description = "Lamarr, get down from there!",
     model = "models/player/kleiner.mdl"
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_spraypaint",
     name = "Spraypaint",
     description = "Deface the server with this handy graffiti tool.",
     model = "models/props_junk/propane_tank001a.mdl"
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_vape",
     name = "Mouth Fedora",
     description = "The classy alternative to blazing",
     model = 'models/swamponions/vape.mdl'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_beans",
     name = "Baked Beans",
     description = "For eating in theaters while watching Cars 2.",
@@ -97,7 +97,7 @@ PS_WeaponProduct({
     extrapreviewgap = 1
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_monster",
     name = "Monster Zero",
     description = "*sip* yeap, Quake was a good game",
@@ -105,7 +105,7 @@ PS_WeaponProduct({
     extrapreviewgap = 2
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_shotgun",
     name = "Defense Shotgun",
     description = "Use this free, unlimited ammo shotgun to defend your private theater.",
@@ -113,7 +113,7 @@ PS_WeaponProduct({
     CanBuyStatus = function(self, v)
         if v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner() == v and v:GetTheater()._PermanentOwnerID == nil then
         else
-            return PS_BUYSTATUS_PRIVATETHEATER
+            return SS_BUYSTATUS_PRIVATETHEATER
         end
     end,
     OnBuy = function(self, ply)
@@ -124,7 +124,7 @@ PS_WeaponProduct({
 
 SS_Heading("Expensive Toys")
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_airhorn",
     price = 100,
     name = "MLG Airhorn",
@@ -132,7 +132,7 @@ PS_WeaponProduct({
     model = "models/rockyscroll/airhorn/airhorn.mdl"
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Magic Missile',
     description = "Is capable of magically removing Kleiners. Unlimited (but recharging) ammo.",
     price = 2000,
@@ -140,14 +140,14 @@ PS_WeaponProduct({
     class = 'weapon_magicmissile'
 })
 
--- PS_WeaponProduct({
+-- SS_WeaponProduct({
 -- 	name = 'Admin Abuse',
 -- 	description = "The physgun. You can pick up and fling around players. If you get killed while you own it, your killer will get 10,000 points.",
 -- 	price = 25000,
 -- 	model = 'models/weapons/w_physics.mdl',
 -- 	class = 'weapon_physgun'
 -- })
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Sandcorn',
     description = "Creates a sandstorm of popcorn. Very obnoxious.",
     price = 12000,
@@ -155,7 +155,7 @@ PS_WeaponProduct({
     class = 'weapon_sandcorn'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Spamcorn',
     description = "Full-Auto popcorn throwing",
     price = 6000,
@@ -163,7 +163,7 @@ PS_WeaponProduct({
     class = 'weapon_popcorn_spam'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Companion Pillow',
     description = "*boof*",
     price = 1000,
@@ -171,7 +171,7 @@ PS_WeaponProduct({
     class = 'weapon_bodypillow'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Police Taser',
     description = "An electroshock weapon capable of paralyzing other players for up to 20 seconds.",
     price = 4000,
@@ -179,7 +179,7 @@ PS_WeaponProduct({
     class = 'weapon_taser'
 })
 
-PS_WeaponAndAmmoProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Laser Pointer',
     description = "Makes a funny dot. Keep away from eyes. Right click for lethal beam. Re-buy for battery refill.",
     price = 500,
@@ -197,7 +197,7 @@ SS_Product({
     model = (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
     OnBuy = function(self, ply)
         if ply.cantmakepresent then
-            ply:PS_GivePoints(self.price)
+            ply:SS_GivePoints(self.price)
             ply:Notify("Cooldown...")
 
             return
@@ -245,7 +245,7 @@ SS_Product({
         if tryMakeTrash(ply) then
             e = makeTrashWheelchair(ply, false)
         else
-            ply:PS_GivePoints(self.price)
+            ply:SS_GivePoints(self.price)
         end
     end
 })
@@ -268,7 +268,7 @@ SS_Product({
             e.FrontWheel:SetColor(Color(255, 0, 0))
             e.BackWheel:SetColor(Color(255, 0, 0))
         else
-            ply:PS_GivePoints(self.price)
+            ply:SS_GivePoints(self.price)
         end
     end
 })
@@ -285,7 +285,7 @@ SS_Product({
         ply:Notify("This item lasts for one life!")
     end,
     CanBuyStatus = function(self, ply)
-        if ply:GetNWBool("spacehat") then return PS_BUYSTATUS_OWNED end
+        if ply:GetNWBool("spacehat") then return SS_BUYSTATUS_OWNED end
     end
 })
 

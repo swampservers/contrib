@@ -3,13 +3,13 @@
 local PANEL = {}
 
 function PANEL:Close()
-    if IsValid(PS_PopupPanel) then
-        PS_ShopMenu:SetParent()
-        PS_PopupPanel:Remove()
+    if IsValid(SS_PopupPanel) then
+        SS_ShopMenu:SetParent()
+        SS_PopupPanel:Remove()
     end
 
     self:SetVisible(false)
-    PS_InventoryPanel:SetVisible(true)
+    SS_InventoryPanel:SetVisible(true)
 end
 
 function PANEL:Open(item)
@@ -17,35 +17,35 @@ function PANEL:Open(item)
         v:Remove()
     end
 
-    if IsValid(PS_PopupPanel) then
-        PS_ShopMenu:SetParent()
-        PS_PopupPanel:Remove()
+    if IsValid(SS_PopupPanel) then
+        SS_ShopMenu:SetParent()
+        SS_PopupPanel:Remove()
     end
 
-    PS_PopupPanel = vgui.Create("DFrame")
-    PS_PopupPanel:SetPos(0, 0)
-    PS_PopupPanel:SetSize(ScrW(), ScrH())
-    PS_PopupPanel:SetDraggable(false)
-    PS_PopupPanel:ShowCloseButton(false)
-    PS_PopupPanel:SetTitle("")
-    PS_PopupPanel.Paint = function() end
-    PS_PopupPanel:MakePopup()
-    PS_ShopMenu:SetParent(PS_PopupPanel)
+    SS_PopupPanel = vgui.Create("DFrame")
+    SS_PopupPanel:SetPos(0, 0)
+    SS_PopupPanel:SetSize(ScrW(), ScrH())
+    SS_PopupPanel:SetDraggable(false)
+    SS_PopupPanel:ShowCloseButton(false)
+    SS_PopupPanel:SetTitle("")
+    SS_PopupPanel.Paint = function() end
+    SS_PopupPanel:MakePopup()
+    SS_ShopMenu:SetParent(SS_PopupPanel)
     self.itemobj = item
-    self.item = PS_Items[item.class]
+    self.item = SS_Items[item.class]
     self.cfg = table.Copy(item.cfg)
     self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
     self:SetVisible(true)
-    PS_InventoryPanel:SetVisible(false)
-    self:SetBackgroundColor(PS_GridBGColor)
+    SS_InventoryPanel:SetVisible(false)
+    self:SetBackgroundColor(SS_GridBGColor)
     local inner = vgui.Create("DPanel", self)
-    inner:SetBackgroundColor(PS_TileBGColor)
+    inner:SetBackgroundColor(SS_TileBGColor)
     inner:DockMargin(8, 8, 8, 8)
     inner:Dock(FILL)
     local p = vgui.Create("DLabel", inner)
-    p:SetFont("PS_LargeTitle")
+    p:SetFont("SS_LargeTitle")
     p:SetText("βUSTOMIZER")
-    p:SetColor(PS_SwitchableColor)
+    p:SetColor(SS_SwitchableColor)
     p:SetContentAlignment(5)
     p:SizeToContents()
     p:DockMargin(14, 6, 14, 10)
@@ -56,7 +56,7 @@ function PANEL:Open(item)
     bot:Dock(BOTTOM)
     p = vgui.Create('DButton', bot)
     p:SetText("Reset")
-    p:SetFont("PS_DESCTITLEFONT")
+    p:SetFont("SS_DESCTITLEFONT")
     p:SetWide(200)
 
     p.Paint = function(self, w, h)
@@ -75,7 +75,7 @@ function PANEL:Open(item)
     p:Dock(LEFT)
     p = vgui.Create('DButton', bot)
     p:SetText("Cancel")
-    p:SetFont("PS_DESCTITLEFONT")
+    p:SetFont("SS_DESCTITLEFONT")
     p:SetWide(200)
 
     p.Paint = function(self, w, h)
@@ -86,14 +86,14 @@ function PANEL:Open(item)
     end
 
     p.DoClick = function(butn)
-        PS_HoverCfg = self.itemobj.cfg
+        SS_HoverCfg = self.itemobj.cfg
         self:Close()
     end
 
     p:Dock(LEFT)
     p = vgui.Create('DButton', bot)
     p:SetText("Done")
-    p:SetFont("PS_DESCTITLEFONT")
+    p:SetFont("SS_DESCTITLEFONT")
 
     p.Paint = function(self, w, h)
         if self:IsHovered() then
@@ -103,14 +103,14 @@ function PANEL:Open(item)
     end
 
     p.DoClick = function(butn)
-        PS_ConfigureItem(self.itemobj.id, self.cfg)
+        SS_ConfigureItem(self.itemobj.id, self.cfg)
         self:Close()
     end
 
     p:Dock(FILL)
     self.controlzone = vgui.Create("DPanel", inner)
     self.controlzone:Dock(FILL)
-    self.controlzone:SetBackgroundColor(PS_TileBGColor)
+    self.controlzone:SetBackgroundColor(SS_TileBGColor)
     self:SetupControls()
 end
 
@@ -122,7 +122,7 @@ function PANEL:SetupControls()
     local wearzone = vgui.Create("DPanel", self.controlzone)
     wearzone:SetWide(400)
     wearzone:Dock(LEFT)
-    wearzone:SetBackgroundColor(PS_TileBGColor)
+    wearzone:SetBackgroundColor(SS_TileBGColor)
     wearzone = vgui.Create("DScrollPanel", wearzone)
     wearzone:Dock(FILL)
 
@@ -140,9 +140,9 @@ function PANEL:SetupControls()
         end
 
         local p = vgui.Create("DLabel", p2 or parent)
-        p:SetFont("PS_DESCINSTFONT")
+        p:SetFont("SS_DESCINSTFONT")
         p:SetText(text)
-        p:SetTextColor(PS_SwitchableColor)
+        p:SetTextColor(SS_SwitchableColor)
         p:SizeToContents()
 
         if top then
@@ -167,7 +167,7 @@ function PANEL:SetupControls()
         p:SetDecimals(2)
         p:DockMargin(32, 8, 32, 0)
         p:Dock(TOP)
-        p:SetDark(not PS_DarkMode)
+        p:SetDark(not SS_DarkMode)
         p.TextArea:SetPaintBackground(true)
         p:SetTall(24)
 
@@ -188,9 +188,9 @@ function PANEL:SetupControls()
         p3:SetPos(0, 2)
         --p:SetTall(24)
         local p = vgui.Create("DLabel", p2 or parent)
-        p:SetFont("PS_DESCFONT")
+        p:SetFont("SS_DESCFONT")
         p:SetText(text)
-        p:SetTextColor(PS_SwitchableColor)
+        p:SetTextColor(SS_SwitchableColor)
         p:SetPos(24, 0)
         p:SizeToContents()
 
@@ -213,7 +213,7 @@ function PANEL:SetupControls()
         ATTACHSELECT = vgui.Create("DComboBox", p)
         ATTACHSELECT:SetValue((self.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
 
-        for k, v in pairs(PS_Attachments) do
+        for k, v in pairs(SS_Attachments) do
             ATTACHSELECT:AddChoice(k)
         end
 
@@ -229,7 +229,7 @@ function PANEL:SetupControls()
         p:Dock(LEFT)
         p:SetText("Attach to")
         p:SetDark(true)
-        p:SetTextColor(PS_SwitchableColor)
+        p:SetTextColor(SS_SwitchableColor)
         LabelMaker(wearzone, "Offset")
         local translate = (self.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
         XSL = SliderMaker(wearzone, "Forward/Backward")
@@ -362,7 +362,7 @@ function PANEL:SetupControls()
         p:Dock(LEFT)
         p:SetText("Attach to")
         p:SetDark(true)
-        p:SetTextColor(PS_SwitchableColor)
+        p:SetTextColor(SS_SwitchableColor)
 
         --bunch of copied shit
         local function transformslidersupdate()
@@ -477,7 +477,7 @@ function PANEL:SetupControls()
     local colorzone = vgui.Create("DPanel", self.controlzone)
     --colorzone.Paint = function() end
     colorzone:Dock(FILL)
-    colorzone:SetBackgroundColor(PS_TileBGColor)
+    colorzone:SetBackgroundColor(SS_TileBGColor)
     colorzone = vgui.Create("DScrollPanel", colorzone)
     colorzone:Dock(FILL)
 
@@ -548,7 +548,7 @@ function PANEL:SetupControls()
         IMGURENTRY:SetValue((self.cfg.imgur or {}).url or "")
         local imgurinfo = vgui.Create("DLabel", urlzone)
         imgurinfo:SetText("Use an imgur direct URL such as:\nhttp://i.imgur.com/PxOc7TC.png\n(Right click -> Copy image address)")
-        imgurinfo:SetColor(PS_SwitchableColor)
+        imgurinfo:SetColor(SS_SwitchableColor)
         imgurinfo:Dock(RIGHT)
         imgurinfo:SetWide(100)
         imgurinfo:SizeToContents()
@@ -596,7 +596,7 @@ function PANEL:SetupControls()
 end
 
 function PANEL:UpdateCfg(skiptext)
-    PS_HoverCfg = self.cfg
+    SS_HoverCfg = self.cfg
 
     if IsValid(RAWENTRY) and not skiptext then
         RAWENTRY.RECIEVE = true

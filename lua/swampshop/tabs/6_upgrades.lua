@@ -61,7 +61,7 @@ local prices = {0, 10000, 15000, 22000, 33000, 50000, 75000, 110000, 175000, 250
 	1000000,
 }]]
 for n = 2, 14 do
-    PS_ItemProduct({
+    SS_ItemProduct({
         class = "accslot_" .. tostring(n),
         price = prices[n],
         name = 'Accessory Slot ' .. tostring(n),
@@ -71,7 +71,7 @@ for n = 2, 14 do
         invcategory = "Upgrades",
         never_equip = true,
         CanBuyStatus = function(itm, ply)
-            if ply:PS_AccessorySlots() < n - 1 then return PS_BUYSTATUS_PREVIOUS_SLOTS end
+            if ply:SS_AccessorySlots() < n - 1 then return SS_BUYSTATUS_PREVIOUS_SLOTS end
         end
     })
 end

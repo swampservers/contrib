@@ -3,8 +3,8 @@
 AddCSLuaFile()
 include("net_hd.lua")
 include("config.lua")
-PS_Products = PS_Products or {}
-PS_Items = PS_Items or {}
+SS_Products = SS_Products or {}
+SS_Items = SS_Items or {}
 
 
 SS_Layout = SS_Layout or {}
@@ -39,7 +39,7 @@ function SS_Product(product)
 
     product.price = product.price or 0
     SS_Products[product.class] = product
-    PS_Products[product.class] = product
+    SS_Products[product.class] = product
 
     if product.model then
         util.PrecacheModel(product.model)
@@ -52,18 +52,18 @@ end
 
 
 
-function PS_AngleGen(func)
+function SS_AngleGen(func)
     local ang = Angle()
     func(ang)
 
     return ang
 end
 
-function PS_ProductlessItem(item)
-    PS_Items[item.class] = item
+function SS_ProductlessItem(item)
+    SS_Items[item.class] = item
 end
 
-function PS_PlayermodelItemProduct(item)
+function SS_PlayermodelItemProduct(item)
     item.playermodel = true
     item.PlayerSetModelOrig = item.PlayerSetModel
 
@@ -80,20 +80,20 @@ function PS_PlayermodelItemProduct(item)
     --gets called just before this object changes state
     item.OnChangeEquip = function(self, ply, eq)
         if eq then
-            for k, v in ipairs(ply.PS_EQItems) do
-                if PS_Items[v.class] and PS_Items[v.class].PlayerSetModel then
-                    ply:PS_EquipItem(v.id, false)
+            for k, v in ipairs(ply.SS_EQItems) do
+                if SS_Items[v.class] and SS_Items[v.class].PlayerSetModel then
+                    ply:SS_EquipItem(v.id, false)
                 end
             end
         end
     end
 
     item.invcategory = "Playermodels"
-    PS_ItemProduct(item)
+    SS_ItemProduct(item)
 end
 
 --ITEMS are stuff that is saved in the database
-function PS_ItemProduct(item)
+function SS_ItemProduct(item)
     if item.wear then
         local itmcw = (item.configurable or {}).wear or {}
 
@@ -141,30 +141,30 @@ function PS_ItemProduct(item)
         item.invcategory = "Accessories"
     end
 
-    PS_Items[item.class] = item
+    SS_Items[item.class] = item
     product = item
     product.keepnotice = "This " .. ((item.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((item.price or 0) == 0 and "return" or "sell") .. " it."
 
     function product:OnBuy(ply)
-        ply:PS_GiveItem(self.class)
-        net.Start("PS_PointOutInventory")
+        ply:SS_GiveItem(self.class)
+        net.Start("SS_PointOutInventory")
         net.Send(ply)
     end
 
     SS_Product(product)
 end
 
-function PS_DeathKeepnotice(product)
+function SS_DeathKeepnotice(product)
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " will be lost if you die or log out."
 end
 
-function PS_WeaponProduct(product)
+function SS_WeaponProduct(product)
     --[[	wt = weapons.GetStored(product.class)
 	if wt and wt.WorldModel then
 		product.model = wt.WorldModel
 	end ]]
     product.OnBuyOrig = product.OnBuy
-    PS_DeathKeepnotice(product)
+    SS_DeathKeepnotice(product)
 
     function product:OnBuy(ply)
         ply:Give(self.class)
@@ -178,8 +178,8 @@ function PS_WeaponProduct(product)
     SS_Product(product)
 end
 
-function PS_WeaponAndAmmoProduct(product)
-    PS_DeathKeepnotice(product)
+function SS_WeaponAndAmmoProduct(product)
+    SS_DeathKeepnotice(product)
 
     function product:OnBuy(ply)
         if not ply:HasWeapon(self.class) then
@@ -201,9 +201,9 @@ function PS_WeaponAndAmmoProduct(product)
     SS_Product(product)
 end
 
-function PS_AmmoProduct(product)
+function SS_AmmoProduct(product)
     product.class = "ammo_" .. product.ammotype .. "_" .. tostring(product.amount)
-    PS_DeathKeepnotice(product)
+    SS_DeathKeepnotice(product)
 
     function product:OnBuy(ply)
         ply:GiveAmmo(self.amount, self.ammotype)
@@ -212,25 +212,25 @@ function PS_AmmoProduct(product)
     SS_Product(product)
 end
 
-function PS_UniqueModelProduct(product)
+function SS_UniqueModelProduct(product)
     product.playermodel = true
     product.CanBuyStatusOrig = product.CanBuyStatus
     product.OnBuyOrig = product.OnBuy
 
     function product:CanBuyStatus(ply)
         if self.CanBuyStatusOrig then
-            local s = self:CanBuyStatusOrig(ply) or PS_BUYSTATUS_OK
-            if s ~= PS_BUYSTATUS_OK then return s end
+            local s = self:CanBuyStatusOrig(ply) or SS_BUYSTATUS_OK
+            if s ~= SS_BUYSTATUS_OK then return s end
         end
 
         for k, v in pairs(player.GetAll()) do
-            if v:GetNWString("uniqmodl") == self.name and v:Alive() then return v == ply and PS_BUYSTATUS_OWNED or PS_BUYSTATUS_TAKEN end
+            if v:GetNWString("uniqmodl") == self.name and v:Alive() then return v == ply and SS_BUYSTATUS_OWNED or SS_BUYSTATUS_TAKEN end
         end
 
-        return PS_BUYSTATUS_OK
+        return SS_BUYSTATUS_OK
     end
 
-    PS_DeathKeepnotice(product)
+    SS_DeathKeepnotice(product)
 
     function product:OnBuy(ply)
         ply:SetNWString("uniqmodl", self.name)
@@ -244,86 +244,85 @@ function PS_UniqueModelProduct(product)
     SS_Product(product)
 end
 
-function PS_Initialize()
-    include('sps/categories.lua')
-    local files, _ = file.Find('sps/tabs/*', 'LUA')
+function SS_Initialize()
+    local files, _ = file.Find('swampshop/tabs/*', 'LUA')
     table.sort(files)
     for _, name in pairs(files) do
-        AddCSLuaFile('sps/tabs/' .. name)
-        include('sps/tabs/' .. name)
+        AddCSLuaFile('swampshop/tabs/' .. name)
+        include('swampshop/tabs/' .. name)
     end
 end
 
 local Player = FindMetaTable('Player')
 
-function Player:PS_GetDonation()
-    return self.PS_Donation or 0
+function Player:SS_GetDonation()
+    return self.SS_Donation or 0
 end
 
-function Player:PS_GetPoints()
-    return self.PS_Points or 0
+function Player:SS_GetPoints()
+    return self.SS_Points or 0
 end
 
-function Player:PS_HasPoints(points)
-    return (self.PS_Points or 0) >= points
+function Player:SS_HasPoints(points)
+    return (self.SS_Points or 0) >= points
 end
 
-PS_BUYSTATUS_OK = 0
-PS_BUYSTATUS_AFFORD = 1
-PS_BUYSTATUS_OWNED = 2
-PS_BUYSTATUS_OWNED_MULTI = 3
-PS_BUYSTATUS_SLOTS = 4
-PS_BUYSTATUS_TAKEN = 5
-PS_BUYSTATUS_PRIVATETHEATER = 6
-PS_BUYSTATUS_CANTBUILD = 7
-PS_BUYSTATUS_PONYONLY = 8
-PS_BUYSTATUS_PREVIOUS_SLOTS = 9
+SS_BUYSTATUS_OK = 0
+SS_BUYSTATUS_AFFORD = 1
+SS_BUYSTATUS_OWNED = 2
+SS_BUYSTATUS_OWNED_MULTI = 3
+SS_BUYSTATUS_SLOTS = 4
+SS_BUYSTATUS_TAKEN = 5
+SS_BUYSTATUS_PRIVATETHEATER = 6
+SS_BUYSTATUS_CANTBUILD = 7
+SS_BUYSTATUS_PONYONLY = 8
+SS_BUYSTATUS_PREVIOUS_SLOTS = 9
 
-PS_BuyStatusMessage = {"You can't afford this.", "You already own this.", "You own the maximum number of these.", "Buy more accessory slots (in Upgrades) first.", "Someone else is using this - kill them.", "You must own a private theater to use this.", "You can't build here.", "You must own the ponymodel to buy this.", "Buy the previous slots to unlock this one."}
+SS_BuyStatusMessage = {"You can't afford this.", "You already own this.", "You own the maximum number of these.", "Buy more accessory slots (in Upgrades) first.", "Someone else is using this - kill them.", "You must own a private theater to use this.", "You can't build here.", "You must own the ponymodel to buy this.", "Buy the previous slots to unlock this one."}
 
-function Player:PS_CanBuyStatus(product)
-    local buycode = PS_BUYSTATUS_OK
+function Player:SS_CanBuyStatus(product)
+    local buycode = SS_BUYSTATUS_OK
 
     if product.CanBuyStatus then
-        buycode = product:CanBuyStatus(self) or PS_BUYSTATUS_OK
+        buycode = product:CanBuyStatus(self) or SS_BUYSTATUS_OK
     end
 
-    if buycode == PS_BUYSTATUS_OK then
-        if not self:PS_HasPoints(product.price) then
-            buycode = PS_BUYSTATUS_AFFORD
+    if buycode == SS_BUYSTATUS_OK then
+        if not self:SS_HasPoints(product.price) then
+            buycode = SS_BUYSTATUS_AFFORD
         end
 
-        local maxcount = (product.accessory_slot and self:PS_AccessorySlots() * (product.perslot or 1)) or product.maxowned or 1
+        local maxcount = (product.accessory_slot and self:SS_AccessorySlots() * (product.perslot or 1)) or product.maxowned or 1
 
-        if self:PS_CountItem(product.class) >= maxcount then
-            buycode = product.accessory_slot and PS_BUYSTATUS_SLOTS or (maxcount > 1 and PS_BUYSTATUS_OWNED_MULTI or PS_BUYSTATUS_OWNED)
+        if self:SS_CountItem(product.class) >= maxcount then
+            buycode = product.accessory_slot and SS_BUYSTATUS_SLOTS or (maxcount > 1 and SS_BUYSTATUS_OWNED_MULTI or SS_BUYSTATUS_OWNED)
         end
     end
 
     return buycode
 end
 
-PS_EQUIPSTATUS_OK = 0
-PS_EQUIPSTATUS_WEARABLE = 1
-PS_EQUIPSTATUS_IMGUR = 2
-PS_EQUIPSTATUS_NEVER = 3
+SS_EQUIPSTATUS_OK = 0
+SS_EQUIPSTATUS_WEARABLE = 1
+SS_EQUIPSTATUS_IMGUR = 2
+SS_EQUIPSTATUS_NEVER = 3
 
-PS_EquipStatusMessage = {"Buy more accessory slots (in Upgrades) to wear more items.", "You can only equip 4 different imgur materials at once.", "This item can't be equipped."}
+SS_EquipStatusMessage = {"Buy more accessory slots (in Upgrades) to wear more items.", "You can only equip 4 different imgur materials at once.", "This item can't be equipped."}
 
-function Player:PS_CanEquipStatus(class, cfg, already_equipped)
-    local item = PS_Items[class]
-    if item.never_equip then return PS_EQUIPSTATUS_NEVER end
+function Player:SS_CanEquipStatus(class, cfg, already_equipped)
+    local item = SS_Items[class]
+    if item.never_equip then return SS_EQUIPSTATUS_NEVER end
 
     if item.accessory_slot then
         local c = already_equipped and 0 or 1 / (item.perslot or 1)
 
-        for k, v in pairs(self.PS_Items) do
-            if v.eq and (PS_Items[v.class] or {}).accessory_slot then
-                c = c + (1 / (PS_Items[v.class].perslot or 1))
+        for k, v in pairs(self.SS_Items) do
+            if v.eq and (SS_Items[v.class] or {}).accessory_slot then
+                c = c + (1 / (SS_Items[v.class].perslot or 1))
             end
         end
 
-        if c > self:PS_AccessorySlots() then return PS_EQUIPSTATUS_WEARABLE end
+        if c > self:SS_AccessorySlots() then return SS_EQUIPSTATUS_WEARABLE end
     end
 
     if cfg.imgur then
@@ -331,38 +330,38 @@ function Player:PS_CanEquipStatus(class, cfg, already_equipped)
             [cfg.imgur.url] = true
         }
 
-        for k, v in pairs(self.PS_Items) do
+        for k, v in pairs(self.SS_Items) do
             if v.eq and v.cfg.imgur then
                 urls[v.cfg.imgur.url] = true
             end
         end
 
-        if table.Count(urls) > 4 then return PS_EQUIPSTATUS_IMGUR end
+        if table.Count(urls) > 4 then return SS_EQUIPSTATUS_IMGUR end
     end
 
-    return PS_EQUIPSTATUS_OK
+    return SS_EQUIPSTATUS_OK
 end
 
-function Player:PS_FindItem(item_id)
-    for k, v in ipairs(self.PS_Items or {}) do
+function Player:SS_FindItem(item_id)
+    for k, v in ipairs(self.SS_Items or {}) do
         if v.id == item_id then return k end
     end
 
     return false
 end
 
-function Player:PS_HasItem(item_class)
-    for k, v in ipairs(self.PS_Items or {}) do
+function Player:SS_HasItem(item_class)
+    for k, v in ipairs(self.SS_Items or {}) do
         if v.class == item_class then return true end
     end
 
     return false
 end
 
-function Player:PS_CountItem(item_class)
+function Player:SS_CountItem(item_class)
     local c = 0
 
-    for k, v in ipairs(self.PS_Items or {}) do
+    for k, v in ipairs(self.SS_Items or {}) do
         if v.class == item_class then
             c = c + 1
         end
@@ -371,10 +370,10 @@ function Player:PS_CountItem(item_class)
     return c
 end
 
-function Player:PS_AccessorySlots()
+function Player:SS_AccessorySlots()
     local c = 1
 
-    for k, v in ipairs(self.PS_Items or {}) do
+    for k, v in ipairs(self.SS_Items or {}) do
         if v.class:StartWith("accslot_") then
             c = c + 1
         end

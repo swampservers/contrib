@@ -5,7 +5,7 @@ SS_Tab("Construction","bricks")
 
 SS_Heading("Tools")
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_trash_paint",
     name = 'Paint Tool',
     description = "Paint a solid color onto props. Also changes the color of lights.",
@@ -13,7 +13,7 @@ PS_WeaponProduct({
     price = 2000
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     class = "weapon_trash_tape",
     name = 'Tape Tool',
     description = "Use this to tape (freeze) and un-tape props.",
@@ -53,7 +53,7 @@ SS_Product({
                 if tryMakeTrash(ply) then
                     makeForcefield(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
@@ -79,7 +79,7 @@ SS_Product({
                 if tryMakeTrash(ply) then
                     makeForcefield(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
@@ -104,7 +104,7 @@ SS_Product({
 
             e = makeTrash(ply, nxt[math.random(1, #nxt)])
         else
-            ply:PS_GivePoints(self.price)
+            ply:SS_GivePoints(self.price)
         end
     end
 })
@@ -127,7 +127,7 @@ SS_Product({
 
             e = makeTrash(ply, nxt[math.random(1, #nxt)])
         else
-            ply:PS_GivePoints(self.price)
+            ply:SS_GivePoints(self.price)
         end
     end
 })
@@ -151,7 +151,7 @@ SS_Product({
                 if tryMakeTrash(ply) then
                     makeTrashTheater(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
@@ -177,7 +177,7 @@ SS_Product({
                 if tryMakeTrash(ply) then
                     makeTrashTheater(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
@@ -204,7 +204,7 @@ SS_Product({
                 if tryMakeTrash(ply) then
                     makeTrashTheater(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)

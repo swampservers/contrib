@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 
-PS_ProductlessItem({
+SS_ProductlessItem({
     class = "outfitter",
     price = 1000000,
     name = 'SELL-ONLY Outfitter',
@@ -10,7 +10,7 @@ PS_ProductlessItem({
     invcategory = "Playermodels",
     never_equip = true
 })
-PS_ProductlessItem({
+SS_ProductlessItem({
     class = "whiteeyestest",
     name = "white eyes",
     description = "does nothing. sell me.",

@@ -5,7 +5,7 @@ SS_Tab("Playermodels","user_suit")
 
 SS_Heading("Mods")
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "inflater",
     price = 200000,
     name = 'Inflater',
@@ -35,7 +35,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "offsetter",
     price = 100000,
     name = 'Offsetter',
@@ -67,7 +67,7 @@ PS_ItemProduct({
 
 SS_Heading("Permanent")
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "outfitter2",
     price = 2000000,
     name = 'Outfitter',
@@ -80,8 +80,8 @@ PS_ItemProduct({
 if SERVER then
     timer.Create("syncoutfitter", 1, 0, function()
         for k, v in pairs(player.GetAll()) do
-            if v:GetNWBool("oufitr") ~= v:PS_HasItem("outfitter2") then
-                v:SetNWBool("oufitr", v:PS_HasItem("outfitter2"))
+            if v:GetNWBool("oufitr") ~= v:SS_HasItem("outfitter2") then
+                v:SetNWBool("oufitr", v:SS_HasItem("outfitter2"))
             end
         end
     end)
@@ -91,7 +91,7 @@ hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return ply:GetNWB
 
 
 
-PS_PlayermodelItemProduct({
+SS_PlayermodelItemProduct({
     class = 'crusadermodel',
     price = 300000,
     name = 'Crusader',
@@ -102,7 +102,7 @@ PS_PlayermodelItemProduct({
     end
 })
 
-PS_PlayermodelItemProduct({
+SS_PlayermodelItemProduct({
     class = 'jokermodel',
     price = 180000,
     name = 'The Joker',
@@ -111,7 +111,7 @@ PS_PlayermodelItemProduct({
     PlayerSetModel = function(self, ply) end
 })
 
-PS_PlayermodelItemProduct({
+SS_PlayermodelItemProduct({
     class = 'minecraftmodel',
     price = 400064,
     name = 'Block Man',
@@ -120,7 +120,7 @@ PS_PlayermodelItemProduct({
     PlayerSetModel = function(self, ply) end
 })
 
-PS_PlayermodelItemProduct({
+SS_PlayermodelItemProduct({
     class = 'neckbeardmodel',
     price = 240000,
     name = 'Athiest',
@@ -131,7 +131,7 @@ PS_PlayermodelItemProduct({
     end
 })
 
-PS_PlayermodelItemProduct({
+SS_PlayermodelItemProduct({
     class = 'ogremodel',
     price = 100000,
     name = 'Ogre',
@@ -140,7 +140,7 @@ PS_PlayermodelItemProduct({
     PlayerSetModel = function(self, ply) end
 })
 
-PS_PlayermodelItemProduct({
+SS_PlayermodelItemProduct({
     class = 'ponymodel',
     price = 500000,
     name = 'Pony',
@@ -154,25 +154,25 @@ PS_PlayermodelItemProduct({
 
 SS_Heading("One-Life, Unique")
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'celestia',
     name = 'Sun Princess',
     model = 'models/mlp/player_celestia.mdl',
     CanBuyStatus = function(self, ply)
-        if not ply:PS_HasItem("ponymodel") then return PS_BUYSTATUS_PONYONLY end
+        if not ply:SS_HasItem("ponymodel") then return SS_BUYSTATUS_PONYONLY end
     end
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'luna',
     name = 'Moon Princess',
     model = 'models/mlp/player_luna.mdl',
     CanBuyStatus = function(self, ply)
-        if not ply:PS_HasItem("ponymodel") then return PS_BUYSTATUS_PONYONLY end
+        if not ply:SS_HasItem("ponymodel") then return SS_BUYSTATUS_PONYONLY end
     end
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'billyherrington',
     name = 'Billy Herrington',
     description = "Rest in peace Billy Herrington, you will be missed.",
@@ -185,7 +185,7 @@ PS_UniqueModelProduct({
     end
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'doomguy',
     name = 'Doomslayer',
     description = "They are rage, brutal, without mercy. But you. You will be worse. Rip and tear, until it is done.",
@@ -193,90 +193,90 @@ PS_UniqueModelProduct({
     OnBuy = function(self, ply) end
 })
 
--- PS_UniqueModelProduct({
+-- SS_UniqueModelProduct({
 -- 	class = 'ketchupdemon',
 -- 	name = 'Mortally Challenged',
 -- 	description = '"Demon" is an offensive term.',
 -- 	model = 'models/momot/momot.mdl'
 -- })
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'fatbastard',
     name = 'Fat Bastard',
     model = 'models/obese_male.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'fox',
     name = 'Furball',
     description = "Furries are proof that God has abandoned us.",
     model = 'models/player/ztp_nickwilde.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'garfield',
     name = 'Lasagna Cat',
     description = "I gotta have a good meal.",
     model = 'models/garfield/garfield.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'hitler',
     name = 'Der Fuhrer',
     model = 'models/minson97/hitler/hitler.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'kermit',
     name = 'Frog',
     model = 'models/player/kermit.mdl'
 })
 
--- PS_UniqueModelProduct({
+-- SS_UniqueModelProduct({
 -- 	class = 'kim',
 -- 	name = 'Rocket Man',
 -- 	description = "Won't be around much longer.",
 -- 	model = 'models/player/hhp227/kim_jong_un.mdl'
 -- })
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'minion',
     name = 'Comedy Pill',
     model = 'models/player/minion/minion5/minion5.mdl'
 })
 
--- PS_UniqueModelProduct({
+-- SS_UniqueModelProduct({
 -- 	class = 'moonman',
 -- 	name = 'Mac Tonight',
 -- 	model = 'models/player/moonmankkk.mdl'
 -- })
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'nicestmeme',
     name = 'Thanks, Lori.',
     description = 'John, haha. Where did you find this one?',
     model = 'models/player/pyroteknik/banana.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'pepsiman',
     name = 'Pepsiman',
     description = 'DRINK!',
     model = 'models/player/real/prawnmodels/pepsiman.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'rick',
     name = 'Intellectual',
     description = 'To be fair, you have to have a very high IQ to understand Rick and Morty.',
     model = 'models/player/rick/rick.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'trump',
     name = 'God Emperor',
     description = "Donald J. Trump is the President-for-life of the United States of America, destined savior of Kekistan, and slayer of Hillary the Crooked.",
     model = 'models/omgwtfbbq/the_ship/characters/trump_playermodel.mdl'
 })
 
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'weeaboo',
     name = 'Weeaboo Trash',
     description = "Two nukes wasn't enough.",
@@ -284,7 +284,7 @@ PS_UniqueModelProduct({
 })
 
 -- TODO: make them download/mount on the server, make sure there is not a lua backdoor!
-PS_UniqueModelProduct({
+SS_UniqueModelProduct({
     class = 'jokerjoker',
     name = 'Joker from JOKER',
     description = "A test for now...",

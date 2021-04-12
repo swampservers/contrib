@@ -1233,7 +1233,7 @@ function ENT:EndGame(winner, HideMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --White:PS_GivePoints( self.WagerValue )
+                    --White:SS_GivePoints( self.WagerValue )
                 else
                     if White.addMoney then
                         White:addMoney(self.WagerValue)
@@ -1249,8 +1249,8 @@ function ENT:EndGame(winner, HideMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    if (not White:PS_HasPoints(self.WagerValue)) then return end --ULib.kickban( White, 1, "Chess Exploit", nil) --ULib.kickban( Black, 1, "Chess Exploit", nil)
-                    --White:PS_TakePoints( self.WagerValue )
+                    if (not White:SS_HasPoints(self.WagerValue)) then return end --ULib.kickban( White, 1, "Chess Exploit", nil) --ULib.kickban( Black, 1, "Chess Exploit", nil)
+                    --White:SS_TakePoints( self.WagerValue )
                 else
                     if White.addMoney then
                         White:addMoney(-self.WagerValue)
@@ -1274,7 +1274,7 @@ function ENT:EndGame(winner, HideMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --Black:PS_GivePoints( self.WagerValue )
+                    --Black:SS_GivePoints( self.WagerValue )
                 else
                     if Black.addMoney then
                         Black:addMoney(self.WagerValue)
@@ -1290,8 +1290,8 @@ function ENT:EndGame(winner, HideMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    if (not Black:PS_HasPoints(self.WagerValue)) then return end --ULib.kickban( White, 1, "Chess Exploit", nil) --ULib.kickban( Black, 1, "Chess Exploit", nil)
-                    --Black:PS_TakePoints( self.WagerValue )
+                    if (not Black:SS_HasPoints(self.WagerValue)) then return end --ULib.kickban( White, 1, "Chess Exploit", nil) --ULib.kickban( Black, 1, "Chess Exploit", nil)
+                    --Black:SS_TakePoints( self.WagerValue )
                 else
                     if Black.addMoney then
                         Black:addMoney(-self.WagerValue)
@@ -1888,7 +1888,7 @@ if CLIENT then
         WagerNum:Dock(FILL)
         WagerNum:SetText("Wager")
         WagerNum.Label:SizeToContents()
-        WagerNum:SetMinMax(0, math.Clamp(((board:GetPSWager() and LocalPlayer():PS_GetPoints()) or ((not board:GetPSWager()) and LocalPlayer():getDarkRPVar("money"))) or 0, 0, 16777215))
+        WagerNum:SetMinMax(0, math.Clamp(((board:GetPSWager() and LocalPlayer():SS_GetPoints()) or ((not board:GetPSWager()) and LocalPlayer():getDarkRPVar("money"))) or 0, 0, 16777215))
         WagerNum:SetDark(true)
         WagerNum:SetDecimals(0)
         WagerNum:SetValue(0)
@@ -2549,7 +2549,7 @@ if SERVER then
         if (not wager) or wager < 0 then return end
 
         if board:GetPSWager() then
-            if not ply:PS_HasPoints(wager) then return end
+            if not ply:SS_HasPoints(wager) then return end
         else
             if wager > (ply:getDarkRPVar("money") or 0) then return end
         end

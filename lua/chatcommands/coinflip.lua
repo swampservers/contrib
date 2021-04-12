@@ -69,14 +69,14 @@ timer.Create("CoinFlip", 1, 0, function()
 end)
 
 function initCoinFlip(ply, target, amount)
-    if ply:PS_HasPoints(amount) and CoinFlips[ply:SteamID()] == nil then
+    if ply:SS_HasPoints(amount) and CoinFlips[ply:SteamID()] == nil then
         ply:ChatPrint("[orange]" .. target:Nick() .. " is receiving your coinflip request.")
         target:ChatPrint("[orange]" .. ply:Nick() .. " is sending you a coinflip request for [rainbow]" .. string.Comma(amount) .. "[orange]. Say !coinflip accept [confirm number of points] to accept.")
 
         CoinFlips[ply:SteamID()] = {target:SteamID(), amount, CurTime()}
     elseif CoinFlips[ply:SteamID()] ~= nil then
         ply:ChatPrint("[red]You already have a coinflip in progress.")
-    elseif not ply:PS_HasPoints(amount) then
+    elseif not ply:SS_HasPoints(amount) then
         ply:ChatPrint("[red]You don't have enough points.")
     end
 end
@@ -115,7 +115,7 @@ function finishCoinFlip(fromID, toPlayer)
     if (not fromPlayer) then
         CoinFlips[fromID] = nil -- Remove request from CoinFlip because initiator left the server
         toPlayer:ChatPrint("[red]The initiator left, coinflip cancelled.")
-    elseif fromPlayer:PS_HasPoints(amount) and toPlayer:PS_HasPoints(amount) then
+    elseif fromPlayer:SS_HasPoints(amount) and toPlayer:SS_HasPoints(amount) then
         -- Final Check, make sure they have funds still
         CoinFlips[fromID] = nil
         local heads = math.random() < 0.5 -- the "request from" player is always Heads.
@@ -127,11 +127,11 @@ function finishCoinFlip(fromID, toPlayer)
 
         -- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
         if heads then
-            toPlayer:PS_TakePoints(amount)
-            fromPlayer:PS_GivePoints(amount) --math.floor(amount*0.99))
+            toPlayer:SS_TakePoints(amount)
+            fromPlayer:SS_GivePoints(amount) --math.floor(amount*0.99))
         else
-            fromPlayer:PS_TakePoints(amount)
-            toPlayer:PS_GivePoints(amount) --math.floor(amount*0.99))
+            fromPlayer:SS_TakePoints(amount)
+            toPlayer:SS_GivePoints(amount) --math.floor(amount*0.99))
         end
     else
         CoinFlips[fromID] = nil

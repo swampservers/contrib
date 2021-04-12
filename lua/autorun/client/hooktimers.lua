@@ -91,7 +91,7 @@ end)
 hook.Add("DrawTranslucentAccessories", "DrawSpacehat", function(ply)
     if ply:GetNWBool("spacehat", false) and ply:Alive() then
         if not IsValid(SpaceHatCSModel) then
-            local prod = PS_Products['spacehat']
+            local prod = SS_Products['spacehat']
             SpaceHatCSModel = ClientsideModel(prod.model, RENDERGROUP_OPAQUE)
             SpaceHatCSModel:SetMaterial(prod.material)
             SpaceHatCSModel:SetNoDraw(true)
