@@ -1,100 +1,89 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-if(SERVER)then return end
+if (SERVER) then return end
 include("shared.lua")
 language.Add("kleiner", "Dr. Isaac Kleiner")
 
-
-
 function ENT:Initialize()
-		local effectdata = EffectData()
-	effectdata:SetOrigin( self:GetPos() )
-	effectdata:SetEntity( self )
-	util.Effect( "propspawn", effectdata )
+    local effectdata = EffectData()
+    effectdata:SetOrigin(self:GetPos())
+    effectdata:SetEntity(self)
+    util.Effect("propspawn", effectdata)
 end
- 
 
 local spkr = Material("voice/icntlk_pl")
-hook.Add("CreateClientsideRagdoll","KleinerRagdollsFix",function(ent,rag)
-	if(IsValid(ent) and ent:GetClass() == "kleiner")then
-		if(ent.GetBased)then rag.wasbased = ent:GetBased() end
-		
-		function rag:GetPlayerColor()
-		rag.LastPlayerColor = rag.LastPlayerColor or (IsValid(ent) and ent:GetPlayerColor()) or nil
-			return (rag.LastPlayerColor) or (self.wasbased and KLEINER_NPC_ENT_COLOR_BASED) or KLEINER_NPC_ENT_COLOR_STANDARD			
-		end	
-		if(IsValid(rag))then 
-			for i=0,7 do
-			rag:SetSubMaterial(i,ent:GetSubMaterial(i,""))
-			end
-		end
-		timer.Simple(10,function()
-			if(IsValid(rag))then
-				rag:Remove()
-			end
-		end)
-	end
+
+hook.Add("CreateClientsideRagdoll", "KleinerRagdollsFix", function(ent, rag)
+    if (IsValid(ent) and ent:GetClass() == "kleiner") then
+        if (ent.GetBased) then
+            rag.wasbased = ent:GetBased()
+        end
+
+        function rag:GetPlayerColor()
+            rag.LastPlayerColor = rag.LastPlayerColor or (IsValid(ent) and ent:GetPlayerColor()) or nil
+
+            return (rag.LastPlayerColor) or (self.wasbased and KLEINER_NPC_ENT_COLOR_BASED) or KLEINER_NPC_ENT_COLOR_STANDARD
+        end
+
+        if (IsValid(rag)) then
+            for i = 0, 7 do
+                rag:SetSubMaterial(i, ent:GetSubMaterial(i, ""))
+            end
+        end
+
+        timer.Simple(10, function()
+            if (IsValid(rag)) then
+                rag:Remove()
+            end
+        end)
+    end
 end)
 
-
-
 function ENT:GetStareTarget()
-	local target = self:GetTarget()
+    local target = self:GetTarget()
+    if (IsValid(target)) then return target:EyePos() end
 
-	if(IsValid(target))then 
-		return target:EyePos()
-	end
-	return self:EyePos() + self:GetAngles():Forward()*600
+    return self:EyePos() + self:GetAngles():Forward() * 600
 end
 
-
 function ENT:Draw()
+    if (self:GetTalking() > CurTime()) then
+        local bone = self:GetBonePosition(self:LookupBone("ValveBiped.Bip01_Head1") or 0)
+        render.SetMaterial(spkr)
+        render.DrawSprite(bone + Vector(0, 0, 16), 16, 16, color_white)
+    end
 
-	
-	
-	if(self:GetTalking() > CurTime())then
-		local bone = self:GetBonePosition(self:LookupBone("ValveBiped.Bip01_Head1") or 0)
-		render.SetMaterial( spkr )
-		render.DrawSprite( bone + Vector(0,0,16), 16, 16, color_white)
-	end
-	
-	local lod = self:GetPos():Distance(EyePos())
-	
-		if(lod < 400)then
-		local eyepos = self:GetPos() + Vector(0,0,72)
-		local eyeang = self:GetAngles()
+    local lod = self:GetPos():Distance(EyePos())
 
+    if (lod < 400) then
+        local eyepos = self:GetPos() + Vector(0, 0, 72)
+        local eyeang = self:GetAngles()
+        local targetpos = self:GetStareTarget() or Vector()
+        local angle = (targetpos - eyepos):Angle()
+        local pos, ang = WorldToLocal(targetpos, angle, eyepos, eyeang)
+        self:SetPoseParameter("head_yaw", ang.yaw / 2)
+        self:SetPoseParameter("head_pitch", ang.pitch / 4)
 
-		
+        if (lod < 200) then
+            self:SetEyeTarget(targetpos)
+        end
+    end
 
-		local targetpos = self:GetStareTarget() or Vector()
-		local angle = (targetpos - eyepos):Angle()
-		local pos,ang = WorldToLocal(targetpos,angle,eyepos,eyeang)
-		self:SetPoseParameter("head_yaw",ang.yaw/2)
-		self:SetPoseParameter("head_pitch",ang.pitch/4)
-			if(lod < 200)then
-				self:SetEyeTarget(targetpos)
-			end
-		end	
-	self:DrawModel()
+    self:DrawModel()
 end
 
 function ENT:GetPlayerColor()
-	if(self:GetBased())then
-	return KLEINER_NPC_ENT_COLOR_BASED
-	end
-	return KLEINER_NPC_ENT_COLOR_STANDARD
+    if (self:GetBased()) then return KLEINER_NPC_ENT_COLOR_BASED end
+
+    return KLEINER_NPC_ENT_COLOR_STANDARD
 end
 
 function ENT:OnRemove()
-if(self.LastSound)then self:StopSound(self.LastSound) end 
+    if (self.LastSound) then
+        self:StopSound(self.LastSound)
+    end
 end
-
-
-
 --maybe for later? hud that counts your bounty level against kleiners
-
 --[[
 
 local function KleinerViolenceStarValue(star)
