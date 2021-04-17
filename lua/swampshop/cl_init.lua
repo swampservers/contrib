@@ -1,57 +1,58 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("sh_init.lua")
-include("vgui/DPointShopMenu.lua")
-include("vgui/DPointShopItem.lua")
-include("vgui/DPointShopPreview.lua")
-include("vgui/DPointShopCustomizer.lua")
-include("vgui/DPointShopGivePoints.lua")
+include("vgui/menu.lua")
+include("vgui/panels.lua")
+include("vgui/item.lua")
+include("vgui/preview.lua")
+include("vgui/customizer.lua")
+include("vgui/givepoints.lua")
 local wasf3down = false
 
 hook.Add("Think", "PSToggler", function()
     local isf3down = input.IsKeyDown(KEY_F3)
 
     if isf3down and not wasf3down then
-        PS_ToggleMenu()
+        SS_ToggleMenu()
     end
 
     wasf3down = isf3down
 end)
 
 concommand.Add("ps_togglemenu", function(ply, cmd, args)
-    PS_ToggleMenu()
+    SS_ToggleMenu()
 end)
 
 CreateClientConVar("ps_darkmode", "0", true)
 
 function SetPointshopTheme(dark)
-    PS_DarkMode = dark
+    SS_DarkMode = dark
 
-    if PS_DarkMode then
-        PS_TileBGColor = Color(37, 37, 37)
-        PS_GridBGColor = Color(33, 33, 33)
-        PS_BotBGColor = Color(33, 33, 33)
-        PS_SwitchableColor = Color(200, 200, 200)
+    if SS_DarkMode then
+        SS_TileBGColor = Color(37, 37, 37)
+        SS_GridBGColor = Color(33, 33, 33)
+        SS_BotBGColor = Color(33, 33, 33)
+        SS_SwitchableColor = Color(200, 200, 200)
     else
-        PS_TileBGColor = Color(234, 234, 234)
-        PS_GridBGColor = Color(200, 200, 200)
-        PS_BotBGColor = Color(64, 64, 64)
-        PS_SwitchableColor = Color(0, 0, 0)
+        SS_TileBGColor = Color(234, 234, 234)
+        SS_GridBGColor = Color(200, 200, 200)
+        SS_BotBGColor = Color(64, 64, 64)
+        SS_SwitchableColor = Color(0, 0, 0)
     end
 
-    if IsValid(PS_CustomizerPanel) then
-        PS_CustomizerPanel:Remove()
+    if IsValid(SS_CustomizerPanel) then
+        SS_CustomizerPanel:Remove()
     end
 
-    if IsValid(PS_ShopMenu) then
-        if PS_ShopMenu:IsVisible() then
-            PS_ShopMenu:Remove()
-            PS_ShopMenu = vgui.Create('DPointShopMenu')
-            PS_ShopMenu:Show()
+    if IsValid(SS_ShopMenu) then
+        if SS_ShopMenu:IsVisible() then
+            SS_ShopMenu:Remove()
+            SS_ShopMenu = vgui.Create('DPointShopMenu')
+            SS_ShopMenu:Show()
         else
-            PS_ShopMenu:Remove()
-            PS_ShopMenu = vgui.Create('DPointShopMenu')
-            PS_ShopMenu:SetVisible(false)
+            SS_ShopMenu:Remove()
+            SS_ShopMenu = vgui.Create('DPointShopMenu')
+            SS_ShopMenu:SetVisible(false)
         end
     end
 end
@@ -63,30 +64,30 @@ cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
 end)
 
 concommand.Add("ps_destroymenu", function(ply, cmd, args)
-    if IsValid(PS_CustomizerPanel) then
-        PS_CustomizerPanel:Close()
+    if IsValid(SS_CustomizerPanel) then
+        SS_CustomizerPanel:Close()
     end
 
-    if IsValid(PS_ShopMenu) then
-        PS_ShopMenu:Remove()
+    if IsValid(SS_ShopMenu) then
+        SS_ShopMenu:Remove()
     end
 end)
 
-function PS_ToggleMenu()
-    if not IsValid(PS_ShopMenu) then
-        PS_ShopMenu = vgui.Create('DPointShopMenu')
-        PS_ShopMenu:SetVisible(false)
+function SS_ToggleMenu()
+    if not IsValid(SS_ShopMenu) then
+        SS_ShopMenu = vgui.Create('DPointShopMenu')
+        SS_ShopMenu:SetVisible(false)
     end
 
-    if PS_ShopMenu:IsVisible() then
-        if IsValid(PS_CustomizerPanel) then
-            PS_CustomizerPanel:Close()
+    if SS_ShopMenu:IsVisible() then
+        if IsValid(SS_CustomizerPanel) then
+            SS_CustomizerPanel:Close()
         end
 
-        PS_ShopMenu:Hide()
+        SS_ShopMenu:Hide()
         gui.EnableScreenClicker(false)
     else
-        PS_ShopMenu:Show()
+        SS_ShopMenu:Show()
         gui.EnableScreenClicker(true)
     end
 end
@@ -120,7 +121,7 @@ function PS:ShowColorChooser(item, modifications)
 end
 
 function PS:SendModifications(item_id, modifications)
-	net.Start('PS_ModifyItem')
+	net.Start('SS_ModifyItem')
 		net.WriteString(item_id)
 		net.WriteTable(modifications)
 	net.SendToServer()
@@ -149,63 +150,63 @@ function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
     end
 end
 
-net.Receive('PS_Items', function(length)
+net.Receive('SS_Items', function(length)
     local pi = net.ReadUInt(8)
     local items = net.ReadTableHD()
 
-    SetLoadingPlayerProperty(pi, "PS_Items", items, function(ply)
-        ply:PS_ClearCSModels()
-        ply.PS_BoneModsClean = false
+    SetLoadingPlayerProperty(pi, "SS_Items", items, function(ply)
+        ply:SS_ClearCSModels()
+        ply.SS_PlayermodelModsClean = false
 
         if LocalPlayer() == ply then
-            PS_ValidInventory = false
+            SS_ValidInventory = false
         end
     end)
 end)
 
-net.Receive('PS_EQItems', function(length)
+net.Receive('SS_EQItems', function(length)
     local pi = net.ReadUInt(8)
     local items = net.ReadTableHD()
 
-    SetLoadingPlayerProperty(pi, "PS_EQItems", items, function(ply)
-        ply:PS_ClearCSModels()
-        ply.PS_BoneModsClean = false
+    SetLoadingPlayerProperty(pi, "SS_EQItems", items, function(ply)
+        ply:SS_ClearCSModels()
+        ply.SS_PlayermodelModsClean = false
     end)
 end)
 
-net.Receive('PS_Pts', function(length)
-    SetLoadingPlayerProperty(-1, "PS_Points", net.ReadUInt(32))
+net.Receive('SS_Pts', function(length)
+    SetLoadingPlayerProperty(-1, "SS_Points", net.ReadUInt(32))
 end)
 
-net.Receive('PS_Row', function(length)
+net.Receive('SS_Row', function(length)
     local pi = net.ReadUInt(8)
-    SetLoadingPlayerProperty(pi, "PS_Points", net.ReadUInt(32))
-    SetLoadingPlayerProperty(pi, "PS_Donation", net.ReadUInt(32))
+    SetLoadingPlayerProperty(pi, "SS_Points", net.ReadUInt(32))
+    SetLoadingPlayerProperty(pi, "SS_Donation", net.ReadUInt(32))
 end)
 
-PS_CSModels = PS_CSModels or {}
+SS_CSModels = SS_CSModels or {}
 
-hook.Add('Think', 'PS_Cleanup', function()
-    for ply, mdls in pairs(PS_CSModels) do
+hook.Add('Think', 'SS_Cleanup', function()
+    for ply, mdls in pairs(SS_CSModels) do
         if not IsValid(ply) then
             for k, v in pairs(mdls) do
                 v.mdl:Remove()
             end
 
-            PS_CSModels[ply] = nil
+            SS_CSModels[ply] = nil
         end
     end
 end)
 
 --makes a CSModel for a worn item
-function PS_CreateWornCSModel(itm, cfg)
+function SS_CreateWornCSModel(itm, cfg)
     if itm == nil or itm.wear == nil then return end
 
-    return PS_CreateCSModel(itm, cfg)
+    return SS_CreateCSModel(itm, cfg)
 end
 
 --makes a CSModel for a product or item
-function PS_CreateCSModel(itm, cfg)
+function SS_CreateCSModel(itm, cfg)
     if itm == nil then return end
     local mdlname = itm.model or (cfg or {}).model
     if mdlname == nil then return end
@@ -218,17 +219,17 @@ function PS_CreateCSModel(itm, cfg)
     end
 end
 
-PS_MaterialCache = {}
+SS_MaterialCache = {}
 
-function PS_GetMaterial(nam)
-    local cur = PS_MaterialCache[nam]
+function SS_GetMaterial(nam)
+    local cur = SS_MaterialCache[nam]
     if cur then return cur end
-    PS_MaterialCache[nam] = Material(nam)
+    SS_MaterialCache[nam] = Material(nam)
 
-    return PS_MaterialCache[nam]
+    return SS_MaterialCache[nam]
 end
 
-function PS_PreRender(data, cfg, ent)
+function SS_PreRender(data, cfg, ent)
     cfg = (cfg or {})
     local imgur = cfg.imgur
 
@@ -243,7 +244,7 @@ function PS_PreRender(data, cfg, ent)
         local mat = cfg.material or data.material
 
         if mat then
-            render.MaterialOverride(PS_GetMaterial(mat))
+            render.MaterialOverride(SS_GetMaterial(mat))
         end
     end
 
@@ -254,26 +255,28 @@ function PS_PreRender(data, cfg, ent)
     end
 end
 
-function PS_PostRender()
+function SS_PostRender()
     render.SetColorModulation(1, 1, 1)
     render.MaterialOverride()
     --render.OverrideDepthEnable(false)
 end
 
-hook.Add("PrePlayerDraw", "PS_BoneMods", function(ply)
+hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     -- will be "false" if the model is not mounted yet
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
 
-    if ply.PS_BoneModsLastModel ~= mounted_model then
-        ply.PS_BoneModsClean = false
+    if ply.SS_PlayermodelModsLastModel ~= mounted_model then
+        ply.SS_PlayermodelModsClean = false
         --seems to have issues if you apply the bone mods as soon as the model changes...
-        --timer.Simple(1, function() if IsValid(ply) then ply.PS_BoneModsClean = false end end)
+        --timer.Simple(1, function() if IsValid(ply) then ply.SS_PlayermodelModsClean = false end end)
     end
 
-    if not ply.PS_BoneModsClean then
-        ply.PS_BoneModsClean = PS_ApplyBoneMods(ply, ply:PS_GetActiveBonemods())
-        ply.PS_BoneModsLastModel = mounted_model
+    if not ply.SS_PlayermodelModsClean then
+        ply.SS_PlayermodelModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActiveBonemods())
+        ply.SS_PlayermodelModsLastModel = mounted_model
     end
+
+    SS_ApplyMaterialMods(ply, ply:SS_GetActiveMaterialMods())
 end)
 
 local function AddScaleRecursive(ent, b, scn, recurse, safety)
@@ -304,7 +307,7 @@ end
 
 --only bone scale right now...
 --if you do pos/angles, must do a combination override to make it work with emotes, vape arm etc
-function PS_ApplyBoneMods(ent, mods)
+function SS_ApplyBoneMods(ent, mods)
     for x = 0, (ent:GetBoneCount() - 1) do
         ent:ManipulateBoneScale(x, Vector(1, 1, 1))
         ent:ManipulateBonePosition(x, Vector(0, 0, 0))
@@ -371,7 +374,7 @@ function PS_ApplyBoneMods(ent, mods)
 end
 
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
-function PS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
+function SS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
     local pone = isPonyModel(ent:GetModel())
     local attach = itm.wear.attach
     local scale = itm.wear.scale
@@ -423,7 +426,7 @@ function PS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
             end
         end
     else
-        local bone_id = ent:LookupBone(PS_Attachments[attach][pone and 2 or 1])
+        local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
 
         if bone_id then
             pos, ang = ent:GetBonePosition(bone_id)
@@ -464,14 +467,14 @@ function PS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
     mdl:SetupBones()
 
     if not dontactually then
-        PS_PreRender(itm, cfg, ent)
+        SS_PreRender(itm, cfg, ent)
         mdl:DrawModel()
-        PS_PostRender()
+        SS_PostRender()
     end
 end
 
-hook.Add("DrawOpaqueAccessories", 'PS_DrawPlayerAccessories', function(ply)
-    if ply.PS_Items == nil and ply.PS_EQItems == nil then return end
+hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
+    if ply.SS_Items == nil and ply.SS_EQItems == nil then return end
     if not ply:Alive() then return end
     --if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
     -- and (GetConVar('thirdperson') and GetConVar('thirdperson'):GetInt() == 0)
@@ -479,19 +482,19 @@ hook.Add("DrawOpaqueAccessories", 'PS_DrawPlayerAccessories', function(ply)
     if GAMEMODE.FolderName == "fatkid" and ply:Team() ~= TEAM_HUMAN then return end
 
     --in SPADES, the renderboost.lua is disabled!
-    for _, prop in ipairs(ply:PS_GetCSModels()) do
-        PS_DrawWornCSModel(prop.itm, prop.cfg, prop.mdl, ply)
+    for _, prop in ipairs(ply:SS_GetCSModels()) do
+        SS_DrawWornCSModel(prop.itm, prop.cfg, prop.mdl, ply)
     end
 end)
 
-PS_GibProps = {}
+SS_GibProps = {}
 
-hook.Add('CreateClientsideRagdoll', 'PS_CreateClientsideRagdoll', function(ply, rag)
+hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, rag)
     if IsValid(ply) and ply:IsPlayer() then
         --print(rag:GetPhysicsObjectNum(0):GetVelocity())
         local counter = 0
 
-        for k, v in pairs(PS_CSModels[ply] or {}) do
+        for k, v in pairs(SS_CSModels[ply] or {}) do
             counter = counter + 1
             if counter > 8 then return end
             vm = v.mdl
@@ -503,13 +506,13 @@ hook.Add('CreateClientsideRagdoll', 'PS_CreateClientsideRagdoll', function(ply, 
 
             gib.csmodel = v
             gib:SetNoDraw(true)
-            table.insert(PS_GibProps, gib)
+            table.insert(SS_GibProps, gib)
         end
     end
 end)
 
 concommand.Add("ps_proptest", function()
-    for j, itm in pairs(PS_Items) do
+    for j, itm in pairs(SS_Items) do
         local mdl = itm.model
         local gib = GibClientProp(mdl, LocalPlayer():EyePos(), Angle(0, 0, 0), LocalPlayer():GetVelocity(), 1, 6)
         gib = gib:GetPhysicsObject():GetMesh()
@@ -534,32 +537,32 @@ concommand.Add("ps_proptest", function()
     end
 end)
 
-hook.Add("PostDrawOpaqueRenderables", "PS_RenderGibs", function(depth, sky)
+hook.Add("PostDrawOpaqueRenderables", "SS_RenderGibs", function(depth, sky)
     local nextgibs = {}
 
-    while #PS_GibProps > 0 do
-        local gib = table.remove(PS_GibProps)
+    while #SS_GibProps > 0 do
+        local gib = table.remove(SS_GibProps)
 
         if IsValid(gib) then
-            PS_PreRender(gib.csmodel.itm, gib.csmodel.cfg)
+            SS_PreRender(gib.csmodel.itm, gib.csmodel.cfg)
             gib:DrawModel()
-            PS_PostRender()
+            SS_PostRender()
             table.insert(nextgibs, gib)
         end
     end
 
-    PS_GibProps = nextgibs
+    SS_GibProps = nextgibs
 end)
 
-function PS_BuyProduct(id)
-    if not PS_Products[id] then
+function SS_BuyProduct(id)
+    if not SS_Products[id] then
         LocalPlayerNotify("Unknown product '" .. tostring(id) .. "'. Many products have new codes, update your binds.")
 
         return
     end
 
     print('To quickbuy this product, run: bind <key> "ps_buy ' .. id .. '"')
-    net.Start('PS_BuyProduct')
+    net.Start('SS_BuyProduct')
     net.WriteString(id)
     net.SendToServer()
 end
@@ -572,33 +575,33 @@ concommand.Add("ps_buy", function(ply, cmd, args)
     end
 
     -- if they have the wep and the wep is not a single-use e.g. peacekeeper
-    if LocalPlayer():HasWeapon(args[1]) and not PS_Products[args[1]]['ammotype'] then
+    if LocalPlayer():HasWeapon(args[1]) and not SS_Products[args[1]]['ammotype'] then
         input.SelectWeapon(LocalPlayer():GetWeapon(args[1]))
 
         return
     end
 
-    PS_BuyProduct(args[1])
+    SS_BuyProduct(args[1])
 end)
 
-function PS_SellItem(item_id)
-    if not LocalPlayer():PS_FindItem(item_id) then return end
-    net.Start('PS_SellItem')
+function SS_SellItem(item_id)
+    if not LocalPlayer():SS_FindItem(item_id) then return end
+    net.Start('SS_SellItem')
     net.WriteUInt(item_id, 32)
     net.SendToServer()
 end
 
-function PS_EquipItem(item_id, state)
-    if not LocalPlayer():PS_FindItem(item_id) then return end
-    net.Start('PS_EquipItem')
+function SS_EquipItem(item_id, state)
+    if not LocalPlayer():SS_FindItem(item_id) then return end
+    net.Start('SS_EquipItem')
     net.WriteUInt(item_id, 32)
     net.WriteBool(state)
     net.SendToServer()
 end
 
-function PS_ConfigureItem(item_id, cfg)
-    if not LocalPlayer():PS_FindItem(item_id) then return end
-    net.Start('PS_ConfigureItem')
+function SS_ConfigureItem(item_id, cfg)
+    if not LocalPlayer():SS_FindItem(item_id) then return end
+    net.Start('SS_ConfigureItem')
     net.WriteUInt(item_id, 32)
     net.WriteTableHD(cfg)
     net.SendToServer()
@@ -606,27 +609,27 @@ end
 
 local Player = FindMetaTable('Player')
 
-function Player:PS_ClearCSModels()
-    for k, v in pairs(PS_CSModels[self] or {}) do
+function Player:SS_ClearCSModels()
+    for k, v in pairs(SS_CSModels[self] or {}) do
         v.mdl:Remove()
     end
 
-    PS_CSModels[self] = nil
+    SS_CSModels[self] = nil
 end
 
-function Player:PS_GetCSModels()
-    if PS_CSModels[self] == nil then
-        PS_CSModels[self] = {}
+function Player:SS_GetCSModels()
+    if SS_CSModels[self] == nil then
+        SS_CSModels[self] = {}
 
-        for k, v in pairs(self.PS_Items or self.PS_EQItems or {}) do
+        for k, v in pairs(self.SS_Items or self.SS_EQItems or {}) do
             --eq is nil in eqitems table
             if v.eq == false then continue end
-            local itm = PS_Items[v.class]
+            local itm = SS_Items[v.class]
             if not itm then continue end
-            local mdl = PS_CreateWornCSModel(itm, v.cfg)
+            local mdl = SS_CreateWornCSModel(itm, v.cfg)
 
             if mdl then
-                table.insert(PS_CSModels[self], {
+                table.insert(SS_CSModels[self], {
                     mdl = mdl,
                     itm = itm,
                     cfg = v.cfg,
@@ -636,16 +639,16 @@ function Player:PS_GetCSModels()
         end
     end
 
-    return PS_CSModels[self]
+    return SS_CSModels[self]
 end
 
-function Player:PS_GetActiveBonemods()
+function Player:SS_GetActiveBonemods()
     local mods = {}
 
-    for k, v in pairs(self.PS_Items or self.PS_EQItems or {}) do
+    for k, v in pairs(self.SS_Items or self.SS_EQItems or {}) do
         --eq is nil in eqitems table
         if v.eq == false then continue end
-        local itm = PS_Items[v.class]
+        local itm = SS_Items[v.class]
         if not itm then continue end
 
         if itm.bonemod then
@@ -662,7 +665,7 @@ end
 
 concommand.Add("ps_prop_autorefresh", function()
     timer.Create("ppau", 0.05, 0, function()
-        LocalPlayer():PS_ClearCSModels()
+        LocalPlayer():SS_ClearCSModels()
     end)
 end)
 
@@ -682,7 +685,7 @@ function SendPointsCmd(cmd)
                 chat.AddText("[orange]No player found")
             else
                 if cnt == 1 then
-                    net.Start("PS_SendPoints")
+                    net.Start("SS_SendPoints")
                     net.WriteEntity(ply)
                     net.WriteInt(amt, 32)
                     net.SendToServer()
@@ -696,4 +699,24 @@ function SendPointsCmd(cmd)
     if fail then
         chat.AddText("[orange]Usage: !givepoints player amount")
     end
+end
+
+function SS_ApplyMaterialMods(ent, mods)
+    ent:SetSubMaterial()
+
+    for idx,mod in pairs(mods) do
+        local mat = ImgurMaterial(mod, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {})
+        ent:SetSubMaterial(idx, "!"..mat:GetName())
+    end
+end
+
+
+function Player:SS_GetActiveMaterialMods()
+    return {} --{[5]="https://i.imgur.com/Ue1qUPf.jpg"}
+end
+
+function thinga()
+    TTT1 = FindMetaTable("Entity")
+    TTT2 = FindMetaTable("Player")
+    TTT2.SetMaterial = function(a,b) TTT1.SetMaterial(a,b) print(a,b) end
 end

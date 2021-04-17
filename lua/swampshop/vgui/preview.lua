@@ -18,20 +18,20 @@ function PANEL:Paint()
 
     local pos = self.vCamPos
 
-    if PS_CustomizerPanel:IsVisible() then
-        if IsValid(PS_HoverCSModel) then
-            PS_DrawWornCSModel(PS_HoverData, PS_HoverCfg, PS_HoverCSModel, self.Entity, true)
-            pos = LerpVector(0, PS_HoverCSModel:GetPos() - (ang:Forward() * 25), pos)
+    if SS_CustomizerPanel:IsVisible() then
+        if IsValid(SS_HoverCSModel) then
+            SS_DrawWornCSModel(SS_HoverData, SS_HoverCfg, SS_HoverCSModel, self.Entity, true)
+            pos = LerpVector(0, SS_HoverCSModel:GetPos() - (ang:Forward() * 25), pos)
         end
 
-        if PS_HoverData and PS_HoverData.bonemod then
+        if SS_HoverData and SS_HoverData.bonemod then
             pos = pos + (ang:Forward() * 25)
             --positions are wrong
             --[[
 			local pone = isPonyModel(self.Entity:GetModel())
 			local suffix = pone and "_p" or "_h"
 
-			local bn = PS_HoverCfg["bone"..suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head")
+			local bn = SS_HoverCfg["bone"..suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head")
 			local x = self.Entity:LookupBone(bn)
 			if x then
 				local pos2,ang2 = self.Entity:GetBonePosition(x)
@@ -61,8 +61,8 @@ function PANEL:Paint()
     local ply = LocalPlayer()
     local mdl = ply:GetModel()
 
-    if PS_HoverData and (not PS_HoverData.wear) and (not PS_HoverData.bonemod) then
-        mdl = PS_HoverData.model
+    if SS_HoverData and (not SS_HoverData.wear) and (not SS_HoverData.bonemod) then
+        mdl = SS_HoverData.model
     end
 
     require_workshop_model(mdl)
@@ -73,11 +73,11 @@ function PANEL:Paint()
         PPM.setBodygroups(self.Entity, true)
     end
 
-    if PS_HoverData and (not PS_HoverData.playermodel) and (not PS_HoverData.wear) and (not PS_HoverData.bonemod) then
-        PS_PreRender(PS_HoverData, PS_HoverCfg)
-        PS_PreviewShopModel(self, PS_HoverData)
+    if SS_HoverData and (not SS_HoverData.playermodel) and (not SS_HoverData.wear) and (not SS_HoverData.bonemod) then
+        SS_PreRender(SS_HoverData, SS_HoverCfg)
+        SS_PreviewShopModel(self, SS_HoverData)
         self.Entity:DrawModel()
-        PS_PostRender()
+        SS_PostRender()
     else
         local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
@@ -91,18 +91,18 @@ function PANEL:Paint()
         self:SetCamPos(center + (diam * Vector(0.4, 0.4, 0.1)))
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-        local mods = LocalPlayer():PS_GetActiveBonemods()
+        local mods = LocalPlayer():SS_GetActiveBonemods()
 
-        if PS_HoverData and PS_HoverData.bonemod then
+        if SS_HoverData and SS_HoverData.bonemod then
             table.insert(mods, {
-                itm = PS_HoverData,
-                cfg = PS_HoverCfg
+                itm = SS_HoverData,
+                cfg = SS_HoverCfg
             })
 
             local rm = nil
 
             for i, v in ipairs(mods) do
-                if v.id == PS_HoverItemID then
+                if v.id == SS_HoverItemID then
                     rm = i
                     break
                 end
@@ -113,34 +113,34 @@ function PANEL:Paint()
             end
         end
 
-        PS_ApplyBoneMods(self.Entity, mods)
+        SS_ApplyBoneMods(self.Entity, mods)
         self.Entity:DrawModel()
     end
 
-    if PS_HoverData == nil or PS_HoverData.playermodel or PS_HoverData.wear or PS_HoverData.bonemod then
-        for _, prop in pairs(ply:PS_GetCSModels()) do
-            if PS_HoverItemID == nil or PS_HoverItemID ~= prop.id then
-                PS_DrawWornCSModel(prop.itm, prop.cfg, prop.mdl, self.Entity)
+    if SS_HoverData == nil or SS_HoverData.playermodel or SS_HoverData.wear or SS_HoverData.bonemod then
+        for _, prop in pairs(ply:SS_GetCSModels()) do
+            if SS_HoverItemID == nil or SS_HoverItemID ~= prop.id then
+                SS_DrawWornCSModel(prop.itm, prop.cfg, prop.mdl, self.Entity)
             end
         end
     end
 
-    if PS_HoverData and PS_HoverData.wear then
-        if not IsValid(PS_HoverCSModel) then
-            PS_HoverCSModel = PS_CreateWornCSModel(PS_HoverData, PS_HoverCfg)
+    if SS_HoverData and SS_HoverData.wear then
+        if not IsValid(SS_HoverCSModel) then
+            SS_HoverCSModel = SS_CreateWornCSModel(SS_HoverData, SS_HoverCfg)
         end
 
-        PS_DrawWornCSModel(PS_HoverData, PS_HoverCfg, PS_HoverCSModel, self.Entity)
+        SS_DrawWornCSModel(SS_HoverData, SS_HoverCfg, SS_HoverCSModel, self.Entity)
     end
 
     render.SuppressEngineLighting(false)
     cam.IgnoreZ(false)
     cam.End3D()
 
-    if PS_CustomizerPanel:IsVisible() then
+    if SS_CustomizerPanel:IsVisible() then
         if ValidPanel(XRSL) then
-            if IsValid(PS_HoverCSModel) then
-                draw.SimpleText("RMB + drag to rotate", "PS_DESCFONT", self:GetWide() / 2, 14, PS_SwitchableColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            if IsValid(SS_HoverCSModel) then
+                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, SS_SwitchableColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
     end

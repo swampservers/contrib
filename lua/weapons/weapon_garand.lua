@@ -214,7 +214,9 @@ function SWEP:Reload()
     self:SetNextPrimaryFire(CurTime() + 2)
 
     timer.Simple(0, function()
-        self:EmitSound("weapons/smg1/smg1_reload.wav")
+        if IsValid(self) then
+            self:EmitSound("weapons/smg1/smg1_reload.wav")
+        end
     end)
 end
 

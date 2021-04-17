@@ -1,6 +1,24 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-PS_GenericProduct({
+SS_Tab("Construction", "bricks")
+SS_Heading("Tools")
+
+SS_WeaponProduct({
+    class = "weapon_trash_paint",
+    name = 'Paint Tool',
+    description = "Paint a solid color onto props. Also changes the color of lights.",
+    model = 'models/props_junk/metal_paintcan001a.mdl',
+    price = 2000
+})
+
+SS_WeaponProduct({
+    class = "weapon_trash_tape",
+    name = 'Tape Tool',
+    description = "Use this to tape (freeze) and un-tape props.",
+    model = 'models/swamponions/ducktape.mdl'
+})
+
+SS_Product({
     class = 'trash',
     name = 'Trash',
     description = "Spawn a random piece of junk for building stuff with",
@@ -12,7 +30,9 @@ PS_GenericProduct({
     end
 })
 
-PS_GenericProduct({
+SS_Heading("Props")
+
+SS_Product({
     class = 'trashfield',
     price = 200,
     name = 'Medium Protection Field',
@@ -31,14 +51,14 @@ PS_GenericProduct({
                 if tryMakeTrash(ply) then
                     makeForcefield(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashfieldlarge',
     price = 3000,
     name = 'Large Protection Field',
@@ -57,14 +77,14 @@ PS_GenericProduct({
                 if tryMakeTrash(ply) then
                     makeForcefield(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashlight',
     price = 1000,
     name = 'Lights',
@@ -82,12 +102,12 @@ PS_GenericProduct({
 
             e = makeTrash(ply, nxt[math.random(1, #nxt)])
         else
-            ply:PS_GivePoints(self.price)
+            ply:SS_GivePoints(self.price)
         end
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashseat',
     price = 2000,
     name = 'Chairs',
@@ -105,12 +125,12 @@ PS_GenericProduct({
 
             e = makeTrash(ply, nxt[math.random(1, #nxt)])
         else
-            ply:PS_GivePoints(self.price)
+            ply:SS_GivePoints(self.price)
         end
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashtheater',
     price = 8000,
     name = 'Medium Theater Screen',
@@ -129,14 +149,14 @@ PS_GenericProduct({
                 if tryMakeTrash(ply) then
                     makeTrashTheater(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashtheatertiny',
     price = 4000,
     name = "Tiny Theater Screen",
@@ -155,14 +175,14 @@ PS_GenericProduct({
                 if tryMakeTrash(ply) then
                     makeTrashTheater(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
     end
 })
 
-PS_GenericProduct({
+SS_Product({
     class = 'trashtheaterbig',
     price = 16000,
     name = 'Large Theater Screen',
@@ -182,24 +202,9 @@ PS_GenericProduct({
                 if tryMakeTrash(ply) then
                     makeTrashTheater(ply, self.model)
                 else
-                    ply:PS_GivePoints(self.price)
+                    ply:SS_GivePoints(self.price)
                 end
             end)
         end)
     end
-})
-
-PS_WeaponProduct({
-    class = "weapon_trash_paint",
-    name = 'Paint Tool',
-    description = "Paint a solid color onto props. Also changes the color of lights.",
-    model = 'models/props_junk/metal_paintcan001a.mdl',
-    price = 2000
-})
-
-PS_WeaponProduct({
-    class = "weapon_trash_tape",
-    name = 'Tape Tool',
-    description = "Use this to tape (freeze) and un-tape props.",
-    model = 'models/swamponions/ducktape.mdl'
 })

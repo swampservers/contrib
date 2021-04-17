@@ -22,21 +22,17 @@ PLEASE FORMAT YOUR LUA CODE USING https://fptje.github.io/glualint-web/
 
 Add the weapon to lua/weapons/ as normal (See API for coding stuff)
 
-Register the weapon in lua/sps/items/free.lua or lua/sps/items/weapons.lua as shown
-
-Add the weapon to lua/sps/categories.lua
+Register the weapon in lua/sps/tabs/toys.lua or lua/sps/tabs/weapons.lua as shown
 
 ## One time use models:
 
 Upload the playermodel
 
-Register in lua/sps/items/uniquemodels.lua
-
-Add to lua/sps/categories.lua
+Register in lua/sps/tabs/playermodels.lua
 
 ## Props ("wearables"):
 
-Upload model, add to wearables.lua, add to categories.lua
+Upload model, add to tabs/swag.lua
 
 To set up the default model position/scale, use **hatmaker.lua** (in the root of this repository; instructions are in the file)
 

@@ -144,7 +144,7 @@ function SWEP:Reload()
 
             net.SendToServer()
         else
-            PS_BuyProduct('trash')
+            SS_BuyProduct('trash')
         end
     end
 

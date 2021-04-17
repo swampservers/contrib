@@ -1,6 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-PS_WeaponProduct({
+SS_Tab("Weapons", "bomb")
+
+SS_WeaponProduct({
     name = 'Crossbow',
     description = "Kills players in one shot, and is capable of hitting distant targets. Also unfreezes props.",
     price = 5000,
@@ -8,15 +10,7 @@ PS_WeaponProduct({
     class = 'weapon_crossbow'
 })
 
-PS_AmmoProduct({
-    name = 'Crossbow bolt x5',
-    price = 1500,
-    model = 'models/Items/CrossbowRounds.mdl',
-    ammotype = "XBowBolt",
-    amount = 5
-})
-
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Big Frickin\' Gun',
     description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
     price = 20000,
@@ -24,7 +18,7 @@ PS_WeaponProduct({
     class = 'weapon_doom3_bfg'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Submachine Gun',
     description = "Effective at killing players at close range, and the ammo is cheap.",
     price = 5000,
@@ -32,16 +26,7 @@ PS_WeaponProduct({
     class = 'weapon_smg1'
 })
 
-PS_AmmoProduct({
-    name = 'SMG Magazine',
-    description = "45 rounds",
-    price = 1000,
-    model = 'models/Items/BoxSRounds.mdl',
-    ammotype = "SMG1",
-    amount = 45
-})
-
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Sniper',
     description = "This powerful rifle kills any player in one shot and has a scope for long distance assassinations. Also unfreezes props.",
     price = 8000,
@@ -49,15 +34,7 @@ PS_WeaponProduct({
     class = 'weapon_sniper'
 })
 
-PS_AmmoProduct({
-    name = 'Sniper Ammo x 5',
-    price = 2500,
-    model = 'models/Items/sniper_round_box.mdl',
-    ammotype = "sniper",
-    amount = 5
-})
-
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Throatneck Slitter',
     description = "A deadly knife capable of killing one person before breaking.",
     price = 2000,
@@ -65,7 +42,7 @@ PS_WeaponProduct({
     class = 'weapon_slitter'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = '357 Magnum',
     description = "This gun is convenient for shooting and removing props. It takes 2 bullets to kill a player.",
     price = 4000,
@@ -73,15 +50,7 @@ PS_WeaponProduct({
     class = 'weapon_357'
 })
 
-PS_AmmoProduct({
-    name = '357 Ammo x 6',
-    price = 500,
-    model = 'models/Items/357ammo.mdl',
-    ammotype = "357",
-    amount = 6
-})
-
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Suicide Bombing',
     description = "A powerful suicide bomb attack capable of killing seated players.",
     price = 15000,
@@ -89,7 +58,7 @@ PS_WeaponProduct({
     class = 'weapon_jihad'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Big Bomb',
     description = "A large throwable bomb which kills everyone nearby, even seated players.",
     price = 25000,
@@ -97,7 +66,7 @@ PS_WeaponProduct({
     class = 'weapon_bigbomb'
 })
 
-PS_WeaponProduct({
+SS_WeaponProduct({
     name = 'Infinity Gauntlet',
     description = '*snap*',
     price = 13000,
@@ -105,7 +74,7 @@ PS_WeaponProduct({
     class = 'weapon_gauntlet'
 })
 
--- PS_WeaponAndAmmoProduct({
+-- SS_WeaponAndAmmoProduct({
 -- 	name = 'Anti-Kleiner Rifle',
 -- 	description = "This specialty weapon is capable of massacring Kleiners, but is harmless to anyone else. Re-purchase for more ammo.",
 -- 	price = 2000,
@@ -114,7 +83,7 @@ PS_WeaponProduct({
 -- 	ammotype = "AR2",
 -- 	amount = 30
 -- })
-PS_WeaponAndAmmoProduct({
+SS_WeaponAndAmmoProduct({
     name = 'S.L.A.M. x3',
     description = "Explosives that can be placed as mines or thrown and detonated.",
     price = 6000,
@@ -124,7 +93,7 @@ PS_WeaponAndAmmoProduct({
     amount = 3
 })
 
-PS_WeaponAndAmmoProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Rocket Launcher',
     description = "Two guided rocket-propelled grenades and a launcher. Re-purchase for more rockets.",
     price = 8000,
@@ -134,7 +103,7 @@ PS_WeaponAndAmmoProduct({
     amount = 2
 })
 
-PS_WeaponAndAmmoProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Peacekeeper',
     description = "Peacekeeper (Re-buy for more shots)",
     price = 5000,
@@ -142,4 +111,39 @@ PS_WeaponAndAmmoProduct({
     class = 'weapon_peacekeeper',
     ammotype = "peaceshot",
     amount = 2
+})
+
+SS_Heading("Ammo")
+
+SS_AmmoProduct({
+    name = 'Crossbow bolt x5',
+    price = 1500,
+    model = 'models/Items/CrossbowRounds.mdl',
+    ammotype = "XBowBolt",
+    amount = 5
+})
+
+SS_AmmoProduct({
+    name = 'SMG Magazine',
+    description = "45 rounds",
+    price = 1000,
+    model = 'models/Items/BoxSRounds.mdl',
+    ammotype = "SMG1",
+    amount = 45
+})
+
+SS_AmmoProduct({
+    name = 'Sniper Ammo x 5',
+    price = 2500,
+    model = 'models/Items/sniper_round_box.mdl',
+    ammotype = "sniper",
+    amount = 5
+})
+
+SS_AmmoProduct({
+    name = '357 Ammo x 6',
+    price = 500,
+    model = 'models/Items/357ammo.mdl',
+    ammotype = "357",
+    amount = 6
 })

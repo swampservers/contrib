@@ -1,6 +1,9 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-PS_ItemProduct({
+SS_Tab("Swag", "color_swatch")
+SS_Heading("Accessories")
+
+SS_ItemProduct({
     class = 'trumphatfree',
     name = 'Unstumpable',
     description = "Bold, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
@@ -11,7 +14,7 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 0.76,
         translate = Vector(-1.5, 0, 2.8),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Up(), -90)
             ang:RotateAroundAxis(ang:Forward(), -20)
             ang:RotateAroundAxis(ang:Right(), 5)
@@ -19,7 +22,7 @@ PS_ItemProduct({
         pony = {
             scale = 1.0,
             translate = Vector(-4, 0, 13),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Up(), -90)
                 ang:RotateAroundAxis(ang:Forward(), -20)
                 ang:RotateAroundAxis(ang:Right(), 5)
@@ -28,7 +31,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "clownshoe",
     price = 50000,
     name = 'Clown Shoe',
@@ -50,7 +53,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "bigburger",
     price = 100000,
     name = 'Burger',
@@ -71,7 +74,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "bicyclehelmet",
     price = 120000,
     name = 'Safety Helmet',
@@ -92,7 +95,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "buckethat",
     price = 10000,
     name = 'Bucket Head',
@@ -103,7 +106,7 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 0.5,
         translate = Vector(-3.3, -1, 6),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Right(), 180)
             ang:RotateAroundAxis(ang:Up(), 195)
             ang:RotateAroundAxis(ang:Forward(), 10)
@@ -111,7 +114,7 @@ PS_ItemProduct({
         pony = {
             scale = 0.9,
             translate = Vector(-11.1, -3.5, 15.5),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Right(), 190)
                 ang:RotateAroundAxis(ang:Up(), 195)
                 ang:RotateAroundAxis(ang:Forward(), 14)
@@ -120,7 +123,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "conehattest",
     price = 1000,
     name = 'Cone Head',
@@ -131,20 +134,20 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 0.7,
         translate = Vector(-7, 0, 11),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Right(), 20)
         end),
         pony = {
             scale = 0.7,
             translate = Vector(-7, 0, 22),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Right(), 20)
             end),
         }
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "kleinerglasses",
     price = 1000000,
     name = "Kleiner's Glasses",
@@ -165,7 +168,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "santahat",
     price = 25000,
     name = 'Christmas Hat',
@@ -176,7 +179,7 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 1,
         translate = Vector(-3.8, 0, -3),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Up(), -90)
             ang:RotateAroundAxis(ang:Forward(), 90)
             ang:RotateAroundAxis(ang:Right(), 15)
@@ -184,7 +187,7 @@ PS_ItemProduct({
         pony = {
             scale = 1.5,
             translate = Vector(-8, 0, 2),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Up(), -90)
                 ang:RotateAroundAxis(ang:Forward(), 90)
                 ang:RotateAroundAxis(ang:Right(), 15)
@@ -193,7 +196,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "shrunkenhead",
     price = 150000,
     name = 'Conjoined Twin',
@@ -213,7 +216,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "spikecollar",
     price = 200000,
     name = 'Spike Collar',
@@ -224,14 +227,14 @@ PS_ItemProduct({
         attach = "neck",
         scale = 1.05,
         translate = Vector(2.5, -2.1, 0),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Up(), 52)
             ang:RotateAroundAxis(ang:Forward(), 90)
         end),
         pony = {
             scale = 1.56,
             translate = Vector(0, -1.25, 0),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Up(), 52)
                 ang:RotateAroundAxis(ang:Forward(), 90)
             end),
@@ -239,7 +242,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "tinfoilhat",
     price = 40000,
     name = "InfoWarrior's Hat",
@@ -251,14 +254,14 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 1,
         translate = Vector(-5, 0, 4.8),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Forward(), 180)
             ang:RotateAroundAxis(ang:Right(), -30)
         end),
         pony = {
             scale = 1.75,
             translate = Vector(-11, 0, 14),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Forward(), 180)
                 ang:RotateAroundAxis(ang:Right(), -25)
             end),
@@ -266,7 +269,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "trashhattest",
     price = 10000000,
     name = 'Party Hat',
@@ -278,14 +281,14 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 1.1,
         translate = Vector(-3.3, -0.3, 2.5),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Up(), -60)
             ang:RotateAroundAxis(ang:Forward(), 15)
         end),
         pony = {
             scale = 1.6,
             translate = Vector(-6.3, -0.2, 10),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Up(), 40)
                 ang:RotateAroundAxis(ang:Forward(), 10)
             end),
@@ -293,7 +296,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "turtleplush",
     price = 1000,
     name = 'Turtle Plush',
@@ -305,13 +308,13 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 1,
         translate = Vector(-3.2, 0, 2),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Up(), -90)
         end),
         pony = {
             scale = 1,
             translate = Vector(-5, 0, 9),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Up(), -90)
                 ang:RotateAroundAxis(ang:Forward(), -10)
             end),
@@ -319,7 +322,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "pickelhaube",
     price = 250000,
     name = 'Pickelhaube',
@@ -329,14 +332,14 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 1.05,
         translate = Vector(-3.5, .1, 2.3),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Right(), 17)
         end),
         pony = {
             attach = "head",
             scale = 1.8,
             translate = Vector(-4, -9, .3),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Up(), -20)
                 ang:RotateAroundAxis(ang:Forward(), 90)
             end),
@@ -344,7 +347,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = "horsemask",
     price = 500,
     name = 'Poverty Pony',
@@ -355,20 +358,20 @@ PS_ItemProduct({
         attach = "eyes",
         scale = 1.0,
         translate = Vector(.6, 0, -1),
-        rotate = PS_AngleGen(function(ang)
+        rotate = SS_AngleGen(function(ang)
             ang:RotateAroundAxis(ang:Up(), 90)
         end),
         pony = {
             scale = 1.85,
             translate = Vector(-2, 0, 2),
-            rotate = PS_AngleGen(function(ang)
+            rotate = SS_AngleGen(function(ang)
                 ang:RotateAroundAxis(ang:Up(), 90)
             end),
         }
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = 'sombrero',
     price = 30000,
     name = 'Sombrero',
@@ -388,7 +391,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = 'headcrabhat',
     price = 600000,
     name = 'Headcrab',
@@ -408,7 +411,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = 'catears',
     price = 1450,
     name = 'Cat Ears',
@@ -428,7 +431,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = 'uwumask',
     price = 50000,
     name = 'uwu Mask',
@@ -448,7 +451,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = 'tophat',
     price = 300000,
     name = 'Top Hat',
@@ -468,7 +471,7 @@ PS_ItemProduct({
     }
 })
 
-PS_ItemProduct({
+SS_ItemProduct({
     class = 'swampyhat',
     price = 25000,
     name = 'Krusty Hat',
@@ -487,3 +490,64 @@ PS_ItemProduct({
         }
     }
 })
+
+SS_Heading("Primitives")
+
+local primitives = {
+    Plane = 10000,
+    Tetrahedron = 10000,
+    Angle = 15000,
+    Cube = 20000,
+    Icosahedron = 30000,
+    Dome = 40000,
+    Cone = 50000,
+    Cylinder = 60000,
+    Sphere = 80000,
+    Torus = 100000
+}
+
+for k, v in pairs(primitives) do
+    kl = k:lower()
+
+    local itm = {
+        class = 'primitive_' .. kl,
+        price = v,
+        name = k,
+        description = "Select these primitives in your inventory and click 'customize' to build more interesting outfits!",
+        model = 'models/swamponions/primitives/' .. kl .. '.mdl',
+        maxscale = kl == "plane" and 3 or 2.5,
+        wear = {
+            attach = "eyes",
+            scale = kl == "plane" and 1.5 or 2.0,
+            translate = kl == "plane" and Vector(2, 0, 0) or Vector(0, 0, 0),
+            rotate = kl == "plane" and Angle(90, 0, 0) or Angle(0, 0, 0),
+            pony = {
+                --copy of above
+                scale = kl == "plane" and 1.5 or 2.0,
+                translate = kl == "plane" and Vector(2, 0, 0) or Vector(0, 0, 0),
+                rotate = kl == "plane" and Angle(90, 0, 0) or Angle(0, 0, 0),
+            }
+        }
+    }
+
+    if kl == "torus" then
+        itm.configurable = {
+            wear = {
+                xs = {
+                    max = 10.0
+                }
+            }
+        }
+    end
+
+    if kl == "cone" then
+        itm.maxscale = 3.0
+    end
+
+    if kl == "plane" then
+        itm.description = "Two per slot! Lots can be used."
+        itm.perslot = 2
+    end
+
+    SS_ItemProduct(itm)
+end

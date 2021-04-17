@@ -115,7 +115,9 @@ Tail01
 Tail02
 Tail03
 ]]
-PS_Attachments = {
+SS_InvCategories = {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"}
+
+SS_Attachments = {
     eyes = "I'm special",
     head = {"ValveBiped.Bip01_Head1", "LrigScull"},
     neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
@@ -129,18 +131,18 @@ PS_Attachments = {
     right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
 }
 
-function PS_CalculateSellPrice(ply, item)
+function SS_CalculateSellPrice(ply, item)
     if item.class == "ponymodel" then return item.price * 0.5 end
 
     return math.Round(item.price * 0.8)
 end
 
-function PS_BaseIncome(ply)
-    return math.floor(20 + math.Clamp((ply:PS_GetPoints()) / 5000, 0, 80))
+function SS_BaseIncome(ply)
+    return math.floor(20 + math.Clamp((ply:SS_GetPoints()) / 5000, 0, 80))
 end
 
-function PS_BaseIncomeMultiplier(ply)
-    local cash = ply:PS_GetDonation()
+function SS_BaseIncomeMultiplier(ply)
+    local cash = ply:SS_GetDonation()
     local incomelevel = math.min(math.floor(math.min(cash, 2000) / 1000) + math.floor(cash / 10000) + 1, 42)
     local mult = ((ply.HasHalfPoints and 1 or 3) + incomelevel) * 0.25
 
@@ -159,9 +161,9 @@ NoPointAltIds = {
     ["STEAM_0:0:179623822"] = true
 }
 
-function PS_Income(ply)
+function SS_Income(ply)
     if NoPointAltIds[ply:SteamID()] then return 0 end
-    local income = math.floor(PS_BaseIncome(ply) * PS_BaseIncomeMultiplier(ply))
+    local income = math.floor(SS_BaseIncome(ply) * SS_BaseIncomeMultiplier(ply))
 
     --if GAMEMODE.FolderName=="spades" then income=income*2 end
     if os.time() < 1601402349 then

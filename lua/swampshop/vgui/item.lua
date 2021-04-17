@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-function PS_PreviewShopModel(self, data)
+function SS_PreviewShopModel(self, data)
     local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
     local center = (PrevMaxs + PrevMins) / 2
     local diam = PrevMins:Distance(PrevMaxs) + (data.extrapreviewgap or 0)
@@ -8,7 +8,7 @@ function PS_PreviewShopModel(self, data)
     self:SetLookAt(center)
 end
 
-function PS_MouseInsidePanel(panel)
+function SS_MouseInsidePanel(panel)
     local x, y = panel:LocalCursorPos()
 
     return x > 0 and y > 0 and x < panel:GetWide() and y < panel:GetTall()
@@ -26,9 +26,9 @@ function PANEL:OnMousePressed(b)
     if b ~= MOUSE_LEFT then return end
 
     if self.product then
-        local status = LocalPlayer():PS_CanBuyStatus(self.data)
+        local status = LocalPlayer():SS_CanBuyStatus(self.data)
 
-        if status == PS_BUYSTATUS_OK then
+        if status == SS_BUYSTATUS_OK then
             if not self.prebuyclick then
                 self.prebuyclick = true
 
@@ -37,21 +37,21 @@ function PANEL:OnMousePressed(b)
 
             self.prebuyclick = nil
             surface.PlaySound("UI/buttonclick.wav")
-            PS_BuyProduct(self.data.class)
+            SS_BuyProduct(self.data.class)
         else
             surface.PlaySound("common/wpn_denyselect.wav")
-            LocalPlayerNotify(PS_BuyStatusMessage[status])
+            LocalPlayerNotify(SS_BuyStatusMessage[status])
         end
     else
         if self:IsSelected() then
-            local status = (not self.item.eq) and LocalPlayer():PS_CanEquipStatus(self.item.class, self.item.cfg) or PS_EQUIPSTATUS_OK
+            local status = (not self.item.eq) and LocalPlayer():SS_CanEquipStatus(self.item.class, self.item.cfg) or SS_EQUIPSTATUS_OK
 
-            if status == PS_EQUIPSTATUS_OK then
+            if status == SS_EQUIPSTATUS_OK then
                 surface.PlaySound("weapons/smg1/switch_single.wav")
-                PS_EquipItem(self.item.id, not self.item.eq)
+                SS_EquipItem(self.item.id, not self.item.eq)
             else
                 surface.PlaySound("common/wpn_denyselect.wav")
-                LocalPlayerNotify(PS_EquipStatusMessage[status])
+                LocalPlayerNotify(SS_EquipStatusMessage[status])
             end
         else
             self:Select()
@@ -76,28 +76,28 @@ function PANEL:OnCursorExited()
 end
 
 function PANEL:Select()
-    if IsValid(PS_SelectedPanel) then
-        PS_SelectedPanel:Deselect()
+    if IsValid(SS_SelectedPanel) then
+        SS_SelectedPanel:Deselect()
     end
 
-    PS_SelectedPanel = self
-    PS_HoverData = self.data
-    PS_HoverCfg = (self.item or {}).cfg
-    PS_HoverItemID = (self.item or {}).id
-    local p = vgui.Create("DLabel", PS_DescriptionPanel)
-    p:SetFont("PS_DESCTITLEFONT")
+    SS_SelectedPanel = self
+    SS_HoverData = self.data
+    SS_HoverCfg = (self.item or {}).cfg
+    SS_HoverItemID = (self.item or {}).id
+    local p = vgui.Create("DLabel", SS_DescriptionPanel)
+    p:SetFont("SS_DESCTITLEFONT")
     p:SetText(self.data.name)
-    p:SetColor(PS_SwitchableColor)
+    p:SetColor(SS_SwitchableColor)
     p:SetContentAlignment(5)
     p:SizeToContents()
     p:DockMargin(0, -4, 0, 0)
     p:Dock(TOP)
 
     if self.data.description then
-        p = vgui.Create("DLabel", PS_DescriptionPanel)
-        p:SetFont("PS_DESCFONT")
+        p = vgui.Create("DLabel", SS_DescriptionPanel)
+        p:SetFont("SS_DESCFONT")
         p:SetText(self.data.description)
-        p:SetColor(PS_SwitchableColor)
+        p:SetColor(SS_SwitchableColor)
 
         --HACK
         if string.len(self.data.description) > 45 then
@@ -114,11 +114,11 @@ function PANEL:Select()
 
     if self.product then
         local function addline(txt)
-            p = vgui.Create("DLabel", PS_DescriptionPanel)
-            p:SetFont("PS_DESCINSTFONT")
+            p = vgui.Create("DLabel", SS_DescriptionPanel)
+            p:SetFont("SS_DESCINSTFONT")
             p:SetText(txt)
             p:SetContentAlignment(5)
-            p:SetColor(PS_SwitchableColor)
+            p:SetColor(SS_SwitchableColor)
             --p:SetWrap(true)
             --bp:SetAutoStretchVertical(true)
             p:SizeToContents()
@@ -127,17 +127,17 @@ function PANEL:Select()
         end
 
         addline("Price: " .. (self.data.price == 0 and "Free" or (string.Comma(self.data.price) .. " points")))
-        local status = LocalPlayer():PS_CanBuyStatus(self.data)
+        local status = LocalPlayer():SS_CanBuyStatus(self.data)
 
-        if status == PS_BUYSTATUS_OK then
+        if status == SS_BUYSTATUS_OK then
             addline("Double-click to " .. (self.data.price == 0 and "get" or "buy"))
         else
-            addline(PS_BuyStatusMessage[status])
+            addline(SS_BuyStatusMessage[status])
         end
 
-        if status ~= PS_BUYSTATUS_OWNED then
-            if PS_Items[self.data.class] then
-                local count = LocalPlayer():PS_CountItem(self.data.class)
+        if status ~= SS_BUYSTATUS_OWNED then
+            if SS_Items[self.data.class] then
+                local count = LocalPlayer():SS_CountItem(self.data.class)
 
                 if count > 0 then
                     addline("You own " .. tostring(count) .. " of these")
@@ -148,51 +148,51 @@ function PANEL:Select()
         local typetext = nil
 
         if self.data.keepnotice then
-            p = vgui.Create("DLabel", PS_DescriptionPanel)
-            p:SetFont("PS_DESCFONT")
+            p = vgui.Create("DLabel", SS_DescriptionPanel)
+            p:SetFont("SS_DESCFONT")
             p:SetText(self.data.keepnotice)
             p:SetContentAlignment(5)
-            p:SetColor(PS_SwitchableColor)
+            p:SetColor(SS_SwitchableColor)
             p:SizeToContents()
             p:DockMargin(14, 2, 14, 8)
             p:Dock(BOTTOM)
         end
     else
         if self.data.configurable then
-            p = vgui.Create('DButton', PS_DescriptionPanel)
+            p = vgui.Create('DButton', SS_DescriptionPanel)
             p:SetText("Customize")
-            p:SetTextColor(PS_SwitchableColor)
+            p:SetTextColor(SS_SwitchableColor)
             p:DockMargin(16, 12, 16, 4)
             p:Dock(TOP)
 
             p.DoClick = function(butn)
-                if PS_CustomizerPanel:IsVisible() then
-                    PS_CustomizerPanel:Close()
+                if SS_CustomizerPanel:IsVisible() then
+                    SS_CustomizerPanel:Close()
                 else
-                    PS_CustomizerPanel:Open(self.item)
+                    SS_CustomizerPanel:Open(self.item)
                 end
             end
 
             p.Paint = function(panel, w, h)
                 if panel.Depressed then
-                    panel:SetTextColor(PS_ColorWhite)
+                    panel:SetTextColor(SS_ColorWhite)
                     draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
                 else
-                    panel:SetTextColor(PS_SwitchableColor)
-                    draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+                    panel:SetTextColor(SS_SwitchableColor)
+                    draw.RoundedBox(4, 0, 0, w, h, SS_TileBGColor)
                 end
             end
         end
 
-        p = vgui.Create('DButton', PS_DescriptionPanel)
-        p:SetText("Sell for " .. tostring(PS_CalculateSellPrice(LocalPlayer(), self.data)) .. " points")
-        p:SetTextColor(PS_SwitchableColor)
+        p = vgui.Create('DButton', SS_DescriptionPanel)
+        p:SetText("Sell for " .. tostring(SS_CalculateSellPrice(LocalPlayer(), self.data)) .. " points")
+        p:SetTextColor(SS_SwitchableColor)
         p:DockMargin(16, 12, 16, 12)
         p:Dock(TOP)
 
         p.DoClick = function(butn)
             if butn:GetText() == "CONFIRM?" then
-                PS_SellItem(self.item.id)
+                SS_SellItem(self.item.id)
             else
                 butn:SetText("CONFIRM?")
             end
@@ -200,11 +200,11 @@ function PANEL:Select()
 
         p.Paint = function(panel, w, h)
             if panel.Depressed then
-                panel:SetTextColor(PS_ColorWhite)
+                panel:SetTextColor(SS_ColorWhite)
                 draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
             else
-                panel:SetTextColor(PS_SwitchableColor)
-                draw.RoundedBox(4, 0, 0, w, h, PS_TileBGColor)
+                panel:SetTextColor(SS_SwitchableColor)
+                draw.RoundedBox(4, 0, 0, w, h, SS_TileBGColor)
             end
         end
     end
@@ -212,24 +212,24 @@ end
 
 function PANEL:Deselect()
     if not self:IsSelected() then return end
-    PS_SelectedPanel = nil
-    PS_HoverData = nil
-    PS_HoverCfg = nil
-    PS_HoverItemID = nil
+    SS_SelectedPanel = nil
+    SS_HoverData = nil
+    SS_HoverCfg = nil
+    SS_HoverItemID = nil
 
-    if IsValid(PS_HoverCSModel) then
-        PS_HoverCSModel:Remove()
+    if IsValid(SS_HoverCSModel) then
+        SS_HoverCSModel:Remove()
     end
 
-    if IsValid(PS_DescriptionPanel) then
-        for k, v in pairs(PS_DescriptionPanel:GetChildren()) do
+    if IsValid(SS_DescriptionPanel) then
+        for k, v in pairs(SS_DescriptionPanel:GetChildren()) do
             v:Remove()
         end
     end
 end
 
 function PANEL:IsSelected()
-    return PS_SelectedPanel == self
+    return SS_SelectedPanel == self
 end
 
 function PANEL:SetProduct(product)
@@ -257,7 +257,7 @@ function PANEL:Setup()
             ent:SetAngles(Angle(0, ent:GetAngles().y + (RealFrameTime() * 120), 0))
         end
 
-        PS_PreviewShopModel(self, self:GetParent().data)
+        SS_PreviewShopModel(self, self:GetParent().data)
     end
 
     function DModelPanel:OnMousePressed(b)
@@ -280,7 +280,7 @@ function PANEL:Setup()
         end
 
         if (not IsValid(dmp.Entity)) then return end
-        PS_PreRender(self.data, (self.item or {}).cfg)
+        SS_PreRender(self.data, (self.item or {}).cfg)
         local x, y = dmp:LocalToScreen(0, 0)
         dmp:LayoutEntity(dmp.Entity)
         local ang = dmp.aLookAngle
@@ -307,7 +307,7 @@ function PANEL:Setup()
         render.SuppressEngineLighting(false)
         cam.End3D()
         dmp.LastPaint = RealTime()
-        PS_PostRender()
+        SS_PostRender()
     end
 end
 
@@ -319,7 +319,7 @@ function PANEL:Think()
         local c = input.IsMouseDown(MOUSE_LEFT)
 
         if c and not self.lastc then
-            if not PS_MouseInsidePanel(self) and not PS_MouseInsidePanel(PS_PreviewPane) then
+            if not SS_MouseInsidePanel(self) and not SS_MouseInsidePanel(SS_PreviewPane) then
                 self:Deselect()
             end
         end
@@ -335,24 +335,24 @@ function PANEL:Think()
     self.textfont = nil
     self.icon = nil
     self.icontext = nil
-    self.BGColor = PS_TileBGColor
+    self.BGColor = SS_TileBGColor
 
     if self.product then
-        local buystatus = LocalPlayer():PS_CanBuyStatus(self.data)
+        local buystatus = LocalPlayer():SS_CanBuyStatus(self.data)
 
-        if buystatus == PS_BUYSTATUS_OK then
+        if buystatus == SS_BUYSTATUS_OK then
             self.barcolor = Color(0, 112, 0, 160)
         else
             self.fademodel = true
 
-            if buystatus == PS_BUYSTATUS_AFFORD then
+            if buystatus == SS_BUYSTATUS_AFFORD then
                 self.barcolor = Color(112, 0, 0, 160)
             else
                 self.barcolor = Color(72, 72, 72, 160)
             end
         end
 
-        local c = LocalPlayer():PS_CountItem(self.data.class)
+        local c = LocalPlayer():SS_CountItem(self.data.class)
 
         if c > 0 then
             self.icon = ownedcheckmark
@@ -364,7 +364,7 @@ function PANEL:Think()
 
         if self.hovered then
             self.barheight = 30
-            self.textfont = "PS_Price"
+            self.textfont = "SS_Price"
 
             if self.prebuyclick then
                 self.text = self.data.price == 0 and ">  GET  <" or ">  BUY  <"
@@ -373,11 +373,11 @@ function PANEL:Think()
             end
         else
             self.barheight = 20
-            self.textfont = "PS_ProductName"
+            self.textfont = "SS_ProductName"
             self.text = self.data.name
         end
 
-        self.textcolor = PS_ColorWhite
+        self.textcolor = SS_ColorWhite
     else
         if self.item.eq then
             self.icon = visiblemark
@@ -388,13 +388,13 @@ function PANEL:Think()
         end
 
         self.barheight = 20
-        self.textfont = "PS_ProductName"
+        self.textfont = "SS_ProductName"
         self.text = self.data.name
         local leqc = 0
         local totalc = 0
 
-        for k, v in ipairs(LocalPlayer().PS_Items or {}) do
-            local odata = PS_Items[v.class]
+        for k, v in ipairs(LocalPlayer().SS_Items or {}) do
+            local odata = SS_Items[v.class]
 
             if odata and self.data.name == odata.name then
                 totalc = totalc + 1
@@ -409,18 +409,18 @@ function PANEL:Think()
             self.text = self.text .. " (" .. tostring(leqc) .. ")"
         end
 
-        self.textcolor = PS_SwitchableColor
+        self.textcolor = SS_SwitchableColor
 
         if self:IsSelected() then
-            self.BGColor = PS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
+            self.BGColor = SS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
 
             if self.hovered then
                 self.barheight = 30
-                self.textfont = "PS_Price"
+                self.textfont = "SS_Price"
                 self.text = self.item.eq and "HOLSTER" or "EQUIP"
             end
         elseif self.hovered then
-            self.BGColor = PS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
+            self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
         end
     end
 end
@@ -443,7 +443,7 @@ function PANEL:PaintOver(w, h)
         surface.DrawTexturedRect(w - 20, 4, 16, 16)
 
         if self.icontext then
-            draw.SimpleText(self.icontext, "PS_ProductName", self:GetWide() - 22, 11, PS_SwitchableColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+            draw.SimpleText(self.icontext, "SS_ProductName", self:GetWide() - 22, 11, SS_SwitchableColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
         end
     end
 

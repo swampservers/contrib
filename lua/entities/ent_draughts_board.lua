@@ -553,7 +553,7 @@ function ENT:EndGame(winner, NoMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --White:PS_GivePoints( self.WagerValue )
+                    --White:SS_GivePoints( self.WagerValue )
                 else
                     if White.addMoney then
                         White:addMoney(self.WagerValue)
@@ -569,7 +569,7 @@ function ENT:EndGame(winner, NoMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --White:PS_TakePoints( self.WagerValue )
+                    --White:SS_TakePoints( self.WagerValue )
                 else
                     if White.addMoney then
                         White:addMoney(-self.WagerValue)
@@ -593,7 +593,7 @@ function ENT:EndGame(winner, NoMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --Black:PS_GivePoints( self.WagerValue )
+                    --Black:SS_GivePoints( self.WagerValue )
                 else
                     if Black.addMoney then
                         Black:addMoney(self.WagerValue)
@@ -609,7 +609,7 @@ function ENT:EndGame(winner, NoMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --Black:PS_TakePoints( self.WagerValue )
+                    --Black:SS_TakePoints( self.WagerValue )
                 else
                     if Black.addMoney then
                         Black:addMoney(-self.WagerValue)
