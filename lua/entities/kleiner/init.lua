@@ -509,6 +509,7 @@ function ENT:ResetBehavior()
         self.path = nil
     end
 
+    self.TouchedDoor = nil
     self.ManualTarget = nil
     self.NeedsTarget = true
     --self:FindTarget() 
@@ -808,6 +809,12 @@ function ENT:ChaseTarget(options)
     return "ok"
 end
 
+function ENT:OnContact(ent)
+    if (self.path and ent:GetClass() == "prop_door_rotating") then
+        self.TouchedDoor = true
+    end
+end
+
 --this function runs during the path movement. returning false will interrupt path movement, in case other actions are needed.
 function ENT:WhilePathing(path)
     if (path == nil or not path:IsValid()) then return true end
@@ -822,12 +829,18 @@ function ENT:WhilePathing(path)
         dir = (seg2.pos - seg1.pos):GetNormalized()
     end
 
+    -- If a kleiner touches a door while moving along a path, it's more than likely he needs to pass that door. The cheapest method is to teleport hi.
+    if (self.TouchedDoor and seg1) then
+        self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos) or (seg1 and seg1.pos))
+        self.TouchedDoor = nil
+        return
+    end
+
+
     -- a quick fix to the broken ladder handling. If they are about to climb a ladder, teleport them instead
     --everything goes wrong when we use ladders so let's try to teleport over them.
     if (seg2 and seg2.ladder:IsValid()) then
         self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
-        self.loco:ClearStuck()
-
         return
     end
 
@@ -836,8 +849,6 @@ function ENT:WhilePathing(path)
         --self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
         if (seg3 and seg3.area ~= seg1.area) then
             self.loco:JumpAcrossGap((seg3 and seg3.pos) or (seg2 and seg2.pos), dir)
-            self.loco:ClearStuck()
-
             return
         end
     end
@@ -845,6 +856,7 @@ function ENT:WhilePathing(path)
     -- if they're on a ladder, their physics have been permanently broken so we'll just delete him.
     if (self.loco:IsUsingLadder()) then
         self:Remove()
+        return
     end
 
     -- Jumping handling
