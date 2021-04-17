@@ -704,19 +704,23 @@ end
 function SS_ApplyMaterialMods(ent, mods)
     ent:SetSubMaterial()
 
-    for idx,mod in pairs(mods) do
+    for idx, mod in pairs(mods) do
         local mat = ImgurMaterial(mod, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {})
-        ent:SetSubMaterial(idx, "!"..mat:GetName())
+        ent:SetSubMaterial(idx, "!" .. mat:GetName())
     end
 end
 
-
 function Player:SS_GetActiveMaterialMods()
-    return {} --{[5]="https://i.imgur.com/Ue1qUPf.jpg"}
+    --{[5]="https://i.imgur.com/Ue1qUPf.jpg"}
+    return {}
 end
 
 function thinga()
     TTT1 = FindMetaTable("Entity")
     TTT2 = FindMetaTable("Player")
-    TTT2.SetMaterial = function(a,b) TTT1.SetMaterial(a,b) print(a,b) end
+
+    TTT2.SetMaterial = function(a, b)
+        TTT1.SetMaterial(a, b)
+        print(a, b)
+    end
 end

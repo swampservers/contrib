@@ -2,7 +2,6 @@
 local meta = FindMetaTable("Player")
 local entity = FindMetaTable("Entity")
 
-
 function meta:GetLocation()
     return self:GetDTInt(0) or 0
 end
@@ -29,6 +28,7 @@ end
 
 function meta:SetLocation(locationId)
     self.LastLocation = self:GetLocation()
+
     return self:SetDTInt(0, locationId)
 end
 
@@ -189,7 +189,6 @@ function meta:StaffControlTheater()
 
     return self:GetRank() >= minn
 end
-
 
 function isPonyModel(modelName)
     modelName = modelName:sub(1, 17)

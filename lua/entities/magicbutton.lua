@@ -24,7 +24,7 @@ if (SERVER) then
         if EntityCount("magicbutton") < MAGICBUTTON_ENT_DESIRED_NUMBER then
             local button = ents.Create("magicbutton")
 
-            if (IsValid(button)) then 
+            if (IsValid(button)) then
                 button:Spawn()
                 button:Activate()
             end
@@ -87,7 +87,7 @@ function ENT:FindSuitableCastOrigin()
                 -- local ext = area:GetExtentInfo()
                 -- local bnds = Vector(ext.SizeX, ext.SizeY, ext.SizeZ + 1)
                 -- debugoverlay.Box(area:GetCenter() + Vector(0, 0, 0.5), bnds * -0.5, bnds * 0.5, 60, Color(0, 0, 255, 0))
-            -- else
+                -- else
                 --debugoverlay.SweptBox( tr.start, trace.HitPos, tr.mins, tr.maxs, Angle(), 60, Color( 255, 0, 255,0 ) )
             end
         end
@@ -137,13 +137,7 @@ function ENT:FindCastBox(casttrace)
             end
         end
 
-        if (table.Count(navareas) > 0) then
-            -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 255, 0, 0))
-
-            return trace2
-        -- else
-            -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
-        end
+        if (table.Count(navareas) > 0) then return trace2 end -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 255, 0, 0)) -- else -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
     else
         -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
     end
@@ -165,14 +159,7 @@ function ENT:FindCastFinal(trace, index)
     tr3.endpos = tr3.start + dir * hull * 4
     tr3.mask = MASK_PLAYERSOLID
     local trace3 = util.TraceLine(tr3)
-
-    if (self:IsTraceValid(trace3, true)) then
-        -- debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 255, 0))
-
-        return trace3
-    -- else
-    --     debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 128, 0))
-    end
+    if (self:IsTraceValid(trace3, true)) then return trace3 end -- debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 255, 0)) -- else --     debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 128, 0))
 end
 
 function ENT:FindHidingSpot()
@@ -301,8 +288,9 @@ end
 
 -- this is where we generate a random amount of points to give the player
 function ButtonMoneyPrize()
-    local min,max = 1000,300000
-    return math.Round(math.pow(math.Rand(0,1), 4) * (max-min) + min,-3)
+    local min, max = 1000, 300000
+
+    return math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3)
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
@@ -311,6 +299,7 @@ local function MagicOutcomeBountyAndPrize(ply)
     ply:SS_GivePoints(amount)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
+
     return amount
 end
 
@@ -321,7 +310,7 @@ local function MagicOutcomeKleinerFanclub(ply)
         KLEINER_OVERRIDE_TARGET = nil
     end)
 
-    return "" 
+    return ""
 end
 
 local MagicButtonOutcomes = {
@@ -329,61 +318,50 @@ local MagicButtonOutcomes = {
         func = MagicOutcomeBountyAndPrize,
         message = "and won %s points and also a %s point bounty on themself!",
     },
-    -- {
-    --     func = MagicOutcomeKleinerFanclub,
-    --     message = "and won the attention of every kleiner on the map!",
-    -- },
-    -- {
-    --     func = function(ply) KLEINER_BULLIES[ply:SteamID()] = 5000 return "" end,
-    --     message = "and said an anti-kleiner slur! watch out!",
-    -- },
+    -- { --     func = MagicOutcomeKleinerFanclub, --     message = "and won the attention of every kleiner on the map!", -- }, -- { --     func = function(ply) KLEINER_BULLIES[ply:SteamID()] = 5000 return "" end, --     message = "and said an anti-kleiner slur! watch out!", -- },
     {
-        func = function(ply, button) ply:SetPos(button:FindSuitableCastOrigin().StartPos) return "" end,
+        func = function(ply, button)
+            ply:SetPos(button:FindSuitableCastOrigin().StartPos)
+
+            return ""
+        end,
         message = "and teleported somewhere mysterious!",
     },
     {
         func = function(ply, button) return "" end,
         message = "but nothing happened!",
     }
-    
 }
 
-for i=1,3 do
-    table.insert(MagicButtonOutcomes,
-{
-    func = function(ply, button) return OpenAPresent(ply, button:GetPos()) end,
-    message = "and got %s!",
-} )
+for i = 1, 3 do
+    table.insert(MagicButtonOutcomes, {
+        func = function(ply, button) return OpenAPresent(ply, button:GetPos()) end,
+        message = "and got %s!",
+    })
 end
-
-
 
 --NOTE: On these functions, please return a string if there was a success, and nil if there was not.
 function ENT:Effect(ply)
     local effect
     local item
     local outcometable = {}
-    for k,v in pairs(MagicButtonOutcomes)do
-        table.insert(outcometable,math.random(1,#outcometable+1),k)
+
+    for k, v in pairs(MagicButtonOutcomes) do
+        table.insert(outcometable, math.random(1, #outcometable + 1), k)
     end
 
-    for _,index in pairs(outcometable)do
+    for _, index in pairs(outcometable) do
         effect = MagicButtonOutcomes[index]
-
-
-            print(effect.message)
-            item = effect.func(ply, self)
-            if(item != nil)then
-                break 
-            end
-  
+        print(effect.message)
+        item = effect.func(ply, self)
+        if (item ~= nil) then break end
     end
 
     if (type(item) == "number") then
         item = string.Comma(item)
     end
 
-    return string.format(effect.message, item, item) 
+    return string.format(effect.message, item, item)
 end
 
 function ENT:Use(activator)
@@ -401,27 +379,23 @@ function ENT:Use(activator)
                 end)
             end
         end)
-         
-        local message = self:Effect(activator)
-        assert(message ~= nil )
 
+        local message = self:Effect(activator)
+        assert(message ~= nil)
         message = activator:Nick() .. " pressed a hidden button " .. message
 
         if (BotSayGlobal) then
-            BotSayGlobal("[fbc]" ..message )
+            BotSayGlobal("[fbc]" .. message)
         else
             PrintMessage(HUD_PRINTTALK, message)
-        end 
+        end
 
         local c2 = self:GetColor()
         c2.r = c2.r / 5
         c2.g = c2.g / 5
         c2.b = c2.b / 5
         self:SetColor(c2)
-        
         self:ManipulateBonePosition(1, Vector(0, 0, -0.5))
         activator:EmitSound("buttons/button9.wav")
-
-
-    end 
+    end
 end

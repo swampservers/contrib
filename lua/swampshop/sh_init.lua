@@ -3,7 +3,6 @@
 AddCSLuaFile()
 include("net_hd.lua")
 include("config.lua")
-
 SS_Layout = SS_Layout or {}
 SS_Products = SS_Products or {}
 SS_Items = SS_Items or {}
