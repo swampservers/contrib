@@ -142,9 +142,11 @@ end
 function SWEP:GetPlayerCurrentTauntActivity()
     local ply = self:GetOwner()
     if (not IsValid(ply)) then return nil end
-    local act = ply:GetSequenceInfo(ply:GetLayerSequence(0)).activityname
+    local seqinfo = ply:GetSequenceInfo(ply:GetLayerSequence(0))
+    local act = seqinfo.activityname
+    local actID = seqinfo.activity
 
-    return _G[act], act
+    return actID, act
 end
 
 function SWEP:PrimaryAttack(networked)
