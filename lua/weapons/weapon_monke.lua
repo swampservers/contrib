@@ -53,7 +53,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "RandomSeed")
 end
 
-function SWEP:Reload()
+function SWEP:Reload(networked)
     if (not self:CanPrimaryAttack() or not self:CanSecondaryAttack()) then return end
     if (self.BananaEatNext and self.BananaEatNext > CurTime()) then return end
     self:NetworkTaunt(3)
@@ -68,10 +68,14 @@ function SWEP:Reload()
     ply.ChewDur = 0.2
     self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ply.IsPony and ply:IsPony() and ACT_LAND or self.EatTaunt, true)
 
-    ply:ExtEmitSound("beans/eating.wav", {
-        level = 60,
-        shared = true
-    })
+    if (ply.ExtEmitSound) then
+        ply:ExtEmitSound("beans/eating.wav", {
+            level = 60,
+            shared = true
+        })
+    else
+        ply:EmitSound("beans/eating.wav", 60)
+    end
 
     self.BananaNextRender = CurTime() + 3
     self.BananaEatNext = CurTime() + 3
@@ -107,16 +111,16 @@ if (CLIENT) then
         if (not IsValid(wep:GetOwner())) then return end
         local state = net.ReadInt(8)
 
-        if (state == 1) then
-            wep:PrimaryAttack()
+        if (state == 1 and wep.PrimaryAttack) then
+            wep:PrimaryAttack(true)
         end
 
-        if (state == 2) then
-            wep:SecondaryAttack()
+        if (state == 2 and wep.PrimaryAttack) then
+            wep:SecondaryAttack(true)
         end
 
-        if (state == 3) then
-            wep:Reload()
+        if (state == 3 and wep.PrimaryAttack) then
+            wep:Reload(true)
         end
     end)
 end
@@ -127,7 +131,7 @@ end
 
 function SWEP:NetworkTaunt(tt)
     if (SERVER) then
-        if (not IsValid(self:GetOwner())) then return end
+        if (not IsValid(self:GetOwner()) or not IsValid(self)) then return end
         net.Start("MonkyTaunt")
         net.WriteEntity(self)
         net.WriteInt(tt, 8)
@@ -135,7 +139,15 @@ function SWEP:NetworkTaunt(tt)
     end
 end
 
-function SWEP:PrimaryAttack()
+function SWEP:GetPlayerCurrentTauntActivity()
+    local ply = self:GetOwner()
+    if (not IsValid(ply)) then return nil end
+    local act = ply:GetSequenceInfo(ply:GetLayerSequence(0)).activityname
+
+    return _G[act], act
+end
+
+function SWEP:PrimaryAttack(networked)
     self:NetworkTaunt(1)
     local ply = self:GetOwner()
     local soundindex = math.Round(util.SharedRandom("MonkeyPrimary" .. ply:UserID(), 1, #self.SoundsPrimary, self:GetRandomSeed()), 0)
@@ -147,12 +159,14 @@ function SWEP:PrimaryAttack()
     end
 
     if (ply.ExtEmitSound) then
-        ply:ExtEmitSound(sound, {
-            speech = 0.1,
-            shared = true,
-            pitch = 100,
-            crouchpitch = 100
-        })
+        if (IsFirstTimePredicted() or networked) then
+            ply:ExtEmitSound(sound, {
+                speech = 0.1,
+                shared = true,
+                pitch = 100,
+                crouchpitch = 100
+            })
+        end
     else
         ply:EmitSound(sound)
     end
@@ -161,7 +175,12 @@ function SWEP:PrimaryAttack()
 
     if (self.MonkeyingAround ~= 1) then
         self.MonkeyingAround = 1
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self:GetMonkeyTaunt(), false)
+    end
+
+    local DesiredTaunt = self:GetMonkeyTaunt()
+
+    if (self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt) then
+        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt, false)
     end
 
     timer.Create(ply:EntIndex() .. "stopmonkeyingaround", delay + 0.1, 1, function()
@@ -180,7 +199,7 @@ function SWEP:PrimaryAttack()
     self:SetNextSecondaryFire(CurTime() + delay)
 end
 
-function SWEP:SecondaryAttack()
+function SWEP:SecondaryAttack(networked)
     self:NetworkTaunt(2)
     local ply = self:GetOwner()
     local soundindex = math.Round(util.SharedRandom("MonkeySecondary" .. ply:UserID(), 1, #self.SoundsSecondary, self:GetRandomSeed()), 0)
@@ -192,19 +211,22 @@ function SWEP:SecondaryAttack()
     end
 
     if (ply.ExtEmitSound) then
-        ply:ExtEmitSound(sound, {
-            speech = 0.1,
-            shared = true,
-            pitch = 100,
-            crouchpitch = 100
-        })
+        if (IsFirstTimePredicted() or networked) then
+            ply:ExtEmitSound(sound, {
+                speech = 0.1,
+                shared = true,
+                pitch = 100,
+                crouchpitch = 100
+            })
+        end
     else
         ply:EmitSound(sound)
     end
 
-    if (self.MonkeyingAround ~= 2) then
-        self.MonkeyingAround = 2
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, self:GetMonkeyTaunt2(), false)
+    local DesiredTaunt = self:GetMonkeyTaunt2()
+
+    if (self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt) then
+        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt, false)
     end
 
     self.BeatingChest = true
@@ -229,7 +251,7 @@ function SWEP:SecondaryAttack()
         end)
     end
 
-    if (IsFirstTimePredicted()) then
+    if (IsFirstTimePredicted() or networked) then
         self:DropBanana(delay)
     end
 
@@ -357,51 +379,60 @@ end
 
 function SWEP:DrawWorldModel(flags, check)
     local ply = self:GetOwner()
+    local mrt = self:GetBoneMatrix(0)
 
     if IsValid(ply) then
         local bname = ply.IsPony ~= nil and ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bone = ply:LookupBone(bname) or 0
         local opos = self:GetPos()
         local oang = self:GetAngles()
-        local bp, ba = self.Owner:GetBonePosition(bone)
 
-        if (bp) then
-            opos = bp
-        end
+        if (bone ~= 0) then
+            local bp, ba = self.Owner:GetBonePosition(bone)
 
-        if (ba) then
-            oang = ba
-        end
+            if (bp) then
+                opos = bp
+            end
 
-        if bname == "LrigScull" then
-            opos = opos + oang:Right() * -2
-            opos = opos + oang:Forward() * 9
-            opos = opos + oang:Up() * 1
-            oang:RotateAroundAxis(oang:Forward(), 90)
-            oang:RotateAroundAxis(oang:Right(), -135)
+            if (ba) then
+                oang = ba
+            end
+
+            if bname == "LrigScull" then
+                opos = opos + oang:Right() * -2
+                opos = opos + oang:Forward() * 9
+                opos = opos + oang:Up() * 1
+                oang:RotateAroundAxis(oang:Forward(), 90)
+                oang:RotateAroundAxis(oang:Right(), -135)
+            else
+                opos = opos + oang:Right() * 2
+                opos = opos + oang:Forward() * 3
+                opos = opos + oang:Up() * -1
+                oang:RotateAroundAxis(oang:Forward(), 90)
+                oang:RotateAroundAxis(oang:Right(), -90)
+                oang:RotateAroundAxis(oang:Up(), 0)
+            end
+
+            self:SetupBones()
+            local banscale = self.BananaNextRender and 1 - math.Clamp((self.BananaNextRender - CurTime()) * 4, 0, 1) or 1
+
+            if mrt then
+                mrt:SetTranslation(opos)
+                mrt:SetAngles(oang)
+                mrt:SetScale(Vector(.8, .8, .8) * banscale)
+                self:SetBoneMatrix(0, mrt)
+            end
+
+            if (not check) then
+                if (self.BananaNextRender == nil or (self.BananaNextRender ~= nil and banscale > 0)) then
+                    self:DrawModel()
+                end
+            end
         else
-            opos = opos + oang:Right() * 2
-            opos = opos + oang:Forward() * 3
-            opos = opos + oang:Up() * -1
-            oang:RotateAroundAxis(oang:Forward(), 90)
-            oang:RotateAroundAxis(oang:Right(), -90)
-            oang:RotateAroundAxis(oang:Up(), 0)
-        end
-
-        self:SetupBones()
-        local banscale = self.BananaNextRender and 1 - math.Clamp((self.BananaNextRender - CurTime()) * 4, 0, 1) or 1
-        local mrt = self:GetBoneMatrix(0)
-
-        if mrt then
-            mrt:SetTranslation(opos)
-            mrt:SetAngles(oang)
-            mrt:SetScale(Vector(.8, .8, .8) * banscale)
-            self:SetBoneMatrix(0, mrt)
-        end
-
-        if (not check) then
-            if (self.BananaNextRender == nil or (self.BananaNextRender ~= nil and banscale > 0)) then
+            if (not check) then
                 self:DrawModel()
+
+                return
             end
         end
 
@@ -410,9 +441,11 @@ function SWEP:DrawWorldModel(flags, check)
         return
     end
 
-    self:DrawModel()
+    if (not check) then
+        self:DrawModel()
+    end
 
-    return
+    return mrt
 end
 
 function SWEP:GetViewModelPosition(pos, ang)

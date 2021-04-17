@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/pyroteknik/kleinerbait_inside"
+	//"$bumpmap" "Models/Weapons/V_bugbait/bugbait_inside_normal"
+	"$bumpmap" "effects/flat_normal"
+	"$envmap" "env_Cubemap"
+	"$envmaptint" "[.2 .2 .2]"
+	"$phong" "1"
+	"$phongboost" "0.2"
+	"$phongexponent" 4
+	"$phongfresnelranges"	"[1 0.5 0.1]"
+
+}
+
