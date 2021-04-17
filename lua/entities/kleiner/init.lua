@@ -204,7 +204,7 @@ function ENT:OnKilled(dmginfo)
         end
 
         self.IsAlive = false
-        
+
     local rag = self:BecomeRagdoll(dmginfo)
 end
 
@@ -335,14 +335,11 @@ end
 function ENT:CanBeTarget(ent)
     if (not IsValid(ent)) then return false end
     if (ent == self) then return false end
-    if (ent.InVehicle and ent:InVehicle()) then return false end
-    if (ent.Alive and not ent:Alive()) then return false end
     if (ent:GetMoveType() == MOVETYPE_FLY) then return false end
     if (ent.IsAFK and ent:IsAFK()) then return false end
     if (Safe and Safe(ent) and ent:IsPlayer()) then return false end
     if (self.TargetBlacklist and self.TargetBlacklist[ent] and self.TargetBlacklist[ent] > CurTime()) then return false end
     if (not self:PosInRange(ent:GetPos())) then return false end
-
     return true
 end
 
