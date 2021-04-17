@@ -156,7 +156,7 @@ net.Receive('SS_Items', function(length)
 
     SetLoadingPlayerProperty(pi, "SS_Items", items, function(ply)
         ply:SS_ClearCSModels()
-        ply.SS_BoneModsClean = false
+        ply.SS_PlayermodelModsClean = false
 
         if LocalPlayer() == ply then
             SS_ValidInventory = false
@@ -170,7 +170,7 @@ net.Receive('SS_EQItems', function(length)
 
     SetLoadingPlayerProperty(pi, "SS_EQItems", items, function(ply)
         ply:SS_ClearCSModels()
-        ply.SS_BoneModsClean = false
+        ply.SS_PlayermodelModsClean = false
     end)
 end)
 
@@ -265,16 +265,18 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     -- will be "false" if the model is not mounted yet
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
 
-    if ply.SS_BoneModsLastModel ~= mounted_model then
-        ply.SS_BoneModsClean = false
+    if ply.SS_PlayermodelModsLastModel ~= mounted_model then
+        ply.SS_PlayermodelModsClean = false
         --seems to have issues if you apply the bone mods as soon as the model changes...
-        --timer.Simple(1, function() if IsValid(ply) then ply.SS_BoneModsClean = false end end)
+        --timer.Simple(1, function() if IsValid(ply) then ply.SS_PlayermodelModsClean = false end end)
     end
 
-    if not ply.SS_BoneModsClean then
-        ply.SS_BoneModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActiveBonemods())
-        ply.SS_BoneModsLastModel = mounted_model
+    if not ply.SS_PlayermodelModsClean then
+        ply.SS_PlayermodelModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActiveBonemods())
+        ply.SS_PlayermodelModsLastModel = mounted_model
     end
+
+    SS_ApplyMaterialMods(ply, ply:SS_GetActiveMaterialMods())
 end)
 
 local function AddScaleRecursive(ent, b, scn, recurse, safety)
@@ -697,4 +699,24 @@ function SendPointsCmd(cmd)
     if fail then
         chat.AddText("[orange]Usage: !givepoints player amount")
     end
+end
+
+function SS_ApplyMaterialMods(ent, mods)
+    ent:SetSubMaterial()
+
+    for idx,mod in pairs(mods) do
+        local mat = ImgurMaterial(mod, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {})
+        ent:SetSubMaterial(idx, "!"..mat:GetName())
+    end
+end
+
+
+function Player:SS_GetActiveMaterialMods()
+    return {} --{[5]="https://i.imgur.com/Ue1qUPf.jpg"}
+end
+
+function thinga()
+    TTT1 = FindMetaTable("Entity")
+    TTT2 = FindMetaTable("Player")
+    TTT2.SetMaterial = function(a,b) TTT1.SetMaterial(a,b) print(a,b) end
 end
