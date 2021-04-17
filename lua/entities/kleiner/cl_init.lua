@@ -46,28 +46,21 @@ function ENT:GetStareTarget()
 end
 
 function ENT:Draw()
-    if (self:GetTalking() > CurTime()) then
-        local bone = self:GetBonePosition(self:LookupBone("ValveBiped.Bip01_Head1") or 0)
-        render.SetMaterial(spkr)
-        render.DrawSprite(bone + Vector(0, 0, 16), 16, 16, color_white)
-    end
-
     local lod = self:GetPos():Distance(EyePos())
-
-    if (lod < 400) then
+    if (lod < 200) then
         local eyepos = self:GetPos() + Vector(0, 0, 72)
         local eyeang = self:GetAngles()
         local targetpos = self:GetStareTarget() or Vector()
         local angle = (targetpos - eyepos):Angle()
         local pos, ang = WorldToLocal(targetpos, angle, eyepos, eyeang)
+        --self:SetupBones()
         self:SetPoseParameter("head_yaw", ang.yaw / 2)
         self:SetPoseParameter("head_pitch", ang.pitch / 4)
-
-        if (lod < 200) then
+        self:InvalidateBoneCache()
+        if (lod < 100) then
             self:SetEyeTarget(targetpos)
         end
     end
-
     self:DrawModel()
 end
 
@@ -77,11 +70,7 @@ function ENT:GetPlayerColor()
     return KLEINER_NPC_ENT_COLOR_STANDARD
 end
 
-function ENT:OnRemove()
-    if (self.LastSound) then
-        self:StopSound(self.LastSound)
-    end
-end
+
 --maybe for later? hud that counts your bounty level against kleiners
 --[[
 

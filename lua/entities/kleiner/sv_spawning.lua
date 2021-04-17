@@ -5,42 +5,19 @@ KLEINER_NPCS = KLEINER_NPCS or {}
 KLEINER_NPCS_FILTER = KLEINER_NPCS_FILTER or {}
 KLEINER_NPC_TARGETS = KLEINER_NPC_TARGETS or {}
 KLEINER_NPCS_CURRENT_NUMBER = KLEINER_NPCS_CURRENT_NUMBER or 0
-KLEINER_DESIRED_NUMBER = KLEINER_DESIRED_NUMBER or GetConVar("kleiner_spawncount"):GetInt() or 0
 
-function KLEINER_NPC_SETUPTIMER(value)
-    KLEINER_DESIRED_NUMBER = value
-    timer.Destroy("kleiner_spawner")
+timer.Create("kleiner_spawner", 1, 0, function()
+    print(table.Count(KLEINER_NPCS) , GetConVar("kleiner_spawncount"):GetInt() or 0)
+    if (table.Count(KLEINER_NPCS) < (GetConVar("kleiner_spawncount"):GetInt() or 0)) then
+        local newkleiner = ents.Create("kleiner")
 
-    if (KLEINER_DESIRED_NUMBER > 0) then
-        timer.Create("kleiner_spawner", 1, 0, function()
-            if (table.Count(KLEINER_NPCS) < KLEINER_DESIRED_NUMBER) then
-                local newkleiner = ents.Create("kleiner")
-
-                if (IsValid(newkleiner)) then
-                    local spawnpoint = gmod.GetGamemode().SpawnPoints and table.Random(gmod.GetGamemode().SpawnPoints):GetPos() or Vector(0, 0, 16)
-                    newkleiner:SetPos(spawnpoint)
-                    newkleiner:Spawn()
-                    newkleiner:Activate()
-                end
-            end
-        end)
-    end
-
-    local clearcount = KLEINER_NPCS_CURRENT_NUMBER - value
-
-    if (clearcount > 0) then
-        for i = 1, clearcount do
-            table.Random(ents.FindByClass("kleiner")):Remove()
+        if (IsValid(newkleiner)) then
+            local spawnpoint = gmod.GetGamemode().SpawnPoints and table.Random(gmod.GetGamemode().SpawnPoints):GetPos() or Vector(0, 0, 16)
+            newkleiner:SetPos(spawnpoint)
+            newkleiner:Spawn()
+            newkleiner:Activate()
         end
     end
-end
-
-hook.Add("Initialize", "KleinerNPC_TimerInit", function()
-    cvars.AddChangeCallback("kleiner_spawncount", function(convar_name, value_old, value_new)
-        KLEINER_NPC_SETUPTIMER(tonumber(value_new))
-    end, "kleiner_adjust_spawnlimit")
-
-    KLEINER_NPC_SETUPTIMER(KLEINER_DESIRED_NUMBER)
 end)
 
 hook.Add("EntityRemoved", "kleiner_npc_kleanup", function(ent)

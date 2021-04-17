@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
 	"$basetexture" "models/pyroteknik/jokleiner_face"
-	"$bumpmap" "models/pyroteknik/jokleiner_face_normal"
+	"$bumpmap" "models/kleiner/walter_face_normal"
 
 	"$phong" "1"
 	"$phongexponent" "10"

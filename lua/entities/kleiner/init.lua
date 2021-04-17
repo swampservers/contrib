@@ -72,8 +72,8 @@ function ENT:SpawnBait(vel)
     phys:SetVelocity(vel or (Vector(0, 0, 233) + VectorRand() * Vector(55, 55, 0)))
 
     timer.Simple(60, function()
-        if (IsValid(self) and not IsValid(self:GetOwner())) then
-            self:Remove()
+        if (IsValid(bait) and not IsValid(bait:GetOwner())) then
+            bait:Remove()
         end
     end)
 end
@@ -85,12 +85,18 @@ function ENT:Speak(snd)
         self:StopSound(self.LastSound)
     end
 
-    self:EmitSound(snd, 50, nil, nil, nil, nil, 56)
+    self:EmitSound(snd, 50, nil, nil, nil, nil, nil)
     self.LastSound = snd
     local dur = SoundDuration(snd)
     self:SetTalking(CurTime() + dur - 0.2)
 
     return dur
+end
+
+function ENT:OnRemove()
+    if (self.LastSound) then
+        self:StopSound(self.LastSound)
+    end
 end
 
 function ENT:IsTalking()
@@ -175,7 +181,11 @@ function ENT:OnInjured(damageinfo)
     if (damageinfo:GetDamage() > self:Health() / 20) then
         local snd = table.Random(PainSounds)
         self:Speak(snd)
-        self:AddGestureSequence(self:LookupSequence("fear_reaction_gesture"))
+        self.NextCowerGesture = self.NextCowerGesture or CurTime()-1
+        if(self.NextCowerGesture <= CurTime())then
+            self:AddGestureSequence(self:LookupSequence("fear_reaction_gesture"))
+            self.NextCowerGesture = CurTime() + 0.5
+        end
     end
 
     if (self:Health() < 0 and self.IsAlive ~= true) then
@@ -575,15 +585,13 @@ function ENT:RunBehaviour()
                 if (self.WanderForcePos) then
                     wanderpos = self.WanderForcePos + VectorRand() * Vector(1, 1, 0):GetNormalized() * math.Rand(80, 150)
                 end
-
                 wanderpos = wanderpos or self:FindSpot("random", {
                     type = "hiding",
                     pos = self:GetPos(),
-                    radius = 4000,
+                    radius = 1000,
                     stepup = 900,
                     stepdown = 900
                 })
-
                 if (wanderpos ~= nil) then
                     self.WanderForcePos = nil
 
@@ -716,23 +724,8 @@ function ENT:HandleStuck()
 end
 
 function ENT:Teleport(newpos)
-    local caneffect = self.NextTeleport == nil or self.NextTeleport < CurTime()
-
-    if (caneffect) then
-        -- deleting beam effect for now due to weird visual behavior.
-        local effectdata = EffectData()
-        effectdata:SetMagnitude(5)
-        effectdata:SetNormal(Vector(0, 0, 1))
-        effectdata:SetOrigin(self:GetPos() + Vector(0, 0, 40))
-        util.Effect("cball_explode", effectdata) --make a cool energy ball explosion
         self:SetPos(newpos)
-        effectdata:SetOrigin(self:GetPos() + Vector(0, 0, 40))
-        util.Effect("cball_explode", effectdata) -- make another one at the new spot	
-        self:EmitSound("Weapon_PhysCannon.Launch")
-        self.NextTeleport = CurTime() + 1
-    else
-        self:SetPos(newpos)
-    end
+        self:EmitSound("garrysmod/balloon_pop_cute.wav")
 end
 
 local KLPATHGEN_ITERS

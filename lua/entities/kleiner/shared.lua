@@ -4,6 +4,7 @@ KLEINER_NPC_ENT_COLOR_STANDARD = Vector(0.23, 0.35, 0.41)
 KLEINER_NPC_ENT_COLOR_BASED = Vector(0.8, 0, 0.05)
 ENT.Base = "base_nextbot"
 ENT.Spawnable = true
+ENT.RenderGroup = RENDERGROUP_OPAQUE
 
 function ENT:SetupDataTables()
     self:NetworkVar("Bool", 0, "Based")
