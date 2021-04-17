@@ -334,6 +334,13 @@ local function MagicOutcomeBountyAndPrize(ply)
     return amount
 end
 
+local function MagicOutcomePrize(ply)
+    local amount = MoneyPrize()
+    if (ply.PS_GivePoints == nil) then return nil end
+    ply:PS_GivePoints(amount)
+    return amount
+end
+
 local function MagicOutcomeKleinerFanclub(ply)
     KLEINER_OVERRIDE_TARGET = ply
 
@@ -395,20 +402,25 @@ local MagicButtonOutcomes = {
     },
 }
 
+
 --NOTE: On these functions, please return a string if there was a success, and nil if there was not.
 function ENT:Effect(ply)
     local effect
     local item
-    local counter = 0
+    local outcometable = {}
+    for k,v in pairs(MagicButtonOutcomes)do
+        table.insert(outcometable,math.random(1,#MagicButtonOutcomes),k)
+    end
 
-    while (item == nil and counter < 100) do
-        effect = table.Copy(table.Random(MagicButtonOutcomes))
+    for _,index in pairs(outcometable)do
+        effect = MagicButtonOutcomes[index]
 
         if (effect.func and type(effect.func) == "function") then
             item = effect.func(ply, self)
+            if(item != nil)then
+                break 
+            end
         end
-
-        counter = counter + 1
     end
 
     if (type(item) == "number") then
