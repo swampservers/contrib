@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-if (SERVER) then return end
 include("shared.lua")
 language.Add("kleiner", "Dr. Isaac Kleiner")
 

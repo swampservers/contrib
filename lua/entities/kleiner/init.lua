@@ -306,21 +306,7 @@ function ENT:SpawnGrenade()
 end
 
 function ENT:DropGrenades()
-    if (IsValid(self.Grenade1)) then
-        local gren = self.Grenade1
-        gren:SetParent()
-        gren:PhysicsInit(MOVETYPE_VPHYSICS)
-        gren:GetPhysicsObject():Wake()
-
-        timer.Simple(60 * 15, function()
-            if (IsValid(gren)) then
-                gren:Remove()
-            end
-        end)
-    end
-
-    if (IsValid(self.Grenade2)) then
-        local gren = self.Grenade2
+    for _, gren in ipairs({self.Grenade1, self.Grenade2}) do
         gren:SetParent()
         gren:PhysicsInit(MOVETYPE_VPHYSICS)
         gren:GetPhysicsObject():Wake()
@@ -424,7 +410,7 @@ function ENT:SetTargetViolence(ent, amount)
 			net.Start("kleinernpc_warning")
 			net.WriteInt(amount,16)
 			net.Send(ent)
-			]]
+            ]]
     end
 end
 
@@ -833,14 +819,15 @@ function ENT:WhilePathing(path)
     if (self.TouchedDoor and seg1) then
         self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos) or (seg1 and seg1.pos))
         self.TouchedDoor = nil
+
         return
     end
-
 
     -- a quick fix to the broken ladder handling. If they are about to climb a ladder, teleport them instead
     --everything goes wrong when we use ladders so let's try to teleport over them.
     if (seg2 and seg2.ladder:IsValid()) then
         self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
+
         return
     end
 
@@ -849,6 +836,7 @@ function ENT:WhilePathing(path)
         --self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
         if (seg3 and seg3.area ~= seg1.area) then
             self.loco:JumpAcrossGap((seg3 and seg3.pos) or (seg2 and seg2.pos), dir)
+
             return
         end
     end
@@ -856,6 +844,7 @@ function ENT:WhilePathing(path)
     -- if they're on a ladder, their physics have been permanently broken so we'll just delete him.
     if (self.loco:IsUsingLadder()) then
         self:Remove()
+
         return
     end
 
