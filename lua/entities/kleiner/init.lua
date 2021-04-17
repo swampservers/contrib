@@ -192,8 +192,6 @@ function ENT:OnKilled(dmginfo)
     end
 
     hook.Run("OnNPCKilled", self, dmginfo:GetAttacker(), dmginfo:GetInflictor())
-
-    if (SERVER) then
         local attacker = dmginfo:GetAttacker()
 
         if (IsValid(attacker) and attacker:IsPlayer()) then
@@ -206,8 +204,7 @@ function ENT:OnKilled(dmginfo)
         end
 
         self.IsAlive = false
-    end
-
+        
     local rag = self:BecomeRagdoll(dmginfo)
 end
 
