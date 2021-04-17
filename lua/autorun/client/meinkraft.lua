@@ -137,7 +137,7 @@ CVX_SORTABLE_DLIGHTS = {}
 
 DynamicLight = function(idx, elight)
     CVX_TRACKED_DLIGHTS[idx] = setmetatable({
-        _data = {dietime = 0},
+        _data = {dietime = (CurTime() + 1)},
         _light = BASE_DYNAMIC_LIGHT(idx, elight)
     }, CVX_DLIGHT_PROXY_META)
 
