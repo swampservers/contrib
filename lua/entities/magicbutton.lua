@@ -342,6 +342,7 @@ local function MagicOutcomePrize(ply)
 end
 
 local function MagicOutcomeKleinerFanclub(ply)
+    if(KLEINER_NPCS == nil)then return nil end
     KLEINER_OVERRIDE_TARGET = ply
 
     timer.Create("KLEINER_GOD_EXPIRE", 60 * 15, 1, function()
@@ -352,6 +353,7 @@ local function MagicOutcomeKleinerFanclub(ply)
 end
 
 local function MagicOutcomeKleinerHatred(ply)
+    if(KLEINER_NPCS == nil)then return nil end
     KLEINER_BULLIES[ply:SteamID()] = 5000
 
     return ""
@@ -378,6 +380,11 @@ local MagicButtonOutcomes = {
     {
         func = MagicOutcomeBountyAndPrize,
         message = "and won %s points and also a %s point bounty on themself!",
+        weight = 1
+    },
+    {
+        func = MagicOutcomePrize,
+        message = "and won %s points!",
         weight = 1
     },
     {
@@ -415,7 +422,7 @@ function ENT:Effect(ply)
     for _,index in pairs(outcometable)do
         effect = MagicButtonOutcomes[index]
 
-        if (effect.func and type(effect.func) == "function") then
+        if (effect.func) then
             item = effect.func(ply, self)
             if(item != nil)then
                 break 
