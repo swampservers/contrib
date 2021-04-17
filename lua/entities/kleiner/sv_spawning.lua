@@ -7,7 +7,6 @@ KLEINER_NPC_TARGETS = KLEINER_NPC_TARGETS or {}
 KLEINER_NPCS_CURRENT_NUMBER = KLEINER_NPCS_CURRENT_NUMBER or 0
 
 timer.Create("kleiner_spawner", 1, 0, function()
-    print(table.Count(KLEINER_NPCS) , GetConVar("kleiner_spawncount"):GetInt() or 0)
     if (table.Count(KLEINER_NPCS) < (GetConVar("kleiner_spawncount"):GetInt() or 0)) then
         local newkleiner = ents.Create("kleiner")
 
