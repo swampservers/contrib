@@ -8,10 +8,10 @@ KLEINER_NPCS_CURRENT_NUMBER = KLEINER_NPCS_CURRENT_NUMBER or 0
 KLEINER_DESIRED_NUMBER = KLEINER_DESIRED_NUMBER or GetConVar("kleiner_spawncount"):GetInt() or 0
 
 function KLEINER_NPC_SETUPTIMER(value)
-    KLEINER_DESIRED_NUMBER = GetConVar("kleiner_spawncount"):GetInt() or 0
+    KLEINER_DESIRED_NUMBER = value
     timer.Destroy("kleiner_spawner")
 
-    if (value > 0) then
+    if (KLEINER_DESIRED_NUMBER > 0) then
         timer.Create("kleiner_spawner", 1, 0, function()
             if (table.Count(KLEINER_NPCS) < KLEINER_DESIRED_NUMBER) then
                 local newkleiner = ents.Create("kleiner")
