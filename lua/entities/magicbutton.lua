@@ -320,16 +320,8 @@ end
 
 -- this is where we generate a random amount of points to give the player
 function MoneyPrize()
-    local basenumber = 100
-
-    for i = 1, math.random(10, 40) do
-        basenumber = (basenumber) ^ math.Rand(1.01, 1.06)
-    end
-
-    basenumber = math.Clamp(basenumber, 1000, math.random(100000, 500000))
-    basenumber = math.Round(basenumber, -3)
-
-    return basenumber * 1
+    local min,max = 1000,500000
+    return math.Round(math.pow(math.Rand(0,1), 5) * (max-min) + min,-3)
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
