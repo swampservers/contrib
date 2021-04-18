@@ -43,10 +43,6 @@ function meta:Name()
         st = "Kleiner"
     end
 
-    if st == "Swamp" and self:SteamID() ~= "STEAM_0:0:38422842" then
-        st = "Onions"
-    end
-
     return st
 end
 

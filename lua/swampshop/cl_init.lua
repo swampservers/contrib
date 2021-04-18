@@ -164,11 +164,11 @@ net.Receive('SS_Items', function(length)
     end)
 end)
 
-net.Receive('SS_EQItems', function(length)
+net.Receive('SS_ShownItems', function(length)
     local pi = net.ReadUInt(8)
     local items = net.ReadTableHD()
 
-    SetLoadingPlayerProperty(pi, "SS_EQItems", items, function(ply)
+    SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
         ply:SS_ClearCSModels()
         ply.SS_PlayermodelModsClean = false
     end)
@@ -474,7 +474,7 @@ function SS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
 end
 
 hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
-    if ply.SS_Items == nil and ply.SS_EQItems == nil then return end
+    if ply.SS_Items == nil and ply.SS_ShownItems == nil then return end
     if not ply:Alive() then return end
     --if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
     -- and (GetConVar('thirdperson') and GetConVar('thirdperson'):GetInt() == 0)
@@ -621,8 +621,8 @@ function Player:SS_GetCSModels()
     if SS_CSModels[self] == nil then
         SS_CSModels[self] = {}
 
-        for k, v in pairs(self.SS_Items or self.SS_EQItems or {}) do
-            --eq is nil in eqitems table
+        for k, v in pairs(self.SS_Items or self.SS_ShownItems or {}) do
+            --eq is nil in ShownItems table
             if v.eq == false then continue end
             local itm = SS_Items[v.class]
             if not itm then continue end
@@ -645,8 +645,8 @@ end
 function Player:SS_GetActiveBonemods()
     local mods = {}
 
-    for k, v in pairs(self.SS_Items or self.SS_EQItems or {}) do
-        --eq is nil in eqitems table
+    for k, v in pairs(self.SS_Items or self.SS_ShownItems or {}) do
+        --eq is nil in ShownItems table
         if v.eq == false then continue end
         local itm = SS_Items[v.class]
         if not itm then continue end

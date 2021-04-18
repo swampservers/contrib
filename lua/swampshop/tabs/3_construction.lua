@@ -208,3 +208,32 @@ SS_Product({
         end)
     end
 })
+
+-- TODO finish this, make env_projectedtexture when in the theater
+-- SS_Product({
+--     class = 'trashtheaterprojector',
+--     price = 640,
+--     name = 'Projector Theater',
+--     description = "Create your own private theater anywhere! You'll remain owner even if you walk away.",
+--     model = "models/dav0r/camera.mdl",
+--     OnBuy = function(self, ply)
+--         for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+--             if v:GetOwnerID() == ply:SteamID() then
+--                 v:Remove()
+--             end
+--         end
+
+--         --Delay 1 tick
+--         timer.Simple(0, function()
+--             timer.Simple(0.001, function()
+--                 if tryMakeTrash(ply) then
+--                     makeTrashTheater(ply, self.model)
+--                 else
+--                     ply:SS_GivePoints(self.price)
+--                 end
+--             end)
+--         end)
+--     end
+-- })
+
+

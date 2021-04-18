@@ -133,6 +133,8 @@ function PANEL:Paint()
         SS_DrawWornCSModel(SS_HoverData, SS_HoverCfg, SS_HoverCSModel, self.Entity)
     end
 
+    -- ForceDrawPlayer(LocalPlayer())
+
     render.SuppressEngineLighting(false)
     cam.IgnoreZ(false)
     cam.End3D()

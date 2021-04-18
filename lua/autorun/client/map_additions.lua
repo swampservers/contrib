@@ -103,7 +103,8 @@ end)
 BARBRIGHTFADE = BARBRIGHTFADE or 0
 
 hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
-    if IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Drunken Clam" then
+    local vape = (LocalPlayer():GetLocationName()=="Vapor Lounge" and LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying()) --and LocalPlayer():SteamID()=="STEAM_0:0:38422842"
+    if IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Drunken Clam" or vape then
         BARBRIGHTFADE = math.min(BARBRIGHTFADE + FrameTime(), 1)
     else
         BARBRIGHTFADE = math.max(BARBRIGHTFADE - FrameTime() * 2, 0)
@@ -111,11 +112,27 @@ hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
 
     if BARBRIGHTFADE > 0 then
         --if not LocalPlayer():SteamID()=="STEAM_0:0:38422842" then return end
+        local thing2 = BARBRIGHTFADE
         local thing = -(BARBRIGHTFADE * 0.06)
         local tab = {}
-        tab["$pp_colour_colour"] = 1 + thing
-        tab["$pp_colour_contrast"] = 1 / (1 + thing * 0.5)
-        tab["$pp_colour_brightness"] = thing
+        if vape then 
+            tab["$pp_colour_contrast"] = 1 / (1 + thing)
+            tab["$pp_colour_colour"] = 1 - thing
+            tab["$pp_colour_brightness"] = thing*1.5
+            -- tab["$pp_colour_mulr"] = thing*5
+            -- tab["$pp_colour_mulg"] = thing*5
+            -- tab["$pp_colour_mulb"] = thing*5
+        else
+            tab["$pp_colour_contrast"] = 1 / (1 + thing * 0.5)
+            tab["$pp_colour_colour"] = 1 + thing
+            tab["$pp_colour_brightness"] = thing
+             
+        end
+        tab["$pp_colour_mulr"] = 0
+            tab["$pp_colour_mulg"] = 0
+            tab["$pp_colour_mulb"] = 0
+           
+        
         DrawColorModify(tab)
     end
 end)

@@ -49,6 +49,7 @@ end
 
 function ENT:DrawTranslucent()
     if PropTrashLookedAt == self then
+        print("DRAW", self:GetAreaMin(), self:GetAreaMax())
         render.CullMode(MATERIAL_CULLMODE_CW)
         render.SetColorMaterial()
         local col = self:GetTaped() and Color(128, 255, 255, 60) or Color(255, 255, 255, 20)
@@ -59,7 +60,7 @@ end
 
 TrashMobileTheaterData = {
     ["models/props_c17/tv_monitor01.mdl"] = {
-        distance = 50,
+        center = Vector(50,0,0),
         cubesize = 125,
         tpos = Vector(7, -9, 5),
         tang = Angle(0, 90, 0),
@@ -67,7 +68,7 @@ TrashMobileTheaterData = {
         th = 9 * 0.95
     },
     ["models/props_phx/rt_screen.mdl"] = {
-        distance = 100,
+        center = Vector(100,0,0),
         cubesize = 250,
         tpos = Vector(6.16, -28, 35),
         tang = Angle(0, 90, 0),
@@ -75,19 +76,32 @@ TrashMobileTheaterData = {
         th = 31.5
     },
     ["models/hunter/plates/plate1x2.mdl"] = {
-        distance = 150,
+        center = Vector(0,0,150),
         cubesize = 350,
         tpos = Vector(-21.1, -28 * 1.36, 5.5),
         tang = Angle(0, 90, -90),
         tw = 56 * 1.36,
         th = 31.5 * 1.36
+    },
+    ["models/dav0r/camera.mdl"] = {
+        center = Vector(150,0,0),
+        cubesize = 400,
+        tpos = Vector(300, 160, 90),
+        tang = Angle(0, -90, 0),
+        tw = 320,
+        th = 180,
+        projection = {
+            pos = Vector(0,0,0),
+            ang = Angle(0,0,0),
+        }
     }
 }
 
 function ENT:GetAreaMin()
-    local cs = TrashMobileTheaterData[self:GetModel()].cubesize
+    local tmtd = TrashMobileTheaterData[self:GetModel()]
+    local cs = tmtd.cubesize
 
-    return self:GetPos() + (((self:GetModel() == "models/hunter/plates/plate1x2.mdl") and self:GetUp() or self:GetForward()) * TrashMobileTheaterData[self:GetModel()].distance) - Vector(cs / 2, cs / 2, cs / 2)
+    return self:LocalToWorld(tmtd.center) - Vector(cs / 2, cs / 2, cs / 2)
 end
 
 function ENT:GetAreaMax()
@@ -121,11 +135,19 @@ function ENT:CreateTheater(i)
     l.Min = self:GetAreaMin()
     l.Max = self:GetAreaMax()
     l.Name = self:GetTheaterName()
-    l.Theater.Width = TrashMobileTheaterData[self:GetModel()].tw
-    l.Theater.Height = TrashMobileTheaterData[self:GetModel()].th
-    local tpos, tang = LocalToWorld(TrashMobileTheaterData[self:GetModel()].tpos, TrashMobileTheaterData[self:GetModel()].tang, self:GetPos(), self:GetAngles())
+    local tmtd = TrashMobileTheaterData[self:GetModel()]
+    l.Theater.Width = tmtd.tw
+    l.Theater.Height = tmtd.th
+    local tpos, tang = LocalToWorld(tmtd.tpos, tmtd.tang, self:GetPos(), self:GetAngles())
     l.Theater.Pos = tpos
     l.Theater.Ang = tang
+    if tmtd.projection then
+        -- TODO implement this
+        l.Theater.Projector = {
+            pos = self:LocalToWorld(tmtd.projection.pos),
+            ang = self:LocalToWorldAngles(tmtd.projection.ang),
+        }
+    end
     l.Theater.PermanentOwnerID = self:GetOwnerID()
     local t = theater.GetByLocation(li)
 
