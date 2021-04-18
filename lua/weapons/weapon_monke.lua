@@ -141,8 +141,11 @@ end
 
 function SWEP:GetPlayerCurrentTauntActivity()
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return nil end
-    local seqinfo = ply:GetSequenceInfo(ply:GetLayerSequence(0))
+    if (not IsValid(ply)) then return end
+    local seq = ply:GetLayerSequence(0)
+    if(seq == nil)then return end
+    local seqinfo = ply:GetSequenceInfo(seq)
+    if(seqinfo == nil)then return end
     local act = seqinfo.activityname
     local actID = seqinfo.activity
 
