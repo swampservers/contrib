@@ -2,10 +2,8 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 local Player = FindMetaTable('Player')
-
 SS_Layout = SS_Layout or {}
 SS_Products = SS_Products or {}
-
 
 -- add custom paint funcs here
 function SS_Tab(name, icon)
@@ -54,8 +52,6 @@ function SS_Product(product)
         end
     end
 end
-
-
 
 function SS_DeathKeepnotice(product)
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " will be lost if you die or log out."
@@ -115,8 +111,6 @@ function SS_AmmoProduct(product)
     SS_Product(product)
 end
 
-
-
 function SS_UniqueModelProduct(product)
     product.playermodel = true
     product.CanBuyStatusOrig = product.CanBuyStatus
@@ -148,9 +142,6 @@ function SS_UniqueModelProduct(product)
 
     SS_Product(product)
 end
-
-
-
 
 SS_BUYSTATUS_OK = 0
 SS_BUYSTATUS_AFFORD = 1

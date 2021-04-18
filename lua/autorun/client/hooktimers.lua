@@ -602,7 +602,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
     local loc = LocalPlayer():GetLocationName()
 
     if loc == "Vapor Lounge" then
-        target="vapor"
+        target = "vapor"
     end
 
     -- if loc=="Mines" then
@@ -622,7 +622,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 
     if MusicPagePanel then
         if target == MusicPagePanel.target then
-            MusicPagePanel:RunJavascript("setAttenuation("..(LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1")..")")
+            MusicPagePanel:RunJavascript("setAttenuation(" .. (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1") .. ")")
         else
             if (target == "cavern" or target == "cavernalt") and (MusicPagePanel.target == "cavern" or MusicPagePanel.target == "cavernalt") then return end
             --don't remove panel for caverns themes
@@ -648,7 +648,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
                 end
 
                 MusicPagePanel.target = target
-                MusicPagePanel:OpenURL("http://swampservers.net/bgmusic.php?t=" .. target .. "&v=" .. GetConVar("cinema_volume"):GetString().."&r"..tostring(math.random()))
+                MusicPagePanel:OpenURL("http://swampservers.net/bgmusic.php?t=" .. target .. "&v=" .. GetConVar("cinema_volume"):GetString() .. "&r" .. tostring(math.random()))
             end
         end
     end

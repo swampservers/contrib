@@ -18,7 +18,6 @@ SS_BaseItem({
     model = "models/error.mdl",
     material = "models/debug/debugwhite",
 })
-
 -- SS_BaseItem({
 --     class = "unknown",
 --     price = 0,

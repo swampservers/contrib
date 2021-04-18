@@ -208,7 +208,6 @@ SS_Product({
         end)
     end
 })
-
 -- TODO finish this, make env_projectedtexture when in the theater
 -- SS_Product({
 --     class = 'trashtheaterprojector',
@@ -222,7 +221,6 @@ SS_Product({
 --                 v:Remove()
 --             end
 --         end
-
 --         --Delay 1 tick
 --         timer.Simple(0, function()
 --             timer.Simple(0.001, function()
@@ -235,5 +233,3 @@ SS_Product({
 --         end)
 --     end
 -- })
-
-

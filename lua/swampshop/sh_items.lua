@@ -2,39 +2,54 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 local Player = FindMetaTable('Player')
-
 SS_Items = SS_Items or {}
-
 
 -- SS_ITEM_META = {
 --     __index = function(t, k) return t[k] or t.cfg[k]  or t.class[k] end, --or t.spec[k]
 --     __newindex = function(t, k, v) end
 -- }
-
 -- convert sql loaded data, or network data, to item
 -- still needs to be sanitized on server, left out of here to deal with prop slots
 function SS_MakeItem(ply, item)
     local class = SS_Items[item.class]
-    if not class then print("Unknown item",item.class) return end
+
+    if not class then
+        print("Unknown item", item.class)
+
+        return
+    end
+
     item.owner = ply
     setmetatable(item, class)
-    return item  
+
+    return item
 end
 
 function SS_GenerateItem(ply, class)
     return SS_MakeItem(ply, {
-        class=class,
-        id=-1,
+        class = class,
+        id = -1,
         cfg = {},
-        eq=true,
+        eq = true,
     })
 end
 
+function SS_AngleGen(func)
+    local ang = Angle()
+    func(ang)
 
-function SS_AngleGen(func) local ang = Angle() func(ang) return ang end
+    return ang
+end
 
 function SS_BaseItem(item)
-    item.Sanitize = function(item) SS_ConfigurationSanitize(item, item.cfg) if item.owner:SS_CanEquipStatus(item.class, item.cfg) ~= SS_EQUIPSTATUS_OK then item.eq=false end end
+    item.Sanitize = function(item)
+        SS_ConfigurationSanitize(item, item.cfg)
+
+        if item.owner:SS_CanEquipStatus(item.class, item.cfg) ~= SS_EQUIPSTATUS_OK then
+            item.eq = false
+        end
+    end
+
     item.ShouldShow = function(item) return item.eq end
     item.__index = item
     SS_Items[item.class] = item
@@ -69,7 +84,6 @@ function SS_PlayermodelItemProduct(item)
     item.invcategory = "Playermodels"
     SS_ItemProduct(item)
 end
-
 
 --ITEMS are stuff that is saved in the database
 function SS_ItemProduct(item)
@@ -133,8 +147,6 @@ function SS_ItemProduct(item)
     SS_Product(product)
 end
 
-
-
 SS_EQUIPSTATUS_OK = 0
 SS_EQUIPSTATUS_WEARABLE = 1
 SS_EQUIPSTATUS_IMGUR = 2
@@ -174,8 +186,6 @@ function Player:SS_CanEquipStatus(class, cfg, already_equipped)
 
     return SS_EQUIPSTATUS_OK
 end
-
-
 
 function SS_ConfigurationSanitize(itm, cfg)
     if not itm then return end

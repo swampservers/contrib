@@ -60,7 +60,7 @@ end
 
 TrashMobileTheaterData = {
     ["models/props_c17/tv_monitor01.mdl"] = {
-        center = Vector(50,0,0),
+        center = Vector(50, 0, 0),
         cubesize = 125,
         tpos = Vector(7, -9, 5),
         tang = Angle(0, 90, 0),
@@ -68,7 +68,7 @@ TrashMobileTheaterData = {
         th = 9 * 0.95
     },
     ["models/props_phx/rt_screen.mdl"] = {
-        center = Vector(100,0,0),
+        center = Vector(100, 0, 0),
         cubesize = 250,
         tpos = Vector(6.16, -28, 35),
         tang = Angle(0, 90, 0),
@@ -76,7 +76,7 @@ TrashMobileTheaterData = {
         th = 31.5
     },
     ["models/hunter/plates/plate1x2.mdl"] = {
-        center = Vector(0,0,150),
+        center = Vector(0, 0, 150),
         cubesize = 350,
         tpos = Vector(-21.1, -28 * 1.36, 5.5),
         tang = Angle(0, 90, -90),
@@ -84,15 +84,15 @@ TrashMobileTheaterData = {
         th = 31.5 * 1.36
     },
     ["models/dav0r/camera.mdl"] = {
-        center = Vector(150,0,0),
+        center = Vector(150, 0, 0),
         cubesize = 400,
         tpos = Vector(300, 160, 90),
         tang = Angle(0, -90, 0),
         tw = 320,
         th = 180,
         projection = {
-            pos = Vector(0,0,0),
-            ang = Angle(0,0,0),
+            pos = Vector(0, 0, 0),
+            ang = Angle(0, 0, 0),
         }
     }
 }
@@ -141,6 +141,7 @@ function ENT:CreateTheater(i)
     local tpos, tang = LocalToWorld(tmtd.tpos, tmtd.tang, self:GetPos(), self:GetAngles())
     l.Theater.Pos = tpos
     l.Theater.Ang = tang
+
     if tmtd.projection then
         -- TODO implement this
         l.Theater.Projector = {
@@ -148,6 +149,7 @@ function ENT:CreateTheater(i)
             ang = self:LocalToWorldAngles(tmtd.projection.ang),
         }
     end
+
     l.Theater.PermanentOwnerID = self:GetOwnerID()
     local t = theater.GetByLocation(li)
 

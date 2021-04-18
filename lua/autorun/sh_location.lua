@@ -166,12 +166,11 @@ Map = {
         Max = Vector(2549, 1524, 242),
         Theater = {
             Flags = THEATER_PRIVATEREPLICATED,
-            -- Pos = Vector(2312+36, 1520-37, 210),
-            -- Ang = Angle(0, 315, 0),
-            Pos = Vector(2304 + 262.5/2, 273, 216),
+            -- Pos = Vector(2312+36, 1520-37, 210), -- Ang = Angle(0, 315, 0),
+            Pos = Vector(2304 + 262.5 / 2, 273, 216),
             Ang = Angle(0, 180, 0),
             Width = 262.5, --21:9; should be 200 for 16:9
-            Height = 112.5, 
+            Height = 112.5,
             AllowItems = true
         },
         Filter = function(pos) return pos.x < 2560 or (pos.y > 560 and pos.y < 688 and pos.z < 128) end

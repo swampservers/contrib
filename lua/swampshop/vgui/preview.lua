@@ -134,7 +134,6 @@ function PANEL:Paint()
     end
 
     -- ForceDrawPlayer(LocalPlayer())
-
     render.SuppressEngineLighting(false)
     cam.IgnoreZ(false)
     cam.End3D()
