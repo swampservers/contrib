@@ -15,7 +15,7 @@ end)
 
 local url2 = url -- keep reference for extracting url data
 module("theater", package.seeall)
-Theaters = {}
+Theaters = Theaters or {}
 
 function GetTheaters()
     return Theaters

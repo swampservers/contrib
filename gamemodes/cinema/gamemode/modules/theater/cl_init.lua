@@ -1,12 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 module("theater", package.seeall)
-CurrentVideo = nil -- Most recent video loaded
-Fullscreen = false
-NumVoteSkips = 0
-ReqVoteSkips = 0
+CurrentVideo = CurrentVideo or nil -- Most recent video loaded
+Fullscreen = Fullscreen or false
+NumVoteSkips = NumVoteSkips or 0
+ReqVoteSkips = ReqVoteSkips or 0
 ActivePanel = ActivePanel or nil
-Queue = {}
+Queue = Queue or {}
 local _Volume = -1
 
 hook.Add("Tick", "TheaterPanelRemover", function()
