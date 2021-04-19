@@ -16,12 +16,14 @@ function draw.HTMLTexture(panel, w, h)
     w = w / pw
     h = h / ph
     -- Fix for non-power-of-two html panel size
-    pw = pw * (math.power2(pw) / pw)
-    ph = ph * (math.power2(ph) / ph)
+    local fixx = (math.power2(pw) / pw)
+    local fixy = (math.power2(ph) / ph)
+    pw = pw * fixx
+    ph = ph * fixy
     surface.SetDrawColor(255, 255, 255, 255)
     local matt = panel:GetHTMLMaterial()
     surface.SetMaterial(matt)
     surface.DrawTexturedRect(0, 0, w * pw, h * ph)
 
-    return matt
+    return matt, fixx, fixy
 end

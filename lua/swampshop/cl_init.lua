@@ -127,9 +127,9 @@ function PS:SendModifications(item_id, modifications)
 	net.SendToServer()
 end ]]
 function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
-    if not calls then
-        calls = 10
-    end
+
+        calls = calls or 10
+
 
     local ply = pi == -1 and LocalPlayer() or Entity(pi)
 
@@ -151,23 +151,15 @@ function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
 end
 
 net.Receive('SS_Items', function(length)
-    local pi = net.ReadUInt(8)
     local items = net.ReadTableHD()
-
-    SetLoadingPlayerProperty(pi, "SS_Items", items, function(ply)
-        ply:SS_ClearCSModels()
-        ply.SS_PlayermodelModsClean = false
-
-        if LocalPlayer() == ply then
-            SS_ValidInventory = false
-        end
+    SetLoadingPlayerProperty(-1, "SS_Items", items, function(ply)
+        SS_ValidInventory = false
     end)
 end)
 
 net.Receive('SS_ShownItems', function(length)
     local pi = net.ReadUInt(8)
     local items = net.ReadTableHD()
-
     SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
         ply:SS_ClearCSModels()
         ply.SS_PlayermodelModsClean = false
@@ -179,9 +171,8 @@ net.Receive('SS_Pts', function(length)
 end)
 
 net.Receive('SS_Row', function(length)
-    local pi = net.ReadUInt(8)
-    SetLoadingPlayerProperty(pi, "SS_Points", net.ReadUInt(32))
-    SetLoadingPlayerProperty(pi, "SS_Donation", net.ReadUInt(32))
+    SetLoadingPlayerProperty(-1, "SS_Points", net.ReadUInt(32))
+    SetLoadingPlayerProperty(-1, "SS_Donation", net.ReadUInt(32))
 end)
 
 SS_CSModels = SS_CSModels or {}
@@ -201,7 +192,6 @@ end)
 --makes a CSModel for a worn item
 function SS_CreateWornCSModel(itm, cfg)
     if itm == nil or itm.wear == nil then return end
-
     return SS_CreateCSModel(itm, cfg)
 end
 

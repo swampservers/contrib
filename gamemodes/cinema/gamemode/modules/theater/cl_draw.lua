@@ -61,7 +61,9 @@ w = 0
 h = 0
 local LoadingStr = 'Loading'
 HtmlLightsMat = nil
-TheaterCustomRT = GetRenderTarget("ThLights", 16, 16, true)
+THLIGHT_CANVAS_XS = 32
+THLIGHT_CANVAS_YS = 16
+TheaterCustomRT = GetRenderTarget("ThLights2", THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, true)
 local LastLocation = -1
 local LocationChangeTime = 0
 local LoadingStartTime = 0
@@ -108,7 +110,7 @@ function DrawActiveTheater(bDrawingDepth, bDrawingSkybox)
 
     if drawpanel then
         cam.Start3D2D(Pos, Ang, 1)
-        HtmlLightsMat = draw.HTMLTexture(ActivePanel, w, h)
+        HtmlLightsMat, HtmlLightsMatFixx, HtmlLightsMatFixy = draw.HTMLTexture(ActivePanel, w, h)
         cam.End3D2D()
     else
         if IsValid(ActivePanel) then
@@ -234,14 +236,14 @@ function DrawVideoInfo(w, h, explicit)
     end
 end
 
-KKKLightColor = Vector(0, 0, 0)
-KKKLightColor2 = Vector(0, 0, 0)
+KLUBLightColor = Vector(0, 0, 0)
+KLUBLightColor2 = Vector(0, 0, 0)
 
 matproxy.Add({
     name = "klub0",
     init = function(self, mat, values) end,
     bind = function(self, mat, ent)
-        mat:SetVector("$color2", KKKLightColor)
+        mat:SetVector("$color2", KLUBLightColor)
     end
 })
 
@@ -249,7 +251,7 @@ matproxy.Add({
     name = "klub1",
     init = function(self, mat, values) end,
     bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.1, KKKLightColor, KKKLightColor2))
+        mat:SetVector("$color2", LerpVector(0.1, KLUBLightColor, KLUBLightColor2))
     end
 })
 
@@ -257,7 +259,7 @@ matproxy.Add({
     name = "klub2",
     init = function(self, mat, values) end,
     bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.3, KKKLightColor, KKKLightColor2))
+        mat:SetVector("$color2", LerpVector(0.3, KLUBLightColor, KLUBLightColor2))
     end
 })
 
@@ -265,7 +267,7 @@ matproxy.Add({
     name = "klub3",
     init = function(self, mat, values) end,
     bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.5, KKKLightColor, KKKLightColor2))
+        mat:SetVector("$color2", LerpVector(0.5, KLUBLightColor, KLUBLightColor2))
     end
 })
 
@@ -273,7 +275,7 @@ matproxy.Add({
     name = "klub4",
     init = function(self, mat, values) end,
     bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.7, KKKLightColor, KKKLightColor2))
+        mat:SetVector("$color2", LerpVector(0.7, KLUBLightColor, KLUBLightColor2))
     end
 })
 
@@ -281,7 +283,7 @@ matproxy.Add({
     name = "klub5",
     init = function(self, mat, values) end,
     bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.9, KKKLightColor, KKKLightColor2))
+        mat:SetVector("$color2", LerpVector(0.9, KLUBLightColor, KLUBLightColor2))
     end
 })
 
@@ -289,7 +291,7 @@ matproxy.Add({
     name = "klub6",
     init = function(self, mat, values) end,
     bind = function(self, mat, ent)
-        mat:SetVector("$color2", KKKLightColor2)
+        mat:SetVector("$color2", KLUBLightColor2)
     end
 })
 
@@ -306,8 +308,8 @@ function DrawFullscreenOrLighting()
         end
     else
         local settin = GetConVarNumber("cinema_lightfx")
-        local inkkk = LocalPlayer():GetLocationName() == "Kool Kids Klub"
-        if settin < 1 and not inkkk then return end
+        local inklub = LocalPlayer():GetLocationName() == "Vapor Lounge"
+        if settin < 1 and not inklub then return end
         --dont activate the developer stuff
         settin = 1
         if HtmlLightsMat == nil then return end
@@ -337,14 +339,14 @@ function DrawFullscreenOrLighting()
             render.SetRenderTarget(HtmlLightsMat:GetTexture("$basetexture"))
         end
 
-        render.SetViewPort(0, 0, 16, 16)
+        render.SetViewPort(0, 0, THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS)
 
         if settin < 4 then
             render.Clear(0, 0, 0, 255, true)
             cam.Start2D()
             surface.SetDrawColor(255, 255, 255, 255)
             surface.SetMaterial(HtmlLightsMat)
-            surface.DrawTexturedRect(0, 0, 16, 16)
+            surface.DrawTexturedRect(0, 0, THLIGHT_CANVAS_XS * HtmlLightsMatFixx, THLIGHT_CANVAS_YS * HtmlLightsMatFixy)
         end
 
         render.CapturePixels()
@@ -356,19 +358,27 @@ function DrawFullscreenOrLighting()
         local avgb2 = 0
         local avgc = 0
 
-        for x = 0, 16 - 1 do
-            for y = 0, 16 - 1 do
+        local allpixels = {}
+
+        for x = 0, THLIGHT_CANVAS_XS - 1 do
+            -- table.insert(allpixels,{})
+            for y = 0, THLIGHT_CANVAS_YS - 1 do
                 local r, g, b = render.ReadPixel(x, y)
 
-                if x >= (16 / 2) then
-                    avgr2 = avgr2 + r
-                    avgg2 = avgg2 + g
-                    avgb2 = avgb2 + b
+                if inklub then
+                    table.insert(allpixels, Vector(r,g,b)/255)
                 else
-                    avgr1 = avgr1 + r
-                    avgg1 = avgg1 + g
-                    avgb1 = avgb1 + b
-                    avgc = avgc + 1
+                    if x >= (THLIGHT_CANVAS_XS / 2) then
+                        avgr2 = avgr2 + r
+                        avgg2 = avgg2 + g
+                        avgb2 = avgb2 + b
+                    else
+                        avgr1 = avgr1 + r
+                        avgg1 = avgg1 + g
+                        avgb1 = avgb1 + b
+                        avgc = avgc + 1
+                    end
+
                 end
             end
         end
@@ -379,21 +389,28 @@ function DrawFullscreenOrLighting()
 
         render.SetViewPort(0, 0, ow, oh)
         render.SetRenderTarget(OldRT)
+
+        if inklub then
+            VaporLightData(allpixels)
+            return 
+        end
+
+
         avgc1 = Color(avgr1 / avgc, avgg1 / avgc, avgb1 / avgc)
         avgc2 = Color(avgr2 / avgc, avgg2 / avgc, avgb2 / avgc)
 
-        if inkkk then
-            local h1, s1, v1 = ColorToHSV(avgc1)
-            local h2, s2, v2 = ColorToHSV(avgc2)
-            s1 = math.pow(s1, 0.3)
-            s2 = math.pow(s2, 0.3)
-            v1 = math.pow(v1, 0.5)
-            v2 = math.pow(v2, 0.5)
-            avgc1 = HSVToColor(h1, s1, v1)
-            avgc2 = HSVToColor(h2, s2, v2)
-            KKKLightColor = Vector(avgc1.r / 255.0, avgc1.g / 255.0, avgc1.b / 255.0)
-            KKKLightColor2 = Vector(avgc2.r / 255.0, avgc2.g / 255.0, avgc2.b / 255.0)
-        end
+        -- if inklub then
+        --     local h1, s1, v1 = ColorToHSV(avgc1)
+        --     local h2, s2, v2 = ColorToHSV(avgc2)
+        --     s1 = math.pow(s1, 0.3)
+        --     s2 = math.pow(s2, 0.3)
+        --     v1 = math.pow(v1, 0.5)
+        --     v2 = math.pow(v2, 0.5)
+        --     avgc1 = HSVToColor(h1, s1, v1)
+        --     avgc2 = HSVToColor(h2, s2, v2)
+        --     KLUBLightColor = Vector(avgc1.r / 255.0, avgc1.g / 255.0, avgc1.b / 255.0)
+        --     KLUBLightColor2 = Vector(avgc2.r / 255.0, avgc2.g / 255.0, avgc2.b / 255.0)
+        -- end
 
         local dlight = DynamicLight(1439)
 
@@ -407,10 +424,10 @@ function DrawFullscreenOrLighting()
             dlight.Size = (w + h) * 1.25
             dlight.DieTime = CurTime() + 1
 
-            if inkkk then
-                dlight.pos = Vector(2228, 568, 72)
-                dlight.Size = 900
-            end
+            -- if inklub then
+            --     dlight.pos = Vector(2228, 568, 72)
+            --     dlight.Size = 900
+            -- end
         end
 
         dlight = DynamicLight(1441)
@@ -425,10 +442,10 @@ function DrawFullscreenOrLighting()
             dlight.Size = (w + h) * 1.25
             dlight.DieTime = CurTime() + 1
 
-            if inkkk then
-                dlight.pos = Vector(2380, 568, 72)
-                dlight.Size = 900
-            end
+            -- if inklub then
+            --     dlight.pos = Vector(2380, 568, 72)
+            --     dlight.Size = 900
+            -- end
         end
 
         if firsttime then
