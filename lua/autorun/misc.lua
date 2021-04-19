@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- function For(tab, callback)
 --     local out = {}
 --     for k,v in pairs(tab) do
@@ -17,17 +16,19 @@
 -- end
 function For(tab, callback)
     local out = {}
-    for _,v in ipairs(tab) do
+
+    for _, v in ipairs(tab) do
         v = callback(v)
-        if v~=nil then
-            table.insert(out,v)
+
+        if v ~= nil then
+            table.insert(out, v)
         end
     end
+
     return out
 end
+
 --PrintTable(For({1,2,3,4,5,6}, function(v) if v%2==0 then return v end end)) 
-
-
 function Safe(ent)
     local loc = 0
     local name = "Unknown"

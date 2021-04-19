@@ -357,7 +357,6 @@ function DrawFullscreenOrLighting()
         local avgg2 = 0
         local avgb2 = 0
         local avgc = 0
-
         local allpixels = {}
 
         for x = 0, THLIGHT_CANVAS_XS - 1 do
@@ -366,7 +365,7 @@ function DrawFullscreenOrLighting()
                 local r, g, b = render.ReadPixel(x, y)
 
                 if inklub then
-                    table.insert(allpixels, Vector(r,g,b)/255)
+                    table.insert(allpixels, Vector(r, g, b) / 255)
                 else
                     if x >= (THLIGHT_CANVAS_XS / 2) then
                         avgr2 = avgr2 + r
@@ -378,7 +377,6 @@ function DrawFullscreenOrLighting()
                         avgb1 = avgb1 + b
                         avgc = avgc + 1
                     end
-
                 end
             end
         end
@@ -392,13 +390,12 @@ function DrawFullscreenOrLighting()
 
         if inklub then
             VaporLightData(allpixels)
-            return 
-        end
 
+            return
+        end
 
         avgc1 = Color(avgr1 / avgc, avgg1 / avgc, avgb1 / avgc)
         avgc2 = Color(avgr2 / avgc, avgg2 / avgc, avgb2 / avgc)
-
         -- if inklub then
         --     local h1, s1, v1 = ColorToHSV(avgc1)
         --     local h2, s2, v2 = ColorToHSV(avgc2)
@@ -411,7 +408,6 @@ function DrawFullscreenOrLighting()
         --     KLUBLightColor = Vector(avgc1.r / 255.0, avgc1.g / 255.0, avgc1.b / 255.0)
         --     KLUBLightColor2 = Vector(avgc2.r / 255.0, avgc2.g / 255.0, avgc2.b / 255.0)
         -- end
-
         local dlight = DynamicLight(1439)
 
         if (dlight) then
@@ -423,7 +419,6 @@ function DrawFullscreenOrLighting()
             dlight.Decay = 100
             dlight.Size = (w + h) * 1.25
             dlight.DieTime = CurTime() + 1
-
             -- if inklub then
             --     dlight.pos = Vector(2228, 568, 72)
             --     dlight.Size = 900
@@ -441,7 +436,6 @@ function DrawFullscreenOrLighting()
             dlight.Decay = 100
             dlight.Size = (w + h) * 1.25
             dlight.DieTime = CurTime() + 1
-
             -- if inklub then
             --     dlight.pos = Vector(2380, 568, 72)
             --     dlight.Size = 900

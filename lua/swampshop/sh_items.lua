@@ -15,23 +15,28 @@ function SS_MakeItem(ply, itemdata)
 
     if not class then
         print("Unknown item", itemdata.class)
+
         return
     end
 
     assert(IsValid(ply))
-
-
     itemdata.owner = ply
     setmetatable(itemdata, class)
+
     return itemdata
 end
 
 function SS_MakeItems(ply, itemdatas, skip_unknown)
-    local out = {} 
+    local out = {}
 
-    for i,v in ipairs(itemdatas) do
+    for i, v in ipairs(itemdatas) do
         v = SS_MakeItem(ply, v)
-        if v then table.insert(out, v) elseif not skip_unknown then error() end
+
+        if v then
+            table.insert(out, v)
+        elseif not skip_unknown then
+            error()
+        end
     end
 
     return out
