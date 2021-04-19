@@ -1,8 +1,10 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 if SERVER then
-    AddCSLuaFile("swampshop/cl_init.lua")
     if not file.Exists("swampshop/sv_init.lua", "LUA") then return end
+    
+    AddCSLuaFile("swampshop/cl_init.lua")
+    AddCSLuaFile("swampshop/cl_draw.lua")
     include("swampshop/sv_init.lua")
 end
 

@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("sh_init.lua")
+include("cl_draw.lua")
 include("vgui/menu.lua")
 include("vgui/panels.lua")
 include("vgui/item.lua")
@@ -128,7 +129,7 @@ function PS:SendModifications(item_id, modifications)
 end ]]
 function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
 
-        calls = calls or 10
+        calls = calls or 50
 
 
     local ply = pi == -1 and LocalPlayer() or Entity(pi)
@@ -143,7 +144,7 @@ function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
         if calls < 1 then
             print("ERROR loading " .. prop .. " for " .. tostring(pi))
         else
-            timer.Simple(1, function()
+            timer.Simple(0.5, function()
                 SetLoadingPlayerProperty(pi, prop, val, callback, calls - 1)
             end)
         end
@@ -153,6 +154,7 @@ end
 net.Receive('SS_Items', function(length)
     local items = net.ReadTableHD()
     SetLoadingPlayerProperty(-1, "SS_Items", items, function(ply)
+        ply.SS_Items = SS_MakeItems(ply, ply.SS_Items)
         SS_ValidInventory = false
     end)
 end)
@@ -161,6 +163,7 @@ net.Receive('SS_ShownItems', function(length)
     local pi = net.ReadUInt(8)
     local items = net.ReadTableHD()
     SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
+        ply.SS_ShownItems = SS_MakeItems(ply, ply.SS_ShownItems)
         ply:SS_ClearCSModels()
         ply.SS_PlayermodelModsClean = false
     end)
@@ -675,7 +678,7 @@ function SendPointsCmd(cmd)
                 chat.AddText("[orange]No player found")
             else
                 if cnt == 1 then
-                    net.Start("SS_SendPoints")
+                    net.Start("SS_TransferPoints")
                     net.WriteEntity(ply)
                     net.WriteInt(amt, 32)
                     net.SendToServer()

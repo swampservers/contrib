@@ -93,7 +93,7 @@ function PANEL:Submit()
     end
 
     if not other then return end -- player could have left
-    net.Start('SS_SendPoints')
+    net.Start('SS_TransferPoints')
     net.WriteEntity(other)
     net.WriteInt(tonumber(self.pselector:GetValue()), 32)
     net.SendToServer()

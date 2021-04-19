@@ -10,19 +10,31 @@ SS_Items = SS_Items or {}
 -- }
 -- convert sql loaded data, or network data, to item
 -- still needs to be sanitized on server, left out of here to deal with prop slots
-function SS_MakeItem(ply, item)
-    local class = SS_Items[item.class]
+function SS_MakeItem(ply, itemdata)
+    local class = SS_Items[itemdata.class]
 
     if not class then
-        print("Unknown item", item.class)
-
+        print("Unknown item", itemdata.class)
         return
     end
 
-    item.owner = ply
-    setmetatable(item, class)
+    assert(IsValid(ply))
 
-    return item
+
+    itemdata.owner = ply
+    setmetatable(itemdata, class)
+    return itemdata
+end
+
+function SS_MakeItems(ply, itemdatas, skip_unknown)
+    local out = {} 
+
+    for i,v in ipairs(itemdatas) do
+        v = SS_MakeItem(ply, v)
+        if v then table.insert(out, v) elseif not skip_unknown then error() end
+    end
+
+    return out
 end
 
 function SS_GenerateItem(ply, class)
