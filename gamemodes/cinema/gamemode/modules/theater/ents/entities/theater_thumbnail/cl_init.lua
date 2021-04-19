@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include('sh_init.lua')
 ENT.RenderGroup = RENDERGROUP_BOTH
@@ -139,6 +139,10 @@ function ENT:DrawThumbnail()
         net.Start("ThumbnailDelivery")
         net.WriteEntity(self)
         net.SendToServer()
+        self.thumbnail = ""
+    end
+
+    if (self:GetTitle() == "Nothing Playing")
         self.thumbnail = ""
     end
 
