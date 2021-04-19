@@ -102,7 +102,6 @@ end)
 
 BARBRIGHTFADE = BARBRIGHTFADE or 0
 
-
 hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
     if IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Drunken Clam" or vape then
         BARBRIGHTFADE = math.min(BARBRIGHTFADE + FrameTime(), 1)
@@ -113,7 +112,6 @@ hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
     if BARBRIGHTFADE > 0 then
         local thing = -(BARBRIGHTFADE * 0.06)
         local tab = {}
-
         tab["$pp_colour_contrast"] = 1 / (1 + thing * 0.5)
         tab["$pp_colour_colour"] = 1 + thing
         tab["$pp_colour_brightness"] = thing
@@ -122,10 +120,7 @@ hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
         tab["$pp_colour_mulb"] = 0
         DrawColorModify(tab)
     end
-
-
 end)
-
 
 local flagmaterial = Material("models/props_fairgrounds/fairgrounds_flagpole01")
 

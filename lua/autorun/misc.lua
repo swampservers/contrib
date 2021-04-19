@@ -1,7 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
 --PrintTable(For({1,2,3,4,5,6}, function(v) if v%2==0 then return v end end)) 
 function Safe(ent)
     local loc = 0
