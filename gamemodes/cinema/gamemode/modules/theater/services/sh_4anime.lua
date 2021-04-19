@@ -62,7 +62,6 @@ if CLIENT then
                         if string.StartWith(msg, "URL:") and not self.data then
                             self.data = msg:sub(5, -1)
                             print("URL: " .. self.data)
-
                             --for whatever reason, 4anime just has completely inaccessible anime eps that won't ever load in the player
                             --[[HTTP({
                                 method = "HEAD",

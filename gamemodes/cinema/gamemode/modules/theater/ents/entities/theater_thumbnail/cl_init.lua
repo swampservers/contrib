@@ -1,4 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include('sh_init.lua')
 ENT.RenderGroup = RENDERGROUP_BOTH
@@ -142,7 +142,7 @@ function ENT:DrawThumbnail()
         self.thumbnail = ""
     end
 
-    if (self:GetTitle() == "Nothing Playing")
+    if (self:GetTitle() == "Nothing Playing") then
         self.thumbnail = ""
     end
 
