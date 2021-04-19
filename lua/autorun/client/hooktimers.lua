@@ -601,9 +601,11 @@ timer.Create("AreaMusicController", 0.5, 0, function()
     local target = ""
     local loc = LocalPlayer():GetLocationName()
 
-    if loc == "Vapor Lounge" then
+    if loc == "Vapor Lounge" and not (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying()) then
         target = "vapor"
     end
+
+    print(target)
 
     -- if loc=="Mines" then
     -- 	if GetGlobalBool("DAY", true) then
@@ -622,7 +624,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 
     if MusicPagePanel then
         if target == MusicPagePanel.target then
-            MusicPagePanel:RunJavascript("setAttenuation(" .. (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1") .. ")")
+            -- MusicPagePanel:RunJavascript("setAttenuation(" .. (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1") .. ")")
         else
             if (target == "cavern" or target == "cavernalt") and (MusicPagePanel.target == "cavern" or MusicPagePanel.target == "cavernalt") then return end
             --don't remove panel for caverns themes

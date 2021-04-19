@@ -1,32 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
--- function For(tab, callback)
---     local out = {}
---     for k,v in pairs(tab) do
---         k,v = callback(k,v)
---         if k~=nil then
---             if v~=nil then
---                 out[k]=v
---             else
---                 table.insert(out,k)
---             end
---         end
---     end
---     return out
--- end
-function For(tab, callback)
-    local out = {}
 
-    for _, v in ipairs(tab) do
-        v = callback(v)
-
-        if v ~= nil then
-            table.insert(out, v)
-        end
-    end
-
-    return out
-end
 
 --PrintTable(For({1,2,3,4,5,6}, function(v) if v%2==0 then return v end end)) 
 function Safe(ent)
