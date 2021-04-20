@@ -73,13 +73,22 @@ function SWEP:DrawWorldModel( )
 	end
 end
 
+function SWEP:Initialize()
+	if ( SERVER ) then
+self:SetWeaponHoldType(self.HoldType)
+	end
+end
+--------------
+
 function SWEP:Deploy()
 	self.Owner:DrawViewModel(true)
 	self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
 end
 
 function SWEP:PrimaryAttack()
-	self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+
+	local vm = self.Owner:GetViewModel()
+	vm:SendViewModelMatchingSequence( vm:LookupSequence( "swing1" ) )
 	self.Weapon:EmitSound(self.SwingSound,100,math.random(90,120))
 	self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay)
 	
@@ -88,6 +97,7 @@ function SWEP:PrimaryAttack()
 	end
 	
 	if SERVER then
+		
 		timer.Simple(.7, function() if self:IsValid() then
 		local trace = self.Owner:GetEyeTrace()
 		if trace.HitPos:Distance(self.Owner:GetShootPos()) <= (self.Primary.Distance) then
@@ -122,6 +132,12 @@ function SWEP:PrimaryAttack()
 				self.Weapon:EmitSound(self.FleshSound,100,math.random(90,120))
 				
 			end	
+			local center = self.Owner:EyePos() + self.Owner:EyeAngles():Forward()*50
+			for _,v in ipairs(ents.GetAll()) do
+			if v~=self.Owner and v:LocalToWorld(v:OBBCenter()):Distance(center)<100 then
+              v:TakeDamage(100,self.Owner,self)
+			end
+			end
 			end
 			else
 				self.Owner:SetAnimation( PLAYER_ATTACK1 )

@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/aoc_weapon/w_longswords"
+	"$bumpmap" "models/aoc_weapon/w_longswords_nrm"
+	"$surfaceprop" "Metal"
+	"$phong" "1"
+	"$phongexponent" "10"
+	"$phongboost" "1"
+	"$phongfresnelranges" "[1 3 6]"
+	"$phongalbedotint" "1"
+}
