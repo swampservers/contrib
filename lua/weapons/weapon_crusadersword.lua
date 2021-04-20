@@ -26,9 +26,9 @@ SWEP.Slot 				= 0                                     -- Decide which slot you w
 ----------------------------------------------------------------------------------------------------------------|
 SWEP.Primary.Automatic 			= true     					-- Do We Have To Click Or Hold Down The Click
 SWEP.Primary.Ammo 				= "none"  						-- What Ammo Does This SWEP Use (If Melee Then Use None)   
-SWEP.Primary.Damage 			= 500                 			-- How Much Damage Does The SWEP Do                         
-SWEP.Primary.Spread	 			= 0                 			-- How Much Of A Spread Is There (Should Be Zero)
-SWEP.Primary.NumberofShots 		= 1                 			-- How Many Shots Come Out (should Be Zero)
+SWEP.Primary.Damage 			= 500 	               			-- How Much Damage Does The SWEP Do                         
+SWEP.Primary.Spread	 			= -1                 			-- How Much Of A Spread Is There (Should Be Zero)
+SWEP.Primary.NumberofShots 		= -1                 			-- How Many Shots Come Out (should Be Zero)
 SWEP.Primary.Recoil 			= 8                 			-- How Much Jump After An Attack        
 SWEP.Primary.ClipSize			= -1                 			-- Size Of The Clip
 SWEP.Primary.DefaultClip 		= -1
@@ -44,7 +44,7 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
-
+local HitSoundBody = Sound ( "aof/weapons/hitbod6.wav")
 
 ------------------------------//Crotch Gun Fix\\------------------------------------------------------------|
 SWEP.Offset = {
@@ -99,61 +99,28 @@ function SWEP:PrimaryAttack()
 	if SERVER then
 		
 		timer.Simple(.7, function() if self:IsValid() then
-		local trace = self.Owner:GetEyeTrace()
-		if trace.HitPos:Distance(self.Owner:GetShootPos()) <= (self.Primary.Distance) then
-		if ( trace.Hit ) then
-			local rnda = self.Primary.Recoil * -1 
-			local rndb = self.Primary.Recoil * math.random(-1, 2) 
-		self.Weapon:EmitSound(self.WallSound,100,math.random(90,120))
-			bullet = {}
-			bullet.Num    = 1
-			bullet.Src    = self.Owner:GetShootPos()
-			bullet.Dir    = self.Owner:GetAimVector()
-			bullet.Spread = Vector(0, 0, 0)
-			bullet.Tracer = 1
-				self.Owner:SetAnimation( PLAYER_ATTACK1 )
-			if trace.Entity:IsNPC() or trace.Entity:IsPlayer() or trace.Entity:GetClass() == "prop_ragdoll" then
-				bullet.TracerName = "" 
-					self.Weapon:EmitSound(self.FleshSound,100,math.random(90,120))
-					
-				else
-				bullet.TracerName = ""
-			end
-				bullet.Force  = self.Primary.Force 	
-				bullet.Damage = self.Primary.Damage 
-				self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay)
-				self.Owner:FireBullets(bullet)
-			if (trace.Hit) then if trace.Entity:IsNPC() then
-				self.Owner:FireBullets(bullet)
-				self.Owner:SetAnimation( PLAYER_ATTACK1 )
-				self.Weapon:SetNextPrimaryFire( CurTime() +  self.Primary.Delay)
-				local rnda = self.Primary.Recoil * -1 
-				local rndb = self.Primary.Recoil * math.random(-1, 2) 
-				self.Weapon:EmitSound(self.FleshSound,100,math.random(90,120))
-				
-			end	
-			local center = self.Owner:EyePos() + self.Owner:EyeAngles():Forward()*50
+			local center = self.Owner:EyePos() + self.Owner:EyeAngles():Forward()*75
 			for _,v in ipairs(ents.GetAll()) do
-			if v~=self.Owner and v:LocalToWorld(v:OBBCenter()):Distance(center)<100 then
-              v:TakeDamage(100,self.Owner,self)
-			end
-			end
-			end
+				if v~=self.Owner and v:LocalToWorld(v:OBBCenter()):Distance(center)<75 then
+				v:TakeDamage(100,self.Owner,self)
+				self:EmitSound( HitSoundBody , 80, 100, 1, CHAN_WEAPON)
+				self.Weapon:SetNextPrimaryFire( CurTime() + 1.5)
+				self.Owner:SetAnimation( PLAYER_ATTACK1 )
+
 			else
 				self.Owner:SetAnimation( PLAYER_ATTACK1 )
 				self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
-				
 			end
+			end
+			
 			else
-
 				self.Weapon:SetNextPrimaryFire(  CurTime() + 1.5 )
 				self.Weapon:SendWeaponAnim(ACT_VM_MISSCENTER)
 				self.Owner:SetAnimation( PLAYER_ATTACK1 )
 				local rnda = self.Primary.Recoil * -1 
 				local rndb = self.Primary.Recoil * math.random(-1, 2) 
-
 			end
-			end
+			
 		end)
 	end
 end
