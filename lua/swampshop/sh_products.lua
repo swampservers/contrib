@@ -40,7 +40,7 @@ end
 
 function SS_Product(product)
     local tab = _SS_TABADDTARGET.layout
-    table.insert(tab[#tab].products, product.class)
+    table.insert(tab[#tab].products, product)
     product.price = product.price or 0
     SS_Products[product.class] = product
 

@@ -128,10 +128,7 @@ function PS:SendModifications(item_id, modifications)
 	net.SendToServer()
 end ]]
 function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
-
-        calls = calls or 50
-
-
+    calls = calls or 50
     local ply = pi == -1 and LocalPlayer() or Entity(pi)
 
     if IsValid(ply) then
@@ -193,15 +190,14 @@ hook.Add('Think', 'SS_Cleanup', function()
 end)
 
 --makes a CSModel for a worn item
-function SS_CreateWornCSModel(itm, cfg)
-    if itm == nil or itm.wear == nil then return end
-    return SS_CreateCSModel(itm, cfg)
+function SS_CreateWornCSModel(item)
+    if item.wear == nil then return end
+    return SS_CreateCSModel(item)
 end
 
 --makes a CSModel for a product or item
-function SS_CreateCSModel(itm, cfg)
-    if itm == nil then return end
-    local mdlname = itm.model or (cfg or {}).model
+function SS_CreateCSModel(item)
+    local mdlname = item.model or item.cfg.model
     if mdlname == nil then return end
     local mdl = ClientsideModel(mdlname, RENDERGROUP_OPAQUE)
 
@@ -215,33 +211,28 @@ end
 SS_MaterialCache = {}
 
 function SS_GetMaterial(nam)
-    local cur = SS_MaterialCache[nam]
-    if cur then return cur end
-    SS_MaterialCache[nam] = Material(nam)
-
+    SS_MaterialCache[nam] = SS_MaterialCache[nam] or Material(nam)
     return SS_MaterialCache[nam]
 end
 
-function SS_PreRender(data, cfg, ent)
-    cfg = (cfg or {})
-    local imgur = cfg.imgur
+function SS_PreRender(item, ent) --todo: use item.owner?
 
-    if imgur then
-        local imat = ImgurMaterial(imgur.url, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {
+    if item.cfg.imgur then
+        local imat = ImgurMaterial(item.cfg.imgur.url, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {
             ["$alphatest"] = 1
         })
 
         render.MaterialOverride(imat)
         --render.OverrideDepthEnable(true,true)
     else
-        local mat = cfg.material or data.material
+        local mat = item.cfg.material or item.material
 
         if mat then
             render.MaterialOverride(SS_GetMaterial(mat))
         end
     end
 
-    local col = cfg.color or data.color
+    local col = item.cfg.color or item.color
 
     if col then
         render.SetColorModulation(col.x, col.y, col.z)
@@ -316,18 +307,18 @@ function SS_ApplyBoneMods(ent, mods)
         if #ent:GetChildBones(pelvis) == 0 then return false end
     end
 
-    for _, v in ipairs(mods) do
-        local bn = v.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
+    for _, item in ipairs(mods) do
+        local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
         local x = ent:LookupBone(bn)
 
         if x then
-            if (v.itm.configurable or {}).scale then
-                local scn = v.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
-                AddScaleRecursive(ent, x, scn, v.cfg["scale_children" .. suffix], {})
+            if (item.configurable or {}).scale then
+                local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
+                AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
             end
 
-            if (v.itm.configurable or {}).pos then
-                local psn = v.cfg["pos" .. suffix] or Vector(10, 0, 0)
+            if (item.configurable or {}).pos then
+                local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
 
                 --don't allow moving the root bone
                 if ent:GetBoneParent(x) == -1 then
@@ -367,29 +358,27 @@ function SS_ApplyBoneMods(ent, mods)
 end
 
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
-function SS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
+function SS_DrawWornCSModel(item, mdl, ent, dontactually)
     local pone = isPonyModel(ent:GetModel())
-    local attach = itm.wear.attach
-    local scale = itm.wear.scale
-    local translate = itm.wear.translate
-    local rotate = itm.wear.rotate
+    local attach = item.wear.attach
+    local scale = item.wear.scale
+    local translate = item.wear.translate
+    local rotate = item.wear.rotate
 
-    if pone and itm.wear.pony then
-        attach = itm.wear.pony.attach or attach
-        scale = itm.wear.pony.scale or scale
-        translate = itm.wear.pony.translate or translate
-        rotate = itm.wear.pony.rotate or rotate
+    if pone and item.wear.pony then
+        attach = item.wear.pony.attach or attach
+        scale = item.wear.pony.scale or scale
+        translate = item.wear.pony.translate or translate
+        rotate = item.wear.pony.rotate or rotate
     end
 
-    if cfg then
-        local cfgk = pone and "wear_p" or "wear_h"
+    local cfgk = pone and "wear_p" or "wear_h"
 
-        if cfg[cfgk] then
-            attach = cfg[cfgk].attach or attach
-            scale = cfg[cfgk].scale or scale
-            translate = cfg[cfgk].pos or translate
-            rotate = cfg[cfgk].ang or rotate
-        end
+    if item.cfg[cfgk] then
+        attach = item.cfg[cfgk].attach or attach
+        scale = item.cfg[cfgk].scale or scale
+        translate = item.cfg[cfgk].pos or translate
+        rotate = item.cfg[cfgk].ang or rotate
     end
 
     local pos, ang
@@ -460,7 +449,7 @@ function SS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
     mdl:SetupBones()
 
     if not dontactually then
-        SS_PreRender(itm, cfg, ent)
+        SS_PreRender(item, ent)
         mdl:DrawModel()
         SS_PostRender()
     end
@@ -476,7 +465,7 @@ hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
 
     --in SPADES, the renderboost.lua is disabled!
     for _, prop in ipairs(ply:SS_GetCSModels()) do
-        SS_DrawWornCSModel(prop.itm, prop.cfg, prop.mdl, ply)
+        SS_DrawWornCSModel(prop.item, prop.mdl, ply)
     end
 end)
 
@@ -537,7 +526,7 @@ hook.Add("PostDrawOpaqueRenderables", "SS_RenderGibs", function(depth, sky)
         local gib = table.remove(SS_GibProps)
 
         if IsValid(gib) then
-            SS_PreRender(gib.csmodel.itm, gib.csmodel.cfg)
+            SS_PreRender(gib.csmodel.item)
             gib:DrawModel()
             SS_PostRender()
             table.insert(nextgibs, gib)
@@ -549,7 +538,7 @@ end)
 
 function SS_BuyProduct(id)
     if not SS_Products[id] then
-        LocalPlayerNotify("Unknown product '" .. tostring(id) .. "'. Many products have new codes, update your binds.")
+        LocalPlayerNotify("Unknown product '" .. tostring(id) .. "'. You may need to update your binds.")
 
         return
     end
@@ -614,19 +603,13 @@ function Player:SS_GetCSModels()
     if SS_CSModels[self] == nil then
         SS_CSModels[self] = {}
 
-        for k, v in pairs(self.SS_Items or self.SS_ShownItems or {}) do
-            --eq is nil in ShownItems table
-            if v.eq == false then continue end
-            local itm = SS_Items[v.class]
-            if not itm then continue end
-            local mdl = SS_CreateWornCSModel(itm, v.cfg)
+        for k, item in pairs(self.SS_ShownItems or {}) do
+            local mdl = SS_CreateWornCSModel(item)
 
             if mdl then
                 table.insert(SS_CSModels[self], {
                     mdl = mdl,
-                    itm = itm,
-                    cfg = v.cfg,
-                    id = v.id
+                    item = item
                 })
             end
         end
@@ -638,18 +621,9 @@ end
 function Player:SS_GetActiveBonemods()
     local mods = {}
 
-    for k, v in pairs(self.SS_Items or self.SS_ShownItems or {}) do
-        --eq is nil in ShownItems table
-        if v.eq == false then continue end
-        local itm = SS_Items[v.class]
-        if not itm then continue end
-
-        if itm.bonemod then
-            table.insert(mods, {
-                itm = itm,
-                cfg = v.cfg,
-                id = v.id
-            })
+    for k, item in pairs(self.SS_ShownItems or {}) do
+        if item.bonemod then
+            table.insert(mods, item)
         end
     end
 
