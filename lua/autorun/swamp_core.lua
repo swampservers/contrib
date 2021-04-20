@@ -30,7 +30,7 @@ end
 local vec = FindMetaTable("Vector")
 vec__baseadd = vec__baseadd or vec.__add
 vec__basesub = vec__basesub or vec.__sub
-vec__basediv = vec.__basediv or vec.__div
+vec__basediv = vec__basediv or vec.__div
 
 vec.__add = function(a, b)
     if isnumber(b) then
@@ -64,6 +64,11 @@ function vec:Pow(y)
     return Vector(math.pow(self.x, y), math.pow(self.y, y), math.pow(self.z, y))
 end
 
+
+BLACK = Color(0,0,0,255)
+WHITE = Color(255,255,255,255)
+
+
 -- WORKING SETGLOBAL* BECAUSE GARRYS VERSION UNSETS ITSELF RANDOMLY THANKS A LOT GARRY
 glbls = glbls or {}
 
@@ -95,8 +100,8 @@ if SERVER then
     end)
 
     function SetG(k, v)
+        if glbls[k]==v then return end
         net.Start("Glbl")
-
         net.WriteTable({
             [k] = v
         })

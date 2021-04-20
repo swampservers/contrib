@@ -33,6 +33,69 @@ SS_Product({
 SS_Heading("Props")
 
 SS_Product({
+    class = 'plate1',
+    price = 1000,
+    name = 'Small Plate',
+    description = "Easy but costs money",
+    model = 'models/props_phx/construct/metal_plate1.mdl',
+    OnBuy = function(self, ply)
+        if tryMakeTrash(ply) then
+            makeTrash(ply, self.model)
+        else
+            ply:SS_GivePoints(self.price)
+        end
+    end
+})
+
+SS_Product({
+    class = 'plate2',
+    price = 2000,
+    name = 'Medium Plate',
+    description = "Easy but costs money",
+    model = 'models/props_phx/construct/metal_plate1x2.mdl',
+    OnBuy = function(self, ply)
+        if tryMakeTrash(ply) then
+            makeTrash(ply, self.model)
+        else
+            ply:SS_GivePoints(self.price)
+        end
+    end
+})
+
+SS_Product({
+    class = 'plate3',
+    price = 5000,
+    name = 'Big Plate',
+    description = "Easy but costs money",
+    model = 'models/props_phx/construct/metal_plate2x2.mdl',
+    OnBuy = function(self, ply)
+        if tryMakeTrash(ply) then
+            makeTrash(ply, self.model)
+        else
+            ply:SS_GivePoints(self.price)
+        end
+    end
+})
+
+SS_Product({
+    class = 'plate4',
+    price = 2000,
+    name = 'Triangle',
+    description = "Easy but costs money",
+    model = 'models/props_phx/construct/metal_plate2x2_tri.mdl',
+    OnBuy = function(self, ply)
+        if tryMakeTrash(ply) then
+            makeTrash(ply, self.model)
+        else
+            ply:SS_GivePoints(self.price)
+        end
+    end
+})
+
+
+
+
+SS_Product({
     class = 'trashfield',
     price = 200,
     name = 'Medium Protection Field',
