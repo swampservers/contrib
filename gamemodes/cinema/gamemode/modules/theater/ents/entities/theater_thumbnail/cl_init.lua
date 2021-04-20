@@ -142,6 +142,10 @@ function ENT:DrawThumbnail()
         self.thumbnail = ""
     end
 
+    if (self:GetTitle() == "Nothing Playing") then
+        self.thumbnail = ""
+    end
+
     -- Thumbnail isn't set yet
     if self.thumbnail == "" or ((theater.Services[self:GetService()] and theater.Services[self:GetService()].Mature) and not GetConVar("swamp_mature_content"):GetBool()) then
         if self:GetService() == "" then

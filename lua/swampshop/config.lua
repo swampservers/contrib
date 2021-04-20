@@ -115,7 +115,6 @@ Tail01
 Tail02
 Tail03
 ]]
-
 SS_InvCategories = {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"}
 
 SS_Attachments = {

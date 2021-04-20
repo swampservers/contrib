@@ -2,7 +2,6 @@
 STEAMWS_MOUNTED = STEAMWS_MOUNTED or {}
 
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
-
 function require_workshop(id)
     if not STEAMWS_DOWNLOAD_STARTED[id] then
         STEAMWS_DOWNLOAD_STARTED[id] = true
@@ -18,7 +17,7 @@ function require_workshop(id)
                 game.MountGMA(name)
                 STEAMWS_MOUNTED[_id_] = true
             else
-                print("Workshop download failed for ".._id_)
+                print("Workshop download failed for " .. _id_)
                 STEAMWS_DOWNLOAD_STARTED[_id_] = nil
             end
         end)

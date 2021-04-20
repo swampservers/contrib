@@ -110,8 +110,28 @@ function GetMapPropTable()
             ang = Angle(7.031, -115.884, 38.408),
             model = "models/swamponions/trumphat.mdl",
             noshadows = true
-        },
+        }
     }
+
+    for _, side in ipairs({-1, 1}) do
+        for z = 0, 2 do
+            table.insert(stuff, {
+                class = "prop_physics",
+                pos = Vector(2304 + side * 245, 280, 80 + z * 55),
+                ang = Angle(0, -90 - side * 5, side * 90),
+                model = "models/sunabouzu/speaker.mdl",
+                noshadows = true
+            })
+        end
+
+        table.insert(stuff, {
+            class = "prop_physics",
+            pos = Vector(2304 + side * 8, 530 + side * 0.1, 23),
+            ang = Angle(0, 0, 0),
+            model = "models/props_combine/breenconsole.mdl",
+            noshadows = true
+        })
+    end
 
     --{class="prop_dynamic",pos=Vector(-2720, -1601, 24),ang=Angle(0,0,0),model="models/props_fairgrounds/mic_stand.mdl"}, //temporary
     if os.date("%B", os.time()) == "December" then
@@ -135,3 +155,9 @@ function GetMapPropTable()
 
     return stuff
 end
+
+if MAPPROPS_RERUN then
+    CreateTableMapProps()
+end
+
+MAPPROPS_RERUN = true

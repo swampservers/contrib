@@ -37,7 +37,7 @@ if CLIENT then
 
                         return
                     elseif vpanel.phase == 1 then
-                        vpanel:RunJavascript("console.log('URL:'+document.getElementsByClassName('mirror_dl').item(0).href);")
+                        vpanel:RunJavascript("console.log('URL:'+document.getElementsByTagName('source').item(0).src);")
                         vpanel:RunJavascript("console.log('TITLE:'+document.title);")
                         vpanel:RunJavascript("if(!swampvid){var swampvid=document.getElementById('example_video_1_html5_api');}if(swampvid){swampvid.volume=0;swampvid.play();console.log('DURATION:'+swampvid.duration);function ReloadIfNeed(){};}") --videojs player
                         vpanel:RunJavascript("if(typeof jwplayer === 'function'){var jwp=jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());}") --jwplayer
@@ -62,17 +62,23 @@ if CLIENT then
                         if string.StartWith(msg, "URL:") and not self.data then
                             self.data = msg:sub(5, -1)
                             print("URL: " .. self.data)
-
                             --for whatever reason, 4anime just has completely inaccessible anime eps that won't ever load in the player
-                            http.Fetch(self.data, function(body, size, headers, code)
-                                if (code == 403 or code == 503) then
-                                    LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The video file is currently inaccessible")
-                                    print("File returned a " .. code .. " error")
-                                    print("Failed")
-                                    callback()
-                                    self:Remove()
+                            --[[HTTP({
+                                method = "HEAD",
+                                url = self.data,
+                                success = function(code)
+                                    if (code == 403 or code == 503) then
+                                        LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The video file is currently inaccessible")
+                                        print("File returned a " .. code .. " error")
+                                        print("Failed")
+                                        callback()
+                                        self:Remove()
+                                    end
+                                end,
+                                failed = function(err)
+                                    print(err)
                                 end
-                            end, function() end)
+                            })]]
                         end
 
                         if string.StartWith(msg, "DURATION:") and not self.duration then

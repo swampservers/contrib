@@ -1,6 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 --	resource.AddWorkshop( "893884637" ) -- SwampCommon
 if GAMEMODE.FolderName == "cinema" then
     -- shards of contrib

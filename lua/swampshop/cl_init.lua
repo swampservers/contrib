@@ -150,6 +150,7 @@ end
 
 net.Receive('SS_Items', function(length)
     local items = net.ReadTableHD()
+
     SetLoadingPlayerProperty(-1, "SS_Items", items, function(ply)
         ply.SS_Items = SS_MakeItems(ply, ply.SS_Items)
         SS_ValidInventory = false
@@ -159,6 +160,7 @@ end)
 net.Receive('SS_ShownItems', function(length)
     local pi = net.ReadUInt(8)
     local items = net.ReadTableHD()
+
     SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
         ply.SS_ShownItems = SS_MakeItems(ply, ply.SS_ShownItems)
         ply:SS_ClearCSModels()
