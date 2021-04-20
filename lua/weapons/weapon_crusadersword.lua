@@ -44,7 +44,6 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
-local HitSoundBody = Sound ( "aof/weapons/hitbod6.wav")
 
 ------------------------------//Crotch Gun Fix\\------------------------------------------------------------|
 SWEP.Offset = {
@@ -99,11 +98,18 @@ function SWEP:PrimaryAttack()
 	if SERVER then
 		
 		timer.Simple(.7, function() if self:IsValid() then
+			local trace = self.Owner:GetEyeTrace()
+		if trace.HitPos:Distance(self.Owner:GetShootPos()) <= (self.Primary.Distance) then
+		if ( trace.Hit ) then
+		self:EmitSound( self.WallSound , 80, 100, 1, CHAN_WEAPON)
+		end
+		end
+			
 			local center = self.Owner:EyePos() + self.Owner:EyeAngles():Forward()*75
 			for _,v in ipairs(ents.GetAll()) do
 				if v~=self.Owner and v:LocalToWorld(v:OBBCenter()):Distance(center)<75 then
 				v:TakeDamage(100,self.Owner,self)
-				self:EmitSound( HitSoundBody , 80, 100, 1, CHAN_WEAPON)
+				self:EmitSound( self.FleshSound , 80, 100, 1, CHAN_WEAPON)
 				self.Weapon:SetNextPrimaryFire( CurTime() + 1.5)
 				self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
