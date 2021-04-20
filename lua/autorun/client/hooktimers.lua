@@ -605,8 +605,6 @@ timer.Create("AreaMusicController", 0.5, 0, function()
         target = "vapor"
     end
 
-    print(target)
-
     -- if loc=="Mines" then
     -- 	if GetGlobalBool("DAY", true) then
     -- 		target = table.Random({"cavern", "cavernalt"}) --alt. theme - https://youtu.be/-erU20cQO_Y
