@@ -28,7 +28,7 @@ end)
 timer.Create("musicvis_resetter",0.5,0,function()
     local th =theater.GetByLocation(Location.GetLocationIndexByName("Vapor Lounge"))
 
-    if th:VideoType()=="youtube" and MVIS_LAST_REQUESTED_VIDEO~=th:VideoKey() then
+    if th:VideoType()=="youtube" and th:VideoDuration()>0 and th:VideoDuration()<10000 and MVIS_LAST_REQUESTED_VIDEO~=th:VideoKey() then
         print("MAKEREQUEST") 
         http.Fetch("http://127.0.0.1/fft/?v="..th:VideoKey(),function(b,l,h,c) print(b) end, function(msg) print(msg) end) --tell the server to prepare it, hopefully it works
         MVIS_LAST_REQUESTED_VIDEO = th:VideoKey()

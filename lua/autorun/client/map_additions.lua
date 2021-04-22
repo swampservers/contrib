@@ -123,7 +123,15 @@ hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
 end)
 
 local flagmaterial = Material("models/props_fairgrounds/fairgrounds_flagpole01")
-
+local vapermaterial = Material("swamponions/swampcinema/vapers")
+local vapesignmaterial = Material("models/vapor/sign/sign_green")
 timer.Simple(0, function()
     flagmaterial:SetTexture("$basetexture", "models/props_fairgrounds/fairgrounds_flagpole01_alternate")
+    vapermaterial:SetMatrix("$basetexturetransform", Matrix( {
+        { 1, 0, 0, 0 },
+        { 0, 1.05, 0, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 0, 1 }
+    } ))
+    -- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))
 end)

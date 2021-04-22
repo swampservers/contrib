@@ -83,6 +83,30 @@ function table.sub(tab,a,b)
     return out
 end
 
+function table.ireduce(tab,fn)
+    local out = nil
+    for i,v in ipairs(tab) do
+        if out == nil then
+            out = v
+        else
+            out = fn(out,v)
+        end
+    end
+    return out
+end
+
+function table.isum(tab)
+    return table.ireduce(tab,function(a,b) return a+b end)
+end
+
+function table.imax(tab)
+    return table.ireduce(tab,math.max)
+end
+
+function table.imin(tab)
+    return table.ireduce(tab,math.min)
+end
+
 -- function table.repeated(val,n)
 --     local out = {}
 --     for i=1,n do
