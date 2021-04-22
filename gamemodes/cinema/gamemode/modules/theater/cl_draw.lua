@@ -308,7 +308,7 @@ function DrawFullscreenOrLighting()
         end
     else
         local settin = GetConVarNumber("cinema_lightfx")
-        local inklub = LocalPlayer():GetLocationName() == "Vapor Lounge"
+        local inklub = false --LocalPlayer():GetLocationName() == "Vapor Lounge" DISABL
         if settin < 1 and not inklub then return end
         --dont activate the developer stuff
         settin = 1

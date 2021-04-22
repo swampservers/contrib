@@ -75,7 +75,7 @@ function SWEP:PrimaryAttack()
     if not IsFirstTimePredicted() then return end
     local trc = self.Owner:GetEyeTrace()
 
-    if IsValid(trc.Entity) and trc.Entity:IsPlayer() and self.Owner:GetPos():DistToSqr(trc.Entity:GetPos()) < self.MaxTaseDist * self.MaxTaseDist and not Safe(trc.Entity) and not trc.Entity:InVehicle() then
+    if IsValid(trc.Entity) and trc.Entity:IsPlayer() and self.Owner:GetPos():DistToSqr(trc.Entity:GetPos()) < self.MaxTaseDist * self.MaxTaseDist and not Safe(trc.Entity) and not trc.Entity:InVehicle() and trc.Entity:GetMoveType()~=MOVETYPE_NOCLIP then
         self:UnTasePlayer()
         self.Owner:ExtEmitSound("ambient/energy/zap8.wav")
         self:AttachWire(trc.Entity)
