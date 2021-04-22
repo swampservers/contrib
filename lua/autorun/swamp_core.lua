@@ -64,9 +64,56 @@ function vec:Pow(y)
     return Vector(math.pow(self.x, y), math.pow(self.y, y), math.pow(self.z, y))
 end
 
+function vec:Max(o)
+    return Vector(math.max(self.x,o.x),math.max(self.y,o.y),math.max(self.z,o.z))
+end
+
+function vec:Min(o)
+    return Vector(math.min(self.x,o.x),math.min(self.y,o.y),math.min(self.z,o.z))
+end
 
 BLACK = Color(0,0,0,255)
 WHITE = Color(255,255,255,255)
+
+function table.sub(tab,a,b)
+    local out = {}
+    for i=a,b do
+        table.insert(out, tab[i])
+    end
+    return out
+end
+
+function table.ireduce(tab,fn)
+    local out = nil
+    for i,v in ipairs(tab) do
+        if out == nil then
+            out = v
+        else
+            out = fn(out,v)
+        end
+    end
+    return out
+end
+
+function table.isum(tab)
+    return table.ireduce(tab,function(a,b) return a+b end)
+end
+
+function table.imax(tab)
+    return table.ireduce(tab,math.max)
+end
+
+function table.imin(tab)
+    return table.ireduce(tab,math.min)
+end
+
+-- function table.repeated(val,n)
+--     local out = {}
+--     for i=1,n do
+--         table.insert(out, val)
+--     end
+--     return out  
+-- end
 
 
 -- WORKING SETGLOBAL* BECAUSE GARRYS VERSION UNSETS ITSELF RANDOMLY THANKS A LOT GARRY
