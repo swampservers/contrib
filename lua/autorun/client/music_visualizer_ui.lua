@@ -11,8 +11,7 @@ end)
 
 --todo make this interface better
 VISUALIZER_SETTINGS = {
-     --"Rave", "Colorful", "Flash", "Red",  "Dynamic", "Dark", "None",  "Ignite",
-     "Rave",  "Red",  "Dark", "None",  "Ignite",
+     "Rave", "Colorful", "Flash", "Red",   "Dark", "None",  "Ignite", --"Dynamic",
 }
  
 
@@ -137,6 +136,8 @@ VAPOR_CHARTS = {}
 
 function VaporChart(name, val)
     -- if not GetConVar("musicvis_debug"):GetBool() then return end
+    if not val then val = MVISTAB[name] or 0 end
+
     local chart = nil
     local i = nil
     for ii,v in ipairs(VAPOR_CHARTS) do

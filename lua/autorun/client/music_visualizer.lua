@@ -57,6 +57,7 @@ function MvisDecayingMean(k, val, blend, initial)
     end
     MVIS_TRACKERS[k] = MVIS_TRACKERS[k] * (1-blend) + val*blend
     MVISTAB[k] = MVIS_TRACKERS[k]
+    return MVISTAB[k]
 end
 
 function MvisMean(k, val, framecount, initial)
@@ -80,6 +81,7 @@ function MvisMean(k, val, framecount, initial)
     MVIS_SUMS[k] = val+sum
     
     MVISTAB[k] = MVIS_SUMS[k] / (#(MVIS_TRACKERS[k]))
+    return MVISTAB[k]
 end
 
 function MvisMeanStd(k,val,framecount)
@@ -88,6 +90,7 @@ function MvisMeanStd(k,val,framecount)
     MvisMean(k2,val*val,framecount)
     local var = MVISTAB[k2] - MVISTAB[k]*MVISTAB[k]
     MVISTAB[k.."_std"] = (isnumber(var) and math.sqrt(var) or var:Max(Vector(0,0,0)):Pow(0.5))
+    return MVISTAB[k], MVISTAB[k.."_std"]
 end
 
 function MvisDecayingMax(k,val,decay,subtract)
@@ -97,12 +100,37 @@ function MvisDecayingMax(k,val,decay,subtract)
         MVIS_TRACKERS[k]=subtract and math.max(val,MVIS_TRACKERS[k]-decay) or math.max(val,MVIS_TRACKERS[k]*decay)
     end
     MVISTAB[k] = MVIS_TRACKERS[k]
+    return MVISTAB[k]
+end
+
+function MvisInterpolating(k,inc,gen)
+    if MVIS_TRACKERS[k]==nil then
+        MVIS_TRACKERS[k] = {0, gen(0), gen(1)}
+    end
+    local lastid = math.floor(MVIS_TRACKERS[k][1])
+    MVIS_TRACKERS[k][1] = MVIS_TRACKERS[k][1] + inc
+    local t = MVIS_TRACKERS[k][1]
+    local frameid = math.floor(t)
+
+    if lastid ~= frameid then
+        MVIS_TRACKERS[k][2] = MVIS_TRACKERS[k][3]
+        MVIS_TRACKERS[k][3] = gen(frameid+1)
+    end
+
+    v0 = MVIS_TRACKERS[k][2]
+    v1 = MVIS_TRACKERS[k][3]
+    if isfunction(v0) then v0=v0() end
+    if isfunction(v1) then v1=v1() end
+
+    MVISTAB[k] = (isvector(v0) and LerpVector or Lerp)(t-frameid,v0,v1)
+    return MVISTAB[k]
 end
 
 -- keeps track of last frame's params
 MVISTAB={} 
 function MvisNextFrame(f,fft, resp)
     local col,vol = unpack(f)
+    local last = MVISTAB or {}
     MVISTAB={}
     local tab = MVISTAB
 
@@ -119,15 +147,37 @@ function MvisNextFrame(f,fft, resp)
     MvisMeanStd("c2", col, 120)
     MvisMeanStd("c4", col, 240)
     MvisMeanStd("v05", vol, 30)
-    MvisMean("fft1m", fft[1], 10)
-    MvisDecayingMax("fft1d", fft[1], 0.9, false)
+    MvisMean("fft1d", fft[1], 10)
+    -- MvisDecayingMax("fft1d", fft[1], 0.9, false)
     MvisDecayingMax("fft2d", math.max(fft[2],fft[3]), 0.9, false)
-    MvisDecayingMax("dualbass", tab["fft2d"]*0.8>tab["fft1m"] and tab["fft2d"] or -tab["fft1m"]*0.8, 0.2, true)
 
+    -- a,b = tab["fft1d"], tab["fft2d"]
+    -- wa,wb = math.pow(a,2),math.pow(b*0.7,2)
+    -- (b*wb - a*wa ) / (wa+wb + 0.001)
+
+    MvisDecayingMax("dualbass1",tab["fft2d"]*0.7>tab["fft1d"] and tab["fft2d"] or -tab["fft1d"], 0.25, true)
+
+    -- print(math.max(1, 1-math.pow((last["dualbass"]or 0)-tab["dualbass1"],4)))
+    MvisDecayingMean("dualbass",tab["dualbass1"],math.min(1, math.abs((last["dualbass"]or 0)-tab["dualbass1"])^0.5  ))
+
+    MvisInterpolating("alternating_color", 1/60, function(i) 
+        local hsv = VectorRand(0, 1)
+        -- print("Cb1", hsv, i)
+        if i%2==1 then
+            -- local genx = hsv.x
+            -- return function()
+                local sc_h, sc_s, sc_v = ColorToHSV(tab["c1"]:ToColor() )
+                hsv.x = ((sc_h / 360) + hsv.x * 0.1 - 0.05) % 1
+            --     return hsv
+            -- end
+        end
+        return hsv
+    end)
 
     -- tab["lead"] = math.max(fft[4],fft[5],fft[6]) - math.min(fft[4],fft[5],fft[6]) --math.max(fft[7],fft[8],fft[9])
-    tab["lead"] = math.max(fft[5],fft[6],fft[7]) - math.min(fft[5],fft[6],fft[7])
+    -- tab["lead"] = math.max(fft[5],fft[6],fft[7]) - math.min(fft[5],fft[6],fft[7])
 end
+
 
 
 
@@ -215,8 +265,6 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
         local mean4, std4 = tab["c4"], tab["c4_std"]
         local mv5,std5 = tab["v05"], tab["v05_std"]
 
-
-
         local normvol = (meanvol-mv5) --not actual std
 
         -- TODO: use long color mean for extra darkness, short color mean for extra flash
@@ -230,52 +278,18 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
         -- 1 = default light, 0 = squared light with color. it can go above 1 but not below 0 (it should have dark non-flickery parts.. maybe bright nonflicker when the image is bright? )
         local drive = -0.35 + tab["dualbass"]+tab["v05"]*1.5 + normalized:Mean()*2
 
-        -- makes it less bright when the video gets bright
-        -- if not UsingMusicVis("flash") then
-        --     if finalpower < 0.5 then
-        --         finalpower = 0.5 - (0.5 - finalpower) * 0.6
-        --     end
-        -- end
+        -- drive = math.pow(math.max(0,drive), 2)
 
-        -- if UsingMusicVis("flash") then finalpower = finalpower-1 end
-        -- if UsingMusicVis("dark") or UsingMusicVis("colorful") then finalpower=1 end
+        if UsingMusicVis("flash") then drive=drive+1 end
+        if UsingMusicVis("dark") or UsingMusicVis("colorful") then drive=0 end
 
-        -- finalpower = -1
-        -- finalpower = -5
-        local function HSVFOR(timepoint)
-            math.randomseed(timepoint)
-            local hsv = VectorRand(0, 1)
-            math.randomseed(SysTime())
-
-            local sc_h, sc_s, sc_v = ColorToHSV(mean1:ToColor())
-
-            if timepoint % 2 == 0 then
-                hsv.x = ((sc_h / 360) + hsv.x * 0.1 - 0.05) % 1
-            end
-
-            return hsv
-        end
-
-        local wanderingcolorbase = CurTime() * 1
-        local hsv = LerpVector(wanderingcolorbase - math.floor(wanderingcolorbase), HSVFOR(math.floor(wanderingcolorbase)), HSVFOR(math.ceil(wanderingcolorbase)))
-        math.randomseed(SysTime())
-
-        
-        
-        
-        
-        -- local extradarkness = math.min(0.2 + mean_avg * 5, 1)
-
-        -- if finalpower > 0.5 then
-        --     extradarkness = extradarkness - (math.min(finalpower, 1.0) - 0.5) / 10 --floor at 1 so its not always flashing
-        -- end
+        local hsv = tab["alternating_color"]
 
         local maxextradarkness = math.max(0.4-mean4:Mean(), 0) * 0.6
         local extradarkness = (math.max(0.3-drive, 0)/0.3) * maxextradarkness
         -- VaporChart("med", maxextradarkness) 
         local colormod = HSVToColor(hsv.x * 360, math.sqrt(hsv.y), 1-extradarkness) --math.max((finalpower-1)*0.1, 0))
         colormod = Vector(colormod.r / 255, colormod.g / 255, colormod.b / 255)
-
 
 
         if UsingMusicVis("dark") then
@@ -285,8 +299,8 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
 
         if UsingMusicVis("red") then
             --local other = math.max(0, 0.5 - drive
-            colormod = Vector(1,0.1,0.1)
-            drive = drive*0.3
+            colormod = Vector(math.min(0.7,drive)+0.3,0.1,0.1)
+            drive = 0 --drive*0.1
         end
 
         local extraflash = 0
@@ -295,7 +309,7 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
             -- flashing increases when the screen is bright... TODO make it adjust drive directly but make it balance with sound
             extraflash = math.min((drive-1)/(2 - mean:Mean()*1.5), 0.5+mean:Mean())
 
-            -- if UsingMusicVis("flash") then` extraflash=extraflash*1.5 end
+            if UsingMusicVis("flash") then extraflash=extraflash*1.5 end
 
             DrawColorModify({
                 ["$pp_colour_addr"] = 0, --ADD TO ONE
@@ -309,59 +323,50 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
                 ["$pp_colour_contrast"] = 1 + extraflash, --MULTIPLY ALL
             })
         else
-            -- TODO: maybe use a stencil to mask out the area outside the lounge so its not flashing? probalby not worth fps cost, just put doors on it that automatically close
             DrawSquareColor(1-drive, colormod, false)
         end
 
-        --tab)  -- I want to not have to copy the texture twice, but cant get it to work, some really weird depth buffer issue
         if GetConVar("musicvis_debug"):GetBool() then
             draw.DrawText("Setting: "..tostring(GetG("musicvis")), "DermaDefault", 310,1)
-            -- if GetConVar("musicvis_debug"):GetInt()>1 then
-            --     for i,col in ipairs(VAPORLASTPIXELS) do
-            --         surface.SetDrawColor(col.x*255,col.y*255,col.z*255,255)
-            --         surface.DrawRect(math.floor(i/16)*3 + 310,(i%16)*3 + 20,3,3)
-            --     end
-            -- end
-            -- local fft = MvisGetFFT(data, vframe)
-
-            VaporChart("drive", drive) 
-            VaporChart("final_color", colormod)
-            VaporChart("instru",tab["instrument"])
-
-            VaporChart("framediff", diff) 
+            VaporChart("drive") 
+            VaporChart("colormod")
+            VaporChart("extraflash")
+        
+        
+            VaporChart("instrument",tab["instrument"])
+        
+            VaporChart("framediff") 
             --band notes
             -- 1 very low
             -- 2 is kick
             -- 3 is like low humming or higher kick
-
-
+        
             VaporChart("volume", meanvol)
             -- VaporChart("fft1", fft[1])
-            -- VaporChart("fft1d", tab["fft1d"])
+            VaporChart("fft1d", tab["fft1d"])
             -- VaporChart("fft1m", tab["fft1m"])
             -- VaporChart("fft2", fft[2])
-            -- VaporChart("fft2d", tab["fft2d"])
+            VaporChart("fft2d", tab["fft2d"])
             VaporChart("dualbass", tab["dualbass"]+0.5)
+            VaporChart("dualbass1", tab["dualbass1"]+0.5)
             -- VaporChart("fftub", fft[3])
             -- VaporChart("fft5", fft[5])
             -- VaporChart("fft9", fft[9])
             -- VaporChart("nvolume", normvol+0.5)
             -- VaporChart("mvolume", mv5)
             VaporChart("normalized", (normalized) + 0.5)
-
+        
             VaporChart("mean", mean)
             VaporChart("rmean1", mean1)
             VaporChart("rmean4",mean4)
             -- VaporChart("mean-running_mean", mean-VAPOR_RUNNINGMEAN + Vector(0.5,0.5,0.5))
             VaporChart("std1", std1)
-
-
-
+        
             -- local h, s, v = ColorToHSV(mean1:ToColor())
             -- VaporChart("hue", h / 360)
             -- VaporChart("extradarkness", extradarkness)
             -- VaporChart("extraflash", extraflash)
-
+        
             
             for i,v in ipairs(fft) do
                 surface.SetDrawColor( 255,255,i%2==0 and 128 or 255, 255 )
