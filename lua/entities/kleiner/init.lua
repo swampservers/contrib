@@ -314,15 +314,17 @@ end
 
 function ENT:DropGrenades()
     for _, gren in ipairs({self.Grenade1, self.Grenade2}) do
-        gren:SetParent()
-        gren:PhysicsInit(MOVETYPE_VPHYSICS)
-        gren:GetPhysicsObject():Wake()
+        if(IsValid(gren))then
+            gren:SetParent()
+            gren:PhysicsInit(MOVETYPE_VPHYSICS)
+            gren:GetPhysicsObject():Wake()
 
-        timer.Simple(60 * 15, function()
-            if (IsValid(gren)) then
-                gren:Remove()
-            end
-        end)
+            timer.Simple(60 * 15, function()
+                if (IsValid(gren)) then
+                    gren:Remove()
+                end
+            end)
+        end
     end
 end
 
@@ -447,7 +449,6 @@ function ENT:FindTarget()
     local targets = {}
     local targetcount = 0
     local playersum = 0
-
     for ent, val in pairs(_ents) do
         if (self:CanBecomeTarget(ent) and self:GetTargetPriority(ent) > 0) then
             if (ent:IsPlayer()) then
@@ -577,7 +578,7 @@ function ENT:RunBehaviour()
             self.loco:SetAcceleration(self.Suicidal and 400 or 200)
             self.loco:SetDeceleration(self.Suicidal and 900 or 900)
 
-            if (math.random(1, 50) == 1) then
+            if (math.random(1, 10) == 1) then
                 self:ResetBehavior()
             else
                 local wanderpos

@@ -57,7 +57,7 @@ function SWEP:SecondaryAttack(undo)
 
     local ply = self:GetOwner()
     self:EmitSound("Weapon_Bugbait.Splat")
-    self:EmitSound(undo and "vo/k_lab/kl_hedyno03.wav" or "vo/k_lab2/kl_greatscott.wav", 45, 200, 0.2, nil, nil, 56)
+    self:EmitSound(undo and "vo/k_lab/kl_hedyno03.wav" or "vo/k_lab2/kl_greatscott.wav", 45, 200, 0.2, nil, nil)
     self:SendWeaponAnim(ACT_VM_SECONDARYATTACK)
 
     if (SERVER) then
