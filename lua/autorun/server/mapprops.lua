@@ -13,6 +13,13 @@ function GetMapPropTable()
             ang = Angle(0, 0, 0)
         },
         {
+            class = "gmt_instrument_piano",
+            pos = Vector(100, 1700, 192),
+            ang = Angle(0, 0, 0)
+        },
+
+        
+        {
             class = "ent_chess_board",
             pos = Vector(-2445, 220, 0)
         },
