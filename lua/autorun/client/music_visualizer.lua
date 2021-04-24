@@ -354,7 +354,7 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
             return
         end
 
-        if vframe < MVIS_LASTVFRAME or vframe > MVIS_LASTVFRAME+100 then
+        if MVIS_LASTVFRAME==nil or vframe < MVIS_LASTVFRAME or vframe > MVIS_LASTVFRAME+100 then
             MVIS_TRACKERS = {} -- reset all trackers
             MVIS_LASTVFRAME = vframe-(2+MVIS_LOOKAHEAD_FRAMES)
         end
