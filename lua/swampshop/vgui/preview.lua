@@ -8,7 +8,6 @@ function PANEL:Init()
     self.ZoomOffset = 0
 end
 
-
 function PANEL:OnMouseWheeled(amt)
     self.ZoomOffset = self.ZoomOffset + (amt > 0 and 1 or -1)
 end
@@ -162,10 +161,16 @@ function PANEL:Paint()
     end
 
     if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.bonemod) then
-        if SS_HoverItem then SS_PreRender(SS_HoverItem) end
+        if SS_HoverItem then
+            SS_PreRender(SS_HoverItem)
+        end
+
         SS_PreviewShopModel(self, SS_HoverIOP)
         self.Entity:DrawModel()
-        if SS_HoverItem then SS_PreRender(SS_HoverItem) end
+
+        if SS_HoverItem then
+            SS_PreRender(SS_HoverItem)
+        end
     else
         local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
@@ -182,8 +187,6 @@ function PANEL:Paint()
         local mods = LocalPlayer():SS_GetActiveBonemods()
 
         if SS_HoverItem and SS_HoverItem.bonemod then
-            
-
             local add = true
 
             for i, v in ipairs(mods) do
@@ -204,7 +207,7 @@ function PANEL:Paint()
 
     if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.bonemod then
         for _, prop in pairs(ply:SS_GetCSModels()) do
-            if SS_HoverItem == nil or SS_HoverItem.id ~= prop.id then
+            if SS_HoverItem == nil or SS_HoverItem.id ~= prop.item.id then
                 SS_DrawWornCSModel(prop.item, prop.mdl, self.Entity)
             end
         end
@@ -212,10 +215,10 @@ function PANEL:Paint()
 
     if SS_HoverItem and SS_HoverItem.wear then
         if not IsValid(SS_HoverCSModel) then
-            SS_HoverCSModel = SS_CreateWornCSModel(SS_HoverData, SS_HoverCfg)
+            SS_HoverCSModel = SS_CreateWornCSModel(SS_HoverItem)
         end
 
-        SS_DrawWornCSModel(SS_HoverData, SS_HoverCfg, SS_HoverCSModel, self.Entity)
+        SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity)
     end
 
     -- ForceDrawPlayer(LocalPlayer())

@@ -3,6 +3,10 @@
 SS_Tab("Construction", "bricks")
 SS_Heading("Tools")
 
+local function CannotBuyTrash(self, ply)
+    if SERVER then return CannotMakeTrash(ply) end
+end
+
 SS_WeaponProduct({
     class = "weapon_trash_paint",
     name = 'Paint Tool',
@@ -13,6 +17,7 @@ SS_WeaponProduct({
 
 SS_WeaponProduct({
     class = "weapon_trash_tape",
+    price = 0,
     name = 'Tape Tool',
     description = "Use this to tape (freeze) and un-tape props.",
     model = 'models/swamponions/ducktape.mdl'
@@ -20,13 +25,13 @@ SS_WeaponProduct({
 
 SS_Product({
     class = 'trash',
+    price = 0,
     name = 'Trash',
     description = "Spawn a random piece of junk for building stuff with",
     model = 'models/props_junk/cardboard_box001b.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        if tryMakeTrash(ply) then
-            e = makeTrash(ply, trashlist[math.random(1, #trashlist)])
-        end
+        makeTrash(ply, trashlist[math.random(1, #trashlist)])
     end
 })
 
@@ -38,12 +43,9 @@ SS_Product({
     name = 'Small Plate',
     description = "Easy but costs money",
     model = 'models/props_phx/construct/metal_plate1.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        if tryMakeTrash(ply) then
-            makeTrash(ply, self.model)
-        else
-            ply:SS_GivePoints(self.price)
-        end
+        makeTrash(ply, self.model)
     end
 })
 
@@ -53,12 +55,9 @@ SS_Product({
     name = 'Medium Plate',
     description = "Easy but costs money",
     model = 'models/props_phx/construct/metal_plate1x2.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        if tryMakeTrash(ply) then
-            makeTrash(ply, self.model)
-        else
-            ply:SS_GivePoints(self.price)
-        end
+        makeTrash(ply, self.model)
     end
 })
 
@@ -68,12 +67,9 @@ SS_Product({
     name = 'Big Plate',
     description = "Easy but costs money",
     model = 'models/props_phx/construct/metal_plate2x2.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        if tryMakeTrash(ply) then
-            makeTrash(ply, self.model)
-        else
-            ply:SS_GivePoints(self.price)
-        end
+        makeTrash(ply, self.model)
     end
 })
 
@@ -83,17 +79,11 @@ SS_Product({
     name = 'Triangle',
     description = "Easy but costs money",
     model = 'models/props_phx/construct/metal_plate2x2_tri.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        if tryMakeTrash(ply) then
-            makeTrash(ply, self.model)
-        else
-            ply:SS_GivePoints(self.price)
-        end
+        makeTrash(ply, self.model)
     end
 })
-
-
-
 
 SS_Product({
     class = 'trashfield',
@@ -101,6 +91,7 @@ SS_Product({
     name = 'Medium Protection Field',
     description = "While taped, prevents other players from building in your space. Also makes blocks stronger in the mines.",
     model = 'models/maxofs2d/hover_classic.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         for k, v in pairs(ents.FindByClass("prop_trash_field")) do
             if v:GetOwnerID() == ply:SteamID() then
@@ -111,11 +102,7 @@ SS_Product({
         --Delay 1 tick
         timer.Simple(0, function()
             timer.Simple(0.001, function()
-                if tryMakeTrash(ply) then
-                    makeForcefield(ply, self.model)
-                else
-                    ply:SS_GivePoints(self.price)
-                end
+                makeForcefield(ply, self.model)
             end)
         end)
     end
@@ -127,6 +114,7 @@ SS_Product({
     name = 'Large Protection Field',
     description = "While taped, prevents other players from building in your space. Also makes blocks stronger in the mines.",
     model = 'models/dav0r/hoverball.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         for k, v in pairs(ents.FindByClass("prop_trash_field")) do
             if v:GetOwnerID() == ply:SteamID() then
@@ -137,11 +125,7 @@ SS_Product({
         --Delay 1 tick
         timer.Simple(0, function()
             timer.Simple(0.001, function()
-                if tryMakeTrash(ply) then
-                    makeForcefield(ply, self.model)
-                else
-                    ply:SS_GivePoints(self.price)
-                end
+                makeForcefield(ply, self.model)
             end)
         end)
     end
@@ -153,20 +137,17 @@ SS_Product({
     name = 'Lights',
     description = "Lights up while taped",
     model = 'models/maxofs2d/light_tubular.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        if tryMakeTrash(ply) then
-            local nxt = {}
+        local nxt = {}
 
-            for k, v in pairs(trashlist) do
-                if PropTrashLightData[v] then
-                    table.insert(nxt, v)
-                end
+        for k, v in pairs(trashlist) do
+            if PropTrashLightData[v] then
+                table.insert(nxt, v)
             end
-
-            e = makeTrash(ply, nxt[math.random(1, #nxt)])
-        else
-            ply:SS_GivePoints(self.price)
         end
+
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
 
@@ -176,20 +157,17 @@ SS_Product({
     name = 'Chairs',
     description = "Can be sat on",
     model = 'models/props_c17/furniturechair001a.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        if tryMakeTrash(ply) then
-            local nxt = {}
+        local nxt = {}
 
-            for k, v in pairs(trashlist) do
-                if ChairOffsets[v] then
-                    table.insert(nxt, v)
-                end
+        for k, v in pairs(trashlist) do
+            if ChairOffsets[v] then
+                table.insert(nxt, v)
             end
-
-            e = makeTrash(ply, nxt[math.random(1, #nxt)])
-        else
-            ply:SS_GivePoints(self.price)
         end
+
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
 
@@ -199,6 +177,7 @@ SS_Product({
     name = 'Medium Theater Screen',
     description = "Create your own private theater anywhere! You'll remain owner even if you walk away.",
     model = 'models/props_phx/rt_screen.mdl',
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
             if v:GetOwnerID() == ply:SteamID() then
@@ -209,11 +188,7 @@ SS_Product({
         --Delay 1 tick
         timer.Simple(0, function()
             timer.Simple(0.001, function()
-                if tryMakeTrash(ply) then
-                    makeTrashTheater(ply, self.model)
-                else
-                    ply:SS_GivePoints(self.price)
-                end
+                makeTrashTheater(ply, self.model)
             end)
         end)
     end
@@ -225,6 +200,7 @@ SS_Product({
     name = "Tiny Theater Screen",
     description = "Create your own private theater anywhere! You'll remain owner even if you walk away.",
     model = "models/props_c17/tv_monitor01.mdl",
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
             if v:GetOwnerID() == ply:SteamID() then
@@ -235,11 +211,7 @@ SS_Product({
         --Delay 1 tick
         timer.Simple(0, function()
             timer.Simple(0.001, function()
-                if tryMakeTrash(ply) then
-                    makeTrashTheater(ply, self.model)
-                else
-                    ply:SS_GivePoints(self.price)
-                end
+                makeTrashTheater(ply, self.model)
             end)
         end)
     end
@@ -252,6 +224,7 @@ SS_Product({
     description = "Create your own private theater anywhere! You'll remain owner even if you walk away.",
     model = "models/hunter/plates/plate1x2.mdl",
     material = "tools/toolsblack",
+    CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
             if v:GetOwnerID() == ply:SteamID() then
@@ -262,11 +235,7 @@ SS_Product({
         --Delay 1 tick
         timer.Simple(0, function()
             timer.Simple(0.001, function()
-                if tryMakeTrash(ply) then
-                    makeTrashTheater(ply, self.model)
-                else
-                    ply:SS_GivePoints(self.price)
-                end
+                makeTrashTheater(ply, self.model)
             end)
         end)
     end

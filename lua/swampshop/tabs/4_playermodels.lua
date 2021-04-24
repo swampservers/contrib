@@ -3,7 +3,7 @@
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
-SS_ItemProduct({
+SS_Item({
     class = "inflater",
     price = 200000,
     name = 'Inflater',
@@ -15,25 +15,15 @@ SS_ItemProduct({
     bonemod = true,
     configurable = {
         scale = {
-            xs = {
-                min = 0.5,
-                max = 1.5
-            },
-            ys = {
-                min = 0.5,
-                max = 1.5
-            },
-            zs = {
-                min = 0.5,
-                max = 1.5
-            }
+            min = Vector(0.5, 0.5, 0.5),
+            max = Vector(1.5, 1.5, 1.5)
         },
         bone = true,
         scale_children = true
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "offsetter",
     price = 100000,
     name = 'Offsetter',
@@ -45,18 +35,8 @@ SS_ItemProduct({
     bonemod = true,
     configurable = {
         pos = {
-            x = {
-                min = -8,
-                max = 8
-            },
-            y = {
-                min = -8,
-                max = 8
-            },
-            z = {
-                min = -8,
-                max = 8
-            }
+            min = Vector(-8, -8, -8),
+            max = Vector(8, 8, 8),
         },
         bone = true
     }
@@ -64,7 +44,7 @@ SS_ItemProduct({
 
 SS_Heading("Permanent")
 
-SS_ItemProduct({
+SS_Item({
     class = "outfitter2",
     price = 2000000,
     name = 'Outfitter',
@@ -86,7 +66,7 @@ end
 
 hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return ply:GetNWBool("oufitr") end)
 
-SS_PlayermodelItemProduct({
+SS_PlayermodelItem({
     class = 'crusadermodel',
     price = 300000,
     name = 'Crusader',
@@ -97,7 +77,7 @@ SS_PlayermodelItemProduct({
     end
 })
 
-SS_PlayermodelItemProduct({
+SS_PlayermodelItem({
     class = 'jokermodel',
     price = 180000,
     name = 'The Joker',
@@ -106,7 +86,7 @@ SS_PlayermodelItemProduct({
     PlayerSetModel = function(self, ply) end
 })
 
-SS_PlayermodelItemProduct({
+SS_PlayermodelItem({
     class = 'minecraftmodel',
     price = 400064,
     name = 'Block Man',
@@ -115,7 +95,7 @@ SS_PlayermodelItemProduct({
     PlayerSetModel = function(self, ply) end
 })
 
-SS_PlayermodelItemProduct({
+SS_PlayermodelItem({
     class = 'neckbeardmodel',
     price = 240000,
     name = 'Athiest',
@@ -126,7 +106,7 @@ SS_PlayermodelItemProduct({
     end
 })
 
-SS_PlayermodelItemProduct({
+SS_PlayermodelItem({
     class = 'ogremodel',
     price = 100000,
     name = 'Ogre',
@@ -135,7 +115,7 @@ SS_PlayermodelItemProduct({
     PlayerSetModel = function(self, ply) end
 })
 
-SS_PlayermodelItemProduct({
+SS_PlayermodelItem({
     class = 'ponymodel',
     price = 500000,
     name = 'Pony',
@@ -154,7 +134,7 @@ SS_UniqueModelProduct({
     name = 'Sun Princess',
     model = 'models/mlp/player_celestia.mdl',
     CanBuyStatus = function(self, ply)
-        if not ply:SS_HasItem("ponymodel") then return SS_BUYSTATUS_PONYONLY end
+        if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
     end
 })
 
@@ -163,7 +143,7 @@ SS_UniqueModelProduct({
     name = 'Moon Princess',
     model = 'models/mlp/player_luna.mdl',
     CanBuyStatus = function(self, ply)
-        if not ply:SS_HasItem("ponymodel") then return SS_BUYSTATUS_PONYONLY end
+        if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
     end
 })
 
@@ -274,7 +254,7 @@ SS_UniqueModelProduct({
 SS_UniqueModelProduct({
     class = 'weeaboo',
     name = 'Weeaboo Trash',
-    description = "Two nukes wasn't enough.",
+    description = "Anime is proof that God has abandoned us.",
     model = 'models/tsumugi.mdl'
 })
 

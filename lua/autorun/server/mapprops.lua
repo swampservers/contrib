@@ -17,8 +17,6 @@ function GetMapPropTable()
             pos = Vector(100, 1700, 192),
             ang = Angle(0, 0, 0)
         },
-
-        
         {
             class = "ent_chess_board",
             pos = Vector(-2445, 220, 0)
@@ -144,7 +142,7 @@ function GetMapPropTable()
         --by the door
         table.insert(stuff, {
             class = "prop_physics",
-            pos = Vector(2050, 768+side*58, 64),
+            pos = Vector(2050, 768 + side * 58, 64),
             ang = Angle(0, 90, 90),
             model = "models/hunter/blocks/cube05x3x025.mdl",
             noshadows = true,
@@ -152,6 +150,7 @@ function GetMapPropTable()
             material = "!VaporLoungeBoxes"
         })
     end
+
     table.insert(stuff, {
         class = "prop_physics",
         pos = Vector(2304, 285, 111),
@@ -161,7 +160,6 @@ function GetMapPropTable()
         -- color=Color(64,64,64),
         material = "!VaporLoungeBoxes"
     })
-
 
     --{class="prop_dynamic",pos=Vector(-2720, -1601, 24),ang=Angle(0,0,0),model="models/props_fairgrounds/mic_stand.mdl"}, //temporary
     if os.date("%B", os.time()) == "December" then

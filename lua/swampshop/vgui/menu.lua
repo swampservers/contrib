@@ -399,10 +399,9 @@ function PANEL:Init()
             local scat = NewSubCategory(cat)
 
             for _, product in ipairs(LAYOUT.products) do
-
                 local model = vgui.Create('DPointShopItem')
                 model:SetProduct(product)
-                model:SetSize(SS_TILESIZE,SS_TILESIZE)
+                model:SetSize(SS_TILESIZE, SS_TILESIZE)
                 scat:Add(model)
             end
         end
@@ -415,27 +414,31 @@ function PANEL:Init()
 
     function SS_InventoryPanel:Think()
         if not SS_ValidInventory then
-            if #self:GetCanvas():GetChildren() > 0 then
-                for k, v in pairs(self:GetCanvas():GetChildren()) do
-                    v:Remove()
-                end
+            -- if #self:GetCanvas():GetChildren() > 0 then
+            local scroll2 = self:GetVBar():GetScroll()
 
-                return
+            for k, v in pairs(self:GetCanvas():GetChildren()) do
+                v:Remove()
             end
 
+            -- return
+            -- end
             -- print("Items reloading")
             local itemstemp = LocalPlayer().SS_Items or {}
 
             table.sort(itemstemp, function(a, b)
                 local i = 0
                 local ml = math.min(string.len(a.name), string.len(b.name))
+
                 while i < ml do
                     i = i + 1
                     local a1 = string.byte(a.name, i)
                     local b1 = string.byte(b.name, i)
                     if a1 ~= b1 then return a1 < b1 end
                 end
+
                 if string.len(a.name) == string.len(b.name) then return a.id < b.id end
+
                 return string.len(a.name) > string.len(b.name)
             end)
 
@@ -455,7 +458,7 @@ function PANEL:Init()
                     for _, item in pairs(categorizeditems[cat]) do
                         local model = vgui.Create('DPointShopItem')
                         model:SetItem(item)
-                        model:SetSize(SS_TILESIZE,SS_TILESIZE)
+                        model:SetSize(SS_TILESIZE, SS_TILESIZE)
                         sc:Add(model)
                     end
                 end
@@ -464,6 +467,10 @@ function PANEL:Init()
             FinishCategory(self)
             self:InvalidateLayout()
             SS_ValidInventory = true
+
+            timer.Simple(0, function()
+                self:GetVBar():SetScroll(scroll2)
+            end)
         end
     end
 
@@ -473,8 +480,6 @@ function PANEL:Init()
     local previewpanel = vgui.Create('DPointShopPreview', self.rpane)
     previewpanel:SetTall(SS_PREVIEWHEIGHT)
     previewpanel:Dock(TOP)
-
-
     SS_DescriptionPanel = vgui.Create('DPanel', self.rpane)
     SS_DescriptionPanel:Dock(FILL)
     SS_DescriptionPanel.Paint = function() end
@@ -489,7 +494,7 @@ function PANEL:Init()
 
     p.Paint = function(pnl, w, h)
         draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, (h / 2) - 13, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-        draw.SimpleText("Income: " .. tostring(SS_Income(LocalPlayer())) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     end
 
     local xo = p:GetWide() + SS_BOTBARHEIGHT

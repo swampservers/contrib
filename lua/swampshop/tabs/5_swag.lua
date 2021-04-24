@@ -3,8 +3,9 @@
 SS_Tab("Swag", "color_swatch")
 SS_Heading("Accessories")
 
-SS_ItemProduct({
+SS_Item({
     class = 'trumphatfree',
+    price = 0,
     name = 'Unstumpable',
     description = "Bold, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
     model = 'models/swamponions/colorabletrumphat.mdl',
@@ -31,7 +32,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "clownshoe",
     price = 50000,
     name = 'Clown Shoe',
@@ -53,7 +54,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "bigburger",
     price = 100000,
     name = 'Burger',
@@ -74,7 +75,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "bicyclehelmet",
     price = 120000,
     name = 'Safety Helmet',
@@ -95,7 +96,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "buckethat",
     price = 10000,
     name = 'Bucket Head',
@@ -123,7 +124,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "conehattest",
     price = 1000,
     name = 'Cone Head',
@@ -147,7 +148,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "kleinerglasses",
     price = 1000000,
     name = "Kleiner's Glasses",
@@ -168,7 +169,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "santahat",
     price = 25000,
     name = 'Christmas Hat',
@@ -196,7 +197,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "shrunkenhead",
     price = 150000,
     name = 'Conjoined Twin',
@@ -216,7 +217,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "spikecollar",
     price = 200000,
     name = 'Spike Collar',
@@ -242,7 +243,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "tinfoilhat",
     price = 40000,
     name = "InfoWarrior's Hat",
@@ -269,7 +270,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "trashhattest",
     price = 10000000,
     name = 'Party Hat',
@@ -296,7 +297,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "turtleplush",
     price = 1000,
     name = 'Turtle Plush',
@@ -322,7 +323,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "pickelhaube",
     price = 250000,
     name = 'Pickelhaube',
@@ -347,7 +348,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = "horsemask",
     price = 500,
     name = 'Poverty Pony',
@@ -371,7 +372,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = 'sombrero',
     price = 30000,
     name = 'Sombrero',
@@ -391,7 +392,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = 'headcrabhat',
     price = 600000,
     name = 'Headcrab',
@@ -411,7 +412,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = 'catears',
     price = 1450,
     name = 'Cat Ears',
@@ -431,11 +432,11 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = 'uwumask',
     price = 50000,
-    name = 'uwu Mask',
-    description = "The apparel of one who notices.",
+    name = 'Mask',
+    description = "No one cared who I was until I put on the mask.",
     model = 'models/milaco/owomask/owomask.mdl',
     maxscale = 2.0,
     wear = {
@@ -451,7 +452,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = 'tophat',
     price = 300000,
     name = 'Top Hat',
@@ -471,7 +472,7 @@ SS_ItemProduct({
     }
 })
 
-SS_ItemProduct({
+SS_Item({
     class = 'swampyhat',
     price = 25000,
     name = 'Krusty Hat',
@@ -549,5 +550,5 @@ for k, v in pairs(primitives) do
         itm.perslot = 2
     end
 
-    SS_ItemProduct(itm)
+    SS_Item(itm)
 end

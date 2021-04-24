@@ -1,4 +1,28 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+function noop()
+end
+
+function call(fn, ...)
+    fn(...)
+end
+
+function call_async(fn, ...)
+    local arg = {...}
+
+    timer.Simple(0, function()
+        fn(unpack(arg))
+    end)
+end
+
+--auto pcall
+function apcall(fn, ...)
+    local succ, err = pcall(fn, ...)
+
+    if not succ then
+        ErrorNoHalt(err)
+    end
+end
+
 -- function For(tab, callback)
 --     local out = {}
 --     for k,v in pairs(tab) do
@@ -65,46 +89,54 @@ function vec:Pow(y)
 end
 
 function vec:Max(o)
-    return Vector(math.max(self.x,o.x),math.max(self.y,o.y),math.max(self.z,o.z))
+    return Vector(math.max(self.x, o.x), math.max(self.y, o.y), math.max(self.z, o.z))
 end
 
 function vec:Min(o)
-    return Vector(math.min(self.x,o.x),math.min(self.y,o.y),math.min(self.z,o.z))
+    return Vector(math.min(self.x, o.x), math.min(self.y, o.y), math.min(self.z, o.z))
 end
 
-BLACK = Color(0,0,0,255)
-WHITE = Color(255,255,255,255)
+function vec:Clamp(min, max)
+    return Vector(math.Clamp(self.x, min.x, max.x), math.Clamp(self.y, min.y, max.y), math.Clamp(self.z, min.z, max.z))
+end
 
-function table.sub(tab,a,b)
+BLACK = Color(0, 0, 0, 255)
+WHITE = Color(255, 255, 255, 255)
+
+function table.sub(tab, a, b)
     local out = {}
-    for i=a,b do
+
+    for i = a, b do
         table.insert(out, tab[i])
     end
+
     return out
 end
 
-function table.ireduce(tab,fn)
+function table.ireduce(tab, fn)
     local out = nil
-    for i,v in ipairs(tab) do
+
+    for i, v in ipairs(tab) do
         if out == nil then
             out = v
         else
-            out = fn(out,v)
+            out = fn(out, v)
         end
     end
+
     return out
 end
 
 function table.isum(tab)
-    return table.ireduce(tab,function(a,b) return a+b end)
+    return table.ireduce(tab, function(a, b) return a + b end)
 end
 
 function table.imax(tab)
-    return table.ireduce(tab,math.max)
+    return table.ireduce(tab, math.max)
 end
 
 function table.imin(tab)
-    return table.ireduce(tab,math.min)
+    return table.ireduce(tab, math.min)
 end
 
 -- function table.repeated(val,n)
@@ -114,8 +146,6 @@ end
 --     end
 --     return out  
 -- end
-
-
 -- WORKING SETGLOBAL* BECAUSE GARRYS VERSION UNSETS ITSELF RANDOMLY THANKS A LOT GARRY
 glbls = glbls or {}
 
@@ -147,8 +177,9 @@ if SERVER then
     end)
 
     function SetG(k, v)
-        if glbls[k]==v then return end
+        if glbls[k] == v then return end
         net.Start("Glbl")
+
         net.WriteTable({
             [k] = v
         })

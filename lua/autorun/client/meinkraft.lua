@@ -236,14 +236,9 @@ local ma = Material("swamponions/meinkraft/iron_ore")
 local mb = Material("swamponions/meinkraft/gold_ore")
 local mc = Material("swamponions/meinkraft/diamond_ore")
 local md = Material("lights/white")
-print(ma)
-print(mb)
-print(mc)
-print(md)
 
 MINECRAFTOREMATERIALS = {ma, mb, mc, md}
 
-PrintTable(MINECRAFTOREMATERIALS)
 MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
 
 hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function()

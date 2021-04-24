@@ -58,7 +58,7 @@ local prices = {0, 10000, 15000, 22000, 33000, 50000, 75000, 110000, 175000, 250
 	1000000,
 }]]
 for n = 2, 14 do
-    SS_ItemProduct({
+    SS_Item({
         class = "accslot_" .. tostring(n),
         price = prices[n],
         name = 'Accessory Slot ' .. tostring(n),

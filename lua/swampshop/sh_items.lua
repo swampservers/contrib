@@ -3,6 +3,8 @@
 AddCSLuaFile()
 local Player = FindMetaTable('Player')
 SS_Items = SS_Items or {}
+-- this is not used as a table, it is just a unique value
+SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 
 -- SS_ITEM_META = {
 --     __index = function(t, k) return t[k] or t.cfg[k]  or t.class[k] end, --or t.spec[k]
@@ -19,7 +21,7 @@ function SS_MakeItem(ply, itemdata)
         return
     end
 
-    assert(IsValid(ply))
+    assert(IsValid(ply) or ply == SS_SAMPLE_ITEM_OWNER)
     itemdata.owner = ply
     setmetatable(itemdata, class)
 
@@ -42,15 +44,6 @@ function SS_MakeItems(ply, itemdatas, skip_unknown)
     return out
 end
 
-function SS_GenerateItem(ply, class)
-    return SS_MakeItem(ply, {
-        class = class,
-        id = -1,
-        cfg = {},
-        eq = true,
-    })
-end
-
 function SS_AngleGen(func)
     local ang = Angle()
     func(ang)
@@ -58,21 +51,7 @@ function SS_AngleGen(func)
     return ang
 end
 
-function SS_BaseItem(item)
-    item.Sanitize = function(item)
-        SS_ConfigurationSanitize(item, item.cfg)
-
-        if item.owner:SS_CanEquipStatus(item.class, item.cfg) ~= SS_EQUIPSTATUS_OK then
-            item.eq = false
-        end
-    end
-
-    item.ShouldShow = function(item) return item.eq end
-    item.__index = item
-    SS_Items[item.class] = item
-end
-
-function SS_PlayermodelItemProduct(item)
+function SS_PlayermodelItem(item)
     item.playermodel = true
     item.PlayerSetModelOrig = item.PlayerSetModel
 
@@ -92,203 +71,160 @@ function SS_PlayermodelItemProduct(item)
             for k, v in ipairs(ply.SS_ShownItems) do
                 -- todo: change this to sanitizing all items, local item last?
                 if SS_Items[v.class] and SS_Items[v.class].PlayerSetModel then
-                    ply:SS_EquipItem(v.id, false)
+                    ply:SS_EquipItem(v, false)
                 end
             end
         end
     end
 
     item.invcategory = "Playermodels"
-    SS_ItemProduct(item)
+    SS_Item(item)
 end
 
 --ITEMS are stuff that is saved in the database
-function SS_ItemProduct(item)
+function SS_Item(item)
     if item.wear then
-        local itmcw = (item.configurable or {}).wear or {}
+        item.configurable = item.configurable or {}
+        item.configurable.wear = item.configurable.wear or {}
 
-        local xscale = itmcw.xs or {
-            max = (item.maxscale or 1.0)
+        --Pass -1 for default?
+        item.configurable.wear.scale = {
+            min = Vector(0.05, 0.05, 0.05),
+            max = (item.maxscale or 1) * Vector(1, 1, 1)
         }
 
-        local yscale = itmcw.ys or {
-            max = (item.maxscale or 1.0)
+        item.configurable.wear.pos = {
+            min = Vector(-16, -16, -16),
+            max = Vector(16, 16, 16)
         }
 
-        local zscale = itmcw.zs or {
-            max = (item.maxscale or 1.0)
+        item.configurable.color = {
+            max = 5
         }
 
-        xscale.min = xscale.min or 0.05 --(xscale.max/20.0)
-        yscale.min = yscale.min or 0.05 --(yscale.max/20.0)
-        zscale.min = zscale.min or 0.05 --(zscale.max/20.0)
-
-        item.configurable = {
-            color = {
-                max = 5.0
-            },
-            wear = {
-                x = {
-                    min = -16.0,
-                    max = 16.0
-                },
-                y = {
-                    min = -16.0,
-                    max = 16.0
-                },
-                z = {
-                    min = -16.0,
-                    max = 16.0
-                },
-                xs = xscale,
-                ys = yscale,
-                zs = zscale
-            },
-            imgur = true
-        }
-
+        item.configurable.imgur = true
         item.accessory_slot = true
         item.invcategory = "Accessories"
     end
 
-    SS_BaseItem(item)
-    product = item
-    product.keepnotice = "This " .. ((item.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((item.price or 0) == 0 and "return" or "sell") .. " it."
+    function item:Sanitize()
+        _SS_SanitizeConfig(self)
 
-    function product:OnBuy(ply)
-        ply:SS_GiveItem(self.class)
-        net.Start("SS_PointOutInventory")
-        net.Send(ply)
+        if self.owner ~= SS_SAMPLE_ITEM_OWNER and self:CannotEquip() then
+            self.eq = false
+        end
     end
 
-    SS_Product(product)
-end
+    function item:CannotEquip()
+        if self.never_equip then return "This item can't be equipped." end
 
-SS_EQUIPSTATUS_OK = 0
-SS_EQUIPSTATUS_WEARABLE = 1
-SS_EQUIPSTATUS_IMGUR = 2
-SS_EQUIPSTATUS_NEVER = 3
+        if self.accessory_slot then
+            local c = self.eq and 0 or 1 / (self.perslot or 1)
 
-SS_EquipStatusMessage = {"Buy more accessory slots (in Upgrades) to wear more items.", "You can only equip 4 different imgur materials at once.", "This item can't be equipped."}
-
-function Player:SS_CanEquipStatus(class, cfg, already_equipped)
-    local item = SS_Items[class]
-    if item.never_equip then return SS_EQUIPSTATUS_NEVER end
-
-    if item.accessory_slot then
-        local c = already_equipped and 0 or 1 / (item.perslot or 1)
-
-        for k, v in pairs(self.SS_Items) do
-            if v.eq and (SS_Items[v.class] or {}).accessory_slot then
-                c = c + (1 / (SS_Items[v.class].perslot or 1))
+            for k, v in pairs(self.owner.SS_Items) do
+                if v.eq and (SS_Items[v.class] or {}).accessory_slot then
+                    c = c + (1 / (SS_Items[v.class].perslot or 1))
+                end
             end
+
+            print(c, self.owner:SS_AccessorySlots())
+            if c > self.owner:SS_AccessorySlots() then return "Buy more accessory slots (in Upgrades) to wear more items." end
         end
 
-        if c > self:SS_AccessorySlots() then return SS_EQUIPSTATUS_WEARABLE end
-    end
+        if self.cfg.imgur then
+            local urls = {
+                [self.cfg.imgur.url] = true
+            }
 
-    if cfg.imgur then
-        local urls = {
-            [cfg.imgur.url] = true
-        }
-
-        for k, v in pairs(self.SS_Items) do
-            if v.eq and v.cfg.imgur then
-                urls[v.cfg.imgur.url] = true
+            for k, v in pairs(self.owner.SS_Items) do
+                if v.eq and v.cfg.imgur then
+                    urls[v.cfg.imgur.url] = true
+                end
             end
-        end
 
-        if table.Count(urls) > 4 then return SS_EQUIPSTATUS_IMGUR end
+            if table.Count(urls) > 4 then return "You can only equip 4 different imgur materials at once." end
+        end
     end
 
-    return SS_EQUIPSTATUS_OK
+    function item:ShouldShow()
+        return self.eq
+    end
+
+    function item:SellValue()
+        return math.floor(self.value * 0.8)
+    end
+
+    item.__index = item
+    SS_Items[item.class] = item
+
+    if item.price then
+        item.value = item.price
+        SS_ItemProduct(item)
+    end
+
+    assert(item.value and item.value >= 0, "Price or value is needed")
 end
 
-function SS_ConfigurationSanitize(itm, cfg)
-    if not itm then return end
-    local itmc = itm.configurable
+function _SS_SanitizeConfig(item)
+    local cfg = item.cfg
+    local itmc = item.configurable
     if not itmc then return end
-    local san = {}
+    local dirty_cfg = {}
+
+    for k, v in pairs(cfg) do
+        dirty_cfg[k] = v
+    end
+
+    table.Empty(cfg)
+
+    local function sanitize_vector(val, min, max)
+        return isvector(val) and val:Clamp(min, max) or nil
+    end
 
     if itmc.color then
-        if isvector(cfg.color) then
-            san.color = Vector(math.Clamp(cfg.color.x, 0, itmc.color.max), math.Clamp(cfg.color.y, 0, itmc.color.max), math.Clamp(cfg.color.z, 0, itmc.color.max))
-        end
+        cfg.color = sanitize_vector(dirty_cfg.color, Vector(0, 0, 0), Vector(itmc.color.max, itmc.color.max, itmc.color.max))
     end
 
     if itmc.imgur then
-        if istable(cfg.imgur) then
-            local url = SanitizeImgurId(cfg.imgur.url)
+        local url = istable(dirty_cfg.imgur) and SanitizeImgurId(dirty_cfg.imgur.url)
 
-            if url then
-                san.imgur = {
-                    url = url
-                }
-            end
-        end
-    end
-
-    local function san_pos(pos1, bnd)
-        local pos2 = nil
-
-        if isvector(pos1) then
-            pos2 = Vector(math.Clamp(pos1.x, bnd.x.min, bnd.x.max), math.Clamp(pos1.y, bnd.y.min, bnd.y.max), math.Clamp(pos1.z, bnd.z.min, bnd.z.max))
-        end
-
-        return pos2
-    end
-
-    local function san_scale(scl, bnd)
-        local scale = nil
-
-        if isnumber(scl) then
-            scl = Vector(scl, scl, scl)
-        end
-
-        if isvector(scl) then
-            scale = Vector(math.Clamp(scl.x, bnd.xs.min, bnd.xs.max), math.Clamp(scl.y, bnd.ys.min, bnd.ys.max), math.Clamp(scl.z, bnd.zs.min, bnd.zs.max))
-        end
-
-        return scale
+        cfg.imgur = url and {
+            url = url
+        } or nil
     end
 
     if itmc.wear then
         for _, wk in pairs({"wear_h", "wear_p"}) do
-            if istable(cfg[wk]) then
-                san[wk] = {}
-                san[wk].scale = san_scale(cfg[wk].scale, itmc.wear)
-                san[wk].pos = san_pos(cfg[wk].pos, itmc.wear)
+            local curr = istable(dirty_cfg[wk]) and dirty_cfg[wk] or {}
 
-                if isangle(cfg[wk].ang) then
-                    san[wk].ang = Angle(math.Clamp(cfg[wk].ang.x, -180, 180), math.Clamp(cfg[wk].ang.y, -180, 180), math.Clamp(cfg[wk].ang.z, -180, 180))
-                end
+            local tab = {
+                pos = sanitize_vector(curr.pos, itmc.wear.pos.min, itmc.wear.pos.max),
+                scale = sanitize_vector(curr.scale, itmc.wear.scale.min, itmc.wear.scale.max),
+                ang = isangle(curr.ang) and Angle(math.Clamp(curr.ang.x, -180, 180), math.Clamp(curr.ang.y, -180, 180), math.Clamp(curr.ang.z, -180, 180)) or nil,
+                attach = isstring(curr.attach) and SS_Attachments[curr.attach] and curr.attach or nil,
+            }
 
-                if isstring(cfg[wk].attach) and SS_Attachments[cfg[wk].attach] then
-                    san[wk].attach = cfg[wk].attach
-                end
-            end
+            cfg[wk] = table.Count(tab) > 0 and tab or nil
         end
     end
 
     if itmc.scale then
-        san.scale_h = san_scale(cfg.scale_h, itmc.scale)
-        san.scale_p = san_scale(cfg.scale_p, itmc.scale)
+        cfg.scale_h = sanitize_vector(dirty_cfg.scale_h, itmc.scale.min, itmc.scale.max)
+        cfg.scale_p = sanitize_vector(dirty_cfg.scale_p, itmc.scale.min, itmc.scale.max)
     end
 
     if itmc.pos then
-        san.pos_h = san_pos(cfg.pos_h, itmc.pos)
-        san.pos_p = san_pos(cfg.pos_p, itmc.pos)
+        cfg.pos_h = sanitize_vector(dirty_cfg.pos_h, itmc.pos.min, itmc.pos.max)
+        cfg.pos_p = sanitize_vector(dirty_cfg.pos_p, itmc.pos.min, itmc.pos.max)
     end
 
     if itmc.bone then
-        san.bone_h = isstring(cfg.bone_h) and string.sub(cfg.bone_h, 1, 50)
-        san.bone_p = isstring(cfg.bone_p) and string.sub(cfg.bone_p, 1, 50)
+        cfg.bone_h = isstring(dirty_cfg.bone_h) and string.sub(dirty_cfg.bone_h, 1, 50) or nil
+        cfg.bone_p = isstring(dirty_cfg.bone_p) and string.sub(dirty_cfg.bone_p, 1, 50) or nil
     end
 
     if itmc.scale_children then
-        san.scale_children_h = cfg.scale_children_h and true
-        san.scale_children_p = cfg.scale_children_p and true
+        cfg.scale_children_h = dirty_cfg.scale_children_h and true or nil
+        cfg.scale_children_p = dirty_cfg.scale_children_p and true or nil
     end
-
-    return san
 end

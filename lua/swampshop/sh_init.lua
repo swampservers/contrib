@@ -3,8 +3,9 @@
 AddCSLuaFile()
 include("net_hd.lua")
 include("config.lua")
-include("sh_items.lua")
+include("sh_layout.lua")
 include("sh_products.lua")
+include("sh_items.lua")
 local Player = FindMetaTable('Player')
 
 function SS_Initialize()
@@ -19,9 +20,6 @@ end
 
 SS_Initialize()
 
--- if SERVER then for k,ply in pairs(player.GetAll()) do     SQL_LockPlayer(ply, function()
---     SQL_LoadPlayer(ply)   
--- end) end end 
 function Player:SS_GetDonation()
     return self.SS_Donation or 0
 end
@@ -36,18 +34,18 @@ end
 
 function Player:SS_FindItem(item_id)
     for k, v in ipairs(self.SS_Items or {}) do
-        if v.id == item_id then return v end
+        if v.id == item_id then
+            assert(v.owner == self)
+
+            return v
+        end
     end
 
     return false
 end
 
 function Player:SS_HasItem(item_class)
-    for k, v in ipairs(self.SS_Items or {}) do
-        if v.class == item_class then return true end
-    end
-
-    return false
+    return self:SS_CountItem(item_class) > 0
 end
 
 function Player:SS_CountItem(item_class)
