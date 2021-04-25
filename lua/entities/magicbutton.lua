@@ -1,4 +1,7 @@
-﻿AddCSLuaFile()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
+
+AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "Secret Button"
 ENT.Author = "PYROTEKNIK"

@@ -2,6 +2,9 @@
 LOUNGE_DOORS = {}
 util.AddNetworkString("SetMusicVis")
 
+
+
+
 net.Receive("SetMusicVis", function(len, ply)
     local st = net.ReadString()
     if st:len() > 30 then return end
@@ -19,6 +22,12 @@ net.Receive("SetMusicVis", function(len, ply)
                 MUSIC_LAST_SFX = CurTime()
             end
 
+            return
+        end
+
+        if st == "clearstage" then
+            MVIS_CLEAR_STAGE = not MVIS_CLEAR_STAGE
+            ply:Notify(MVIS_CLEAR_STAGE and "Enabled" or "Disabled")
             return
         end
 
@@ -49,8 +58,20 @@ timer.Create("musicvis_resetter", 0.5, 0, function()
 
     if o ~= MUSICVISLASTOWNER then
         MUSICVISLASTOWNER = o
+        MVIS_CLEAR_STAGE = false
         SetG("musicvis", "rave")
     end
+
+    if IsValid(o) and MVIS_CLEAR_STAGE then
+        for k,v in pairs(player.GetAll()) do
+            if v:GetTheater()==th and v~=o and not v:InVehicle() and v:Alive() then
+
+                if v:GetPos().y < 606 then v:SetPos(Vector(v:GetPos().x,606,v:GetPos().z)) v:Notify("Get off the stage!") end
+
+            end
+        end
+    end
+
 
     if #LOUNGE_DOORS == 0 then
         for _, v in ipairs(ents.GetAll()) do

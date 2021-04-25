@@ -136,4 +136,11 @@ timer.Simple(0, function()
         {0, 0, 0, 1}
     }))
 end)
+
+hook.Add("Think","VapeSignColor",function()
+    if vapesignmaterial then
+        local c = HSVToColor(SysTime()*15, 0.5, 1)
+        vapesignmaterial:SetVector("$color2", Vector(c.r,c.g,c.b)/255)
+    end
+end)
 -- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))
