@@ -1,12 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 MVIS_LAST_REQUESTED_VIDEO = MVIS_LAST_REQUESTED_VIDEO or ""
 LOUNGE_DOORS = {}
 util.AddNetworkString("SetMusicVis")
-
-
-
 
 net.Receive("SetMusicVis", function(len, ply)
     local st = net.ReadString()
@@ -31,6 +27,7 @@ net.Receive("SetMusicVis", function(len, ply)
         if st == "clearstage" then
             MVIS_CLEAR_STAGE = not MVIS_CLEAR_STAGE
             ply:Notify(MVIS_CLEAR_STAGE and "Enabled" or "Disabled")
+
             return
         end
 
@@ -66,15 +63,15 @@ timer.Create("musicvis_resetter", 0.5, 0, function()
     end
 
     if IsValid(o) and MVIS_CLEAR_STAGE then
-        for k,v in pairs(player.GetAll()) do
-            if v:GetTheater()==th and v~=o and not v:InVehicle() and v:Alive() then
-
-                if v:GetPos().y < 606 then v:SetPos(Vector(v:GetPos().x,606,v:GetPos().z)) v:Notify("Get off the stage!") end
-
+        for k, v in pairs(player.GetAll()) do
+            if v:GetTheater() == th and v ~= o and not v:InVehicle() and v:Alive() then
+                if v:GetPos().y < 606 then
+                    v:SetPos(Vector(v:GetPos().x, 606, v:GetPos().z))
+                    v:Notify("Get off the stage!")
+                end
             end
         end
     end
-
 
     if #LOUNGE_DOORS == 0 then
         for _, v in ipairs(ents.GetAll()) do
