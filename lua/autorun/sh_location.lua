@@ -52,7 +52,8 @@ Map = {
             Ang = Angle(0, 0, 0),
             Width = 864,
             Height = 486,
-            Thumb = "m_thumb"
+            Thumb = "m_thumb",
+            ProtectionTime = 7200,
         },
         Filter = function(pos) return (pos.x < -1538 and pos.z < 328) or pos.y > 1280 end
     },
@@ -171,7 +172,8 @@ Map = {
             Width = 256, --21:9; should be 200 for 16:9
             Height = 144,
             Ang = Angle(0, 180, 0),
-            AllowItems = true
+            AllowItems = true,
+            ProtectionTime = 3600,
         },
         Filter = function(pos) return pos.x < 2560 or (pos.y > 560 and pos.y < 688 and pos.z < 128) end
     },
