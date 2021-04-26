@@ -14,19 +14,6 @@ function PPM.loadResources()
         PPM.m_eyel = Material("models/ppm/base/eye_l")
         PPM.m_eyer = Material("models/ppm/base/eye_r")
 
-        PPM.t_eyes = {
-            {Material("models/ppm/base/face/tc00"), "Gray", "models/ppm/base/face/tc00"},
-            {Material("models/ppm/base/face/tc01"), "Turquoise", "models/ppm/base/face/tc01"},
-            {Material("models/ppm/base/face/tc02"), "Yellow", "models/ppm/base/face/tc02"},
-            {Material("models/ppm/base/face/tc03"), "Red", "models/ppm/base/face/tc03"},
-            {Material("models/ppm/base/face/tc04"), "Blue", "models/ppm/base/face/tc04"},
-            {Material("models/ppm/base/face/tc05"), "Purple", "models/ppm/base/face/tc05"},
-            {Material("models/ppm/base/face/tc06"), "Slate Blue", "models/ppm/base/face/tc06"},
-            {Material("models/ppm/base/face/tc07"), "Green", "models/ppm/base/face/tc07"},
-            {Material("models/ppm/base/face/tc08"), "Gold", "models/ppm/base/face/tc08"},
-            {Material("models/ppm/base/face/tc09"), "Orange", "models/ppm/base/face/tc09"}
-        }
-
         PPM.m_cmarks = {
             {"models/ppm/cmarks/8ball.vtf"},
             {"models/ppm/cmarks/dice.vtf"},
