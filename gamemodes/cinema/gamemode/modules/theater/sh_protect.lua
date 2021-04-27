@@ -54,7 +54,7 @@ function getPTProtectionCost(time)
     -- if time==0 then return 0 end
     -- time = math.max(time,10*60)
     -- return math.floor(time/60)*200
-    return (time/1200)*5000
+    return (time / 1200) * 5000
 end
 
 if CLIENT then
@@ -100,7 +100,7 @@ if CLIENT then
         window:SetTitle("Protect Theater")
         local desc = vgui.Create("DLabel", window)
         desc:SetWrap(true)
-        desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for "..tostring(math.floor(getPTProtectionTime(Location.Find(LocalPlayer()))/60)).." minutes.")
+        desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for " .. tostring(math.floor(getPTProtectionTime(Location.Find(LocalPlayer())) / 60)) .. " minutes.")
         desc:SetFont("Trebuchet24")
         desc:SetContentAlignment(5)
         desc:SetSize(window:GetWide() - 16, 60)
@@ -111,41 +111,41 @@ if CLIENT then
         rentButton:SetSize(window:GetWide() - 8, 25)
         rentButton:SetPos(0, window:GetTall() - rentButton:GetTall() - 4)
         rentButton:CenterHorizontal()
-    
+
         rentButton.DoClick = function(btn)
             -- net.Start("protectPT")
             -- net.SendToServer()
             RunConsoleCommand("say", "/protect")
             window:Remove()
         end
-    
+
         window.Think = function(pnl)
             local t = getPTProtectionCost(getPTProtectionTime(Location.Find(LocalPlayer())))
-    
+
             if t > 0 then
                 rentButton:SetText("Purchase for " .. tostring(t) .. " Points")
             else
                 rentButton:SetText("Play a video to buy protection")
             end
         end
-    
+
         window:Center()
         window:MakePopup()
     end
-    
+
     local thumbWidth = 480
     local thumbHeight = 360
     local renderScale = 0.2
     local str, col, tw, th, ty, bw, bh, by, scale, location = nil
-    
+
     hook.Add("PostDrawTranslucentRenderables", "TheaterRentals_Thumasdfbnails", function(depth, sky)
         if depth or sky then return end
-    
+
         for _, ent in ipairs(ents.FindByClass("theater_thumbnail")) do
             if ent.Attach and ent:GetNWBool("Rentable") then
                 location = ent:GetNWInt("Location")
                 local tb = protectedTheaterTable[location]
-    
+
                 if tb ~= nil and tb["time"] > 1 then
                     surface.SetFont("TheaterInfoMedium")
                     str = "Protected"
@@ -166,7 +166,6 @@ if CLIENT then
             end
         end
     end)
-
 end
 
 local function divideUpSeconds(seconds)
