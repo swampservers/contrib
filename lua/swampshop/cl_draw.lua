@@ -42,6 +42,8 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     -- will be "false" if the model is not mounted yet
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
 
+    if not mounted_model then print("UNMOUNTED", ply:GetModel()) end
+
     if ply.SS_PlayermodelModsLastModel ~= mounted_model then
         ply.SS_PlayermodelModsClean = false
         --seems to have issues if you apply the bone mods as soon as the model changes...
@@ -49,11 +51,11 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     end
 
     if not ply.SS_PlayermodelModsClean then
-        ply.SS_PlayermodelModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActiveBonemods())
+        ply.SS_PlayermodelModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         ply.SS_PlayermodelModsLastModel = mounted_model
     end
 
-    SS_ApplyMaterialMods(ply, ply:SS_GetActiveMaterialMods())
+    SS_ApplyMaterialMods(ply, ply:SS_GetActivePlayermodelMods())
 end)
 
 local function AddScaleRecursive(ent, b, scn, recurse, safety)
@@ -89,6 +91,7 @@ function SS_ApplyBoneMods(ent, mods)
         ent:ManipulateBoneScale(x, Vector(1, 1, 1))
         ent:ManipulateBonePosition(x, Vector(0, 0, 0))
     end
+    
 
     if ent:GetModel() == HumanTeamModel or ent:GetModel() == PonyTeamModel then return end
     local pone = isPonyModel(ent:GetModel())
@@ -101,27 +104,29 @@ function SS_ApplyBoneMods(ent, mods)
     end
 
     for _, item in ipairs(mods) do
-        local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
-        local x = ent:LookupBone(bn)
+        if item.bonemod then
+            local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
+            local x = ent:LookupBone(bn)
 
-        if x then
-            if (item.configurable or {}).scale then
-                local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
-                AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
-            end
-
-            if (item.configurable or {}).pos then
-                local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
-
-                --don't allow moving the root bone
-                if ent:GetBoneParent(x) == -1 then
-                    psn.x = 0
-                    psn.y = 0
+            if x then
+                if (item.configurable or {}).scale then
+                    local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
+                    AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
                 end
 
-                local pso = ent:GetManipulateBonePosition(x)
-                pso = pso + psn
-                ent:ManipulateBonePosition(x, pso)
+                if (item.configurable or {}).pos then
+                    local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
+
+                    --don't allow moving the root bone
+                    if ent:GetBoneParent(x) == -1 then
+                        psn.x = 0
+                        psn.y = 0
+                    end
+
+                    local pso = ent:GetManipulateBonePosition(x)
+                    pso = pso + psn
+                    ent:ManipulateBonePosition(x, pso)
+                end
             end
         end
     end
@@ -149,6 +154,19 @@ function SS_ApplyBoneMods(ent, mods)
 
     return true
 end
+
+function SS_ApplyMaterialMods(ent, mods)
+    ent:SetSubMaterial()
+
+    for _, item in ipairs(mods) do
+        if item.materialmod then
+            local col = item.cfg.color or Vector(1,1,1)
+            local mat = ImgurMaterial((item.cfg.imgur or {}).url or "EG84dgp.png", ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {["$color2"]=string.format("[%f %f %f]",col.x,col.y,col.z)})
+            ent:SetSubMaterial(item.cfg.submaterial or 0, "!" .. mat:GetName())
+        end
+    end
+end
+
 
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
 function SS_DrawWornCSModel(item, mdl, ent, dontactually)
@@ -390,11 +408,11 @@ function Player:SS_GetCSModels()
     return SS_CSModels[self]
 end
 
-function Player:SS_GetActiveBonemods()
+function Player:SS_GetActivePlayermodelMods()
     local mods = {}
 
     for k, item in pairs(self.SS_ShownItems or {}) do
-        if item.bonemod then
+        if item.playermodelmod then
             table.insert(mods, item)
         end
     end
@@ -402,26 +420,18 @@ function Player:SS_GetActiveBonemods()
     return mods
 end
 
-function SS_ApplyMaterialMods(ent, mods)
-    ent:SetSubMaterial()
 
-    for idx, mod in pairs(mods) do
-        local mat = ImgurMaterial(mod, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {})
-        ent:SetSubMaterial(idx, "!" .. mat:GetName())
-    end
-end
+-- function Player:SS_GetActiveMaterialMods()
+--     --{[5]="https://i.imgur.com/Ue1qUPf.jpg"}
+--     return {}
+-- end
 
-function Player:SS_GetActiveMaterialMods()
-    --{[5]="https://i.imgur.com/Ue1qUPf.jpg"}
-    return {}
-end
+-- function thinga()
+--     TTT1 = FindMetaTable("Entity")
+--     TTT2 = FindMetaTable("Player")
 
-function thinga()
-    TTT1 = FindMetaTable("Entity")
-    TTT2 = FindMetaTable("Player")
-
-    TTT2.SetMaterial = function(a, b)
-        TTT1.SetMaterial(a, b)
-        print(a, b)
-    end
-end
+--     TTT2.SetMaterial = function(a, b)
+--         TTT1.SetMaterial(a, b)
+--         print(a, b)
+--     end
+-- end

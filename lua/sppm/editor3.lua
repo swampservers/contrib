@@ -193,7 +193,7 @@ if CLIENT then
         --mdl.backgroundmodel:SetModelScale( 25,0)
         --mdl.backgroundmodel:SetPos(Vector(0,0,-15))
         mdl.backgroundmodel = ClientsideModel("models/player/neckbeard.mdl")
-        mdl.backgroundmodel.GetPlayerColor = function(ent) return Vector(0.1,0.1,0.1) end
+        mdl.backgroundmodel.GetPlayerColor = function(ent) return Vector(0.2,0.2,0.2) end
         local scl = 1.2
         mdl.backgroundmodel:SetModelScale(5 * scl, 0)
         mdl.backgroundmodel:SetAngles(Angle(0, -105, 0))

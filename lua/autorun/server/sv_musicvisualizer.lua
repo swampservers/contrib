@@ -100,7 +100,7 @@ timer.Create("musicvis_resetter", 0.5, 0, function()
             table.insert(LOUNGE_DOORS, e)
             e:SetModel("models/props_c17/door01_left.mdl")
             e:SetSkin(2)
-            e:SetPos(Vector(2050, 768 + side * 46, 54))
+            e:SetPos(Vector(2048, 768 + side * 46, 54))
             e:SetAngles(Angle(0, 90 + 90 * side, 0))
             e.INNER_OPEN = side == 1 and 2 or 1
             e.OUTER_OPEN = side == 1 and 1 or 2

@@ -142,7 +142,7 @@ function GetMapPropTable()
         --by the door
         table.insert(stuff, {
             class = "prop_physics",
-            pos = Vector(2050, 768 + side * 58, 64),
+            pos = Vector(2048, 768 + side * 58, 64),
             ang = Angle(0, 90, 90),
             model = "models/hunter/blocks/cube05x3x025.mdl",
             noshadows = true,

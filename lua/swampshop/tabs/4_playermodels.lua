@@ -3,6 +3,26 @@
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
+
+SS_Item({
+    class = "skinner",
+    price = 1000000,
+    name = 'Skinner',
+    description = "attach a new skin to your body (WIP)",
+    model = 'models/maxofs2d/gm_painting.mdl',
+    invcategory = "Mods",
+    maxowned = 5,
+    playermodelmod = true,
+    materialmod = true,
+    configurable = {
+        color = {
+            max = 5
+        },
+        imgur = true,
+        submaterial = true,
+    }
+})
+
 SS_Item({
     class = "inflater",
     price = 200000,
@@ -12,6 +32,7 @@ SS_Item({
     material = 'models/debug/debugwhite',
     invcategory = "Mods",
     maxowned = 25,
+    playermodelmod = true,
     bonemod = true,
     configurable = {
         scale = {
@@ -23,6 +44,7 @@ SS_Item({
     }
 })
 
+
 SS_Item({
     class = "offsetter",
     price = 100000,
@@ -32,6 +54,7 @@ SS_Item({
     material = 'models/debug/debugwhite',
     invcategory = "Mods",
     maxowned = 25,
+    playermodelmod = true,
     bonemod = true,
     configurable = {
         pos = {
@@ -41,6 +64,7 @@ SS_Item({
         bone = true
     }
 })
+
 
 SS_Heading("Permanent")
 

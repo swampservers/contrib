@@ -226,4 +226,8 @@ function _SS_SanitizeConfig(item)
         cfg.scale_children_h = dirty_cfg.scale_children_h and true or nil
         cfg.scale_children_p = dirty_cfg.scale_children_p and true or nil
     end
+
+    if itmc.submaterial then
+        cfg.submaterial = isnumber(dirty_cfg.submaterial) and math.Clamp(math.floor(dirty_cfg.submaterial),0,31) or nil
+    end
 end
