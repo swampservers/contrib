@@ -18,7 +18,11 @@ function require_workshop(id)
                 STEAMWS_MOUNTED[_id_] = true
             else
                 print("Workshop download failed for " .. _id_)
-                STEAMWS_DOWNLOAD_STARTED[_id_] = nil
+
+                timer.Simple(60, function()
+                    print("Retrying for ".. _id_)
+                    STEAMWS_DOWNLOAD_STARTED[_id_] = nil
+                end)
             end
         end)
     end
