@@ -1,20 +1,15 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWEP.PrintName = "Infinity Gauntlet"
-SWEP.Author = ""
-SWEP.Contact = ""
-SWEP.Category = "Other"
 SWEP.Instructions = "*snap*"
 SWEP.Slot = 0
 SWEP.SlotPos = 0
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
 SWEP.m_WeaponDeploySpeed = 9
 SWEP.ViewModel = "models/swamp/v_infinitygauntlet.mdl"
 SWEP.WorldModel = "models/swamp/v_infinitygauntlet.mdl"
 --SWEP.ViewModelFOV           = 60
 SWEP.Spawnable = true
-SWEP.AdminOnly = false
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = false

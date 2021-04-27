@@ -3,7 +3,6 @@
 --Keemstar entity for Swamp Cinema boss battle
 AddCSLuaFile()
 DEFINE_BASECLASS("base_gmodentity")
-ENT.Spawnable = false
 local MODEL = Model("models/gnome/gardengnome.mdl")
 
 function ENT:Initialize()

@@ -8,7 +8,6 @@ if (SERVER) then
     SWEP.HoldType = "normal"
 end
 
-SWEP.DrawWeaponInfoBox = true
 SWEP.Instructions = "Wow, it's nothing."
 SWEP.Category = "Swamp Cinema"
 SWEP.Spawnable = true

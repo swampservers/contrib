@@ -2,7 +2,6 @@
 -- INSTALL: CINEMA
 if SERVER then
     AddCSLuaFile("shared.lua")
-    SWEP.Weight = 5
     SWEP.AutoSwitchTo = false
     SWEP.AutoSwitchFrom = false
 
@@ -20,10 +19,8 @@ if SERVER then
     CreateConVar("doom3_sk_plasmagun_ammocapacity", 30, FCVAR_ARCHIVE, "Plasmagun ammo capacity")
     util.AddNetworkString("D3HitCheck")
 else
-    SWEP.DrawAmmo = true
     SWEP.DrawCrosshair = false
     SWEP.ViewModelFOV = 90
-    SWEP.ViewModelFlip = false
     SWEP.BobScale = 0
     SWEP.SwayBounds = 3
     SWEP.WepSelectIconY = 20
@@ -54,11 +51,7 @@ else
 end
 
 SWEP.Author = "Upset"
-SWEP.Contact = ""
-SWEP.Purpose = ""
-SWEP.Instructions = ""
 SWEP.Category = "DOOM 3"
-SWEP.Spawnable = false
 SWEP.Primary.Recoil = 1
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Cone = 0

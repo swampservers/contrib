@@ -1,17 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-SWEP.Author = ""
 SWEP.Instructions = "For all your MLG needs"
 SWEP.PrintName = "Airhorn"
 SWEP.IconLetter = "V"
 SWEP.Slot = 1
-SWEP.SlotPos = 10
-SWEP.ViewModelFOV = 62
-SWEP.BounceWeaponIcon = true
 SWEP.ViewModel = "models/rockyscroll/airhorn/airhorn.mdl"
 SWEP.WorldModel = "models/rockyscroll/airhorn/airhorn.mdl"
 SWEP.Spawnable = true
-SWEP.AdminOnly = false
 SWEP.Primary.Clipsize = -1
 SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = false

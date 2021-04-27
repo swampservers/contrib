@@ -2,7 +2,6 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 DEFINE_BASECLASS("base_gmodentity")
-ENT.Spawnable = false
 ENT.RenderGroup = RENDERGROUP_BOTH
 local matLight = Material("sprites/light_ignorez")
 local MODEL = Model("models/MaxOfS2D/light_tubular.mdl")

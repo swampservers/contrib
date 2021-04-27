@@ -2,7 +2,6 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 DEFINE_BASECLASS("base_anim")
-ENT.Spawnable = false
 
 if (CLIENT) then
     ENT.MaxWorldTipDistance = 256

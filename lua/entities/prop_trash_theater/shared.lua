@@ -2,7 +2,6 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 DEFINE_BASECLASS("prop_trash")
-ENT.Spawnable = false
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.CanChangeTrashOwner = false
 

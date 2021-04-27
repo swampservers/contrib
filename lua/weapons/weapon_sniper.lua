@@ -2,11 +2,6 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 SWEP.PrintName = "Sniper"
-SWEP.Author = ""
-SWEP.Contact = ""
-SWEP.Purpose = ""
-SWEP.Instructions = ""
-SWEP.UseHands = false
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = false
 SWEP.ViewModelFOV = 75
@@ -21,7 +16,6 @@ SWEP.FiresUnderwater = true
 SWEP.Weight = 50
 SWEP.DrawCrosshair = false
 SWEP.Category = "SMOD"
-SWEP.DrawAmmo = true
 
 game.AddAmmoType({
     name = "sniper",

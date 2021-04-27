@@ -65,7 +65,6 @@ TrashNoFreezeNodes = {
 --{Vector(660,-1860,36),100},
 AddCSLuaFile()
 DEFINE_BASECLASS("base_gmodentity")
-ENT.Spawnable = false
 ENT.CanChangeTrashOwner = true
 
 function ENT:SetupDataTables()
