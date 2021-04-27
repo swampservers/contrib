@@ -139,7 +139,7 @@ SS_PlayermodelItem({
     name = 'Ogre',
     description = "IT CAME FROM THE SWAMP",
     model = 'models/player/pyroteknik/shrek.mdl',
-    workshop = '853155677',
+    workshop = '314261589',
     PlayerSetModel = function(self, ply) end
 })
 
@@ -226,9 +226,18 @@ SS_UniqueModelProduct({
     class = 'garfield',
     name = 'Lasagna Cat',
     description = "I gotta have a good meal.",
-    model = 'models/garfield/garfield.mdl', --models/jcthornton/garfield/garfield.mdl
-    workshop = '1958982639',
+    model = 'models/garfield/garfield.mdl'
 })
+
+SS_UniqueModelProduct({
+    class = 'realgarfield',
+    name = 'Real Cat',
+    description = "Garfield gets real.",
+    model = 'models/garfield.mdl',
+    workshop = '905415234',
+})
+
+
 
 SS_UniqueModelProduct({
     class = 'hitler',

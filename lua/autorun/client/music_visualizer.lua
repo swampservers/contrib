@@ -301,7 +301,13 @@ function MvisNextFrame(...)
 
     if UsingMusicVis("red") then
         --local other = math.max(0, 0.5 - drive
-        t.color = Vector(math.min(0.7, t.drive) + 0.3, 0.1, 0.1)
+        t.color = Vector(math.min(0.7, t.drive) + 0.4, 0.1, 0.1)
+        t.drive = 0 --drive*0.1
+    end
+
+    if UsingMusicVis("blue") then
+        --local other = math.max(0, 0.5 - drive
+        t.color = Vector(0.1, 0.1, math.min(0.7, t.drive) + 0.4)
         t.drive = 0 --drive*0.1
     end
 

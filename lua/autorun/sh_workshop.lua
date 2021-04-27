@@ -8,6 +8,7 @@ function SafeMountGMA(wsid, filename)
     local badmodels = {}
     for mdl,mwsid in pairs(STEAMWS_REGISTRY) do
         if mwsid == wsid then
+            print("MOUNTING FOR",mdl)
             badmodels[mdl]=true
         end
     end
@@ -49,11 +50,6 @@ function require_workshop(id)
                 -- game.MountGMA(name)
                 SafeMountGMA(_id_, name)
                 STEAMWS_MOUNTED[_id_] = true
-                -- timer.Simple(5, function()
-                    -- chat.AddText("333")
-
-                    
-                -- end)
             else
                 print("Workshop download failed for " .. _id_)
 

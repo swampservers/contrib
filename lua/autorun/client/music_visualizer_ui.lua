@@ -10,7 +10,7 @@ concommand.Add("musicvis", function(ply, cmd, args)
 end)
 
 --todo make this interface better
-VISUALIZER_SETTINGS = {"Rave", "Colorful", "Flash", "Red", "Dark", "None", "Ignite", "ClearStage"}
+VISUALIZER_SETTINGS = {"Rave", "Colorful", "Flash", "Red", "Blue", "Dark", "None", "Ignite", "ClearStage"}
 
 --"Dynamic",
 hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
