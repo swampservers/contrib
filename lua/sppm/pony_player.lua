@@ -16,21 +16,6 @@ PPM.pony_models["models/ppm/player_default_base.mdl"] = {
     BgroupCount = 8
 }
 
-PPM.pony_models["models/ppm/player_default_base_nj.mdl"] = {
-    isPonyModel = true,
-    BgroupCount = 8
-}
-
-PPM.pony_models["models/ppm/player_default_base_ragdoll.mdl"] = {
-    isPonyModel = true,
-    BgroupCount = 8
-}
-
-PPM.pony_models["models/ppm/player_mature_base.mdl"] = {
-    isPonyModel = true,
-    BgroupCount = 6
-}
-
 PPM.pony_models["models/ppm/player_default_clothes1.mdl"] = {
     isPonyModel = false,
     BgroupCount = 8
