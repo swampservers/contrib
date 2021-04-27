@@ -102,7 +102,7 @@ SS_PlayermodelItem({
     price = 240000,
     name = 'Athiest',
     model = 'models/player/neckbeard.mdl',
-    workshop = '853155677',
+    -- workshop = '853155677', -- Not using workshop because of pony editor built in neckbeard
     PlayerSetModel = function(self, ply)
         ply:Give("weapon_clopper")
         ply:SelectWeapon("weapon_clopper")

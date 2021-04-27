@@ -85,8 +85,8 @@ if CLIENT then
             right_open = false
             right_isOpening = false
             PPM.Editor3 = nil
-            mdl.backgroundmodel_sky:Remove()
-            mdl.backgroundmodel_ground:Remove()
+            -- mdl.backgroundmodel_sky:Remove()
+            -- mdl.backgroundmodel_ground:Remove()
             mdl.backgroundmodel:Remove()
         end
 
@@ -184,11 +184,11 @@ if CLIENT then
         end
 
         mdl.t = 0
-        mdl.backgroundmodel_sky = ClientsideModel("models/ppm/decoration/skydome.mdl")
-        mdl.backgroundmodel_sky:SetModelScale(25, 0)
-        mdl.backgroundmodel_sky:SetAngles(Angle(0, 30, 0))
-        mdl.backgroundmodel_ground = ClientsideModel("models/ppm/decoration/ground.mdl")
-        mdl.backgroundmodel_ground:SetModelScale(5, 0)
+        -- mdl.backgroundmodel_sky = ClientsideModel("models/ppm/decoration/skydome.mdl")
+        -- mdl.backgroundmodel_sky:SetModelScale(25, 0)
+        -- mdl.backgroundmodel_sky:SetAngles(Angle(0, 30, 0))
+        -- mdl.backgroundmodel_ground = ClientsideModel("models/ppm/decoration/ground.mdl")
+        -- mdl.backgroundmodel_ground:SetModelScale(5, 0)
         --mdl.backgroundmodel = ClientsideModel("models/ppm/decoration/building.mdl") 
         --mdl.backgroundmodel:SetModelScale( 25,0)
         --mdl.backgroundmodel:SetPos(Vector(0,0,-15))
@@ -198,7 +198,7 @@ if CLIENT then
         mdl.backgroundmodel:SetAngles(Angle(0, -105, 0))
         local scl2 = 1.2
         mdl.backgroundmodel:SetPos(scl * Vector(32 * scl2, 100 * scl2, -300)) --Vector(-200,50,-600))
-        mdl.backgroundmodel_ground:SetPos(Vector(0, 0, -15))
+        -- mdl.backgroundmodel_ground:SetPos(Vector(0, 0, -15))
 
         --//////////////////////////////////
         mdl.Paint = function()
