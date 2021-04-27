@@ -126,8 +126,6 @@ function SS_Item(item)
                     c = c + (1 / (SS_Items[v.class].perslot or 1))
                 end
             end
-
-            print(c, self.owner:SS_AccessorySlots())
             if c > self.owner:SS_AccessorySlots() then return "Buy more accessory slots (in Upgrades) to wear more items." end
         end
 
