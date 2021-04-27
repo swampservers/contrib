@@ -271,7 +271,7 @@ function SWEP:SecondaryAttack()
     if SERVER then
         if self.REMOVING then return end
 
-        if tryMakeTrash(self.Owner) then
+        if not CannotMakeTrash(self.Owner) then
             local e = ents.Create("prop_trash_pillow")
             local pos, ang = LocalToWorld(self.droppos or Vector(40, 0, 0), self.dropang or Angle(10, 240, -10), self.Owner:EyePos(), self.Owner:EyeAngles())
             local fwdv = self.Owner:EyeAngles():Forward() * 10

@@ -388,26 +388,19 @@ function PANEL:Init()
     end
 
     -- items
-    for _, CATEGORY in pairs(SS_Layout) do
+    for _, CATEGORY in ipairs(SS_Layout) do
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
 
-        for _, LAYOUT in pairs(CATEGORY.layout) do
+        for _, LAYOUT in ipairs(CATEGORY.layout) do
             if LAYOUT.title then
                 NewSubCategoryTitle(cat, LAYOUT.title)
             end
 
             local scat = NewSubCategory(cat)
 
-            for _, PRODUCT in pairs(LAYOUT.products) do
-                pdata = SS_Products[PRODUCT]
-
-                if pdata == nil then
-                    print("Undefined product: " .. PRODUCT)
-                    continue
-                end
-
+            for _, product in ipairs(LAYOUT.products) do
                 local model = vgui.Create('DPointShopItem')
-                model:SetProduct(pdata)
+                model:SetProduct(product)
                 model:SetSize(SS_TILESIZE, SS_TILESIZE)
                 scat:Add(model)
             end
@@ -416,59 +409,45 @@ function PANEL:Init()
         FinishCategory(cat)
     end
 
-    SS_InventoryPanel = NewCategory("My Inventory", 'icon16/basket.png', RIGHT)
+    SS_InventoryPanel = NewCategory("Inventory", 'icon16/basket.png', RIGHT)
     SS_ValidInventory = false
 
     function SS_InventoryPanel:Think()
         if not SS_ValidInventory then
-            if #self:GetCanvas():GetChildren() > 0 then
-                for k, v in pairs(self:GetCanvas():GetChildren()) do
-                    v:Remove()
-                end
+            -- if #self:GetCanvas():GetChildren() > 0 then
+            local scroll2 = self:GetVBar():GetScroll()
 
-                return
+            for k, v in pairs(self:GetCanvas():GetChildren()) do
+                v:Remove()
             end
 
-            print("Items reloading")
+            -- return
+            -- end
+            -- print("Items reloading")
             local itemstemp = LocalPlayer().SS_Items or {}
 
             table.sort(itemstemp, function(a, b)
-                local a2 = a
-                local b2 = b
-                a = a.class
-                b = b.class
-
-                if SS_Items[a] then
-                    a = SS_Items[a].name
-                end
-
-                if SS_Items[b] then
-                    b = SS_Items[b].name
-                end
-
                 local i = 0
-                local ml = math.min(string.len(a), string.len(b))
+                local ml = math.min(string.len(a.name), string.len(b.name))
 
                 while i < ml do
                     i = i + 1
-                    local a1 = string.byte(a, i)
-                    local b1 = string.byte(b, i)
+                    local a1 = string.byte(a.name, i)
+                    local b1 = string.byte(b.name, i)
                     if a1 ~= b1 then return a1 < b1 end
                 end
 
-                if string.len(a) == string.len(b) then return a2.id < b2.id end
+                if string.len(a.name) == string.len(b.name) then return a.id < b.id end
 
-                return string.len(a) > string.len(b)
+                return string.len(a.name) > string.len(b.name)
             end)
 
-            categorizeditems = {}
+            local categorizeditems = {}
 
-            for _, ITEM in pairs(itemstemp) do
-                pdata = SS_Items[ITEM.class]
-                if pdata == nil then continue end --print("Undefined item: "..ITEM.class)
-                local invcategory = pdata.invcategory or "Other"
+            for _, item in pairs(itemstemp) do
+                local invcategory = item.invcategory or "Other"
                 categorizeditems[invcategory] = categorizeditems[invcategory] or {}
-                table.insert(categorizeditems[invcategory], ITEM)
+                table.insert(categorizeditems[invcategory], item)
             end
 
             for _, cat in ipairs(SS_InvCategories) do
@@ -476,9 +455,9 @@ function PANEL:Init()
                     NewSubCategoryTitle(self, cat)
                     local sc = NewSubCategory(self)
 
-                    for _, ITEM in pairs(categorizeditems[cat]) do
+                    for _, item in pairs(categorizeditems[cat]) do
                         local model = vgui.Create('DPointShopItem')
-                        model:SetItem(SS_Items[ITEM.class], ITEM)
+                        model:SetItem(item)
                         model:SetSize(SS_TILESIZE, SS_TILESIZE)
                         sc:Add(model)
                     end
@@ -488,6 +467,10 @@ function PANEL:Init()
             FinishCategory(self)
             self:InvalidateLayout()
             SS_ValidInventory = true
+
+            timer.Simple(0, function()
+                self:GetVBar():SetScroll(scroll2)
+            end)
         end
     end
 
@@ -497,95 +480,6 @@ function PANEL:Init()
     local previewpanel = vgui.Create('DPointShopPreview', self.rpane)
     previewpanel:SetTall(SS_PREVIEWHEIGHT)
     previewpanel:Dock(TOP)
-    --- Drag Rotate
-    previewpanel.Angles = Angle(0, 0, 0)
-    previewpanel.ZoomOffset = 0
-
-    function previewpanel:OnMouseWheeled(amt)
-        self.ZoomOffset = self.ZoomOffset + (amt > 0 and 1 or -1)
-    end
-
-    function previewpanel:DragMousePress(btn)
-        self.PressButton = btn
-        self.PressX, self.PressY = gui.MousePos()
-        self.Pressed = true
-    end
-
-    function previewpanel:DragMouseRelease()
-        self.Pressed = false
-        self.lastPressed = RealTime()
-    end
-
-    function previewpanel:LayoutEntity(thisEntity)
-        if (self.bAnimated) then
-            self:RunAnimation()
-        end
-
-        if (self.Pressed) then
-            local mx, my = gui.MousePos()
-
-            --self.Angles = self.Angles - Angle( ( self.PressY or my ) - my, ( self.PressX or mx ) - mx, 0 )
-            if self.PressButton == MOUSE_LEFT then
-                if SS_CustomizerPanel:IsVisible() then
-                    local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
-                    self.Angles:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.6)
-                    self.Angles:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.6)
-                    self.SPINAT = 0
-                else
-                    self.Angles.y = self.Angles.y + ((mx - (self.PressX or mx)) * 0.6)
-                end
-            end
-
-            if self.PressButton == MOUSE_RIGHT then
-                if SS_CustomizerPanel:IsVisible() then
-                    if ValidPanel(XRSL) then
-                        if IsValid(SS_HoverCSModel) then
-                            clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
-                            clangm = Matrix()
-                            clangm:SetAngles(clang)
-                            clangm:Invert()
-                            clangi = clangm:GetAngles()
-                            cgang = SS_HoverCSModel:GetAngles()
-                            crangm = Matrix()
-                            crangm:SetAngles(cgang)
-                            crangm:Rotate(clangi)
-                            rootang = V
-                            ngang = Angle()
-                            ngang:Set(cgang)
-                            local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
-                            ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
-                            ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
-                            ngangm = Matrix()
-                            ngangm:SetAngles(ngang)
-                            crangm:Invert()
-                            nlangm = crangm * ngangm
-                            nlang = nlangm:GetAngles()
-                            print(nlang)
-                            XRSL:SetValue(nlang.x)
-                            YRSL:SetValue(nlang.y)
-                            ZRSL:SetValue(nlang.z)
-                        end
-                    end
-                end
-            end
-
-            self.PressX, self.PressY = gui.MousePos()
-        end
-
-        if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
-            thisEntity:SetAngles(self.Angles)
-
-            if not SS_CustomizerPanel:IsVisible() then
-                self.SPINAT = 4
-            end
-        else
-            self.Angles.y = math.NormalizeAngle(self.Angles.y + (RealFrameTime() * 21))
-            self.Angles.x = 0
-            self.Angles.z = 0
-            thisEntity:SetAngles(self.Angles)
-        end
-    end
-
     SS_DescriptionPanel = vgui.Create('DPanel', self.rpane)
     SS_DescriptionPanel:Dock(FILL)
     SS_DescriptionPanel.Paint = function() end
@@ -600,7 +494,7 @@ function PANEL:Init()
 
     p.Paint = function(pnl, w, h)
         draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, (h / 2) - 13, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-        draw.SimpleText("Income: " .. tostring(SS_Income(LocalPlayer())) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     end
 
     local xo = p:GetWide() + SS_BOTBARHEIGHT
@@ -765,58 +659,6 @@ function PANEL:Init()
     end
 end
 
---[[
-local function BuildItemMenu(menu, ply, itemstype, callback)
-	local plyitems = ply:SS_GetItems()
-	
-	for category_id, CATEGORY in pairs(SS_Layout) do
-		
-		local catmenu = menu:AddSubMenu(CATEGORY.Name)
-		
-		for item_id, ITEM in pairs(SS_Items) do
-			if ITEM.Category == CATEGORY.Name then
-				if itemstype == ALL_ITEMS or (itemstype == OWNED_ITEMS and plyitems[item_id]) or (itemstype == UNOWNED_ITEMS and not plyitems[item_id]) then
-					catmenu:AddOption(ITEM.Name, function() callback(item_id) end)
-				end
-			end
-		end
-	end
-end
-]]
---[[
-only used by admin area
-function PANEL:Think()
-	if self.ClientsList then
-		local lines = self.ClientsList:GetLines()
-		
-		for _, ply in pairs(player.GetAll()) do
-			local found = false
-			
-			for _, line in pairs(lines) do
-				if line.Player == ply then
-					found = true
-				end
-			end
-			
-			if not found then
-				self.ClientsList:AddLine(ply:GetName(), ply:SS_GetPoints(), table.Count(ply:SS_GetItems())).Player = ply
-			end
-		end
-		
-		for i, line in pairs(lines) do
-			if IsValid(line.Player) then
-				local ply = line.Player
-				
-				line:SetValue(1, ply:GetName())
-				line:SetValue(2, ply:SS_GetPoints())
-				line:SetValue(3, table.Count(ply:SS_GetItems()))
-			else
-				self.ClientsList:RemoveLine(i)
-			end
-		end
-	end
-end
-]]
 function PANEL:Paint(w, h)
     Derma_DrawBackgroundBlur(self)
 end

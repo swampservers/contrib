@@ -137,7 +137,9 @@ CVX_SORTABLE_DLIGHTS = {}
 
 DynamicLight = function(idx, elight)
     CVX_TRACKED_DLIGHTS[idx] = setmetatable({
-        _data = {dietime = (CurTime() + 1)},
+        _data = {
+            dietime = (CurTime() + 1)
+        },
         _light = BASE_DYNAMIC_LIGHT(idx, elight)
     }, CVX_DLIGHT_PROXY_META)
 
@@ -234,14 +236,9 @@ local ma = Material("swamponions/meinkraft/iron_ore")
 local mb = Material("swamponions/meinkraft/gold_ore")
 local mc = Material("swamponions/meinkraft/diamond_ore")
 local md = Material("lights/white")
-print(ma)
-print(mb)
-print(mc)
-print(md)
 
 MINECRAFTOREMATERIALS = {ma, mb, mc, md}
 
-PrintTable(MINECRAFTOREMATERIALS)
 MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
 
 hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function()

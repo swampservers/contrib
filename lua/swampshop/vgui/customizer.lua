@@ -17,6 +17,10 @@ function PANEL:Open(item)
         v:Remove()
     end
 
+    self.item = item
+    item.applied_cfg = table.Copy(item.cfg)
+    self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
+
     if IsValid(SS_PopupPanel) then
         SS_ShopMenu:SetParent()
         SS_PopupPanel:Remove()
@@ -31,10 +35,6 @@ function PANEL:Open(item)
     SS_PopupPanel.Paint = function() end
     SS_PopupPanel:MakePopup()
     SS_ShopMenu:SetParent(SS_PopupPanel)
-    self.itemobj = item
-    self.item = SS_Items[item.class]
-    self.cfg = table.Copy(item.cfg)
-    self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
     self:SetVisible(true)
     SS_InventoryPanel:SetVisible(false)
     self:SetBackgroundColor(SS_GridBGColor)
@@ -67,7 +67,7 @@ function PANEL:Open(item)
     end
 
     p.DoClick = function(butn)
-        self.cfg = {}
+        self.item.cfg = {}
         self:UpdateCfg()
         self:SetupControls()
     end
@@ -86,7 +86,7 @@ function PANEL:Open(item)
     end
 
     p.DoClick = function(butn)
-        SS_HoverCfg = self.itemobj.cfg
+        self.item.cfg = self.item.applied_cfg
         self:Close()
     end
 
@@ -103,7 +103,10 @@ function PANEL:Open(item)
     end
 
     p.DoClick = function(butn)
-        SS_ConfigureItem(self.itemobj.id, self.cfg)
+        net.Start('SS_ConfigureItem')
+        net.WriteUInt(self.item.id, 32)
+        net.WriteTableHD(self.item.cfg)
+        net.SendToServer()
         self:Close()
     end
 
@@ -204,6 +207,7 @@ function PANEL:SetupControls()
 
     local pone = LocalPlayer():IsPony()
     local suffix = pone and "_p" or "_h"
+    local itmcw = self.item.configurable.wear
 
     if (self.item.configurable or {}).wear then
         LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
@@ -211,15 +215,15 @@ function PANEL:SetupControls()
         p:DockMargin(32, 8, 32, 0)
         p:Dock(TOP)
         ATTACHSELECT = vgui.Create("DComboBox", p)
-        ATTACHSELECT:SetValue((self.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
+        ATTACHSELECT:SetValue((self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
 
         for k, v in pairs(SS_Attachments) do
             ATTACHSELECT:AddChoice(k)
         end
 
         ATTACHSELECT.OnSelect = function(panel, index, value)
-            self.cfg[self.wear] = self.cfg[self.wear] or {}
-            self.cfg[self.wear].attach = value
+            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
+            self.item.cfg[self.wear].attach = value
             self:UpdateCfg()
         end
 
@@ -231,18 +235,18 @@ function PANEL:SetupControls()
         p:SetDark(true)
         p:SetTextColor(SS_SwitchableColor)
         LabelMaker(wearzone, "Offset")
-        local translate = (self.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
+        local translate = (self.item.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
         XSL = SliderMaker(wearzone, "Forward/Backward")
-        XSL:SetMinMax(self.item.configurable.wear.x.min, self.item.configurable.wear.x.max)
+        XSL:SetMinMax(itmcw.pos.min.x, itmcw.pos.max.x)
         XSL:SetValue(translate.x)
         YSL = SliderMaker(wearzone, "Left/Right")
-        YSL:SetMinMax(self.item.configurable.wear.y.min, self.item.configurable.wear.y.max)
+        YSL:SetMinMax(itmcw.pos.min.y, itmcw.pos.max.z)
         YSL:SetValue(translate.y)
         ZSL = SliderMaker(wearzone, "Up/Down")
-        ZSL:SetMinMax(self.item.configurable.wear.z.min, self.item.configurable.wear.z.max)
+        ZSL:SetMinMax(itmcw.pos.min.z, itmcw.pos.max.z)
         ZSL:SetValue(translate.z)
         LabelMaker(wearzone, "Angle")
-        local rotate = (self.cfg[self.wear] or {}).ang or (pone and (self.item.wear.pony or {}).rotate) or self.item.wear.rotate
+        local rotate = (self.item.cfg[self.wear] or {}).ang or (pone and (self.item.wear.pony or {}).rotate) or self.item.wear.rotate
         XRSL = SliderMaker(wearzone, "Pitch")
         XRSL:SetMinMax(-180, 180)
         XRSL:SetValue(rotate.p)
@@ -253,28 +257,27 @@ function PANEL:SetupControls()
         ZRSL:SetMinMax(-180, 180)
         ZRSL:SetValue(rotate.r)
         local scalelabel = LabelMaker(wearzone, "Scale")
-        local itmcw = self.item.configurable.wear
-        local scale = (self.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
+        local scale = (self.item.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
 
         if isnumber(scale) then
             scale = Vector(scale, scale, scale)
         end
 
         SXSL = SliderMaker(wearzone, "Length")
-        SXSL:SetMinMax(itmcw.xs.min, itmcw.xs.max)
+        SXSL:SetMinMax(itmcw.scale.min.x, itmcw.scale.max.x)
         SXSL:SetValue(scale.x)
         SYSL = SliderMaker(wearzone, "Width")
-        SYSL:SetMinMax(itmcw.ys.min, itmcw.ys.max)
+        SYSL:SetMinMax(itmcw.scale.min.y, itmcw.scale.max.y)
         SYSL:SetValue(scale.y)
         SZSL = SliderMaker(wearzone, "Height")
-        SZSL:SetMinMax(itmcw.zs.min, itmcw.zs.max)
+        SZSL:SetMinMax(itmcw.scale.min.z, itmcw.scale.max.z)
         SZSL:SetValue(scale.z)
 
         local function transformslidersupdate()
-            self.cfg[self.wear] = self.cfg[self.wear] or {}
-            self.cfg[self.wear].pos = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
-            self.cfg[self.wear].ang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
-            self.cfg[self.wear].scale = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
+            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
+            self.item.cfg[self.wear].pos = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
+            self.item.cfg[self.wear].ang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
+            self.item.cfg[self.wear].scale = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
             self:UpdateCfg()
         end
 
@@ -316,7 +319,7 @@ function PANEL:SetupControls()
         end
 
         SUSL = SliderMaker(wearzone, "Scale")
-        SUSL:SetMinMax(math.max(itmcw.xs.min, itmcw.ys.min, itmcw.zs.min), math.min(itmcw.xs.max, itmcw.ys.max, itmcw.zs.max))
+        SUSL:SetMinMax(math.max(itmcw.scale.min.x, itmcw.scale.min.y, itmcw.scale.min.z), math.min(itmcw.scale.max.x, itmcw.scale.max.y, itmcw.scale.max.z))
 
         SUSL.OnValueChanged = function(self)
             SXSL:SetValue(self:GetValue())
@@ -340,7 +343,7 @@ function PANEL:SetupControls()
         p:DockMargin(32, 8, 32, 0)
         p:Dock(TOP)
         ATTACHSELECT = vgui.Create("DComboBox", p)
-        ATTACHSELECT:SetValue(cleanbonename(self.cfg["bone" .. suffix] or (pone and "Scull" or "Head1")))
+        ATTACHSELECT:SetValue(cleanbonename(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1")))
 
         for x = 0, (LocalPlayer():GetBoneCount() - 1) do
             local bn = LocalPlayer():GetBoneName(x)
@@ -352,7 +355,7 @@ function PANEL:SetupControls()
         end
 
         ATTACHSELECT.OnSelect = function(panel, index, word, value)
-            self.cfg["bone" .. suffix] = value
+            self.item.cfg["bone" .. suffix] = value
             self:UpdateCfg()
         end
 
@@ -367,53 +370,53 @@ function PANEL:SetupControls()
         --bunch of copied shit
         local function transformslidersupdate()
             if self.item.configurable.scale then
-                self.cfg["scale" .. suffix] = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
+                self.item.cfg["scale" .. suffix] = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
             end
 
             if self.item.configurable.pos then
-                self.cfg["pos" .. suffix] = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
+                self.item.cfg["pos" .. suffix] = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
             end
 
             self:UpdateCfg()
         end
 
-        local itmcw = self.item.configurable.pos
+        local itmcp = self.item.configurable.pos
 
-        if itmcw then
+        if itmcp then
             LabelMaker(wearzone, "Offset")
-            local translate = self.cfg["pos" .. suffix] or Vector(0, 0, 0)
+            local translate = self.item.cfg["pos" .. suffix] or Vector(0, 0, 0)
             XSL = SliderMaker(wearzone, "X (Along)")
-            XSL:SetMinMax(itmcw.x.min, itmcw.x.max)
+            XSL:SetMinMax(itmcp.min.x, itmcp.max.x)
             XSL:SetValue(translate.x)
             YSL = SliderMaker(wearzone, "Y")
-            YSL:SetMinMax(itmcw.y.min, itmcw.y.max)
+            YSL:SetMinMax(itmcp.min.y, itmcp.max.y)
             YSL:SetValue(translate.y)
             ZSL = SliderMaker(wearzone, "Z")
-            ZSL:SetMinMax(itmcw.z.min, itmcw.z.max)
+            ZSL:SetMinMax(itmcp.min.z, itmcp.max.z)
             ZSL:SetValue(translate.z)
             XSL.OnValueChanged = transformslidersupdate
             YSL.OnValueChanged = transformslidersupdate
             ZSL.OnValueChanged = transformslidersupdate
         end
 
-        itmcw = self.item.configurable.scale
+        local itmcs = self.item.configurable.scale
 
-        if itmcw then
+        if itmcs then
             local scalelabel = LabelMaker(wearzone, "Scale")
-            local scale = self.cfg["scale" .. suffix] or Vector(1, 1, 1)
+            local scale = self.item.cfg["scale" .. suffix] or Vector(1, 1, 1)
 
             if isnumber(scale) then
                 scale = Vector(scale, scale, scale)
             end
 
             SXSL = SliderMaker(wearzone, "X (Along)")
-            SXSL:SetMinMax(itmcw.xs.min, itmcw.xs.max)
+            SXSL:SetMinMax(itmcs.min.x, itmcs.max.x)
             SXSL:SetValue(scale.x)
             SYSL = SliderMaker(wearzone, "Y")
-            SYSL:SetMinMax(itmcw.ys.min, itmcw.ys.max)
+            SYSL:SetMinMax(itmcs.min.y, itmcs.max.y)
             SYSL:SetValue(scale.y)
             SZSL = SliderMaker(wearzone, "Z")
-            SZSL:SetMinMax(itmcw.zs.min, itmcw.zs.max)
+            SZSL:SetMinMax(itmcs.min.z, itmcs.max.z)
             SZSL:SetValue(scale.z)
             SXSL.OnValueChanged = transformslidersupdate
             SYSL.OnValueChanged = transformslidersupdate
@@ -447,7 +450,7 @@ function PANEL:SetupControls()
             end
 
             SUSL = SliderMaker(wearzone, "Scale")
-            SUSL:SetMinMax(math.max(itmcw.xs.min, itmcw.ys.min, itmcw.zs.min), math.min(itmcw.xs.max, itmcw.ys.max, itmcw.zs.max))
+            SUSL:SetMinMax(math.max(itmcs.min.x, itmcs.min.y, itmcs.min.z), math.min(itmcs.max.x, itmcs.max.y, itmcs.max.z))
 
             SUSL.OnValueChanged = function(self)
                 SXSL:SetValue(self:GetValue())
@@ -465,10 +468,10 @@ function PANEL:SetupControls()
         --end bunch of copied shit
         if self.item.configurable.scale_children then
             CHILDCHECKBOX = CheckboxMaker(wearzone, "Scale child bones")
-            CHILDCHECKBOX:SetValue(self.cfg["scale_children" .. suffix] and 1 or 0)
+            CHILDCHECKBOX:SetValue(self.item.cfg["scale_children" .. suffix] and 1 or 0)
 
             CHILDCHECKBOX.OnChange = function(checkboxself, ch)
-                self.cfg["scale_children" .. suffix] = ch
+                self.item.cfg["scale_children" .. suffix] = ch
                 self:UpdateCfg()
             end
         end
@@ -484,7 +487,7 @@ function PANEL:SetupControls()
     if (self.item.configurable or {}).color then
         LabelMaker(colorzone, "Appearance", true)
         local cv = Vector()
-        cv:Set(self.cfg.color or self.item.color or Vector(1, 1, 1))
+        cv:Set(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
         local cvm = math.max(1, cv.x, cv.y, cv.z)
         PSCMixer = vgui.Create("DColorMixer", colorzone)
         PSCMixer:SetPalette(true)
@@ -499,7 +502,7 @@ function PANEL:SetupControls()
         PSBS:SetValue(cvm)
 
         local function colorchanged()
-            self.cfg.color = PSCMixer:GetVector() * PSBS:GetValue()
+            self.item.cfg.color = PSCMixer:GetVector() * PSBS:GetValue()
             self:UpdateCfg()
         end
 
@@ -533,19 +536,15 @@ function PANEL:SetupControls()
             local id = SanitizeImgurId(new)
             IMGURREMOVEBUTTON:SetVisible(id ~= nil)
 
-            if id then
-                self.cfg.imgur = {
-                    url = id
-                }
-            else
-                self.cfg.imgur = nil
-            end
+            self.item.cfg.imgur = id and {
+                url = id
+            } or nil
 
             self:UpdateCfg()
         end
 
         IMGURENTRY:SetUpdateOnType(true)
-        IMGURENTRY:SetValue((self.cfg.imgur or {}).url or "")
+        IMGURENTRY:SetValue((self.item.cfg.imgur or {}).url or "")
         local imgurinfo = vgui.Create("DLabel", urlzone)
         imgurinfo:SetText("Use an imgur direct URL such as:\nhttp://i.imgur.com/PxOc7TC.png\n(Right click -> Copy image address)")
         imgurinfo:SetColor(SS_SwitchableColor)
@@ -584,23 +583,23 @@ function PANEL:SetupControls()
 
     RAWENTRY.OnValueChange = function(textself, new)
         if not textself.RECIEVE then
-            self.cfg = util.JSONToTable(new) or {}
+            self.item.cfg = util.JSONToTable(new) or {}
             self:UpdateCfg(true) -- TODO: sanitize input like on the server
         end
     end
 
     RAWENTRY:SetUpdateOnType(true)
-    --RAWENTRY:SetValue("unset") --(self.cfg.imgur or {}).url or "")
+    --RAWENTRY:SetValue("unset") --(self.item.cfg.imgur or {}).url or "")
     RAWENTRY:SetVisible(false)
     self:UpdateCfg()
 end
 
 function PANEL:UpdateCfg(skiptext)
-    SS_HoverCfg = self.cfg
+    self.item:Sanitize()
 
     if IsValid(RAWENTRY) and not skiptext then
         RAWENTRY.RECIEVE = true
-        RAWENTRY:SetValue(util.TableToJSON(self.cfg, true))
+        RAWENTRY:SetValue(util.TableToJSON(self.item.cfg, true))
         RAWENTRY.RECIEVE = nil
     end
 end

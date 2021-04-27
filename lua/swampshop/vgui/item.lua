@@ -1,11 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-function SS_PreviewShopModel(self, data)
-    local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
-    local center = (PrevMaxs + PrevMins) / 2
-    local diam = PrevMins:Distance(PrevMaxs) + (data.extrapreviewgap or 0)
-    self:SetCamPos(center + (diam * Vector(0.5, 0.5, 0.5)))
-    self:SetLookAt(center)
+--Note: CAN BE PRODUCT OR ITEM
+function SS_PreviewShopModel(self)
+    local min, max = self.Entity:GetRenderBounds()
+    local center, radius = (min + max) / 2, min:Distance(max) / 2
+    self:SetCamPos(self.Entity:LocalToWorld(center) + ((radius + 1) * Vector(1, 1, 1)))
+    self:SetLookAt(self.Entity:LocalToWorld(center))
 end
 
 function SS_MouseInsidePanel(panel)
@@ -15,6 +15,9 @@ function SS_MouseInsidePanel(panel)
 end
 
 local PANEL = {}
+
+function PANEL:Init()
+end
 
 function PANEL:OnRemove()
     if self:IsSelected() then
@@ -26,9 +29,12 @@ function PANEL:OnMousePressed(b)
     if b ~= MOUSE_LEFT then return end
 
     if self.product then
-        local status = LocalPlayer():SS_CanBuyStatus(self.data)
+        local cantbuy = self.product:CannotBuy(LocalPlayer())
 
-        if status == SS_BUYSTATUS_OK then
+        if cantbuy then
+            surface.PlaySound("common/wpn_denyselect.wav")
+            LocalPlayerNotify(cantbuy)
+        else
             if not self.prebuyclick then
                 self.prebuyclick = true
 
@@ -37,21 +43,18 @@ function PANEL:OnMousePressed(b)
 
             self.prebuyclick = nil
             surface.PlaySound("UI/buttonclick.wav")
-            SS_BuyProduct(self.data.class)
-        else
-            surface.PlaySound("common/wpn_denyselect.wav")
-            LocalPlayerNotify(SS_BuyStatusMessage[status])
+            SS_BuyProduct(self.product.class)
         end
     else
         if self:IsSelected() then
-            local status = (not self.item.eq) and LocalPlayer():SS_CanEquipStatus(self.item.class, self.item.cfg) or SS_EQUIPSTATUS_OK
+            local status = (not self.item.eq) and self.item:CannotEquip() or nil
 
-            if status == SS_EQUIPSTATUS_OK then
+            if status then
+                surface.PlaySound("common/wpn_denyselect.wav")
+                LocalPlayerNotify(status)
+            else
                 surface.PlaySound("weapons/smg1/switch_single.wav")
                 SS_EquipItem(self.item.id, not self.item.eq)
-            else
-                surface.PlaySound("common/wpn_denyselect.wav")
-                LocalPlayerNotify(SS_EquipStatusMessage[status])
             end
         else
             self:Select()
@@ -81,26 +84,40 @@ function PANEL:Select()
     end
 
     SS_SelectedPanel = self
-    SS_HoverData = self.data
-    SS_HoverCfg = (self.item or {}).cfg
-    SS_HoverItemID = (self.item or {}).id
+
+    -- SS_HoverData = self.data
+    -- SS_HoverCfg = (self.item or {}).cfg
+    -- SS_HoverItemID = (self.item or {}).id
+    if self.product then
+        if self.product.sample_item then
+            SS_HoverItem = self.product.sample_item
+            SS_HoverProduct = nil
+        else
+            SS_HoverItem = nil
+            SS_HoverProduct = self.product
+        end
+    else
+        SS_HoverItem = self.item
+    end
+
+    SS_HoverIOP = SS_HoverItem or SS_HoverProduct
     local p = vgui.Create("DLabel", SS_DescriptionPanel)
     p:SetFont("SS_DESCTITLEFONT")
-    p:SetText(self.data.name)
+    p:SetText(self.iop.name)
     p:SetColor(SS_SwitchableColor)
     p:SetContentAlignment(5)
     p:SizeToContents()
     p:DockMargin(0, -4, 0, 0)
     p:Dock(TOP)
 
-    if self.data.description then
+    if self.iop.description then
         p = vgui.Create("DLabel", SS_DescriptionPanel)
         p:SetFont("SS_DESCFONT")
-        p:SetText(self.data.description)
+        p:SetText(self.iop.description)
         p:SetColor(SS_SwitchableColor)
 
         --HACK
-        if string.len(self.data.description) > 45 then
+        if string.len(self.iop.description) > 45 then
             p:SetWrap(true)
             p:SetAutoStretchVertical(true)
         else
@@ -126,18 +143,18 @@ function PANEL:Select()
             p:Dock(TOP)
         end
 
-        addline("Price: " .. (self.data.price == 0 and "Free" or (string.Comma(self.data.price) .. " points")))
-        local status = LocalPlayer():SS_CanBuyStatus(self.data)
+        addline("Price: " .. (self.product.price == 0 and "Free" or (string.Comma(self.product.price) .. " points")))
+        local cannot = self.product:CannotBuy(LocalPlayer())
 
-        if status == SS_BUYSTATUS_OK then
-            addline("Double-click to " .. (self.data.price == 0 and "get" or "buy"))
+        if cannot then
+            addline(cannot)
         else
-            addline(SS_BuyStatusMessage[status])
+            addline("Double-click to " .. (self.product.price == 0 and "get" or "buy"))
         end
 
-        if status ~= SS_BUYSTATUS_OWNED then
-            if SS_Items[self.data.class] then
-                local count = LocalPlayer():SS_CountItem(self.data.class)
+        if cannot ~= SS_CANNOTBUY_OWNED then
+            if self.product.sample_item then
+                local count = LocalPlayer():SS_CountItem(self.product.sample_item.class)
 
                 if count > 0 then
                     addline("You own " .. tostring(count) .. " of these")
@@ -147,10 +164,10 @@ function PANEL:Select()
 
         local typetext = nil
 
-        if self.data.keepnotice then
+        if self.product.keepnotice then
             p = vgui.Create("DLabel", SS_DescriptionPanel)
             p:SetFont("SS_DESCFONT")
-            p:SetText(self.data.keepnotice)
+            p:SetText(self.product.keepnotice)
             p:SetContentAlignment(5)
             p:SetColor(SS_SwitchableColor)
             p:SizeToContents()
@@ -158,7 +175,9 @@ function PANEL:Select()
             p:Dock(BOTTOM)
         end
     else
-        if self.data.configurable then
+        assert(self.item)
+
+        if self.item.configurable then
             p = vgui.Create('DButton', SS_DescriptionPanel)
             p:SetText("Customize")
             p:SetTextColor(SS_SwitchableColor)
@@ -185,7 +204,7 @@ function PANEL:Select()
         end
 
         p = vgui.Create('DButton', SS_DescriptionPanel)
-        p:SetText("Sell for " .. tostring(SS_CalculateSellPrice(LocalPlayer(), self.data)) .. " points")
+        p:SetText("Sell for " .. tostring(self.item:SellValue()) .. " points")
         p:SetTextColor(SS_SwitchableColor)
         p:DockMargin(16, 12, 16, 12)
         p:Dock(TOP)
@@ -213,9 +232,9 @@ end
 function PANEL:Deselect()
     if not self:IsSelected() then return end
     SS_SelectedPanel = nil
-    SS_HoverData = nil
-    SS_HoverCfg = nil
-    SS_HoverItemID = nil
+    SS_HoverProduct = nil
+    SS_HoverItem = nil
+    SS_HoverIOP = nil
 
     if IsValid(SS_HoverCSModel) then
         SS_HoverCSModel:Remove()
@@ -233,23 +252,23 @@ function PANEL:IsSelected()
 end
 
 function PANEL:SetProduct(product)
-    self.data = product
+    self.product = product
     self.item = nil
-    self.product = true
+    self.iop = product
     self:Setup()
 end
 
-function PANEL:SetItem(itemdata, uniqitemdata)
-    self.data = itemdata
-    self.item = uniqitemdata
-    self.product = false
+function PANEL:SetItem(item)
+    self.item = item
+    self.product = nil
+    self.iop = item
     self:Setup()
 end
 
 function PANEL:Setup()
     local DModelPanel = vgui.Create('DModelPanel', self)
     --DModelPanel:SetModel(self.data.model)
-    DModelPanel.model2set = self.data.model
+    DModelPanel.model2set = self.iop.model
     DModelPanel:Dock(FILL)
 
     function DModelPanel:LayoutEntity(ent)
@@ -257,7 +276,7 @@ function PANEL:Setup()
             ent:SetAngles(Angle(0, ent:GetAngles().y + (RealFrameTime() * 120), 0))
         end
 
-        SS_PreviewShopModel(self, self:GetParent().data)
+        SS_PreviewShopModel(self, self:GetParent().iop)
     end
 
     function DModelPanel:OnMousePressed(b)
@@ -275,20 +294,31 @@ function PANEL:Setup()
     DModelPanel.Paint = function(dmp, w, h)
         if dmp.model2set then
             -- might be a workshop model, will be an error till user clicks it and it appears in the preview
+            -- todo: use placeholder
             dmp:SetModel(dmp.model2set)
             dmp.model2set = nil
         end
 
         if (not IsValid(dmp.Entity)) then return end
-        SS_PreRender(self.data, (self.item or {}).cfg)
-        local x, y = dmp:LocalToScreen(0, 0)
-        dmp:LayoutEntity(dmp.Entity)
-        local ang = dmp.aLookAngle
+        dmp.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
 
-        if (not ang) then
-            ang = (dmp.vLookatPos - dmp.vCamPos):Angle()
+        if self.item or self.product.sample_item then
+            SS_PreRender(self.item or self.product.sample_item)
+        else
+            --todo: remove this?
+            local mat, col = self.product.material, self.product.color
+
+            if mat then
+                render.MaterialOverride(SS_GetMaterial(mat))
+            end
+            -- if col then
+            --     render.SetColorModulation(col.x, col.y, col.z)
+            -- end
         end
 
+        local x, y = dmp:LocalToScreen(0, 0)
+        dmp:LayoutEntity(dmp.Entity)
+        local ang = dmp.aLookAngle or (dmp.vLookatPos - dmp.vCamPos):Angle()
         cam.Start3D(dmp.vCamPos, ang, dmp.fFOV, x, y, w, h, 5, dmp.FarZ)
         render.SuppressEngineLighting(true)
         render.SetLightingOrigin(dmp.Entity:GetPos())
@@ -298,7 +328,7 @@ function PANEL:Setup()
         for i = 0, 6 do
             local col = dmp.DirectionalLight[i]
 
-            if (col) then
+            if col then
                 render.SetModelLighting(i, col.r / 255, col.g / 255, col.b / 255)
             end
         end
@@ -338,21 +368,21 @@ function PANEL:Think()
     self.BGColor = SS_TileBGColor
 
     if self.product then
-        local buystatus = LocalPlayer():SS_CanBuyStatus(self.data)
+        local cannot = self.product:CannotBuy(LocalPlayer())
 
-        if buystatus == SS_BUYSTATUS_OK then
-            self.barcolor = Color(0, 112, 0, 160)
-        else
+        if cannot then
             self.fademodel = true
 
-            if buystatus == SS_BUYSTATUS_AFFORD then
+            if cannot == SS_CANNOTBUY_AFFORD then
                 self.barcolor = Color(112, 0, 0, 160)
             else
                 self.barcolor = Color(72, 72, 72, 160)
             end
+        else
+            self.barcolor = Color(0, 112, 0, 160)
         end
 
-        local c = LocalPlayer():SS_CountItem(self.data.class)
+        local c = self.product.sample_item and LocalPlayer():SS_CountItem(self.product.sample_item.class) or 0
 
         if c > 0 then
             self.icon = ownedcheckmark
@@ -367,14 +397,14 @@ function PANEL:Think()
             self.textfont = "SS_Price"
 
             if self.prebuyclick then
-                self.text = self.data.price == 0 and ">  GET  <" or ">  BUY  <"
+                self.text = self.product.price == 0 and ">  GET  <" or ">  BUY  <"
             else
-                self.text = self.data.price == 0 and "FREE" or "-" .. tostring(self.data.price)
+                self.text = self.product.price == 0 and "FREE" or "-" .. tostring(self.product.price)
             end
         else
             self.barheight = 20
             self.textfont = "SS_ProductName"
-            self.text = self.data.name
+            self.text = self.product.name
         end
 
         self.textcolor = SS_ColorWhite
@@ -382,24 +412,22 @@ function PANEL:Think()
         if self.item.eq then
             self.icon = visiblemark
         else
-            if not self.data.never_equip then
+            if not self.item.never_equip then
                 self.fademodel = true
             end
         end
 
         self.barheight = 20
         self.textfont = "SS_ProductName"
-        self.text = self.data.name
+        self.text = self.item.name
         local leqc = 0
         local totalc = 0
 
-        for k, v in ipairs(LocalPlayer().SS_Items or {}) do
-            local odata = SS_Items[v.class]
-
-            if odata and self.data.name == odata.name then
+        for k, otheritem in ipairs(LocalPlayer().SS_Items or {}) do
+            if self.item.class == otheritem.class then
                 totalc = totalc + 1
 
-                if v.id <= self.item.id then
+                if otheritem.id <= self.item.id then
                     leqc = leqc + 1
                 end
             end

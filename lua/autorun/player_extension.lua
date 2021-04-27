@@ -2,7 +2,6 @@
 local meta = FindMetaTable("Player")
 local entity = FindMetaTable("Entity")
 
-
 function meta:GetLocation()
     return self:GetDTInt(0) or 0
 end
@@ -29,6 +28,7 @@ end
 
 function meta:SetLocation(locationId)
     self.LastLocation = self:GetLocation()
+
     return self:SetDTInt(0, locationId)
 end
 
@@ -41,10 +41,6 @@ function meta:Name()
 
     if self:IsBot() then
         st = "Kleiner"
-    end
-
-    if st == "Swamp" and self:SteamID() ~= "STEAM_0:0:38422842" then
-        st = "Onions"
     end
 
     return st
@@ -189,7 +185,6 @@ function meta:StaffControlTheater()
 
     return self:GetRank() >= minn
 end
-
 
 function isPonyModel(modelName)
     modelName = modelName:sub(1, 17)

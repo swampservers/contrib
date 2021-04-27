@@ -164,6 +164,15 @@ Map = {
         Name = "Vapor Lounge",
         Min = Vector(1865, 268, -19),
         Max = Vector(2549, 1524, 242),
+        Theater = {
+            Flags = THEATER_PRIVATEREPLICATED,
+            -- Pos = Vector(2312+36, 1520-37, 210), -- Ang = Angle(0, 315, 0), -- Pos = Vector(2304 + 262.5 / 2, 273, 216), -- Width = 262.5, --21:9; should be 200 for 16:9 -- Height = 112.5,
+            Pos = Vector(2304 + 256 / 2, 273 + 8 + 16, 216),
+            Width = 256, --21:9; should be 200 for 16:9
+            Height = 144,
+            Ang = Angle(0, 180, 0),
+            AllowItems = true
+        },
         Filter = function(pos) return pos.x < 2560 or (pos.y > 560 and pos.y < 688 and pos.z < 128) end
     },
     {
@@ -347,7 +356,8 @@ Map = {
             Pos = Vector(-2849.8, 1208, 136),
             Ang = Angle(0, 90, 0),
             Width = 420,
-            Height = 235
+            Height = 235,
+            AllowItems = true
         }
     },
     {

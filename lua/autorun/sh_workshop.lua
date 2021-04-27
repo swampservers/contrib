@@ -1,6 +1,7 @@
 ﻿STEAMWS_DOWNLOAD_STARTED = STEAMWS_DOWNLOAD_STARTED or {}
 STEAMWS_MOUNTED = STEAMWS_MOUNTED or {}
 
+--placeholder: models/maxofs2d/logo_gmod_b.mdl
 function require_workshop(id)
     if not STEAMWS_DOWNLOAD_STARTED[id] then
         STEAMWS_DOWNLOAD_STARTED[id] = true
@@ -12,8 +13,13 @@ function require_workshop(id)
             -- Any error models currently loaded that the mounted addon provides will be reloaded.
             -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
             -- That means that this cannot be used to fix missing map materials, as the map materials are loaded before you are able to call this.
-            game.MountGMA(name)
-            STEAMWS_MOUNTED[_id_] = true
+            if name then
+                game.MountGMA(name)
+                STEAMWS_MOUNTED[_id_] = true
+            else
+                print("Workshop download failed for " .. _id_)
+                STEAMWS_DOWNLOAD_STARTED[_id_] = nil
+            end
         end)
     end
 

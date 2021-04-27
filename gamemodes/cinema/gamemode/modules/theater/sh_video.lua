@@ -156,8 +156,7 @@ if SERVER then
         if not callback then return end
 
         if self:Type() ~= "" then
-            -- check cache
-            GetVideoLog(self, function(stuff)
+            SQL_GetVideoCache(self, function(stuff)
                 if stuff then
                     self._VideoTitle = stuff.title or "(Unknown)"
                     self._VideoDuration = tonumber(stuff.duration) or -1
@@ -189,7 +188,7 @@ if SERVER then
                         end
 
                         --log here for better performance
-                        theater.LogVideo(self)
+                        SQL_SetVideoCache(self)
                         callback(true)
                     end, loadFailure)
 

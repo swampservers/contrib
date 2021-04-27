@@ -103,25 +103,44 @@ end)
 BARBRIGHTFADE = BARBRIGHTFADE or 0
 
 hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
-    if IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Drunken Clam" then
+    if IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Drunken Clam" or vape then
         BARBRIGHTFADE = math.min(BARBRIGHTFADE + FrameTime(), 1)
     else
         BARBRIGHTFADE = math.max(BARBRIGHTFADE - FrameTime() * 2, 0)
     end
 
     if BARBRIGHTFADE > 0 then
-        --if not LocalPlayer():SteamID()=="STEAM_0:0:38422842" then return end
         local thing = -(BARBRIGHTFADE * 0.06)
         local tab = {}
-        tab["$pp_colour_colour"] = 1 + thing
         tab["$pp_colour_contrast"] = 1 / (1 + thing * 0.5)
+        tab["$pp_colour_colour"] = 1 + thing
         tab["$pp_colour_brightness"] = thing
+        tab["$pp_colour_mulr"] = 0
+        tab["$pp_colour_mulg"] = 0
+        tab["$pp_colour_mulb"] = 0
         DrawColorModify(tab)
     end
 end)
 
 local flagmaterial = Material("models/props_fairgrounds/fairgrounds_flagpole01")
+local vapermaterial = Material("swamponions/swampcinema/vapers")
+local vapesignmaterial = Material("models/vapor/sign/sign_green")
 
 timer.Simple(0, function()
     flagmaterial:SetTexture("$basetexture", "models/props_fairgrounds/fairgrounds_flagpole01_alternate")
+
+    vapermaterial:SetMatrix("$basetexturetransform", Matrix({
+        {1, 0, 0, 0},
+        {0, 1.05, 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1}
+    }))
 end)
+
+hook.Add("Think", "VapeSignColor", function()
+    if vapesignmaterial then
+        local c = HSVToColor(SysTime() * 15, 0.5, 1)
+        vapesignmaterial:SetVector("$color2", Vector(c.r, c.g, c.b) / 255)
+    end
+end)
+-- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))

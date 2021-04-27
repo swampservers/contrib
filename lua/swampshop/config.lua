@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 AddCSLuaFile()
+local Player = FindMetaTable('Player')
 
 --[[
 ValveBiped.Bip01_Pelvis
@@ -131,44 +132,33 @@ SS_Attachments = {
     right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
 }
 
-function SS_CalculateSellPrice(ply, item)
-    if item.class == "ponymodel" then return item.price * 0.5 end
+local NoPointAltIds = {
+    ["STEAM_0:1:149372369"] = true,
+    ["STEAM_0:0:183199559"] = true,
+    ["STEAM_0:0:179623822"] = true
+}
 
-    return math.Round(item.price * 0.8)
+function Player:SS_Income()
+    if NoPointAltIds[self:SteamID()] then return 0 end
+    local income = math.floor(self:SS_BaseIncome() * self:SS_BaseIncomeMultiplier())
+
+    return income
 end
 
-function SS_BaseIncome(ply)
-    return math.floor(20 + math.Clamp((ply:SS_GetPoints()) / 5000, 0, 80))
+function Player:SS_BaseIncome()
+    return math.floor(20 + math.Clamp((self:SS_GetPoints()) / 5000, 0, 80))
 end
 
-function SS_BaseIncomeMultiplier(ply)
-    local cash = ply:SS_GetDonation()
+function Player:SS_BaseIncomeMultiplier()
+    local cash = self:SS_GetDonation()
     local incomelevel = math.min(math.floor(math.min(cash, 2000) / 1000) + math.floor(cash / 10000) + 1, 42)
-    local mult = ((ply.HasHalfPoints and 1 or 3) + incomelevel) * 0.25
+    local mult = ((self.HasHalfPoints and 1 or 3) + incomelevel) * 0.25
 
-    if ply:IsAFK() then
+    if self:IsAFK() then
         mult = mult / 2
     else
         mult = mult * 2
     end
 
     return mult
-end
-
-NoPointAltIds = {
-    ["STEAM_0:1:149372369"] = true,
-    ["STEAM_0:0:183199559"] = true,
-    ["STEAM_0:0:179623822"] = true
-}
-
-function SS_Income(ply)
-    if NoPointAltIds[ply:SteamID()] then return 0 end
-    local income = math.floor(SS_BaseIncome(ply) * SS_BaseIncomeMultiplier(ply))
-
-    --if GAMEMODE.FolderName=="spades" then income=income*2 end
-    if os.time() < 1601402349 then
-        income = income * 2
-    end
-
-    return income
 end

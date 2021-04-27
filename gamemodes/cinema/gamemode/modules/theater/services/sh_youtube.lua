@@ -35,6 +35,20 @@ if CLIENT then
         -- Let the webpage handle loading a video
         local str = string.format("th_video('%s',%s);", string.JavascriptSafe(Video:Key()), Video:Duration() > 0 and "false" or "true")
         panel:QueueJavascript(str)
+        local fn = panel.ConsoleMessage
+
+        panel.ConsoleMessage = function(a, str)
+            fn(a, str)
+
+            if str:len() > 2 and str:sub(1, 2) == "T:" and tonumber(str:sub(3)) then
+                YOUTUBE_TRUE_START = SysTime() - tonumber(str:sub(3))
+                YOUTUBE_TRUE_START_PING = SysTime()
+            end
+        end
+    end
+
+    function YoutubeActualTimestamp()
+        if (YOUTUBE_TRUE_START_PING or -100) > SysTime() - 2 then return SysTime() - YOUTUBE_TRUE_START end
     end
 end
 

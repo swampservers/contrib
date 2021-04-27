@@ -4,6 +4,93 @@ local PANEL = {}
 
 function PANEL:Init()
     self:SetModel(LocalPlayer():GetModel())
+    self.Angles = Angle(0, 0, 0)
+    self.ZoomOffset = 0
+end
+
+function PANEL:OnMouseWheeled(amt)
+    self.ZoomOffset = self.ZoomOffset + (amt > 0 and 1 or -1)
+end
+
+function PANEL:DragMousePress(btn)
+    self.PressButton = btn
+    self.PressX, self.PressY = gui.MousePos()
+    self.Pressed = true
+end
+
+function PANEL:DragMouseRelease()
+    self.Pressed = false
+    self.lastPressed = RealTime()
+end
+
+function PANEL:LayoutEntity(thisEntity)
+    if (self.bAnimated) then
+        self:RunAnimation()
+    end
+
+    if (self.Pressed) then
+        local mx, my = gui.MousePos()
+
+        --self.Angles = self.Angles - Angle( ( self.PressY or my ) - my, ( self.PressX or mx ) - mx, 0 )
+        if self.PressButton == MOUSE_LEFT then
+            if SS_CustomizerPanel:IsVisible() then
+                local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
+                self.Angles:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.6)
+                self.Angles:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.6)
+                self.SPINAT = 0
+            else
+                self.Angles.y = self.Angles.y + ((mx - (self.PressX or mx)) * 0.6)
+            end
+        end
+
+        if self.PressButton == MOUSE_RIGHT then
+            if SS_CustomizerPanel:IsVisible() then
+                if ValidPanel(XRSL) then
+                    if IsValid(SS_HoverCSModel) then
+                        clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
+                        clangm = Matrix()
+                        clangm:SetAngles(clang)
+                        clangm:Invert()
+                        clangi = clangm:GetAngles()
+                        cgang = SS_HoverCSModel:GetAngles()
+                        crangm = Matrix()
+                        crangm:SetAngles(cgang)
+                        crangm:Rotate(clangi)
+                        rootang = V
+                        ngang = Angle()
+                        ngang:Set(cgang)
+                        local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
+                        ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
+                        ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
+                        ngangm = Matrix()
+                        ngangm:SetAngles(ngang)
+                        crangm:Invert()
+                        nlangm = crangm * ngangm
+                        nlang = nlangm:GetAngles()
+                        print(nlang)
+                        XRSL:SetValue(nlang.x)
+                        YRSL:SetValue(nlang.y)
+                        ZRSL:SetValue(nlang.z)
+                    end
+                end
+            end
+        end
+
+        self.PressX, self.PressY = gui.MousePos()
+    end
+
+    if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
+        thisEntity:SetAngles(self.Angles)
+
+        if not SS_CustomizerPanel:IsVisible() then
+            self.SPINAT = 4
+        end
+    else
+        self.Angles.y = math.NormalizeAngle(self.Angles.y + (RealFrameTime() * 21))
+        self.Angles.x = 0
+        self.Angles.z = 0
+        thisEntity:SetAngles(self.Angles)
+    end
 end
 
 function PANEL:Paint()
@@ -20,11 +107,11 @@ function PANEL:Paint()
 
     if SS_CustomizerPanel:IsVisible() then
         if IsValid(SS_HoverCSModel) then
-            SS_DrawWornCSModel(SS_HoverData, SS_HoverCfg, SS_HoverCSModel, self.Entity, true)
+            SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity, true)
             pos = LerpVector(0, SS_HoverCSModel:GetPos() - (ang:Forward() * 25), pos)
         end
 
-        if SS_HoverData and SS_HoverData.bonemod then
+        if SS_HoverItem and SS_HoverItem.bonemod then
             pos = pos + (ang:Forward() * 25)
             --positions are wrong
             --[[
@@ -61,8 +148,8 @@ function PANEL:Paint()
     local ply = LocalPlayer()
     local mdl = ply:GetModel()
 
-    if SS_HoverData and (not SS_HoverData.wear) and (not SS_HoverData.bonemod) then
-        mdl = SS_HoverData.model
+    if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.bonemod) then
+        mdl = SS_HoverIOP.model
     end
 
     require_workshop_model(mdl)
@@ -73,11 +160,17 @@ function PANEL:Paint()
         PPM.setBodygroups(self.Entity, true)
     end
 
-    if SS_HoverData and (not SS_HoverData.playermodel) and (not SS_HoverData.wear) and (not SS_HoverData.bonemod) then
-        SS_PreRender(SS_HoverData, SS_HoverCfg)
-        SS_PreviewShopModel(self, SS_HoverData)
+    if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.bonemod) then
+        if SS_HoverItem then
+            SS_PreRender(SS_HoverItem)
+        end
+
+        SS_PreviewShopModel(self, SS_HoverIOP)
         self.Entity:DrawModel()
-        SS_PostRender()
+
+        if SS_HoverItem then
+            SS_PreRender(SS_HoverItem)
+        end
     else
         local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
@@ -93,23 +186,18 @@ function PANEL:Paint()
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
         local mods = LocalPlayer():SS_GetActiveBonemods()
 
-        if SS_HoverData and SS_HoverData.bonemod then
-            table.insert(mods, {
-                itm = SS_HoverData,
-                cfg = SS_HoverCfg
-            })
-
-            local rm = nil
+        if SS_HoverItem and SS_HoverItem.bonemod then
+            local add = true
 
             for i, v in ipairs(mods) do
-                if v.id == SS_HoverItemID then
-                    rm = i
+                if v.id == SS_HoverItem.id then
+                    add = false
                     break
                 end
             end
 
-            if rm then
-                table.remove(mods, rm)
+            if add then
+                table.insert(mods, SS_HoverItem)
             end
         end
 
@@ -117,22 +205,23 @@ function PANEL:Paint()
         self.Entity:DrawModel()
     end
 
-    if SS_HoverData == nil or SS_HoverData.playermodel or SS_HoverData.wear or SS_HoverData.bonemod then
+    if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.bonemod then
         for _, prop in pairs(ply:SS_GetCSModels()) do
-            if SS_HoverItemID == nil or SS_HoverItemID ~= prop.id then
-                SS_DrawWornCSModel(prop.itm, prop.cfg, prop.mdl, self.Entity)
+            if SS_HoverItem == nil or SS_HoverItem.id ~= prop.item.id then
+                SS_DrawWornCSModel(prop.item, prop.mdl, self.Entity)
             end
         end
     end
 
-    if SS_HoverData and SS_HoverData.wear then
+    if SS_HoverItem and SS_HoverItem.wear then
         if not IsValid(SS_HoverCSModel) then
-            SS_HoverCSModel = SS_CreateWornCSModel(SS_HoverData, SS_HoverCfg)
+            SS_HoverCSModel = SS_CreateWornCSModel(SS_HoverItem)
         end
 
-        SS_DrawWornCSModel(SS_HoverData, SS_HoverCfg, SS_HoverCSModel, self.Entity)
+        SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity)
     end
 
+    -- ForceDrawPlayer(LocalPlayer())
     render.SuppressEngineLighting(false)
     cam.IgnoreZ(false)
     cam.End3D()

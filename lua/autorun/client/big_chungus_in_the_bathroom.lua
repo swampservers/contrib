@@ -29,7 +29,7 @@ local function Chungus_Function(ply, key)
 end
 
 timer.Create("Chungus_Checker", 1, 0, function()
-    if (LocalPlayer():GetLocationName() == "Bathroom") then
+    if (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Bathroom") then
         hook.Add("KeyPress", "ChungusBathroomKey", Chungus_Function)
     else
         hook.Remove("KeyPress", "ChungusBathroomKey")
