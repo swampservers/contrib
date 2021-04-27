@@ -1,9 +1,0 @@
-"VertexlitGeneric"
-{
-	"$basetexture" "models/player/banana/image"//I really really really like this image
-	"$bumpmap" "models/player/banana/image_normal"
-	"$surfaceprop" "Watermelon"
-	"$halflambert" "1"
-	
-}
- 

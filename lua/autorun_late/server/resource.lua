@@ -7,11 +7,13 @@ if GAMEMODE.FolderName == "cinema" then
     resource.AddWorkshop("2453150754")
     resource.AddWorkshop("2453150824")
     resource.AddWorkshop("2453151168")
-    resource.AddWorkshop("2453151259")
-    resource.AddWorkshop("2453151358")
-    resource.AddWorkshop("2453151452")
-    resource.AddWorkshop("2453342540")
-    resource.AddWorkshop("2453342601")
+    -- removed additional shards
+    -- resource.AddWorkshop("2453151259")
+    -- resource.AddWorkshop("2453151358")
+    -- resource.AddWorkshop("2453151452")
+    -- resource.AddWorkshop("2453342540")
+    -- resource.AddWorkshop("2453342601")
+
     -- resource.AddWorkshop( "821872963" ) -- 10 gigs of crap addon
     -- resource.AddWorkshop( "118824086" ) -- cinema gamemode
     -- resource.AddWorkshop( "171935748" ) -- Popcorn SWEP
