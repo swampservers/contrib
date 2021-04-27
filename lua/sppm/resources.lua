@@ -93,7 +93,8 @@ function PPM.loadResources()
             {Material("models/ppm/partrender/body_nosefreckles.png"), "Nose freckles"},
             {Material("models/ppm/partrender/body_socks_primary.png"), "Socks primary"},
             {Material("models/ppm/partrender/body_socks_secondary.png"), "Socks secondary"},
-            {Material("models/ppm/partrender/body_collar.png"), "Collar"}
+            {Material("models/ppm/partrender/body_collar.png"), "Collar"},
+            {Material("models/ppm/partrender/body_lipstick.png"), "Lipstick"}
         }
     end
 end
