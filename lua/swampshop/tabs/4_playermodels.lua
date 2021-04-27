@@ -202,7 +202,7 @@ SS_UniqueModelProduct({
     class = 'garfield',
     name = 'Lasagna Cat',
     description = "I gotta have a good meal.",
-    model = 'models/jcthornton/garfield/garfield.mdl',
+    model = 'models/garfield/garfield.mdl', --models/jcthornton/garfield/garfield.mdl
     workshop = '1958982639',
 })
 
