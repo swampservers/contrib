@@ -20,7 +20,7 @@ If you wish to contribute to this repository, either pick a task from the [taskl
 
 If you wish to get paid for the work you put in this repository, please contact [Echo](https://discord.com/users/425341154452701185) to decide on a deadline for the task / suggestion you wish to code. Once the deadline has been decided, you can already start working on it, and you will be reminded later on of the reward that you will get for completing your work before said deadline.  
 
-If you are working on something that does not have a deadline, you may not get as high of a reward from Swamp, because we value developers that do not procrastinate their work, and effectively get things done. 
+If you are working on something that does not have a deadline, you may not get as high of a reward from Swamp, that is because we prefer developers that do not procrastinate their work, and effectively get things done within a limited timeframe. 
 
 Depending on wether or not you manage to finish the project you started before the deadline you and [Echo](https://discord.com/users/425341154452701185) agreed on, will determine the amount of money you recieve in the end.
 
