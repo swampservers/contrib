@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 local Player = FindMetaTable('Player')
+local Entity = FindMetaTable('Entity')
 SS_MaterialCache = {}
 
 function SS_GetMaterial(nam)
@@ -172,9 +173,38 @@ function SS_ApplyMaterialMods(ent, mods)
     end
 end
 
+
+local EntityGetModel = Entity.GetModel
+-- Entity.SS_True_LookupAttachment = Entity.SS_True_LookupAttachment or Entity.LookupAttachment
+-- Entity.SS_True_LookupBone = Entity.SS_True_LookupBone or Entity.LookupBone
+
+-- function Entity:LookupAttachment(id)
+--     local mdl = EntityGetModel(self)
+--     if self.LookupAttachmentCacheModel ~= mdl then
+--         self.LookupAttachmentCache={}
+--     end
+--     if not self.LookupAttachmentCache[id] then self.LookupAttachmentCache[id] = Entity.SS_True_LookupAttachment(self, id) end
+--     return self.LookupAttachmentCache[id]
+-- end
+
+-- function Entity:LookupBone(id)
+--     local mdl = EntityGetModel(self)
+--     if self.LookupBoneCacheModel ~= mdl then
+--         self.LookupBoneCache={}
+--     end
+--     if not self.LookupBoneCache[id] then self.LookupBoneCache[id] = Entity.SS_True_LookupBone(self, id) end
+--     return self.LookupBoneCache[id]
+-- end
+ 
+-- function SWITCHH()
+--     Entity.LookupAttachment = Entity.SS_True_LookupAttachment
+--     Entity.LookupBone = Entity.SS_True_LookupBone
+-- end
+
+
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
-function SS_DrawWornCSModel(item, mdl, ent, dontactually)
-    local pone = isPonyModel(ent:GetModel())
+function SS_DrawWornCSModel(item, mdl, ent, dontactually) --TODO this is lag causin
+    local pone = isPonyModel(EntityGetModel(ent))
     local attach = item.wear.attach
     local scale = item.wear.scale
     local translate = item.wear.translate
@@ -270,10 +300,10 @@ function SS_DrawWornCSModel(item, mdl, ent, dontactually)
     end
 end
 
-hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
+hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply) 
     if ply.SS_Items == nil and ply.SS_ShownItems == nil then return end
     if not ply:Alive() then return end
-    --if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
+    if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
     -- and (GetConVar('thirdperson') and GetConVar('thirdperson'):GetInt() == 0)
     --if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' then return end
     if GAMEMODE.FolderName == "fatkid" and ply:Team() ~= TEAM_HUMAN then return end

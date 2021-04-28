@@ -132,40 +132,6 @@ if CLIENT then
         window:Center()
         window:MakePopup()
     end
-
-    local thumbWidth = 480
-    local thumbHeight = 360
-    local renderScale = 0.2
-    local str, col, tw, th, ty, bw, bh, by, scale, location = nil
-
-    hook.Add("PostDrawTranslucentRenderables", "TheaterRentals_Thumasdfbnails", function(depth, sky)
-        if depth or sky then return end
-
-        for _, ent in ipairs(ents.FindByClass("theater_thumbnail")) do
-            if ent.Attach and ent:GetNWBool("Rentable") then
-                location = ent:GetNWInt("Location")
-                local tb = protectedTheaterTable[location]
-
-                if tb ~= nil and tb["time"] > 1 then
-                    surface.SetFont("TheaterInfoMedium")
-                    str = "Protected"
-                    tw, th = surface.GetTextSize(str)
-                    tw = tw + tw * 0.05
-                    scale = tw / thumbWidth
-                    scale = math.max(scale, 0.88)
-                    bw, bh = (thumbWidth * scale), (thumbHeight * scale) * 0.16
-                    bh = math.max(bh, th)
-                    by = (thumbHeight * scale)
-                    ty = by + (th / 2)
-                    cam.Start3D2D(ent.Attach.Pos, ent.Attach.Ang, (1 / scale) * renderScale)
-                    surface.SetDrawColor(0, 0, 0, 200)
-                    surface.DrawRect(0, by, bw, bh)
-                    draw.TheaterText(str, "TheaterInfoMedium", (thumbWidth * scale) / 2, ty, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    cam.End3D2D()
-                end
-            end
-        end
-    end)
 end
 
 local function divideUpSeconds(seconds)

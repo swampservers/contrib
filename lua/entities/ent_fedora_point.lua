@@ -20,6 +20,7 @@ function ENT:UpdateTransmitState()
     return TRANSMIT_ALWAYS
 end
 
+
 function ENT:Think()
     local ply = self:GetOwner()
 
@@ -27,16 +28,10 @@ function ENT:Think()
         if not IsValid(ply) or not IsValid(ply:GetActiveWeapon()) or ply:GetActiveWeapon():GetClass() ~= "weapon_flappy" then
             self:Remove()
         end
-        --if owner isn't valid, or owner's active weapon isn't valid, or owner has a weapon but it's not the fedora
-
         return
     end
 
-    if not FLAPPYFEDORATRAIL then return end
-    if not IsValid(ply) then return end
-
-    --only move the entity if in thirdperson, or the player isn't the localplayer
-    if (ply == LocalPlayer() and THIRDPERSON) or ply ~= LocalPlayer() then
+    if IsValid(ply) and ( ply ~= LocalPlayer() or hook.Run("ShouldDrawLocalPlayer", ply) )then
         local bn = ply:IsPony() and "LrigSpine1" or "ValveBiped.Bip01_Head1"
         local bon = ply:LookupBone(bn) or 0
         local bonepos = ply:GetBonePosition(bon)
@@ -48,7 +43,32 @@ function ENT:Think()
             self:SetPos(bonepos + Vector(plyaim.x * 2, plyaim.y * 2, plyaim.z + 7))
         end
     end
+
+    if IsValid(LocalPlayer()) and IsValid(ply) and ply:GetPos():DistToSqr(LocalPlayer():EyePos())>1000000 then
+        self:SetNextClientThink( CurTime() + 0.1 )
+        return true
+    end
 end
+
+    -- hook.Add("DrawTranslucentAccessories", "MoveFedoraPoint", function(ply)
+    --     local self = ply:GetNWEntity("fedora_point")
+    --     if IsValid(self) then
+    --         print("MOVE", self)
+    --         if IsValid(ply) and ( ply ~= LocalPlayer() or hook.Run("ShouldDrawLocalPlayer", ply) )then
+    --             local bn = ply:IsPony() and "LrigSpine1" or "ValveBiped.Bip01_Head1"
+    --             local bon = ply:LookupBone(bn) or 0
+    --             local bonepos = ply:GetBonePosition(bon)
+    --             local plyaim = ply:GetAimVector()
+    
+    --             if ply:IsPony() then
+    --                 self:SetPos(bonepos + Vector(plyaim.x * 1, plyaim.y * 1, plyaim.z - 4))
+    --             else
+    --                 self:SetPos(bonepos + Vector(plyaim.x * 2, plyaim.y * 2, plyaim.z + 7))
+    --             end
+    --         end
+    --     end
+    -- end)
+
 
 function ENT:Draw()
 end

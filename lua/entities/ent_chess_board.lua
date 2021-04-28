@@ -2079,30 +2079,13 @@ if CLIENT then
             end
         end
 
-        --Less than 30 fps
-        if FrameTime() >= 0.33 and not self.SpectatingTable then
-            if self.FPSFailTimeout and self.FPSFailTimeout < CurTime() then
-                self.FPSFailCount = 0
-            end
-
-            if (not self.FPSNextCheck) or self.FPSNextCheck <= CurTime() then
-                self.FPSNextCheck = CurTime() + 0.1
-                self.FPSFailTimeout = CurTime() + 2
-                self.FPSFailCount = (self.FPSFailCount or 0) + 1
-
-                if self.FPSFailCount >= 30 then
-                    self.LowFPSCheck = CurTime() + 5
-                end
-            end
-        end
-
         local InChessGame = (IsValid(LocalPlayer():GetVehicle()) or LocalPlayer():GetNWBool("IsInChess", false))
 
         if InChessGame and ActiveBoard == self then
             render.DepthRange(0, 0)
         end
 
-        if InChessGame or self.SpectatingTable or (not (self.LowFPSCheck and self.LowFPSCheck > CurTime())) then
+        if InChessGame or self.SpectatingTable or self:GetPos():DistToSqr(EyePos())<1000000 then
             local i = 0
 
             for let, column in pairs(self.Pieces) do

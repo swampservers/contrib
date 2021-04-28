@@ -1,89 +1,86 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 if CLIENT then
     --TODO remove this shit entirely (conflicts with pointshop)
-    function PPM:RescaleRIGPART(ent, part, scale)
-        for k, v in pairs(part) do
-            --ent:ManipulateBoneScale( v,scale )   --DISABLED CUZ POINTSHOP
-        end
-    end
+    -- function PPM:RescaleRIGPART(ent, part, scale)
+    --     for k, v in pairs(part) do
+    --         --ent:ManipulateBoneScale( v,scale )   --DISABLED CUZ POINTSHOP
+    --     end
+    -- end
 
-    function PPM:RescaleMRIGPART(ent, part, scale)
-        for k, v in pairs(part) do
-            --ent:ManipulateBonePosition( v, scale )
-        end
-    end
+    -- function PPM:RescaleMRIGPART(ent, part, scale)
+    --     for k, v in pairs(part) do
+    --         --ent:ManipulateBonePosition( v, scale )
+    --     end
+    -- end
 
-    PPM.TailBoneOffsets = {
-        [39] = Vector(-16.302101, -1.011261, 0),
-        [40] = Vector(25.726456, -0.000069, 0),
-        [41] = Vector(40.078480, 0, 0)
-    }
+    -- PPM.TailBoneOffsets = {
+    --     [39] = Vector(-16.302101, -1.011261, 0),
+    --     [40] = Vector(25.726456, -0.000069, 0),
+    --     [41] = Vector(40.078480, 0, 0)
+    -- }
 
-    function PPM:RescaleOFFCETRIGPART(ent, part, scale)
-        for k, v in pairs(part) do
-            local thispos = PPM.TailBoneOffsets[v + 1]
-            --ent:ManipulateBonePosition( v, thispos *(scale-Vector(1,1,1)) )
-        end
-    end
+    -- function PPM:RescaleOFFCETRIGPART(ent, part, scale)
+    --     for k, v in pairs(part) do
+    --         local thispos = PPM.TailBoneOffsets[v + 1]
+    --         --ent:ManipulateBonePosition( v, thispos *(scale-Vector(1,1,1)) )
+    --     end
+    -- end 
 
     function PPM.PrePonyDraw(ent, localvals)
-        if not PPM.isValidPonyLight(ent) then return end
+        if not PPM.isValidPonyLight(ent) then return end 
         local pony = PPM.getPonyValues(ent, localvals)
-        if (table.Count(pony) == 0) then return end
-        local SCALEVAL0 = math.Clamp(pony.bodyweight or 1, 0.5, 2)
-        local SCALEVAL1 = math.Clamp(pony.gender - 1, 0, 1)
-        PPM:RescaleRIGPART(ent, PPM.rig.leg_FL, Vector(1, 1, 1) * SCALEVAL0)
-        PPM:RescaleRIGPART(ent, PPM.rig.leg_FR, Vector(1, 1, 1) * SCALEVAL0)
-        PPM:RescaleRIGPART(ent, PPM.rig.leg_BL, Vector(1, 1, 1) * SCALEVAL0)
-        PPM:RescaleRIGPART(ent, PPM.rig.leg_BR, Vector(1, 1, 1) * SCALEVAL0)
+        if table.IsEmpty(pony) then return end
+        
+        -- local SCALEVAL0 = math.Clamp(pony.bodyweight or 1, 0.5, 2)
+        -- local SCALEVAL1 = math.Clamp(pony.gender - 1, 0, 1)
+        -- PPM:RescaleRIGPART(ent, PPM.rig.leg_FL, Vector(1, 1, 1) * SCALEVAL0)
+        -- PPM:RescaleRIGPART(ent, PPM.rig.leg_FR, Vector(1, 1, 1) * SCALEVAL0)
+        -- PPM:RescaleRIGPART(ent, PPM.rig.leg_BL, Vector(1, 1, 1) * SCALEVAL0)
+        -- PPM:RescaleRIGPART(ent, PPM.rig.leg_BR, Vector(1, 1, 1) * SCALEVAL0)
         --local breathoffs = (math.sin(CurTime())/4)
-        PPM:RescaleRIGPART(ent, PPM.rig.rear, Vector(1, 1, 1) * (SCALEVAL0 - (SCALEVAL1) * 0.2))
-        PPM:RescaleRIGPART(ent, PPM.rig.neck, Vector(1, 1, 1) * SCALEVAL0)
+        -- PPM:RescaleRIGPART(ent, PPM.rig.rear, Vector(1, 1, 1) * (SCALEVAL0 - (SCALEVAL1) * 0.2))
+        -- PPM:RescaleRIGPART(ent, PPM.rig.neck, Vector(1, 1, 1) * SCALEVAL0)
 
-        PPM:RescaleRIGPART(ent, {3}, Vector(1, 1, 0) * ((SCALEVAL0 - 1) + SCALEVAL1 * 0.1 + 0.9) + Vector(0, 0, 1))
+        -- PPM:RescaleRIGPART(ent, {3}, Vector(1, 1, 0) * ((SCALEVAL0 - 1) + SCALEVAL1 * 0.1 + 0.9) + Vector(0, 0, 1))
 
-        PPM:RescaleMRIGPART(ent, {18}, Vector(0, 0, SCALEVAL1 / 2))
+        -- PPM:RescaleMRIGPART(ent, {18}, Vector(0, 0, SCALEVAL1 / 2))
 
-        PPM:RescaleMRIGPART(ent, {24}, Vector(0, 0, -SCALEVAL1 / 2))
+        -- PPM:RescaleMRIGPART(ent, {24}, Vector(0, 0, -SCALEVAL1 / 2))
 
-        local SCALEVAL_tail = math.Clamp(pony.tailsize or 1, 0.8, 1.5)
-        local svts = (SCALEVAL_tail - 1) * 2 + 1
-        local svtc = (SCALEVAL_tail - 1) / 2 + 1
+        -- local SCALEVAL_tail = math.Clamp(pony.tailsize or 1, 0.8, 1.5)
+        -- local svts = (SCALEVAL_tail - 1) * 2 + 1
+        -- local svtc = (SCALEVAL_tail - 1) / 2 + 1
 
-        PPM:RescaleOFFCETRIGPART(ent, {38}, Vector(svtc, svtc, svtc))
+        -- PPM:RescaleOFFCETRIGPART(ent, {38}, Vector(svtc, svtc, svtc))
 
-        PPM:RescaleRIGPART(ent, {38}, Vector(svts, svts, svts))
+        -- PPM:RescaleRIGPART(ent, {38}, Vector(svts, svts, svts))
 
-        PPM:RescaleOFFCETRIGPART(ent, {39, 40}, Vector(SCALEVAL_tail, SCALEVAL_tail, SCALEVAL_tail))
+        -- PPM:RescaleOFFCETRIGPART(ent, {39, 40}, Vector(SCALEVAL_tail, SCALEVAL_tail, SCALEVAL_tail))
 
-        PPM:RescaleRIGPART(ent, {39, 40}, Vector(svts, svts, svts))
+        -- PPM:RescaleRIGPART(ent, {39, 40}, Vector(svts, svts, svts))
 
         if PPM.m_hair1 == nil then return end
         PPM.m_hair1:SetVector("$color2", pony.haircolor1)
         PPM.m_hair2:SetVector("$color2", pony.haircolor2)
         PPM.m_wings:SetVector("$color2", pony.coatcolor)
         PPM.m_horn:SetVector("$color2", pony.coatcolor)
-        PPM.m_eyel:SetFloat("$ParallaxStrength", 0.2)
-        PPM.m_eyer:SetFloat("$ParallaxStrength", 0.1)
+        -- PPM.m_eyel:SetFloat("$ParallaxStrength", 0.2)
+        -- PPM.m_eyer:SetFloat("$ParallaxStrength", 0.1)
 
         if ent.ponydata_tex ~= nil then
             for k, v in pairs(PPM.rendertargettasks) do
                 if ent.ponydata_tex[k] ~= nil and ent.ponydata_tex[k] ~= NULL and ent.ponydata_tex[k .. "_draw"] and type(ent.ponydata_tex[k]) == "ITexture" and not ent.ponydata_tex[k]:IsError() then
-                    v.renderTrue(ent, pony)
+                    v.renderTrue(ent, pony) --NOTE: these are just changing the texture on the same material for each player and it causes all the lag
                 else
-                    v.renderFalse(ent, pony)
+                    v.renderFalse(ent, pony) --NOTE: these are just changing the texture on the same material for each player and it causes all the lag
                 end
             end
         end
     end
 
     function HOOK_PrePlayerDraw(PLY)
-        if PLY.ponydata ~= nil then
-            if PLY.ponydata.clothes1 ~= nil then
-                if IsValid(PLY.ponydata.clothes1) then
+        if PLY.ponydata ~= nil and IsValid(PLY.ponydata.clothes1) then
                     PLY.ponydata.clothes1:SetNoDraw((not PLY:Alive()) or PLY:GetNoDraw())
-                end
-            end
         end
 
         if PLY:GetNoDraw() then return end
@@ -91,28 +88,29 @@ if CLIENT then
         if not PLY:Alive() then return true end
     end
 
-    function HOOK_PostPlayerDraw(PLY)
-        if not IsValid(PLY) then return end
-        if PLY:GetNoDraw() then return end
+    -- No overrides are being used, no need to unset
+    -- function HOOK_PostPlayerDraw(PLY)
+    --     if not IsValid(PLY) then return end
+    --     if PLY:GetNoDraw() then return end
 
-        if (PPM.isLoaded) then
-            if not PPM.isValidPonyLight(PLY) then return end
-            if PPM.m_hair1 == nil then return end
-            --PPM.m_hair1:SetVector( "$color2", Vector(0,0,0) ) 
-            --PPM.m_hair2:SetVector( "$color2", Vector(0,0,0) )  
-            PPM.m_body:SetVector("$color2", Vector(1, 1, 1))
-            PPM.m_wings:SetVector("$color2", Vector(1, 1, 1))
-            PPM.m_horn:SetVector("$color2", Vector(1, 1, 1))
-            --PPM.m_eyel:SetFloat( "$ParallaxStrength", 0.1) 
-            --PPM.m_eyer:SetFloat( "$ParallaxStrength", 0.1) 
-            --local textureTest = PPM.t_eyes[1][1]:GetTexture("$basetexture")
-            --if textureTest == nil then return end
-            --PPM.m_eyel:SetTexture( "$Iris", textureTest )
-            --PPM.m_eyer:SetTexture( "$Iris", PPM.t_eyes[1][1]:GetTexture("$detail") )
-            PPM.m_cmark:SetTexture("$basetexture", PPM.m_cmarks[1][2]:GetTexture("$basetexture"))
-            PPM.m_body:SetTexture("$basetexture", PPM.m_bodyf:GetTexture("$basetexture"))
-        end
-    end
+    --     if (PPM.isLoaded) then
+    --         if not PPM.isValidPonyLight(PLY) then return end
+    --         if PPM.m_hair1 == nil then return end
+    --         --PPM.m_hair1:SetVector( "$color2", Vector(0,0,0) ) 
+    --         --PPM.m_hair2:SetVector( "$color2", Vector(0,0,0) )  
+    --         PPM.m_body:SetVector("$color2", Vector(1, 1, 1))
+    --         PPM.m_wings:SetVector("$color2", Vector(1, 1, 1))
+    --         PPM.m_horn:SetVector("$color2", Vector(1, 1, 1))
+    --         --PPM.m_eyel:SetFloat( "$ParallaxStrength", 0.1) 
+    --         --PPM.m_eyer:SetFloat( "$ParallaxStrength", 0.1) 
+    --         --local textureTest = PPM.t_eyes[1][1]:GetTexture("$basetexture")
+    --         --if textureTest == nil then return end
+    --         --PPM.m_eyel:SetTexture( "$Iris", textureTest )
+    --         --PPM.m_eyer:SetTexture( "$Iris", PPM.t_eyes[1][1]:GetTexture("$detail") )
+    --         PPM.m_cmark:SetTexture("$basetexture", PPM.m_cmarks[1][2]:GetTexture("$basetexture"))
+    --         PPM.m_body:SetTexture("$basetexture", PPM.m_bodyf:GetTexture("$basetexture"))
+    --     end
+    -- end
 
     function HOOK_PostDrawOpaqueRenderables()
         if (not PPM.isLoaded) then
@@ -238,9 +236,8 @@ if CLIENT then
 
     hook.Add("PostDrawOpaqueRenderables", "test_Redraw", HOOK_PostDrawOpaqueRenderables)
     hook.Add("PrePlayerDraw", "pony_draw", HOOK_PrePlayerDraw)
-    hook.Add("PostPlayerDraw", "pony_postdraw", HOOK_PostPlayerDraw)
-    CreateClientConVar("ppm_oldeyes", "0", true, false)
-
+    -- hook.Add("PostPlayerDraw", "pony_postdraw", HOOK_PostPlayerDraw)
+    -- CreateClientConVar("ppm_oldeyes", "0", true, false)
     concommand.Add("ppm_regen", function(ply, cmd, args)
         print("REGENERATING TEXTURES")
 

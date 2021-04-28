@@ -9,16 +9,6 @@ SWEP.ViewModelFOV = 85
 SWEP.WorldModel = Model("models/fedora_rainbowdash/fedora_rainbowdash.mdl")
 SWEP.ViewModel = Model("models/fedora_rainbowdash/fedora_rainbowdash.mdl")
 
---console command to turn off the trail
-if CLIENT then
-    local cvar = CreateClientConVar("cl_fedoratrail", "1", true, false, "Toggles the Flappy Fedora trail. 0 = Disabled, 1 = Enabled", 0, 1)
-    FLAPPYFEDORATRAIL = tobool(cvar:GetInt()) --first join
-
-    cvars.AddChangeCallback("cl_fedoratrail", function(cvar, old, new)
-        FLAPPYFEDORATRAIL = tobool(new)
-    end)
-end
-
 function SWEP:Initialize()
     self:SetHoldType("normal")
     self.justreloaded = 0
@@ -41,6 +31,14 @@ function SWEP:Deploy()
         ply.FedoraPoint:Spawn()
         ply.FedoraPoint:Activate()
     end
+
+    -- if not IsValid(ply:GetNWEntity("fedora_point")) then
+    --     local fp = ents.Create("ent_fedora_point")
+    --     fp:SetOwner(ply)
+    --     fp:Spawn()
+    --     fp:Activate()
+    --     ply:SetNWEntity("fedora_point", fp)
+    -- end
 end
 
 function SWEP:Holster()

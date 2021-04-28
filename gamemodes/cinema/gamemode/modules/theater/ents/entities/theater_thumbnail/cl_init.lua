@@ -45,9 +45,37 @@ function ENT:DrawTranslucent()
     end
 
     cam.Start3D2D(self.Attach.Pos, self.Attach.Ang, RenderScale)
-    pcall(self.DrawThumbnail, self)
+    self:DrawThumbnail()
     cam.End3D2D()
-    pcall(self.DrawText, self)
+    self:DrawText()
+
+
+    if self.Attach and self:GetNWBool("Rentable") then
+        local thumbWidth = 480
+        local thumbHeight = 360
+        local renderScale = 0.2
+
+        location = self:GetNWInt("Location")
+        local tb = protectedTheaterTable[location]
+
+        if tb ~= nil and tb["time"] > 1 then
+            surface.SetFont("TheaterInfoMedium")
+            str = "Protected"
+            tw, th = surface.GetTextSize(str)
+            tw = tw + tw * 0.05
+            scale = tw / thumbWidth
+            scale = math.max(scale, 0.88)
+            bw, bh = (thumbWidth * scale), (thumbHeight * scale) * 0.16
+            bh = math.max(bh, th)
+            by = (thumbHeight * scale)
+            ty = by + (th / 2)
+            cam.Start3D2D(self.Attach.Pos, self.Attach.Ang, (1 / scale) * renderScale)
+            surface.SetDrawColor(0, 0, 0, 200)
+            surface.DrawRect(0, by, bw, bh)
+            draw.TheaterText(str, "TheaterInfoMedium", (thumbWidth * scale) / 2, ty, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            cam.End3D2D()
+        end
+    end
 end
 
 local hangs = {"p", "g", "y", "q", "j"}
@@ -56,32 +84,33 @@ local tw, th, ty, scale, bw, bh, by = nil
 
 function ENT:DrawSubtitle(str, height)
     surface.SetFont("TheaterInfoMedium")
-    -- Get text dimensions
-    tw, th = surface.GetTextSize(str)
-    tw = tw + tw * 0.05 -- add additional padding
 
-    -- Calculate hangs
-    if string.findFromTable(str, hangs) then
-        th = th + (th / 6)
-    end
+    self.TextSizeCache = self.TextSizeCache or defaultdict(
+        function(str) 
+            surface.SetFont("TheaterInfoMedium")
+            tw, th = surface.GetTextSize(str)
+            tw = tw * 1.05 
+            if string.findFromTable(str, hangs) then
+                th = th *1.15
+            end
+            return {tw,th}
+        end
+    )  
 
-    -- Calculate scale for fitting text
-    scale = tw / ThumbWidth
-    scale = math.max(scale, 0.88)
-    -- Calculate subtitle bar dimensions
+    tw,th = unpack(self.TextSizeCache[str])
+    scale = math.max(tw / ThumbWidth, 0.88)
     bw, bh = (ThumbWidth * scale), (ThumbHeight * scale) * 0.16
     bh = math.max(bh, th)
-    -- Calculate height offset for bar
     by = height * scale
     by = math.min(by, (ThumbHeight * scale) - bh)
-    -- Calculate height offset for text
     ty = (height * scale) + (bh / 2)
     ty = math.min(ty, (ThumbHeight * scale) - bh / 2)
-    cam.Start3D2D(self.Attach.Pos, self.Attach.Ang, (1 / scale) * RenderScale)
-    surface.SetDrawColor(0, 0, 0, 200)
-    surface.DrawRect(0, by, bw, bh)
-    draw.TheaterText(str, "TheaterInfoMedium", (ThumbWidth * scale) / 2, ty, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    cam.End3D2D()
+    if cam.StartCulled3D2D(self.Attach.Pos, self.Attach.Ang, (1 / scale) * RenderScale) then
+        surface.SetDrawColor(0, 0, 0, 200)
+        surface.DrawRect(0, by, bw, bh)
+        draw.TheaterText(str, "TheaterInfoMedium", (ThumbWidth * scale) / 2, ty, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        cam.End3D2D()
+    end
 end
 
 local name, title
@@ -112,9 +141,7 @@ function ENT:DrawText()
         end
     end
 
-    -- Draw name
     self:DrawSubtitle(TranslatedName, 0)
-    -- Draw title
     self:DrawSubtitle(TranslatedTitle, 303)
 end
 
@@ -257,7 +284,9 @@ function ENT:DrawThumbnail()
     end
 
     -- Draw the HTML material
+    if self.ThumbMat then
     surface.SetDrawColor(255, 255, 255)
     surface.SetMaterial(self.ThumbMat)
     surface.DrawTexturedRect(0, 0, self.w - 1, self.h - 1)
+    end
 end
