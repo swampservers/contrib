@@ -228,6 +228,6 @@ function _SS_SanitizeConfig(item)
     end
 
     if itmc.submaterial then
-        cfg.submaterial = isnumber(dirty_cfg.submaterial) and math.Clamp(math.floor(dirty_cfg.submaterial),0,31) or nil
+        cfg.submaterial = isnumber(dirty_cfg.submaterial) and math.Clamp(math.floor(dirty_cfg.submaterial), 0, 31) or nil
     end
 end

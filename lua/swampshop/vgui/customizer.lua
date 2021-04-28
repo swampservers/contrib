@@ -477,14 +477,13 @@ function PANEL:SetupControls()
         end
     elseif (self.item.configurable or {}).submaterial then
         LabelMaker(wearzone, "Skin ID", true)
-
         local p = vgui.Create("Panel", wearzone)
         p:DockMargin(32, 8, 32, 0)
         p:Dock(TOP)
         ATTACHSELECT = vgui.Create("DComboBox", p)
         ATTACHSELECT:SetValue(tostring(self.item.cfg.submaterial or 0))
 
-        for x = 0, math.min(31,(#(LocalPlayer():GetMaterials()) - 1)) do
+        for x = 0, math.min(31, (#(LocalPlayer():GetMaterials()) - 1)) do
             ATTACHSELECT:AddChoice(tostring(x), x)
         end
 
@@ -495,7 +494,6 @@ function PANEL:SetupControls()
 
         ATTACHSELECT:SetWide(200)
         ATTACHSELECT:Dock(RIGHT)
-        
     end
 
     local colorzone = vgui.Create("DPanel", self.controlzone)
@@ -504,7 +502,6 @@ function PANEL:SetupControls()
     colorzone:SetBackgroundColor(SS_TileBGColor)
     colorzone = vgui.Create("DScrollPanel", colorzone)
     colorzone:Dock(FILL)
-
     PrintTable(self.item)
 
     if (self.item.configurable or {}).color then

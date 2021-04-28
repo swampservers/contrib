@@ -3,7 +3,6 @@
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
-
 SS_Item({
     class = "skinner",
     price = 1000000,
@@ -44,7 +43,6 @@ SS_Item({
     }
 })
 
-
 SS_Item({
     class = "offsetter",
     price = 100000,
@@ -64,7 +62,6 @@ SS_Item({
         bone = true
     }
 })
-
 
 SS_Heading("Permanent")
 
@@ -100,7 +97,7 @@ SS_PlayermodelItem({
         ply:Give("weapon_deusvult")
         ply:SelectWeapon("weapon_deusvult")
     end
-}) 
+})
 
 SS_PlayermodelItem({
     class = 'jokermodel',
@@ -196,7 +193,7 @@ SS_UniqueModelProduct({
     name = 'Doomslayer',
     description = "They are rage, brutal, without mercy. But you. You will be worse. Rip and tear, until it is done.",
     model = 'models/pechenko_121/doomslayer.mdl',
-    workshop= '2041292605', --This one didn't use a bin file...
+    workshop = '2041292605', --This one didn't use a bin file...
     OnBuy = function(self, ply) end
 })
 
@@ -237,8 +234,6 @@ SS_UniqueModelProduct({
     workshop = '905415234',
 })
 
-
-
 SS_UniqueModelProduct({
     class = 'hitler',
     name = 'Der Fuhrer',
@@ -259,8 +254,6 @@ SS_UniqueModelProduct({
     model = 'models/gonzo/lordkermit/lordkermit.mdl',
     workshop = '1408171201',
 })
-
-
 
 -- SS_UniqueModelProduct({
 -- 	class = 'kim',
@@ -319,7 +312,6 @@ SS_UniqueModelProduct({
 --     description = "Anime is proof that God has abandoned us.",
 --     model = 'models/tsumugi.mdl'
 -- })
-
 -- TODO: make them download/mount on the server, make sure there is not a lua backdoor!
 SS_UniqueModelProduct({
     class = 'jokerjoker',
@@ -336,4 +328,3 @@ SS_UniqueModelProduct({
     model = 'models/sirsmurfzalot/undertale/smh.mdl',
     workshop = "1591120487",
 })
-

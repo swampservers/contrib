@@ -549,23 +549,22 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
             HUDTargets[trace.Entity:GetOwner()] = RealTime() + fadeTime
         end
     else -- draw all players names
-        
         local t1 = SysTime()
         -- local ap = player.GetAll()
-
         local v1 = EyeVector():GetNormalized()
-
         local lp = LocalPlayer()
         local ep = EyePos()
 
         -- for _, ply in ipairs(player.GetAll()) do
         -- for k,ply in ipairs(ap) do
-        for k,ply in pairs(Ents.player) do
+        for k, ply in pairs(Ents.player) do
             if ply ~= lp then
                 local v2 = (ply:EyePos() - ep)
                 local dist2 = v2:LengthSqr()
+
                 if dist2 < 360000 then
                     local dist = math.sqrt(dist2)
+
                     if math.acos(v1:Dot(v2 / dist)) < Lerp(math.Clamp(dist / 600, 0, 1), 0.7, 0.35) then
                         HUDTargets[ply] = math.max(RealTime() + Lerp(math.Clamp((dist - 550) / 50, 0, 1), fadeTime, 0), HUDTargets[ply] or 0)
                     end
@@ -582,7 +581,6 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
             -- Fade over time
             DrawName(ply, 0.7 * ((time - RealTime()) / fadeTime))
         end
-
         -- print(3, SysTime()-t1)
     end
 end)

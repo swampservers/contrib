@@ -188,8 +188,6 @@ function PANEL:Paint()
 
         if SS_HoverItem and SS_HoverItem.playermodelmod then
             -- local add = true
-
-            
             for i, v in ipairs(mods) do
                 if v.id == SS_HoverItem.id then
                     -- add = false
@@ -199,11 +197,9 @@ function PANEL:Paint()
             end
 
             -- if add then
-                table.insert(mods, SS_HoverItem) --TODO why is this different when customizing
+            table.insert(mods, SS_HoverItem) --TODO why is this different when customizing
             -- end
         end
-
-        
 
         SS_ApplyBoneMods(self.Entity, mods)
         SS_ApplyMaterialMods(self.Entity, mods)

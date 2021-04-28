@@ -42,7 +42,9 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     -- will be "false" if the model is not mounted yet
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
 
-    if not mounted_model then print("UNMOUNTED", ply:GetModel()) end
+    if not mounted_model then
+        print("UNMOUNTED", ply:GetModel())
+    end
 
     if ply.SS_PlayermodelModsLastModel ~= mounted_model then
         ply.SS_PlayermodelModsClean = false
@@ -91,7 +93,6 @@ function SS_ApplyBoneMods(ent, mods)
         ent:ManipulateBoneScale(x, Vector(1, 1, 1))
         ent:ManipulateBonePosition(x, Vector(0, 0, 0))
     end
-    
 
     if ent:GetModel() == HumanTeamModel or ent:GetModel() == PonyTeamModel then return end
     local pone = isPonyModel(ent:GetModel())
@@ -160,13 +161,16 @@ function SS_ApplyMaterialMods(ent, mods)
 
     for _, item in ipairs(mods) do
         if item.materialmod then
-            local col = item.cfg.color or Vector(1,1,1)
-            local mat = ImgurMaterial((item.cfg.imgur or {}).url or "EG84dgp.png", ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {["$color2"]=string.format("[%f %f %f]",col.x,col.y,col.z)})
+            local col = item.cfg.color or Vector(1, 1, 1)
+
+            local mat = ImgurMaterial((item.cfg.imgur or {}).url or "EG84dgp.png", ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {
+                ["$color2"] = string.format("[%f %f %f]", col.x, col.y, col.z)
+            })
+
             ent:SetSubMaterial(item.cfg.submaterial or 0, "!" .. mat:GetName())
         end
     end
 end
-
 
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
 function SS_DrawWornCSModel(item, mdl, ent, dontactually)
@@ -419,17 +423,13 @@ function Player:SS_GetActivePlayermodelMods()
 
     return mods
 end
-
-
 -- function Player:SS_GetActiveMaterialMods()
 --     --{[5]="https://i.imgur.com/Ue1qUPf.jpg"}
 --     return {}
 -- end
-
 -- function thinga()
 --     TTT1 = FindMetaTable("Entity")
 --     TTT2 = FindMetaTable("Player")
-
 --     TTT2.SetMaterial = function(a, b)
 --         TTT1.SetMaterial(a, b)
 --         print(a, b)

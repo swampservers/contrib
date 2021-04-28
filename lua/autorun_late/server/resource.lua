@@ -13,7 +13,6 @@ if GAMEMODE.FolderName == "cinema" then
     -- resource.AddWorkshop("2453151452")
     -- resource.AddWorkshop("2453342540")
     -- resource.AddWorkshop("2453342601")
-
     -- resource.AddWorkshop( "821872963" ) -- 10 gigs of crap addon
     -- resource.AddWorkshop( "118824086" ) -- cinema gamemode
     -- resource.AddWorkshop( "171935748" ) -- Popcorn SWEP
