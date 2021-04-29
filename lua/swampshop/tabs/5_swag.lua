@@ -492,6 +492,27 @@ SS_Item({
     }
 })
 
+SS_Item({
+    class = "commandercap",
+    price = 1933000,
+    name = 'Commander Hat',
+    description = "Look like a real commander",
+    model = 'models/ccap/ccap.mdl',
+	color = Vector(0.5, 0, 0),
+    maxscale = 1.25,
+    wear = {
+        attach = "eyes",
+        scale = 0.39,
+        translate = Vector(-2.2, -0, 4.),
+        rotate = Angle(180, 90, 188),
+        pony = {
+            scale = 0.69,
+            translate = Vector(-4.9, -0, 13),
+            rotate = Angle(180, 90, 190),
+        }
+    }
+})
+
 SS_Heading("Primitives")
 
 local primitives = {
