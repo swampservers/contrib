@@ -344,10 +344,10 @@ if CLIENT then
             end
 
             if colorcount ~= nil then
-                local coloroffcet = colorcount[1]
+                local coloroffset = colorcount[1]
 
                 if UPDN == "up" then
-                    coloroffcet = 0
+                    coloroffset = 0
                 end
 
                 local prephrase = UPDN .. "mane_"
@@ -357,11 +357,11 @@ if CLIENT then
                 end
 
                 colorcount = colorcount[2]
-                local backcolor = pony["haircolor" .. (coloroffcet + 1)] or PPM.defaultHairColors[coloroffcet + 1]
+                local backcolor = pony["haircolor" .. (coloroffset + 1)] or PPM.defaultHairColors[coloroffset + 1]
                 render.Clear(backcolor.x * 255, backcolor.y * 255, backcolor.z * 255, 255, true)
 
                 for I = 0, colorcount - 1 do
-                    local color = pony["haircolor" .. (I + 2 + coloroffcet)] or PPM.defaultHairColors[I + 2 + coloroffcet] or Vector(1, 1, 1)
+                    local color = pony["haircolor" .. (I + 2 + coloroffset)] or PPM.defaultHairColors[I + 2 + coloroffset] or Vector(1, 1, 1)
                     local material = Material("models/ppm/partrender/" .. prephrase .. hairnum .. "_mask" .. I .. ".png")
                     render.SetMaterial(material)
                     render.DrawQuadEasy(Vector(256, 256, 0), Vector(0, 0, -1), 512, 512, Color(color.x * 255, color.y * 255, color.z * 255, 255), -90) --position of the rect --direction to face in --size of the rect --color --rotate 90 degrees

@@ -377,13 +377,13 @@ if CLIENT then
         hook.Run("PPM.EditorOpened", window, mdl)
     end
 
-    local taboffcet = 0
+    local taboffset = 0
     local tabcount = 0
     local tabs = {}
     local selected_tab = nil
 
     function spawnTabs()
-        taboffcet = 5 * -32
+        taboffset = 5 * -32
         --local ponymodel =LocalPlayer():GetInfo( "cl_playermodel" )
         --if(PPM.Editor3_ponies[ponymodel]!=nil) then
         spawnTab("node_main", "t")
@@ -400,7 +400,7 @@ if CLIENT then
         TABBUTTON.node = nodename
         TABBUTTON:SetSize(64, 128)
         TABBUTTON.eyemode = (pfx == "h")
-        TABBUTTON:SetPos(ScrW() / 2 + taboffcet, -64)
+        TABBUTTON:SetPos(ScrW() / 2 + taboffset, -64)
         TABBUTTON:SetImage("gui/editor/gui_tab_" .. pfx .. ".png")
 
         TABBUTTON.OnCursorEntered = function()
@@ -450,7 +450,7 @@ if CLIENT then
             end
         end
 
-        taboffcet = taboffcet + 64
+        taboffset = taboffset + 64
         tabcount = tabcount + 1
         tabs[tabcount] = TABBUTTON
 

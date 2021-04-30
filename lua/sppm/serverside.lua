@@ -14,8 +14,10 @@ if (SERVER) then
         end
     end)
 
-    function HOOK_PlayerLeaveVehicle(ply, ent)
-        --if(table.HasValue(ponyarray_temp,ply:GetInfo( "cl_playermodel" ))) then
+    
+    PPM.camoffsetenabled = CreateConVar("ppm_enable_camerashift", "1", {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enables ViewOffset Setup")
+
+    hook.Add("PlayerLeaveVehicle", "pony_fixclothes", function(ply, ent)
         if ply:IsPPMPony() then
             if ply.ponydata ~= nil and IsValid(ply.ponydata.clothes1) then
                 local bdata = {}
@@ -34,11 +36,5 @@ if (SERVER) then
                 end)
             end
         end
-    end
-
-    ponyarray_temp = {"pony", "ponynj"}
-
-    PPM.camoffcetenabled = CreateConVar("ppm_enable_camerashift", "1", {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enables ViewOffset Setup")
-
-    hook.Add("PlayerLeaveVehicle", "pony_fixclothes", HOOK_PlayerLeaveVehicle)
+    end)
 end
