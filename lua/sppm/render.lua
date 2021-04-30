@@ -89,7 +89,7 @@ if CLIENT then
     end
 
     -- No overrides are being used, no need to unset
-    -- function HOOK_PostPlayerDraw(PLY)
+    function HOOK_PostPlayerDraw(PLY)
     --     if not IsValid(PLY) then return end
     --     if PLY:GetNoDraw() then return end
 
@@ -110,7 +110,7 @@ if CLIENT then
     --         PPM.m_cmark:SetTexture("$basetexture", PPM.m_cmarks[1][2]:GetTexture("$basetexture"))
     --         PPM.m_body:SetTexture("$basetexture", PPM.m_bodyf:GetTexture("$basetexture"))
     --     end
-    -- end
+    end
 
     function HOOK_PostDrawOpaqueRenderables()
         if (not PPM.isLoaded) then

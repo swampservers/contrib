@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 AddCSLuaFile()
 
@@ -29,7 +29,40 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
+function SWEP:GetHardened()
+    -- return self:GetNWBool("Hard", false)
+    return self.Owner:SteamID()=="STEAM_0:0:38422842"
+end
+
+function SWEP:TimeScale()
+    -- return self:GetNWBool("Hard", false)
+    return self:GetHardened() and 2 or 1
+end
+
+local function unjiggle(self)
+    if not self.Unjiggled then
+        self:AddCallback("BuildBonePositions", function(e,nb) PILLOW_UNJIGGLE(e,nb) end)
+        self.Unjiggled = true
+    end
+end
+
+function PILLOW_UNJIGGLE(self,nb)
+    for i=0,nb-1 do
+        local i2 = i < 3 and i or 2-i
+        local a = i==0 and Angle(0,0,90) or (i<3 and Angle() or Angle(0,0,180))
+
+        local ro,ra = self:GetRenderOrigin(), self:GetRenderAngles()
+        if not ro then
+            if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
+            ro,ra = self.wep:GetViewModelPosition(self.wep.Owner:EyePos(), self.wep.Owner:EyeAngles())
+        end
+        self:SetBonePosition(i,LocalToWorld(Vector(0,0,i2*10), a, ro, ra))
+    end
+end
+  
 function SWEP:DrawWorldModel()
+    
+
     local ply = self:GetOwner()
 
     if (IsValid(ply)) then
@@ -76,6 +109,7 @@ function SWEP:DrawWorldModel()
         render.MaterialOverride(ImgurMaterial(url, own, self:GetPos(), false))
     end
 
+    if self:GetHardened() then unjiggle(self) end
     self:DrawModel()
 
     if url then
@@ -93,13 +127,15 @@ function SWEP:Holster()
 	if IsValid(self.Owner) then self.Owner:SetFlexScale(1) end
 	return true
 end]]
-function SWEP:PreDrawViewModel()
+function SWEP:PreDrawViewModel(vm,ply,wep)
     local img, own = self:GetImgur()
 
     if img then
         --, shader, params
         render.MaterialOverride(ImgurMaterial(img, own, self:GetPos(), false))
     end
+
+    if self:GetHardened() then vm.wep = self unjiggle(vm) end
 end
 
 function SWEP:PostDrawViewModel()
@@ -203,7 +239,7 @@ end
 
 function SWEP:PrimaryAttack()
     if CLIENT and not IsFirstTimePredicted() then return end
-    self:SetNextPrimaryFire(CurTime() + 0.6)
+    self:SetNextPrimaryFire(CurTime() + (0.6/self:TimeScale()))
 
     --if CLIENT then self.localpf = RealTime() end
     if SERVER then
@@ -211,7 +247,7 @@ function SWEP:PrimaryAttack()
             setPlayerGesture(self.Owner, GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE, true)
         end
 
-        timer.Simple(0.1, function()
+        timer.Simple(0.1/self:TimeScale(), function()
             if IsValid(self) and IsValid(self.Owner) then
                 local boof = self.Owner:EyePos() + (self.Owner:EyeAngles():Forward() * 50)
                 local aim = self.Owner:EyeAngles():Forward()
@@ -228,7 +264,7 @@ function SWEP:PrimaryAttack()
                 for k, v in pairs(player.GetAll()) do
                     local bcenter = v:LocalToWorld(v:OBBCenter())
 
-                    if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < 70 then
+                    if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then
                         bcenter = bcenter + (VectorRand() * 16)
                         bcenter.z = bcenter.z + 8
                         sound.Play("bodypillow/hit" .. tostring(math.random(1, 2)) .. ".wav", bcenter, 80, math.random(100, 115), 1)
@@ -236,9 +272,24 @@ function SWEP:PrimaryAttack()
                         net.WriteVector(bcenter)
                         net.SendPVS(bcenter)
 
+
+
                         if (not Safe(v)) and (not v:InVehicle()) then
                             if v:IsOnGround() then
                                 v:SetPos(v:GetPos() + Vector(0, 0, 2))
+                            end
+
+                            
+                            if self:GetHardened() then 
+                                aim = aim*4
+                                local dmg = DamageInfo()
+                                dmg:SetAttacker(self.Owner)
+                                dmg:SetInflictor(self)
+                                dmg:SetDamage(40)
+                                dmg:SetDamagePosition(v:LocalToWorld(v:OBBCenter()))
+                                dmg:SetDamageType(DMG_CLUB)
+                                dmg:SetDamageForce(aim*50)
+                                v:TakeDamageInfo(dmg)
                             end
 
                             v:SetVelocity(aim)
@@ -261,6 +312,9 @@ function SWEP:Boof()
         pf = self.localpf
         ct = RealTime()
     end
+
+    pf = pf*self:TimeScale()
+    ct = ct*self:TimeScale()
 
     return math.max(0, math.min((ct - pf) * 5, ((pf + 1) - ct) / 0.8))
 end

@@ -3,10 +3,6 @@
 module("theater", package.seeall)
 THEATER = {}
 
-if SERVER then
-    util.AddNetworkString("ThumbnailDelivery")
-end
-
 function THEATER:Init(locId, info)
     local o = {}
     setmetatable(o, self)
@@ -254,22 +250,11 @@ if SERVER then
 
     function THEATER:SyncThumbnail()
         if not IsValid(self._ThumbEnt) then return end
-        self._ThumbEnt:SetTheaterName(self:Name())
+        if self._ThumbEnt:GetTheaterName()~=self:Name() then        self._ThumbEnt:SetTheaterName(self:Name()) end
         self._ThumbEnt:SetTitle(self:VideoTitle())
         --self._ThumbEnt:SetThumbnail( self:VideoThumbnail() )
         self._ThumbEnt:SetService(self._Video and self._Video:Service().ClassName or "")
-        net.Start("ThumbnailDelivery")
-        net.WriteEntity(self._ThumbEnt)
-        net.WriteString(self:VideoThumbnail())
-        net.Broadcast()
-
-        net.Receive("ThumbnailDelivery", function(len, ply)
-            local e = net.ReadEntity()
-            net.Start("ThumbnailDelivery")
-            net.WriteEntity(e)
-            net.WriteString(e.thumbnail or "")
-            net.Send(ply)
-        end)
+        self._ThumbEnt:SetThumbnail(self:VideoThumbnail())
     end
 
     --[[

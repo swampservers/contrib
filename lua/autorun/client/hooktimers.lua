@@ -460,6 +460,14 @@ local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
     if (not LocalPlayer():IsStaff()) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
+
+    local dist = LocalPlayer():GetPos():Distance(ply:GetPos())
+    if (dist >= 800) then return end
+    local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
+    opacity = opacity * opacityScale
+    if opacity <= 0 then return end
+
+
     local pos = ply:EyePos() - Vector(0, 0, 4)
     local ang = LocalPlayer():EyeAngles()
     ang:RotateAroundAxis(ang:Forward(), 90)
@@ -478,10 +486,7 @@ local function DrawName(ply, opacityScale)
 	
 	]]
     --
-    local dist = LocalPlayer():GetPos():Distance(ply:GetPos())
-    if (dist >= 800) then return end
-    local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
-    opacity = opacity * opacityScale
+
     local name = string.upper(ply:GetName())
     cam.Start3D2D(pos, Angle(0, ang.y, 90), 0.15)
     -- render.OverrideDepthEnable(false, true)

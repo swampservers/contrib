@@ -7,13 +7,14 @@ ENT.Model = Model("models/sunabouzu/thumbnail_case.mdl")
 function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "TheaterName")
     self:NetworkVar("String", 1, "Title")
-    --self:NetworkVar( "String", 2, "Thumbnail" )
-    self:NetworkVar("String", 3, "Service")
+    self:NetworkVar("String", 2, "Service")
+    self:NetworkVar("Entity", 0, "TheaterOwner")
+    
 
     if SERVER then
         self:SetTitle('NoVideoPlaying')
         self:SetTheaterName('Invalid')
-        --self:SetThumbnail('')
+        self:SetThumbnail('')
         self:SetService('')
     end
 end
@@ -24,6 +25,16 @@ function ENT:OnRemove()
     end
 end
 
-function ENT:UpdateTransmitState()
-    return TRANSMIT_PVS
+function ENT:GetThumbnail()
+    local i,t = 1,""
+    while self:GetNW2String("Thumbnail"..tostring(i),"")~="" do
+      t = t..self:GetNW2String("Thumbnail"..tostring(i),i)
+      i=i+1
+    end
+    return t
+  end
+  
+function ENT:GetTheaterOwnerName()
+    local x = IsValid(self:GetTheaterOwner())
+    return IsValid(x) and x:Nick() or ""
 end

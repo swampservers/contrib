@@ -41,6 +41,7 @@ concommand.Add("bp", function( ply, cmd, args )
         end
 
         RP_COUNTS = {}
+        RP_SUBCOUNTS = {}
         RP_STACK = {}
         RP_LUAHOOKCALLS = 0
         function RP_PUSH(name)
@@ -50,6 +51,7 @@ concommand.Add("bp", function( ply, cmd, args )
             local name,t1,subtime = unpack(table.remove(RP_STACK))
             local totaltime = (SysTime() - t1)
             RP_COUNTS[name] = (RP_COUNTS[name] or 0) + (totaltime - subtime)
+            RP_SUBCOUNTS[name] = (RP_SUBCOUNTS[name] or 0) + totaltime
             if #RP_STACK > 0 then
                 RP_STACK[#RP_STACK][3] = RP_STACK[#RP_STACK][3] + totaltime
             end
@@ -61,14 +63,17 @@ concommand.Add("bp", function( ply, cmd, args )
             end
             table.SortByMember(sorted, 2, true)
             local total = 0
+            local dwmtotal,dwmtotal2 = 0,0
             for i,stuff in ipairs(sorted) do
                 total = total + stuff[2]
-                if i>(#sorted - (CLIENT and 100 or 30)) then
-                print(unpack(stuff)) end
+                if stuff[1]:find("DrawWorldModel") then dwmtotal = dwmtotal + stuff[2] end --dwmtotal2 = dwmtotal2 + stuff[3] end
+                if i>(#sorted - (CLIENT and 100 or 30)) then print(unpack(stuff)) end
             end
             if total>0 then
-            print("TOTAL", total) end
+            print("TOTAL", total) 
+            print("DRAWWORLDMODEL TOTALS", dwmtotal) end
             RP_COUNTS = {}
+            RP_SUBCOUNTS = {}
             RP_STACK = {}
         end)
 
