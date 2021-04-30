@@ -398,14 +398,14 @@ if SERVER then
         --end
     end
 
-    local function HOOK_SpawnedRagdoll(ply, model, ent)
+    hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll",function(ply, model, ent)
         if PPM.isValidPonyLight(ent) then
             PPM.randomizePony(ent)
             --PPM.initPonyValues(ent)
             PPM.setPonyValues(ent)
             PPM.setBodygroups(ent)
         end
-    end
+    end)
 
     --[[
 	local function HOOK_PlayerSpawn( ply )
@@ -423,7 +423,6 @@ if SERVER then
 		end
 	end ]]
     --hook.Add("PlayerSpawn", "pony_spawn", HOOK_PlayerSpawn)
-    hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll", HOOK_SpawnedRagdoll)
     local playertable = FindMetaTable("Player")
 
     if playertable.SetModelInsidePPM == nil then

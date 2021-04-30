@@ -170,7 +170,9 @@ if CLIENT then
     end
 end
 
-function ENT:Draw()
+function ENT:Draw() 
+    if self:GetPos():DistToSqr(EyePos()) > AutoCullBase()*(self:GetModelRadius() or 1)*3.5 then return end
+
     if PropTrashLookedAt == self then
         local cr, cg, cb = render.GetColorModulation()
         local id = LocalPlayer():SteamID()

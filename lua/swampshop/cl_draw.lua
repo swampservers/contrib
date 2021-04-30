@@ -160,6 +160,8 @@ end
 function SS_ApplyMaterialMods(ent, mods)
     ent:SetSubMaterial()
 
+    if SS_PPM_SetSubMaterials then SS_PPM_SetSubMaterials(ent) end
+
     for _, item in ipairs(mods) do
         if item.materialmod then
             local col = item.cfg.color or Vector(1, 1, 1)

@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 if CLIENT then
+
     function PPM.TextureIsOutdated(ent, name, newhash)
         if not PPM.isValidPony(ent) then return true end
         if ent.ponydata_tex == nil then return true end
@@ -36,7 +37,8 @@ if CLIENT then
         local w, h = ScrW(), ScrH()
         local rttex = nil
         local size = data.size or 512
-        rttex = GetRenderTarget(tname, size, size, false)
+        rttex = GetRenderTarget(tname, size, size)
+            -- ,  RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
 
         if data.predrawfunc ~= nil then
             data.predrawfunc()
@@ -86,7 +88,8 @@ if CLIENT then
         if (ent.ponydata_tex.bodytex ~= nil) then
             rttex = ent.ponydata_tex.bodytex
         else
-            rttex = GetRenderTarget(tostring(ent) .. "body", tW(512), tH(512), false)
+            rttex = GetRenderTargetEx(tostring(ent) .. "body", tW(512), tH(512)
+                , RT_SIZE_NO_CHANGE,   MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
         end
 
         local OldRT = render.GetRenderTarget()
@@ -140,6 +143,15 @@ if CLIENT then
         return rttex
     end
 
+    function PPM_CheckTexture(ent, k)
+        if ent.ponydata_tex and ent.ponydata_tex[k] ~= nil and ent.ponydata_tex[k] ~= NULL and ent.ponydata_tex[k .. "_draw"] and type(ent.ponydata_tex[k]) == "ITexture" and not ent.ponydata_tex[k]:IsError() then
+            return true
+        else
+            return false
+        end
+    end
+
+
     PPM.loadrt = function()
         PPM.currt_success = false
         PPM.currt_ent = nil
@@ -147,18 +159,23 @@ if CLIENT then
         PPM.rendertargettasks = {}
 
         PPM.rendertargettasks["bodytex"] = {
-            renderTrue = function(ENT, PONY)
-                PPM.m_body:SetVector("$color2", Vector(1, 1, 1))
-                PPM.m_body:SetTexture("$basetexture", ENT.ponydata_tex.bodytex)
-            end,
-            renderFalse = function(ENT, PONY)
-                PPM.m_body:SetVector("$color2", PONY.coatcolor)
-
-                if (PONY.gender == 1) then
-                    PPM.m_body:SetTexture("$basetexture", PPM.m_bodyf:GetTexture("$basetexture"))
+            render = function(ENT,PONY) 
+                if PPM_CheckTexture(ENT, "bodytex") then
+                    PPM.m_body:SetVector("$color2", Vector(1, 1, 1))
+                    PPM.m_body:SetTexture("$basetexture", ENT.ponydata_tex.bodytex)
                 else
-                    PPM.m_body:SetTexture("$basetexture", PPM.m_bodym:GetTexture("$basetexture"))
+                    PPM.m_body:SetVector("$color2", PONY.coatcolor)
+                    if (PONY.gender == 1) then
+                        PPM.m_body:SetTexture("$basetexture", PPM.m_bodyf:GetTexture("$basetexture"))
+                    else
+                        PPM.m_body:SetTexture("$basetexture", PPM.m_bodym:GetTexture("$basetexture"))
+                    end
                 end
+                -- PPM.m_hair1:SetVector("$color2", PONY.haircolor1)
+                -- PPM.m_hair2:SetVector("$color2", PONY.haircolor2)
+                PPM.m_wings:SetVector("$color2", PONY.coatcolor)
+                PPM.m_horn:SetVector("$color2", PONY.coatcolor)
+                return {{PPM.m_body,3},{PPM.m_horn,4},{PPM.m_wings,5}}
             end,
             drawfunc = function()
                 local pony = PPM.currt_ponydata
@@ -220,15 +237,15 @@ if CLIENT then
 
         local _cleantexture = Material("models/ppm/partrender/clean.png"):GetTexture("$basetexture")
         PPM.rendertargettasks["hairtex1"] = {
-            renderTrue = function(ENT, PONY)
+            render = function(ENT,PONY) 
+                if PPM_CheckTexture(ENT, "hairtex1") then
                 PPM.m_hair1:SetVector("$color2", Vector(1, 1, 1))
-                --PPM.m_hair2:SetVector( "$color2", Vector(1,1,1) ) 
                 PPM.m_hair1:SetTexture("$basetexture", ENT.ponydata_tex.hairtex1)
-            end,
-            renderFalse = function(ENT, PONY)
+                else
                 PPM.m_hair1:SetVector("$color2", PONY.haircolor1)
-                --PPM.m_hair2:SetVector( "$color2", PONY.haircolor2 ) 
                 PPM.m_hair1:SetTexture("$basetexture", _cleantexture)
+                end
+                return {{PPM.m_hair1,6}}
             end,
             --PPM.m_hair2:SetTexture("$basetexture",Material("models/ppm/partrender/clean.png"):GetTexture("$basetexture")) 
             drawfunc = function()
@@ -240,16 +257,15 @@ if CLIENT then
         }
 
         PPM.rendertargettasks["hairtex2"] = {
-            renderTrue = function(ENT, PONY)
-                --PPM.m_hair1:SetVector( "$color2", Vector(1,1,1) )
-                PPM.m_hair2:SetVector("$color2", Vector(1, 1, 1))
-                PPM.m_hair2:SetTexture("$basetexture", ENT.ponydata_tex.hairtex2)
-            end,
-            renderFalse = function(ENT, PONY)
-                --PPM.m_hair1:SetVector( "$color2", PONY.haircolor1 ) 
-                PPM.m_hair2:SetVector("$color2", PONY.haircolor2)
-                --PPM.m_hair1:SetTexture("$basetexture",Material("models/ppm/partrender/clean.png"):GetTexture("$basetexture")) 
-                PPM.m_hair2:SetTexture("$basetexture", _cleantexture)
+            render = function(ENT,PONY) 
+                if PPM_CheckTexture(ENT, "hairtex2") then
+                    PPM.m_hair2:SetVector("$color2", Vector(1, 1, 1))
+                    PPM.m_hair2:SetTexture("$basetexture", ENT.ponydata_tex.hairtex2)
+                    else
+                    PPM.m_hair2:SetVector("$color2", PONY.haircolor2)
+                    PPM.m_hair2:SetTexture("$basetexture", _cleantexture)
+                end 
+                return {{PPM.m_hair2,7}}
             end,
             drawfunc = function()
                 local pony = PPM.currt_ponydata
@@ -258,17 +274,19 @@ if CLIENT then
             hash = function(ponydata) return tostring(ponydata.haircolor1) .. tostring(ponydata.haircolor2) .. tostring(ponydata.haircolor3) .. tostring(ponydata.haircolor4) .. tostring(ponydata.haircolor5) .. tostring(ponydata.haircolor6) .. tostring(ponydata.mane) .. tostring(ponydata.manel) end
         }
 
-        PPM.rendertargettasks["tailtex"] = {
-            renderTrue = function(ENT, PONY)
+        PPM.rendertargettasks["tailtex"] = { 
+            render = function(ENT,PONY) 
+                if PPM_CheckTexture(ENT, "tailtex") then
                 PPM.m_tail1:SetVector("$color2", Vector(1, 1, 1))
                 PPM.m_tail2:SetVector("$color2", Vector(1, 1, 1))
                 PPM.m_tail1:SetTexture("$basetexture", ENT.ponydata_tex.tailtex)
-            end,
-            renderFalse = function(ENT, PONY)
+                else
                 PPM.m_tail1:SetVector("$color2", PONY.haircolor1)
                 PPM.m_tail2:SetVector("$color2", PONY.haircolor2)
                 PPM.m_tail1:SetTexture("$basetexture", _cleantexture)
                 PPM.m_tail2:SetTexture("$basetexture", _cleantexture)
+                end
+                return {{PPM.m_tail1,8},{PPM.m_tail2,9}}
             end,
             drawfunc = function()
                 local pony = PPM.currt_ponydata
@@ -278,11 +296,13 @@ if CLIENT then
         }
 
         PPM.rendertargettasks["eyeltex"] = {
-            renderTrue = function(ENT, PONY) 
-                PPM.m_eyel:SetTexture("$Iris", ENT.ponydata_tex.eyeltex)
-            end,
-            renderFalse = function(ENT, PONY)
-                PPM.m_eyel:SetTexture("$Iris", _cleantexture)
+            render = function(ENT,PONY)  
+                if PPM_CheckTexture(ENT, "eyeltex") then
+                    PPM.m_eyel:SetTexture("$Iris", ENT.ponydata_tex.eyeltex)
+                else
+                    PPM.m_eyel:SetTexture("$Iris", _cleantexture)
+                end 
+                return {{PPM.m_eyel,1}}
             end,
             drawfunc = function()
                 local pony = PPM.currt_ponydata
@@ -292,11 +312,13 @@ if CLIENT then
         }
 
         PPM.rendertargettasks["eyertex"] = {
-            renderTrue = function(ENT, PONY)
-                PPM.m_eyer:SetTexture("$Iris", ENT.ponydata_tex.eyertex)
-            end,
-            renderFalse = function(ENT, PONY)
-                PPM.m_eyer:SetTexture("$Iris", _cleantexture)
+            render = function(ENT,PONY)  
+                if PPM_CheckTexture(ENT, "eyertex") then
+                    PPM.m_eyer:SetTexture("$Iris", ENT.ponydata_tex.eyertex)
+                else
+                    PPM.m_eyer:SetTexture("$Iris", _cleantexture)
+                end 
+                return {{PPM.m_eyer,2}}
             end,
             drawfunc = function()
                 local pony = PPM.currt_ponydata
@@ -405,6 +427,7 @@ if CLIENT then
         end
 
         PPM.hairrenderOp = function(UPDN, TAIL, hairnum)
+            
             if TAIL then
                 if PPM.manerender["tl" .. hairnum] ~= nil then
                     PPM.currt_success = true
@@ -414,95 +437,55 @@ if CLIENT then
                     PPM.currt_success = true
                 end
             end
+
+            -- print(UPDN, TAIL, hairnum, PPM.currt_success) 
         end
 
         --/PPM.currt_success =true
         --MsgN(UPDN,TAIL,hairnum," = ",PPM.currt_success)
         PPM.manerender = {}
-
         PPM.manerender.up5 = {0, 1}
-
         PPM.manerender.up6 = {0, 1}
-
         PPM.manerender.up8 = {0, 2}
-
         PPM.manerender.up9 = {0, 3}
-
         PPM.manerender.up10 = {0, 1}
-
         PPM.manerender.up11 = {0, 3}
-
         PPM.manerender.up12 = {0, 1}
-
         PPM.manerender.up13 = {0, 1}
-
         PPM.manerender.up14 = {0, 1}
-
         PPM.manerender.up15 = {0, 1}
-
         PPM.manerender.dn5 = {0, 1}
-
         PPM.manerender.dn8 = {3, 2}
-
         PPM.manerender.dn9 = {3, 2}
-
         PPM.manerender.dn10 = {0, 3}
-
         PPM.manerender.dn11 = {0, 2}
-
         PPM.manerender.dn12 = {0, 1}
-
         PPM.manerender.tl5 = {0, 1}
-
         PPM.manerender.tl8 = {0, 5}
-
         PPM.manerender.tl10 = {0, 1}
-
         PPM.manerender.tl11 = {0, 3}
-
         PPM.manerender.tl12 = {0, 2}
-
         PPM.manerender.tl13 = {0, 1}
-
         PPM.manerender.tl14 = {0, 1}
-
-        PPM.manecolorcounts = {}
-        PPM.manecolorcounts[1] = 1
-        PPM.manecolorcounts[2] = 1
-        PPM.manecolorcounts[3] = 1
-        PPM.manecolorcounts[4] = 1
-        PPM.manecolorcounts[5] = 1
-        PPM.manecolorcounts[6] = 1
+        PPM.manecolorcounts = {1,1,1,1,1,1}
 
         PPM.defaultHairColors = {Vector(252, 92, 82) / 256, Vector(254, 134, 60) / 256, Vector(254, 241, 160) / 256, Vector(98, 188, 80) / 256, Vector(38, 165, 245) / 256, Vector(124, 80, 160) / 256}
 
         PPM.rendertargettasks["ccmarktex"] = {
             size = 256,
-            renderTrue = function(ENT, PONY)
-                PPM.m_cmark:SetTexture("$basetexture", ENT.ponydata_tex.ccmarktex)
-            end,
-            renderFalse = function(ENT, PONY)
-                if (PONY == nil) then return end
-
-                if (PONY.imgurcmark or "") ~= "" then
-                    if ENT.isEditorPony then
-                        ENT.imgurcmark = PONY.imgurcmark
-                        PONY = ENT
-                    end
-
-                    PPM.m_cmark:SetTexture("$basetexture", ImgurMaterial(PONY.imgurcmark, ENT, IsValid(ENT) and ENT:IsPlayer() and ENT:GetPos(), true, "VertexLitGeneric", {
-                        ["$translucent"] = 1
-                    }):GetTexture("$basetexture"))
-
-                    return
+            render = function(ENT,PONY)  
+                if PPM_CheckTexture(ENT, "ccmarktex") then
+                    PPM.m_cmark:SetTexture("$basetexture", ENT.ponydata_tex.ccmarktex)
+                else
+                    if (PONY == nil) then return end
+                    if (PONY.cmark == nil) then return end
+                    if (PPM.m_cmarks[PONY.cmark] == nil) then return end
+                    if (PPM.m_cmarks[PONY.cmark][2] == nil) then return end
+                    if (PPM.m_cmarks[PONY.cmark][2]:GetTexture("$basetexture") == nil) then return end
+                    if (PPM.m_cmarks[PONY.cmark][2]:GetTexture("$basetexture") == NULL) then return end
+                    PPM.m_cmark:SetTexture("$basetexture", PPM.m_cmarks[PONY.cmark][2]:GetTexture("$basetexture"))
                 end
-
-                if (PONY.cmark == nil) then return end
-                if (PPM.m_cmarks[PONY.cmark] == nil) then return end
-                if (PPM.m_cmarks[PONY.cmark][2] == nil) then return end
-                if (PPM.m_cmarks[PONY.cmark][2]:GetTexture("$basetexture") == nil) then return end
-                if (PPM.m_cmarks[PONY.cmark][2]:GetTexture("$basetexture") == NULL) then return end
-                PPM.m_cmark:SetTexture("$basetexture", PPM.m_cmarks[PONY.cmark][2]:GetTexture("$basetexture"))
+                return {{PPM.m_cmark,10}}
             end,
             drawfunc = function()
                 local pony = PPM.currt_ponydata

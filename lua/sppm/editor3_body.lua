@@ -424,7 +424,7 @@ for i = 1, 8 do
                 name = "Detail type",
                 type = "edit_type",
                 param = "bodydetail" .. i,
-                choises = {"None", "Leg Gradient", "Lines", "Stripes", "Head Stripes", "Freckles", "Hooves (Big)", "Hooves (Small)", "Head Layer", "Hooves (Big-Round)", "Hooves (Small-Round)", "Spots", "Cow Spots", "Eyeliner", "Muzzle (Hard)", "Muzzle (Soft)", "Nose Freckles", "Socks (Primary)", "Socks (Secondary)", "Collar"}
+                choises = {"None", "Leg Gradient", "Lines", "Stripes", "Head Stripes", "Freckles", "Hooves (Big)", "Hooves (Small)", "Head Layer", "Hooves (Big-Round)", "Hooves (Small-Round)", "Spots", "Cow Spots", "Eyeliner", "Muzzle (Hard)", "Muzzle (Soft)", "Nose Freckles", "Socks (Primary)", "Socks (Secondary)", "Collar", "Lipstick"}
             },
             {
                 name = "Color",

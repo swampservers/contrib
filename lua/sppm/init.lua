@@ -15,7 +15,6 @@ if CLIENT then
     include("editor3_body.lua")
     include("editor3_presets.lua")
     include("presets_base.lua")
-    include("gui_toolpanel.lua")
 end
 
 if SERVER then

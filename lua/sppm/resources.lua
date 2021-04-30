@@ -1,9 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 function PPM.loadResources()
     if CLIENT then
-        PPM.m_body = Material("models/ppm/base/body")
         PPM.m_bodyf = Material("models/ppm/base/bodyf")
         PPM.m_bodym = Material("models/ppm/base/bodym")
+
+        
+        PPM.m_body = Material("models/ppm/base/body")
         PPM.m_wings = Material("models/ppm/base/wings")
         PPM.m_horn = Material("models/ppm/base/horn")
         PPM.m_cmark = Material("models/ppm/base/cmark")
@@ -70,7 +72,11 @@ function PPM.loadResources()
             PPM.m_cmarks[index][2] = Material(wrappedPath[1])
         end
 
-        PPM.m_bodyt0 = {Material("models/ppm/texclothes/clothes_wbs_light.png"), Material("models/ppm/texclothes/clothes_wbs_full.png"), Material("models/ppm/texclothes/clothes_sbs_full.png"), Material("models/ppm/texclothes/clothes_sbs_light.png"), Material("models/ppm/texclothes/clothes_royalguard.png")}
+        PPM.m_bodyt0 = {Material("models/ppm/texclothes/clothes_wbs_light.png"),
+        Material("models/ppm/texclothes/clothes_wbs_full.png"),
+         Material("models/ppm/texclothes/clothes_sbs_full.png"),
+         Material("models/ppm/texclothes/clothes_sbs_light.png"),
+         Material("models/ppm/texclothes/clothes_royalguard.png")}
 
         PPM.m_bodyt0[6] = PPM.m_bodyt0[5] -- Done to prevent bizarre memory bug in GMOD itself...
 

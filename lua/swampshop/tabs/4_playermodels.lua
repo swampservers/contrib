@@ -230,7 +230,7 @@ SS_UniqueModelProduct({
     class = 'realgarfield',
     name = 'Real Cat',
     description = "Garfield gets real.",
-    model = 'models/garfield.mdl',
+    model = 'models/player/yevocore/garfield/garfield.mdl',
     workshop = '905415234',
 })
 
