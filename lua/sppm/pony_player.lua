@@ -198,237 +198,153 @@ local BODYGROUP_EYELASH = 8
 local EYES_COUNT = 10
 local MARK_COUNT = 27
 
-PPM.pony_models = {
-    ["models/ppm/player_default_base.mdl"] = {
-        isPonyModel = true,
-        BgroupCount = 8
-    },
-    ["models/ppm/player_default_clothes1.mdl"] = {
-        isPonyModel = false,
-        BgroupCount = 8
-    }
+-- PPM.pony_models = {
+--     ["models/ppm/player_default_base.mdl"] = {
+--         isPonyModel = true,
+--         BgroupCount = 8
+--     }
+--     -- ,
+-- --     ["models/ppm/player_default_clothes1.mdl"] = {
+-- --         isPonyModel = false,
+-- --         BgroupCount = 8
+-- --     }
+-- }
+
+-- function PPM.LOAD()
+--     if CLIENT then
+--         PPM.setupPony(LocalPlayer())
+--         PPM.SendPonyData()
+--     end
+
+--     PPM.RefreshActivePonies()
+--     PPM.isLoaded = true
+-- end
+
+-- function PPM.setupPony(ent, fake)
+--     --if ent.ponydata!=nil then return end 
+--     ent.ponydata_tex = ponydata_tex or {}
+--     ent.ponydata = ent.ponydata or {}
+
+--     for k, v in SortedPairs(PPM.default_pony) do
+--         ent.ponydata[k] = ent.ponydata[k] or v.default
+--     end
+
+--     if not fake then
+--         if SERVER then
+--             if not IsValid(ent.ponydata.clothes1) then
+--                 ent.ponydata.clothes1 = ents.Create("prop_dynamic")
+--                 ent.ponydata.clothes1:SetModel("models/ppm/player_default_clothes1.mdl")
+--                 ent.ponydata.clothes1:DrawShadow(false)
+--                 ent.ponydata.clothes1:SetParent(ent)
+--                 ent.ponydata.clothes1:AddEffects(EF_BONEMERGE)
+--                 ent.ponydata.clothes1:SetRenderMode(RENDERMODE_TRANSALPHA)
+--                 --ent.ponydata.clothes1:SetNoDraw(true)	
+--                 ent:SetNetworkedEntity("pny_clothing", ent.ponydata.clothes1)
+--             end
+--             --PPM.setPonyValues(ent)
+--         end
+--     end
+-- end
+
+-- function PPM.cleanPony(ent)
+--     PPM.setupPony(ent)
+
+--     for k, v in SortedPairs(PPM.default_pony) do
+--         ent.ponydata[k] = v.default
+--     end
+--     --ent.ponydata._cmark = nil
+--     --ent.ponydata._cmark_loaded = false 
+-- end
+
+
+-- function PPM.copyLocalPonyTo(from, to)
+--     to.ponydata = to.ponydata or {} -- Make sure ponydata is initialized
+--     local clothes = to.ponydata.clothes1 -- Get the clothing data if possible
+--     to.ponydata = table.Copy(from.ponydata)
+--     to.ponydata.clothes1 = clothes
+-- end
+
+-- function PPM.copyLocalTextureDataTo(from, to)
+--     to.ponydata_tex = table.Copy(from.ponydata_tex)
+-- end
+
+-- function PPM.copyPonyTo(from, to)
+--     to.ponydata = to.ponydata or {} -- Make sure ponydata is initialized
+--     local clothes = to.ponydata.clothes1 -- Get the clothing data if possible
+--     to.ponydata = table.Copy(PPM.getPonyValues(from))
+--     to.ponydata.clothes1 = clothes
+-- end
+
+-- function PPM.mergePonyData(destination, addition)
+
+-- end
+
+-- function PPM.hasPonyModel(model)
+--     if PPM.pony_models[model] == nil then return false end
+
+--     return PPM.pony_models[model].isPonyModel
+-- end
+
+-- function PPM.isValidPonyLight(ent)
+--     if not IsValid(ent) then return false end
+--     if not PPM.hasPonyModel(ent:GetModel()) then return false end
+
+--     return true
+-- end
+
+-- function PPM.isValidPony(ent)
+--     if not IsValid(ent) then return false end
+--     if ent.ponydata == nil then return false end
+--     if not PPM.hasPonyModel(ent:GetModel()) then return false end
+
+--     return true
+-- end
+
+PPM.rig = {
+    neck = {4, 5, 6}
+    ,ribcage = {1, 2, 3}
+    ,rear = {0}
+    ,leg_BL = {8, 9, 10, 11, 12}
+    ,leg_BR = {13, 14, 15, 16, 17}
+    ,leg_FL = {18, 19, 20, 21, 22, 23}
+    ,leg_FR = {24, 25, 26, 27, 28, 29}
 }
-
-function PPM.LOAD()
-    if CLIENT then
-        PPM.setupPony(LocalPlayer())
-        PPM.SendPonyData()
-    end
-
-    PPM.RefreshActivePonies()
-    PPM.isLoaded = true
-end
-
-function PPM.setupPony(ent, fake)
-    --if ent.ponydata!=nil then return end 
-    ent.ponydata_tex = ponydata_tex or {}
-    ent.ponydata = ent.ponydata or {}
-
-    for k, v in SortedPairs(PPM.default_pony) do
-        ent.ponydata[k] = ent.ponydata[k] or v.default
-    end
-
-    if not fake then
-        if SERVER then
-            if not IsValid(ent.ponydata.clothes1) then
-                ent.ponydata.clothes1 = ents.Create("prop_dynamic")
-                ent.ponydata.clothes1:SetModel("models/ppm/player_default_clothes1.mdl")
-                ent.ponydata.clothes1:DrawShadow(false)
-                ent.ponydata.clothes1:SetParent(ent)
-                ent.ponydata.clothes1:AddEffects(EF_BONEMERGE)
-                ent.ponydata.clothes1:SetRenderMode(RENDERMODE_TRANSALPHA)
-                --ent.ponydata.clothes1:SetNoDraw(true)	
-                ent:SetNetworkedEntity("pny_clothing", ent.ponydata.clothes1)
-            end
-            --PPM.setPonyValues(ent)
-        end
-    end
-end
-
-function PPM.cleanPony(ent)
-    PPM.setupPony(ent)
-
-    for k, v in SortedPairs(PPM.default_pony) do
-        ent.ponydata[k] = v.default
-    end
-    --ent.ponydata._cmark = nil
-    --ent.ponydata._cmark_loaded = false 
-end
-
-function PPM.randomizePony(ent)
-    -- PPM.setupPony(ent)
-    ent.ponydata = {}
-    ent.ponydata.kind = math.Round(math.Rand(1, 4))
-    ent.ponydata.gender = math.Round(math.Rand(1, 2))
-    ent.ponydata.body_type = 1
-    ent.ponydata.mane = math.Round(math.Rand(1, 15))
-    ent.ponydata.manel = math.Round(math.Rand(1, 12))
-    ent.ponydata.tail = math.Round(math.Rand(1, 14))
-    ent.ponydata.tailsize = math.Rand(0.8, 1)
-    ent.ponydata.eye = math.Round(math.Rand(1, EYES_COUNT))
-    ent.ponydata.eyelash = math.Round(math.Rand(1, 5))
-    ent.ponydata.coatcolor = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
-
-    for I = 1, 6 do
-        ent.ponydata["haircolor" .. I] = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
-    end
-
-    for I = 1, 8 do
-        ent.ponydata["bodydetail" .. I] = 1
-        ent.ponydata["bodydetail" .. I .. "_c"] = Vector(0, 0, 0)
-    end
-
-    ent.ponydata.cmark = math.Round(math.Rand(1, MARK_COUNT))
-    ent.ponydata.bodyweight = math.Rand(0.8, 1.2)
-    ent.ponydata.bodyt0 = 1 --math.Round(math.Rand(1,4)) 
-    ent.ponydata.bodyt1_color = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
-    local iriscolor = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1)) * 2
-    ent.ponydata.eyecolor_bg = Vector(1, 1, 1)
-    ent.ponydata.eyeirissize = 0.7 + math.Rand(-0.1, 0.1)
-    ent.ponydata.eyecolor_iris = iriscolor
-    ent.ponydata.eyecolor_grad = iriscolor / 3
-    ent.ponydata.eyecolor_line1 = iriscolor * 0.9
-    ent.ponydata.eyecolor_line2 = iriscolor * 0.8
-    ent.ponydata.eyeholesize = 0.7 + math.Rand(-0.1, 0.1)
-    ent.ponydata.eyecolor_hole = Vector(0, 0, 0)
-end
-
-function PPM.copyLocalPonyTo(from, to)
-    to.ponydata = to.ponydata or {} -- Make sure ponydata is initialized
-    local clothes = to.ponydata.clothes1 -- Get the clothing data if possible
-    to.ponydata = table.Copy(from.ponydata)
-    to.ponydata.clothes1 = clothes
-end
-
-function PPM.copyLocalTextureDataTo(from, to)
-    to.ponydata_tex = table.Copy(from.ponydata_tex)
-end
-
-function PPM.copyPonyTo(from, to)
-    to.ponydata = to.ponydata or {} -- Make sure ponydata is initialized
-    local clothes = to.ponydata.clothes1 -- Get the clothing data if possible
-    to.ponydata = table.Copy(PPM.getPonyValues(from))
-    to.ponydata.clothes1 = clothes
-end
-
-function PPM.mergePonyData(destination, addition)
-    for k, v in pairs(addition) do
-        destination[k] = v
-    end
-end
-
-function PPM.hasPonyModel(model)
-    if PPM.pony_models[model] == nil then return false end
-
-    return PPM.pony_models[model].isPonyModel
-end
-
-function PPM.isValidPonyLight(ent)
-    if not IsValid(ent) then return false end
-    if not PPM.hasPonyModel(ent:GetModel()) then return false end
-
-    return true
-end
-
-function PPM.isValidPony(ent)
-    if not IsValid(ent) then return false end
-    if ent.ponydata == nil then return false end
-    if not PPM.hasPonyModel(ent:GetModel()) then return false end
-
-    return true
-end
-
-PPM.rig = {}
-
-PPM.rig.neck = {4, 5, 6}
-
-PPM.rig.ribcage = {1, 2, 3}
-
-PPM.rig.rear = {0}
-
-PPM.rig.leg_BL = {8, 9, 10, 11, 12}
-
-PPM.rig.leg_BR = {13, 14, 15, 16, 17}
-
-PPM.rig.leg_FL = {18, 19, 20, 21, 22, 23}
-
-PPM.rig.leg_FR = {24, 25, 26, 27, 28, 29}
 
 PPM.rig_tail = {38, 39, 40}
 
-function PPM.setBodygroups(ent, localvals)
-    if not PPM.isValidPony(ent) then return end
-    local ponydata = PPM.getPonyValues(ent, localvals)
 
-    --if true then return end   
-    if (ponydata.kind == 1) then
-        PPM.setBodygroupSafe(ent, BODYGROUP_HORN, 1) --h
-        PPM.setBodygroupSafe(ent, BODYGROUP_WING, 1) --w
-    elseif (ponydata.kind == 2) then
-        PPM.setBodygroupSafe(ent, BODYGROUP_HORN, 1)
-        PPM.setBodygroupSafe(ent, BODYGROUP_WING, 0)
-    elseif (ponydata.kind == 3) then
-        PPM.setBodygroupSafe(ent, BODYGROUP_HORN, 0)
-        PPM.setBodygroupSafe(ent, BODYGROUP_WING, 1)
-    else
-        PPM.setBodygroupSafe(ent, BODYGROUP_HORN, 0)
-        PPM.setBodygroupSafe(ent, BODYGROUP_WING, 0)
-    end
+-- function PPM.getPonyValues(ent, localvals)
+--     if (localvals) then
+--         local pony = ent.ponydata
+--         pony._cmark = {}
 
-    PPM.setBodygroupSafe(ent, BODYGROUP_BODY, ponydata.gender - 1)
-    PPM.setBodygroupSafe(ent, BODYGROUP_MANE, ponydata.mane - 1)
-    PPM.setBodygroupSafe(ent, BODYGROUP_MANE_LOW, ponydata.manel - 1)
-    PPM.setBodygroupSafe(ent, BODYGROUP_TAIL, ponydata.tail - 1)
-    PPM.setBodygroupSafe(ent, BODYGROUP_CMARK, ponydata.cmark_enabled - 1)
+--         return ent.ponydata
+--     else
+--         PPM.UnInitializedPonies[ent] = nil
+--         local pony
 
-    if ponydata.gender == 1 then
-        PPM.setBodygroupSafe(ent, BODYGROUP_EYELASH, ponydata.eyelash - 1)
-    else
-        PPM.setBodygroupSafe(ent, BODYGROUP_EYELASH, 5)
-    end
-end
+--         if PPM.PonyData[ent] then
+--             pony = PPM.PonyData[ent][2]
+--         end
 
-function PPM.setBodygroupSafe(ent, bgid, bgval)
-    if ent == nil or not IsEntity(ent) or ent == NULL then return end
-    if bgid < 1 or bgval < 0 then return end
-    local mdl = ent:GetModel()
-    if PPM.pony_models[mdl] == nil then return end
-    if bgid > PPM.pony_models[mdl].BgroupCount then return end
-    ent:SetBodygroup(bgid, bgval)
-end
+--         if not pony then
+--             --EntIndex() ~= -1 then
+--             if ent:IsPlayer() then
+--                 PPM.UnInitializedPonies[ent] = true
+--             end
 
-function PPM.getPonyValues(ent, localvals)
-    if (localvals) then
-        local pony = ent.ponydata
-        pony._cmark = {}
+--             pony = {}
 
-        return ent.ponydata
-    else
-        PPM.UnInitializedPonies[ent] = nil
-        local pony
+--             for k, v in pairs(PPM.default_pony) do
+--                 pony[k] = v.default
+--             end
+--         end
 
-        if PPM.PonyData[ent] then
-            pony = PPM.PonyData[ent][2]
-        end
+--         pony._cmark = {}
 
-        if not pony then
-            --EntIndex() ~= -1 then
-            if ent:IsPlayer() then
-                PPM.UnInitializedPonies[ent] = true
-            end
-
-            pony = {}
-
-            for k, v in pairs(PPM.default_pony) do
-                pony[k] = v.default
-            end
-        end
-
-        pony._cmark = {}
-
-        return pony
-    end
-end
+--         return pony
+--     end
+-- end
 
 if CLIENT then
     -- function PPM.RELOAD()
@@ -448,50 +364,50 @@ if CLIENT then
     -- function reloadPPM()
     --     PPM.isLoaded = false
     -- end
-    function getLocalBoneAng(ent, boneid)
-        local wangle = ent:GetBoneMatrix(boneid):GetAngles()
-        local parentbone = ent:GetBoneParent(boneid)
-        local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles()
-        local lp, la = WorldToLocal(Vector(0, 0, 0), wangle, Vector(0, 0, 0), wangle_parent)
+    -- function getLocalBoneAng(ent, boneid)
+    --     local wangle = ent:GetBoneMatrix(boneid):GetAngles()
+    --     local parentbone = ent:GetBoneParent(boneid)
+    --     local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles()
+    --     local lp, la = WorldToLocal(Vector(0, 0, 0), wangle, Vector(0, 0, 0), wangle_parent)
 
-        return la
-    end
+    --     return la
+    -- end
 
-    function getWorldAng(ent, boneid, ang)
-        --local wangle = ent:GetBoneMatrix(boneid):GetAngles()
-        local parentbone = ent:GetBoneParent(boneid)
-        local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles()
-        local lp, la = LocalToWorld(Vector(0, 0, 0), ang, Vector(0, 0, 0), wangle_parent)
+    -- function getWorldAng(ent, boneid, ang)
+    --     --local wangle = ent:GetBoneMatrix(boneid):GetAngles()
+    --     local parentbone = ent:GetBoneParent(boneid)
+    --     local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles()
+    --     local lp, la = LocalToWorld(Vector(0, 0, 0), ang, Vector(0, 0, 0), wangle_parent)
 
-        return la
-    end
+    --     return la
+    -- end
     -- concommand.Add("ppm_getvalues", getValues)
     -- concommand.Add("ppm_getvaluesl", getValuesl)
     -- concommand.Add("ppm_reload", reloadPPM)
 end
 
 if SERVER then
-    function PPM.setPonyValues(ent)
-        if not PPM.isValidPony(ent) then return end
-        --local custom_mark_temp = ent.ponydata.custom_mark
-        --ent.ponydata.custom_mark = nil
-        local ocData = PPM.PonyDataToString(ent.ponydata)
-        --ent.ponydata.custom_mark = custom_mark_temp
-        local sig
-        local id
-        --if SERVER then
-        --     PPM.SendCharToClients(ent)
-        --end
-    end
+    -- function PPM.setPonyValues(ent)
+    --     if not PPM.isValidPony(ent) then return end
+    --     --local custom_mark_temp = ent.ponydata.custom_mark
+    --     --ent.ponydata.custom_mark = nil
+    --     local ocData = PPM.PonyDataToString(ent.ponydata)
+    --     --ent.ponydata.custom_mark = custom_mark_temp
+    --     local sig
+    --     local id
+    --     --if SERVER then
+    --     --     PPM.SendCharToClients(ent)
+    --     --end
+    -- end
 
-    hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll", function(ply, model, ent)
-        if PPM.isValidPonyLight(ent) then
-            PPM.randomizePony(ent)
-            --PPM.initPonyValues(ent)
-            PPM.setPonyValues(ent)
-            PPM.setBodygroups(ent)
-        end
-    end)
+    -- hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll", function(ply, model, ent)
+    --     if PPM.isValidPonyLight(ent) then
+    --         PPM.randomizePony(ent)
+    --         --PPM.initPonyValues(ent)
+    --         PPM.setPonyValues(ent)
+    --         PPM.setBodygroups(ent)
+    --     end
+    -- end)
 
     --[[
 	local function HOOK_PlayerSpawn( ply )
@@ -509,31 +425,31 @@ if SERVER then
 		end
 	end ]]
     --hook.Add("PlayerSpawn", "pony_spawn", HOOK_PlayerSpawn)
-    local playertable = FindMetaTable("Player")
+    -- local playertable = FindMetaTable("Player")
 
-    if playertable.SetModelInsidePPM == nil then
-        playertable.SetModelInsidePPM = playertable.SetModel or FindMetaTable("Entity").SetModel
+    -- if playertable.SetModelInsidePPM == nil then
+    --     playertable.SetModelInsidePPM = playertable.SetModel or FindMetaTable("Entity").SetModel
 
-        function playertable:SetModel(modelName)
-            self:SetModelInsidePPM(modelName)
+    --     function playertable:SetModel(modelName)
+    --         self:SetModelInsidePPM(modelName)
 
-            if modelName ~= self.pi_prevplmodel then
-                PPM:pi_UnequipAll(self)
-            end
+    --         if modelName ~= self.pi_prevplmodel then
+    --             PPM:pi_UnequipAll(self)
+    --         end
 
-            if PPM.hasPonyModel(modelName) then
-                -- timer.Simple( 1, function()
-                if self.ponydata == nil then
-                    PPM.setupPony(self)
-                end
+    --         if PPM.hasPonyModel(modelName) then
+    --             -- timer.Simple( 1, function()
+    --             if self.ponydata == nil then
+    --                 PPM.setupPony(self)
+    --             end
 
-                PPM.setBodygroups(self, false)
-                PPM.setPonyValues(self)
-                --PPM.ccmakr_onplyinitspawn(ply)
-                --end )
-            end
+    --             PPM.setBodygroups(self, false)
+    --             PPM.setPonyValues(self)
+    --             --PPM.ccmakr_onplyinitspawn(ply)
+    --             --end )
+    --         end
 
-            self.pi_prevplmodel = modelName
-        end
-    end
+    --         self.pi_prevplmodel = modelName
+    --     end
+    -- end
 end

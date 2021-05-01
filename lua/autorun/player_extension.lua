@@ -67,18 +67,10 @@ end
 
 function meta:SetModel(modelName)
     self:TrueSetModel(modelName)
+
     if GAMEMODE.FolderName == "spades" then return end
 
     if isPonyModel(modelName) then
-        if PPM and PPM.setPonyValues then
-            if self.ponydata == nil then
-                PPM.setupPony(self)
-            end
-
-            PPM.setPonyValues(self)
-            PPM.setBodygroups(self)
-        end
-
         self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 42))
         self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 32))
 
@@ -92,13 +84,6 @@ function meta:SetModel(modelName)
             self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 47))
         end
     else
-        if PPM then
-            PPM:pi_UnequipAll(self)
-        end
-
-        --	if self.ponydata~=nil and IsValid(self.ponydata.clothes1) then
-        --		self.ponydata.clothes1:Remove()
-        --	end
         self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 64))
         self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 28))
 
@@ -120,6 +105,8 @@ function meta:SetModel(modelName)
 
     self:SetSubMaterial()
     self:SetDefaultJumpPower()
+
+    hook.Run("PlayerModelApplied",self,modelName)
 end
 
 function meta:SetDefaultJumpPower()
@@ -131,36 +118,16 @@ function meta:IsPony()
 end
 
 function meta:PonyNoseOffsetBone(ang)
-    if PPM then
-        local pd = PPM.PonyData[self]
-
-        if pd then
-            pd = pd[2]
-        end
-
-        if pd == nil then
-            pd = self.ponydata
-        end
-
-        if pd and pd.gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
+    if self:IsPPMPony() then
+        if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
     end
 
     return Vector(0, 0, 0)
 end
 
 function meta:PonyNoseOffsetAttach(ang)
-    if PPM then
-        local pd = PPM.PonyData[self]
-
-        if pd then
-            pd = pd[2]
-        end
-
-        if pd == nil then
-            pd = self.ponydata
-        end
-
-        if pd and pd.gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
+    if self:IsPPMPony() then
+        if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
     end
 
     return Vector(0, 0, 0)

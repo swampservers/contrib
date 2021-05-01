@@ -1,7 +1,14 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 function PPM_SetPonyCfg(ent, cfg)
     ent.ponydata = cfg
     -- invalidate caches
+    ent.ponymaterials = nil
+end
+
+function PPM_UpdateLocalPonyCfg(k, v)
+    local ent = LocalPlayer()
+    ent.ponydata[k] = v
     ent.ponymaterials = nil
 end
 
@@ -12,16 +19,16 @@ function PPM_PrePonyDraw(ent)
     local ply = ent:PonyPlayer() -- conversion shop/editor model and ragdoll
     if not IsValid(ply) then return end
 
-    if ply.OutdatedPony then
+    if not ply.UpdatedPony then
         net.Start("PonyRequest")
         net.WriteEntity(ply)
         net.SendToServer()
-        ply.OutdatedPony = nil
+        ply.UpdatedPony = true
     end
 
     PPM_PONIES_NEARBY[ply] = true
 
-    for k, v in ipairs(ent.ponymaterials or {}) do
+    for k, v in ipairs(ply.ponymaterials or {}) do
         ent:SetSubMaterial(k - 1, "!" .. v:GetName())
     end
 
@@ -31,6 +38,11 @@ function PPM_PrePonyDraw(ent)
         })
 
         ent:SetSubMaterial(9, "!" .. mat:GetName())
+    end
+
+    -- Only applies to editor models; ragdolls are handled in hook below and players are handled serverside
+    if ent:EntIndex()==-1 then
+        PPM_SetBodyGroups(ent)
     end
 end
 
@@ -231,7 +243,7 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 ply.ponydata_tex[k .. "_draw"] = PPM.currt_success --remove
                 -- if PPM.currt_success then 
                 v.render(ply, ply.ponymaterials)
-                print(k)
+                -- print(k)
                 -- mats = PPM_CLONE_MATERIALS(mats)
                 -- for _,v in ipairs(mats) do
                 --     ply.ponymaterials[v[2]] = v[1]
@@ -296,8 +308,23 @@ end
 
 concommand.Add("ppm_refresh", function(ply, cmd, args)
     for _, ent in ipairs(player.GetAll()) do
-        ent.OutdatedPony = true
+        ent.UpdatedPony = nil
         ent.ponydata = nil
         ent.ponymaterials = nil
     end
 end)
+
+
+-- if this causes conflicts maybe just set the materials one time
+function PPM_RagdollRender(self)
+    PPM_PrePonyDraw(self)
+    self:DrawModel()
+end
+
+hook.Add( "CreateClientsideRagdoll", "PPM_CreateClientsideRagdoll", function( entity, ragdoll )
+    if entity:IsPlayer() then
+        ragdoll.RagdollSourcePlayer = entity
+        PPM_SetBodyGroups(ragdoll)
+        ragdoll.RenderOverride = PPM_RagdollRender
+    end
+end )

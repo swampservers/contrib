@@ -156,8 +156,10 @@ function PANEL:Paint()
     self:SetModelCaching(mdl)
 
     if isPonyModel(self.Entity:GetModel()) then
-        PPM.PrePonyDraw(self.Entity, true)
-        PPM.setBodygroups(self.Entity, true)
+        -- PPM.PrePonyDraw(self.Entity, true)
+        -- PPM.setBodygroups(self.Entity, true)
+        -- 
+        PPM_SetBodyGroups(self.Entity)
     end
 
     if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
@@ -241,11 +243,11 @@ function PANEL:SetModelCaching(sm)
         self.ModelName = sm
         self:SetModel(sm)
 
-        if isPonyModel(sm) then
-            self.Entity.isEditorPony = true
-            PPM.editor3_pony = self.Entity
-            PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
-        end
+        -- if isPonyModel(sm) then
+        --     self.Entity.isEditorPony = true
+        --     PPM.editor3_pony = self.Entity
+        --     PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
+        -- end
     end
 end
 

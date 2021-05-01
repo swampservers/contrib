@@ -7,14 +7,14 @@ PPM.Editor3_ponies = {
         node_main = "node_main",
         node_body = "pony_normal_body",
         node_face = "pony_normal_face",
-        node_equipment = "pony_equipment",
+        -- node_equipment = "pony_equipment",
         node_presets = "node_presets"
     },
     ponynj = {
         node_main = "node_main",
         node_body = "pony_normal_body",
         node_face = "pony_normal_face",
-        node_equipment = "pony_equipment",
+        -- node_equipment = "pony_equipment",
         node_presets = "node_presets"
     }
 }
@@ -52,61 +52,63 @@ PPM.Editor3_nodes.node_presets = {
     }
 }
 
-PPM.Editor3_nodes.pony_equipment = {
-    name = "Equipment",
-    controlls = {
-        {
-            name = "Head",
-            type = "edit_equipment_slot",
-            slotid = 0,
-        },
-        {
-            name = "Eyes",
-            type = "edit_equipment_slot",
-            slotid = 7,
-        },
-        {
-            name = "Neck",
-            type = "edit_equipment_slot",
-            slotid = 1,
-        },
-        {
-            name = "Front body",
-            type = "edit_equipment_slot",
-            slotid = 2,
-        },
-        {
-            name = "Front legs",
-            type = "edit_equipment_slot",
-            slotid = 3,
-        },
-        {
-            name = "Front hooves",
-            type = "edit_equipment_slot",
-            slotid = 5,
-        },
-        {
-            name = "Uniform",
-            type = "edit_equipment_slot",
-            slotid = 50,
-        },
-        {
-            name = "Back body",
-            type = "edit_equipment_slot",
-            slotid = 9,
-        },
-        {
-            name = "Hind legs",
-            type = "edit_equipment_slot",
-            slotid = 10,
-        },
-        {
-            name = "Hind hooves",
-            type = "edit_equipment_slot",
-            slotid = 12,
-        }
-    }
-}
+
+-- PPM.Editor3_nodes.pony_equipment = {
+--     name = "Equipment",
+--     controlls = {
+--         -- {
+--         --     name = "Head",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 0,
+--         -- },
+--         -- {
+--         --     name = "Eyes",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 7,
+--         -- },
+--         -- {
+--         --     name = "Neck",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 1,
+--         -- },
+--         -- {
+--         --     name = "Front body",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 2,
+--         -- },
+--         -- {
+--         --     name = "Front legs",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 3,
+--         -- },
+--         -- {
+--         --     name = "Front hooves",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 5,
+--         -- },
+--         {
+--             name = "Uniform",
+--             type = "edit_equipment_slot",
+--             slotid = 50,
+--         }
+--         -- ,
+--         -- {
+--         --     name = "Back body",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 9,
+--         -- },
+--         -- {
+--         --     name = "Hind legs",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 10,
+--         -- },
+--         -- {
+--         --     name = "Hind hooves",
+--         --     type = "edit_equipment_slot",
+--         --     slotid = 12,
+--         -- }
+--     }
+-- }
 
 PPM.Editor3_nodes.pony_normal_face = {
     eyelashes = {

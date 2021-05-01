@@ -50,18 +50,20 @@ local function unjiggle(self)
 end
 
 function PILLOW_UNJIGGLE(self, nb)
-    for i = 0, nb - 1 do
-        local i2 = i < 3 and i or 2 - i
-        local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
-        local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
+    pcall(function()
+        for i = 0, nb - 1 do
+            local i2 = i < 3 and i or 2 - i
+            local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
+            local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
 
-        if not ro then
-            if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
-            ro, ra = self.wep:GetViewModelPosition(self.wep.Owner:EyePos(), self.wep.Owner:EyeAngles())
+            if not ro then
+                if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
+                ro, ra = self.wep:GetViewModelPosition(self.wep.Owner:EyePos(), self.wep.Owner:EyeAngles())
+            end
+
+            self:SetBonePosition(i, LocalToWorld(Vector(0, 0, i2 * 10), a, ro, ra))
         end
-
-        self:SetBonePosition(i, LocalToWorld(Vector(0, 0, i2 * 10), a, ro, ra))
-    end
+    end)
 end
 
 function SWEP:DrawWorldModel()

@@ -7,10 +7,10 @@ end)
 
 net.Receive("PonyInvalidate", function(len)
     local ply = net.ReadEntity()
-    ply.OutdatedPony = true
+    ply.UpdatedPony = nil
 end)
 
-function PPM.Load(filename)
+function PPM_Load(filename)
     local str = file.Read("data/ppm/" .. filename, "GAME")
     local lines = string.Split(str, "\n")
     local ponydata = {}
@@ -32,13 +32,52 @@ function PPM.Load(filename)
         end
     end
 
-    return ponydata
+    PPM_SetPonyCfg(LocalPlayer(), SanitizePonyCfg(ponydata))
 end
 
-function PPM.Save(filename, ponydata)
+
+function PPM_Randomize()
+    local ponydata = {}
+    ponydata.kind = math.Round(math.Rand(1, 4))
+    ponydata.gender = math.Round(math.Rand(1, 2))
+    ponydata.body_type = 1
+    ponydata.mane = math.Round(math.Rand(1, 15))
+    ponydata.manel = math.Round(math.Rand(1, 12))
+    ponydata.tail = math.Round(math.Rand(1, 14))
+    ponydata.tailsize = math.Rand(0.8, 1)
+    ponydata.eye = math.Round(math.Rand(1, EYES_COUNT))
+    ponydata.eyelash = math.Round(math.Rand(1, 5))
+    ponydata.coatcolor = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
+    for I = 1, 6 do
+        ponydata["haircolor" .. I] = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
+    end
+    for I = 1, 8 do
+        ponydata["bodydetail" .. I] = 1
+        ponydata["bodydetail" .. I .. "_c"] = Vector(0, 0, 0)
+    end
+    ponydata.cmark = math.Round(math.Rand(1, MARK_COUNT))
+    ponydata.bodyweight = math.Rand(0.8, 1.2)
+    ponydata.bodyt0 = 1 --math.Round(math.Rand(1,4)) 
+    ponydata.bodyt1_color = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
+    local iriscolor = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1)) * 2
+    ponydata.eyecolor_bg = Vector(1, 1, 1)
+    ponydata.eyeirissize = 0.7 + math.Rand(-0.1, 0.1)
+    ponydata.eyecolor_iris = iriscolor
+    ponydata.eyecolor_grad = iriscolor / 3
+    ponydata.eyecolor_line1 = iriscolor * 0.9
+    ponydata.eyecolor_line2 = iriscolor * 0.8
+    ponydata.eyeholesize = 0.7 + math.Rand(-0.1, 0.1)
+    ponydata.eyecolor_hole = Vector(0, 0, 0)
+    -- TODO assert(ponydata == SanitizePonyCfg(ponydata))
+    PPM_SetPonyCfg(LocalPlayer(), ponydata)
+end
+
+
+
+function PPM_Save(filename)
     local saveframe = {}
 
-    for k, v in SortedPairs(ponydata) do
+    for k, v in SortedPairs(LocalPlayer().ponydata) do 
         if type(v) == "number" then
             table.insert(saveframe, "\n " .. k .. " " .. tostring(v))
         elseif type(v) == "Vector" then
@@ -63,19 +102,25 @@ function PPM.Save(filename, ponydata)
     MsgN("saving .... " .. "ppm/" .. filename)
     file.Write("ppm/" .. filename, saveframe)
 end
+ 
+
+
+function ReloadCurrentPony()
+    if (file.Exists("ppm/_current.txt", "DATA")) then
+        PPM_Load("_current.txt")
+    else
+        PPM_Randomize()
+    end
+    SendLocalPonyCfg()
+end
 
 hook.Add("Think", "PPM_Loader", function()
-    if IsValid(LocalPlayer()) then
-        if (file.Exists("ppm/_current.txt", "DATA")) then
-            PPM_SetPonyCfg(LocalPlayer(), PPM.Load("_current.txt"))
-        else
-            PPM.randomizePony(LocalPlayer())
-        end
-
-        SendLocalPonyCfg()
+    if IsValid(LocalPlayer()) then -- and LocalPlayer():IsPPMPony() then --disabled so it appears in shop
+        ReloadCurrentPony()
         hook.Remove("Think", "PPM_Loader")
     end
-end)
+end) 
+
 
 function SendLocalPonyCfg()
     local tab = LocalPlayer().ponydata

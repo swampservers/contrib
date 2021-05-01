@@ -32,9 +32,7 @@ function PPM.CreateTexture(tname, data)
     local w, h = ScrW(), ScrH()
     local rttex = nil
     local size = data.size or 512
-    rttex = GetRenderTarget(tname, size, size)
-
-    -- ,  RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
+    rttex = GetRenderTargetEx(tname, size, size,  RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
     if data.predrawfunc ~= nil then
         data.predrawfunc()
     end
@@ -59,80 +57,6 @@ function PPM.CreateTexture(tname, data)
     render.SetColorModulation(1, 1, 1)
     render.SetBlend(1)
     render.SuppressEngineLighting(false)
-
-    return rttex
-end
-
-function PPM.CreateBodyTexture(ent, pony)
-    if not PPM.isValidPony(ent) then return end
-    local w, h = ScrW(), ScrH()
-
-    --val/512*w end
-    local function tW(val)
-        return val
-    end
-
-    --val/512*h end
-    local function tH(val)
-        return val
-    end
-
-    local rttex = nil
-    ent.ponydata_tex = ent.ponydata_tex or {}
-
-    if (ent.ponydata_tex.bodytex ~= nil) then
-        rttex = ent.ponydata_tex.bodytex
-    else
-        rttex = GetRenderTargetEx(tostring(ent) .. "body", tW(512), tH(512), RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
-    end
-
-    local OldRT = render.GetRenderTarget()
-    render.SetRenderTarget(rttex)
-    render.SuppressEngineLighting(true)
-    cam.IgnoreZ(true)
-    render.SetLightingOrigin(Vector(0, 0, 0))
-    render.ResetModelLighting(1, 1, 1)
-    render.SetColorModulation(1, 1, 1)
-    render.SetBlend(1)
-    render.SetModelLighting(BOX_TOP, 1, 1, 1)
-    render.SetViewPort(0, 0, tW(512), tH(512))
-    render.Clear(0, 255, 255, 255, true)
-    cam.Start2D()
-    render.SetColorModulation(1, 1, 1)
-
-    if (pony.gender == 1) then
-        render.SetMaterial(FixVertexLitMaterial(Material("models/ppm/base/render/bodyf")))
-    else
-        render.SetMaterial(FixVertexLitMaterial(Material("models/ppm/base/render/bodym")))
-    end
-
-    render.DrawQuadEasy(Vector(tW(256), tH(256), 0), Vector(0, 0, -1), tW(512), tH(512), Color(pony.coatcolor.x * 255, pony.coatcolor.y * 255, pony.coatcolor.z * 255, 255), -90) --position of the rect --direction to face in --size of the rect --color --rotate 90 degrees
-
-    if (pony.bodyt1 > 1) then
-        render.SetMaterial(FixVertexLitMaterial(PPM.m_bodydetails[pony.bodyt1 - 1][1]))
-        render.SetBlend(1)
-        local colorbl = pony.bodyt1_color or Vector(1, 1, 1)
-        render.DrawQuadEasy(Vector(tW(256), tH(256), 0), Vector(0, 0, -1), tW(512), tH(512), Color(colorbl.x * 255, colorbl.y * 255, colorbl.z * 255, 255), -90) --position of the rect --direction to face in --size of the rect --color --rotate 90 degrees
-    end
-
-    if (pony.bodyt0 > 1) then
-        render.SetMaterial(FixVertexLitMaterial(PPM.m_bodyt0[pony.bodyt0 - 1][1]))
-        render.SetBlend(1)
-        render.DrawQuadEasy(Vector(tW(256), tH(256), 0), Vector(0, 0, -1), tW(512), tH(512), Color(255, 255, 255, 255), -90) --position of the rect --direction to face in --size of the rect --color --rotate 90 degrees
-    end
-
-    cam.End2D()
-    render.SetRenderTarget(OldRT) -- Resets the RenderTarget to our screen
-    render.SetViewPort(0, 0, w, h)
-    render.SetColorModulation(1, 1, 1)
-    render.SetBlend(1)
-    render.SuppressEngineLighting(false)
-    --	cam.IgnoreZ( false )
-    ent.ponydata_tex.bodytex = rttex
-    --MsgN("HASHOLD: "..tostring(ent.ponydata_tex.bodytex_hash)) 
-    -- ent.ponydata_tex.bodytex_hash = PPM.GetBodyHash(pony)
-    --MsgN("HASHNEW: "..tostring(ent.ponydata_tex.bodytex_hash)) 
-    --MsgN("HASHTAR: "..tostring(PPM.GetBodyHash(outpony))) 
 
     return rttex
 end
