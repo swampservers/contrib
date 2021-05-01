@@ -205,7 +205,7 @@ if CLIENT then
             if (not IsValid(mdl.Entity)) then return end
             local x, y = mdl:LocalToScreen(0, 0)
             mdl:LayoutEntity(mdl.Entity)
-            PPM.PrePonyDraw(mdl.Entity, true)
+            -- PPM.PrePonyDraw(mdl.Entity, true)
             local ang = mdl.aLookAngle
 
             if (not ang) then

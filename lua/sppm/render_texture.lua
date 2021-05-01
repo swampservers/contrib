@@ -28,16 +28,11 @@ function FixVertexLitMaterial(Mat)
     return Mat
 end
 
-function PPM.CreateTexture(tname, data)
+function PPM_CreateTexture(tname, data)
     local w, h = ScrW(), ScrH()
-    local rttex = nil
     local size = data.size or 512
-    rttex = GetRenderTargetEx(tname, size, size, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
 
-    if data.predrawfunc ~= nil then
-        data.predrawfunc()
-    end
-
+    local rttex = GetRenderTargetEx(tname, size, size, RT_SIZE_NO_CHANGE, data.translucent and MATERIAL_RT_DEPTH_SEPARATE or MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, data.translucent and IMAGE_FORMAT_BGRA8888 or IMAGE_FORMAT_BGR888)
     local OldRT = render.GetRenderTarget()
     render.SetRenderTarget(rttex)
     render.SuppressEngineLighting(true)
@@ -152,14 +147,17 @@ PPM.rendertargettasks.bodytex = {
 --     end
 --     return hash
 -- end
-local _cleantexture = Material("models/ppm/partrender/clean.png"):GetTexture("$basetexture")
+-- local _cleanmaterial = Material("models/ppm/partrender/clean.png") --lights/white") --
+local _cleantexture = "lights/white" --_cleanmaterial:GetTexture("$basetexture")
 
 PPM.rendertargettasks.hairtex1 = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "hairtex1") then
+            print("HAIR1TEX", ent)
             mats[PPMMAT_HAIR1]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_HAIR1]:SetTexture("$basetexture", ent.ponydata_tex.hairtex1)
         else
+            print("HAIR1", ent, ent.ponydata.haircolor1)
             mats[PPMMAT_HAIR1]:SetVector("$color2", ent.ponydata.haircolor1)
             mats[PPMMAT_HAIR1]:SetTexture("$basetexture", _cleantexture)
         end
@@ -177,15 +175,18 @@ PPM.rendertargettasks.hairtex1 = {
 PPM.rendertargettasks.hairtex2 = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "hairtex2") then
+            print("HAIR2TEX", ent)
             mats[PPMMAT_HAIR2]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_HAIR2]:SetTexture("$basetexture", ent.ponydata_tex.hairtex2)
         else
+            print("HAIR2", ent, ent.ponydata.haircolor2)
             mats[PPMMAT_HAIR2]:SetVector("$color2", ent.ponydata.haircolor2)
             mats[PPMMAT_HAIR2]:SetTexture("$basetexture", _cleantexture)
         end
     end,
     drawfunc = function()
         local pony = PPM.currt_ponydata
+        -- render.Clear(0,255,0, 255, true) --testcolor
         PPM.tex_drawhairfunc(pony, "dn", false)
     end
 }
@@ -199,6 +200,7 @@ PPM.rendertargettasks.tailtex = {
             mats[PPMMAT_TAIL1]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_TAIL2]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_TAIL1]:SetTexture("$basetexture", ent.ponydata_tex.tailtex)
+            mats[PPMMAT_TAIL2]:SetTexture("$basetexture", _cleantexture) --added?
         else
             print("TAIL", ent, ent.ponydata.haircolor1, ent.ponydata.haircolor2)
             mats[PPMMAT_TAIL1]:SetVector("$color2", ent.ponydata.haircolor1)
@@ -209,6 +211,7 @@ PPM.rendertargettasks.tailtex = {
     end,
     drawfunc = function()
         local pony = PPM.currt_ponydata
+        -- render.Clear(0,255,0, 255, true) --testcolor
         PPM.tex_drawhairfunc(pony, "up", true)
     end
 }
@@ -226,7 +229,8 @@ PPM.rendertargettasks.eyeltex = {
     drawfunc = function()
         local pony = PPM.currt_ponydata
         PPM.tex_draweyefunc(pony, false)
-    end
+    end,
+    translucent=true
 }
 
 -- ,
@@ -242,7 +246,8 @@ PPM.rendertargettasks.eyertex = {
     drawfunc = function()
         local pony = PPM.currt_ponydata
         PPM.tex_draweyefunc(pony, true)
-    end
+    end,
+    translucent=true
 }
 
 -- ,

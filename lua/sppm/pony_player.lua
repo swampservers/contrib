@@ -317,19 +317,19 @@ PPM.rig_tail = {38, 39, 40}
 --         return pony
 --     end
 -- end
-if CLIENT then end -- function PPM.RELOAD() -- end -- function getValues() --     local pony = PPM.getPonyValues(LocalPlayer(), false) --     for k, v in SortedPairs(pony) do --         MsgN(k .. " = " .. tostring(v)) --     end -- end -- function getValuesl() --     local pony = PPM.getPonyValues(LocalPlayer(), true) --     for k, v in SortedPairs(pony) do --         MsgN(k .. " = " .. tostring(v)) --     end -- end -- function reloadPPM() --     PPM.isLoaded = false -- end -- function getLocalBoneAng(ent, boneid) --     local wangle = ent:GetBoneMatrix(boneid):GetAngles() --     local parentbone = ent:GetBoneParent(boneid) --     local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles() --     local lp, la = WorldToLocal(Vector(0, 0, 0), wangle, Vector(0, 0, 0), wangle_parent) --     return la -- end -- function getWorldAng(ent, boneid, ang) --     --local wangle = ent:GetBoneMatrix(boneid):GetAngles() --     local parentbone = ent:GetBoneParent(boneid) --     local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles() --     local lp, la = LocalToWorld(Vector(0, 0, 0), ang, Vector(0, 0, 0), wangle_parent) --     return la -- end -- concommand.Add("ppm_getvalues", getValues) -- concommand.Add("ppm_getvaluesl", getValuesl) -- concommand.Add("ppm_reload", reloadPPM)
-if SERVER then end -- function PPM.setPonyValues(ent) --     if not PPM.isValidPony(ent) then return end --     --local custom_mark_temp = ent.ponydata.custom_mark --     --ent.ponydata.custom_mark = nil --     local ocData = PPM.PonyDataToString(ent.ponydata) --     --ent.ponydata.custom_mark = custom_mark_temp --     local sig --     local id --     --if SERVER then --     --     PPM.SendCharToClients(ent) --     --end -- end -- hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll", function(ply, model, ent) --     if PPM.isValidPonyLight(ent) then --         PPM.randomizePony(ent) --         --PPM.initPonyValues(ent) --         PPM.setPonyValues(ent) --         PPM.setBodygroups(ent) --     end -- end) --[[
-	local function HOOK_PlayerSpawn( ply )
-		local m = ply:GetInfo( "cl_playermodel" )
-		if(m=="pony")or (m=="ponynj")then
-            timer.Simple( 1, function()
-                if ply.ponydata==nil then 
-                    PPM.setupPony( ply )
-                end
+-- if CLIENT then end -- function PPM.RELOAD() -- end -- function getValues() --     local pony = PPM.getPonyValues(LocalPlayer(), false) --     for k, v in SortedPairs(pony) do --         MsgN(k .. " = " .. tostring(v)) --     end -- end -- function getValuesl() --     local pony = PPM.getPonyValues(LocalPlayer(), true) --     for k, v in SortedPairs(pony) do --         MsgN(k .. " = " .. tostring(v)) --     end -- end -- function reloadPPM() --     PPM.isLoaded = false -- end -- function getLocalBoneAng(ent, boneid) --     local wangle = ent:GetBoneMatrix(boneid):GetAngles() --     local parentbone = ent:GetBoneParent(boneid) --     local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles() --     local lp, la = WorldToLocal(Vector(0, 0, 0), wangle, Vector(0, 0, 0), wangle_parent) --     return la -- end -- function getWorldAng(ent, boneid, ang) --     --local wangle = ent:GetBoneMatrix(boneid):GetAngles() --     local parentbone = ent:GetBoneParent(boneid) --     local wangle_parent = ent:GetBoneMatrix(parentbone):GetAngles() --     local lp, la = LocalToWorld(Vector(0, 0, 0), ang, Vector(0, 0, 0), wangle_parent) --     return la -- end -- concommand.Add("ppm_getvalues", getValues) -- concommand.Add("ppm_getvaluesl", getValuesl) -- concommand.Add("ppm_reload", reloadPPM)
+-- if SERVER then end -- function PPM.setPonyValues(ent) --     if not PPM.isValidPony(ent) then return end --     --local custom_mark_temp = ent.ponydata.custom_mark --     --ent.ponydata.custom_mark = nil --     local ocData = PPM.PonyDataToString(ent.ponydata) --     --ent.ponydata.custom_mark = custom_mark_temp --     local sig --     local id --     --if SERVER then --     --     PPM.SendCharToClients(ent) --     --end -- end -- hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll", function(ply, model, ent) --     if PPM.isValidPonyLight(ent) then --         PPM.randomizePony(ent) --         --PPM.initPonyValues(ent) --         PPM.setPonyValues(ent) --         PPM.setBodygroups(ent) --     end -- end) --[[
+-- 	local function HOOK_PlayerSpawn( ply )
+-- 		local m = ply:GetInfo( "cl_playermodel" )
+-- 		if(m=="pony")or (m=="ponynj")then
+--             timer.Simple( 1, function()
+--                 if ply.ponydata==nil then 
+--                     PPM.setupPony( ply )
+--                 end
                 
-                PPM.setBodygroups( ply, false )
-                --PPM.setPonyValues(ply)
-                --PPM.ccmakr_onplyinitspawn(ply)
-			end )
-		end
-	end ]] --hook.Add("PlayerSpawn", "pony_spawn", HOOK_PlayerSpawn) -- local playertable = FindMetaTable("Player") -- if playertable.SetModelInsidePPM == nil then --     playertable.SetModelInsidePPM = playertable.SetModel or FindMetaTable("Entity").SetModel --     function playertable:SetModel(modelName) --         self:SetModelInsidePPM(modelName) --         if modelName ~= self.pi_prevplmodel then --             PPM:pi_UnequipAll(self) --         end --         if PPM.hasPonyModel(modelName) then --             -- timer.Simple( 1, function() --             if self.ponydata == nil then --                 PPM.setupPony(self) --             end --             PPM.setBodygroups(self, false) --             PPM.setPonyValues(self) --             --PPM.ccmakr_onplyinitspawn(ply) --             --end ) --         end --         self.pi_prevplmodel = modelName --     end -- end
+--                 PPM.setBodygroups( ply, false )
+--                 --PPM.setPonyValues(ply)
+--                 --PPM.ccmakr_onplyinitspawn(ply)
+-- 			end )
+-- 		end
+-- 	end --hook.Add("PlayerSpawn", "pony_spawn", HOOK_PlayerSpawn) -- local playertable = FindMetaTable("Player") -- if playertable.SetModelInsidePPM == nil then --     playertable.SetModelInsidePPM = playertable.SetModel or FindMetaTable("Entity").SetModel --     function playertable:SetModel(modelName) --         self:SetModelInsidePPM(modelName) --         if modelName ~= self.pi_prevplmodel then --             PPM:pi_UnequipAll(self) --         end --         if PPM.hasPonyModel(modelName) then --             -- timer.Simple( 1, function() --             if self.ponydata == nil then --                 PPM.setupPony(self) --             end --             PPM.setBodygroups(self, false) --             PPM.setPonyValues(self) --             --PPM.ccmakr_onplyinitspawn(ply) --             --end ) --         end --         self.pi_prevplmodel = modelName --     end -- end
