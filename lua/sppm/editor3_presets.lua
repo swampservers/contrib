@@ -426,7 +426,7 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         DermaButton:Dock(TOP)
 
         DermaButton.DoClick = function()
-            LocalPlayer().ponydata.imgurcmark = PPM.SanitizeImgurCmark(TextEntry:GetValue())
+            LocalPlayer().ponydata.imgurcmark = SanitizeImgurId(TextEntry:GetValue())
             --print("imgur cmark:"..LocalPlayer().ponydata.imgurcmark)
             TextEntry:SetValue(LocalPlayer().ponydata.imgurcmark)
         end

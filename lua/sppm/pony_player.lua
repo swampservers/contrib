@@ -1,4 +1,192 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+PPM.default_pony = {
+    --main
+    kind = {
+        default = 1,
+        min = 1,
+        max = 4
+    },
+    age = {
+        default = 2,
+        min = 2,
+        max = 2
+    },
+    gender = {
+        default = 1,
+        min = 1,
+        max = 2
+    },
+    body_type = {
+        default = 1,
+        min = 1,
+        max = 1
+    },
+    --body
+    mane = {
+        default = 1,
+        min = 1,
+        max = 15
+    },
+    manel = {
+        default = 1,
+        min = 1,
+        max = 12
+    },
+    tail = {
+        default = 1,
+        min = 1,
+        max = 14
+    },
+    tailsize = {
+        default = 1,
+        min = 0.8,
+        max = 1.5
+    },
+    cmark_enabled = {
+        default = 2
+    },
+    cmark = {
+        default = 1,
+        min = 1,
+        max = 30
+    },
+    bodyweight = {
+        default = 1,
+        min = 0.5,
+        max = 2.0
+    },
+    coatcolor = {
+        default = Vector(1, 1, 1),
+        min = Vector(0, 0, 0),
+        max = Vector(1, 1, 1)
+    },
+    haircolor1 = {
+        default = Vector(1, 1, 1),
+        min = Vector(0, 0, 0),
+        max = Vector(1, 1, 1)
+    },
+    haircolor2 = {
+        default = Vector(1, 1, 1),
+        min = Vector(0, 0, 0),
+        max = Vector(1, 1, 1)
+    },
+    haircolor3 = {
+        default = Vector(1, 1, 1),
+        min = Vector(0, 0, 0),
+        max = Vector(1, 1, 1)
+    },
+    haircolor4 = {
+        default = Vector(1, 1, 1),
+        min = Vector(0, 0, 0),
+        max = Vector(1, 1, 1)
+    },
+    haircolor5 = {
+        default = Vector(1, 1, 1),
+        min = Vector(0, 0, 0),
+        max = Vector(1, 1, 1)
+    },
+    haircolor6 = {
+        default = Vector(1, 1, 1),
+        min = Vector(0, 0, 0),
+        max = Vector(1, 1, 1)
+    },
+    --bodydetails
+    bodydetail1 = {
+        default = 1
+    },
+    bodydetail2 = {
+        default = 1
+    },
+    bodydetail3 = {
+        default = 1
+    },
+    bodydetail4 = {
+        default = 1
+    },
+    bodydetail5 = {
+        default = 1
+    },
+    bodydetail6 = {
+        default = 1
+    },
+    bodydetail7 = {
+        default = 1
+    },
+    bodydetail8 = {
+        default = 1
+    },
+    bodydetail1_c = {
+        default = Vector(1, 1, 1)
+    },
+    bodydetail2_c = {
+        default = Vector(1, 1, 1)
+    },
+    bodydetail3_c = {
+        default = Vector(1, 1, 1)
+    },
+    bodydetail4_c = {
+        default = Vector(1, 1, 1)
+    },
+    bodydetail5_c = {
+        default = Vector(1, 1, 1)
+    },
+    bodydetail6_c = {
+        default = Vector(1, 1, 1)
+    },
+    bodydetail7_c = {
+        default = Vector(1, 1, 1)
+    },
+    bodydetail8_c = {
+        default = Vector(1, 1, 1)
+    },
+    --eyes
+    eyehaslines = {
+        default = 1
+    },
+    eyelash = {
+        default = 1,
+        min = 1,
+        max = 5
+    },
+    eyeirissize = {
+        default = 0.7,
+        min = 0.65,
+        max = 0.88
+    },
+    eyeholesize = {
+        default = 0.7,
+        min = 0.65,
+        max = 0.88
+    },
+    eyejholerssize = {
+        default = 1,
+        min = 0.2,
+        max = 1
+    },
+    eyecolor_bg = {
+        default = Vector(1, 1, 1)
+    },
+    eyecolor_iris = {
+        default = Vector(1, 1, 1) / 3
+    },
+    eyecolor_grad = {
+        default = Vector(1, 1, 1) / 2
+    },
+    eyecolor_line1 = {
+        default = Vector(1, 1, 1) * 0.8
+    },
+    eyecolor_line2 = {
+        default = Vector(1, 1, 1) * 0.9
+    },
+    eyecolor_hole = {
+        default = Vector(0, 0, 0)
+    },
+    --body clothing
+    bodyt0 = {
+        default = 1
+    }
+}
+
 local BODYGROUP_BODY = 1
 local BODYGROUP_HORN = 2
 local BODYGROUP_WING = 3
@@ -9,24 +197,21 @@ local BODYGROUP_CMARK = 7
 local BODYGROUP_EYELASH = 8
 local EYES_COUNT = 10
 local MARK_COUNT = 27
-PPM.pony_models = {}
 
-PPM.pony_models["models/ppm/player_default_base.mdl"] = {
-    isPonyModel = true,
-    BgroupCount = 8
-}
-
-PPM.pony_models["models/ppm/player_default_clothes1.mdl"] = {
-    isPonyModel = false,
-    BgroupCount = 8
+PPM.pony_models = {
+    ["models/ppm/player_default_base.mdl"] = {
+        isPonyModel = true,
+        BgroupCount = 8
+    },
+    ["models/ppm/player_default_clothes1.mdl"] = {
+        isPonyModel = false,
+        BgroupCount = 8
+    }
 }
 
 function PPM.LOAD()
     if CLIENT then
         PPM.setupPony(LocalPlayer())
-        PPM.loadResources()
-        PPM.Load_settings()
-        PPM.loadrt()
         PPM.SendPonyData()
     end
 
@@ -39,7 +224,7 @@ function PPM.setupPony(ent, fake)
     ent.ponydata_tex = ponydata_tex or {}
     ent.ponydata = ent.ponydata or {}
 
-    for k, v in SortedPairs(PPM.Pony_variables.default_pony) do
+    for k, v in SortedPairs(PPM.default_pony) do
         ent.ponydata[k] = ent.ponydata[k] or v.default
     end
 
@@ -60,21 +245,10 @@ function PPM.setupPony(ent, fake)
     end
 end
 
-function PPM.doRespawn(ply)
-    if not IsValid(ply) then return end
-    if not ply:IsPlayer() then return end
-end
-
-function PPM.getPonyEnts()
-end
-
-function PPM.reValidatePonies()
-end
-
 function PPM.cleanPony(ent)
     PPM.setupPony(ent)
 
-    for k, v in SortedPairs(PPM.Pony_variables.default_pony) do
+    for k, v in SortedPairs(PPM.default_pony) do
         ent.ponydata[k] = v.default
     end
     --ent.ponydata._cmark = nil
@@ -82,7 +256,8 @@ function PPM.cleanPony(ent)
 end
 
 function PPM.randomizePony(ent)
-    PPM.setupPony(ent)
+    -- PPM.setupPony(ent)
+    ent.ponydata = {}
     ent.ponydata.kind = math.Round(math.Rand(1, 4))
     ent.ponydata.gender = math.Round(math.Rand(1, 2))
     ent.ponydata.body_type = 1
@@ -222,18 +397,6 @@ function PPM.setBodygroupSafe(ent, bgid, bgval)
     ent:SetBodygroup(bgid, bgval)
 end
 
-function PPM.initPonyValues(ent)
-    if not PPM.isValidPonyLight(ent) then return end
-    --[[
-	ent.SetupDataTables = function()
-	
-	self:NetworkVar( "Vector",	0,	"pny_coatcolor",	{ KeyName = "topcolor", Edit = { type = "VectorColor", category = "Main", title = "Coat color", order = 1 } } );		
-	self:NetworkVar( "Vector",	1,	"pny_haircolor1",	{ KeyName = "bottomcolor", Edit = { type = "VectorColor", category = "Main", title = "Hair Color 1", order = 2  } } );		
-	end
-	ent.SetupDataTables(ent)
-	]]
-end
-
 function PPM.getPonyValues(ent, localvals)
     if (localvals) then
         local pony = ent.ponydata
@@ -256,7 +419,7 @@ function PPM.getPonyValues(ent, localvals)
 
             pony = {}
 
-            for k, v in pairs(PPM.Pony_variables.default_pony) do
+            for k, v in pairs(PPM.default_pony) do
                 pony[k] = v.default
             end
         end
@@ -268,56 +431,28 @@ function PPM.getPonyValues(ent, localvals)
 end
 
 if CLIENT then
-    PPM.jiggleboneids = {}
+    -- function PPM.RELOAD()
+    -- end
 
-    function PPM.fixJigglebones(ent)
-        local bonecount = ent:GetBoneCount()
-        print("PLAYER BONECOUNT:", bonecount)
-        bboneeez(ent, bonecount, bonecount)
-        ent.BuildBonePositions(ent, bonecount)
-        --Entity:GetBoneMatrix( number boneID )
-    end
-end
+    -- function getValues()
+    --     local pony = PPM.getPonyValues(LocalPlayer(), false)
 
---///////////////////////////////////////////////////////////////CLIENT
-if CLIENT then
-    function PPM.RELOAD()
-    end
+    --     for k, v in SortedPairs(pony) do
+    --         MsgN(k .. " = " .. tostring(v))
+    --     end
+    -- end
 
-    function getValues()
-        local pony = PPM.getPonyValues(LocalPlayer(), false)
+    -- function getValuesl()
+    --     local pony = PPM.getPonyValues(LocalPlayer(), true)
 
-        for k, v in SortedPairs(pony) do
-            MsgN(k .. " = " .. tostring(v))
-        end
-    end
+    --     for k, v in SortedPairs(pony) do
+    --         MsgN(k .. " = " .. tostring(v))
+    --     end
+    -- end
 
-    function getValuesl()
-        local pony = PPM.getPonyValues(LocalPlayer(), true)
-
-        for k, v in SortedPairs(pony) do
-            MsgN(k .. " = " .. tostring(v))
-        end
-    end
-
-    function reloadPPM()
-        PPM.isLoaded = false
-    end
-
-    function OnEntityCreated(ent)
-        --[[
-  print("3456345")
-		if ent:IsPlayer() then -- We want to define this for each player that gets created.
-	 print("BONE:235235")
-			ent.BuildBonePositions = function( self, NumBones, NumPhysBones )
-					print("BONE:")
-				-- Do stuff
-				 bboneeez(self, NumBones, NumPhysBones )
-			end
-	 
-		end
-	 ]]
-    end
+    -- function reloadPPM()
+    --     PPM.isLoaded = false
+    -- end
 
     function getLocalBoneAng(ent, boneid)
         local wangle = ent:GetBoneMatrix(boneid):GetAngles()
@@ -337,53 +472,11 @@ if CLIENT then
         return la
     end
 
-    function bboneeez(self, NumBones, NumPhysBones)
-        for k = 1, NumBones - 1 do
-            print("BONE:", k, self:GetBoneName(k))
-            local bmatrix = self:GetBoneMatrix(k)
-
-            --if( k>=30 && k<=40 )then
-            -- print("","",bmatrix:GetAngles())
-            --bmatrix:SetAngles( Angle(0,0,0) )
-            -- print("","",bmatrix:GetAngles()) 
-            --ent:SetBoneMatrix(k,bmatrix) 
-            --ent:ManipulateBoneAngles(k,Angle(0,10,0) )
-            --self:SetBonePosition( k, Vector(0,0,0),Angle(0,10,0) )
-            if (k == 40) then
-                local ba = getLocalBoneAng(self, k)
-                local diff1 = Angle(0.133, 0.000, 0.021) - ba
-                local diff2 = getWorldAng(self, k, diff1)
-                print("PREV", ba)
-                print("DIFF", diff1)
-                print("DIFF", diff2)
-                self:ManipulateBoneAngles(k, -diff2) --diff1) 
-                print("AFTE", getLocalBoneAng(self, k))
-            end
-            --self:ManipulateBoneAngles( k,getLocalBoneAng(self,k)- Angle(180,180,180))//self:GetManipulateBoneAngles( k)+ Angle(0,190,190))
-            --print(self:GetManipulateBoneAngles( k))
-            --ent:SetupBones()
-            --end 
-        end
-
-        --An entity cannot have more than 128 bones
-        for i = 1, NumBones do
-            -- self:SetBonePosition( i, VectorRand() * 32, VectorRand():Angle() )
-        end
-    end
-
-    hook.Add("OnEntityCreated", "pony_spawnent", OnEntityCreated)
-    concommand.Add("ppm_getvalues", getValues)
-    concommand.Add("ppm_getvaluesl", getValuesl)
-    concommand.Add("ppm_reload", reloadPPM)
-
-    concommand.Add("ppm_getbones", function(ply)
-        for i = 0, ply:GetBoneCount() - 1 do
-            MsgN(i, " - ", ply:GetBoneName(i))
-        end
-    end)
+    -- concommand.Add("ppm_getvalues", getValues)
+    -- concommand.Add("ppm_getvaluesl", getValuesl)
+    -- concommand.Add("ppm_reload", reloadPPM)
 end
 
---///////////////////////////////////////////////////////////////SERVER
 if SERVER then
     function PPM.setPonyValues(ent)
         if not PPM.isValidPony(ent) then return end
@@ -398,7 +491,7 @@ if SERVER then
         --end
     end
 
-    hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll",function(ply, model, ent)
+    hook.Add("PlayerSpawnedRagdoll", "pony_spawnragdoll", function(ply, model, ent)
         if PPM.isValidPonyLight(ent) then
             PPM.randomizePony(ent)
             --PPM.initPonyValues(ent)

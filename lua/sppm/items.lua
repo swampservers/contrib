@@ -85,14 +85,6 @@ function PPM:AddPPMEDItem(pitem)
     return pitem
 end
 
-concommand.Add("test_add_item", function(ply) end)
-
-concommand.Add("test_getall_items", function(ply)
-    for i, k in pairs(PPM.pony_items) do
-        MsgN(k.id .. " - " .. k.name .. " - " .. k.model .. " " .. k.bid .. " - " .. k.bval)
-    end
-end)
-
 function PPM:GetAvailItems(playermodel, slotid)
     --MsgN(playermodel)
     local ait = {}

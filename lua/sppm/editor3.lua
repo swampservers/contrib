@@ -566,18 +566,6 @@ if CLIENT then
         return PPM.Save("_current.txt", LocalPlayer().ponydata)
     end
 
-    function PPM.Load_settings()
-        if (file.Exists("ppm/_current.txt", "DATA")) then
-            PPM.mergePonyData(LocalPlayer().ponydata, PPM.Load("_current.txt"))
-            --PPM.SendCharToServer(LocalPlayer()) 
-        else
-            PPM.randomizePony(LocalPlayer())
-            --PPM.SendCharToServer(LocalPlayer()) 
-        end
-
-        local sig = PPM.Save_settings()
-    end
-
     function VectorToLPCameraScreen(vDir, iScreenW, iScreenH, angCamRot, fFoV)
         --Same as we did above, we found distance the camera to a rectangular slice of the camera's frustrum, whose width equals the "4:3" width corresponding to the given screen height.
         local d = 4 * iScreenH / (6 * math.tan(0.5 * fFoV))

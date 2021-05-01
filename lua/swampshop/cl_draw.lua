@@ -43,9 +43,7 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     -- will be "false" if the model is not mounted yet
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
 
-    if not mounted_model then
-        print("UNMOUNTED", ply:GetModel())
-    end
+    if not ply:Alive() then return true end
 
     if ply.SS_PlayermodelModsLastModel ~= mounted_model then
         ply.SS_PlayermodelModsClean = false
