@@ -2,19 +2,14 @@
 -- INSTALL: CINEMA
 SWEP.PrintName = "Flare"
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
-SWEP.DrawWeaponInfoBox = true
 SWEP.ViewModelFOV = 85
-SWEP.ViewModelFlip = false
 SWEP.Slot = 0
 SWEP.SlotPos = 2
 SWEP.Purpose = "Light Gnomes On Fire"
 SWEP.Instructions = "Primary: Use"
-SWEP.Spawnable = false
 SWEP.AdminSpawnable = false
 SWEP.ViewModel = Model("models/brian/flare.mdl")
 SWEP.WorldModel = Model("models/brian/flare.mdl")
-SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
 SWEP.Primary.ClipSize = -1

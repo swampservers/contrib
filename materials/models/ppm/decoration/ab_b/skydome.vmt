@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "models\ppm\decoration\ab_b\skydome" 
-    $selfillum 1
- 
-}

@@ -111,7 +111,7 @@ function PANEL:Paint()
             pos = LerpVector(0, SS_HoverCSModel:GetPos() - (ang:Forward() * 25), pos)
         end
 
-        if SS_HoverItem and SS_HoverItem.bonemod then
+        if SS_HoverItem and SS_HoverItem.playermodelmod then
             pos = pos + (ang:Forward() * 25)
             --positions are wrong
             --[[
@@ -148,7 +148,7 @@ function PANEL:Paint()
     local ply = LocalPlayer()
     local mdl = ply:GetModel()
 
-    if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.bonemod) then
+    if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
         mdl = SS_HoverIOP.model
     end
 
@@ -160,7 +160,7 @@ function PANEL:Paint()
         PPM.setBodygroups(self.Entity, true)
     end
 
-    if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.bonemod) then
+    if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
         if SS_HoverItem then
             SS_PreRender(SS_HoverItem)
         end
@@ -184,28 +184,29 @@ function PANEL:Paint()
         self:SetCamPos(center + (diam * Vector(0.4, 0.4, 0.1)))
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-        local mods = LocalPlayer():SS_GetActiveBonemods()
+        local mods = LocalPlayer():SS_GetActivePlayermodelMods()
 
-        if SS_HoverItem and SS_HoverItem.bonemod then
-            local add = true
-
+        if SS_HoverItem and SS_HoverItem.playermodelmod then
+            -- local add = true
             for i, v in ipairs(mods) do
                 if v.id == SS_HoverItem.id then
-                    add = false
+                    -- add = false
+                    table.remove(mods, i)
                     break
                 end
             end
 
-            if add then
-                table.insert(mods, SS_HoverItem)
-            end
+            -- if add then
+            table.insert(mods, SS_HoverItem) --TODO why is this different when customizing
+            -- end
         end
 
         SS_ApplyBoneMods(self.Entity, mods)
+        SS_ApplyMaterialMods(self.Entity, mods)
         self.Entity:DrawModel()
     end
 
-    if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.bonemod then
+    if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
         for _, prop in pairs(ply:SS_GetCSModels()) do
             if SS_HoverItem == nil or SS_HoverItem.id ~= prop.item.id then
                 SS_DrawWornCSModel(prop.item, prop.mdl, self.Entity)

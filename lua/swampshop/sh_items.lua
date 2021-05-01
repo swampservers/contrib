@@ -127,7 +127,6 @@ function SS_Item(item)
                 end
             end
 
-            print(c, self.owner:SS_AccessorySlots())
             if c > self.owner:SS_AccessorySlots() then return "Buy more accessory slots (in Upgrades) to wear more items." end
         end
 
@@ -226,5 +225,9 @@ function _SS_SanitizeConfig(item)
     if itmc.scale_children then
         cfg.scale_children_h = dirty_cfg.scale_children_h and true or nil
         cfg.scale_children_p = dirty_cfg.scale_children_p and true or nil
+    end
+
+    if itmc.submaterial then
+        cfg.submaterial = isnumber(dirty_cfg.submaterial) and math.Clamp(math.floor(dirty_cfg.submaterial), 0, 31) or nil
     end
 end

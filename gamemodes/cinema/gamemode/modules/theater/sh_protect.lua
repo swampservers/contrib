@@ -47,14 +47,14 @@ function getPTProtectionTime(loc)
     -- 	end
     -- end
     -- return 0
-    return 1200
+    return ((Location.GetLocationByIndex(loc).Theater or {}).ProtectionTime or 1200)
 end
 
 function getPTProtectionCost(time)
     -- if time==0 then return 0 end
     -- time = math.max(time,10*60)
     -- return math.floor(time/60)*200
-    return 5000
+    return (time / 1200) * 5000
 end
 
 if CLIENT then
@@ -93,6 +93,45 @@ if CLIENT then
             end
         end
     end)
+
+    function CreateRentWindow()
+        local window = vgui.Create("CinemaRentalsWindow")
+        window:SetSize(450, 125)
+        window:SetTitle("Protect Theater")
+        local desc = vgui.Create("DLabel", window)
+        desc:SetWrap(true)
+        desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for " .. tostring(math.floor(getPTProtectionTime(Location.Find(LocalPlayer())) / 60)) .. " minutes.")
+        desc:SetFont("Trebuchet24")
+        desc:SetContentAlignment(5)
+        desc:SetSize(window:GetWide() - 16, 60)
+        desc:SetPos(8, window:GetTall() - 90)
+        desc:CenterHorizontal()
+        local rentButton = vgui.Create("TheaterButton", window)
+        rentButton:SetText("Purchase")
+        rentButton:SetSize(window:GetWide() - 8, 25)
+        rentButton:SetPos(0, window:GetTall() - rentButton:GetTall() - 4)
+        rentButton:CenterHorizontal()
+
+        rentButton.DoClick = function(btn)
+            -- net.Start("protectPT")
+            -- net.SendToServer()
+            RunConsoleCommand("say", "/protect")
+            window:Remove()
+        end
+
+        window.Think = function(pnl)
+            local t = getPTProtectionCost(getPTProtectionTime(Location.Find(LocalPlayer())))
+
+            if t > 0 then
+                rentButton:SetText("Purchase for " .. tostring(t) .. " Points")
+            else
+                rentButton:SetText("Play a video to buy protection")
+            end
+        end
+
+        window:Center()
+        window:MakePopup()
+    end
 end
 
 local function divideUpSeconds(seconds)

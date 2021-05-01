@@ -3,11 +3,9 @@
 SWEP.Author = "Noz"
 SWEP.Instructions = "Eat while watching Cars 2"
 SWEP.PrintName = "Beans"
-SWEP.Category = "Other"
 SWEP.ViewModel = "models/noz/beans.mdl"
 SWEP.WorldModel = "models/noz/beans.mdl"
 SWEP.Spawnable = true
-SWEP.AdminOnly = false
 SWEP.ViewModelFOV = 100
 SWEP.Primary.Clipsize = -1
 SWEP.Primary.DefaultClip = -1

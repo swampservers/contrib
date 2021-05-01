@@ -2,19 +2,14 @@
 -- INSTALL: CINEMA
 SWEP.PrintName = "Pickaxe"
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
-SWEP.DrawWeaponInfoBox = true
 SWEP.ViewModelFOV = 85
-SWEP.ViewModelFlip = false
 SWEP.Slot = 5
 SWEP.SlotPos = 2
 SWEP.Purpose = "Mine gold for points"
 SWEP.Instructions = "Primary: Mine\nSecondary: Craft"
-SWEP.Spawnable = false
 SWEP.AdminSpawnable = false
 SWEP.ViewModel = Model("models/staticprop/props_mining/pickaxe01.mdl")
 SWEP.WorldModel = Model("models/staticprop/props_mining/pickaxe01.mdl")
-SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
 SWEP.Primary.ClipSize = -1

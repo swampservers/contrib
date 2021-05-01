@@ -2,19 +2,14 @@
 -- INSTALL: CINEMA
 SWEP.PrintName = "DuckTape"
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
-SWEP.DrawWeaponInfoBox = true
 SWEP.ViewModelFOV = 85
-SWEP.ViewModelFlip = false
 SWEP.Slot = 5
 SWEP.SlotPos = 0
 SWEP.Purpose = "Build things"
 SWEP.Instructions = "Primary: Tape Object Down\nSecondary: Untape object\nReload: Destroy item (or quick spawn trash)"
-SWEP.Spawnable = false
 SWEP.AdminSpawnable = false
 SWEP.ViewModel = Model("models/swamponions/ducktape.mdl")
 SWEP.WorldModel = Model("models/swamponions/ducktape.mdl")
-SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
 SWEP.Primary.ClipSize = -1

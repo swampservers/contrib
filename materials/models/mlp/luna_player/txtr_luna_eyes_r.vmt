@@ -1,6 +1,0 @@
-"eyes"
-{
-	"$basetexture" "models/mlp/luna_player/eyeball_r"
-	"$iris" "models/mlp/luna_player/pupil_r"
-	"$halflambert" "1"
-}

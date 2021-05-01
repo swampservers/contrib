@@ -14,7 +14,7 @@
  "$AmbientOcclColor" "[0.3 0.3 0.3]" // Default 0.33, 0.33, 0.33
  "$Dilation" "0.5"     // Default 0.5
  "$Glossiness" "1"     // Glossiness of eye (1 is default, 0 is not glossy at all)
- "$ParallaxStrength" "0.1"          // Default 0.25
+ "$ParallaxStrength" "0.2"          // Default 0.25
  "$CorneaBumpStrength" "0.1"   // Default 1.0
 
  "$halflambert" "1"

@@ -2,19 +2,14 @@
 -- INSTALL: CINEMA
 SWEP.PrintName = "PaintBucket"
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
-SWEP.DrawWeaponInfoBox = true
 SWEP.ViewModelFOV = 85
-SWEP.ViewModelFlip = false
 SWEP.Slot = 5
 SWEP.SlotPos = 1
 SWEP.Purpose = "Paint things"
 SWEP.Instructions = "Primary: Paint object\nSecondary: Unpaint object\nReload: Change Color"
-SWEP.Spawnable = false
 SWEP.AdminSpawnable = false
 SWEP.ViewModel = Model("models/props_junk/metal_paintcan001a.mdl")
 SWEP.WorldModel = Model("models/props_junk/metal_paintcan001a.mdl")
-SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
 SWEP.Primary.ClipSize = -1

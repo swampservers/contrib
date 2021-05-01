@@ -4,11 +4,9 @@ SWEP.PrintName = "Golf Club"
 SWEP.ViewModel = "models/pyroteknik/putter.mdl"
 SWEP.WorldModel = "models/pyroteknik/putter.mdl"
 SWEP.Slot = 0
-SWEP.ViewModelFOV = 62
 SWEP.AutoSwitchTo = false
 -------------------------------------------------------------------
 SWEP.Author = "Swamp & PYROTEKNIK"
-SWEP.Contact = ""
 SWEP.Purpose = "Hit the thing with it"
 SWEP.Instructions = "Left/right click: place, hit ball\nReload: retry hole"
 SWEP.Spawnable = true

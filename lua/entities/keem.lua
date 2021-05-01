@@ -3,12 +3,11 @@
 --Keemstar entity for Swamp Cinema boss battle
 AddCSLuaFile()
 DEFINE_BASECLASS("base_gmodentity")
-ENT.Spawnable = false
 local MODEL = Model("models/gnome/gardengnome.mdl")
 
 function ENT:Initialize()
     self.lives = 3
-    self:EmitSound("keem/intro.wav")
+    self:EmitSound("keem/intro.ogg")
 
     --lights are rolling around even though the model isn't round!!
     if (SERVER) then
@@ -61,8 +60,8 @@ function ENT:Think()
         for k, v in pairs(temp) do
             if (((self.NoAttack or 0) < CurTime()) or (((not v:HasWeapon("weapon_flare")) or v:GetPos().y > self:GetPos().y) and (self.NoPunch or 0) < CurTime())) and SERVER then
                 if v:GetPos():DistToSqr(self:GetPos()) < 18000 then
-                    self:EmitSound("keem/nigger.wav")
-                    v:EmitSound("keem/punch.wav")
+                    self:EmitSound("keem/gamer.ogg")
+                    v:EmitSound("keem/punch.ogg")
                     v:SetPos(v:GetPos() + Vector(0, 0, 1))
                     v:SetVelocity(Vector(0, -500, 500))
                     v:TakeDamage(35, self, self)
@@ -127,16 +126,16 @@ function ENT:Think()
                 local taunt = math.random(1, 4)
 
                 if taunt <= 1 then
-                    self:EmitSound("keem/fuckingnigger.wav")
+                    self:EmitSound("keem/fuckinggamer.ogg")
                     self.NextTaunt = CurTime() + 1.2
                 elseif taunt <= 2 then
-                    self:EmitSound("keem/stupidbitch.wav")
+                    self:EmitSound("keem/stupidbitch.ogg")
                     self.NextTaunt = CurTime() + 1.8
                 elseif taunt <= 3 then
-                    self:EmitSound("keem/report.wav")
+                    self:EmitSound("keem/report.ogg")
                     self.NextTaunt = CurTime() + 2.2
                 else
-                    self:EmitSound("keem/swingatme.wav")
+                    self:EmitSound("keem/swingatme.ogg")
                     self.NextTaunt = CurTime() + 3
                     self.NoAttack = CurTime() + 5.5
                 end

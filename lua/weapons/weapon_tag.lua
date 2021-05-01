@@ -7,7 +7,6 @@ SWEP.Purpose = "Tag someone within 30 seconds or you will die."
 SWEP.Slot = 0
 SWEP.SlotPos = 4
 SWEP.Weight = 99
-SWEP.AutoSwitchTo = true
 SWEP.AutoSwitchFrom = false
 SWEP.Spawnable = true
 SWEP.ViewModel = Model("models/weapons/c_arms.mdl")

@@ -2,11 +2,7 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 SWEP.PrintName = "Peacekeeper"
-SWEP.Author = ""
-SWEP.Contact = ""
-SWEP.Purpose = ""
 SWEP.Instructions = "Keep the peace"
-SWEP.UseHands = false
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = false
 SWEP.ViewModelFOV = 70
@@ -17,7 +13,6 @@ SWEP.HoldType = "shotgun"
 SWEP.FiresUnderwater = true
 SWEP.Weight = 50
 SWEP.DrawCrosshair = false
-SWEP.DrawAmmo = true
 
 game.AddAmmoType({
     name = "peaceshot",

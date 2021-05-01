@@ -10,7 +10,7 @@ function SWEP:DrawHUD()
 end
 
 hook.Add("Think", "magicmissilelight", function()
-    for k, pBall in pairs(ents.FindByClass("prop_combine_ball")) do
+    for k, pBall in pairs(Ents.prop_combine_ball) do
         local dlight = DynamicLight(pBall:EntIndex())
 
         if (dlight) then

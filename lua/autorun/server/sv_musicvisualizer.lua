@@ -1,5 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+print("IMPORT SHELL")
+require("shell")
+print("OK")
 MVIS_LAST_REQUESTED_VIDEO = MVIS_LAST_REQUESTED_VIDEO or ""
 LOUNGE_DOORS = {}
 util.AddNetworkString("SetMusicVis")
@@ -41,15 +44,26 @@ timer.Create("musicvis_resetter", 0.5, 0, function()
     local th = theater.GetByLocation(Location.GetLocationIndexByName("Vapor Lounge"))
 
     if th:VideoType() == "youtube" and th:VideoDuration() > 0 and th:VideoDuration() < 10000 and MVIS_LAST_REQUESTED_VIDEO ~= th:VideoKey() then
-        print("MAKEREQUEST")
-
         --tell the server to prepare it, hopefully it works
-        http.Fetch("http://127.0.0.1/fft/?v=" .. th:VideoKey(), function(b, l, h, c)
-            print(b)
-        end, function(msg)
-            print(msg)
+        -- http.Fetch("http://127.0.0.1/fft/?v=" .. th:VideoKey(), function(b, l, h, c)
+        --     print(b)
+        -- end, function(msg)
+        --     print(msg)
+        -- end)
+        print("TRY2")
+
+        if MVIS_KILL_PREV then
+            print("KILLL")
+            MVIS_KILL_PREV()
+        end
+
+        MVIS_KILL_PREV = Shell.Execute({"/swamp/gm_shell/fft.sh", th:VideoKey()}, function(c, a, b)
+            print("STDOUT", a)
+            print("STDERR", b)
+            print("CODE", c)
         end)
 
+        -- MVIS_KILL_PREV = nil
         MVIS_LAST_REQUESTED_VIDEO = th:VideoKey()
     end
 
@@ -86,7 +100,7 @@ timer.Create("musicvis_resetter", 0.5, 0, function()
             table.insert(LOUNGE_DOORS, e)
             e:SetModel("models/props_c17/door01_left.mdl")
             e:SetSkin(2)
-            e:SetPos(Vector(2050, 768 + side * 46, 54))
+            e:SetPos(Vector(2048, 768 + side * 46, 54))
             e:SetAngles(Angle(0, 90 + 90 * side, 0))
             e.INNER_OPEN = side == 1 and 2 or 1
             e.OUTER_OPEN = side == 1 and 1 or 2

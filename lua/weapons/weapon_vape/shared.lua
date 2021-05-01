@@ -16,7 +16,6 @@ SWEP.BounceWeaponIcon = false
 SWEP.ViewModel = "models/swamponions/vape.mdl"
 SWEP.WorldModel = "models/swamponions/vape.mdl"
 SWEP.Spawnable = true
-SWEP.AdminOnly = false
 SWEP.Primary.Clipsize = -1
 SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = true

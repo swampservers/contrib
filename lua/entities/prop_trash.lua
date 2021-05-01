@@ -65,7 +65,6 @@ TrashNoFreezeNodes = {
 --{Vector(660,-1860,36),100},
 AddCSLuaFile()
 DEFINE_BASECLASS("base_gmodentity")
-ENT.Spawnable = false
 ENT.CanChangeTrashOwner = true
 
 function ENT:SetupDataTables()
@@ -140,8 +139,7 @@ if CLIENT then
     function ENT:Think()
         local light = PropTrashLightData[self:GetModel()]
 
-        if light and (self:GetTaped() or light.untaped) then
-            if EyePos():Distance(self:GetPos()) > (self:GetPos().z > -48 and 1000 or 3000) then return end
+        if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then 
             local dlight = DynamicLight(self:EntIndex())
 
             if dlight then
@@ -165,6 +163,9 @@ if CLIENT then
                 dlight.Decay = 500
                 dlight.DieTime = CurTime() + 1
             end
+        else
+            self:SetNextClientThink( CurTime() + 0.5 )
+            return true
         end
     end
 end

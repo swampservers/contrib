@@ -7,7 +7,6 @@ SWEP.Spawnable = true
 SWEP.Slot = 1
 SWEP.SlotPos = 1
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
 SWEP.ViewModel = "models/weapons/cg_ocrp2/v_taser.mdl"
 SWEP.WorldModel = "models/weapons/cg_ocrp2/w_taser.mdl"
 SWEP.MaxTaseDist = 120
