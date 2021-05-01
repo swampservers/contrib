@@ -68,7 +68,8 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
                 method = "HEAD",
                 url = key,
                 success = function(code)
-                    if (code == 200 or string.match(key, "cdn.discordapp.com")) then --whitelist for discord's annoying anti-scrape measure
+                    --whitelist for discord's annoying anti-scrape measure
+                    if (code == 200 or string.match(key, "cdn.discordapp.com")) then
                         onReceive(info)
                     else
                         onFailure('File is only available to you')

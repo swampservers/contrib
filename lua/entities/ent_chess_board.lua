@@ -2087,7 +2087,7 @@ if CLIENT then
             render.DepthRange(0, 0)
         end
 
-        if InChessGame or self.SpectatingTable or self:GetPos():DistToSqr(EyePos())<1000000 then
+        if InChessGame or self.SpectatingTable or self:GetPos():DistToSqr(EyePos()) < 1000000 then
             local i = 0
 
             for let, column in pairs(self.Pieces) do
@@ -2118,21 +2118,19 @@ if CLIENT then
                         self.PiecesEnts[i]:SetPos(pos)
                     end
 
-                    if self.PiecesEnts[i]:GetModel() ~= self.Models["White".. square.Class] then
+                    if self.PiecesEnts[i]:GetModel() ~= self.Models["White" .. square.Class] then
                         self.PiecesEnts[i]:SetModel(self.Models["White" .. square.Class])
                     end
 
-
                     local x = 1.25
+
                     if square.Team == "Black" then
                         x = 0.35
-                    -- else
-                        
+                        -- else
                     end
-                    render.MaterialOverride(WhiteMaterial)
-                    
 
-                    render.SetColorModulation(x,x,x)
+                    render.MaterialOverride(WhiteMaterial)
+                    render.SetColorModulation(x, x, x)
                     self.PiecesEnts[i]:DrawModel()
 
                     if self.DrawDouble and self.DrawDouble[square.Class] then
@@ -2143,7 +2141,7 @@ if CLIENT then
                     end
 
                     render.MaterialOverride()
-                    render.SetColorModulation(1,1,1)
+                    render.SetColorModulation(1, 1, 1)
                 end
             end
         end

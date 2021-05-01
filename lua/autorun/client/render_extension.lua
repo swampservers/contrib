@@ -23,9 +23,10 @@ function render.PopColorModulation()
     render.BaseSetColorModulation(col.x, col.y, col.z)
 end
 
-function cam.StartCulled3D2D(pos,ang,scale)
+function cam.StartCulled3D2D(pos, ang, scale)
     if (EyePos() - pos):Dot(ang:Up()) > 0 then
-        cam.Start3D2D(pos,ang,scale)
+        cam.Start3D2D(pos, ang, scale)
+
         return true
     end
 end

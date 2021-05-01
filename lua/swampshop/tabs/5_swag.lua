@@ -498,7 +498,7 @@ SS_Item({
     name = 'Commander Hat',
     description = "Look like a real commander",
     model = 'models/ccap/ccap.mdl',
-	color = Vector(0.5, 0, 0),
+    color = Vector(0.5, 0, 0),
     maxscale = 1.25,
     wear = {
         attach = "eyes",

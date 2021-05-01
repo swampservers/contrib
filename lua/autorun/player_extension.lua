@@ -194,22 +194,6 @@ function isPonyModel(modelName)
     return false
 end
 
-
 if CLIENT then
-    hook.Add("Think","PMViewOffset",function()
-        -- local lp = LocalPlayer()
-        -- if IsValid(lp) then
-        --     lp:SetupBones()
-        --     local att = lp:LookupAttachment("eyes")
-        --     if att>0 then
-        --         att = lp:GetAttachment(att)
-        --         if lp:Nick()=="Joker Gaming" then
-        --             local v = Vector(0,0,att.Pos.z - lp:GetPos().z)
-        --             -- v.z=10
-        --             print(v)
-        --             lp:SetViewOffset(v)
-        --         end
-        --     end
-        -- end
-    end)
+    hook.Add("Think", "PMViewOffset", function() end) -- local lp = LocalPlayer() -- if IsValid(lp) then --     lp:SetupBones() --     local att = lp:LookupAttachment("eyes") --     if att>0 then --         att = lp:GetAttachment(att) --         if lp:Nick()=="Joker Gaming" then --             local v = Vector(0,0,att.Pos.z - lp:GetPos().z) --             -- v.z=10 --             print(v) --             lp:SetViewOffset(v) --         end --     end -- end
 end

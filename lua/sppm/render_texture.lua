@@ -5,14 +5,11 @@
 --     if ent.ponydata_tex[name] == nil then return true end
 --     if ent.ponydata_tex[name .. "_hash"] == nil then return true end
 --     if ent.ponydata_tex[name .. "_hash"] ~= newhash then return true end
-
 --     return false
 -- end
-
 -- function PPM.GetBodyHash(ponydata)
 --     return tostring(ponydata.bodyt0) .. tostring(ponydata.bodyt1) .. tostring(ponydata.coatcolor) .. tostring(ponydata.bodyt1_color)
 -- end
-
 function FixVertexLitMaterial(Mat)
     local strImage = Mat:GetName()
 
@@ -154,7 +151,7 @@ PPM.currt_ponydata = nil
 PPM.rendertargettasks = {}
 
 PPM.rendertargettasks.bodytex = {
-    render = function(ent,  mats)
+    render = function(ent, mats)
         if PPM_CheckTexture(ent, "bodytex") then
             mats[PPMMAT_BODY]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_BODY]:SetTexture("$basetexture", ent.ponydata_tex.bodytex)
@@ -218,20 +215,18 @@ PPM.rendertargettasks.bodytex = {
 
         PPM.currt_success = true
     end
-    -- ,
-    -- hash = function(ponydata)
-    --     local hash = tostring(ponydata.bodyt0) .. tostring(ponydata.coatcolor) .. tostring(ponydata.gender)
-
-    --     for C = 1, 8 do
-    --         local detailvalue = ponydata["bodydetail" .. C] or 1
-    --         local detailcolor = ponydata["bodydetail" .. C .. "_c"] or Vector(0, 0, 0)
-    --         hash = hash .. tostring(detailvalue) .. tostring(detailcolor)
-    --     end
-
-    --     return hash
-    -- end
 }
 
+-- ,
+-- hash = function(ponydata)
+--     local hash = tostring(ponydata.bodyt0) .. tostring(ponydata.coatcolor) .. tostring(ponydata.gender)
+--     for C = 1, 8 do
+--         local detailvalue = ponydata["bodydetail" .. C] or 1
+--         local detailcolor = ponydata["bodydetail" .. C .. "_c"] or Vector(0, 0, 0)
+--         hash = hash .. tostring(detailvalue) .. tostring(detailcolor)
+--     end
+--     return hash
+-- end
 local _cleantexture = Material("models/ppm/partrender/clean.png"):GetTexture("$basetexture")
 
 PPM.rendertargettasks.hairtex1 = {
@@ -243,7 +238,6 @@ PPM.rendertargettasks.hairtex1 = {
             mats[PPMMAT_HAIR1]:SetVector("$color2", ent.ponydata.haircolor1)
             mats[PPMMAT_HAIR1]:SetTexture("$basetexture", _cleantexture)
         end
-
     end,
     --PPM.m_hair2:SetTexture("$basetexture",Material("models/ppm/partrender/clean.png"):GetTexture("$basetexture")) 
     drawfunc = function()
@@ -251,10 +245,10 @@ PPM.rendertargettasks.hairtex1 = {
         render.Clear(pony.haircolor1.x * 255, pony.haircolor1.y * 255, pony.haircolor1.z * 255, 255, true)
         PPM.tex_drawhairfunc(pony, "up", false)
     end
-    -- ,
-    -- hash = function(ponydata) return tostring(ponydata.haircolor1) .. tostring(ponydata.haircolor2) .. tostring(ponydata.haircolor3) .. tostring(ponydata.haircolor4) .. tostring(ponydata.haircolor5) .. tostring(ponydata.haircolor6) .. tostring(ponydata.mane) .. tostring(ponydata.manel) end
 }
 
+-- ,
+-- hash = function(ponydata) return tostring(ponydata.haircolor1) .. tostring(ponydata.haircolor2) .. tostring(ponydata.haircolor3) .. tostring(ponydata.haircolor4) .. tostring(ponydata.haircolor5) .. tostring(ponydata.haircolor6) .. tostring(ponydata.mane) .. tostring(ponydata.manel) end
 PPM.rendertargettasks.hairtex2 = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "hairtex2") then
@@ -264,16 +258,15 @@ PPM.rendertargettasks.hairtex2 = {
             mats[PPMMAT_HAIR2]:SetVector("$color2", ent.ponydata.haircolor2)
             mats[PPMMAT_HAIR2]:SetTexture("$basetexture", _cleantexture)
         end
-
     end,
     drawfunc = function()
         local pony = PPM.currt_ponydata
         PPM.tex_drawhairfunc(pony, "dn", false)
     end
-    -- ,
-    -- hash = function(ponydata) return tostring(ponydata.haircolor1) .. tostring(ponydata.haircolor2) .. tostring(ponydata.haircolor3) .. tostring(ponydata.haircolor4) .. tostring(ponydata.haircolor5) .. tostring(ponydata.haircolor6) .. tostring(ponydata.mane) .. tostring(ponydata.manel) end
 }
 
+-- ,
+-- hash = function(ponydata) return tostring(ponydata.haircolor1) .. tostring(ponydata.haircolor2) .. tostring(ponydata.haircolor3) .. tostring(ponydata.haircolor4) .. tostring(ponydata.haircolor5) .. tostring(ponydata.haircolor6) .. tostring(ponydata.mane) .. tostring(ponydata.manel) end
 PPM.rendertargettasks.tailtex = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "tailtex") then
@@ -282,7 +275,7 @@ PPM.rendertargettasks.tailtex = {
             mats[PPMMAT_TAIL2]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_TAIL1]:SetTexture("$basetexture", ent.ponydata_tex.tailtex)
         else
-            print("TAIL", ent, ent.ponydata.haircolor1,ent.ponydata.haircolor2)
+            print("TAIL", ent, ent.ponydata.haircolor1, ent.ponydata.haircolor2)
             mats[PPMMAT_TAIL1]:SetVector("$color2", ent.ponydata.haircolor1)
             mats[PPMMAT_TAIL2]:SetVector("$color2", ent.ponydata.haircolor2)
             mats[PPMMAT_TAIL1]:SetTexture("$basetexture", _cleantexture)
@@ -293,10 +286,10 @@ PPM.rendertargettasks.tailtex = {
         local pony = PPM.currt_ponydata
         PPM.tex_drawhairfunc(pony, "up", true)
     end
-    -- ,
-    -- hash = function(ponydata) return tostring(ponydata.haircolor1) .. tostring(ponydata.haircolor2) .. tostring(ponydata.haircolor3) .. tostring(ponydata.haircolor4) .. tostring(ponydata.haircolor5) .. tostring(ponydata.haircolor6) .. tostring(ponydata.tail) end
 }
 
+-- ,
+-- hash = function(ponydata) return tostring(ponydata.haircolor1) .. tostring(ponydata.haircolor2) .. tostring(ponydata.haircolor3) .. tostring(ponydata.haircolor4) .. tostring(ponydata.haircolor5) .. tostring(ponydata.haircolor6) .. tostring(ponydata.tail) end
 PPM.rendertargettasks.eyeltex = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "eyeltex") then
@@ -309,10 +302,10 @@ PPM.rendertargettasks.eyeltex = {
         local pony = PPM.currt_ponydata
         PPM.tex_draweyefunc(pony, false)
     end
-    -- ,
-    -- hash = function(ponydata) return tostring(ponydata.eyecolor_bg) .. tostring(ponydata.eyecolor_iris) .. tostring(ponydata.eyecolor_grad) .. tostring(ponydata.eyecolor_line1) .. tostring(ponydata.eyecolor_line2) .. tostring(ponydata.eyecolor_hole) .. tostring(ponydata.eyeirissize) .. tostring(ponydata.eyeholesize) .. tostring(ponydata.eyejholerssize) .. tostring(ponydata.eyehaslines) end
 }
 
+-- ,
+-- hash = function(ponydata) return tostring(ponydata.eyecolor_bg) .. tostring(ponydata.eyecolor_iris) .. tostring(ponydata.eyecolor_grad) .. tostring(ponydata.eyecolor_line1) .. tostring(ponydata.eyecolor_line2) .. tostring(ponydata.eyecolor_hole) .. tostring(ponydata.eyeirissize) .. tostring(ponydata.eyeholesize) .. tostring(ponydata.eyejholerssize) .. tostring(ponydata.eyehaslines) end
 PPM.rendertargettasks.eyertex = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "eyertex") then
@@ -320,16 +313,15 @@ PPM.rendertargettasks.eyertex = {
         else
             mats[PPMMAT_EYER]:SetTexture("$Iris", _cleantexture)
         end
-
     end,
     drawfunc = function()
         local pony = PPM.currt_ponydata
         PPM.tex_draweyefunc(pony, true)
     end
-    -- ,
-    -- hash = function(ponydata) return tostring(ponydata.eyecolor_bg) .. tostring(ponydata.eyecolor_iris) .. tostring(ponydata.eyecolor_grad) .. tostring(ponydata.eyecolor_line1) .. tostring(ponydata.eyecolor_line2) .. tostring(ponydata.eyecolor_hole) .. tostring(ponydata.eyeirissize) .. tostring(ponydata.eyeholesize) .. tostring(ponydata.eyejholerssize) .. tostring(ponydata.eyehaslines) end
 }
 
+-- ,
+-- hash = function(ponydata) return tostring(ponydata.eyecolor_bg) .. tostring(ponydata.eyecolor_iris) .. tostring(ponydata.eyecolor_grad) .. tostring(ponydata.eyecolor_line1) .. tostring(ponydata.eyecolor_line2) .. tostring(ponydata.eyecolor_hole) .. tostring(ponydata.eyeirissize) .. tostring(ponydata.eyeholesize) .. tostring(ponydata.eyejholerssize) .. tostring(ponydata.eyehaslines) end
 PPM.tex_drawhairfunc = function(pony, UPDN, TAIL)
     local hairnum = pony.mane
 
@@ -445,31 +437,33 @@ end
 --/PPM.currt_success =true
 --MsgN(UPDN,TAIL,hairnum," = ",PPM.currt_success)
 PPM.manerender = {
-up5 = {0, 1}
-,up6 = {0, 1}
-,up8 = {0, 2}
-,up9 = {0, 3}
-,up10 = {0, 1}
-,up11 = {0, 3}
-,up12 = {0, 1}
-,up13 = {0, 1}
-,up14 = {0, 1}
-,up15 = {0, 1}
-,dn5 = {0, 1}
-,dn8 = {3, 2}
-,dn9 = {3, 2}
-,dn10 = {0, 3}
-,dn11 = {0, 2}
-,dn12 = {0, 1}
-,tl5 = {0, 1}
-,tl8 = {0, 5}
-,tl10 = {0, 1}
-,tl11 = {0, 3}
-,tl12 = {0, 2}
-,tl13 = {0, 1}
-,tl14 = {0, 1}
+    up5 = {0, 1},
+    up6 = {0, 1},
+    up8 = {0, 2},
+    up9 = {0, 3},
+    up10 = {0, 1},
+    up11 = {0, 3},
+    up12 = {0, 1},
+    up13 = {0, 1},
+    up14 = {0, 1},
+    up15 = {0, 1},
+    dn5 = {0, 1},
+    dn8 = {3, 2},
+    dn9 = {3, 2},
+    dn10 = {0, 3},
+    dn11 = {0, 2},
+    dn12 = {0, 1},
+    tl5 = {0, 1},
+    tl8 = {0, 5},
+    tl10 = {0, 1},
+    tl11 = {0, 3},
+    tl12 = {0, 2},
+    tl13 = {0, 1},
+    tl14 = {0, 1}
 }
+
 PPM.manecolorcounts = {1, 1, 1, 1, 1, 1}
+
 PPM.defaultHairColors = {Vector(252, 92, 82) / 256, Vector(254, 134, 60) / 256, Vector(254, 241, 160) / 256, Vector(98, 188, 80) / 256, Vector(38, 165, 245) / 256, Vector(124, 80, 160) / 256}
 
 PPM.rendertargettasks.ccmarktex = {
@@ -478,15 +472,14 @@ PPM.rendertargettasks.ccmarktex = {
         if PPM_CheckTexture(ent, "ccmarktex") then
             mats[PPMMAT_CMARK]:SetTexture("$basetexture", ent.ponydata_tex.ccmarktex)
         else
-            if (ent.ponydata == nil) then return  end
-            if (ent.ponydata.cmark == nil) then return  end
-            if (PPM.m_cmarks[ent.ponydata.cmark] == nil) then return  end
-            if (PPM.m_cmarks[ent.ponydata.cmark][2] == nil) then return  end
-            if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == nil) then return  end
-            if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == NULL) then return  end
+            if (ent.ponydata == nil) then return end
+            if (ent.ponydata.cmark == nil) then return end
+            if (PPM.m_cmarks[ent.ponydata.cmark] == nil) then return end
+            if (PPM.m_cmarks[ent.ponydata.cmark][2] == nil) then return end
+            if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == nil) then return end
+            if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == NULL) then return end
             mats[PPMMAT_CMARK]:SetTexture("$basetexture", PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture"))
         end
-
     end,
     drawfunc = function()
         local pony = PPM.currt_ponydata
@@ -497,6 +490,6 @@ PPM.rendertargettasks.ccmarktex = {
             PPM.currt_success = false
         end
     end
-    -- ,
-    -- hash = function(ponydata) return tostring(ponydata._cmark[1] ~= nil) end
 }
+-- ,
+-- hash = function(ponydata) return tostring(ponydata._cmark[1] ~= nil) end

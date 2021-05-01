@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 hook.Add("Think", "RequestVideoCloser", function()
     if ValidPanel(RequestPanel) and gui.IsGameUIVisible() then
         gui.HideGameUI()
@@ -10,13 +9,13 @@ hook.Add("Think", "RequestVideoCloser", function()
 end)
 
 hook.Add("PostRenderVGUI", "PostDrawHUD_RequestedVideo", function()
-    local alp = 1- ((CurTime() - (LastRequestClickTime or -10))*0.7)^4
-    if alp>0 then
-        draw.WordBox( 4, gui.MouseX()+20, gui.MouseY(), "Requested!", "Trebuchet24", Color(0,0,0,200*alp), Color(255,255,255,255*alp) )
-        draw.WordBox( 4, gui.MouseX()+24, gui.MouseY()+30, "Esc to close", "Trebuchet18", Color(0,0,0,200*alp), Color(255,255,255,255*alp) )
-    end
-end )
+    local alp = 1 - ((CurTime() - (LastRequestClickTime or -10)) * 0.7) ^ 4
 
+    if alp > 0 then
+        draw.WordBox(4, gui.MouseX() + 20, gui.MouseY(), "Requested!", "Trebuchet24", Color(0, 0, 0, 200 * alp), Color(255, 255, 255, 255 * alp))
+        draw.WordBox(4, gui.MouseX() + 24, gui.MouseY() + 30, "Esc to close", "Trebuchet18", Color(0, 0, 0, 200 * alp), Color(255, 255, 255, 255 * alp))
+    end
+end)
 
 function RequestVideoURL(url)
     -- if ValidPanel(RequestPanel) then
@@ -24,7 +23,6 @@ function RequestVideoURL(url)
     --     RequestPanel:Remove()
     -- end
     LastRequestClickTime = CurTime()
-
     LastURLRequested = url
     --RunConsoleCommand( "cinema_video_request", url )
     net.Start("VideoRequest")

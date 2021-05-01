@@ -250,7 +250,11 @@ if SERVER then
 
     function THEATER:SyncThumbnail()
         if not IsValid(self._ThumbEnt) then return end
-        if self._ThumbEnt:GetTheaterName()~=self:Name() then        self._ThumbEnt:SetTheaterName(self:Name()) end
+
+        if self._ThumbEnt:GetTheaterName() ~= self:Name() then
+            self._ThumbEnt:SetTheaterName(self:Name())
+        end
+
         self._ThumbEnt:SetTitle(self:VideoTitle())
         --self._ThumbEnt:SetThumbnail( self:VideoThumbnail() )
         self._ThumbEnt:SetService(self._Video and self._Video:Service().ClassName or "")

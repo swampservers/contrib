@@ -139,7 +139,7 @@ if CLIENT then
     function ENT:Think()
         local light = PropTrashLightData[self:GetModel()]
 
-        if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then 
+        if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then
             local dlight = DynamicLight(self:EntIndex())
 
             if dlight then
@@ -164,14 +164,15 @@ if CLIENT then
                 dlight.DieTime = CurTime() + 1
             end
         else
-            self:SetNextClientThink( CurTime() + 0.5 )
+            self:SetNextClientThink(CurTime() + 0.5)
+
             return true
         end
     end
 end
 
-function ENT:Draw() 
-    if self:GetPos():DistToSqr(EyePos()) > AutoCullBase()*(self:GetModelRadius() or 1)*3.5 then return end
+function ENT:Draw()
+    if self:GetPos():DistToSqr(EyePos()) > AutoCullBase() * (self:GetModelRadius() or 1) * 3.5 then return end
 
     if PropTrashLookedAt == self then
         local cr, cg, cb = render.GetColorModulation()

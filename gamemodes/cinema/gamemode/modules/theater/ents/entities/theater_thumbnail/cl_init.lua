@@ -2,10 +2,9 @@
 -- INSTALL: CINEMA
 include('sh_init.lua')
 ENT.RenderGroup = RENDERGROUP_OPAQUE
-
 local ThumbWidth = 512 -- Expected to be PO2
 local ThumbHeight = 384 -- Expected <= width
-local RenderScale = 0.2 * (480/512)
+local RenderScale = 0.2 * (480 / 512)
 local DefaultThumbnail = Material("theater/static.vmt")
 
 function ENT:Draw()
@@ -28,24 +27,26 @@ function ENT:Draw()
     end
 end
 
-
 function ENT:DrawThumbnail()
-    
     local theatername_esc = string.JavascriptSafe(self:GetTheaterName())
 
     if self:GetNWBool("Rentable") then
         location = self:GetNWInt("Location")
         local tb = protectedTheaterTable[location]
+
         if tb ~= nil and tb["time"] > 1 then
-            theatername_esc = theatername_esc.."<br>Protected"
+            theatername_esc = theatername_esc .. "<br>Protected"
         end
     end
 
     local videotitle = self:GetTitle()
-
     local thumbnail = self:GetThumbnail()
-    if thumbnail=="" then thumbnail="http://swampservers.net/video/logos/movie.png" end
-    local background = [[background:black url(]]..string.JavascriptSafe(thumbnail)..[[) no-repeat fixed center;]]
+
+    if thumbnail == "" then
+        thumbnail = "http://swampservers.net/video/logos/movie.png"
+    end
+
+    local background = [[background:black url(]] .. string.JavascriptSafe(thumbnail) .. [[) no-repeat fixed center;]]
 
     if self:GetService() == "" then
         surface.SetDrawColor(80, 80, 80)
@@ -54,10 +55,11 @@ function ENT:DrawThumbnail()
         background = ""
     end
 
-    local setting = theatername_esc..":"..videotitle..":"..background
- 
+    local setting = theatername_esc .. ":" .. videotitle .. ":" .. background
+
     if self.ThumbMat then
         local t = self.ThumbMat:GetTexture("$basetexture")
+
         if self.ThumbMat:IsError() or t:IsError() or t:IsErrorTexture() then
             self.ThumbMat = nil
         end
@@ -67,6 +69,7 @@ function ENT:DrawThumbnail()
         if ValidPanel(self.HTML) then
             self.HTML:Remove()
         end
+
         -- 
         self.LastSetting = setting
         self.ThumbMat = nil
@@ -85,7 +88,7 @@ function ENT:DrawThumbnail()
                 <style>
                 body {
                     margin:0;
-                    ]]..background..[[
+                    ]] .. background .. [[
                     background-size:contain;
                 }
                 div {
@@ -107,8 +110,8 @@ function ENT:DrawThumbnail()
                 </style>
                 </head>
                 <body>
-                    <div id="div1">]]..theatername_esc..[[</div>
-                    <div id="div2">]]..string.JavascriptSafe(videotitle)..[[</div>
+                    <div id="div1">]] .. theatername_esc .. [[</div>
+                    <div id="div2">]] .. string.JavascriptSafe(videotitle) .. [[</div>
                     <script>
                     var div = document.getElementById("div2");
                     div.style.fontSize = Math.min(10,((div.innerText.length > 50 ? 400 : 200)/div.innerText.length))+"vw";
@@ -116,9 +119,8 @@ function ENT:DrawThumbnail()
                 </body>
                 </html>
             ]])
-            
-            return
 
+            return
         elseif not self.HTML:IsLoading() and not self.JSDelay then
             self.JSDelay = true
 
@@ -141,6 +143,6 @@ function ENT:DrawThumbnail()
     if self.ThumbMat then
         surface.SetDrawColor(255, 255, 255)
         surface.SetMaterial(self.ThumbMat)
-        surface.DrawTexturedRectUV(0, 0, ThumbWidth, ThumbHeight, 0,0,1,ThumbHeight/ThumbWidth)
+        surface.DrawTexturedRectUV(0, 0, ThumbWidth, ThumbHeight, 0, 0, 1, ThumbHeight / ThumbWidth)
     end
 end

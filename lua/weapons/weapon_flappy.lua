@@ -31,7 +31,6 @@ function SWEP:Deploy()
         ply.FedoraPoint:Spawn()
         ply.FedoraPoint:Activate()
     end
-
     -- if not IsValid(ply:GetNWEntity("fedora_point")) then
     --     local fp = ents.Create("ent_fedora_point")
     --     fp:SetOwner(ply)

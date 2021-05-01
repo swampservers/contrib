@@ -9,7 +9,6 @@ function ENT:SetupDataTables()
     self:NetworkVar("String", 1, "Title")
     self:NetworkVar("String", 2, "Service")
     self:NetworkVar("Entity", 0, "TheaterOwner")
-    
 
     if SERVER then
         self:SetTitle('NoVideoPlaying')
@@ -26,15 +25,18 @@ function ENT:OnRemove()
 end
 
 function ENT:GetThumbnail()
-    local i,t = 1,""
-    while self:GetNW2String("Thumbnail"..tostring(i),"")~="" do
-      t = t..self:GetNW2String("Thumbnail"..tostring(i),i)
-      i=i+1
+    local i, t = 1, ""
+
+    while self:GetNW2String("Thumbnail" .. tostring(i), "") ~= "" do
+        t = t .. self:GetNW2String("Thumbnail" .. tostring(i), i)
+        i = i + 1
     end
+
     return t
-  end
-  
+end
+
 function ENT:GetTheaterOwnerName()
     local x = IsValid(self:GetTheaterOwner())
+
     return IsValid(x) and x:Nick() or ""
 end

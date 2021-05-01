@@ -12,20 +12,10 @@ PPM.m_tail2 = Material("models/ppm/base/tail_color_2")
 PPM.m_eyel = Material("models/ppm/base/eye_l")
 PPM.m_eyer = Material("models/ppm/base/eye_r")
 
-PPM_player_mat = {
-    PPM.m_eyel,
-    PPM.m_eyer,
-    PPM.m_body,
-    PPM.m_horn,
-    PPM.m_wings,
-    PPM.m_hair1,
-    PPM.m_hair2,
-    PPM.m_tail1,
-    PPM.m_tail2,
-    PPM.m_cmark --todo remove built in cmarks?
-    --cmark and eyelashes come next
-}
+PPM_player_mat = {PPM.m_eyel, PPM.m_eyer, PPM.m_body, PPM.m_horn, PPM.m_wings, PPM.m_hair1, PPM.m_hair2, PPM.m_tail1, PPM.m_tail2, PPM.m_cmark}
 
+--todo remove built in cmarks?
+--cmark and eyelashes come next
 PPMMAT_EYEL = 1
 PPMMAT_EYER = 2
 PPMMAT_BODY = 3

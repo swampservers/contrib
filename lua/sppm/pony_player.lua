@@ -433,27 +433,21 @@ end
 if CLIENT then
     -- function PPM.RELOAD()
     -- end
-
     -- function getValues()
     --     local pony = PPM.getPonyValues(LocalPlayer(), false)
-
     --     for k, v in SortedPairs(pony) do
     --         MsgN(k .. " = " .. tostring(v))
     --     end
     -- end
-
     -- function getValuesl()
     --     local pony = PPM.getPonyValues(LocalPlayer(), true)
-
     --     for k, v in SortedPairs(pony) do
     --         MsgN(k .. " = " .. tostring(v))
     --     end
     -- end
-
     -- function reloadPPM()
     --     PPM.isLoaded = false
     -- end
-
     function getLocalBoneAng(ent, boneid)
         local wangle = ent:GetBoneMatrix(boneid):GetAngles()
         local parentbone = ent:GetBoneParent(boneid)
@@ -471,7 +465,6 @@ if CLIENT then
 
         return la
     end
-
     -- concommand.Add("ppm_getvalues", getValues)
     -- concommand.Add("ppm_getvaluesl", getValuesl)
     -- concommand.Add("ppm_reload", reloadPPM)

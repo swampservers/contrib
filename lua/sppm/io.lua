@@ -1,6 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 net.Receive("PonyCfg", function(len)
     local ply = net.ReadEntity()
     local cfg = net.ReadTable()
@@ -65,8 +63,6 @@ function PPM.Save(filename, ponydata)
     MsgN("saving .... " .. "ppm/" .. filename)
     file.Write("ppm/" .. filename, saveframe)
 end
- 
- 
 
 hook.Add("Think", "PPM_Loader", function()
     if IsValid(LocalPlayer()) then
@@ -75,13 +71,13 @@ hook.Add("Think", "PPM_Loader", function()
         else
             PPM.randomizePony(LocalPlayer())
         end
+
         SendLocalPonyCfg()
         hook.Remove("Think", "PPM_Loader")
     end
 end)
- 
 
-function SendLocalPonyCfg() 
+function SendLocalPonyCfg()
     local tab = LocalPlayer().ponydata
     assert(istable(tab))
     -- if not istable(tbl) then return end
