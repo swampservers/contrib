@@ -32,7 +32,8 @@ function PPM.CreateTexture(tname, data)
     local w, h = ScrW(), ScrH()
     local rttex = nil
     local size = data.size or 512
-    rttex = GetRenderTargetEx(tname, size, size,  RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
+    rttex = GetRenderTargetEx(tname, size, size, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_BGR888)
+
     if data.predrawfunc ~= nil then
         data.predrawfunc()
     end

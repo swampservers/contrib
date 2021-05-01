@@ -88,7 +88,6 @@ if CLIENT then
             -- mdl.backgroundmodel_sky:Remove()
             -- mdl.backgroundmodel_ground:Remove()
             mdl.backgroundmodel:Remove()
-
             ReloadCurrentPony() --the editor adjusts local ponydata, if they didnt save then reload their current
         end
 
@@ -121,7 +120,6 @@ if CLIENT then
 
         function mdl:LayoutEntity()
             -- PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
-
             PPM.editor3_pony = self.Entity
             self.Entity.isEditorPony = true
 
@@ -136,7 +134,6 @@ if CLIENT then
             -- if LocalPlayer().pi_wear[50] ~= nil then
             --     self.Entity.ponydata.bodyt0 = LocalPlayer().pi_wear[50].wearid or 1
             -- end
-
             PPM.editor3_pony:SetPoseParameter("move_x", 0)
 
             -- if (LocalPlayer().pi_wear ~= nil) then
@@ -145,7 +142,6 @@ if CLIENT then
             --         PPM.setBodygroupSafe(mdl.model2, item.bid, item.bval)
             --     end
             -- end
-
             self.OnMousePressed = function()
                 self.ismousepressed = true
                 self.mdx, self.mdy = self:CursorPos()
@@ -373,7 +369,6 @@ if CLIENT then
             SendLocalPonyCfg()
             -- hook.Run("PPM.Apply", window)
             colorFlash(APPLY, 0.1, Color(0, 200, 0), Color(255, 255, 255))
-
         end
 
         --

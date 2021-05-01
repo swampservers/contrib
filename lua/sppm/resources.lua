@@ -11,7 +11,6 @@ PPM.m_tail1 = Material("models/ppm/base/tail_color_1")
 PPM.m_tail2 = Material("models/ppm/base/tail_color_2")
 PPM.m_eyel = Material("models/ppm/base/eye_l")
 PPM.m_eyer = Material("models/ppm/base/eye_r")
-
 PPM.m_cmark:SetTexture("$basetexture", "lights/white")
 PPM.m_eyel:SetTexture("$Iris", "lights/white")
 PPM.m_eyer:SetTexture("$Iris", "lights/white")
@@ -87,14 +86,9 @@ for index, wrappedPath in ipairs(PPM.m_cmarks) do
     PPM.m_cmarks[index][2] = Material(wrappedPath[1])
 end
 
-PPM.m_bodyt0 = {Material("models/ppm/texclothes/clothes_wbs_light.png"),
- Material("models/ppm/texclothes/clothes_wbs_full.png"), 
- Material("models/ppm/texclothes/clothes_sbs_full.png"), 
- Material("models/ppm/texclothes/clothes_sbs_light.png"),
-  Material("models/ppm/texclothes/clothes_royalguard.png")}
+PPM.m_bodyt0 = {Material("models/ppm/texclothes/clothes_wbs_light.png"), Material("models/ppm/texclothes/clothes_wbs_full.png"), Material("models/ppm/texclothes/clothes_sbs_full.png"), Material("models/ppm/texclothes/clothes_sbs_light.png"), Material("models/ppm/texclothes/clothes_royalguard.png")}
 
 -- PPM.m_bodyt0[6] = PPM.m_bodyt0[5] -- Done to prevent bizarre memory bug in GMOD itself... edit: there was no bug in "gmod itself" you retard
-
 -- MAKE SURE TO INCREASE LIMITS IN sppm.lua IF YOU CHANGE THIS, THE LIMIT SHOULD BE len+1 BECAUSE 1 MEANS NO OVERLAY
 PPM.m_bodydetails = {
     {Material("models/ppm/partrender/body_leggrad1.png"), "Leg grad"},

@@ -35,7 +35,6 @@ function PPM_Load(filename)
     PPM_SetPonyCfg(LocalPlayer(), SanitizePonyCfg(ponydata))
 end
 
-
 function PPM_Randomize()
     local ponydata = {}
     ponydata.kind = math.Round(math.Rand(1, 4))
@@ -48,13 +47,16 @@ function PPM_Randomize()
     ponydata.eye = math.Round(math.Rand(1, EYES_COUNT))
     ponydata.eyelash = math.Round(math.Rand(1, 5))
     ponydata.coatcolor = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
+
     for I = 1, 6 do
         ponydata["haircolor" .. I] = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
     end
+
     for I = 1, 8 do
         ponydata["bodydetail" .. I] = 1
         ponydata["bodydetail" .. I .. "_c"] = Vector(0, 0, 0)
     end
+
     ponydata.cmark = math.Round(math.Rand(1, MARK_COUNT))
     ponydata.bodyweight = math.Rand(0.8, 1.2)
     ponydata.bodyt0 = 1 --math.Round(math.Rand(1,4)) 
@@ -72,12 +74,10 @@ function PPM_Randomize()
     PPM_SetPonyCfg(LocalPlayer(), ponydata)
 end
 
-
-
 function PPM_Save(filename)
     local saveframe = {}
 
-    for k, v in SortedPairs(LocalPlayer().ponydata) do 
+    for k, v in SortedPairs(LocalPlayer().ponydata) do
         if type(v) == "number" then
             table.insert(saveframe, "\n " .. k .. " " .. tostring(v))
         elseif type(v) == "Vector" then
@@ -102,8 +102,6 @@ function PPM_Save(filename)
     MsgN("saving .... " .. "ppm/" .. filename)
     file.Write("ppm/" .. filename, saveframe)
 end
- 
-
 
 function ReloadCurrentPony()
     if (file.Exists("ppm/_current.txt", "DATA")) then
@@ -111,16 +109,17 @@ function ReloadCurrentPony()
     else
         PPM_Randomize()
     end
+
     SendLocalPonyCfg()
 end
 
 hook.Add("Think", "PPM_Loader", function()
-    if IsValid(LocalPlayer()) then -- and LocalPlayer():IsPPMPony() then --disabled so it appears in shop
+    -- and LocalPlayer():IsPPMPony() then --disabled so it appears in shop
+    if IsValid(LocalPlayer()) then
         ReloadCurrentPony()
         hook.Remove("Think", "PPM_Loader")
     end
-end) 
-
+end)
 
 function SendLocalPonyCfg()
     local tab = LocalPlayer().ponydata

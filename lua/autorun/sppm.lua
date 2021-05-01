@@ -7,21 +7,19 @@ FindMetaTable("Entity").IsPPMPony = function(self) return self:GetModel() == PPM
 
 FindMetaTable("Entity").PonyPlayer = function(self)
     if self:IsPlayer() then return self end
-	if self:EntIndex() == -1 then return LocalPlayer() end --pointshop model
-	if self.RagdollSourcePlayer then return self.RagdollSourcePlayer end
-	-- if self.PonyPlayerEntity then return 
+    if self:EntIndex() == -1 then return LocalPlayer() end --pointshop model
+    if self.RagdollSourcePlayer then return self.RagdollSourcePlayer end
+    -- if self.PonyPlayerEntity then return 
     -- if its a ragdoll then return owner
     print(self)
 end
 
 PPM.serverPonydata = PPM.serverPonydata or {}
 PPM.isLoaded = false
-
 -- Deleted items because apparently it was never even meant to save, what a garbage system!
 -- Even if I added saving of the items, it would be incompatible with other PPM servers.
 -- Plus it is extra complication.
 -- include("sppm/items.lua") 
-
 include("sppm/pony_player.lua")
 
 if CLIENT then
@@ -44,14 +42,6 @@ else
     AddCSLuaFile("sppm/render_texture.lua")
     AddCSLuaFile("sppm/resources.lua")
 end
-
-
-
-
-
-
-
-
 
 -- TODO SET MAX NUMBERS TO THE CORRECT MAX OR AT LEAST HIGH ENOUGH
 local ponydata_numbers = {
@@ -85,9 +75,29 @@ local ponydata_numbers = {
 }
 
 local ponydata_vectors = {
-    bodydetail1_c={},
-    bodydetail2_c={}, bodydetail3_c={}, bodydetail4_c={},bodydetail5_c={},bodydetail6_c={},bodydetail7_c={},bodydetail8_c={},bodyt1_color={},coatcolor={},eyecolor_bg={},eyecolor_grad={},
-    eyecolor_hole={Vector(0,0,0)},eyecolor_iris={},eyecolor_line1={},eyecolor_line2={},haircolor1={},haircolor2={},haircolor3={},haircolor4={},haircolor5={},haircolor6={}}
+    bodydetail1_c = {},
+    bodydetail2_c = {},
+    bodydetail3_c = {},
+    bodydetail4_c = {},
+    bodydetail5_c = {},
+    bodydetail6_c = {},
+    bodydetail7_c = {},
+    bodydetail8_c = {},
+    bodyt1_color = {},
+    coatcolor = {},
+    eyecolor_bg = {},
+    eyecolor_grad = {},
+    eyecolor_hole = {Vector(0, 0, 0)},
+    eyecolor_iris = {},
+    eyecolor_line1 = {},
+    eyecolor_line2 = {},
+    haircolor1 = {},
+    haircolor2 = {},
+    haircolor3 = {},
+    haircolor4 = {},
+    haircolor5 = {},
+    haircolor6 = {}
+}
 
 function SanitizePonyCfg(in_cfg)
     local cfg = {}
@@ -121,7 +131,6 @@ function SanitizePonyCfg(in_cfg)
     return cfg
 end
 
-
 local BODYGROUP_BODY = 1
 local BODYGROUP_HORN = 2
 local BODYGROUP_WING = 3
@@ -134,29 +143,29 @@ local EYES_COUNT = 10
 local MARK_COUNT = 27
 
 function PPM_SetBodyGroups(ent)
-	if not ent:IsPPMPony() then return end
-	local ply = ent:PonyPlayer()
-	if not IsValid(ply) then return end
-	local ponydata = ply.ponydata
-	if not ponydata then return end
+    if not ent:IsPPMPony() then return end
+    local ply = ent:PonyPlayer()
+    if not IsValid(ply) then return end
+    local ponydata = ply.ponydata
+    if not ponydata then return end
+    local h, w
 
-	local h,w
-	if ponydata.kind == 1 then
-		h,w=1,1
+    if ponydata.kind == 1 then
+        h, w = 1, 1
     elseif ponydata.kind == 2 then
-        h,w=1,0
+        h, w = 1, 0
     elseif ponydata.kind == 3 then
-        h,w=0,1
+        h, w = 0, 1
     else
-        h,w=0,0
+        h, w = 0, 0
     end
 
-	ent:SetBodygroup( BODYGROUP_HORN, h)
-	ent:SetBodygroup( BODYGROUP_WING, w)
-    ent:SetBodygroup( BODYGROUP_BODY, ponydata.gender - 1)
-    ent:SetBodygroup( BODYGROUP_MANE, ponydata.mane - 1)
-    ent:SetBodygroup( BODYGROUP_MANE_LOW, ponydata.manel - 1)
-    ent:SetBodygroup( BODYGROUP_TAIL, ponydata.tail - 1)
-    ent:SetBodygroup( BODYGROUP_CMARK, ponydata.cmark_enabled - 1)
-	ent:SetBodygroup( BODYGROUP_EYELASH, (ponydata.gender == 1) and (ponydata.eyelash - 1) or 5)
+    ent:SetBodygroup(BODYGROUP_HORN, h)
+    ent:SetBodygroup(BODYGROUP_WING, w)
+    ent:SetBodygroup(BODYGROUP_BODY, ponydata.gender - 1)
+    ent:SetBodygroup(BODYGROUP_MANE, ponydata.mane - 1)
+    ent:SetBodygroup(BODYGROUP_MANE_LOW, ponydata.manel - 1)
+    ent:SetBodygroup(BODYGROUP_TAIL, ponydata.tail - 1)
+    ent:SetBodygroup(BODYGROUP_CMARK, ponydata.cmark_enabled - 1)
+    ent:SetBodygroup(BODYGROUP_EYELASH, (ponydata.gender == 1) and (ponydata.eyelash - 1) or 5)
 end

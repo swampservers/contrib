@@ -67,7 +67,6 @@ end
 
 function meta:SetModel(modelName)
     self:TrueSetModel(modelName)
-
     if GAMEMODE.FolderName == "spades" then return end
 
     if isPonyModel(modelName) then
@@ -105,8 +104,7 @@ function meta:SetModel(modelName)
 
     self:SetSubMaterial()
     self:SetDefaultJumpPower()
-
-    hook.Run("PlayerModelApplied",self,modelName)
+    hook.Run("PlayerModelApplied", self, modelName)
 end
 
 function meta:SetDefaultJumpPower()

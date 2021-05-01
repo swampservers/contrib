@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 function PPM_SetPonyCfg(ent, cfg)
     ent.ponydata = cfg
     -- invalidate caches
@@ -41,7 +40,7 @@ function PPM_PrePonyDraw(ent)
     end
 
     -- Only applies to editor models; ragdolls are handled in hook below and players are handled serverside
-    if ent:EntIndex()==-1 then
+    if ent:EntIndex() == -1 then
         PPM_SetBodyGroups(ent)
     end
 end
@@ -314,17 +313,16 @@ concommand.Add("ppm_refresh", function(ply, cmd, args)
     end
 end)
 
-
 -- if this causes conflicts maybe just set the materials one time
 function PPM_RagdollRender(self)
     PPM_PrePonyDraw(self)
     self:DrawModel()
 end
 
-hook.Add( "CreateClientsideRagdoll", "PPM_CreateClientsideRagdoll", function( entity, ragdoll )
+hook.Add("CreateClientsideRagdoll", "PPM_CreateClientsideRagdoll", function(entity, ragdoll)
     if entity:IsPlayer() then
         ragdoll.RagdollSourcePlayer = entity
         PPM_SetBodyGroups(ragdoll)
         ragdoll.RenderOverride = PPM_RagdollRender
     end
-end )
+end)

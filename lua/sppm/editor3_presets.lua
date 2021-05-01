@@ -138,7 +138,6 @@ function OpenItemMenu(slotid, container)
     end
 end
 
-
 local usedcolors = {}
 local last = 1
 
@@ -180,17 +179,14 @@ end
 --         DISPLAY_CASE:SetColor(Color(255, 255, 255, 255))
 --         local plymodel = "pony" --LocalPlayer():GetInfo( "cl_playermodel" )
 --         local avitems = PPM:GetAvailItems(plymodel, SLOTID)
-
 --         if (avitems ~= nil and table.Count(avitems) > 0) then
 --             DISPLAY_CASE:SetImage("gui/item.png")
-
 --             DISPLAY_CASE.DoClick = function()
 --                 OpenItemMenu(SLOTID, CONTAINER)
 --             end
 --         else
 --             DISPLAY_CASE:SetImage("gui/editor/gui_cross.png")
 --         end
-
 --         --DISPLAY:Dock( TOP )
 --         local HEADERLABEL = vgui.Create("DLabel", CONTAINER)
 --         HEADERLABEL:SetPos(80, 10)
@@ -208,7 +204,6 @@ end
 --         PPM_UpdateSlot(SLOTID, DISPLAY)
 --     end
 -- }
-
 PPM.Editor3_presets["select_custom_cmark"] = {
     spawn = function(parent, variable) end
 }
@@ -235,10 +230,7 @@ PPM.Editor3_presets["edit_bool"] = {
         SELECTOR:SetValue(LocalPlayer().ponydata[variable.param] == variable.onvalue)
 
         SELECTOR.OnChange = function(pSelf, fValue)
-
-                PPM_UpdateLocalPonyCfg(variable.param, fValue and variable.onvalue or variable.offvalue)
-                
-
+            PPM_UpdateLocalPonyCfg(variable.param, fValue and variable.onvalue or variable.offvalue)
         end
     end
 }
@@ -316,7 +308,7 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         DermaButton:Dock(TOP)
 
         DermaButton.DoClick = function()
-            PPM_UpdateLocalPonyCfg('imgurcmark', "")            
+            PPM_UpdateLocalPonyCfg('imgurcmark', "")
             TextEntry:SetValue("")
         end
     end
@@ -726,11 +718,9 @@ PPM.Editor3_presets["menu_save_load"] = {
             --if(PPM.selected_filename=="@NEWFILE@") then return end
             --PPM.ReadFile(PPM.selected_filename)  
             -- PPM.cleanPony(LocalPlayer())
-
             -- for k, v in pairs(addition) do
             --     destination[k] = v
             -- end
-
             PPM_Load(selected_fname)
             --PPM.SendCharToServer(LocalPlayer()) 
             colorFlash(INDICATOR_ONE, 0.1, Color(0, 200, 0), Color(255, 255, 255))

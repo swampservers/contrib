@@ -52,7 +52,6 @@ PPM.Editor3_nodes.node_presets = {
     }
 }
 
-
 -- PPM.Editor3_nodes.pony_equipment = {
 --     name = "Equipment",
 --     controlls = {
@@ -109,7 +108,6 @@ PPM.Editor3_nodes.node_presets = {
 --         -- }
 --     }
 -- }
-
 PPM.Editor3_nodes.pony_normal_face = {
     eyelashes = {
         name = "Eyelashes",

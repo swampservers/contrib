@@ -242,7 +242,6 @@ function PANEL:SetModelCaching(sm)
     if sm ~= self.ModelName then
         self.ModelName = sm
         self:SetModel(sm)
-
         -- if isPonyModel(sm) then
         --     self.Entity.isEditorPony = true
         --     PPM.editor3_pony = self.Entity
