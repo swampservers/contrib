@@ -291,7 +291,6 @@ PPM.rig = {
 }
 
 PPM.rig_tail = {38, 39, 40}
-
 -- function PPM.getPonyValues(ent, localvals)
 --     if (localvals) then
 --         local pony = ent.ponydata
@@ -326,7 +325,6 @@ PPM.rig_tail = {38, 39, 40}
 --                 if ply.ponydata==nil then 
 --                     PPM.setupPony( ply )
 --                 end
-                
 --                 PPM.setBodygroups( ply, false )
 --                 --PPM.setPonyValues(ply)
 --                 --PPM.ccmakr_onplyinitspawn(ply)

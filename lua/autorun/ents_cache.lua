@@ -1,8 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 include('autorun/swamp_core.lua') --defaultdict needed
-
 local EntClass = FindMetaTable("Entity").GetClass
 local EntIndex = FindMetaTable("Entity").EntIndex
 

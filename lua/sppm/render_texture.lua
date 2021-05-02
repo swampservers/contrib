@@ -31,7 +31,6 @@ end
 function PPM_CreateTexture(tname, data)
     local w, h = ScrW(), ScrH()
     local size = data.size or 512
-
     local rttex = GetRenderTargetEx(tname, size, size, RT_SIZE_NO_CHANGE, data.translucent and MATERIAL_RT_DEPTH_SEPARATE or MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, data.translucent and IMAGE_FORMAT_BGRA8888 or IMAGE_FORMAT_BGR888)
     local OldRT = render.GetRenderTarget()
     render.SetRenderTarget(rttex)
@@ -230,7 +229,7 @@ PPM.rendertargettasks.eyeltex = {
         local pony = PPM.currt_ponydata
         PPM.tex_draweyefunc(pony, false)
     end,
-    translucent=true
+    translucent = true
 }
 
 -- ,
@@ -247,7 +246,7 @@ PPM.rendertargettasks.eyertex = {
         local pony = PPM.currt_ponydata
         PPM.tex_draweyefunc(pony, true)
     end,
-    translucent=true
+    translucent = true
 }
 
 -- ,

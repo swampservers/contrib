@@ -173,49 +173,79 @@ end
 
 if CLIENT then
     local stock_weapon_pony_position = {
-        weapon_crowbar = {{0,Vector(3,3.6,7),Angle(0,0,4)}},
-        weapon_pistol = {{1,Vector(9.5,2,-4),Angle(-10,-5,0)}},
-        weapon_357 = {{1,Vector(4,3.5,0),Angle(-10,-5,0)}},
-        weapon_smg1 = {{2,Vector(10,1,-4),Angle(-10,-5,0)}},
-        weapon_ar2 = {{1,Vector(-1,6,-3),Angle(0,5,-90)}},
-        weapon_shotgun = {{1,Vector(-2,5,-3),Angle(-3,-2,-90)}},
-        weapon_crossbow = {{2,Vector(-1,11,-3),Angle(-90,-95,-90)}},
-        weapon_rpg = {{1,Vector(-1,13,-4),Angle(-90,-85,-90)}},
-        weapon_frag = {{0,Vector(9,0,0.5),Angle(20,150,0)}},
-        weapon_slam = {{1,Vector(8.5,2.3,-5),Angle(-4, 125, -93)}},
-        weapon_bugbait = {{0,Vector(6,4.2,0),Angle(0,0,0)}},
+        weapon_crowbar = {
+            {0, Vector(3, 3.6, 7), Angle(0, 0, 4)}
+        },
+        weapon_pistol = {
+            {1, Vector(9.5, 2, -4), Angle(-10, -5, 0)}
+        },
+        weapon_357 = {
+            {1, Vector(4, 3.5, 0), Angle(-10, -5, 0)}
+        },
+        weapon_smg1 = {
+            {2, Vector(10, 1, -4), Angle(-10, -5, 0)}
+        },
+        weapon_ar2 = {
+            {1, Vector(-1, 6, -3), Angle(0, 5, -90)}
+        },
+        weapon_shotgun = {
+            {1, Vector(-2, 5, -3), Angle(-3, -2, -90)}
+        },
+        weapon_crossbow = {
+            {2, Vector(-1, 11, -3), Angle(-90, -95, -90)}
+        },
+        weapon_rpg = {
+            {1, Vector(-1, 13, -4), Angle(-90, -85, -90)}
+        },
+        weapon_frag = {
+            {0, Vector(9, 0, 0.5), Angle(20, 150, 0)}
+        },
+        weapon_slam = {
+            {1, Vector(8.5, 2.3, -5), Angle(-4, 125, -93)}
+        },
+        weapon_bugbait = {
+            {0, Vector(6, 4.2, 0), Angle(0, 0, 0)}
+        },
         weapon_physcannon = {
-            {1,Vector(-4,11,-4),Angle(-90,-95,-90)},
-            {2,Vector(0,2.5,24),Angle(0,0,0)},
-            {3,Vector(0,5,20),Angle(0,0,0)},
-            {4,Vector(3,0.5,20),Angle(0,60,0)},
-            {5,Vector(-2,1,20),Angle(0,-60,0)},
+            {1, Vector(-4, 11, -4), Angle(-90, -95, -90)},
+            {2, Vector(0, 2.5, 24), Angle(0, 0, 0)},
+            {3, Vector(0, 5, 20), Angle(0, 0, 0)},
+            {4, Vector(3, 0.5, 20), Angle(0, 60, 0)},
+            {5, Vector(-2, 1, 20), Angle(0, -60, 0)},
         }
     }
+
     stock_weapon_pony_position.weapon_physgun = stock_weapon_pony_position.weapon_physcannon
 
-    hook.Add("OnEntityCreated","PonyStockWeapons",function(ent)
+    hook.Add("OnEntityCreated", "PonyStockWeapons", function(ent)
         if stock_weapon_pony_position[ent:GetClass()] then
             ent:AddCallback("BuildBonePositions", function(ent, numbones)
                 local o = ent:GetOwner()
+
                 if o then
                     local misspelled_skull = o:LookupBone("LrigScull")
+
                     if misspelled_skull then
-                        local spos,sang = o:GetBonePosition(misspelled_skull)
+                        local spos, sang = o:GetBonePosition(misspelled_skull)
+
                         if (o.ponydata or {}).gender == 2 then
-                            spos = spos + sang:Forward()*1.9 + sang:Right()*0.6
+                            spos = spos + sang:Forward() * 1.9 + sang:Right() * 0.6
                         end
-                        local rootpos,rootang
-                        for i,v in ipairs(stock_weapon_pony_position[ent:GetClass()]) do
-                            local wepbone,pos,ang= unpack(v)
-                            if i>1 then
-                                pos,ang = LocalToWorld(pos,ang,rootpos,rootang)
+
+                        local rootpos, rootang
+
+                        for i, v in ipairs(stock_weapon_pony_position[ent:GetClass()]) do
+                            local wepbone, pos, ang = unpack(v)
+
+                            if i > 1 then
+                                pos, ang = LocalToWorld(pos, ang, rootpos, rootang)
                             else
-                                rootpos,rootang = pos,ang
+                                rootpos, rootang = pos, ang
                             end
+
                             -- Without this it throws an uncatchable error when you pull out the physgun
                             if ent:GetBoneContents(wepbone) > 0 then
-                                ent:SetBonePosition(wepbone,LocalToWorld(pos,ang,spos,sang ))
+                                ent:SetBonePosition(wepbone, LocalToWorld(pos, ang, spos, sang))
                             end
                         end
                     end
@@ -223,5 +253,4 @@ if CLIENT then
             end)
         end
     end)
-
 end

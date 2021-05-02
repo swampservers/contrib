@@ -1,22 +1,19 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("shared.lua")
+SWEP.SwayScale = 0
 
-
-SWEP.SwayScale =0
 function SWEP:GetViewModelPosition(pos, ang)
-    local tipdelay = SysTime()-(self.TipTime or 0)
-    local tipness = 1-math.min(tipdelay*6, 1)
+    local tipdelay = SysTime() - (self.TipTime or 0)
+    local tipness = 1 - math.min(tipdelay * 6, 1)
     pos = pos + ang:Up() * 5.5
     ang:RotateAroundAxis(ang:Up(), -90)
-    ang:RotateAroundAxis(ang:Forward(), tipness*-10)
+    ang:RotateAroundAxis(ang:Forward(), tipness * -10)
 
     return pos, ang
 end
 
-
-
-function SWEP:DrawWorldModel()    
+function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
     if not self.UseFirstPersonTrail then
@@ -59,25 +56,18 @@ function SWEP:DrawWorldModel()
 
         -- This makes the trail appear where we want it
         if not self.UseFirstPersonTrail then
-            self.CalcAbsolutePosition = function(ent,pos,ang) 
-                return opos+oang:Right()*3, ang
-            end
+            self.CalcAbsolutePosition = function(ent, pos, ang) return opos + oang:Right() * 3, ang end
         end
     end
 
     self:DrawModel()
 end
 
-
 function SWEP:Think()
     self.UseFirstPersonTrail = self.Owner == LocalPlayer() and not hook.Run("ShouldDrawLocalPlayer", LocalPlayer())
+
     if self.UseFirstPersonTrail then
-        local ep = LocalPlayer():EyePos() + Vector(0,0,3+math.sin(SysTime()*20)) - LocalPlayer():EyeAngles():Forward()*10
-        self.CalcAbsolutePosition = function(ent,pos,ang) 
-            return ep, oang
-        end
+        local ep = LocalPlayer():EyePos() + Vector(0, 0, 3 + math.sin(SysTime() * 20)) - LocalPlayer():EyeAngles():Forward() * 10
+        self.CalcAbsolutePosition = function(ent, pos, ang) return ep, oang end
     end
 end
-
-
-

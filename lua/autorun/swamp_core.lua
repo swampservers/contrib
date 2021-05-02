@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 function noop()
 end
 
@@ -154,7 +153,6 @@ end
 --     end
 --     return out  
 -- end
-
 function defaultdict(constructor)
     return setmetatable({}, {
         __index = function(tab, key)

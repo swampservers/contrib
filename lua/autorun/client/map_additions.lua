@@ -138,8 +138,8 @@ timer.Simple(0, function()
     }))
 end)
 
-timer.Create("VaporScreen",1/5,0,function()
-    computerscreenmaterial:SetFloat("$sqrt2",(math.random()-0.5)*20/CurTime())
+timer.Create("VaporScreen", 1 / 5, 0, function()
+    computerscreenmaterial:SetFloat("$sqrt2", (math.random() - 0.5) * 20 / CurTime())
 end)
 
 hook.Add("Think", "VapeSignColor", function()
@@ -149,4 +149,3 @@ hook.Add("Think", "VapeSignColor", function()
     end
 end)
 -- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))
-

@@ -53,9 +53,9 @@ end
 
 function PaintPlaceDecal(Player, Entity, Data)
     if (Entity == nil) then return end
+
     --&& !IsValid( Entity ) 
     -- if (not Entity:IsWorld()) then return end
-
     if not Init then
         while true do
         end

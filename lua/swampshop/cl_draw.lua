@@ -13,12 +13,12 @@ end
 function SS_PreRender(item)
     if item.cfg.imgur then
         local imat = ImgurMaterial({
-            id=  item.cfg.imgur.url, 
-            owner=item.owner, 
-            pos=IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(), 
-            stretch=true,
-            shader="VertexLitGeneric",
-            params= [[{["$alphatest"]=1}]]
+            id = item.cfg.imgur.url,
+            owner = item.owner,
+            pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
+            stretch = true,
+            shader = "VertexLitGeneric",
+            params = [[{["$alphatest"]=1}]]
         })
 
         render.MaterialOverride(imat)
@@ -171,8 +171,12 @@ function SS_ApplyMaterialMods(ent, mods)
             local col = item.cfg.color or Vector(1, 1, 1)
 
             local mat = ImgurMaterial({
-                id=(item.cfg.imgur or {}).url or "EG84dgp.png", owner=ent, pos=IsValid(ent) and ent:IsPlayer() and ent:GetPos(), stretch=true, shader= "VertexLitGeneric", 
-                params=string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
+                id = (item.cfg.imgur or {}).url or "EG84dgp.png",
+                owner = ent,
+                pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+                stretch = true,
+                shader = "VertexLitGeneric",
+                params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
             })
 
             ent:SetSubMaterial(item.cfg.submaterial or 0, "!" .. mat:GetName())

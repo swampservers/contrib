@@ -27,12 +27,19 @@ function PPM_PrePonyDraw(ent)
 
     PPM_PONIES_NEARBY[ply] = true
 
-    for k, v in ipairs(ply.ponymaterials or {}) do 
-        if k==10 and ((ply.ponydata or {}).imgurcmark or "") ~= "" then
+    for k, v in ipairs(ply.ponymaterials or {}) do
+        if k == 10 and ((ply.ponydata or {}).imgurcmark or "") ~= "" then
             -- big TODO: make imgur materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
-            v = ImgurMaterial({id=ply.ponydata.imgurcmark, owner=ent, pos=IsValid(ent) and ent:IsPlayer() and ent:GetPos(), stretch=false, shader="VertexLitGeneric", 
-            params=[[{["$translucent"]=1}]] })
+            v = ImgurMaterial({
+                id = ply.ponydata.imgurcmark,
+                owner = ent,
+                pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+                stretch = false,
+                shader = "VertexLitGeneric",
+                params = [[{["$translucent"]=1}]]
+            })
         end
+
         ent:SetSubMaterial(k - 1, "!" .. v:GetName())
     end
 
@@ -74,7 +81,7 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 PPM.currt_ent = ply
                 PPM.currt_ponydata = ply.ponydata
                 PPM.currt_success = false
-                ply.ponydata_tex[k] = PPM_CreateTexture(UNIQUEVALUE..tostring(ply:EntIndex()) .. k, v)
+                ply.ponydata_tex[k] = PPM_CreateTexture(UNIQUEVALUE .. tostring(ply:EntIndex()) .. k, v)
                 -- ply.ponydata_tex[k .. "_hash"] = v.hash(pony) --remove
                 ply.ponydata_tex[k .. "_draw"] = PPM.currt_success --remove
                 -- if PPM.currt_success then 
