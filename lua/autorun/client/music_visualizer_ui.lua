@@ -37,67 +37,68 @@ hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
     end
 
     -- local own = LocalPlayer():GetTheater():GetOwner()==LocalPlayer()
-    cam.Start3D2D(c, a, scl)
+    if cam.StartCulled3D2D(c, a, scl) then
 
-    -- costs fps?? EyePos():Distance(c)<100 and
-    --and HtmlLightsMatFixx then
-    if theater.HtmlLightsMat then
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(theater.HtmlLightsMat)
-        -- surface.DrawTexturedRect(-30, 0, THLIGHT_CANVAS_XS * HtmlLightsMatFixx, THLIGHT_CANVAS_YS * HtmlLightsMatFixy)
-        surface.DrawTexturedRect(-280, -60, 160 * 4, 90 * 4)
-    end
-
-    for i, v in ipairs(VISUALIZER_SETTINGS) do
-        draw.SimpleText(v, "Trebuchet24", 16, lh * (i - 1), WHITE)
-
-        if hit and hit.y > lh * (i - 1) and hit.y < lh * i then
-            VISUALIZER_TYPE_TARGET = v
-        end
-
-        if UsingMusicVis(v:lower()) or VISUALIZER_TYPE_TARGET == v then
+        -- costs fps?? EyePos():Distance(c)<100 and
+        --and HtmlLightsMatFixx then
+        if theater.HtmlLightsMat then
             surface.SetDrawColor(255, 255, 255, 255)
-            local sz = UsingMusicVis(v:lower()) and 5 or 4
-            surface.DrawRect(8 - sz, lh * (i - 0.5) - sz - 1, sz * 2, sz * 2)
+            surface.SetMaterial(theater.HtmlLightsMat)
+            -- surface.DrawTexturedRect(-30, 0, THLIGHT_CANVAS_XS * HtmlLightsMatFixx, THLIGHT_CANVAS_YS * HtmlLightsMatFixy)
+            surface.DrawTexturedRect(-280, -60, 160 * 4, 90 * 4)
         end
+
+        for i, v in ipairs(VISUALIZER_SETTINGS) do
+            draw.SimpleText(v, "Trebuchet24", 16, lh * (i - 1), WHITE)
+
+            if hit and hit.y > lh * (i - 1) and hit.y < lh * i then
+                VISUALIZER_TYPE_TARGET = v
+            end
+
+            if UsingMusicVis(v:lower()) or VISUALIZER_TYPE_TARGET == v then
+                surface.SetDrawColor(255, 255, 255, 255)
+                local sz = UsingMusicVis(v:lower()) and 5 or 4
+                surface.DrawRect(8 - sz, lh * (i - 0.5) - sz - 1, sz * 2, sz * 2)
+            end
+        end
+
+        if VAPOR_LAST_DRIVE then
+            local p = VAPOR_LAST_DRIVE
+
+            if p < 0 then
+                p = p * 0.2
+            end
+
+            if p > 1 then
+                p = 1 - (1 - p) * 0.2
+            end
+
+            local h = p * 100
+            surface.SetDrawColor(255, 128, 0, 255)
+
+            if h >= 0 then
+                h = math.max(h, 2)
+            end
+
+            surface.DrawRect(240, 160 - h, 20, h)
+
+            -- surface.DrawRect(-260,40,14,2)
+            for i, v in ipairs(VAPOR_LAST_FFT or {}) do
+                surface.SetDrawColor(255, 255, i % 2 == 0 and 128 or 255, 255)
+                h = math.max(v * 150, 2)
+                surface.DrawRect(-260 + 20 * i, 160 - h, 14, h)
+            end
+        end
+
+        if hit then
+            surface.SetDrawColor(0, 0, 0, 255)
+            surface.DrawRect(hit.x - 4, hit.y - 4, 8, 8)
+            surface.SetDrawColor(255, 255, 255, 255)
+            surface.DrawRect(hit.x - 2, hit.y - 2, 4, 4)
+        end
+
+        cam.End3D2D()
     end
-
-    if VAPOR_LAST_DRIVE then
-        local p = VAPOR_LAST_DRIVE
-
-        if p < 0 then
-            p = p * 0.2
-        end
-
-        if p > 1 then
-            p = 1 - (1 - p) * 0.2
-        end
-
-        local h = p * 100
-        surface.SetDrawColor(255, 128, 0, 255)
-
-        if h >= 0 then
-            h = math.max(h, 2)
-        end
-
-        surface.DrawRect(240, 160 - h, 20, h)
-
-        -- surface.DrawRect(-260,40,14,2)
-        for i, v in ipairs(VAPOR_LAST_FFT or {}) do
-            surface.SetDrawColor(255, 255, i % 2 == 0 and 128 or 255, 255)
-            h = math.max(v * 150, 2)
-            surface.DrawRect(-260 + 20 * i, 160 - h, 14, h)
-        end
-    end
-
-    if hit then
-        surface.SetDrawColor(0, 0, 0, 255)
-        surface.DrawRect(hit.x - 4, hit.y - 4, 8, 8)
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.DrawRect(hit.x - 2, hit.y - 2, 4, 4)
-    end
-
-    cam.End3D2D()
 end)
 
 hook.Add("KeyPress", "MusicVisClick", function(ply, key)

@@ -69,42 +69,42 @@ function meta:SetModel(modelName)
     self:TrueSetModel(modelName)
     if GAMEMODE.FolderName == "spades" then return end
 
-    if isPonyModel(modelName) then
-        self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 42))
-        self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 32))
+    -- if isPonyModel(modelName) then
+    --     self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 42))
+    --     self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 32))
 
-        if modelName == "models/mlp/player_celestia.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 66))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 55))
-        end
+    --     if modelName == "models/mlp/player_celestia.mdl" then
+    --         self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 66))
+    --         self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 55))
+    --     end
 
-        if modelName == "models/mlp/player_luna.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 58))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 47))
-        end
-    else
-        self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 64))
-        self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 28))
+    --     if modelName == "models/mlp/player_luna.mdl" then
+    --         self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 58))
+    --         self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 47))
+    --     end
+    -- else
+    --     self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 64))
+    --     self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 28))
 
-        if modelName == "models/garfield/garfield.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 40))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 18))
-        end
+    --     if modelName == "models/garfield/garfield.mdl" then
+    --         self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 40))
+    --         self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 18))
+    --     end
 
-        if modelName == "models/player/ztp_nickwilde.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 52))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 24))
-        end
+    --     if modelName == "models/player/ztp_nickwilde.mdl" then
+    --         self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 52))
+    --         self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 24))
+    --     end
 
-        if modelName:StartWith("models/player/minion/") then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 36))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 8))
-        end
-    end
+    --     if modelName:StartWith("models/player/minion/") then
+    --         self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 36))
+    --         self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 8))
+    --     end
+    -- end
 
     self:SetSubMaterial()
     self:SetDefaultJumpPower()
-    hook.Run("PlayerModelApplied", self, modelName)
+    hook.Run("PlayerModelChanged", self, modelName)
 end
 
 function meta:SetDefaultJumpPower()

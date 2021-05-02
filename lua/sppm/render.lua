@@ -20,6 +20,7 @@ function PPM_PrePonyDraw(ent)
 
     if not ply.UpdatedPony then
         net.Start("PonyRequest")
+        print("REQ", ply)
         net.WriteEntity(ply)
         net.SendToServer()
         ply.UpdatedPony = true
