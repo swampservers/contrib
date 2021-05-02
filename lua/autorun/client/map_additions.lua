@@ -125,6 +125,7 @@ end)
 local flagmaterial = Material("models/props_fairgrounds/fairgrounds_flagpole01")
 local vapermaterial = Material("swamponions/swampcinema/vapers")
 local vapesignmaterial = Material("models/vapor/sign/sign_green")
+local computerscreenmaterial = Material("models/unconid/pc_models/c64/screen_c64_ll")
 
 timer.Simple(0, function()
     flagmaterial:SetTexture("$basetexture", "models/props_fairgrounds/fairgrounds_flagpole01_alternate")
@@ -137,6 +138,10 @@ timer.Simple(0, function()
     }))
 end)
 
+timer.Create("VaporScreen",1/5,0,function()
+    computerscreenmaterial:SetFloat("$sqrt2",(math.random()-0.5)*20/CurTime())
+end)
+
 hook.Add("Think", "VapeSignColor", function()
     if vapesignmaterial then
         local c = HSVToColor(SysTime() * 15, 0.5, 1)
@@ -144,3 +149,4 @@ hook.Add("Think", "VapeSignColor", function()
     end
 end)
 -- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))
+
