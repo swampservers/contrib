@@ -19,7 +19,7 @@ function MvisGetFrame(data, fn)
         t = {}
 
         for i = 1, BYTES_PER_FRAME do
-            table.insert(tab, 0)
+            table.insert(t, 0)
         end
     else
         t = {string.byte(data, fn * BYTES_PER_FRAME + 1, fn * BYTES_PER_FRAME + BYTES_PER_FRAME)}
@@ -216,13 +216,6 @@ function MvisNextFrame(...)
 
     -- the inputs are MVIS_LOOKAHEAD_FRAMES ahead of time, just correct it for now, but it could be useful
     col, colchange, amplitude, fft1, fft2, harmonics = unpack(MvisDelay("lookahead_delay", {...}, MVIS_LOOKAHEAD_FRAMES))
-
-    if fft1==nil then
-        print("DEBUG")
-        PrintTable({...})
-        print("AND")
-        print(col, colchange, amplitude, fft1, fft2, harmonics)
-    end
 
     t.avgfft1 = table.isum(fft1) / (#fft1)
     t.maxharmonic = table.imax(harmonics)
