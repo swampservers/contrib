@@ -116,6 +116,12 @@ function GetMapPropTable()
             model = "models/swamponions/trumphat.mdl",
             noshadows = true
         },
+        -- {
+        --     class = "prop_physics",
+        --     pos = Vector(624, 540, 64),
+        --     ang = Angle(0, 0, 0),
+        --     model = "models/swamponions/1234.mdl"
+        -- },
     }
 
     --IN VAPOR LOUNGE
