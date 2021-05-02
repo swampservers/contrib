@@ -217,6 +217,13 @@ function MvisNextFrame(...)
     -- the inputs are MVIS_LOOKAHEAD_FRAMES ahead of time, just correct it for now, but it could be useful
     col, colchange, amplitude, fft1, fft2, harmonics = unpack(MvisDelay("lookahead_delay", {...}, MVIS_LOOKAHEAD_FRAMES))
 
+    if ff1==nil then
+        print("DEBUG")
+        PrintTable({...})
+        print("AND")
+        print(col, colchange, amplitude, fft1, fft2, harmonics)
+    end
+
     t.avgfft1 = table.isum(fft1) / (#fft1)
     t.maxharmonic = table.imax(harmonics)
     t.avgharmonic = table.isum(harmonics) / (#harmonics)
