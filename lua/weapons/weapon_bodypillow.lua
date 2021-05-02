@@ -110,7 +110,7 @@ function SWEP:DrawWorldModel()
     local url, own = self:GetImgur()
 
     if url then
-        render.MaterialOverride(ImgurMaterial(url, own, self:GetPos(), false))
+        render.MaterialOverride(ImgurMaterial({id=url, owner=own, pos=self:GetPos(), stretch=true}))
     end
 
     if self:GetHardened() then
@@ -139,7 +139,7 @@ function SWEP:PreDrawViewModel(vm, ply, wep)
 
     if img then
         --, shader, params
-        render.MaterialOverride(ImgurMaterial(img, own, self:GetPos(), false))
+        render.MaterialOverride(ImgurMaterial({id=img, owner=own, pos=self:GetPos(), stretch=true}))
     end
 
     if self:GetHardened() then

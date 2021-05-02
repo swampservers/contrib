@@ -45,7 +45,9 @@ function ENT:Draw()
 
     --HACK to not load on painted things
     if url and self:GetMaterial() ~= "phoenix_storms/gear" then
-        render.MaterialOverride(ImgurMaterial(url, own, self:GetPos(), false))
+        render.MaterialOverride(
+            ImgurMaterial({id=url, owner=own, pos=self:GetPos(), fix_aspect=false})
+        )
     end
 
     BaseClass.Draw(self) --, true)

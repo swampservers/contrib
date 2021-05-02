@@ -30,9 +30,8 @@ function PPM_PrePonyDraw(ent)
     for k, v in ipairs(ply.ponymaterials or {}) do 
         if k==10 and ((ply.ponydata or {}).imgurcmark or "") ~= "" then
             -- big TODO: make imgur materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
-            v = ImgurMaterial(ply.ponydata.imgurcmark, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), true, "VertexLitGeneric", {
-                ["$translucent"] = 1
-            })
+            v = ImgurMaterial({id=ply.ponydata.imgurcmark, owner=ent, pos=IsValid(ent) and ent:IsPlayer() and ent:GetPos(), stretch=false, shader="VertexLitGeneric", 
+            params=[[{["$translucent"]=1}]] })
         end
         ent:SetSubMaterial(k - 1, "!" .. v:GetName())
     end
