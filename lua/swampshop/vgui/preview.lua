@@ -95,6 +95,7 @@ end
 
 function PANEL:Paint()
     if (not IsValid(self.Entity)) then return end
+    render.SetColorModulation(1,1,1) --WTF
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
     local ang = self.aLookAngle

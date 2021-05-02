@@ -132,7 +132,7 @@ function GetMapPropTable()
         },
         {
             class = "prop_physics",
-            pos = Vector(-480+0.1, 640+12, 108),
+            pos = Vector(-480+0.1, 640+14, 112),
             ang = Angle(90, 0, 0),
             model = "models/swamponions/cinematext/public.mdl",
             noshadows = true

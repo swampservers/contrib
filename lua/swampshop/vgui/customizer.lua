@@ -530,13 +530,59 @@ function PANEL:SetupControls()
         PSBS.OnValueChanged = colorchanged
         local matlabel = LabelMaker(colorzone, "Custom Material")
         IMGURREMOVEBUTTON = vgui.Create("DButton", matlabel)
-        IMGURREMOVEBUTTON:SetText("Remove Custom Material")
         IMGURREMOVEBUTTON:SetWide(160)
         IMGURREMOVEBUTTON:Dock(RIGHT)
 
-        IMGURREMOVEBUTTON.DoClick = function(btn)
-            IMGURENTRY:SetValue("")
+        IMGURREMOVEBUTTON.SetRemoveMode = function(btn, remove)
+            self.removemove = remove
+            if remove then
+                btn:SetText("Remove Custom Material")
+                btn.DoClick = function(btn)
+                    IMGURENTRY:SetValue("")
+                end
+            else
+                btn:SetText("Show Reference Material")
+                btn.DoClick = function(btn)
+                    local mat
+                    if IsValid(SS_HoverCSModel) then
+                        mat = SS_HoverCSModel:GetMaterials()[1]
+                    else
+                        mat = LocalPlayer():GetMaterials()[self.item.cfg.submaterial+1]
+                    end
+                    print("MAT PATH:",mat)
+
+                    local sz = math.min(1024, ScrH()-30)
+
+                    if mat then
+                        local Frame = vgui.Create("DFrame")
+                        Frame:SetSize(sz+10, sz+30)
+                        Frame:Center()
+                        Frame:SetTitle("Take a screenshot; it'll last longer. Displayed at "..tostring(sz).."x"..tostring(sz))
+                        Frame:MakePopup()
+                        Frame.BasedPaint = Frame.Paint
+                        function Frame:Paint( w, h )    
+                            cam.IgnoreZ(true)
+                            draw.RoundedBox( 4, 0, 0, w, h, Color( 255, 0, 128 ) )
+                            cam.IgnoreZ(false)
+                        end
+                        local img = vgui.Create("DImage", Frame)
+                        img:SetPos(5, 25)
+                        img:SetSize(sz, sz)
+                        img:SetImage(mat)
+                        img:GetMaterial():SetInt("$flags",0)
+                        img.BasedPaint = img.Paint
+                        function img:Paint( w, h )
+                            cam.IgnoreZ(true)
+                            self:BasedPaint(w,h)
+                            cam.IgnoreZ(false)
+                        end
+                    else
+                        LocalPlayerNotify("Couldn't find the material, sorry.")
+                    end
+                end                
+            end
         end
+
 
         local urlzone = vgui.Create("Panel", colorzone)
         urlzone:DockMargin(0, 8, 32, 0)
@@ -554,7 +600,8 @@ function PANEL:SetupControls()
 
         IMGURENTRY.OnValueChange = function(textself, new)
             local id = SanitizeImgurId(new)
-            IMGURREMOVEBUTTON:SetVisible(id ~= nil)
+            -- IMGURREMOVEBUTTON:SetVisible(id ~= nil)
+            IMGURREMOVEBUTTON:SetRemoveMode(id ~= nil)
 
             self.item.cfg.imgur = id and {
                 url = id

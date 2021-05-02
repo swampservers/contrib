@@ -24,7 +24,7 @@ function SWEP:Holster()
 end
 
 hook.Add("SetupMove", "flappy_SetupMove", function(ply, mv, cmd)
-    if mv:KeyPressed(IN_JUMP) then
+    if mv:KeyPressed(IN_JUMP) and not ply:InVehicle() then
         local self = ply:GetActiveWeapon()
         if not IsValid(self) or self:GetClass() ~= "weapon_flappy" then return end
         if ply.InTheater and ply:InTheater() and not ply:IsOnGround() then return end
