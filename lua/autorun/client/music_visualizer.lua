@@ -217,7 +217,7 @@ function MvisNextFrame(...)
     -- the inputs are MVIS_LOOKAHEAD_FRAMES ahead of time, just correct it for now, but it could be useful
     col, colchange, amplitude, fft1, fft2, harmonics = unpack(MvisDelay("lookahead_delay", {...}, MVIS_LOOKAHEAD_FRAMES))
 
-    if ff1==nil then
+    if fft1==nil then
         print("DEBUG")
         PrintTable({...})
         print("AND")
