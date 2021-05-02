@@ -345,6 +345,7 @@ end
 
 function SWEP:DropBanana(delay)
     delay = delay or 1
+    local ply = self:GetOwner()
     if (not IsFirstTimePredicted()) then return end
 
     if (self.BananaNextRender and self.BananaNextRender > CurTime()) then
@@ -362,6 +363,11 @@ function SWEP:DropBanana(delay)
     self.BananaGib = ents.CreateClientProp(self.WorldModel)
     if (not IsValid(self.BananaGib)) then return end
     local matrix = self:DrawWorldModel(nil, true)
+    if(!IsValid(matrix))then 
+        matrix = Matrix()
+        matrix:SetTranslation(ply:EyePos())
+        matrix:SetAngles(ply:EyeAngles())
+    end
     self.BananaGib:SetPos(matrix:GetTranslation())
     self.BananaGib:SetAngles(matrix:GetAngles())
     self.BananaGib.BananaGib = true
