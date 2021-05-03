@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- GLOBAL
 function noop()
 end
 
@@ -51,6 +52,56 @@ function For(tab, callback)
     return out
 end
 
+-- MATH
+function math.power2(n)
+    return math.pow(2, math.ceil(math.log(n) / math.log(2)))
+end
+
+-- TABLE
+function table.sub(tab, a, b)
+    local out = {}
+
+    for i = a, b do
+        table.insert(out, tab[i])
+    end
+
+    return out
+end
+
+function table.ireduce(tab, fn)
+    local out = nil
+
+    for i, v in ipairs(tab) do
+        if out == nil then
+            out = v
+        else
+            out = fn(out, v)
+        end
+    end
+
+    return out
+end
+
+function table.isum(tab)
+    return table.ireduce(tab, function(a, b) return a + b end)
+end
+
+function table.imax(tab)
+    return table.ireduce(tab, math.max)
+end
+
+function table.imin(tab)
+    return table.ireduce(tab, math.min)
+end
+
+-- function table.repeated(val,n)
+--     local out = {}
+--     for i=1,n do
+--         table.insert(out, val)
+--     end
+--     return out  
+-- end
+-- VECTOR
 local vec = FindMetaTable("Vector")
 local vec__baseadd = vec__baseadd or vec.__add
 local vec__basesub = vec__basesub or vec.__sub
@@ -107,52 +158,14 @@ function vec:Clamp(min, max)
     return Vector(math.Clamp(self.x, min.x, max.x), math.Clamp(self.y, min.y, max.y), math.Clamp(self.z, min.z, max.z))
 end
 
+function vec:InBox(vec1, vec2)
+    return self.x >= vec1.x and self.x <= vec2.x and self.y >= vec1.y and self.y <= vec2.y and self.z >= vec1.z and self.z <= vec2.z
+end
+
+-- COLOR
 BLACK = Color(0, 0, 0, 255)
 WHITE = Color(255, 255, 255, 255)
 
-function table.sub(tab, a, b)
-    local out = {}
-
-    for i = a, b do
-        table.insert(out, tab[i])
-    end
-
-    return out
-end
-
-function table.ireduce(tab, fn)
-    local out = nil
-
-    for i, v in ipairs(tab) do
-        if out == nil then
-            out = v
-        else
-            out = fn(out, v)
-        end
-    end
-
-    return out
-end
-
-function table.isum(tab)
-    return table.ireduce(tab, function(a, b) return a + b end)
-end
-
-function table.imax(tab)
-    return table.ireduce(tab, math.max)
-end
-
-function table.imin(tab)
-    return table.ireduce(tab, math.min)
-end
-
--- function table.repeated(val,n)
---     local out = {}
---     for i=1,n do
---         table.insert(out, val)
---     end
---     return out  
--- end
 function defaultdict(constructor)
     return setmetatable({}, {
         __index = function(tab, key)

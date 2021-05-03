@@ -1,12 +1,282 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-surface.CreateFont("VideoInfoLarge", {
-    font = "Open Sans Condensed",
-    size = 148,
-    weight = 700,
-    antialias = true
-})
+module("theater", package.seeall)
+local gradientDown = surface.GetTextureID("VGUI/gradient_down")
+local refreshTexture = surface.GetTextureID("gui/html/refresh")
+local NoVideoScreen = Material("theater/static.vmt")
+local THLIGHT_CANVAS_XS = 16
+local THLIGHT_CANVAS_YS = 16
+local LocationChangeTime = 0
+local LoadingStartTime = 0
+local LastTitle = ""
+local Title = ""
+local WasFullscreen = false
+LastInfoDraw = LastInfoDraw or 0
+InfoDrawDelay = 3
+LastHtmlMaterial = nil
+TheaterCustomRT = GetRenderTarget("ThLights2", THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, true)
+LastLocation = LastLocation or -1
 
+function DrawVideoInfo(w, h)
+    local Video = CurrentVideo
+    if not Video then return end
+    local explicitblock = false
+
+    if not GetConVar("swamp_mature_content"):GetBool() then
+        explicitblock = Video:IsMature() and not (LocalPlayer():GetTheater():Name() == "Movie Theater" and IsValid(Video:GetOwner()) and Video:GetOwner():IsStaff())
+    end
+
+    if input.IsKeyDown(KEY_Q) then
+        LastInfoDraw = CurTime()
+    end
+
+    if not (explicitblock or LastInfoDraw + InfoDrawDelay > CurTime()) then return end
+
+    if explicitblock then
+        surface.SetDrawColor(0, 0, 0, 255)
+        surface.DrawRect(0, 0, w, h)
+    end
+
+    surface.SetDrawColor(0, 0, 0, 255)
+    surface.SetTexture(gradientDown)
+    surface.DrawTexturedRect(0, -1, w + 1, h + 1)
+
+    -- Title
+    if LastTitle ~= Video:Title() or WasFullscreen ~= Fullscreen then
+        LastTitle = Video:Title()
+        WasFullscreen = Fullscreen
+        Title = string.reduce(LastTitle, "VideoInfoMedium", w)
+    end
+
+    DrawTheaterText(Title, "VideoInfoMedium", 10, 10, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+    DrawTheaterText("VOLUME", "VideoInfoSmall", w - 72, 120, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+    DrawTheaterText(GetVolume() .. "%", "VideoInfoMedium", w - 72, 136, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+
+    -- Vote Skips
+    if NumVoteSkips > 0 then
+        DrawTheaterText("VOTESKIPS", "VideoInfoSmall", w - 72, 230, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        DrawTheaterText(NumVoteSkips .. "/" .. ReqVoteSkips, "VideoInfoMedium", w - 72, 246, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+    end
+
+    if Safe(LocalPlayer()) then
+        DrawTheaterText("PROTECTED", "VideoInfoSmall", w - 72, 90, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+    end
+
+    -- Timed video info
+    if Video:IsTimed() then
+        local current = (CurTime() - Video:StartTime())
+        local percent = math.Clamp((current / Video:Duration()) * 100, 0, 100)
+        -- Bar
+        local bh = h * 1 / 32
+        draw.RoundedBox(0, 0, h - bh, w, bh + 1, Color(0, 0, 0, 200))
+        draw.RoundedBox(0, 0, h - bh, w * (percent / 100), bh + 1, Color(255, 255, 255, 255))
+        local strSeconds = string.FormatSeconds(math.Clamp(math.Round(current), 0, Video:Duration()))
+        DrawTheaterText(strSeconds, "VideoInfoMedium", 16, h - bh, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+        local strDuration = string.FormatSeconds(Video:Duration())
+        DrawTheaterText(strDuration, "VideoInfoMedium", w - 16, h - bh, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+    end
+
+    -- Loading indicater
+    if IsValid(ActivePanel) and ActivePanel:IsLoading() then
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.SetTexture(refreshTexture)
+        surface.DrawTexturedRectRotated(32, 128, 64, 64, RealTime() * -256)
+    end
+
+    if explicitblock then
+        surface.SetDrawColor(0, 0, 0, 220)
+        surface.DrawRect(0, 0, w, h)
+        DrawTheaterText("This video may contain explicit content.", "VideoInfoMedium", w / 2, h * 0.44, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        DrawTheaterText("Press F6 if you're okay with seeing adult material.", "VideoInfoALittleSmaller", w / 2, h * 0.56, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
+end
+
+hook.Add("PostDrawOpaqueRenderables", "DrawTheaterScreen", function(bDrawingDepth, bDrawingSkybox)
+    if bDrawingDepth or bDrawingSkybox then return end --oof
+
+    if LastLocation ~= LocalPlayer():GetLocation() then
+        LocationChangeTime = RealTime()
+        LastLocation = LocalPlayer():GetLocation()
+    end
+
+    if (not IsValid(ActivePanel)) or (not ActivePanel:IsLoading()) then
+        LoadingStartTime = RealTime()
+    end
+
+    --Don't draw a panel that is loading unless it has been loading for a long time
+    if IsValid(ActivePanel) then
+        ActivePanel:UpdateHTMLTexture()
+    end
+
+    local drawpanel = IsValid(ActivePanel) and ((not ActivePanel:IsLoading()) or (RealTime() - LoadingStartTime) > 1.0)
+    LastHtmlMaterial = drawpanel and ActivePanel:GetHTMLMaterial() or nil
+    -- gets at least to here once each frame
+    local Theater = LocalPlayer():GetTheater()
+    if not Theater or Fullscreen then return end
+    local ang = Angle(Theater:GetAngles()) -- makes copy
+    ang:RotateAroundAxis(ang:Forward(), 90)
+    local pos = Theater:GetPos()
+    local w, h = Theater:GetSize()
+    render.OverrideDepthEnable(true, false) -- needed?
+    local iw = 1100 -- Is <=1024 faster than 1100? dont think so
+    local infoscale = iw / w
+    local ih = infoscale * h
+
+    cam.Culled3D2D(pos, ang, 1 / infoscale, function()
+        local blackness = 1.0 - math.Clamp((RealTime() - (LocationChangeTime + 0.3)) * 0.8, 0, 1)
+
+        if LastHtmlMaterial ~= nil then
+            -- ActivePanel:UpdateHTMLTexture()
+            -- local matt = ActivePanel:GetHTMLMaterial()
+            surface.SetMaterial(LastHtmlMaterial)
+            surface.SetDrawColor(255, 255, 255, 255)
+            surface.DrawTexturedRectUV(0, 0, iw, ih, 0, 0, ActivePanel:GetUVMax())
+        else
+            local untrusted = CurrentVideo and (not CurrentVideo:ShouldTrust())
+
+            if IsValid(ActivePanel) or untrusted then
+                surface.SetDrawColor(0, 0, 0, 255)
+                surface.DrawRect(0, 0, iw, ih)
+
+                if untrusted then
+                    DrawTheaterText("This video is hosted at: ", "VideoInfoMedium", iw / 2, ih * 0.34, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText(CurrentVideo:Key(), "VideoInfoMedium", iw / 2, ih * 0.46, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("Press F8 to load it.", "VideoInfoALittleSmaller", iw / 2, ih * 0.58, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("This may reveal your IP address to the host;", "VideoInfoALittleSmaller", iw / 2, ih * 0.67, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("you can use a VPN to hide it.", "VideoInfoALittleSmaller", iw / 2, ih * 0.76, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                end
+            else
+                surface.SetMaterial(NoVideoScreen)
+                surface.SetDrawColor(255, 255, 255, 255)
+                surface.DrawTexturedRect(0, 0, iw, ih)
+                DrawTheaterText("SWAMP CINEMA", "VideoInfoBrand", iw / 2, (ih / 2) - 44, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                DrawTheaterText("To request a video, hold Q", "VideoInfoNV1", iw / 2, (ih / 2) + 30, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                DrawTheaterText("Need help? Say /help", "VideoInfoNV2", iw / 2, (ih / 2) + 96, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
+        end
+
+        DrawVideoInfo(iw, ih)
+
+        if blackness > 0 then
+            surface.SetDrawColor(0, 0, 0, blackness * 255.0)
+            surface.DrawRect(0, -1, iw + 1, ih + 2)
+        end
+    end)
+
+    render.OverrideDepthEnable(false, true)
+end)
+
+hook.Add("HUDPaint", "DrawFullscreenInfo", function()
+    if not IsValid(ActivePanel) then return end
+
+    if Fullscreen then
+        surface.SetDrawColor(0, 0, 0, 255)
+        surface.DrawRect(0, 0, ScrW(), ScrH())
+
+        if LastHtmlMaterial ~= nil then
+            surface.SetMaterial(LastHtmlMaterial)
+            surface.SetDrawColor(255, 255, 255, 255)
+            surface.DrawTexturedRectUV(0, 0, ScrW(), ScrH(), 0, 0, ActivePanel:GetUVMax())
+        end
+
+        DrawVideoInfo(ScrW(), ScrH())
+    else
+        local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater() or nil
+        if not Theater or Theater:Name() == "Vapor Lounge" then return end
+        if LastHtmlMaterial == nil then return end
+        if GetConVar("cinema_lightfx"):GetInt() < 1 then return end
+        -- Dynamic lighting from screen colors (Swamp Cinema)
+        local ang = Angle(Theater:GetAngles()) -- makes copy
+        ang:RotateAroundAxis(ang:Forward(), 90)
+        local pos = Theater:GetPos() + ang:Right() * 0.01
+        local w, h = Theater:GetSize()
+        local OldRT = render.GetRenderTarget()
+        local ow, oh = ScrW(), ScrH()
+        render.SetRenderTarget(TheaterCustomRT)
+        render.SetViewPort(0, 0, THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS)
+        cam.Start2D()
+        surface.SetMaterial(LastHtmlMaterial)
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.DrawTexturedRectUV(0, 0, THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, 0, 0, ActivePanel:GetUVMax())
+        render.CapturePixels()
+        local sumr, sumg, sumb = 0, 0, 0
+
+        for x = 0, THLIGHT_CANVAS_XS - 1 do
+            for y = 0, THLIGHT_CANVAS_YS - 1 do
+                local r, g, b = render.ReadPixel(x, y)
+                sumr, sumg, sumb = sumr + r, sumg + g, sumb + b
+            end
+        end
+
+        cam.End2D()
+        render.SetViewPort(0, 0, ow, oh)
+        render.SetRenderTarget(OldRT)
+        local avgc = THLIGHT_CANVAS_XS * THLIGHT_CANVAS_YS
+        local dlight = DynamicLight(1439)
+
+        if dlight then
+            dlight.pos = pos + (ang:Forward() * (w / 2)) + (ang:Right() * (h / 2)) + (ang:Up() * ((w + h) / 4))
+            dlight.r = sumr / avgc
+            dlight.g = sumg / avgc
+            dlight.b = sumb / avgc
+            dlight.brightness = 2
+            dlight.Decay = 100
+            dlight.Size = (w + h) * 2.5
+            dlight.DieTime = CurTime() + 1
+        end
+    end
+end)
+
+hook.Add("HUDPaint", "DrawNoFlashWarning", function()
+    local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater()
+
+    if Theater and Theater._Video then
+        if (not EmbeddedIsReady()) then return end
+        local needschromium = Theater._Video:Service().NeedsChromium and (not EmbeddedHasChromium())
+        local needsflash = Theater._Video:Service().NeedsFlash and (not EmbeddedHasFlash())
+        local needscodecs = ((Theater._Video:Duration() == 0 and Theater._Video:Service().LivestreamNeedsCodecs) or Theater._Video:Service().NeedsCodecs) and (not EmbeddedHasCodecs())
+
+        if needschromium or needsflash or needscodecs then
+            local plural = (needschromium and 1 or 0) + (needsflash and 1 or 0) + (needscodecs and 1 or 0) > 1 and "them" or "it"
+            draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 - 50, "You don't have" .. (needschromium and " Chromium," or "") .. (needsflash and " the Adobe Flash plugin," or "") .. (needscodecs and " the video codec patch," or ""), "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
+            draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2, "Without " .. plural .. ", you can't watch this video", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
+            draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 + 50, "Press F2 to install " .. plural .. "! Then fully reboot Garry's Mod.", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
+
+            if needschromium and (not needsflash) and Theater._Video:Service().NeedsFlash then
+                draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 + 100, "This video also requires flash", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
+            end
+        end
+    end
+end)
+
+function DrawTheaterText(text, font, x, y, c, xalign, yalign)
+    -- if OLDTEXT then 
+    --     draw.SimpleText(text, font, x, y + 4, Color(0, 0, 0, colour.a), xalign, yalign)
+    --     draw.SimpleText(text, font, x + 1, y + 2, Color(0, 0, 0, colour.a), xalign, yalign)
+    --     draw.SimpleText(text, font, x - 1, y + 2, Color(0, 0, 0, colour.a), xalign, yalign)
+    --     draw.SimpleText(text, font, x, y, colour, xalign, yalign)
+    --     return
+    -- end
+    -- draw.SimpleTextOutlined(text, font, x, y+2, bc, xalign, yalign,0.5,bc)
+    -- draw.SimpleText(text, font, x, y+3, bc, xalign, yalign)
+    -- draw.SimpleTextOutlined(text, font, x, y, c, xalign, yalign,0.5,bc)
+    local bc = Color(0, 0, 0, 255 * math.pow(c.a / 255, 0.5))
+    draw.SimpleText(text, font, x + 1, y + 3, bc, xalign, yalign)
+    draw.SimpleText(text, font, x, y, c, xalign, yalign)
+end
+
+_G.DrawTheaterText = DrawTheaterText
+
+-- local function CreateTheaterFont(name, data)
+--     surface.CreateFont(name, data)
+--     -- data.antialias=false
+--     -- data.outline=true
+--     -- surface.CreateFont(name.."O", data)
+--     -- data.antialias=true
+--     -- data.outline=false
+--     -- data.shadow=true
+--     -- surface.CreateFont(name.."S", data)
+-- end
 surface.CreateFont("VideoInfoMedium", {
     font = "Open Sans Condensed",
     size = 72,
@@ -48,439 +318,15 @@ surface.CreateFont("VideoInfoNV2", {
     antialias = true
 })
 
-local gradientDown = surface.GetTextureID("VGUI/gradient_down")
-local refreshTexture = surface.GetTextureID("gui/html/refresh")
-local NoVideoScreen = Material("theater/static.vmt")
-module("theater", package.seeall)
-LastInfoDraw = 0
-InfoDrawDelay = 3
-Pos = Vector(0, 0, 0)
-Ang = Angle(0, 0, 0)
-InfoScale = 1
-w = 0
-h = 0
-local LoadingStr = 'Loading'
-HtmlLightsMat = nil
-THLIGHT_CANVAS_XS = 32
-THLIGHT_CANVAS_YS = 16
-TheaterCustomRT = GetRenderTarget("ThLights2", THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, true)
-local LastLocation = -1
-local LocationChangeTime = 0
-local LoadingStartTime = 0
-
-function DrawActiveTheater(bDrawingDepth, bDrawingSkybox)
-    if LastLocation ~= LocalPlayer():GetLocation() then
-        LocationChangeTime = RealTime()
-        LastLocation = LocalPlayer():GetLocation()
-    end
-
-    if (not IsValid(ActivePanel)) or (not ActivePanel:IsLoading()) then
-        LoadingStartTime = RealTime()
-    end
-
-    if input.IsKeyDown(KEY_Q) then
-        LastInfoDraw = CurTime()
-    end
-
-    if Fullscreen then return end -- Don't render twice
-    local Theater = LocalPlayer():GetTheater()
-    if not Theater then return end
-    local ang = Theater:GetAngles()
-    Ang = Angle(ang.p, ang.y, ang.r) -- don't modify actual theater angle
-    Ang:RotateAroundAxis(Ang:Forward(), 90)
-    Pos = Theater:GetPos()
-    w, h = Theater:GetSize()
-    w = w
-    h = h
-    --if (LocalPlayer():EyePos()-Pos):Dot(Ang:Up())<0 then return end
-    --Don't draw a panel that is loading unless it has been loading for a long time
-    local drawpanel = IsValid(ActivePanel) and ((not ActivePanel:IsLoading()) or (RealTime() - LoadingStartTime) > 1.0)
-
-    if drawpanel then
-        drawpanel = (ActivePanel:GetHTMLMaterial() ~= nil)
-
-        if not drawpanel then
-            ActivePanel:UpdateHTMLTexture()
-            drawpanel = (ActivePanel:GetHTMLMaterial() ~= nil)
-        end
-    end
-
-    local drawblackscreen = false
-    render.OverrideDepthEnable(true, false)
-
-    if drawpanel then
-        cam.Start3D2D(Pos, Ang, 1)
-        HtmlLightsMat, HtmlLightsMatFixx, HtmlLightsMatFixy = draw.HTMLTexture(ActivePanel, w, h)
-        cam.End3D2D()
-    else
-        if IsValid(ActivePanel) then
-            drawblackscreen = true
-        else
-            cam.Start3D()
-            render.SetMaterial(NoVideoScreen)
-            local fv = Ang:Forward() * w
-            local uv = Ang:Right() * h
-            render.DrawQuad(Pos, Pos + fv, Pos + uv + fv, Pos + uv)
-            cam.End3D()
-        end
-    end
-
-    render.OverrideDepthEnable(false, true)
-    local infoscale = 1100 / w
-    local iw = 1100
-    local ih = infoscale * h
-    local ev = ExplicitVideoWarning()
-    local drawinfo = (LastInfoDraw + InfoDrawDelay > CurTime()) or ev
-    local blackness = 1.0 - math.Clamp((RealTime() - (LocationChangeTime + 0.3)) * 0.8, 0, 1)
-
-    if (not IsValid(ActivePanel)) or drawblackscreen or drawinfo or blackness > 0 then
-        cam.Start3D2D(Pos, Ang, 1.0 / infoscale)
-
-        if not IsValid(ActivePanel) then
-            DrawNoVideoPlaying(iw, ih)
-        end
-
-        if drawblackscreen then
-            surface.SetDrawColor(0, 0, 0, 255.0)
-            surface.DrawRect(0, 0, iw, ih)
-        end
-
-        if drawinfo then
-            DrawVideoInfo(iw, ih, ev)
-        end
-
-        if blackness > 0 then
-            surface.SetDrawColor(0, 0, 0, blackness * 255.0)
-            surface.DrawRect(0, -1, iw + 1, ih + 2)
-        end
-
-        cam.End3D2D()
-    end
-end
-
-hook.Add("PostDrawOpaqueRenderables", "DrawTheaterScreen", DrawActiveTheater)
-
-function DrawNoVideoPlaying(w, h)
-    draw.TheaterText("SWAMP CINEMA", "VideoInfoBrand", w / 2, (h / 2) - 44, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    draw.TheaterText("To request a video, hold Q", "VideoInfoNV1", w / 2, (h / 2) + 30, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    draw.TheaterText("Need help? Say /help", "VideoInfoNV2", w / 2, (h / 2) + 96, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-end
-
-local LastTitle = ""
-local WasFullscreen = false
-local Title = ""
-
-function DrawVideoInfo(w, h, explicit)
-    local Video = CurrentVideo
-    if not Video then return end
-
-    if explicit then
-        surface.SetDrawColor(0, 0, 0, 255)
-        surface.DrawRect(0, 0, w, h)
-    end
-
-    surface.SetDrawColor(0, 0, 0, 255)
-    surface.SetTexture(gradientDown)
-    surface.DrawTexturedRect(0, -1, w + 1, h + 1)
-
-    -- Title
-    if LastTitle ~= Video:Title() or WasFullscreen ~= Fullscreen then
-        LastTitle = Video:Title()
-        WasFullscreen = Fullscreen
-        Title = string.reduce(LastTitle, "VideoInfoMedium", w)
-    end
-
-    draw.TheaterText(Title, "VideoInfoMedium", 10, 10, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-    -- Volume
-    draw.TheaterText("VOLUME", "VideoInfoSmall", w - 72, 120, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-    draw.TheaterText(GetVolume() .. "%", "VideoInfoMedium", w - 72, 136, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-
-    -- Vote Skips
-    if NumVoteSkips > 0 then
-        draw.TheaterText(T('Voteskips'):upper(), "VideoInfoSmall", w - 72, 230, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-        draw.TheaterText(NumVoteSkips .. "/" .. ReqVoteSkips, "VideoInfoMedium", w - 72, 246, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-    end
-
-    if Safe(LocalPlayer()) then
-        draw.TheaterText("PROTECTED", "VideoInfoSmall", w - 72, 90, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-    end
-
-    -- Timed video info
-    if Video:IsTimed() then
-        local current = (CurTime() - Video:StartTime())
-        local percent = math.Clamp((current / Video:Duration()) * 100, 0, 100)
-        -- Bar
-        local bh = h * 1 / 32
-        draw.RoundedBox(0, 0, h - bh, w, bh + 1, Color(0, 0, 0, 200))
-        draw.RoundedBox(0, 0, h - bh, w * (percent / 100), bh + 1, Color(255, 255, 255, 255))
-        -- Current Time
-        local strSeconds = string.FormatSeconds(math.Clamp(math.Round(current), 0, Video:Duration()))
-        draw.TheaterText(strSeconds, "VideoInfoMedium", 16, h - bh, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-        -- Duration
-        local strDuration = string.FormatSeconds(Video:Duration())
-        draw.TheaterText(strDuration, "VideoInfoMedium", w - 16, h - bh, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-    end
-
-    -- Loading indicater
-    if IsValid(ActivePanel) and ActivePanel:IsLoading() then
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetTexture(refreshTexture)
-        surface.DrawTexturedRectRotated(32, 128, 64, 64, RealTime() * -256)
-    end
-
-    if explicit then
-        surface.SetDrawColor(0, 0, 0, 220)
-        surface.DrawRect(0, 0, w, h)
-        draw.TheaterText("This video may contain explicit content.", "VideoInfoMedium", w / 2, h * 0.44, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        draw.TheaterText("Press F6 if you're okay with seeing adult material.", "VideoInfoALittleSmaller", w / 2, h * 0.56, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    end
-end
-
-KLUBLightColor = Vector(0, 0, 0)
-KLUBLightColor2 = Vector(0, 0, 0)
-
-matproxy.Add({
-    name = "klub0",
-    init = function(self, mat, values) end,
-    bind = function(self, mat, ent)
-        mat:SetVector("$color2", KLUBLightColor)
-    end
+surface.CreateFont("3D2DName", {
+    font = "Bebas Neue",
+    size = 80,
+    weight = 600
 })
 
-matproxy.Add({
-    name = "klub1",
-    init = function(self, mat, values) end,
-    bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.1, KLUBLightColor, KLUBLightColor2))
-    end
+surface.CreateFont("TheaterDermaLarge", {
+    font = "Roboto",
+    size = 32,
+    weight = 500,
+    extended = true
 })
-
-matproxy.Add({
-    name = "klub2",
-    init = function(self, mat, values) end,
-    bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.3, KLUBLightColor, KLUBLightColor2))
-    end
-})
-
-matproxy.Add({
-    name = "klub3",
-    init = function(self, mat, values) end,
-    bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.5, KLUBLightColor, KLUBLightColor2))
-    end
-})
-
-matproxy.Add({
-    name = "klub4",
-    init = function(self, mat, values) end,
-    bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.7, KLUBLightColor, KLUBLightColor2))
-    end
-})
-
-matproxy.Add({
-    name = "klub5",
-    init = function(self, mat, values) end,
-    bind = function(self, mat, ent)
-        mat:SetVector("$color2", LerpVector(0.9, KLUBLightColor, KLUBLightColor2))
-    end
-})
-
-matproxy.Add({
-    name = "klub6",
-    init = function(self, mat, values) end,
-    bind = function(self, mat, ent)
-        mat:SetVector("$color2", KLUBLightColor2)
-    end
-})
-
-function DrawFullscreenOrLighting()
-    if Fullscreen and IsValid(ActivePanel) then
-        if ActivePanel:GetHTMLMaterial() ~= nil then
-            draw.HTMLTexture(ActivePanel, ScrW(), ScrH())
-        end
-
-        local ev = ExplicitVideoWarning()
-
-        if ev or LastInfoDraw + InfoDrawDelay > CurTime() then
-            DrawVideoInfo(ScrW(), ScrH(), ev)
-        end
-    else
-        local settin = GetConVarNumber("cinema_lightfx")
-        local inklub = false --LocalPlayer():GetLocationName() == "Vapor Lounge" DISABL
-        if settin < 1 and not inklub then return end
-        --dont activate the developer stuff
-        settin = 1
-        if HtmlLightsMat == nil then return end
-        local firsttime = nil
-
-        if settin > 1 then
-            firsttime = SysTime()
-        end
-
-        --Cool lighting fx by Swamp Onions
-        local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater() or nil
-        if not Theater then return end
-        local ang = Theater:GetAngles()
-        Ang = Angle(ang.p, ang.y, ang.r) -- don't modify actual theater angle
-        Ang:RotateAroundAxis(Ang:Forward(), 90)
-        Pos = Theater:GetPos() + Ang:Right() * 0.01
-        --used below to place lights
-        w, h = Theater:GetSize()
-        local OldRT = render.GetRenderTarget()
-        local ow, oh = ScrW(), ScrH()
-
-        if settin < 3 then
-            render.SetRenderTarget(TheaterCustomRT)
-        end
-
-        if settin > 3 then
-            render.SetRenderTarget(HtmlLightsMat:GetTexture("$basetexture"))
-        end
-
-        render.SetViewPort(0, 0, THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS)
-
-        if settin < 4 then
-            render.Clear(0, 0, 0, 255, true)
-            cam.Start2D()
-            surface.SetDrawColor(255, 255, 255, 255)
-            surface.SetMaterial(HtmlLightsMat)
-            surface.DrawTexturedRect(0, 0, THLIGHT_CANVAS_XS * HtmlLightsMatFixx, THLIGHT_CANVAS_YS * HtmlLightsMatFixy)
-        end
-
-        render.CapturePixels()
-        local avgr1 = 0
-        local avgg1 = 0
-        local avgb1 = 0
-        local avgr2 = 0
-        local avgg2 = 0
-        local avgb2 = 0
-        local avgc = 0
-        local allpixels = {}
-
-        for x = 0, THLIGHT_CANVAS_XS - 1 do
-            -- table.insert(allpixels,{})
-            for y = 0, THLIGHT_CANVAS_YS - 1 do
-                local r, g, b = render.ReadPixel(x, y)
-
-                if inklub then
-                    table.insert(allpixels, Vector(r, g, b) / 255)
-                else
-                    if x >= (THLIGHT_CANVAS_XS / 2) then
-                        avgr2 = avgr2 + r
-                        avgg2 = avgg2 + g
-                        avgb2 = avgb2 + b
-                    else
-                        avgr1 = avgr1 + r
-                        avgg1 = avgg1 + g
-                        avgb1 = avgb1 + b
-                        avgc = avgc + 1
-                    end
-                end
-            end
-        end
-
-        if settin < 4 then
-            cam.End2D()
-        end
-
-        render.SetViewPort(0, 0, ow, oh)
-        render.SetRenderTarget(OldRT)
-
-        if inklub then
-            VaporLightData(allpixels)
-
-            return
-        end
-
-        avgc1 = Color(avgr1 / avgc, avgg1 / avgc, avgb1 / avgc)
-        avgc2 = Color(avgr2 / avgc, avgg2 / avgc, avgb2 / avgc)
-        -- if inklub then
-        --     local h1, s1, v1 = ColorToHSV(avgc1)
-        --     local h2, s2, v2 = ColorToHSV(avgc2)
-        --     s1 = math.pow(s1, 0.3)
-        --     s2 = math.pow(s2, 0.3)
-        --     v1 = math.pow(v1, 0.5)
-        --     v2 = math.pow(v2, 0.5)
-        --     avgc1 = HSVToColor(h1, s1, v1)
-        --     avgc2 = HSVToColor(h2, s2, v2)
-        --     KLUBLightColor = Vector(avgc1.r / 255.0, avgc1.g / 255.0, avgc1.b / 255.0)
-        --     KLUBLightColor2 = Vector(avgc2.r / 255.0, avgc2.g / 255.0, avgc2.b / 255.0)
-        -- end
-        local dlight = DynamicLight(1439)
-
-        if (dlight) then
-            dlight.pos = Pos + (Ang:Forward() * (w / 4)) + (Ang:Right() * (h / 2)) + (Ang:Up() * ((w + h) / 4))
-            dlight.r = avgc1.r
-            dlight.g = avgc1.g
-            dlight.b = avgc1.b
-            dlight.brightness = 2
-            dlight.Decay = 100
-            dlight.Size = (w + h) * 1.25
-            dlight.DieTime = CurTime() + 1
-            -- if inklub then
-            --     dlight.pos = Vector(2228, 568, 72)
-            --     dlight.Size = 900
-            -- end
-        end
-
-        dlight = DynamicLight(1441)
-
-        if (dlight) then
-            dlight.pos = Pos + (Ang:Forward() * (w * 3 / 4)) + (Ang:Right() * (h / 2)) + (Ang:Up() * ((w + h) / 4))
-            dlight.r = avgc2.r
-            dlight.g = avgc2.g
-            dlight.b = avgc2.b
-            dlight.brightness = 2
-            dlight.Decay = 100
-            dlight.Size = (w + h) * 1.25
-            dlight.DieTime = CurTime() + 1
-            -- if inklub then
-            --     dlight.pos = Vector(2380, 568, 72)
-            --     dlight.Size = 900
-            -- end
-        end
-
-        if firsttime then
-            print(SysTime() - firsttime)
-        end
-    end
-end
-
-hook.Add("HUDPaint", "DrawFullscreenInfo", DrawFullscreenOrLighting)
-
-function ExplicitVideoWarning()
-    if GetConVar("swamp_mature_content"):GetBool() then return false end
-    local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater()
-
-    if Theater and Theater._Video and Theater._Video:IsMature() then
-        if Theater._Name == "Movie Theater" and IsValid(Theater._Video:GetOwner()) and Theater._Video:GetOwner():IsStaff() then return false end
-
-        return true
-    end
-
-    return false
-end
-
-hook.Add("HUDPaint", "DrawNoFlashWarning", function()
-    local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater()
-
-    if Theater and Theater._Video then
-        if (not EmbeddedIsReady()) then return end
-        local needschromium = Theater._Video:Service().NeedsChromium and (not EmbeddedHasChromium())
-        local needsflash = Theater._Video:Service().NeedsFlash and (not EmbeddedHasFlash())
-        local needscodecs = ((Theater._Video:Duration() == 0 and Theater._Video:Service().LivestreamNeedsCodecs) or Theater._Video:Service().NeedsCodecs) and (not EmbeddedHasCodecs())
-
-        if needschromium or needsflash or needscodecs then
-            local plural = (needschromium and 1 or 0) + (needsflash and 1 or 0) + (needscodecs and 1 or 0) > 1 and "them" or "it"
-            draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 - 50, "You don't have" .. (needschromium and " Chromium," or "") .. (needsflash and " the Adobe Flash plugin," or "") .. (needscodecs and " the video codec patch," or ""), "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
-            draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2, "Without " .. plural .. ", you can't watch this video", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
-            draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 + 50, "Press F2 to install " .. plural .. "! Then fully reboot Garry's Mod.", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
-
-            if needschromium and (not needsflash) and Theater._Video:Service().NeedsFlash then
-                draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 + 100, "This video also requires flash", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
-            end
-        end
-    end
-end)

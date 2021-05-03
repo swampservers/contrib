@@ -21,10 +21,9 @@ function ENT:Draw()
         end
     end
 
-    if cam.StartCulled3D2D(self.Attach.Pos, self.Attach.Ang, RenderScale) then
+    cam.Culled3D2D(self.Attach.Pos, self.Attach.Ang, RenderScale, function()
         self:DrawThumbnail()
-        cam.End3D2D()
-    end
+    end)
 end
 
 function ENT:DrawThumbnail()
@@ -53,6 +52,11 @@ function ENT:DrawThumbnail()
         surface.SetMaterial(DefaultThumbnail)
         surface.DrawTexturedRect(0, 0, ThumbWidth - 1, ThumbHeight - 1)
         background = ""
+    elseif IsValid(LocalPlayer()) and LocalPlayer():FlashlightIsOn() then
+        print("BF")
+        surface.SetDrawColor(80, 80, 80)
+        surface.SetMaterial(DefaultThumbnail) --FIX WEIRD BUG
+        surface.DrawTexturedRect(0, 0, 1, 1)
     end
 
     local setting = theatername_esc .. ":" .. videotitle .. ":" .. background

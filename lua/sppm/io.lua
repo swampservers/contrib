@@ -2,6 +2,7 @@
 net.Receive("PonyCfg", function(len)
     local ply = net.ReadEntity()
     local cfg = net.ReadTable()
+
     if IsValid(ply) then
         PPM_SetPonyCfg(ply, cfg)
     end
@@ -9,6 +10,7 @@ end)
 
 net.Receive("PonyInvalidate", function(len)
     local ply = net.ReadEntity()
+
     if IsValid(ply) then
         ply.UpdatedPony = nil
     end
@@ -123,8 +125,7 @@ hook.Add("Think", "PPM_Loader", function()
         ReloadCurrentPony()
         hook.Remove("Think", "PPM_Loader")
     end
-end) 
-
+end)
 
 function SendLocalPonyCfg()
     local tab = LocalPlayer().ponydata

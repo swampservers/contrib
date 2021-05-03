@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 module("theater", package.seeall)
-VIDEO = {}
+VIDEO = istable(VIDEO) and VIDEO or {}
 
 function VIDEO:Init(info, ply)
     if (not info) or ((info.type or "") == "") then return end
@@ -203,4 +203,36 @@ if SERVER then
             callback(false)
         end
     end
+end
+
+if CLIENT then
+    function VIDEO:ShouldTrust()
+        return self:Service():ShouldTrust(self) or self.FORCETRUST
+    end
+
+    --used by services
+    function TRUSTED_VIDEO_HOST(k)
+        k = k:lower():gsub("https", "http"):gsub("http://", ""):gsub("www.", "")
+
+        return k:StartWith("swampservers.net/") or k:StartWith("dropbox.com/") or k:StartWith("puu.sh/") or k:StartWith("discord.gg/") or k:StartWith("discord.com/")
+    end
+
+    _G.TRUSTED_VIDEO_HOST = TRUSTED_VIDEO_HOST
+
+    hook.Add("Think", "VideoTrust", function()
+        if input.IsKeyDown(KEY_F8) then
+            if IsValid(LocalPlayer()) then
+                local th = LocalPlayer():GetTheater()
+
+                if th then
+                    local v = th:GetVideo()
+
+                    if v and not v:ShouldTrust() then
+                        v.FORCETRUST = true
+                        RunConsoleCommand("cinema_refresh")
+                    end
+                end
+            end
+        end
+    end)
 end

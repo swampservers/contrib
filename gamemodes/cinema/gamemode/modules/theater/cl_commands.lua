@@ -7,10 +7,9 @@ CreateClientConVar("cinema_muteall", 0, true, true)
 MuteAFKConVar = CreateClientConVar("cinema_muteafk", 0, true, true)
 MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true)
 GameVolumeConVar = CreateClientConVar("cinema_game_volume", 1, true, false)
-CreateClientConVar("cinema_hd", 0, true, false)
+CreateClientConVar("cinema_quality", 1, true, false)
 CreateClientConVar("cinema_cc", 0, true, false)
 CreateClientConVar("cinema_hideinterface", 0, true, false)
-CreateClientConVar("cinema_resolution", 720, true, false)
 local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false)
 local ScrollAmount = CreateClientConVar("cinema_scrollamount", 60, true, false)
 local HidePlayers = CreateClientConVar("cinema_hideplayers", 0, true, false)
@@ -74,30 +73,8 @@ concommand.Add("cinema_requestlast", function()
     end
 end)
 
-cvars.AddChangeCallback("cinema_hd", function(cmd, old, new)
-    new = tonumber(new)
-
-    if not new then
-        return
-    elseif new < 1 then
-        RunConsoleCommand("cinema_resolution", "720")
-    else
-        RunConsoleCommand("cinema_resolution", "1080")
-    end
-end)
-
-cvars.AddChangeCallback("cinema_resolution", function(cmd, old, new)
-    new = tonumber(new)
-
-    if not new then
-        return
-    elseif new < 2 then
-        RunConsoleCommand("cinema_resolution", 2)
-    elseif new > 1080 then
-        RunConsoleCommand("cinema_resolution", 1080)
-    else
-        theater.ResizePanel()
-    end
+cvars.AddChangeCallback("cinema_quality", function(cmd, old, new)
+    theater.ResizePanel()
 end)
 
 cvars.AddChangeCallback("cinema_volume", function(cmd, old, new)

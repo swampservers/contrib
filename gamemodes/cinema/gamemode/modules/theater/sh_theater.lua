@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 module("theater", package.seeall)
-THEATER = {}
+THEATER = istable(THEATER) and THEATER or {}
 
 function THEATER:Init(locId, info)
     local o = {}
@@ -84,6 +84,10 @@ end
 
 function THEATER:IsReplicated()
     return bit.band(self._Flags, THEATER_REPLICATED) == THEATER_REPLICATED
+end
+
+function THEATER:GetVideo()
+    return self._Video
 end
 
 function THEATER:SetVideo(Video)
@@ -455,6 +459,7 @@ if SERVER then
             net.WriteFloat(self:VideoStartTime())
             net.WriteString(self:VideoOwnerName())
             net.WriteString(self:VideoOwnerSteamID())
+            net.WriteUInt(self:NumVoteSkips(), 8)
         end
 
         net.Send(ply or self.Players) -- sent to specific player if specified

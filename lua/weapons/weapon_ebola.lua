@@ -44,7 +44,7 @@ if SERVER then
                         v:GetWeapon("weapon_ebola"):PrimaryAttack()
                     end
 
-                    if math.random() < 0.02 then
+                    if math.random() < 0.03 then
                         v:ChatPrint("[green]coronavirus healed")
                         v:StripWeapon("weapon_ebola")
                     else

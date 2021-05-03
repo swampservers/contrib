@@ -33,9 +33,11 @@ function player:SetLocation(locationId)
 end
 
 player.TrueName = player.TrueName or player.Nick
+
 function player:Name()
     return self:IsBot() and "Kleiner" or self:TrueName()
 end
+
 player.Nick = player.Name
 player.GetName = player.Name
 
@@ -57,17 +59,17 @@ if SERVER then
         hook.Run("PlayerModelChanged", self, mdl)
     end
 else
-    hook.Add("PrePlayerDraw","PlayerModelChangeDetector",function(ply)
+    hook.Add("PrePlayerDraw", "PlayerModelChangeDetector", function(ply)
         local mdl = ply:GetModel()
-        if mdl~=ply.PlayerModelChangedLastModel then
-            ply.PlayerModelChangedLastModel=mdl
+
+        if mdl ~= ply.PlayerModelChangedLastModel then
+            ply.PlayerModelChangedLastModel = mdl
             hook.Run("PlayerModelChanged", ply, mdl)
         end
     end)
 end
 
-
-hook.Add("PlayerModelChanged", "SetJumpPower",function(ply,mdl) 
+hook.Add("PlayerModelChanged", "SetJumpPower", function(ply, mdl)
     -- print(ply,mdl)
     ply:SetJumpPower(ply:IsPony() and 160 or 152)
 end)

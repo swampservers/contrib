@@ -118,28 +118,28 @@ function GetMapPropTable()
         },
         {
             class = "prop_physics",
-            pos = Vector(608+16+384, 528+0.1, 84),
+            pos = Vector(608 + 16 + 384, 528 + 0.1, 84),
             ang = Angle(90, 90, 0),
             model = "models/swamponions/cinematext/1234.mdl",
             noshadows = true
         },
         {
             class = "prop_physics",
-            pos = Vector(832, 1008-0.1, 84),
+            pos = Vector(832, 1008 - 0.1, 84),
             ang = Angle(90, -90, 0),
             model = "models/swamponions/cinematext/56.mdl",
             noshadows = true
         },
         {
             class = "prop_physics",
-            pos = Vector(-480+0.1, 640+14, 112),
+            pos = Vector(-480 + 0.1, 640 + 14, 112),
             ang = Angle(90, 0, 0),
             model = "models/swamponions/cinematext/public.mdl",
             noshadows = true
         },
         {
             class = "prop_physics",
-            pos = Vector(-736-29.5,1264+29.5,116),
+            pos = Vector(-736 - 29.5, 1264 + 29.5, 116),
             ang = Angle(90, -45, 0),
             model = "models/swamponions/cinematext/movie.mdl",
             noshadows = true

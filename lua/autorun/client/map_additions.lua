@@ -139,6 +139,7 @@ timer.Simple(0, function()
 end)
 
 local last_thing = 0
+
 hook.Add("Think", "VapeSignColor", function()
     if vapesignmaterial then
         local c = HSVToColor(SysTime() * 15, 0.5, 1)
@@ -146,11 +147,11 @@ hook.Add("Think", "VapeSignColor", function()
     end
 
     --fix the screen
-    local next_thing = math.floor(CurTime()*7)
-    if next_thing~=last_thing then
-        computerscreenmaterial:SetFloat("$sqrt2",(math.random()-0.5)*20/CurTime())
-        last_thing=next_thing
+    local next_thing = math.floor(CurTime() * 7)
+
+    if next_thing ~= last_thing then
+        computerscreenmaterial:SetFloat("$sqrt2", (math.random() - 0.5) * 20 / CurTime())
+        last_thing = next_thing
     end
 end)
 -- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))
-

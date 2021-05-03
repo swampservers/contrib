@@ -43,6 +43,16 @@ PLAYERLIST.TitleHeight = BrandTitleBarHeight
 PLAYERLIST.ServerHeight = 32
 PLAYERLIST.PlyHeight = 48
 
+concommand.Add("mute", function(ply, cmd, args, argss)
+    local v = Ply(argss)
+
+    if v then
+        v.ClickMuted = not v.ClickMuted
+        print(v.ClickMuted and "Muted" or "Unmuted", v)
+        UpdateMutes()
+    end
+end)
+
 function UpdateMutes()
     for k, v in pairs(player.GetAll()) do
         if v ~= LocalPlayer() then

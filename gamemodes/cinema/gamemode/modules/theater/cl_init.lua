@@ -34,6 +34,13 @@ function CreatePanel()
     -- There should only be one panel playing
     RemovePanels()
     ActivePanel = vgui.Create("TheaterHTML", vgui.GetWorldPanel(), "TheaterScreen")
+
+    ActivePanel.GetUVMax = function(self)
+        local pw, ph = self:GetSize()
+
+        return pw / math.power2(pw), ph / math.power2(ph)
+    end
+
     --[[
 	timer.Simple(0.1, function()
 		if IsValid(ActivePanel) then
@@ -76,10 +83,24 @@ function ResizePanel()
     else
         local Theater = LocalPlayer():GetTheater()
         local tw, th = Theater:GetSize()
-        local scale = tw / th
-        local h = (GetConVar("cinema_hd") and GetConVar("cinema_hd"):GetBool() or false) and 720 or 480
-        -- Adjust width based on the theater screen's scale
-        local w = math.floor(h * scale)
+        local aspect = tw / th
+        local q = GetConVar("cinema_quality"):GetInt()
+        local h, w = 256, 512
+
+        if q == 1 then
+            h, w = 512, 1024
+        elseif q == 2 then
+            h, w = 1024, 2048
+        elseif q >= 3 then
+            h, w = 2048, 4096
+        end
+
+        if aspect >= 2 then
+            h, w = math.ceil(w / aspect), w
+        else
+            h, w = h, math.ceil(h * aspect)
+        end
+
         ActivePanel:SetSize(w, h)
     end
 end
@@ -105,7 +126,11 @@ function RemovePanels()
     end
 end
 
-hook.Add("OnReloaded", "RemoveAllPanels", theater.RemovePanels)
+--theater.RemovePanels
+hook.Add("OnReloaded", "RemoveAllPanels", function()
+    print("RELOAD")
+end)
+
 hook.Add("OnGamemodeLoaded", "RemoveAllPanels2", theater.RemovePanels)
 
 function ToggleFullscreen()
@@ -161,7 +186,7 @@ function PollServer()
     LocalPlayer().LastTheaterRequest = CurTime()
 end
 
-function ReceiveVideo()
+net.Receive("TheaterVideo", function()
     local Video = nil
     local info = {}
     info.type = net.ReadString()
@@ -175,6 +200,9 @@ function ReceiveVideo()
         info.OwnerName = net.ReadString()
         info.OwnerSteamID = net.ReadString()
         Video = VIDEO:Init(info)
+        NumVoteSkips = net.ReadUInt(8)
+    else
+        NumVoteSkips = 0
     end
 
     -- Private theater owner
@@ -196,13 +224,10 @@ function ReceiveVideo()
         end)
     end
 
-    NumVoteSkips = 0
     LastInfoDraw = CurTime()
-end
+end)
 
-net.Receive("TheaterVideo", ReceiveVideo)
-
-function ReceiveSeek()
+net.Receive("TheaterSeek", function()
     local seconds = net.ReadFloat()
     local Video = CurrentVideo
     local Theater = LocalPlayer():GetTheater()
@@ -213,11 +238,9 @@ function ReceiveSeek()
     if IsValid(ActivePanel) and CurrentVideo then
         CurrentVideo:Service():SeekTo(CurTime() - seconds, ActivePanel)
     end
-end
+end)
 
-net.Receive("TheaterSeek", ReceiveSeek)
-
-function ReceiveTheater()
+net.Receive("TheaterInfo", function()
     local v = net.ReadTable()
     Queue = net.ReadTable()
     local Video = Theaters[v.Location] and Theaters[v.Location]._Video
@@ -251,11 +274,9 @@ function ReceiveTheater()
     if ValidPanel(GuiQueue) then
         GuiQueue:UpdateList()
     end
-end
+end)
 
-net.Receive("TheaterInfo", ReceiveTheater)
-
-function ReceiveVoteSkips()
+net.Receive("TheaterVoteSkips", function()
     local name = net.ReadString()
     local skips = net.ReadInt(7)
     local required = net.ReadInt(7)
@@ -264,14 +285,12 @@ function ReceiveVoteSkips()
 
     NumVoteSkips = skips
     ReqVoteSkips = required
-end
-
-net.Receive("TheaterVoteSkips", ReceiveVoteSkips)
+end)
 
 function LoadVideo(Video)
     CurrentVideo = Video
 
-    if not Video then
+    if not Video or not Video:ShouldTrust() then
         if IsValid(ActivePanel) then
             ActivePanel:Remove()
         end
