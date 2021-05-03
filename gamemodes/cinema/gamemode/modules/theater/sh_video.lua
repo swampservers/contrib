@@ -206,15 +206,20 @@ if SERVER then
 end
 
 if CLIENT then
+    local TEMP_TRUST = TEMP_TRUST or {}
+    local CURRENTKEY = nil
+    
     function VIDEO:ShouldTrust()
-        return self:Service():ShouldTrust(self) or self.FORCETRUST
+        return self:Service():ShouldTrust(self) or (CURRENTKEY and TEMP_TRUST[CURRENTKEY]) or GetConVar("cinema_trust_videos") or self.FORCETRUST
     end
 
     --used by services
     function TRUSTED_VIDEO_HOST(k)
-        k = k:lower():gsub("https", "http"):gsub("http://", ""):gsub("www.", "")
+        local t = url.parse2(k)
+        if not t.host then return false end
+        CURRENTKEY = t.host
 
-        return k:StartWith("swampservers.net/") or k:StartWith("dropbox.com/") or k:StartWith("puu.sh/") or k:StartWith("discord.gg/") or k:StartWith("discord.com/")
+        return t.host == "www.swampservers.net" or t.host == "www.dropbox.com" or t.host == "www.puu.sh" or t.host == "cdn.discordapp.com"
     end
 
     _G.TRUSTED_VIDEO_HOST = TRUSTED_VIDEO_HOST
@@ -229,6 +234,7 @@ if CLIENT then
 
                     if v and not v:ShouldTrust() then
                         v.FORCETRUST = true
+                        if CURRENTKEY then TEMP_TRUST[CURRENTKEY] = true end
                         RunConsoleCommand("cinema_refresh")
                     end
                 end
