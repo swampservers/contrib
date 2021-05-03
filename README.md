@@ -44,13 +44,20 @@ To set up the default model position/scale, use **hatmaker.lua** (in the root of
 
 # API
 
-See lua/autorun/player_extension.lua:
-
+lua/autorun/player_extension.lua:
+```
 player:IsPony()
 player:IsAFK()
-player:GetRank() (0 for players 1+ for staff)
+player:GetRank() # (0 for players 1+ for staff)
+Hook: "PlayerModelChanged" is run when a player's model changes (called on both client and server)
+```
 
-entity:ExtEmitSound(soundname, options): its basically like EmitSound but does stuff so that if one guy is in a theater he won't hear it if its played outside the theater. It also handles the "lip syncing" (not really syncing - they move randomly) for speech sounds. options is a keyvalue table (or nil), possible arguments are:
+lua/autorun/swamp_core.lua:
+Extensions to Vector, math, table, etc
+
+
+lua/autorun/extsound.lua:
+entity:ExtEmitSound(soundname, options): Like EmitSound but does stuff so that if one guy is in a theater he won't hear it if its played outside the theater. It also handles the "lip syncing" (not really syncing - they move randomly) for speech sounds. options is a keyvalue table (or nil), possible arguments are:
 - pitch
 - crouchpitch
 - level
@@ -60,8 +67,8 @@ entity:ExtEmitSound(soundname, options): its basically like EmitSound but does s
 - shared: emit on client without networking, assuming called in shared function
 - speech: move player lips (time to move lips, or auto if < 0)
 
-player:GetLocation(): returns a integer for what location they are at
-player:GetLocationName(): gets the location name (look at the cinema gamemode for more on this, the swamp version is similar)
+player:GetLocation(): returns a integer for what location a player is in.
+player:GetLocationName(): gets the location name (look at the cinema gamemode for more on this, the swamp version is similar).
 
 global function: Safe(player or entity): is the player/entity in a safe/protected area or otherwise safe
 
