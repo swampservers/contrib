@@ -10,7 +10,7 @@ local v_width = 16000
 local v_height = 9000
 local v_dist = 5000
 
-hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function(depth,sky)
+hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function(depth, sky)
     if sky or depth then return end
     local to_c0 = c0 - EyePos()
     local to_c1 = c1 - EyePos()

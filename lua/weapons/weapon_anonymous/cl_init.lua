@@ -6,7 +6,6 @@ SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 anonymousOverlayImage = Material("anonymous/overlay.png")
 
-
 function SWEP:DrawHUD()
     local shade = 120
     surface.SetDrawColor(shade, shade, shade, math.max(0, 255 - (math.max(0, EyePos():Distance(LocalPlayer():GetPos() + LocalPlayer():GetCurrentViewOffset()) - 20) * 10)))

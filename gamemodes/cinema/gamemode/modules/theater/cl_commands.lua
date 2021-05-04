@@ -1,69 +1,72 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+CreateClientConVar("cinema_volume", 50, true, false, "", 0, 100)
+GameVolumeConVar = CreateClientConVar("cinema_game_volume", 100, true, false, "", 0, 100)
 
-CreateClientConVar("cinema_volume", 50, true, false,"",0,100)
-GameVolumeConVar = CreateClientConVar("cinema_game_volume", 100, true, false,"",0,100)
-if GameVolumeConVar:GetInt()==1 then RunConsoleCommand("cinema_game_volume","100") end --reset it
-MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true,"",0,1)
+--reset it
+if GameVolumeConVar:GetInt() == 1 then
+    RunConsoleCommand("cinema_game_volume", "100")
+end
 
-MuteVoiceConVar = CreateClientConVar("cinema_mute_voice", 0, true, true,"",0,4)
-
-HideNamesConVar = CreateClientConVar("cinema_hidenames", 0, true, false, "",0,1)
-CreateClientConVar("cinema_lightfx", 0, true, false,"",0,1)
-
-CreateClientConVar("cinema_quality", 1, true, false, "",0,3)
-
-CreateClientConVar("cinema_hideinterface", 0, true, false, "",0,1)
-local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false, "",0,1)
-local HidePlayers = CreateClientConVar("cinema_hideplayers", 0, true, false, "",0,1)
+MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true, "", 0, 1)
+MuteVoiceConVar = CreateClientConVar("cinema_mute_voice", 0, true, true, "", 0, 4)
+HideNamesConVar = CreateClientConVar("cinema_hidenames", 0, true, false, "", 0, 1)
+CreateClientConVar("cinema_lightfx", 0, true, false, "", 0, 1)
+CreateClientConVar("cinema_quality", 1, true, false, "", 0, 3)
+CreateClientConVar("cinema_hideinterface", 0, true, false, "", 0, 1)
+local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false, "", 0, 1)
+local HidePlayers = CreateClientConVar("cinema_hideplayers", 0, true, false, "", 0, 1)
 
 -- CreateClientConVar("cinema_cc", 0, true, false, "",0,1) --maybe add this back if another deaf guy complains
-
-net.Receive("EntityEmitSound",function(len)
+net.Receive("EntityEmitSound", function(len)
     local ent = net.ReadEntity()
     local soundname = net.ReadString()
     local soundlevel = net.ReadFloat()
     local pitch = net.ReadFloat()
     local volume = net.ReadFloat()
-    local channel = net.ReadUInt(8)-2
+    local channel = net.ReadUInt(8) - 2
     local flags = net.ReadUInt(10)
     local dsp = net.ReadUInt(8)
-    
     if not IsValid(ent) then return end --unloaded ent
-
     -- played in prediction, hopefully...?
-    if ent==LocalPlayer() or ent:IsWeapon() and ent.Owner == LocalPlayer() then return end
-    ent:EmitSound(soundname, soundlevel, pitch, volume, channel~=-2 and channel or nil,flags,dsp)
+    if ent == LocalPlayer() or ent:IsWeapon() and ent.Owner == LocalPlayer() then return end
+    ent:EmitSound(soundname, soundlevel, pitch, volume, channel ~= -2 and channel or nil, flags, dsp)
 end)
 
-net.Receive("EmitSound",function(len)
+net.Receive("EmitSound", function(len)
     local soundname = net.ReadString()
     local pos = net.ReadVector()
-    local channel = net.ReadUInt(8)-1
+    local channel = net.ReadUInt(8) - 1
     local volume = net.ReadFloat()
     local soundlevel = net.ReadFloat()
     local flags = net.ReadUInt(10)
     local pitch = net.ReadFloat()
-    local dsp = net.ReadUInt(8)    
+    local dsp = net.ReadUInt(8)
     -- EmitSound(soundname,pos,-1,channel,volume,soundlevel,flags,pitch,dsp)
-    sound.Play(soundname,pos,soundlevel,pitch,volume)
+    sound.Play(soundname, pos, soundlevel, pitch, volume)
 end)
 
 function CinemaGameVolumeSetting()
     if IsValid(LocalPlayer()) and LocalPlayer():InTheater() and MuteGameConVar:GetBool() then return 0 end
-    return GameVolumeConVar:GetFloat()/100
+
+    return GameVolumeConVar:GetFloat() / 100
 end
 
-surface.PlaySoundOriginal =surface.PlaySoundOriginal or surface.PlaySound
+surface.PlaySoundOriginal = surface.PlaySoundOriginal or surface.PlaySound
+
 surface.PlaySound = function(fl)
-    if CinemaGameVolumeSetting() > 0 then surface.PlaySoundOriginal(fl) end
+    if CinemaGameVolumeSetting() > 0 then
+        surface.PlaySoundOriginal(fl)
+    end
 end
 
 hook.Add("EntityEmitSound", "CinemaMuteGame", function(s)
-    local f =CinemaGameVolumeSetting()
-    if f==0 then return false end
+    local f = CinemaGameVolumeSetting()
+    if f == 0 then return false end
+
     if f < 1 then
         s.Volume = s.Volume * f
+
         return true
     end
 end)

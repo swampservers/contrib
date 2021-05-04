@@ -56,7 +56,7 @@ end)
 function UpdateMutes()
     for k, v in pairs(player.GetAll()) do
         if v ~= LocalPlayer() then
-            v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteVoiceConVar:GetInt()>=2))
+            v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteVoiceConVar:GetInt() >= 2))
         end
     end
 end
@@ -425,7 +425,7 @@ end
 
 function SERVERNAME:Update()
     self.Name:SetText(game.GetMap())
-    local players = table.Count(player.GetHumans())
+    local players = SV_PLYCOUNT or table.Count(player.GetHumans())
     local ttext = tostring(players) .. " Players Online"
 
     if players == 1 then
