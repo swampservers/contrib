@@ -14,7 +14,7 @@ VISUALIZER_SETTINGS = {"Rave", "Colorful", "Flash", "Red", "Blue", "Dark", "None
 
 --"Dynamic",
 hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
-    if depth or sky then return end
+    if sky or depth then return end
     VISUALIZER_TYPE_TARGET = nil
     if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Vapor Lounge" and LocalPlayer():GetTheater()) then return end
     local c, a = Vector(2302, 530, 69), Angle(0, 0, 40)

@@ -399,9 +399,8 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase)
     end
 end
 
-local laserhook = function(depth, skybox)
-    if (depth) then return end
-    if (skybox) then return end
+hook.Add("PostDrawTranslucentRenderables", "laserhook", function(depth, sky)
+    if sky or depth then return end
     render.SetMaterial(laser_material)
 
     if (laser_material) then
@@ -438,9 +437,7 @@ local laserhook = function(depth, skybox)
             LaserPointer_DrawBeam(ply, wep, ply:EyePos(), ply:GetAimVector(), color, nil, beamstart, wep:GetBeamMode())
         end
     end
-end
-
-hook.Add("PostDrawTranslucentRenderables", "laserhook", laserhook)
+end)
 
 function SWEP:MakePlane(pos, targetpos)
     if (CLIENT) then return end

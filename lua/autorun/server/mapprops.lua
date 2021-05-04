@@ -132,17 +132,19 @@ function GetMapPropTable()
         },
         {
             class = "prop_physics",
-            pos = Vector(-480 + 0.1, 640 + 14, 112),
+            pos = Vector(-480 + 0.1, 640 + 14, 108),
             ang = Angle(90, 0, 0),
             model = "models/swamponions/cinematext/public.mdl",
-            noshadows = true
+            noshadows = true,
+            scale = 0.95
         },
         {
             class = "prop_physics",
-            pos = Vector(-736 - 29.5, 1264 + 29.5, 116),
+            pos = Vector(-736 - 29.5 +0.5, 1264 + 29.5 - 0.5, 116),
             ang = Angle(90, -45, 0),
             model = "models/swamponions/cinematext/movie.mdl",
-            noshadows = true
+            noshadows = true,
+            scale = 0.95 --the curve doesnt quite line up now, but the map very well curved
         },
     }
 

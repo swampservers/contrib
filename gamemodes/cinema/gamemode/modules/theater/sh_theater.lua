@@ -255,8 +255,17 @@ if SERVER then
     function THEATER:SyncThumbnail()
         if not IsValid(self._ThumbEnt) then return end
 
-        if self._ThumbEnt:GetTheaterName() ~= self:Name() then
-            self._ThumbEnt:SetTheaterName(self:Name())
+        local name = self:Name()
+        if name==self:OriginalName() then
+            if IsValid(self:GetOwner()) then
+                name = self:GetOwner():Name().."'s Theater"
+            else
+                name=""
+            end
+        end
+
+        if self._ThumbEnt:GetTheaterName() ~= name  then
+            self._ThumbEnt:SetTheaterName(name)
         end
 
         self._ThumbEnt:SetTitle(self:VideoTitle())

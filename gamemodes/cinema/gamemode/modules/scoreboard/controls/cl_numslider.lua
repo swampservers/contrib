@@ -11,7 +11,7 @@ function PANEL:Init()
     self.Slider.TranslateValues = function(slider, x, y) return self:TranslateSliderValues(x, y) end
     self.Slider:SetTrapInside(true)
     self.Slider:SetImage("vgui/slider")
-    self:SetTall(35)
+    self:SetTall( 35) --does nothing?
 end
 
 --[[---------------------------------------------------------

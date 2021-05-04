@@ -118,10 +118,3 @@ end
 function GM:CreateMove(cmd)
     if (player_manager.RunClass(LocalPlayer(), "CreateMove", cmd)) then return true end
 end
-
---//Generic open
-net.Receive("openWebpage", function(len)
-    local theurl = net.ReadString()
-    gui.OpenURL(theurl)
-    print(theurl)
-end)

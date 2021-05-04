@@ -244,20 +244,22 @@ FullRefractLocation = {
 }
 
 SKYBOXLOC = -1
-PLAYERVISDISABLED = true
 
 concommand.Add("playervis", function(ply, cmd, args)
     for k, ply in ipairs(player.GetAll()) do
         DisableNoDraw(ply)
     end
 
-    PLAYERVISDISABLED = not PLAYERVISDISABLED
-    chat.AddText(PLAYERVISDISABLED and "disabled" or "enabled")
+    if (hook.GetTable()["PreDrawOpaqueRenderables"] or {})["PlayerVisPreDraw"] then
+        hook.Remove("PreDrawOpaqueRenderables", "PlayerVisPreDraw")
+        chat.AddText("Disabled")
+    else
+        hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", PlayerVisUpdate)
+        chat.AddText("Enabled")
+    end
 end)
 
-hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", function(depth, sky)
-    if PLAYERVISDISABLED then return end
-
+function PlayerVisUpdate(depth, sky)
     if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0) > 0 then
         for k, ply in ipairs(player.GetAll()) do
             DisableNoDraw(ply)
@@ -407,7 +409,7 @@ hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", function(depth, sky)
             end
         end
     end
-end)
+end
 
 --local PlayerRenderClipDistSq = 600*600 --900*900
 --local PlayerRenderShadowDistSq = 450*450
@@ -509,7 +511,7 @@ local fadeTime = 2
 
 hook.Add("DrawTranslucentAccessories", "DrawPlayerNames2", function(ply)
     if not render.DrawingScreen() then return end
-    if not GetConVar("cinema_drawnames"):GetBool() then return end
+    if HideNamesConVar and HideNamesConVar:GetBool() then return end
     if not IsValid(LocalPlayer()) or not LocalPlayer().InTheater then return end
     if ply == LocalPlayer() then return end
     local fwd = EyeAngles():Forward()

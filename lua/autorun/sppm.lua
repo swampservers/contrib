@@ -132,17 +132,6 @@ function SanitizePonyCfg(in_cfg)
     return cfg
 end
 
-local BODYGROUP_BODY = 1
-local BODYGROUP_HORN = 2
-local BODYGROUP_WING = 3
-local BODYGROUP_MANE = 4
-local BODYGROUP_MANE_LOW = 5
-local BODYGROUP_TAIL = 6
-local BODYGROUP_CMARK = 7
-local BODYGROUP_EYELASH = 8
-local EYES_COUNT = 10
-local MARK_COUNT = 27
-
 function PPM_SetBodyGroups(ent)
     if not ent:IsPPMPony() then return end
     local ply = ent:PonyPlayer()
@@ -161,14 +150,14 @@ function PPM_SetBodyGroups(ent)
         h, w = 0, 0
     end
 
-    ent:SetBodygroup(BODYGROUP_HORN, h)
-    ent:SetBodygroup(BODYGROUP_WING, w)
-    ent:SetBodygroup(BODYGROUP_BODY, ponydata.gender - 1)
-    ent:SetBodygroup(BODYGROUP_MANE, ponydata.mane - 1)
-    ent:SetBodygroup(BODYGROUP_MANE_LOW, ponydata.manel - 1)
-    ent:SetBodygroup(BODYGROUP_TAIL, ponydata.tail - 1)
-    ent:SetBodygroup(BODYGROUP_CMARK, ponydata.cmark_enabled - 1)
-    ent:SetBodygroup(BODYGROUP_EYELASH, (ponydata.gender == 1) and (ponydata.eyelash - 1) or 5)
+    ent:SetBodygroup(PPM.BODYGROUP_HORN, h)
+    ent:SetBodygroup(PPM.BODYGROUP_WING, w)
+    ent:SetBodygroup(PPM.BODYGROUP_BODY, ponydata.gender - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_MANE, ponydata.mane - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_MANE_LOW, ponydata.manel - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_TAIL, ponydata.tail - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_CMARK, ponydata.cmark_enabled - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_EYELASH, (ponydata.gender == 1) and (ponydata.eyelash - 1) or 5)
 end
 
 if CLIENT then
@@ -222,7 +211,7 @@ if CLIENT then
             ent:AddCallback("BuildBonePositions", function(ent, numbones)
                 local o = ent:GetOwner()
 
-                if o then
+                if o and IsValid(o) then
                     local misspelled_skull = o:LookupBone("LrigScull")
 
                     if misspelled_skull then

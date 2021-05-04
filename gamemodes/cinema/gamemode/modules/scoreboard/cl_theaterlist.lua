@@ -174,7 +174,7 @@ end
 function THEATERLISTITEM:Update()
     local th = self.th
     if not th then return end
-    self.Title:SetText(string.upper(th.name):gsub(" THEATER", ""):gsub("VAPOR ", ""))
+    self.Title:SetText(string.upper(th.name):gsub(" THEATER", ""):gsub("VAPOR ", ""):gsub("DRUNKEN ", ""))
 
     if th.players == 0 then
         self.Players:SetText("Empty")

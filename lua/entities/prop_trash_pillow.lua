@@ -5,6 +5,13 @@ DEFINE_BASECLASS("prop_trash")
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.CanChangeTrashOwner = false
 
+
+function ENT:OnTakeDamage(dmg) if dmg:GetDamageType()==DMG_ACID then self:SetNWBool("Hard", true) end end
+
+function ENT:GetHardened()
+    return self:GetNWBool("Hard", false)
+end
+
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables(self, true)
 end
@@ -24,6 +31,7 @@ function ENT:Use(ply)
         else
             local wep = ply:Give("weapon_bodypillow")
             ply:SelectWeapon("weapon_bodypillow")
+            wep:SetNWBool("Hard",self:GetHardened())
             local pos, ang = WorldToLocal(self:GetPos(), self:GetAngles(), ply:EyePos(), ply:EyeAngles())
             wep.droppos = pos
             wep.dropang = ang
@@ -43,14 +51,26 @@ end
 function ENT:Draw()
     local url, own = self:GetImgur()
 
+    if not url and self:GetHardened() then
+        url = "cogLTj5.png" -- the default texture, hacky solution
+    end
+
     --HACK to not load on painted things
     if url and self:GetMaterial() ~= "phoenix_storms/gear" then
         render.MaterialOverride(ImgurMaterial({
             id = url,
             owner = own,
             pos = self:GetPos(),
-            fix_aspect = false
+            stretch=true,
+            params=self:GetHardened() and HardenedPillowArgs(util.CRC((self:GetOwnerID() or "")..url)) or nil
         }))
+    end
+
+    if self:GetHardened() then
+        -- local m = self:GetModel()
+        -- self:SetModel("models/error.mdl")
+        -- self:SetModel(m)
+        bodypillow_unjiggle(self)
     end
 
     BaseClass.Draw(self) --, true)

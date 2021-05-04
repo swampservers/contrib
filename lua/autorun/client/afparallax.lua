@@ -10,7 +10,8 @@ local v_width = 16000
 local v_height = 9000
 local v_dist = 5000
 
-hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function()
+hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function(depth,sky)
+    if sky or depth then return end
     local to_c0 = c0 - EyePos()
     local to_c1 = c1 - EyePos()
     local adjacent = to_c0:Dot(Vector(1, 1, 0):GetNormalized())
@@ -28,7 +29,7 @@ hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function()
     local v1 = calc_parallax(-to_c1.z, w_height, v_height) + vofs
     local u0 = calc_parallax(to_c0:Dot(Vector(1, -1, 0):GetNormalized()), -w_width, v_width)
     local u1 = calc_parallax(to_c1:Dot(Vector(1, -1, 0):GetNormalized()), w_width, v_width)
-    cam.Start3D2D(w_center, Angle(0, -45, 90), 1)
+    cam.Start3D2D(w_center, Angle(0, -45, 90), 1) -- Already backface culled by checks above
     surface.SetDrawColor(255, 255, 255, 255)
     surface.SetMaterial(AF_CITYMAT)
     surface.DrawTexturedRectUV(-w_width / 2, -w_height / 2, w_width, w_height, u0, v0, u1, v1)

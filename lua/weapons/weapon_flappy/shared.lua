@@ -27,14 +27,20 @@ hook.Add("SetupMove", "flappy_SetupMove", function(ply, mv, cmd)
     if mv:KeyPressed(IN_JUMP) and not ply:InVehicle() then
         local self = ply:GetActiveWeapon()
         if not IsValid(self) or self:GetClass() ~= "weapon_flappy" then return end
-        if ply.InTheater and ply:InTheater() and not ply:IsOnGround() then return end
+
+        local power = 200
+
+        if ply.InTheater and ply:InTheater() then
+            power = 155
+            if not ply:IsOnGround() then return end
+        end
 
         if CLIENT and IsFirstTimePredicted() then
             self.TipTime = SysTime()
         end
 
         local vel = mv:GetVelocity()
-        vel.z = 220
+        vel.z = power
         mv:SetVelocity(vel)
         ply:DoCustomAnimEvent(PLAYERANIMEVENT_JUMP, -1)
 
