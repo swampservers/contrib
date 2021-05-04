@@ -483,22 +483,20 @@ local function DrawName(ply, opacityScale)
     -- render.OverrideDepthEnable(false, true)
     DrawTheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
 
-    if LocalPlayer():IsStaff() then
-        if ply:IsAFK() then
-            DrawTheaterText("[AFK]", "TheaterDermaLarge", 70, 70, Color(255, 255, 255, opacity))
-        end
+    if ply:IsAFK() then
+        DrawTheaterText("[AFK]", "TheaterDermaLarge", 70, 70, Color(255, 255, 255, opacity))
+    end
 
-        if ShowEyeAng then
-            DrawTheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
-            DrawTheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
-            ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
+    if LocalPlayer():IsStaff() and ShowEyeAng then
+        DrawTheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
+        DrawTheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
+        ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
 
-            if CurTime() - ply.lastrequestedmousepos > 0.5 then
-                ply.lastrequestedmousepos = CurTime()
-                net.Start("GetGUIMousePos")
-                net.WriteEntity(ply)
-                net.SendToServer()
-            end
+        if CurTime() - ply.lastrequestedmousepos > 0.5 then
+            ply.lastrequestedmousepos = CurTime()
+            net.Start("GetGUIMousePos")
+            net.WriteEntity(ply)
+            net.SendToServer()
         end
     end
 

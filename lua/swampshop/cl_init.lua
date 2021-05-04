@@ -9,12 +9,24 @@ include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
 local wasf3down = false
+local wascontextdown = false
+
+OLDBINDSCONVAR = CreateClientConVar("swamp_old_binds", "0", true, false)
+
+concommand.Add("menu_context", function() if not OLDBINDSCONVAR:GetBool() then SS_ToggleMenu() end end)
+concommand.Add("+menu_context", function() if not OLDBINDSCONVAR:GetBool() then SS_ToggleMenu() end  end)
+concommand.Add("swamp_shop", function() SS_ToggleMenu() end)
 
 hook.Add("Think", "PSToggler", function()
+
     local isf3down = input.IsKeyDown(KEY_F3)
 
     if isf3down and not wasf3down then
-        SS_ToggleMenu()
+        if OLDBINDSCONVAR:GetBool() then
+            SS_ToggleMenu()
+        else
+            LocalPlayerNotify("The shop binding is now "..tostring(input.LookupBinding("menu_context") or "unbound"):upper().." (bind +menu_context, or bind swamp_shop, or set swamp_old_binds 1)")
+        end
     end
 
     wasf3down = isf3down

@@ -64,8 +64,9 @@ if CLIENT then
     local mat = Material("sprites/sent_ball")
     local mat2 = Material("models/wireframe")
 
-    hook.Add("PostDrawOpaqueRenderables", "MonitorDraw", function(depth,sky)
+    hook.Add("PostDrawOpaqueRenderables", "MonitorDraw", function(depth, sky)
         if sky or depth then return end
+
         if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0) == 1 then
             SituationMonitorMaterial:SetMatrix("$texture2transform", Matrix({
                 {1.5, 0, 0, math.Rand(0, 1)},

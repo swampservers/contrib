@@ -9,13 +9,11 @@ local DefaultThumbnail = Material("theater/static.vmt")
 function ENT:Draw()
     self:DrawModel()
     self:SetModelScale(0.8)
-
     local scl = self:GetModelScale()
     local rscl = 0.98 * 0.1875 * scl
+    local pos, ang = LocalToWorld(Vector(0.6, rscl * ThumbWidth * -0.5, rscl * ThumbHeight * 0.5), Angle(0, 90, 90), self:GetPos(), self:GetAngles())
 
-    local pos,ang = LocalToWorld(Vector(0.6,rscl*ThumbWidth*-0.5,rscl*ThumbHeight*0.5),Angle(0,90,90),self:GetPos(),self:GetAngles())
-
-    cam.Culled3D2D(pos,ang, rscl, function()
+    cam.Culled3D2D(pos, ang, rscl, function()
         self:DrawThumbnail()
     end)
 end
@@ -57,7 +55,7 @@ function ENT:DrawThumbnail()
     if self.ThumbMat then
         local t = self.ThumbMat:GetTexture("$basetexture")
 
-        if self.ThumbMat:IsError() or t==nil or t:IsError() or t:IsErrorTexture() then
+        if self.ThumbMat:IsError() or t == nil or t:IsError() or t:IsErrorTexture() then
             self.ThumbMat = nil
         end
     end
@@ -126,7 +124,7 @@ function ENT:DrawThumbnail()
             self.JSDelay = true
 
             -- Add delay to wait for JS to run
-            timer.Simple(0.01, function()
+            timer.Simple(0.1, function()
                 if not IsValid(self) then return end
                 if not ValidPanel(self.HTML) then return end
                 self.HTML:UpdateHTMLTexture()
