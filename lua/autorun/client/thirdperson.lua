@@ -15,7 +15,7 @@ hook.Add("Think", "ThirdPersonToggler", function()
         if (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
             THIRDPERSON = not THIRDPERSON
         else
-            LocalPlayerNotify("The thirdperson binding is now "..tostring(input.LookupBinding("gmod_undo")):upper().." (or bind gmod_undo, or bind swamp_thirdperson, or set swamp_old_binds 1)")
+            LocalPlayerNotify("The thirdperson binding is now "..tostring(input.LookupBinding("gmod_undo") or "unbound"):upper().." (bind gmod_undo, or bind swamp_thirdperson, or set swamp_old_binds 1)")
         end
     end
 

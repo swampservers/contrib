@@ -25,7 +25,7 @@ hook.Add("Think", "PSToggler", function()
         if OLDBINDSCONVAR:GetBool() then
             SS_ToggleMenu()
         else
-            LocalPlayerNotify("The shop binding is now "..tostring(input.LookupBinding("menu_context")):upper().." (or bind +menu_context, or bind swamp_shop, or set swamp_old_binds 1)")
+            LocalPlayerNotify("The shop binding is now "..tostring(input.LookupBinding("menu_context") or "unbound"):upper().." (bind +menu_context, or bind swamp_shop, or set swamp_old_binds 1)")
         end
     end
 
