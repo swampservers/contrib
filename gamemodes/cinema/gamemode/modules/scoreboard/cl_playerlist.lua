@@ -56,7 +56,7 @@ end)
 function UpdateMutes()
     for k, v in pairs(player.GetAll()) do
         if v ~= LocalPlayer() then
-            v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteAFKConVar:GetBool()))
+            v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteVoiceConVar:GetInt()>=2))
         end
     end
 end

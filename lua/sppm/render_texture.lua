@@ -152,11 +152,11 @@ local _cleantexture = "lights/white" --_cleanmaterial:GetTexture("$basetexture")
 PPM.rendertargettasks.hairtex1 = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "hairtex1") then
-            print("HAIR1TEX", ent)
+            -- print("HAIR1TEX", ent)
             mats[PPMMAT_HAIR1]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_HAIR1]:SetTexture("$basetexture", ent.ponydata_tex.hairtex1)
         else
-            print("HAIR1", ent, ent.ponydata.haircolor1)
+            -- print("HAIR1", ent, ent.ponydata.haircolor1)
             mats[PPMMAT_HAIR1]:SetVector("$color2", ent.ponydata.haircolor1)
             mats[PPMMAT_HAIR1]:SetTexture("$basetexture", _cleantexture)
         end
@@ -174,11 +174,11 @@ PPM.rendertargettasks.hairtex1 = {
 PPM.rendertargettasks.hairtex2 = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "hairtex2") then
-            print("HAIR2TEX", ent)
+            -- print("HAIR2TEX", ent)
             mats[PPMMAT_HAIR2]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_HAIR2]:SetTexture("$basetexture", ent.ponydata_tex.hairtex2)
         else
-            print("HAIR2", ent, ent.ponydata.haircolor2)
+            -- print("HAIR2", ent, ent.ponydata.haircolor2)
             mats[PPMMAT_HAIR2]:SetVector("$color2", ent.ponydata.haircolor2)
             mats[PPMMAT_HAIR2]:SetTexture("$basetexture", _cleantexture)
         end
@@ -195,13 +195,13 @@ PPM.rendertargettasks.hairtex2 = {
 PPM.rendertargettasks.tailtex = {
     render = function(ent, mats)
         if PPM_CheckTexture(ent, "tailtex") then
-            print("TAILTEX", ent)
+            -- print("TAILTEX", ent)
             mats[PPMMAT_TAIL1]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_TAIL2]:SetVector("$color2", Vector(1, 1, 1))
             mats[PPMMAT_TAIL1]:SetTexture("$basetexture", ent.ponydata_tex.tailtex)
             mats[PPMMAT_TAIL2]:SetTexture("$basetexture", _cleantexture) --added?
         else
-            print("TAIL", ent, ent.ponydata.haircolor1, ent.ponydata.haircolor2)
+            -- print("TAIL", ent, ent.ponydata.haircolor1, ent.ponydata.haircolor2)
             mats[PPMMAT_TAIL1]:SetVector("$color2", ent.ponydata.haircolor1)
             mats[PPMMAT_TAIL2]:SetVector("$color2", ent.ponydata.haircolor2)
             mats[PPMMAT_TAIL1]:SetTexture("$basetexture", _cleantexture)
@@ -362,9 +362,6 @@ PPM.hairrenderOp = function(UPDN, TAIL, hairnum)
     end
 end
 
--- print(UPDN, TAIL, hairnum, PPM.currt_success) 
---/PPM.currt_success =true
---MsgN(UPDN,TAIL,hairnum," = ",PPM.currt_success)
 PPM.manerender = {
     up5 = {0, 1},
     up6 = {0, 1},

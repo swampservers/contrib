@@ -3,6 +3,7 @@
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 ENT.Model = Model("models/sunabouzu/thumbnail_case.mdl")
+-- ENT.Model = Model("models/props_phx/rt_screen.mdl")
 
 function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "TheaterName")

@@ -372,6 +372,7 @@ concommand.Add("ps_proptest", function()
 end)
 
 hook.Add("PostDrawOpaqueRenderables", "SS_RenderGibs", function(depth, sky)
+    if sky or depth then return end
     local nextgibs = {}
 
     while #SS_GibProps > 0 do

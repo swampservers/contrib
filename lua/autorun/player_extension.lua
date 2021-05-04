@@ -1,60 +1,60 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local player = FindMetaTable("Player")
+local PLAYER = FindMetaTable("Player")
 local entity = FindMetaTable("Entity")
 
-function player:GetLocation()
+function PLAYER:GetLocation()
     return self:GetDTInt(0) or 0
 end
 
-function player:GetLastLocation()
+function PLAYER:GetLastLocation()
     return self.LastLocation or -1
 end
 
-function player:GetLocationName()
+function PLAYER:GetLocationName()
     return Location.GetLocationNameByIndex(self:GetLocation())
 end
 
-function player:GetLocationTable()
+function PLAYER:GetLocationTable()
     return Location.GetLocationByIndex(self:GetLocation()) or {}
 end
 
-function player:InTheater()
+function PLAYER:InTheater()
     return self:GetLocationTable().Theater ~= nil
 end
 
-function player:GetTheater()
+function PLAYER:GetTheater()
     return theater.GetByLocation(self:GetLocation())
 end
 
-function player:SetLocation(locationId)
+function PLAYER:SetLocation(locationId)
     self.LastLocation = self:GetLocation()
 
     return self:SetDTInt(0, locationId)
 end
 
-player.TrueName = player.TrueName or player.Nick
+PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
 
-function player:Name()
+function PLAYER:Name()
     return self:IsBot() and "Kleiner" or self:TrueName()
 end
 
-player.Nick = player.Name
-player.GetName = player.Name
+PLAYER.Nick = PLAYER.Name
+PLAYER.GetName = PLAYER.Name
 
 if SERVER then
-    player.TrueSetPos = player.TrueSetPos or entity.SetPos
+    PLAYER.TrueSetPos = PLAYER.TrueSetPos or entity.SetPos
 
     -- prevents teleporting out with it
-    function player:SetPos(pos)
+    function PLAYER:SetPos(pos)
         self:StripWeapon("weapon_kekidol")
         self:TrueSetPos(pos)
     end
 end
 
-player.TrueSetModel = player.TrueSetModel or entity.SetModel
+PLAYER.TrueSetModel = PLAYER.TrueSetModel or entity.SetModel
 
 if SERVER then
-    function player:SetModel(mdl)
+    function PLAYER:SetModel(mdl)
         self:TrueSetModel(mdl)
         hook.Run("PlayerModelChanged", self, mdl)
     end
@@ -69,16 +69,19 @@ else
     end)
 end
 
+function PLAYER:SetDefaultJumpPower()
+    self:SetJumpPower(self:IsPony() and 160 or 152)
+end
+
 hook.Add("PlayerModelChanged", "SetJumpPower", function(ply, mdl)
-    -- print(ply,mdl)
-    ply:SetJumpPower(ply:IsPony() and 160 or 152)
+    ply:SetDefaultJumpPower()
 end)
 
-function player:IsPony()
+function PLAYER:IsPony()
     return isPonyModel(self:GetModel())
 end
 
-function player:PonyNoseOffsetBone(ang)
+function PLAYER:PonyNoseOffsetBone(ang)
     if self:IsPPMPony() then
         if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
     end
@@ -86,7 +89,7 @@ function player:PonyNoseOffsetBone(ang)
     return Vector(0, 0, 0)
 end
 
-function player:PonyNoseOffsetAttach(ang)
+function PLAYER:PonyNoseOffsetAttach(ang)
     if self:IsPPMPony() then
         if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
     end
@@ -94,11 +97,11 @@ function player:PonyNoseOffsetAttach(ang)
     return Vector(0, 0, 0)
 end
 
-function player:IsAFK()
+function PLAYER:IsAFK()
     return self:GetNWBool("afk", false)
 end
 
-function player:StaffControlTheater()
+function PLAYER:StaffControlTheater()
     local minn = 2
 
     if not CH then
@@ -120,4 +123,9 @@ function isPonyModel(modelName)
     if modelName == "models/mlp/player" then return true end
 
     return false
+end
+
+function PLAYER:UsingWeapon(cls)
+    local c = self:GetActiveWeapon()
+    return IsValid(c) and c:GetClass()==cls
 end
