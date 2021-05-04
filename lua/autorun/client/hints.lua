@@ -4,8 +4,8 @@ HintConVar = CreateClientConVar("swamp_showhints", "1", true, false, "", 0, 1)
 SWAMP_HINTS = {
     intro = function() return "Welcome to Swamp Cinema! Hold " .. (input.LookupBinding("showscores") or "the scoreboard key (bind it in options)") .. " to see what's playing." end,
     settings = function() return "You can also disable hints from this menu (click to unlock your mouse)" end,
-    theater = function() return "Inside theaters, you can hold " .. string.upper(input.LookupBinding("menu") or "the spawnmenu key (bind it in options)") .. " to request your own video." end,
-    store = function() return "Press F3 to open the shop and get fun items, weapons, and cosmetics. Many items are free!" end,
+    theater = function() return "Inside theaters, you can hold " .. string.upper(input.LookupBinding("menu") or "the spawn menu key (bind it in options)") .. " to request your own video." end,
+    store = function() return "Press " .. string.upper(input.LookupBinding("menu_context") or "the context menu key (bind it in options)") .. " to open the shop and get fun items, weapons, and cosmetics. Many items are free!" end,
 }
 
 CURRENT_SWAMP_HINT = "intro"
@@ -52,7 +52,10 @@ hook.Add("Think", "SwampHintThink", function()
             SetSwampHint()
         end
     elseif CURRENT_SWAMP_HINT == "store" then
-        if input.IsKeyDown(KEY_F3) then
+        local b = input.LookupBinding("menu_context")
+
+        -- if input.IsKeyDown(KEY_F3) then
+        if b and input.IsButtonDown(input.GetKeyCode(b)) then
             SetSwampHint()
         end
     end

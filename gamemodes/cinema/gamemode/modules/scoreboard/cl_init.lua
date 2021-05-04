@@ -115,7 +115,7 @@ function GM:MenuShow()
 end
 
 concommand.Add("+menu", GM.MenuShow)
-concommand.Add("+menu_context", GM.MenuShow)
+-- concommand.Add("+menu_context", GM.MenuShow)
 
 function GM:MenuHide()
     if ValidPanel(GuiQueue) then
@@ -130,7 +130,7 @@ function GM:MenuHide()
 end
 
 concommand.Add("-menu", GM.MenuHide)
-concommand.Add("-menu_context", GM.MenuHide)
+-- concommand.Add("-menu_context", GM.MenuHide)
 
 -- Scroll playerlist
 hook.Add("PlayerBindPress", "PlayerListScroll", function(ply, bind, pressed)

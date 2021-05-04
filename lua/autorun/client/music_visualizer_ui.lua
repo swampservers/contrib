@@ -40,11 +40,11 @@ hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
     if cam.StartCulled3D2D(c, a, scl) then
         -- costs fps?? EyePos():Distance(c)<100 and
         --and HtmlLightsMatFixx then
-        if theater.HtmlLightsMat then
+        if theater.LastHtmlMaterial and ValidPanel(theater.ActivePanel) then
             surface.SetDrawColor(255, 255, 255, 255)
-            surface.SetMaterial(theater.HtmlLightsMat)
+            surface.SetMaterial(theater.LastHtmlMaterial)
             -- surface.DrawTexturedRect(-30, 0, THLIGHT_CANVAS_XS * HtmlLightsMatFixx, THLIGHT_CANVAS_YS * HtmlLightsMatFixy)
-            surface.DrawTexturedRect(-280, -60, 160 * 4, 90 * 4)
+            surface.DrawTexturedRectUV(-280, -60, 160 * 3.1, 90 * 3.1,0,0,theater.ActivePanel:GetUVMax())
         end
 
         for i, v in ipairs(VISUALIZER_SETTINGS) do

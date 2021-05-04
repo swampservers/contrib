@@ -146,6 +146,9 @@ function HardenedPillowArgs(hsh)
 end
 
 function SWEP:PreDrawViewModel(vm, ply, wep)
+    self.PrintName = self:GetHardened() and "Body Pillow (Hardened)" or "Body Pillow"
+    self.Purpose = self:GetHardened() and "Stands up on its own" or "Gives the feeling of companionship"
+
     local url, own = self:GetImgur()
 
     if not url and self:GetHardened() then
@@ -311,7 +314,7 @@ function SWEP:PrimaryAttack()
                             local aimvel = aim
 
                             if self:GetHardened() then
-                                aimvel = aim * 4
+                                aimvel = aim * 5
                                 local dmg = DamageInfo()
                                 dmg:SetAttacker(self.Owner)
                                 dmg:SetInflictor(self)

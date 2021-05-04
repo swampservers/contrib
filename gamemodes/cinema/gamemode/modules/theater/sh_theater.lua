@@ -257,11 +257,11 @@ if SERVER then
         local name = self:Name()
 
         if name == self:OriginalName() then
-            if IsValid(self:GetOwner()) then
-                name = self:GetOwner():Name() .. "'s Theater"
-            else
+            -- if IsValid(self:GetOwner()) then
+            --     name = self:GetOwner():Name() .. "'s Theater"
+            -- else
                 name = ""
-            end
+            -- end
         end
 
         if self._ThumbEnt:GetTheaterName() ~= name then

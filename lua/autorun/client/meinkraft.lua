@@ -243,7 +243,7 @@ MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
 
 hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
     if sky or depth then return end
-    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Minecraft") then return end
+    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
     MINECRAFT_OREANGLE = Angle(0, 0, 0)
     MINECRAFT_OREMINS = -Vector(0.51, 0.51, 0.51) * CVX_SCALE
     MINECRAFT_OREMAXS = Vector(0.51, 0.51, 0.51) * CVX_SCALE
@@ -323,7 +323,7 @@ hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
 end)
 
 hook.Add("Think", "MinecraftOreUpdates", function()
-    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Minecraft") then return end
+    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
 
     if not REQUESTED_ORES then
         net.Start("cvxOres")

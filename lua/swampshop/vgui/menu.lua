@@ -648,7 +648,7 @@ function PANEL:Init()
             end, function() end, "Change Skin", "Cancel")
 
             local srdx, srdy = mderma:GetSize()
-            local mdermacredits = Label("Minecraft Skins by Milaco and Chev for Swamp Servers", mderma)
+            local mdermacredits = Label("Minecraft Skins by Chev for Swamp Servers", mderma)
             mdermacredits:Dock(BOTTOM)
             mdermacredits:SetContentAlignment(2)
             mderma:SetSize(srdx, srdy + 15)

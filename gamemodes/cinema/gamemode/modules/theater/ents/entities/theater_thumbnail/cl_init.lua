@@ -124,7 +124,7 @@ function ENT:DrawThumbnail()
             self.JSDelay = true
 
             -- Add delay to wait for JS to run
-            timer.Simple(0.01, function()
+            timer.Simple(0.1, function()
                 if not IsValid(self) then return end
                 if not ValidPanel(self.HTML) then return end
                 self.HTML:UpdateHTMLTexture()
