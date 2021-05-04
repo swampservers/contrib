@@ -181,7 +181,7 @@ function SETTINGS:Create()
     --addCheckbox('Don\'t load chat images',"fedorachat_hideimg","Hides all images in chat")
     addCheckbox('Hide interface', "cinema_hideinterface", "Clean Your Screen")
     addCheckbox('Hide players in theater', "cinema_hideplayers", 'For when trolls stand in front of your screen')
-	addCheckbox('Trust Videos', "cinema_trust_videos", 'Don\'t show the warning on untrusted videos')
+    addCheckbox('Trust Videos', "cinema_trust_videos", 'Don\'t show the warning on untrusted videos')
 
     addLabel('Adult content (18+)')
     addCheckbox('Videos & sprays (toggle: F6)', "swamp_mature_content", 'Show potentially mature videos & sprays')
