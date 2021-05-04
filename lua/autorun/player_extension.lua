@@ -127,5 +127,6 @@ end
 
 function PLAYER:UsingWeapon(cls)
     local c = self:GetActiveWeapon()
-    return IsValid(c) and c:GetClass()==cls
+
+    return IsValid(c) and c:GetClass() == cls
 end

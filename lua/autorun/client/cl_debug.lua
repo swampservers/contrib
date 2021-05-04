@@ -4,7 +4,7 @@ module("Location", package.seeall)
 local DebugEnabled = CreateClientConVar("cinema_debug_locations", "0", false, false)
 
 -- location visualizer for debugging
-hook.Add("PostDrawTranslucentRenderables", "CinemaDebugLocations", function(depth,sky)
+hook.Add("PostDrawTranslucentRenderables", "CinemaDebugLocations", function(depth, sky)
     if sky or depth then return end
     if (not DebugEnabled:GetBool()) then return end
 

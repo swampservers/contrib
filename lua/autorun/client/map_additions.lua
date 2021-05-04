@@ -34,41 +34,36 @@ hook.Add("PostDrawTranslucentRenderables", "DrawArenaBorder", function(dep,sky)
 
 end) ]]
 --
-local ClockArms = Material( "vgui/white" ) --Material("lights/white")
+local ClockArms = Material("debug/debugvertexcolor") --Material("lights/white")
 local ClockCenter = Vector(0, 1039.4 + 155, 192 - 4)
 
--- PostTranslucent so there is no z-fighting
+-- PostTranslucent so there is no z-fighting TODO this should be an entity with renderbounds
 hook.Add("PostDrawTranslucentRenderables", "lobbyclock", function(depth, sky)
     if sky or depth then return end
-    if EyePos().y > ClockCenter.y then return end
-    
-
+    if EyePos().y > ClockCenter.y or EyePos():DistToSqr(ClockCenter)>5000000 then return end
     local seconds = Vector(0, -21, 0)
     local minutes = Vector(0, -25, 0)
     local hours = Vector(0, -18, 0)
-
-    local h,m,s = unpack(os.date("%H:%M:%S"):Split(":"))
+    local h, m, s = unpack(os.date("%H:%M:%S"):Split(":"))
     seconds:Rotate(Angle(0, tonumber(s) * 6, 0))
     minutes:Rotate(Angle(0, tonumber(m) * 6, 0))
     hours:Rotate(Angle(0, tonumber(h) * 30, 0))
 
     local function DrawClockLine(endX, endY, thickness)
         local v2 = Vector(endX, 0, -endY)
-        local v1 = v2:GetNormalized()*1.5 -- start point is offset from center
+        local v1 = v2:GetNormalized() * 1.5 -- start point is offset from center
         local v3 = v2 - v1
         v3:Normalize()
         v3:Mul(thickness / 2)
         v3:Rotate(Angle(90, 0, 0))
-        render.DrawQuad(ClockCenter + v1  + v3,  ClockCenter +v1  - v3,ClockCenter +v2  - v3,ClockCenter +v2  + v3, Color(36,36,36))
+        render.DrawQuad(ClockCenter + v1 + v3, ClockCenter + v1 - v3, ClockCenter + v2 - v3, ClockCenter + v2 + v3, Color(36, 36, 36))
     end
 
     render.SetMaterial(ClockArms)
-    DrawClockLine( seconds.x, seconds.y, 0.4) 
-    DrawClockLine( minutes.x, minutes.y, 0.8)
-    DrawClockLine( hours.x, hours.y, 1.2)
+    DrawClockLine(seconds.x, seconds.y, 0.4)
+    DrawClockLine(minutes.x, minutes.y, 0.8)
+    DrawClockLine(hours.x, hours.y, 1.2)
 end)
-
-
 
 local hevmaterial = Material("models/hevsuit/hevsuit_sheet")
 
@@ -148,11 +143,12 @@ hook.Add("Think", "VapeSignColor", function()
         last_thing = next_thing
     end
 end)
+
 -- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))
-concommand.Add("dashing", function( ply, cmd, args )
+concommand.Add("dashing", function(ply, cmd, args)
     local m = Material("models/fedora_rainbowdash/fedora_rainbowdash_texture")
-    m:SetFloat("$cloakpassenabled",1)
-    m:SetFloat("$cloakfactor",0.95)
-    m:SetVector("$cloakcolortint",Vector(0.5,0.8,1))
-    m:SetFloat("$refractamount",0)
+    m:SetFloat("$cloakpassenabled", 1)
+    m:SetFloat("$cloakfactor", 0.95)
+    m:SetVector("$cloakcolortint", Vector(0.5, 0.8, 1))
+    m:SetFloat("$refractamount", 0)
 end)

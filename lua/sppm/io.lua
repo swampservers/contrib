@@ -77,7 +77,7 @@ function PPM_Randomize()
     ponydata.eyeholesize = 0.7 + math.Rand(-0.1, 0.1)
     ponydata.eyecolor_hole = Vector(0, 0, 0)
     -- TODO assert(ponydata == SanitizePonyCfg(ponydata))
-    PPM_SetPonyCfg(LocalPlayer(), ponydata)
+    PPM_SetPonyCfg(LocalPlayer(), SanitizePonyCfg(ponydata))
 end
 
 function PPM_Save(filename)

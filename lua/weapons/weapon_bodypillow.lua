@@ -30,8 +30,8 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
 function SWEP:GetHardened()
-    return self:GetNWBool("Hard", false)
     -- return self.Owner:SteamID() == "STEAM_0:0:38422842"
+    return self:GetNWBool("Hard", false)
 end
 
 function SWEP:TimeScale()
@@ -52,13 +52,16 @@ end
 function PILLOW_UNJIGGLE(self, nb)
     pcall(function()
         --or (self.wep and not self.wep:GetHardened()) 
-        if self:GetModel()~="models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
+        if self:GetModel() ~= "models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
+
         for i = 0, nb - 1 do
             local i2 = i < 3 and i or 2 - i
             local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
             local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
 
-            if self:GetClass()=="prop_trash_pillow" then ro,ra = self:GetPos(),self:GetAngles() end
+            if self:GetClass() == "prop_trash_pillow" then
+                ro, ra = self:GetPos(), self:GetAngles()
+            end
 
             if not ro then
                 if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
@@ -111,20 +114,19 @@ function SWEP:DrawWorldModel()
     end
 
     self:SetupBones()
-
     local url, own = self:GetImgur()
 
     if not url and self:GetHardened() then
         url = "cogLTj5.png" -- the default texture, hacky solution
     end
-    
+
     if url then
         render.MaterialOverride(ImgurMaterial({
             id = url,
             owner = own,
             pos = self:GetPos(),
             stretch = true,
-            params=self:GetHardened() and HardenedPillowArgs(util.CRC(  (own~="" and own or (IsValid(self.Owner) and self.Owner:SteamID() or ""))..url  )) or nil
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
         }))
     end
 
@@ -140,10 +142,13 @@ function SWEP:DrawWorldModel()
 end
 
 function HardenedPillowArgs(hsh)
-    return string.format([[{["$detail"]="decals/decalstain%03da",["$detailscale"]="1",["$detailblendfactor"]="2"}]],(hsh%15)+1)
+    return string.format([[{["$detail"]="decals/decalstain%03da",["$detailscale"]="1",["$detailblendfactor"]="2"}]], (hsh % 15) + 1)
 end
 
 function SWEP:PreDrawViewModel(vm, ply, wep)
+    self.PrintName = self:GetHardened() and "Body Pillow (Hardened)" or "Body Pillow"
+    self.Purpose = self:GetHardened() and "Stands up on its own" or "Gives the feeling of companionship"
+
     local url, own = self:GetImgur()
 
     if not url and self:GetHardened() then
@@ -156,7 +161,7 @@ function SWEP:PreDrawViewModel(vm, ply, wep)
             owner = own,
             pos = self:GetPos(),
             stretch = true,
-            params=self:GetHardened() and HardenedPillowArgs(util.CRC(  (own~="" and own or (IsValid(self.Owner) and self.Owner:SteamID() or ""))..url  )) or nil
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
         }))
     end
 
@@ -301,14 +306,15 @@ function SWEP:PrimaryAttack()
                         net.WriteVector(bcenter)
                         net.SendPVS(bcenter)
 
-                        if (not Safe(v)) and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass()=="weapon_golfclub") then
+                        if (not Safe(v)) and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") then
                             if v:IsOnGround() then
                                 v:SetPos(v:GetPos() + Vector(0, 0, 2))
                             end
+
                             local aimvel = aim
 
                             if self:GetHardened() then
-                                aimvel = aim * 4
+                                aimvel = aim * 5
                                 local dmg = DamageInfo()
                                 dmg:SetAttacker(self.Owner)
                                 dmg:SetInflictor(self)

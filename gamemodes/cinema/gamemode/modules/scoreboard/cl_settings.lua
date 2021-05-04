@@ -96,7 +96,6 @@ function SETTINGS:Create()
         self.TheaterList:AddItem(Volume.Wrap)
     end
 
-
     local function addLabel(label)
         local setting = self:NewSetting("DLabel", label)
         setting:AlignLeft(16)
@@ -108,7 +107,6 @@ function SETTINGS:Create()
         setting.Wrap:SetTall(setting:GetTall())
         self.TheaterList:AddItem(setting.Wrap)
     end
-
 
     local function addCheckbox(label, convar, hover)
         local HD = self:NewSetting("TheaterCheckBoxLabel", label, convar)
@@ -126,8 +124,7 @@ function SETTINGS:Create()
         self.TheaterList:AddItem(HD.Wrap)
     end
 
-    
-    local function addDropdown(title,convar,tooltip,selections,labelsize,comboboxsize)
+    local function addDropdown(title, convar, tooltip, selections, labelsize, comboboxsize)
         local Wrap = vgui.Create("Panel", self)
         Wrap:DockPadding(16, 6, 16, 4)
         Wrap:SetTooltip(tooltip)
@@ -136,44 +133,40 @@ function SETTINGS:Create()
         label:SetFont("LabelSmaller")
         label:Dock(LEFT)
         label:SetText(title)
-        label:SetSize( labelsize or 100, 18 )
+        label:SetSize(labelsize or 100, 18)
         label:SetColor(color_white)
-    
-        local DComboBox = vgui.Create( "DComboBox", Wrap)
+        local DComboBox = vgui.Create("DComboBox", Wrap)
         DComboBox:Dock(RIGHT)
-        DComboBox:SetSize( comboboxsize or 100, 18 )
+        DComboBox:SetSize(comboboxsize or 100, 18)
         DComboBox:SetSortItems(false)
-        for i,v in ipairs(selections) do 
+
+        for i, v in ipairs(selections) do
             DComboBox:AddChoice(v)
         end
-        -- DComboBox:AddChoice( "Extreme (LOW FPS)" )
-        DComboBox:ChooseOptionID(math.Clamp(GetConVar(convar):GetInt()+1,1,#selections))
-        DComboBox.OnSelect = function( self, index, value )
-            RunConsoleCommand(convar, tostring(index-1))
-        end  
-        self.TheaterList:AddItem(Wrap)
 
+        -- DComboBox:AddChoice( "Extreme (LOW FPS)" )
+        DComboBox:ChooseOptionID(math.Clamp(GetConVar(convar):GetInt() + 1, 1, #selections))
+
+        DComboBox.OnSelect = function(self, index, value)
+            RunConsoleCommand(convar, tostring(index - 1))
+        end
+
+        self.TheaterList:AddItem(Wrap)
     end
 
     addSlider("Video & music volume", "cinema_volume", "cinema videos and background music")
     addCheckbox('Mute video while alt-tabbed', "cinema_mute_nofocus", 'No background noise')
-
     addSlider("Game sounds volume", "cinema_game_volume", "Gunshots, footsteps etc.\nIf this doesn't work well, try the settings in the escape menu.")
-    addCheckbox('Mute game in theater', "cinema_mutegame", 'Mute game sound in theater.')
+    addCheckbox('Mute game sound in theater', "cinema_mutegame", 'Mute game sound in theater.')
 
-    addDropdown("Voice chat","cinema_mute_voice","When should voice chat be heard?",{
-        "Everywhere", "Mute in theaters", "Mute AFK players", "Mute AFK and in theaters", "Mute everyone"
-    }, 80, 120)
-    
-    
+    addDropdown("Voice chat", "cinema_mute_voice", "When should voice chat be heard?", {"Everywhere", "Mute in theaters", "Mute AFK players", "Mute AFK and in theaters", "Mute everyone"}, 80, 120)
+
     addLabel('Quality')
-    addDropdown("Video quality","cinema_quality","Video playback quality; affects FPS.\nSettings are 256p/512p/1024p",{
-        "Low (best FPS)", "Medium", "High"
-    })
+
+    addDropdown("Video quality", "cinema_quality", "Video playback quality; affects FPS.\nSettings are 256p/512p/1024p", {"Low (best FPS)", "Medium", "High"})
+
     addCheckbox('Dynamic theater lighting', "cinema_lightfx", 'Exclusive lighting effects (reduces fps)')
     addCheckbox('Turbo button (increase FPS)', "swamp_fps_boost", "Put your gaymergear PC into overdrive")
-
-
     addLabel('Display')
     addCheckbox('Show hints', "swamp_showhints", 'Show hints on the top of your screen')
     addCheckbox('Hide player names', "cinema_hidenames", "Big names in yo face")
