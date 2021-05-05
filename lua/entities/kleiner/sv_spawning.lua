@@ -1,12 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-CreateConVar("kleiner_spawncount", "18", FCVAR_ARCHIVE + FCVAR_PROTECTED, "Number of Kleiner NPCs to spawn automatically.", 0, 100)
+CreateConVar("kleiner_spawncount", "18", FCVAR_ARCHIVE + FCVAR_PROTECTED, "Number of Kleiner NPCs to spawn automatically.", 0, 400)
 KLEINER_NPCS = KLEINER_NPCS or {}
 KLEINER_NPCS_FILTER = KLEINER_NPCS_FILTER or {}
 KLEINER_NPC_TARGETS = KLEINER_NPC_TARGETS or {}
 KLEINER_NPCS_CURRENT_NUMBER = KLEINER_NPCS_CURRENT_NUMBER or 0
 
-timer.Create("kleiner_spawner", 1, 0, function()
+timer.Create("kleiner_spawner", 0.5, 0, function()
     if (table.Count(KLEINER_NPCS) < (GetConVar("kleiner_spawncount"):GetInt() or 0)) then
         local newkleiner = ents.Create("kleiner")
 
@@ -54,7 +54,7 @@ hook.Add("EntityTakeDamage", "GrenadeAttribution", function(target, dmginfo)
     end
 
     --if grenade is hit by high force damage from non-world, change grenade owner to attacker
-    if (target:GetClass() == "npc_grenade_frag" and dmginfo:GetDamage() > 5 and dmginfo:GetDamageForce():Length() > 200 and IsValid(dmginfo:GetAttacker()) and IsValid(dmginfo:GetInflictor())) then
+    if (target:GetClass() == "npc_grenade_frag" and dmginfo:GetDamage() > 5 and dmginfo:GetDamageForce():Length() > 200 and IsValid(dmginfo:GetAttacker()) and IsValid(dmginfo:GetInflictor()) and !IsValid(target:GetParent())) then
         if (dmginfo:GetDamageForce():Length() < 5000) then
             dmginfo:SetDamageForce(dmginfo:GetDamageForce():GetNormalized() * 5000)
         end
