@@ -1,17 +1,19 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
---player_manager.AddValidModel( "pony", "models/ppm/player_default_base.mdl" ) 
---player_manager.AddValidModel( "ponynj", "models/ppm/player_default_base_nj.mdl" )  
+
 PPM = PPM or {}
 PPM.Playermodel = "models/ppm/player_default_base.mdl"
-FindMetaTable("Entity").IsPPMPony = function(self) return self:GetModel() == PPM.Playermodel end
 
-FindMetaTable("Entity").PonyPlayer = function(self)
+local Entity = FindMetaTable("Entity")
+
+function Entity:IsPPMPony() return self:GetModel() == PPM.Playermodel end
+
+function Entity:PonyPlayer()
     if self:IsPlayer() then return self end
     if self:EntIndex() == -1 then return LocalPlayer() end --pointshop model
     if self.RagdollSourcePlayer then return self.RagdollSourcePlayer end
     -- if self.PonyPlayerEntity then return 
     -- if its a ragdoll then return owner
-    print(self)
+    print(self, "unknown pony")
 end
 
 PPM.serverPonydata = PPM.serverPonydata or {}
@@ -103,9 +105,6 @@ local ponydata_vectors = {
 function SanitizePonyCfg(in_cfg)
     local cfg = {}
 
-    -- local json = util.JSONToTable(util.Decompress(data))
-    -- local pdata = {}
-    -- pdata._cmark_loaded = false
     for k, v in pairs(ponydata_numbers) do
         local value = in_cfg[k]
         value = isnumber(value) and value or v[3]

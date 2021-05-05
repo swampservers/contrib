@@ -28,8 +28,13 @@ function Entity:__index(key)
     local val = Entity[key]
     if val ~= nil then return val end
     local tab = EntTable(self)
-    if tab then return tab[key] end
-    -- Removed .Owner -> :GetOwner()
+    if tab ~= nil then
+        local val = tab[key]
+        if val ~= nil then return val end
+    end
+
+    -- TODO remove this and collapse this function to be like Player
+    if key == "Owner" then return EntOwner(self) end
 end
 
 function Player:__index(key)
