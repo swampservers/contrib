@@ -138,7 +138,6 @@ PropTrashLightData = {
 if CLIENT then
     function ENT:Think()
         local light = PropTrashLightData[self:GetModel()]
-
         if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then
             local dlight = DynamicLight(self:EntIndex())
 
@@ -163,11 +162,11 @@ if CLIENT then
                 dlight.Decay = 500
                 dlight.DieTime = CurTime() + 1
             end
+            self:SetNextClientThink(CurTime() + 0.1)
         else
             self:SetNextClientThink(CurTime() + 0.5)
-
-            return true
         end
+        return true
     end
 end
 

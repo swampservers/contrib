@@ -31,6 +31,7 @@ function SafeMountGMA(wsid, filename)
 end
 
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
+--or: models/props_phx/gears/spur24.mdl
 function require_workshop(id)
     if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT == 0 then
         STEAMWS_DOWNLOAD_STARTED[id] = true
@@ -79,4 +80,10 @@ function require_workshop_model(mdl)
         -- assume its built in
         return true
     end
+end
+
+function is_model_undownloaded(mdl)
+    if not STEAMWS_REGISTRY[mdl] then return false end
+    if util.IsValidModel(mdl) then return false end
+    return not STEAMWS_MOUNTED[STEAMWS_REGISTRY[mdl]]
 end

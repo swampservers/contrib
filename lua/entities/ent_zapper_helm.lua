@@ -118,13 +118,12 @@ function ENT:Think()
         --         end
         --     end
         -- end
-    end
-
-    if SERVER then
+        self:NextThink(CurTime())
+    else
         local s = NULL
 
-        for k, v in pairs(player.GetAll()) do
-            if v:InVehicle() and v:GetPos():Distance(self:GetPos()) < 100 then
+        for k, v in pairs(Ents.player) do
+            if v:InVehicle() and v:GetPos():DistToSqr(self:GetPos()) < 10000 then
                 s = v
             end
         end
@@ -133,9 +132,8 @@ function ENT:Think()
             self:SetSubject(s)
         end
         --self:SetPos(player.GetAll()[1]:GetPos())
+        self:NextThink(CurTime()+0.1)
     end
-
-    self:NextThink(CurTime())
 
     return true
 end

@@ -3,9 +3,10 @@
 local wasf4down = false
 
 
-
 concommand.Add("gmod_undo", function() if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then THIRDPERSON = not THIRDPERSON end end)
 concommand.Add("+gmod_undo", function() if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then THIRDPERSON = not THIRDPERSON end end)
+concommand.Add("undo", function() if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then THIRDPERSON = not THIRDPERSON end end)
+concommand.Add("+undo", function() if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then THIRDPERSON = not THIRDPERSON end end)
 concommand.Add("swamp_thirdperson", function() THIRDPERSON = not THIRDPERSON end)
 
 hook.Add("Think", "ThirdPersonToggler", function()

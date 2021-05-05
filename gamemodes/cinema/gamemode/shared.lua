@@ -75,45 +75,26 @@ function GM:EntityTakeDamage(target, dmginfo)
     end
 end
 
---[[---------------------------------------------------------
-	 Name: Text to show in the server browser
------------------------------------------------------------]]
 function GM:GetGameDescription()
     return self.Name
 end
 
---[[---------------------------------------------------------
-	 Name: gamemode:ShouldCollide( Ent1, Ent2 )
-	 Desc: This should always return true unless you have 
-			a good reason for it not to.
------------------------------------------------------------]]
 function GM:ShouldCollide(Ent1, Ent2)
     return false
 end
 
---[[---------------------------------------------------------
-	 Name: gamemode:Move
-	 This basically overrides the NOCLIP, PLAYERMOVE movement stuff.
-	 It's what actually performs the move. 
-	 Return true to not perform any default movement actions. (completely override)
------------------------------------------------------------]]
 function GM:Move(ply, mv)
-    if (player_manager.RunClass(ply, "Move", mv)) then return true end
+    -- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 end
 
---[[---------------------------------------------------------
--- Purpose: This is called pre player movement and copies all the data necessary
---          from the player for movement. Copy from the usercmd to move.
------------------------------------------------------------]]
+
 function GM:SetupMove(ply, mv, cmd)
-    if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then return true end
+    -- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 end
 
---[[---------------------------------------------------------
-	 Name: gamemode:FinishMove( player, movedata )
------------------------------------------------------------]]
+
 function GM:FinishMove(ply, mv)
-    if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
+    -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 end
 
 --Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this

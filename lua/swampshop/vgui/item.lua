@@ -299,6 +299,12 @@ function PANEL:Setup()
             dmp.model2set = nil
         end
 
+        if is_model_undownloaded(dmp:GetModel()) then
+            draw.SimpleText("Mouse over", "DermaDefaultBold", w/2,h/2-8, Color( 0,0,0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText("to download", "DermaDefaultBold", w/2,h/2+8, Color( 0,0,0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            return
+        end
+
         if (not IsValid(dmp.Entity)) then return end
         dmp.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
 
