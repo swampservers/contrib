@@ -57,7 +57,7 @@ end
 --MAGICBUTTON_CACHED_ORIGINPOINTS = nil
 function ENT:FindSuitableCastOrigin()
     local hull = MAGICBUTTON_HULLSIZE
-    if (IsValid(self.Owner)) then end --return self:GetPos() + Vector(0,0,64)
+    if (IsValid(self:GetOwner())) then end --return self:GetPos() + Vector(0,0,64)
     local navareas = navmesh.GetAllNavAreas()
     local picks
 

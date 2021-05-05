@@ -3,9 +3,25 @@
 local Player = FindMetaTable("Player")
 local Weapon = FindMetaTable("Weapon")
 local Entity = FindMetaTable("Entity")
-local EntTable = Entity.GetTable
 
-function Entity:__index( key )
+ENTITY_CGETTABLE = ENTITY_CGETTABLE or Entity.GetTable
+
+-- Thanks to trolge#2286 on the GMod discord for help with this
+local EntTableCache = setmetatable ({}, {__mode = "kv"}) --weak references
+
+function Entity:GetTable()
+    local tab = EntTableCache[self]
+    if not tab then
+        tab = ENTITY_CGETTABLE(self)
+        EntTableCache[self] = tab
+    end
+    return tab
+end
+
+local EntTable = Entity.GetTable
+local EntOwner = Entity.GetOwner
+
+function Entity:__index( key ) 
 	local val = Entity[ key ]
 	if  val != nil then return val end
 	local tab = EntTable(self)
@@ -13,19 +29,19 @@ function Entity:__index( key )
 		return tab[ key ]
 	end
     -- Removed .Owner -> :GetOwner()
-end
-
+end 
+    
 function Player:__index( key )
 	local val = Player[key]
 	if  val != nil  then return val end
-	local val = Entity[key]
-	if  val != nil  then return val end
-	local tab = EntTable( self )
+	local val = Entity[key] 
+	if  val != nil  then return val end   
+	local tab = EntTable( self ) 
 	if  tab  then
 		return tab[ key ]
 	end
-end
-
+end  
+ 
 function Weapon:__index( key )
 	local val = Weapon[key]
 	if  val != nil  then return val end
@@ -37,5 +53,5 @@ function Weapon:__index( key )
 		if  val != nil  then return val end
 	end
     -- TODO remove this and collapse this function to be like Player
-	if  key == "Owner"  then return entity.GetOwner( self ) end
+	if  key == "Owner"  then return EntOwner( self ) end
 end
