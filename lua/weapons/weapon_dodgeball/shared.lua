@@ -11,15 +11,6 @@ function SWEP:Initialize()
     self:SetHoldType("physgun")
 end
 
-makeDodgeball = makeDodgeball or function(pos,vel,ply)
-local ball = ents.Create("dodgeball")
-ball:SetPos(pos)
-ball:Spawn()
-ball:GetPhysicsObject():SetVelocity(vel)
-ball.Owner = ply
-
-end
-
 function SWEP:ThrowBall(force)
     self:SetHoldType("physgun")
     self:SetNextPrimaryFire(CurTime() + 1)
