@@ -12,6 +12,8 @@ function ENT:SetupDataTables()
     self:NetworkVar("Entity", 0, "Target")
 end
 
+
+
 function ENT:GetName()
     return "Kleiner"
 end
@@ -29,3 +31,19 @@ list.Set("NPC", "Kleiner", {
     Class = "kleiner",
     Category = "Nextbot"
 })
+
+function ENT:IsNPC()
+    return true
+end
+
+
+hook.Add("EntityEmitSound","Kleiner_Footsounds",function(info)
+
+if(IsValid(info.Entity) and info.Entity:GetClass() == "kleiner" and string.sub(info.SoundName,0,16) == "player/footsteps")then
+    return false
+end
+if(IsValid(info.Entity) and info.Entity:GetClass() == "kleiner" and string.sub(info.SoundName,0,8) == "physics/")then
+    return false
+end
+
+end)

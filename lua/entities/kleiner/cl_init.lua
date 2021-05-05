@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("shared.lua")
-language.Add("kleiner", "Dr. Isaac Kleiner")
+language.Add("kleiner", "Kleiner")
 
 function ENT:Initialize()
     local effectdata = EffectData()
@@ -38,12 +38,15 @@ hook.Add("CreateClientsideRagdoll", "KleinerRagdollsFix", function(ent, rag)
     end
 end)
 
+
+
 function ENT:GetStareTarget()
     local target = self:GetTarget()
     if (IsValid(target)) then return target:EyePos() end
 
     return self:EyePos() + self:GetAngles():Forward() * 600
 end
+
 
 function ENT:Draw()
     local lod = self:GetPos():Distance(EyePos())
@@ -62,6 +65,7 @@ function ENT:Draw()
         end
     end
     self:DrawModel()
+
 end
 
 function ENT:GetPlayerColor()

@@ -5,7 +5,7 @@ include("sv_spawning.lua")
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 local RELEVANT_KLEINER
-ENT.LoseTargetDist = 3000
+ENT.LoseTargetDist = 5000
 ENT.SearchRadius = 1500
 ENT.KillReward = 100
 ENT.KillRewardBased = 10000
@@ -31,7 +31,7 @@ function ENT:Initialize()
     self:SetUseType(SIMPLE_USE)
     self:SetBased(math.random(1, 10) == 1)
     self:SetHealth(self:GetBased() and 200 or 50)
-
+    
     if (self:GetBased()) then
         self:SetSubMaterial(3, "models/pyroteknik/jokleiner_face")
     else
@@ -44,7 +44,6 @@ function ENT:Initialize()
             self:SetSubMaterial(3, "models/pyroteknik/jokleiner_face")
         end
     end
-
     --remove glasses
     if (math.random(1, 15) == 1) then
         self:SetSubMaterial(2, "engine/occlusionproxy")
@@ -54,28 +53,23 @@ function ENT:Initialize()
         --epic sunglasses
         self:SetSubMaterial(7, "tools/toolsblack")
     end
-
     self:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
     self:ResetBehavior()
 end
 
+
 function ENT:Use(ply)
-end
+    if(self:GetTarget() == ply)then
+    self:IgnoreTarget(ply)
+    self:ResetBehavior()
 
-function ENT:SpawnBait(vel)
-    local bait = ents.Create("weapon_kleinerbait")
-    if (not IsValid(bait)) then return end
-    bait:SetPos(self:GetPos() + Vector(0, 0, 36))
-    bait:Spawn()
-    bait:EmitSound("Weapon_Bugbait.Splat")
-    local phys = bait:GetPhysicsObject()
-    phys:SetVelocity(vel or (Vector(0, 0, 233) + VectorRand() * Vector(55, 55, 0)))
-
-    timer.Simple(60, function()
-        if (IsValid(bait) and not IsValid(bait:GetOwner())) then
-            bait:Remove()
-        end
-    end)
+    ply:ChatPrint("Kleiner stopped following you")
+    self:EmitSound("ui/buttonclickrelease.wav")
+    else
+        self:SetTarget(ply)
+        ply:ChatPrint("Kleiner started following you")
+        self:EmitSound("ui/buttonclickrelease.wav")
+    end
 end
 
 function ENT:Speak(snd)
@@ -119,13 +113,6 @@ function ENT:SayStuff(snd)
 
     local gesture = true
     snd = snd or table.Random(self.Chatter)
-
-    if (math.random(1, 50) == 1) then
-        self:Speak("vo/k_lab/kl_ahhhh.wav")
-        self:SpawnBait(Vector(0, 0, 0)) --shit out a larvae and scream
-
-        return
-    end
 
     local dur = self:Speak(snd)
 
@@ -175,6 +162,13 @@ end
 
 local PainSounds = {"vo/k_lab/kl_ahhhh.wav", "vo/k_lab/kl_hedyno03.wav"}
 
+function ENT:OnTakeDamage( dmginfo )
+	if(dmginfo:GetInflictor():GetClass() == "npc_grenade_frag" and dmginfo:GetAttacker() != self and dmginfo:GetAttacker():GetClass() == "kleiner")then
+        dmginfo:SetDamage(0)
+        return 0 --we don't want kleiners to be blowing eachother up
+    end
+end
+
 function ENT:OnInjured(damageinfo)
     if (self.Suicidal) then return end
 
@@ -196,10 +190,6 @@ end
 function ENT:OnKilled(dmginfo)
     self:StopSound(self.LastSound or "")
     self:DropGrenades()
-
-    if (math.random(1, 10) == 1) then
-        self:SpawnBait()
-    end
 
     hook.Run("OnNPCKilled", self, dmginfo:GetAttacker(), dmginfo:GetInflictor())
         local attacker = dmginfo:GetAttacker()
@@ -461,7 +451,7 @@ function ENT:FindTarget()
         end
     end
 
-    targetsum = targetsum + (targetcount * 0.5)
+    targetsum = targetsum + (targetcount * 0.1)
     local samplevalue = math.Rand(0, 1) * targetsum
 
     for key, ent in pairs(targets) do
@@ -586,13 +576,9 @@ function ENT:RunBehaviour()
                 if (self.WanderForcePos) then
                     wanderpos = self.WanderForcePos + VectorRand() * Vector(1, 1, 0):GetNormalized() * math.Rand(80, 150)
                 end
-                wanderpos = wanderpos or self:FindSpot("random", {
-                    type = "hiding",
-                    pos = self:GetPos(),
-                    radius = 1000,
-                    stepup = 900,
-                    stepdown = 900
-                })
+                wanderpos = wanderpos or table.Random(navmesh.Find( self:GetPos(), 1000, 900, 900 )):GetCenter()
+                
+
                 if (wanderpos ~= nil) then
                     self.WanderForcePos = nil
 
@@ -705,7 +691,7 @@ function ENT:HandleStuck()
         if (self:Health() <= 0) then
             self:Remove()
 
-            return
+            return 
         end
 
         self:Teleport(spot.pos)
@@ -719,7 +705,7 @@ function ENT:HandleStuck()
             return
         end
 
-        self.loco:Jump()
+        self:TeleportSafe()
         self.loco:ClearStuck()
     end
 end
@@ -727,6 +713,11 @@ end
 function ENT:Teleport(newpos)
         self:SetPos(newpos)
         self:EmitSound("garrysmod/balloon_pop_cute.wav")
+end
+
+function ENT:TeleportSafe(tpos,radius) --attempt to teleport the kleiner somewhere safe
+    local pos = table.Random(navmesh.Find( tpos or self:GetPos(), radius or 500, 128, 64 )):GetCenter()
+    self:Teleport(pos or tpos or self:GetPos())
 end
 
 local KLPATHGEN_ITERS
@@ -784,9 +775,35 @@ function ENT:ChaseTarget(options)
 end
 
 function ENT:OnContact(ent)
-    if (self.path and ent:GetClass() == "prop_door_rotating") then
-        self.TouchedDoor = true
+
+end
+
+local function IsDoor(door)
+
+    local doorClass = door:GetClass()
+	if ( doorClass == "func_door" or doorClass == "func_door_rotating" or  doorClass == "prop_door_rotating" ) then
+        return true
     end
+    return false
+end
+local function DoorIsOpen( door )
+	
+	local doorClass = door:GetClass()
+
+	if ( doorClass == "func_door" or doorClass == "func_door_rotating" ) then
+
+		return door:GetInternalVariable( "m_toggle_state" ) == 0
+
+	elseif ( doorClass == "prop_door_rotating" ) then
+
+		return door:GetInternalVariable( "m_eDoorState" ) ~= 0
+
+	else
+
+		return false
+
+	end
+
 end
 
 --this function runs during the path movement. returning false will interrupt path movement, in case other actions are needed.
@@ -798,23 +815,48 @@ function ENT:WhilePathing(path)
     local seg2 = path:GetAllSegments()[index + 1]
     local seg3 = path:GetAllSegments()[index + 2]
     local dir = self:GetForward()
+    local tseg1 = seg1
+    local tseg2 = seg3 or seg2
+    
 
-    if (seg1 and seg2) then
-        dir = (seg2.pos - seg1.pos):GetNormalized()
+
+    if(tseg1 != nil and tseg2 != nil)then
+        dir = (tseg2.pos - tseg1.pos):GetNormalized()
+
+    local tr = {}
+    tr.start = self:GetPos() + Vector(0,0,30)
+    tr.endpos = tr.start + dir*100
+    tr.filter = self
+    tr.mask = MASK_PLAYERSOLID
+        if(self:GetVelocity():Length() < 1)then
+            local trace = util.TraceLine(tr)   
+            if(trace.Hit and IsDoor(trace.Entity))then
+                
+                if( !DoorIsOpen( trace.Entity ))then
+                    print("     ATTEMPTING TO OPEN A DOOR!!!")
+                    trace.Entity:Use(self,self,SIMPLE_USE,1)
+                    trace.Entity.KleinerInteracting = true
+                    self.loco:SetVelocity(dir*-500)
+                end
+                timer.Create(trace.Entity:EntIndex().."kleinerdoor",2,1,function()
+                    trace.Entity.KleinerInteracting = nil
+                end)
+
+            end
+        end
     end
-
+  
+    
     -- If a kleiner touches a door while moving along a path, it's more than likely he needs to pass that door. The cheapest method is to teleport hi.
     if (self.TouchedDoor and seg1) then
-        self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos) or (seg1 and seg1.pos))
-        self.TouchedDoor = nil
-
-        return
+        --self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos) or (seg1 and seg1.pos))
+        --self.TouchedDoor = nil
     end
 
     -- a quick fix to the broken ladder handling. If they are about to climb a ladder, teleport them instead
     --everything goes wrong when we use ladders so let's try to teleport over them.
-    if (seg2 and seg2.ladder:IsValid()) then
-        self:Teleport((seg3 and seg3.pos) or (seg2 and seg2.pos))
+    if (tseg1 and tseg1.ladder:IsValid()) then
+        self:Teleport(tseg2.pos)
 
         return
     end
@@ -837,17 +879,18 @@ function ENT:WhilePathing(path)
     end
 
     -- Jumping handling
-    local ofs = (seg2.pos - self:GetPos())
+
+    local ofs = dir
     local heightdist = ofs.z
     local lendist = (ofs * Vector(1, 1, 0)):Length()
     local jumpdir = (ofs * Vector(1, 1, 0)):GetNormalized()
     local inrange = lendist < 64
-    local shouldjump = inrange and (seg3 and (seg3.area:HasAttributes(NAV_MESH_JUMP) or seg3.type == 2 or seg3.type == 3))
+    local shouldjump = inrange and (tseg2 and (tseg2.area:HasAttributes(NAV_MESH_JUMP) or tseg2.type == 2 or tseg2.type == 3))
     local across = (math.abs(heightdist) < 64)
 
     if (self:IsOnGround() and shouldjump) then
         if (across) then
-            self.loco:JumpAcrossGap((seg3 and seg3.pos) or (seg2 and seg2.pos), dir)
+            self.loco:JumpAcrossGap((tseg2 and tseg2.pos), dir)
         else
             self.loco:Jump()
         end
