@@ -1,176 +1,107 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local meta = FindMetaTable("Player")
+local PLAYER = FindMetaTable("Player")
 local entity = FindMetaTable("Entity")
 
-function meta:GetLocation()
+function PLAYER:GetLocation()
     return self:GetDTInt(0) or 0
 end
 
-function meta:GetLastLocation()
+function PLAYER:GetLastLocation()
     return self.LastLocation or -1
 end
 
-function meta:GetLocationName()
+function PLAYER:GetLocationName()
     return Location.GetLocationNameByIndex(self:GetLocation())
 end
 
-function meta:GetLocationTable()
+function PLAYER:GetLocationTable()
     return Location.GetLocationByIndex(self:GetLocation()) or {}
 end
 
-function meta:InTheater()
+function PLAYER:InTheater()
     return self:GetLocationTable().Theater ~= nil
 end
 
-function meta:GetTheater()
+function PLAYER:GetTheater()
     return theater.GetByLocation(self:GetLocation())
 end
 
-function meta:SetLocation(locationId)
+function PLAYER:SetLocation(locationId)
     self.LastLocation = self:GetLocation()
 
     return self:SetDTInt(0, locationId)
 end
 
-if not meta.TrueName then
-    meta.TrueName = meta.Nick
+PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
+
+function PLAYER:Name()
+    return self:IsBot() and "Kleiner" or self:TrueName()
 end
 
-function meta:Name()
-    local st = self:TrueName()
-
-    if self:IsBot() then
-        st = "Kleiner"
-    end
-
-    return st
-end
-
-meta.Nick = meta.Name
-meta.GetName = meta.Name
+PLAYER.Nick = PLAYER.Name
+PLAYER.GetName = PLAYER.Name
 
 if SERVER then
-    if not meta.TrueSetPos then
-        meta.TrueSetPos = entity.SetPos
-    end
+    PLAYER.TrueSetPos = PLAYER.TrueSetPos or entity.SetPos
 
     -- prevents teleporting out with it
-    function meta:SetPos(pos)
+    function PLAYER:SetPos(pos)
         self:StripWeapon("weapon_kekidol")
         self:TrueSetPos(pos)
     end
 end
 
-if not meta.TrueSetModel then
-    meta.TrueSetModel = entity.SetModel
-end
+PLAYER.TrueSetModel = PLAYER.TrueSetModel or entity.SetModel
 
-function meta:SetModel(modelName)
-    self:TrueSetModel(modelName)
-    if GAMEMODE.FolderName == "spades" then return end
-
-    if isPonyModel(modelName) then
-        if PPM and PPM.setPonyValues then
-            if self.ponydata == nil then
-                PPM.setupPony(self)
-            end
-
-            PPM.setPonyValues(self)
-            PPM.setBodygroups(self)
-        end
-
-        self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 42))
-        self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 32))
-
-        if modelName == "models/mlp/player_celestia.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 66))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 55))
-        end
-
-        if modelName == "models/mlp/player_luna.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 58))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 47))
-        end
-    else
-        if PPM then
-            PPM:pi_UnequipAll(self)
-        end
-
-        --	if self.ponydata~=nil and IsValid(self.ponydata.clothes1) then
-        --		self.ponydata.clothes1:Remove()
-        --	end
-        self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 64))
-        self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 28))
-
-        if modelName == "models/garfield/garfield.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 40))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 18))
-        end
-
-        if modelName == "models/player/ztp_nickwilde.mdl" then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 52))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 24))
-        end
-
-        if modelName:StartWith("models/player/minion/") then
-            self:SetViewOffset(Vector(0, 0, self:GetModelScale() * 36))
-            self:SetViewOffsetDucked(Vector(0, 0, self:GetModelScale() * 8))
-        end
+if SERVER then
+    function PLAYER:SetModel(mdl)
+        self:TrueSetModel(mdl)
+        hook.Run("PlayerModelChanged", self, mdl)
     end
+else
+    hook.Add("PrePlayerDraw", "PlayerModelChangeDetector", function(ply)
+        local mdl = ply:GetModel()
 
-    self:SetSubMaterial()
-    self:SetDefaultJumpPower()
+        if mdl ~= ply.PlayerModelChangedLastModel then
+            ply.PlayerModelChangedLastModel = mdl
+            hook.Run("PlayerModelChanged", ply, mdl)
+        end
+    end)
 end
 
-function meta:SetDefaultJumpPower()
-    self:SetJumpPower(self:IsPony() and 160 or 144)
+function PLAYER:SetDefaultJumpPower()
+    self:SetJumpPower(self:IsPony() and 160 or 152)
 end
 
-function meta:IsPony()
+hook.Add("PlayerModelChanged", "SetJumpPower", function(ply, mdl)
+    ply:SetDefaultJumpPower()
+end)
+
+function PLAYER:IsPony()
     return isPonyModel(self:GetModel())
 end
 
-function meta:PonyNoseOffsetBone(ang)
-    if PPM then
-        local pd = PPM.PonyData[self]
-
-        if pd then
-            pd = pd[2]
-        end
-
-        if pd == nil then
-            pd = self.ponydata
-        end
-
-        if pd and pd.gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
+function PLAYER:PonyNoseOffsetBone(ang)
+    if self:IsPPMPony() then
+        if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
     end
 
     return Vector(0, 0, 0)
 end
 
-function meta:PonyNoseOffsetAttach(ang)
-    if PPM then
-        local pd = PPM.PonyData[self]
-
-        if pd then
-            pd = pd[2]
-        end
-
-        if pd == nil then
-            pd = self.ponydata
-        end
-
-        if pd and pd.gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
+function PLAYER:PonyNoseOffsetAttach(ang)
+    if self:IsPPMPony() then
+        if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
     end
 
     return Vector(0, 0, 0)
 end
 
-function meta:IsAFK()
+function PLAYER:IsAFK()
     return self:GetNWBool("afk", false)
 end
 
-function meta:StaffControlTheater()
+function PLAYER:StaffControlTheater()
     local minn = 2
 
     if not CH then
@@ -192,4 +123,10 @@ function isPonyModel(modelName)
     if modelName == "models/mlp/player" then return true end
 
     return false
+end
+
+function PLAYER:UsingWeapon(cls)
+    local c = self:GetActiveWeapon()
+
+    return IsValid(c) and c:GetClass() == cls
 end

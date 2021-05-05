@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture"		"cursor/cursor_default"
+   	"$vertexalpha" "1"
+}

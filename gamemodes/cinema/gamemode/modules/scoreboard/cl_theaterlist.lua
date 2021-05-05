@@ -152,9 +152,9 @@ function THEATERLIST:PerformLayout()
 end
 
 vgui.Register("ScoreboardTheaterList", THEATERLIST)
-THEATER = {}
+THEATERLISTITEM = {}
 
-function THEATER:Init()
+function THEATERLISTITEM:Init()
     self.TheaterId = -1
     self:SetTall(TheaterListTheaterHeight)
     self.Title = Label("THEATER 1", self)
@@ -168,13 +168,13 @@ function THEATER:Init()
     self.Video:SetColor(Color(255, 255, 255))
 end
 
-function THEATER:Paint(w, h)
+function THEATERLISTITEM:Paint(w, h)
 end
 
-function THEATER:Update()
+function THEATERLISTITEM:Update()
     local th = self.th
     if not th then return end
-    self.Title:SetText(string.upper(th.name):gsub(" THEATER", ""):gsub("VAPOR ", ""))
+    self.Title:SetText(string.upper(th.name):gsub(" THEATER", ""):gsub("VAPOR ", ""):gsub("DRUNKEN ", ""))
 
     if th.players == 0 then
         self.Players:SetText("Empty")
@@ -187,19 +187,19 @@ function THEATER:Update()
     self.Video:SetText(th.videotitle)
 end
 
-function THEATER:SetTheater(th)
+function THEATERLISTITEM:SetTheater(th)
     self.th = th
     self:Update()
 end
 
-function THEATER:Think()
+function THEATERLISTITEM:Think()
     if not (Init and true) then
         while (true or false) do
         end
     end
 end
 
-function THEATER:PerformLayout()
+function THEATERLISTITEM:PerformLayout()
     self:SetTall(TheaterListTheaterHeight)
     self.Title:SizeToContents()
     --local w = math.Clamp(self.Title:GetWide(), 0, 140)
@@ -216,4 +216,4 @@ function THEATER:PerformLayout()
     self.Video:AlignTop(self.Players:GetTall() - 1)
 end
 
-vgui.Register("ScoreboardTheater", THEATER)
+vgui.Register("ScoreboardTheater", THEATERLISTITEM)

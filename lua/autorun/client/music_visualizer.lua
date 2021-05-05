@@ -19,7 +19,7 @@ function MvisGetFrame(data, fn)
         t = {}
 
         for i = 1, BYTES_PER_FRAME do
-            table.insert(tab, 0)
+            table.insert(t, 0)
         end
     else
         t = {string.byte(data, fn * BYTES_PER_FRAME + 1, fn * BYTES_PER_FRAME + BYTES_PER_FRAME)}

@@ -23,6 +23,7 @@ if GAMEMODE.FolderName == "cinema" then
     -- resource.AddWorkshop( "346465496" ) -- Christmas Props
     -- resource.AddWorkshop( "822232922" ) -- UXmas model pack
     -- resource.AddWorkshop( "1783952608" ) --HEV KLEINER
+    resource.AddSingleFile("gamemodes/cinema/logo.png")
 end
 
 if GAMEMODE.FolderName == "fatkid" then

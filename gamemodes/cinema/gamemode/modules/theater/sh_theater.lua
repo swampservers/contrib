@@ -1,11 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 module("theater", package.seeall)
-THEATER = {}
-
-if SERVER then
-    util.AddNetworkString("ThumbnailDelivery")
-end
+THEATER = istable(THEATER) and THEATER or {}
 
 function THEATER:Init(locId, info)
     local o = {}
@@ -88,6 +84,10 @@ end
 
 function THEATER:IsReplicated()
     return bit.band(self._Flags, THEATER_REPLICATED) == THEATER_REPLICATED
+end
+
+function THEATER:GetVideo()
+    return self._Video
 end
 
 function THEATER:SetVideo(Video)
@@ -254,22 +254,24 @@ if SERVER then
 
     function THEATER:SyncThumbnail()
         if not IsValid(self._ThumbEnt) then return end
-        self._ThumbEnt:SetTheaterName(self:Name())
+        local name = self:Name()
+
+        if name == self:OriginalName() then
+            -- if IsValid(self:GetOwner()) then
+            --     name = self:GetOwner():Name() .. "'s Theater"
+            -- else
+            name = ""
+            -- end
+        end
+
+        if self._ThumbEnt:GetTheaterName() ~= name then
+            self._ThumbEnt:SetTheaterName(name)
+        end
+
         self._ThumbEnt:SetTitle(self:VideoTitle())
         --self._ThumbEnt:SetThumbnail( self:VideoThumbnail() )
         self._ThumbEnt:SetService(self._Video and self._Video:Service().ClassName or "")
-        net.Start("ThumbnailDelivery")
-        net.WriteEntity(self._ThumbEnt)
-        net.WriteString(self:VideoThumbnail())
-        net.Broadcast()
-
-        net.Receive("ThumbnailDelivery", function(len, ply)
-            local e = net.ReadEntity()
-            net.Start("ThumbnailDelivery")
-            net.WriteEntity(e)
-            net.WriteString(e.thumbnail or "")
-            net.Send(ply)
-        end)
+        self._ThumbEnt:SetThumbnail(self:VideoThumbnail())
     end
 
     --[[
@@ -466,6 +468,7 @@ if SERVER then
             net.WriteFloat(self:VideoStartTime())
             net.WriteString(self:VideoOwnerName())
             net.WriteString(self:VideoOwnerSteamID())
+            net.WriteUInt(self:NumVoteSkips(), 8)
         end
 
         net.Send(ply or self.Players) -- sent to specific player if specified

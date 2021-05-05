@@ -44,7 +44,7 @@ TrashLocationOverrides = {
     ['Janitor\'s Closet'] = TRASHLOC_BUILD,
     ['Outdoor Pool'] = TRASHLOC_BUILD,
     ['Golf'] = TRASHLOC_NOSPAWN,
-    ['Minecraft'] = TRASHLOC_BUILD,
+    ['In Minecraft'] = TRASHLOC_BUILD,
     ['Tree'] = TRASHLOC_BUILD,
     ['Shooting Range'] = TRASHLOC_NOSPAWN,
     ['Temple of Kek'] = TRASHLOC_BUILD,
@@ -139,7 +139,7 @@ if CLIENT then
     function ENT:Think()
         local light = PropTrashLightData[self:GetModel()]
 
-        if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then 
+        if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then
             local dlight = DynamicLight(self:EntIndex())
 
             if dlight then
@@ -163,14 +163,19 @@ if CLIENT then
                 dlight.Decay = 500
                 dlight.DieTime = CurTime() + 1
             end
+
+            self:SetNextClientThink(CurTime() + 0.1)
         else
-            self:SetNextClientThink( CurTime() + 0.5 )
-            return true
+            self:SetNextClientThink(CurTime() + 0.5)
         end
+
+        return true
     end
 end
 
 function ENT:Draw()
+    if self:GetPos():DistToSqr(EyePos()) > AutoCullBase() * (self:GetModelRadius() or 1) * 3.5 then return end
+
     if PropTrashLookedAt == self then
         local cr, cg, cb = render.GetColorModulation()
         local id = LocalPlayer():SteamID()

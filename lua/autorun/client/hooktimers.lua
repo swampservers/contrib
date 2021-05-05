@@ -244,20 +244,22 @@ FullRefractLocation = {
 }
 
 SKYBOXLOC = -1
-PLAYERVISDISABLED = true
 
 concommand.Add("playervis", function(ply, cmd, args)
     for k, ply in ipairs(player.GetAll()) do
         DisableNoDraw(ply)
     end
 
-    PLAYERVISDISABLED = not PLAYERVISDISABLED
-    chat.AddText(PLAYERVISDISABLED and "disabled" or "enabled")
+    if (hook.GetTable()["PreDrawOpaqueRenderables"] or {})["PlayerVisPreDraw"] then
+        hook.Remove("PreDrawOpaqueRenderables", "PlayerVisPreDraw")
+        chat.AddText("Disabled")
+    else
+        hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", PlayerVisUpdate)
+        chat.AddText("Enabled")
+    end
 end)
 
-hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", function(depth, sky)
-    if PLAYERVISDISABLED then return end
-
+function PlayerVisUpdate(depth, sky)
     if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0) > 0 then
         for k, ply in ipairs(player.GetAll()) do
             DisableNoDraw(ply)
@@ -407,7 +409,7 @@ hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", function(depth, sky)
             end
         end
     end
-end)
+end
 
 --local PlayerRenderClipDistSq = 600*600 --900*900
 --local PlayerRenderShadowDistSq = 450*450
@@ -449,17 +451,15 @@ hook.Add("PostPlayerDraw", "UndoPlayerBlend", function(ply)
     end
 end)
 
---todo: move to new file
-surface.CreateFont("3D2DName", {
-    font = "Bebas Neue",
-    size = 80,
-    weight = 600
-})
-
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
     if (not LocalPlayer():IsStaff()) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
+    local dist = LocalPlayer():GetPos():Distance(ply:GetPos())
+    if (dist >= 800) then return end
+    local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
+    opacity = opacity * opacityScale
+    if opacity <= 0 then return end
     local pos = ply:EyePos() - Vector(0, 0, 4)
     local ang = LocalPlayer():EyeAngles()
     ang:RotateAroundAxis(ang:Forward(), 90)
@@ -475,34 +475,28 @@ local function DrawName(ply, opacityScale)
 	else
 		pos = pos + Vector( 0, 0, 60 )
 	end
-	
+	 
 	]]
     --
-    local dist = LocalPlayer():GetPos():Distance(ply:GetPos())
-    if (dist >= 800) then return end
-    local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
-    opacity = opacity * opacityScale
     local name = string.upper(ply:GetName())
     cam.Start3D2D(pos, Angle(0, ang.y, 90), 0.15)
     -- render.OverrideDepthEnable(false, true)
-    draw.TheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
+    DrawTheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
 
-    if LocalPlayer():IsStaff() then
-        if ply:IsAFK() then
-            draw.TheaterText("[AFK]", "DermaLarge", 70, 70, Color(255, 255, 255, opacity))
-        end
+    if ply:IsAFK() then
+        DrawTheaterText("[AFK]", "TheaterDermaLarge", 70, 70, Color(255, 255, 255, opacity))
+    end
 
-        if ShowEyeAng then
-            draw.TheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "DermaLarge", 70, 100, Color(255, 255, 255, opacity))
-            draw.TheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "DermaLarge", 70, 130, Color(255, 255, 255, opacity))
-            ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
+    if LocalPlayer():IsStaff() and ShowEyeAng then
+        DrawTheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
+        DrawTheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
+        ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
 
-            if CurTime() - ply.lastrequestedmousepos > 0.5 then
-                ply.lastrequestedmousepos = CurTime()
-                net.Start("GetGUIMousePos")
-                net.WriteEntity(ply)
-                net.SendToServer()
-            end
+        if CurTime() - ply.lastrequestedmousepos > 0.5 then
+            ply.lastrequestedmousepos = CurTime()
+            net.Start("GetGUIMousePos")
+            net.WriteEntity(ply)
+            net.SendToServer()
         end
     end
 
@@ -515,95 +509,83 @@ local fadeTime = 2
 
 hook.Add("DrawTranslucentAccessories", "DrawPlayerNames2", function(ply)
     if not render.DrawingScreen() then return end
-    if not GetConVar("cinema_drawnames"):GetBool() then return end
+    if HideNamesConVar and HideNamesConVar:GetBool() then return end
     if not IsValid(LocalPlayer()) or not LocalPlayer().InTheater then return end
-    if ply==LocalPlayer() then return end
-
+    if ply == LocalPlayer() then return end
     local fwd = EyeAngles():Forward()
     local to = ply:EyePos() - EyePos()
     local dist = to:Length()
-    to = to/dist
+    to = to / dist
     local dot = fwd:Dot(to)
 
     if LocalPlayer():InTheater() then
         if theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool() then return end
-        DrawName(ply, 0.5* math.min(1, ((dot-0.85)*6.66 + math.max(-0.5, (1-dist)*0.01 ))) )
+        DrawName(ply, 0.5 * math.min(1, ((dot - 0.85) * 6.66 + math.max(-0.5, (1 - dist) * 0.01))))
     else
-        DrawName(ply, math.min(1, (dot-0.8)*5 + math.max(0, (200-dist)*0.01 ) ))
+        DrawName(ply, math.min(1, (dot - 0.8) * 5 + math.max(0, (200 - dist) * 0.01)))
     end
 end)
 
 -- hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sky)
-    -- if sky then return end
-    -- if not render.DrawingScreen() then return end
-    -- local t1 = os.clock()
-    -- if GetConVar("cinema_drawnames") and not GetConVar("cinema_drawnames"):GetBool() then return end
-    -- if not LocalPlayer().InTheater then return end
-
-    -- --if IsValid( LocalPlayer():GetVehicle() ) then return end
-    -- -- Draw lower opacity and recently targetted players in theater
-    -- if LocalPlayer():InTheater() then
-    --     if theater.Fullscreen then return end
-    --     if GetConVar("cinema_hideplayers"):GetBool() then return end
-
-    --     for ply, time in pairs(HUDTargets) do
-    --         if time < RealTime() then
-    --             HUDTargets[ply] = nil
-    --             continue
-    --         end
-
-    --         -- Fade over time
-    --         DrawName(ply, 0.11 * ((time - RealTime()) / fadeTime))
-    --     end
-
-    --     local tr = util.GetPlayerTrace(LocalPlayer())
-    --     local trace = util.TraceLine(tr)
-    --     if (not trace.Hit) then return end
-    --     if (not trace.HitNonWorld) then return end
-
-    --     -- Keep track of recently targetted players
-    --     if trace.Entity:IsPlayer() then
-    --         HUDTargets[trace.Entity] = RealTime() + fadeTime
-    --     elseif trace.Entity:IsVehicle() and IsValid(trace.Entity:GetOwner()) and trace.Entity:GetOwner():IsPlayer() then
-    --         HUDTargets[trace.Entity:GetOwner()] = RealTime() + fadeTime
-    --     end
-    -- else -- draw all players names
-    --     local t1 = SysTime()
-    --     -- local ap = player.GetAll()
-    --     local v1 = EyeVector():GetNormalized()
-    --     local lp = LocalPlayer()
-    --     local ep = EyePos()
-
-    --     -- for _, ply in ipairs(player.GetAll()) do
-    --     -- for k,ply in ipairs(ap) do
-    --     for k, ply in pairs(Ents.player) do
-    --         if ply ~= lp then
-    --             local v2 = (ply:EyePos() - ep)
-    --             local dist2 = v2:LengthSqr()
-
-    --             if dist2 < 360000 then
-    --                 local dist = math.sqrt(dist2)
-
-    --                 if math.acos(v1:Dot(v2 / dist)) < Lerp(math.Clamp(dist / 600, 0, 1), 0.7, 0.35) then
-    --                     HUDTargets[ply] = math.max(RealTime() + Lerp(math.Clamp((dist - 550) / 50, 0, 1), fadeTime, 0), HUDTargets[ply] or 0)
-    --                 end
-    --             end
-    --         end
-    --     end
-
-    --     for ply, time in pairs(HUDTargets) do
-    --         if time < RealTime() then
-    --             HUDTargets[ply] = nil
-    --             continue
-    --         end
-
-    --         -- Fade over time
-    --         DrawName(ply, 0.7 * ((time - RealTime()) / fadeTime))
-    --     end
-    --     -- print(3, SysTime()-t1)
-    -- end
+-- if sky then return end
+-- if not render.DrawingScreen() then return end
+-- local t1 = os.clock()
+-- if GetConVar("cinema_drawnames") and not GetConVar("cinema_drawnames"):GetBool() then return end
+-- if not LocalPlayer().InTheater then return end
+-- --if IsValid( LocalPlayer():GetVehicle() ) then return end
+-- -- Draw lower opacity and recently targetted players in theater
+-- if LocalPlayer():InTheater() then
+--     if theater.Fullscreen then return end
+--     if GetConVar("cinema_hideplayers"):GetBool() then return end
+--     for ply, time in pairs(HUDTargets) do
+--         if time < RealTime() then
+--             HUDTargets[ply] = nil
+--             continue
+--         end
+--         -- Fade over time
+--         DrawName(ply, 0.11 * ((time - RealTime()) / fadeTime))
+--     end
+--     local tr = util.GetPlayerTrace(LocalPlayer())
+--     local trace = util.TraceLine(tr)
+--     if (not trace.Hit) then return end
+--     if (not trace.HitNonWorld) then return end
+--     -- Keep track of recently targetted players
+--     if trace.Entity:IsPlayer() then
+--         HUDTargets[trace.Entity] = RealTime() + fadeTime
+--     elseif trace.Entity:IsVehicle() and IsValid(trace.Entity:GetOwner()) and trace.Entity:GetOwner():IsPlayer() then
+--         HUDTargets[trace.Entity:GetOwner()] = RealTime() + fadeTime
+--     end
+-- else -- draw all players names
+--     local t1 = SysTime()
+--     -- local ap = player.GetAll()
+--     local v1 = EyeVector():GetNormalized()
+--     local lp = LocalPlayer()
+--     local ep = EyePos()
+--     -- for _, ply in ipairs(player.GetAll()) do
+--     -- for k,ply in ipairs(ap) do
+--     for k, ply in pairs(Ents.player) do
+--         if ply ~= lp then
+--             local v2 = (ply:EyePos() - ep)
+--             local dist2 = v2:LengthSqr()
+--             if dist2 < 360000 then
+--                 local dist = math.sqrt(dist2)
+--                 if math.acos(v1:Dot(v2 / dist)) < Lerp(math.Clamp(dist / 600, 0, 1), 0.7, 0.35) then
+--                     HUDTargets[ply] = math.max(RealTime() + Lerp(math.Clamp((dist - 550) / 50, 0, 1), fadeTime, 0), HUDTargets[ply] or 0)
+--                 end
+--             end
+--         end
+--     end
+--     for ply, time in pairs(HUDTargets) do
+--         if time < RealTime() then
+--             HUDTargets[ply] = nil
+--             continue
+--         end
+--         -- Fade over time
+--         DrawName(ply, 0.7 * ((time - RealTime()) / fadeTime))
+--     end
+--     -- print(3, SysTime()-t1)
+-- end
 -- end)
-
 net.Receive("GetGUIMousePos", function(len)
     local e = net.ReadEntity()
     local x = net.ReadInt(16)

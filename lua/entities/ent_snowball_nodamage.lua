@@ -7,7 +7,7 @@ ENT.Model = Model("models/weapons/w_snowball_thrown.mdl")
 local hitsnd = Sound("weapons/weapon_snowball/snowhit.ogg")
 
 function ENT:Initialize()
-    local plycol = self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
+    local plycol = self:GetOwner():GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
     self.Entity:SetModel(self.Model)
     self.Entity:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
     self.Entity:SetMoveType(MOVETYPE_VPHYSICS)

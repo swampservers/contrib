@@ -64,11 +64,12 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
     else
         theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
             --don't accept links that can't be viewed by both the client and the server
-            HTTP({
+            --[[HTTP({
                 method = "HEAD",
                 url = key,
                 success = function(code)
-                    if (code == 200) then
+                    --whitelist for discord's annoying anti-scrape measure
+                    if (code == 200 or string.match(key, "cdn.discordapp.com")) then
                         onReceive(info)
                     else
                         onFailure('File is only available to you')
@@ -78,7 +79,8 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
                     ply:PrintMessage(HUD_PRINTCONSOLE, err)
                     onFailure('File is only available to you')
                 end
-            })
+            })]]
+            onReceive(info)
         end, onFailure)
     end
 end

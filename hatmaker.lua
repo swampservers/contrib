@@ -215,23 +215,21 @@ end
 
 function SS_PreRender(data, cfg, ent)
     cfg = (cfg or {})
-    local imgur = cfg.imgur
+    -- local imgur = cfg.imgur
+    -- if imgur then
+    --     local imat = ImgurMaterial(imgur.url, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {
+    --         ["$alphatest"] = 1
+    --     })
+    --     render.MaterialOverride(imat)
+    --     --render.OverrideDepthEnable(true,true)
+    -- else
+    local mat = cfg.material or data.material
 
-    if imgur then
-        local imat = ImgurMaterial(imgur.url, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {
-            ["$alphatest"] = 1
-        })
-
-        render.MaterialOverride(imat)
-        --render.OverrideDepthEnable(true,true)
-    else
-        local mat = cfg.material or data.material
-
-        if mat then
-            render.MaterialOverride(SS_GetMaterial(mat))
-        end
+    if mat then
+        render.MaterialOverride(SS_GetMaterial(mat))
     end
 
+    -- end
     local col = cfg.color or data.color
 
     if col then

@@ -4,6 +4,47 @@ SS_Tab("Toys", "star")
 SS_Heading("Free Toys")
 
 SS_WeaponProduct({
+    class = "weapon_flappy",
+    price = 0,
+    name = "Flappy Fedora",
+    description = "A dashing rainbow fedora. Tip it (press jump) to take flight.",
+    model = 'models/fedora_rainbowdash/fedora_rainbowdash.mdl'
+})
+
+SS_WeaponProduct({
+    class = "weapon_monster",
+    price = 0,
+    name = "Monster Zero",
+    description = "*sip* yeap, Quake was a good game",
+    model = "models/noz/monsterzero.mdl",
+    extrapreviewgap = 2
+})
+
+SS_WeaponProduct({
+    class = "weapon_spraypaint",
+    price = 0,
+    name = "Spraypaint",
+    description = "Deface the server with this handy graffiti tool.",
+    model = "models/props_junk/propane_tank001a.mdl"
+})
+
+SS_WeaponProduct({
+    class = "gmod_camera",
+    price = 0,
+    name = "Cringe Compiler",
+    description = "*SNAP*",
+    model = 'models/MaxOfS2D/camera.mdl'
+})
+
+SS_WeaponProduct({
+    class = "weapon_vape",
+    price = 0,
+    name = "Mouth Fedora",
+    description = "The classy alternative to blazing",
+    model = 'models/swamponions/vape.mdl'
+})
+
+SS_WeaponProduct({
     class = "weapon_anonymous",
     price = 0,
     name = "Anonymous Mask",
@@ -36,14 +77,6 @@ SS_WeaponProduct({
 })
 
 SS_WeaponProduct({
-    class = "gmod_camera",
-    price = 0,
-    name = "Cringe Compiler",
-    description = "*SNAP*",
-    model = 'models/MaxOfS2D/camera.mdl'
-})
-
-SS_WeaponProduct({
     class = "weapon_encyclopedia",
     price = 0,
     name = "Bulletproof Book",
@@ -68,35 +101,11 @@ SS_WeaponProduct({
 })
 
 SS_WeaponProduct({
-    class = "weapon_flappy",
-    price = 0,
-    name = "Flappy Fedora",
-    description = "A dashing rainbow fedora. Tip it (press jump) to take flight.",
-    model = 'models/fedora_rainbowdash/fedora_rainbowdash.mdl'
-})
-
-SS_WeaponProduct({
     class = "weapon_kleiner",
     price = 0,
     name = "Dr. Isaac Kleiner",
     description = "Lamarr, get down from there!",
     model = "models/player/kleiner.mdl"
-})
-
-SS_WeaponProduct({
-    class = "weapon_spraypaint",
-    price = 0,
-    name = "Spraypaint",
-    description = "Deface the server with this handy graffiti tool.",
-    model = "models/props_junk/propane_tank001a.mdl"
-})
-
-SS_WeaponProduct({
-    class = "weapon_vape",
-    price = 0,
-    name = "Mouth Fedora",
-    description = "The classy alternative to blazing",
-    model = 'models/swamponions/vape.mdl'
 })
 
 SS_WeaponProduct({
@@ -106,15 +115,6 @@ SS_WeaponProduct({
     description = "For eating in theaters while watching Cars 2.",
     model = "models/noz/beans.mdl",
     extrapreviewgap = 1
-})
-
-SS_WeaponProduct({
-    class = "weapon_monster",
-    price = 0,
-    name = "Monster Zero",
-    description = "*sip* yeap, Quake was a good game",
-    model = "models/noz/monsterzero.mdl",
-    extrapreviewgap = 2
 })
 
 SS_WeaponProduct({
@@ -133,6 +133,30 @@ SS_WeaponProduct({
 })
 
 SS_Heading("Expensive Toys")
+
+SS_WeaponProduct({
+    name = 'Companion Pillow',
+    description = "*boof*",
+    price = 1000,
+    model = 'models/swamponions/bodypillow.mdl',
+    class = 'weapon_bodypillow'
+})
+
+SS_WeaponProduct({
+    name = 'Spamcorn',
+    description = "Full-Auto popcorn throwing",
+    price = 6000,
+    model = 'models/teh_maestro/popcorn.mdl',
+    class = 'weapon_popcorn_spam'
+})
+
+SS_WeaponProduct({
+    name = 'Sandcorn',
+    description = "Creates a sandstorm of popcorn. Very obnoxious.",
+    price = 12000,
+    model = 'models/props_lab/huladoll.mdl',
+    class = 'weapon_sandcorn'
+})
 
 SS_WeaponProduct({
     class = "weapon_airhorn",
@@ -157,30 +181,6 @@ SS_WeaponProduct({
 -- 	model = 'models/weapons/w_physics.mdl',
 -- 	class = 'weapon_physgun'
 -- })
-SS_WeaponProduct({
-    name = 'Sandcorn',
-    description = "Creates a sandstorm of popcorn. Very obnoxious.",
-    price = 12000,
-    model = 'models/props_lab/huladoll.mdl',
-    class = 'weapon_sandcorn'
-})
-
-SS_WeaponProduct({
-    name = 'Spamcorn',
-    description = "Full-Auto popcorn throwing",
-    price = 6000,
-    model = 'models/teh_maestro/popcorn.mdl',
-    class = 'weapon_popcorn_spam'
-})
-
-SS_WeaponProduct({
-    name = 'Companion Pillow',
-    description = "*boof*",
-    price = 1000,
-    model = 'models/swamponions/bodypillow.mdl',
-    class = 'weapon_bodypillow'
-})
-
 SS_WeaponProduct({
     name = 'Police Taser',
     description = "An electroshock weapon capable of paralyzing other players for up to 20 seconds.",

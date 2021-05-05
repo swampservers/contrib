@@ -1,352 +1,245 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 --player_manager.AddValidModel( "pony", "models/ppm/player_default_base.mdl" ) 
 --player_manager.AddValidModel( "ponynj", "models/ppm/player_default_base_nj.mdl" )  
-if SERVER then
-    AddCSLuaFile("sppm.lua")
-
-    local function add_files(dir)
-        local files, folders = file.Find(dir .. "*", "LUA")
-
-        for key, file_name in pairs(files) do
-            AddCSLuaFile(dir .. file_name)
-        end
-
-        for key, folder_name in pairs(folders) do
-            add_files(dir .. folder_name .. "/")
-        end
-    end
-
-    add_files("sppm/")
-end
-
-if CLIENT then end --list.Set( "PlayerOptionsModel", "pony", "models/ppm/player_default_base.mdl" )  --list.Set( "PlayerOptionsModel", "ponynj", "models/ppm/player_default_base_nj.mdl" ) 
-include("sppm/init.lua")
 PPM = PPM or {}
-PPM.PonyData = PPM.PonyData or {}
-PPM.FailedEnts = PPM.FailedEnts or {}
-PPM.UnInitializedPonies = PPM.UnInitializedPonies or {}
-PPM.ActivePonies = PPM.ActivePonies or {}
+PPM.Playermodel = "models/ppm/player_default_base.mdl"
+FindMetaTable("Entity").IsPPMPony = function(self) return self:GetModel() == PPM.Playermodel end
 
-function PPM.RefreshActivePonies()
-    PPM.ActivePonies = {PPM.editor3_pony}
-
-    -- for k,v in pairs(ents.GetAll()) do
-    --  	if v:IsPPMPony() then
-    -- 		 table.insert(PPM.ActivePonies, v)
-    -- 	end
-    -- end
-    -- PrintTable(PPM.ActivePonies)
-    for k, v in pairs(player.GetAll()) do
-        if v:IsPPMPony() then
-            table.insert(PPM.ActivePonies, v)
-            -- PPM.ActivePonies[v] = true
-            local v2 = v:GetRagdollEntity()
-
-            if IsValid(v2) and v2:IsPPMPony() then
-                table.insert(PPM.ActivePonies, v2)
-                -- PPM.ActivePonies[v2] = true
-            end
-        end
-    end
+FindMetaTable("Entity").PonyPlayer = function(self)
+    if self:IsPlayer() then return self end
+    if self:EntIndex() == -1 then return LocalPlayer() end --pointshop model
+    if self.RagdollSourcePlayer then return self.RagdollSourcePlayer end
+    -- if self.PonyPlayerEntity then return 
+    -- if its a ragdoll then return owner
+    print(self)
 end
 
-function PPM.SanitizeImgurCmark(txt)
-    local spoof = "http://i.imgur.com/2UdwxGb.png"
-    if not isstring(txt) then return "" end --spoof end
-    local txt2 = " " .. txt .. " "
-    if txt2:gsub(" https?://i%.imgur%.com/%w+%.[jp][pn]g ", "") ~= "" then return spoof end
+PPM.serverPonydata = PPM.serverPonydata or {}
+PPM.isLoaded = false
+-- Deleted items because apparently it was never even meant to save, what a garbage system!
+-- Even if I added saving of the items, it would be incompatible with other PPM servers.
+-- Plus it is extra complication.
+-- include("sppm/items.lua") 
+include("sppm/pony_player.lua")
 
-    return txt
-end
-
-if SERVER then
-    util.AddNetworkString("ppm_ponydata")
-    util.AddNetworkString("ppm_ponyrequest")
-
-    net.Receive("ppm_ponyrequest", function(len, ply)
-        ply.poniesAlreadySent = ply.poniesAlreadySent or {}
-        ply.lastResetPoniesAlreadySent = ply.lastResetPoniesAlreadySent or CurTime()
-
-        if CurTime() - ply.lastResetPoniesAlreadySent > 60 then
-            ply.poniesAlreadySent = {}
-            ply.lastResetPoniesAlreadySent = CurTime()
-        end
-
-        local pones = net.ReadTable()
-
-        for k, v in pairs(pones) do
-            local fff = false
-
-            if IsValid(k) then
-                if ply.poniesAlreadySent[k] then
-                else
-                    fff = true
-                    PPM.SendPony(k, ply)
-                end
-            end
-            --			print("      ", k, fff)
-        end
-    end)
-
-    PPM.CompressedPonies = PPM.CompressedPonies or {}
-
-    function PPM.SendPony(ply, target)
-        local comp = PPM.CompressedPonies[ply]
-        if not comp then return end
-
-        if type(target) == "Player" then
-            target.poniesAlreadySent = target.poniesAlreadySent or {}
-            target.poniesAlreadySent[ply] = true
-        end
-
-        net.Start("ppm_ponydata")
-        net.WriteInt(ply:EntIndex(), 14)
-        net.WriteInt(#comp, 17)
-        net.WriteData(comp, #comp)
-        net.Send(target)
-    end
-
-    local pnum = {}
-
-    pnum.age = {2, 2, 2}
-
-    pnum.body_type = {1, 1, 1}
-
-    pnum.bodydetail1 = {1, 20, 1}
-
-    pnum.bodydetail2 = {1, 20, 1}
-
-    pnum.bodydetail3 = {1, 20, 1}
-
-    pnum.bodydetail4 = {1, 20, 1}
-
-    pnum.bodydetail5 = {1, 20, 1}
-
-    pnum.bodydetail6 = {1, 20, 1}
-
-    pnum.bodydetail7 = {1, 20, 1}
-
-    pnum.bodydetail8 = {1, 20, 1}
-
-    pnum.bodyt0 = {1, 6, 1}
-
-    pnum.bodyt1 = {1, 1, 1}
-
-    pnum.bodyweight = {0.5, 2.0, 1}
-
-    pnum.cmark = {1, 48, 1}
-
-    pnum.cmark_enabled = {1, 2, 2}
-
-    pnum.eye = {1, 10, 1}
-
-    pnum.eyehaslines = {1, 2, 1}
-
-    pnum.eyeholesize = {0.3, 1, 0.8}
-
-    pnum.eyeirissize = {0.2, 2, 1}
-
-    pnum.eyejholerssize = {0.2, 1, 1}
-
-    pnum.eyelash = {1, 6, 1}
-
-    pnum.gender = {1, 2, 1}
-
-    pnum.kind = {1, 4, 1}
-
-    pnum.mane = {1, 16, 1}
-
-    pnum.manel = {1, 13, 1}
-
-    pnum.tail = {1, 15, 1}
-
-    pnum.tailsize = {0.8, 1.5, 1}
-
-    local pvec = {"bodydetail1_c", "bodydetail2_c", "bodydetail3_c", "bodydetail4_c", "bodydetail5_c", "bodydetail6_c", "bodydetail7_c", "bodydetail8_c", "bodyt1_color", "coatcolor", "eyecolor_bg", "eyecolor_grad", "eyecolor_hole", "eyecolor_iris", "eyecolor_line1", "eyecolor_line2", "haircolor1", "haircolor2", "haircolor3", "haircolor4", "haircolor5", "haircolor6"}
-
-    local function Validate(data)
-        local json = util.JSONToTable(util.Decompress(data))
-        local pdata = {}
-        pdata._cmark_loaded = false
-
-        for k, v in pairs(pnum) do
-            local value = json[k]
-            value = isnumber(value) and value or v[3]
-            value = math.Clamp(value, v[1], v[2])
-            pdata[k] = value
-        end
-
-        for _, v in ipairs(pvec) do
-            local value = json[v]
-            local vec = isvector(value) and value or Vector(1, 1, 1)
-            vec.x = math.Clamp(vec.x, 0, 1)
-            vec.y = math.Clamp(vec.y, 0, 1)
-            vec.z = math.Clamp(vec.z, 0, 1)
-            pdata[v] = vec
-        end
-
-        pdata.imgurcmark = PPM.SanitizeImgurCmark(json.imgurcmark)
-        local newdata = util.Compress(util.TableToJSON(pdata))
-
-        return newdata, pdata
-    end
-
-    local function ReceivePony(bits, ply)
-        if ply.delay_ponydata and (ply.delay_ponydata > CurTime()) then return end
-        ply.delay_ponydata = CurTime() + 2.7
-        local comp, tbl = Validate(net.ReadData(bits / 8))
-
-        if PPM.CompressedPonies[ply] then
-            if (PPM.CompressedPonies[ply] == comp) then return end
-        end
-
-        PPM.CompressedPonies[ply] = comp
-        PPM.PonyData[ply] = PPM.PonyData[ply] or {}
-        PPM.PonyData[ply][1] = 1
-        PPM.PonyData[ply][2] = tbl
-        PPM.setBodygroups(ply)
-        PPM.SendPony(ply, player.GetAll())
-    end
-
-    net.Receive("ppm_ponydata", ReceivePony)
-
-    hook.Add("PlayerDisconnected", "delete_ppm_compressed_pony", function(ply)
-        PPM.CompressedPonies[ply] = nil
-        PPM.PonyData[ply] = nil
-    end)
+if CLIENT then
+    include("sppm/editor3.lua")
+    include("sppm/editor3_body.lua")
+    include("sppm/editor3_presets.lua")
+    include("sppm/io.lua")
+    include("sppm/render.lua")
+    include("sppm/render_texture.lua")
+    include("sppm/resources.lua")
 else
-    local delays = 0
-
-    function PPM.SendPonyData()
-        local tbl = LocalPlayer().ponydata
-        if not istable(tbl) then return end
-        if (delays > CurTime()) then return end
-        delays = CurTime() + 3
-        local json = util.TableToJSON(tbl)
-        local comp = util.Compress(json)
-        PPM.SentPonyData = comp
-        local length = #comp
-        net.Start("ppm_ponydata")
-        net.WriteData(comp, length)
-        net.SendToServer()
-    end
-
-    local function ReceivePony()
-        local plynum = net.ReadInt(14)
-        local length = net.ReadInt(17)
-        local comp = net.ReadData(length)
-        local json = util.Decompress(comp)
-        local tbl = util.JSONToTable(json)
-        local ply = Entity(plynum)
-
-        if IsValid(ply) then
-            PPM.PonyData[ply] = PPM.PonyData[ply] or {}
-            PPM.PonyData[ply][1] = 1
-            PPM.PonyData[ply][2] = tbl
-        else
-            PPM.FailedEnts[plynum] = {}
-            PPM.FailedEnts[plynum].pony = tbl
-            PPM.FailedEnts[plynum].retries = 0
-        end
-    end
-
-    net.Receive("ppm_ponydata", ReceivePony)
-    local delayl = 0
-
-    local function LoadPonies()
-        if (delayl > CurTime()) then return end
-        delayl = CurTime() + 2
-        local rq = false
-
-        for k, v in pairs(PPM.UnInitializedPonies) do
-            if IsValid(k) then
-                rq = true
-                PPM.UnInitializedPonies[k] = tostring(k)
-            end
-        end
-
-        if rq then
-            net.Start("ppm_ponyrequest")
-            net.WriteTable(PPM.UnInitializedPonies)
-            net.SendToServer()
-            PPM.UnInitializedPonies = {}
-        end
-
-        for k, v in pairs(PPM.FailedEnts) do
-            local ply = Entity(k)
-
-            if IsValid(ply) then
-                if PPM.PonyData[ply] then
-                    PPM.FailedEnts[k] = nil
-                else
-                    PPM.PonyData[ply] = {}
-                    PPM.PonyData[ply][1] = 1
-                    PPM.PonyData[ply][2] = v.pony
-                    PPM.FailedEnts[k] = nil
-                end
-            elseif (PPM.FailedEnts[k].retries > 20) then
-                PPM.FailedEnts[k] = nil
-            else
-                PPM.FailedEnts[k].retries = PPM.FailedEnts[k].retries + 1
-            end
-        end
-    end
-
-    hook.Add("Think", "ppm_load_unloaded_ponies", LoadPonies)
-    --[[
-	hook.Add("OnEntityCreated", "detect_ppm_pony", function(ent)
-	
-		if ent:IsPPMPony() then
-			PPM.ActivePonies[ent] = true
-		end
-	
-	end)
-
-	hook.Add("EntityRemoved", "detect_ppm_pony", function(ent)
-	
-		if !IsValid(ent) then return end
-	
-
-			PPM.ActivePonies[ent] = nil
-
-	
-	end) ]]
-    local delayr = 0
-
-    hook.Add("Think", "ppm_pony_cleanup", function(ent)
-        if (delayr > CurTime()) then return end
-        delayr = CurTime() + 0.2
-        PPM.RefreshActivePonies()
-    end)
-    --[[
-		
-		for ent, _ in pairs(PPM.ActivePonies) do
-		
-			if !IsValid(ent) then
-				PPM.ActivePonies[ent] = nil
-			end
-
-		end
-		
-		for _, ply in ipairs(player.GetAll()) do
-		
-			if ply:IsPPMPony() then
-				PPM.ActivePonies[ply] = true
-			end
-		
-		end
-		
-		for ent, _ in ipairs(PPM.CompressedPonies or {}) do
-		
-			if !IsValid(ent) then
-				PPM.CompressedPonies[ent] = nil
-			end
-			
-		end ]]
+    include("sppm/serverside.lua")
+    AddCSLuaFile("sppm/editor3.lua")
+    AddCSLuaFile("sppm/editor3_body.lua")
+    AddCSLuaFile("sppm/editor3_presets.lua")
+    AddCSLuaFile("sppm/io.lua")
+    -- AddCSLuaFile("sppm/items.lua")
+    AddCSLuaFile("sppm/pony_player.lua")
+    AddCSLuaFile("sppm/render.lua")
+    AddCSLuaFile("sppm/render_texture.lua")
+    AddCSLuaFile("sppm/resources.lua")
 end
 
-local entity = FindMetaTable("Entity")
+-- TODO SET MAX NUMBERS TO THE CORRECT MAX OR AT LEAST HIGH ENOUGH
+-- TODO MOVE THIS TO pony_player.lua AND USE THE SAME TABLE AS IS IN THERE
+local ponydata_numbers = {
+    age = {2, 2, 2},
+    body_type = {1, 1, 1},
+    bodydetail1 = {1, 21, 1},
+    bodydetail2 = {1, 21, 1},
+    bodydetail3 = {1, 21, 1},
+    bodydetail4 = {1, 21, 1},
+    bodydetail5 = {1, 21, 1},
+    bodydetail6 = {1, 21, 1},
+    bodydetail7 = {1, 21, 1},
+    bodydetail8 = {1, 21, 1},
+    bodyt0 = {1, 6, 1},
+    bodyt1 = {1, 1, 1},
+    bodyweight = {0.5, 2.0, 1},
+    cmark = {1, 48, 1},
+    cmark_enabled = {1, 2, 2},
+    eye = {1, 10, 1},
+    eyehaslines = {1, 2, 1},
+    eyeholesize = {0.3, 1, 0.8},
+    eyeirissize = {0.2, 2, 1},
+    eyejholerssize = {0.2, 1, 1},
+    eyelash = {1, 6, 1},
+    gender = {1, 2, 1},
+    kind = {1, 4, 1},
+    mane = {1, 16, 1},
+    manel = {1, 13, 1},
+    tail = {1, 15, 1},
+    tailsize = {0.8, 1.5, 1}
+}
 
-function entity:IsPPMPony()
-    return PPM.hasPonyModel(self:GetModel())
+local ponydata_vectors = {
+    bodydetail1_c = {},
+    bodydetail2_c = {},
+    bodydetail3_c = {},
+    bodydetail4_c = {},
+    bodydetail5_c = {},
+    bodydetail6_c = {},
+    bodydetail7_c = {},
+    bodydetail8_c = {},
+    bodyt1_color = {},
+    coatcolor = {},
+    eyecolor_bg = {},
+    eyecolor_grad = {},
+    eyecolor_hole = {Vector(0, 0, 0)},
+    eyecolor_iris = {},
+    eyecolor_line1 = {},
+    eyecolor_line2 = {},
+    haircolor1 = {},
+    haircolor2 = {},
+    haircolor3 = {},
+    haircolor4 = {},
+    haircolor5 = {},
+    haircolor6 = {}
+}
+
+function SanitizePonyCfg(in_cfg)
+    local cfg = {}
+
+    -- local json = util.JSONToTable(util.Decompress(data))
+    -- local pdata = {}
+    -- pdata._cmark_loaded = false
+    for k, v in pairs(ponydata_numbers) do
+        local value = in_cfg[k]
+        value = isnumber(value) and value or v[3]
+        value = math.Clamp(value, v[1], v[2])
+
+        if v[4] then
+            value = math.floor(value)
+        end
+
+        cfg[k] = value
+    end
+
+    for k, v in pairs(ponydata_vectors) do
+        local value = in_cfg[k]
+        local vec = isvector(value) and value or v[1] or Vector(1, 1, 1)
+        vec.x = math.Clamp(vec.x, 0, 1)
+        vec.y = math.Clamp(vec.y, 0, 1)
+        vec.z = math.Clamp(vec.z, 0, 1)
+        cfg[k] = vec
+    end
+
+    cfg.imgurcmark = SanitizeImgurId(in_cfg.imgurcmark)
+
+    return cfg
+end
+
+function PPM_SetBodyGroups(ent)
+    if not ent:IsPPMPony() then return end
+    local ply = ent:PonyPlayer()
+    if not IsValid(ply) then return end
+    local ponydata = ply.ponydata
+    if not ponydata then return end
+    local h, w
+
+    if ponydata.kind == 1 then
+        h, w = 1, 1
+    elseif ponydata.kind == 2 then
+        h, w = 1, 0
+    elseif ponydata.kind == 3 then
+        h, w = 0, 1
+    else
+        h, w = 0, 0
+    end
+
+    ent:SetBodygroup(PPM.BODYGROUP_HORN, h)
+    ent:SetBodygroup(PPM.BODYGROUP_WING, w)
+    ent:SetBodygroup(PPM.BODYGROUP_BODY, ponydata.gender - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_MANE, ponydata.mane - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_MANE_LOW, ponydata.manel - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_TAIL, ponydata.tail - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_CMARK, ponydata.cmark_enabled - 1)
+    ent:SetBodygroup(PPM.BODYGROUP_EYELASH, (ponydata.gender == 1) and (ponydata.eyelash - 1) or 5)
+end
+
+if CLIENT then
+    local stock_weapon_pony_position = {
+        weapon_crowbar = {
+            {0, Vector(3, 3.6, 7), Angle(0, 0, 4)}
+        },
+        weapon_pistol = {
+            {1, Vector(9.5, 2, -4), Angle(-10, -5, 0)}
+        },
+        weapon_357 = {
+            {1, Vector(4, 3.5, 0), Angle(-10, -5, 0)}
+        },
+        weapon_smg1 = {
+            {2, Vector(10, 1, -4), Angle(-10, -5, 0)}
+        },
+        weapon_ar2 = {
+            {1, Vector(-1, 6, -3), Angle(0, 5, -90)}
+        },
+        weapon_shotgun = {
+            {1, Vector(-2, 5, -3), Angle(-3, -2, -90)}
+        },
+        weapon_crossbow = {
+            {2, Vector(-1, 11, -3), Angle(-90, -95, -90)}
+        },
+        weapon_rpg = {
+            {1, Vector(-1, 13, -4), Angle(-90, -85, -90)}
+        },
+        weapon_frag = {
+            {0, Vector(9, 0, 0.5), Angle(20, 150, 0)}
+        },
+        weapon_slam = {
+            {1, Vector(8.5, 2.3, -5), Angle(-4, 125, -93)}
+        },
+        weapon_bugbait = {
+            {0, Vector(6, 4.2, 0), Angle(0, 0, 0)}
+        },
+        weapon_physcannon = {
+            {1, Vector(-4, 11, -4), Angle(-90, -95, -90)},
+            {2, Vector(0, 2.5, 24), Angle(0, 0, 0)},
+            {3, Vector(0, 5, 20), Angle(0, 0, 0)},
+            {4, Vector(3, 0.5, 20), Angle(0, 60, 0)},
+            {5, Vector(-2, 1, 20), Angle(0, -60, 0)},
+        }
+    }
+
+    stock_weapon_pony_position.weapon_physgun = stock_weapon_pony_position.weapon_physcannon
+
+    hook.Add("OnEntityCreated", "PonyStockWeapons", function(ent)
+        if stock_weapon_pony_position[ent:GetClass()] then
+            ent:AddCallback("BuildBonePositions", function(ent, numbones)
+                local o = ent:GetOwner()
+
+                if o and IsValid(o) then
+                    local misspelled_skull = o:LookupBone("LrigScull")
+
+                    if misspelled_skull then
+                        local spos, sang = o:GetBonePosition(misspelled_skull)
+
+                        if (o.ponydata or {}).gender == 2 then
+                            spos = spos + sang:Forward() * 1.9 + sang:Right() * 0.6
+                        end
+
+                        local rootpos, rootang
+
+                        for i, v in ipairs(stock_weapon_pony_position[ent:GetClass()]) do
+                            local wepbone, pos, ang = unpack(v)
+
+                            if i > 1 then
+                                pos, ang = LocalToWorld(pos, ang, rootpos, rootang)
+                            else
+                                rootpos, rootang = pos, ang
+                            end
+
+                            -- Without this it throws an uncatchable error when you pull out the physgun
+                            if ent:GetBoneContents(wepbone) > 0 then
+                                ent:SetBonePosition(wepbone, LocalToWorld(pos, ang, spos, sang))
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end)
 end

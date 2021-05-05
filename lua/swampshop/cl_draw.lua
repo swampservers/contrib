@@ -12,8 +12,13 @@ end
 
 function SS_PreRender(item)
     if item.cfg.imgur then
-        local imat = ImgurMaterial(item.cfg.imgur.url, item.owner, IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(), false, "VertexLitGeneric", {
-            ["$alphatest"] = 1
+        local imat = ImgurMaterial({
+            id = item.cfg.imgur.url,
+            owner = item.owner,
+            pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
+            stretch = true,
+            shader = "VertexLitGeneric",
+            params = [[{["$alphatest"]=1}]]
         })
 
         render.MaterialOverride(imat)
@@ -42,10 +47,7 @@ end
 hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     -- will be "false" if the model is not mounted yet
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
-
-    if not mounted_model then
-        print("UNMOUNTED", ply:GetModel())
-    end
+    if not ply:Alive() then return true end
 
     if ply.SS_PlayermodelModsLastModel ~= mounted_model then
         ply.SS_PlayermodelModsClean = false
@@ -160,12 +162,21 @@ end
 function SS_ApplyMaterialMods(ent, mods)
     ent:SetSubMaterial()
 
+    if SS_PPM_SetSubMaterials then
+        SS_PPM_SetSubMaterials(ent)
+    end
+
     for _, item in ipairs(mods) do
         if item.materialmod then
             local col = item.cfg.color or Vector(1, 1, 1)
 
-            local mat = ImgurMaterial((item.cfg.imgur or {}).url or "EG84dgp.png", ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {
-                ["$color2"] = string.format("[%f %f %f]", col.x, col.y, col.z)
+            local mat = ImgurMaterial({
+                id = (item.cfg.imgur or {}).url or "EG84dgp.png",
+                owner = ent,
+                pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+                stretch = true,
+                shader = "VertexLitGeneric",
+                params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
             })
 
             ent:SetSubMaterial(item.cfg.submaterial or 0, "!" .. mat:GetName())
@@ -173,11 +184,10 @@ function SS_ApplyMaterialMods(ent, mods)
     end
 end
 
-
 local EntityGetModel = Entity.GetModel
+
 -- Entity.SS_True_LookupAttachment = Entity.SS_True_LookupAttachment or Entity.LookupAttachment
 -- Entity.SS_True_LookupBone = Entity.SS_True_LookupBone or Entity.LookupBone
-
 -- function Entity:LookupAttachment(id)
 --     local mdl = EntityGetModel(self)
 --     if self.LookupAttachmentCacheModel ~= mdl then
@@ -186,7 +196,6 @@ local EntityGetModel = Entity.GetModel
 --     if not self.LookupAttachmentCache[id] then self.LookupAttachmentCache[id] = Entity.SS_True_LookupAttachment(self, id) end
 --     return self.LookupAttachmentCache[id]
 -- end
-
 -- function Entity:LookupBone(id)
 --     local mdl = EntityGetModel(self)
 --     if self.LookupBoneCacheModel ~= mdl then
@@ -195,15 +204,13 @@ local EntityGetModel = Entity.GetModel
 --     if not self.LookupBoneCache[id] then self.LookupBoneCache[id] = Entity.SS_True_LookupBone(self, id) end
 --     return self.LookupBoneCache[id]
 -- end
- 
 -- function SWITCHH()
 --     Entity.LookupAttachment = Entity.SS_True_LookupAttachment
 --     Entity.LookupBone = Entity.SS_True_LookupBone
 -- end
-
-
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
-function SS_DrawWornCSModel(item, mdl, ent, dontactually) --TODO this is lag causin
+--TODO this is lag causin
+function SS_DrawWornCSModel(item, mdl, ent, dontactually)
     local pone = isPonyModel(EntityGetModel(ent))
     local attach = item.wear.attach
     local scale = item.wear.scale
@@ -300,7 +307,7 @@ function SS_DrawWornCSModel(item, mdl, ent, dontactually) --TODO this is lag cau
     end
 end
 
-hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply) 
+hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
     if ply.SS_Items == nil and ply.SS_ShownItems == nil then return end
     if not ply:Alive() then return end
     if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
@@ -365,6 +372,7 @@ concommand.Add("ps_proptest", function()
 end)
 
 hook.Add("PostDrawOpaqueRenderables", "SS_RenderGibs", function(depth, sky)
+    if sky or depth then return end
     local nextgibs = {}
 
     while #SS_GibProps > 0 do

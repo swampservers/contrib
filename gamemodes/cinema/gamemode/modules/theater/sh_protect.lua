@@ -132,6 +132,12 @@ if CLIENT then
         window:Center()
         window:MakePopup()
     end
+else
+    hook.Add("PlayerInitialSpawn", "SendPTProtection", function(ply)
+        net.Start("protectPTdata")
+        net.WriteTable(protectedTheaterTable)
+        net.Send(ply)
+    end)
 end
 
 local function divideUpSeconds(seconds)

@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 module("theater", package.seeall)
-Services = {}
+Services = Services or {}
 
 function RegisterService(class, object, base)
     if not class or not object then return end

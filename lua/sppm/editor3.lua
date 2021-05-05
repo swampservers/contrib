@@ -88,6 +88,7 @@ if CLIENT then
             -- mdl.backgroundmodel_sky:Remove()
             -- mdl.backgroundmodel_ground:Remove()
             mdl.backgroundmodel:Remove()
+            ReloadCurrentPony() --the editor adjusts local ponydata, if they didnt save then reload their current
         end
 
         --[[
@@ -118,7 +119,7 @@ if CLIENT then
         local time = 0
 
         function mdl:LayoutEntity()
-            PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
+            -- PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
             PPM.editor3_pony = self.Entity
             self.Entity.isEditorPony = true
 
@@ -130,19 +131,17 @@ if CLIENT then
                 PPM.editor3_clothing = mdl.model2
             end
 
-            if LocalPlayer().pi_wear[50] ~= nil then
-                self.Entity.ponydata.bodyt0 = LocalPlayer().pi_wear[50].wearid or 1
-            end
-
+            -- if LocalPlayer().pi_wear[50] ~= nil then
+            --     self.Entity.ponydata.bodyt0 = LocalPlayer().pi_wear[50].wearid or 1
+            -- end
             PPM.editor3_pony:SetPoseParameter("move_x", 0)
 
-            if (LocalPlayer().pi_wear ~= nil) then
-                for i, item in pairs(LocalPlayer().pi_wear) do
-                    PPM.setBodygroupSafe(PPM.editor3_pony, item.bid, item.bval)
-                    PPM.setBodygroupSafe(mdl.model2, item.bid, item.bval)
-                end
-            end
-
+            -- if (LocalPlayer().pi_wear ~= nil) then
+            --     for i, item in pairs(LocalPlayer().pi_wear) do
+            --         PPM.setBodygroupSafe(PPM.editor3_pony, item.bid, item.bval)
+            --         PPM.setBodygroupSafe(mdl.model2, item.bid, item.bval)
+            --     end
+            -- end
             self.OnMousePressed = function()
                 self.ismousepressed = true
                 self.mdx, self.mdy = self:CursorPos()
@@ -180,7 +179,7 @@ if CLIENT then
             self:SetCamPos(self.vLookatPos + camvec) --Vector(90,0,60))
             self.camvec = camvec
             time = time + 0.02
-            PPM.setBodygroups(PPM.editor3_pony, true)
+            PPM_SetBodyGroups(PPM.editor3_pony)
         end
 
         mdl.t = 0
@@ -206,7 +205,7 @@ if CLIENT then
             if (not IsValid(mdl.Entity)) then return end
             local x, y = mdl:LocalToScreen(0, 0)
             mdl:LayoutEntity(mdl.Entity)
-            PPM.PrePonyDraw(mdl.Entity, true)
+            -- PPM.PrePonyDraw(mdl.Entity, true)
             local ang = mdl.aLookAngle
 
             if (not ang) then
@@ -256,6 +255,7 @@ if CLIENT then
             --render.DrawQuad(Vector(-dim,-dim,-10), Vector(-dim,dim,-10), Vector(dim,dim,-10),Vector(dim,-dim,-10) )
             --local dim=25 
             --render.DrawQuad(Vector(-dim,-dim,0), Vector(-dim,dim,0), Vector(dim,dim,0),Vector(dim,-dim,0) )
+            PPM_PrePonyDraw(mdl.Entity)
             mdl.Entity:DrawModel()
             mdl.model2:DrawModel()
             render.SuppressEngineLighting(false)
@@ -365,9 +365,9 @@ if CLIENT then
 			RunConsoleCommand( "cl_playermodel", "ponynj" )
 		end]]
             --PPM.SendCharToServer(LocalPlayer())
-            local sig = PPM.Save_settings()
-            PPM.SendPonyData()
-            hook.Run("PPM.Apply", window)
+            PPM_Save("_current.txt")
+            SendLocalPonyCfg()
+            -- hook.Run("PPM.Apply", window)
             colorFlash(APPLY, 0.1, Color(0, 200, 0), Color(255, 255, 255))
         end
 
@@ -377,19 +377,19 @@ if CLIENT then
         hook.Run("PPM.EditorOpened", window, mdl)
     end
 
-    local taboffcet = 0
+    local taboffset = 0
     local tabcount = 0
     local tabs = {}
     local selected_tab = nil
 
     function spawnTabs()
-        taboffcet = 5 * -32
+        taboffset = 5 * -32
         --local ponymodel =LocalPlayer():GetInfo( "cl_playermodel" )
         --if(PPM.Editor3_ponies[ponymodel]!=nil) then
         spawnTab("node_main", "t")
         spawnTab("node_body", "b")
         spawnTab("node_face", "h")
-        spawnTab("node_equipment", "o")
+        -- spawnTab("node_equipment", "o")
         spawnTab("node_presets", "s")
         --end
     end
@@ -400,7 +400,7 @@ if CLIENT then
         TABBUTTON.node = nodename
         TABBUTTON:SetSize(64, 128)
         TABBUTTON.eyemode = (pfx == "h")
-        TABBUTTON:SetPos(ScrW() / 2 + taboffcet, -64)
+        TABBUTTON:SetPos(ScrW() / 2 + taboffset, -64)
         TABBUTTON:SetImage("gui/editor/gui_tab_" .. pfx .. ".png")
 
         TABBUTTON.OnCursorEntered = function()
@@ -450,7 +450,7 @@ if CLIENT then
             end
         end
 
-        taboffcet = taboffcet + 64
+        taboffset = taboffset + 64
         tabcount = tabcount + 1
         tabs[tabcount] = TABBUTTON
 
@@ -560,22 +560,6 @@ if CLIENT then
 
     function PPM.colorcircles(id)
         return Color(math.sin(id - 30) * 255, math.sin(id) * 255, math.sin(id + 30) * 255)
-    end
-
-    function PPM.Save_settings()
-        return PPM.Save("_current.txt", LocalPlayer().ponydata)
-    end
-
-    function PPM.Load_settings()
-        if (file.Exists("ppm/_current.txt", "DATA")) then
-            PPM.mergePonyData(LocalPlayer().ponydata, PPM.Load("_current.txt"))
-            --PPM.SendCharToServer(LocalPlayer()) 
-        else
-            PPM.randomizePony(LocalPlayer())
-            --PPM.SendCharToServer(LocalPlayer()) 
-        end
-
-        local sig = PPM.Save_settings()
     end
 
     function VectorToLPCameraScreen(vDir, iScreenW, iScreenH, angCamRot, fFoV)

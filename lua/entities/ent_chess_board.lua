@@ -143,7 +143,7 @@ function ENT:Initialize()
         tbl.IsChessEntity = true
         local height = (tbl:OBBMaxs()[3] - tbl:OBBMins()[3])
         local BlackSeat = ents.Create("prop_vehicle_prisoner_pod")
-        BlackSeat:SetModel("models/nova/chair_plastic01.mdl")
+        BlackSeat:SetModel("models/props_c17/FurnitureChair001a.mdl") --models/nova/chair_plastic01.mdl")
         BlackSeat:SetPos(pos + (self:GetRight() * 40))
         BlackSeat:SetAngles(ang)
         BlackSeat:Spawn()
@@ -151,7 +151,7 @@ function ENT:Initialize()
         BlackSeat:SetCollisionGroup(COLLISION_GROUP_WORLD)
         BlackSeat.IsChessEntity = true
         local WhiteSeat = ents.Create("prop_vehicle_prisoner_pod")
-        WhiteSeat:SetModel("models/nova/chair_plastic01.mdl")
+        WhiteSeat:SetModel("models/props_c17/FurnitureChair001a.mdl") --models/nova/chair_plastic01.mdl")
         WhiteSeat:SetPos(pos + (self:GetRight() * -40))
         ang:RotateAroundAxis(self:GetUp(), 180)
         WhiteSeat:SetAngles(ang)
@@ -1726,6 +1726,8 @@ if CLIENT then
         weight = 600
     })
 
+    local WhiteMaterial = Material("models/debug/debugwhite")
+
     function ENT:CreateChessPanel()
         local frame = vgui.Create("DFrame")
         frame:SetSize(300, 135)
@@ -2085,7 +2087,7 @@ if CLIENT then
             render.DepthRange(0, 0)
         end
 
-        if InChessGame or self.SpectatingTable or self:GetPos():DistToSqr(EyePos())<1000000 then
+        if InChessGame or self.SpectatingTable or self:GetPos():DistToSqr(EyePos()) < 1000000 then
             local i = 0
 
             for let, column in pairs(self.Pieces) do
@@ -2116,10 +2118,19 @@ if CLIENT then
                         self.PiecesEnts[i]:SetPos(pos)
                     end
 
-                    if self.PiecesEnts[i]:GetModel() ~= self.Models[square.Team .. square.Class] then
-                        self.PiecesEnts[i]:SetModel(self.Models[square.Team .. square.Class])
+                    if self.PiecesEnts[i]:GetModel() ~= self.Models["White" .. square.Class] then
+                        self.PiecesEnts[i]:SetModel(self.Models["White" .. square.Class])
                     end
 
+                    local x = 1.25
+
+                    if square.Team == "Black" then
+                        x = 0.35
+                        -- else
+                    end
+
+                    render.MaterialOverride(WhiteMaterial)
+                    render.SetColorModulation(x, x, x)
                     self.PiecesEnts[i]:DrawModel()
 
                     if self.DrawDouble and self.DrawDouble[square.Class] then
@@ -2128,6 +2139,9 @@ if CLIENT then
                         self.PiecesEnts[i]:SetPos(pos + Vector(0, 0, (self.PiecesEnts[i]:OBBMaxs()[3] - self.PiecesEnts[i]:OBBMins()[3]) * 0.1225))
                         self.PiecesEnts[i]:DrawModel()
                     end
+
+                    render.MaterialOverride()
+                    render.SetColorModulation(1, 1, 1)
                 end
             end
         end
