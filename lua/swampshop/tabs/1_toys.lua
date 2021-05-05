@@ -198,6 +198,15 @@ SS_WeaponAndAmmoProduct({
     class = 'weapon_laserpointer'
 })
 
+SS_WeaponAndAmmoProduct({
+    name = 'Kleiner Larvae',
+    description = "Allows you to control kleiners",
+    price = 1000,
+    ammotype = "kleinerbait",
+    model = 'models/weapons/w_bugbait.mdl',
+    class = 'weapon_kleinerbait'
+})
+
 SS_Product({
     class = 'mystery',
     price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
