@@ -20,8 +20,8 @@ function _SetupEnts()
 end
 
 Ents = Ents or _SetupEnts()
--- Ents = _SetupEnts()
 
+-- Ents = _SetupEnts()
 hook.Add("OnEntityCreated", "Ents_OnEntityCreated", function(v)
     local idx = EntIndex(v)
 
@@ -47,20 +47,23 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(v)
     end
 end)
 
-
 function EntsWithPrefix(pfx)
-    local ok,ov,ik,iv
+    local ok, ov, ik, iv
+
     local function nextmatching()
         while true do
-            ok,ov = next(Ents,ok)
+            ok, ov = next(Ents, ok)
             if not ov then return nil end
             if ok:StartWith(pfx) then return nov end
         end
     end
+
     nextmatching()
+
     return function()
         while true do
-            ik,iv = next(ov,ik)
+            ik, iv = next(ov, ik)
+
             if iv then
                 return iv
             else
@@ -69,10 +72,8 @@ function EntsWithPrefix(pfx)
                 ik = nil
             end
         end
-        
     end
 end
-
 
 function _TestEnts()
     local ShouldBe = _SetupEnts()

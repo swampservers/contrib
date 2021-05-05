@@ -102,6 +102,7 @@ function ENT:Think()
             self:SetPos(self:GetTruePos())
             self:SetAngles(self:GetTrueAng())
         end
+
         -- if IsValid(LocalPlayer()) and LocalPlayer():GetPos():Distance(self:GetPos()) < 500 then
         --     if self:GetZapping() then
         --         local dlight = DynamicLight( self:EntIndex() )
@@ -131,8 +132,9 @@ function ENT:Think()
         if self:GetSubject() ~= s then
             self:SetSubject(s)
         end
+
         --self:SetPos(player.GetAll()[1]:GetPos())
-        self:NextThink(CurTime()+0.1)
+        self:NextThink(CurTime() + 0.1)
     end
 
     return true

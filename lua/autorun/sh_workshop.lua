@@ -85,5 +85,6 @@ end
 function is_model_undownloaded(mdl)
     if not STEAMWS_REGISTRY[mdl] then return false end
     if util.IsValidModel(mdl) then return false end
+
     return not STEAMWS_MOUNTED[STEAMWS_REGISTRY[mdl]]
 end

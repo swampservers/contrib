@@ -44,7 +44,7 @@ hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
             surface.SetDrawColor(255, 255, 255, 255)
             surface.SetMaterial(theater.LastHtmlMaterial)
             -- surface.DrawTexturedRect(-30, 0, THLIGHT_CANVAS_XS * HtmlLightsMatFixx, THLIGHT_CANVAS_YS * HtmlLightsMatFixy)
-            surface.DrawTexturedRectUV(-280, -60, 160 * 3.1, 90 * 3.1,0,0,theater.ActivePanel:GetUVMax())
+            surface.DrawTexturedRectUV(-280, -60, 160 * 3.1, 90 * 3.1, 0, 0, theater.ActivePanel:GetUVMax())
         end
 
         for i, v in ipairs(VISUALIZER_SETTINGS) do

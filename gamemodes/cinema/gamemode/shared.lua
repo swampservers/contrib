@@ -87,11 +87,9 @@ function GM:Move(ply, mv)
     -- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 end
 
-
 function GM:SetupMove(ply, mv, cmd)
     -- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 end
-
 
 function GM:FinishMove(ply, mv)
     -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end

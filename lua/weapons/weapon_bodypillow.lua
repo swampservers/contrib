@@ -148,7 +148,6 @@ end
 function SWEP:PreDrawViewModel(vm, ply, wep)
     self.PrintName = self:GetHardened() and "Body Pillow (Hardened)" or "Body Pillow"
     self.Purpose = self:GetHardened() and "Stands up on its own" or "Gives the feeling of companionship"
-
     local url, own = self:GetImgur()
 
     if not url and self:GetHardened() then
