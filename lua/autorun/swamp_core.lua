@@ -106,6 +106,12 @@ function vec:Clamp(min, max)
     return Vector(math.Clamp(self.x, min.x, max.x), math.Clamp(self.y, min.y, max.y), math.Clamp(self.z, min.z, max.z))
 end
 
+function vec:InBox( vec1, vec2 )
+	return self.x >= vec1.x && self.x <= vec2.x &&
+		self.y >= vec1.y && self.y <= vec2.y &&
+		self.z >= vec1.z && self.z <= vec2.z
+end
+
 BLACK = Color(0, 0, 0, 255)
 WHITE = Color(255, 255, 255, 255)
 
