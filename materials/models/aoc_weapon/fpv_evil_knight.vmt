@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/aoc_weapon/fpv_evil_knight"
+	"$surfaceprop" "Metal"
+}
