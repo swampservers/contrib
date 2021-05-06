@@ -65,7 +65,7 @@ function SWEP:PrimaryAttack()
     self:SetNextSecondaryFire(CurTime() + 0.7)
 
     --added
-   if SERVER then self:Remove() end
+   if SERVER and not self.Owner.EVOLVED then self:Remove() end
 end
 
 function SWEP:ShouldFap()
