@@ -39,6 +39,7 @@ net.Receive("SetMusicVis", function(len, ply)
 end)
 
 timer.Create("musicvis_resetter", 0.5, 0, function()
+    if not theater then return end
     local th = theater.GetByLocation(Location.GetLocationIndexByName("Vapor Lounge"))
 
     if th:VideoType() == "youtube" and th:VideoDuration() > 0 and th:VideoDuration() < 10000 and MVIS_LAST_REQUESTED_VIDEO ~= th:VideoKey() then
