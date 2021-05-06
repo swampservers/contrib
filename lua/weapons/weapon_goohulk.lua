@@ -44,22 +44,23 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Deploy()
-    local ply = self:GetOwner()
+    -- local ply = self:GetOwner()
     
-    ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Clavicle"),Vector(1,2,2))
-    ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_UpperArm"),Vector(2,3,3))
-    ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(2,2,2))
+    -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Clavicle"),Vector(1,2,2))
+    -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_UpperArm"),Vector(2,3,3))
+    -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(2,2,2))
 
-    ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(10,0,0))
-    ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Hand"),Vector(10,0,0))
+    -- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(10,0,0))
+    -- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Hand"),Vector(10,0,0))
    
 end
 
 function SWEP:Holster()
     local ply = self:GetOwner()
+    if not IsValid(ply) then return end
     for i=0,128 do
-    ply:ManipulateBoneScale(i,Vector(1,1,1))
-    ply:ManipulateBonePosition(i,Vector(0,0,0))
+    -- ply:ManipulateBoneScale(i,Vector(1,1,1))
+    -- ply:ManipulateBonePosition(i,Vector(0,0,0))
     end
     return true
 end
@@ -67,7 +68,7 @@ end
 
 
 hook.Add("EntityTakeDamage", "CumHulkDamage", function(target, dmginfo)
-    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "weapon_coomhulk" and dmginfo:GetAttacker() == target) then
+    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "weapon_goohulk" and dmginfo:GetAttacker() == target) then
         return true --don't damage yourself with the coom fist
     end
 end)
@@ -148,5 +149,45 @@ end
 function SWEP:DrawWorldModel()
     if not IsValid(self.Owner) then
         self:DrawModel()
+    else
+        local ply = self:GetOwner()
+    
+        -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Clavicle"),Vector(1,2,2))
+        -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_UpperArm"),Vector(2,3,3))
+        -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(2,2,2))
+
+        -- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(10,0,0))
+        -- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Hand"),Vector(10,0,0))
     end
+end
+
+if CLIENT then
+hook.Add("OnEntityCreated","COOMERBONESFIX",function(ent)
+    ent:AddCallback("BuildBonePositions", function(e,nb) if e:GetModel()=="models/player/soldier_stripped.mdl" then
+        return BUILDCOOMERBONES(e,nb)
+    end end)
+
+end)
+
+local mods2do = {
+    [9] = 2,
+    -- [10] = 20,
+    -- [11] = 20,
+    -- [12] = 20,
+}
+
+function BUILDCOOMERBONES(e,nb)
+
+    for k,v in pairs(mods2do) do
+        local mat = e:GetBoneMatrix(k)
+        if mat then
+            mat:Scale(Vector(v,v,v))
+            e:SetBoneMatrix(8,mat)
+        end
+    end
+
+    
+end
+
+
 end

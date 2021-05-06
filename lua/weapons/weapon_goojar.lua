@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWEP.UseHands = true
-SWEP.PrintName = "Cum Jar"
+SWEP.PrintName = "Goo Jar"
 SWEP.Author = "PYROTEKNIK"
 SWEP.Instructions = "Left Click: Throw\nRight Click: Taunt\nLook Down to heal"
 SWEP.Category = "PYROTEKNIK"
@@ -25,7 +25,7 @@ SWEP.Secondary.ClipSize = -1
 function SWEP:Initialize()
     self:SetHoldType("grenade")
     self:SetSubMaterial(1,"models/shiny")
-     self:SetSubMaterial(2,"engine/occlusionproxy")
+    --  self:SetSubMaterial(2,"engine/occlusionproxy")
 end
 
 
@@ -46,6 +46,8 @@ end
 
 function SWEP:PrimaryAttack()
     if (self:GetNextPrimaryFire() > CurTime()) then return end
+    if self.Throwing then return end
+
     local ply = self:GetOwner()
     self:SendWeaponAnim(ACT_VM_THROW)
     self:EmitSound("WeaponFrag.Throw")
@@ -53,7 +55,7 @@ function SWEP:PrimaryAttack()
     self:GetOwner():SetAnimation(PLAYER_ATTACK1)
     self:EmitSound("coomer/coom.ogg")
     if (SERVER) then
-        local bait = ents.Create("thrown_cum_jar")
+        local bait = ents.Create("thrown_goo_jar")
         bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
         bait:SetOwner(ply)
         bait:Spawn()
@@ -61,11 +63,14 @@ function SWEP:PrimaryAttack()
     end
     self:SetNextPrimaryFire(CurTime() + 0.7)
     self:SetNextSecondaryFire(CurTime() + 0.7)
+
+    --added
+   if SERVER then self:Remove() end
 end
 
 function SWEP:ShouldFap()
     local ply = self:GetOwner()
-    if(ply:GetCumStunned())then
+    if(ply:GetGooStunned())then
         return false
     end
 
@@ -124,7 +129,7 @@ local nomat = Material("engine/occlusionproxy")
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     render.MaterialOverrideByIndex( 1, whitemat )
-    render.MaterialOverrideByIndex( 2, nomat )
+    -- render.MaterialOverrideByIndex( 2, nomat )
 
     
 end

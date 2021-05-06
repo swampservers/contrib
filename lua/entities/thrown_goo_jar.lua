@@ -1,22 +1,22 @@
 ﻿AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "Thrown Cum Jar"
+ENT.PrintName = "Thrown Goo Jar"
 ENT.Author = "PYROTEKNIK"
 ENT.Category = "PYROTEKNIK"
 ENT.Spawnable = false
 ENT.AdminSpawnable = true
 
 if (SERVER) then
-    util.AddNetworkString("cumeffect")
+    util.AddNetworkString("gooeffect")
 end
 
 
 local pmeta = FindMetaTable("Player")
 
-function pmeta:CumStun(length)
+function pmeta:GooStun(length)
     
 
-    self._cumendtime = (length == -1 and 0) or math.max(self._cumendtime or 0, CurTime() + length)
+    self._gooendtime = (length == -1 and 0) or math.max(self._gooendtime or 0, CurTime() + length)
 
     if (SERVER and length > 0) then --try to nicely coat the player in white stuff :)
         for i=-2,2 do 
@@ -41,7 +41,7 @@ function pmeta:CumStun(length)
     end
 
     if (SERVER) then
-        net.Start("cumeffect")
+        net.Start("gooeffect")
         net.WriteEntity(self)
         net.WriteFloat(length)
         net.SendPVS(self:GetPos())
@@ -54,34 +54,34 @@ function pmeta:CumStun(length)
     end
 end
 
-function pmeta:GetCumStunned()
+function pmeta:GetGooStunned()
     --if(true)then  return true,500 end
-    return CurTime() < (self._cumendtime or 0), math.max(0, (self._cumendtime or 0) - CurTime())
+    return CurTime() < (self._gooendtime or 0), math.max(0, (self._gooendtime or 0) - CurTime())
 end
 
 if (CLIENT) then
-    net.Receive("cumeffect", function(len)
+    net.Receive("gooeffect", function(len)
         local ply = net.ReadEntity()
         local duration = net.ReadFloat()
-        ply:CumStun(duration)
+        if IsValid(ply) then ply:GooStun(duration) end
     end)
 end
 
 
-hook.Add("PlayerSpawn", "CumStunReset", function(ply)
-    ply:CumStun(-1)
+hook.Add("PlayerSpawn", "GooStunReset", function(ply)
+    ply:GooStun(-1)
 end)
 
-hook.Add("EntityTakeDamage", "CumStunGive", function(target, dmginfo)
+hook.Add("EntityTakeDamage", "GooStunGive", function(target, dmginfo)
 
-    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_cum_jar" and dmginfo:GetAttacker() == target) then
+    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar" and dmginfo:GetAttacker() == target) then
         return true
     end
-    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_cum_jar") then
+    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar") then
         local coomer = (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
 
         if (not coomer or true) then
-            target:CumStun(math.Clamp(dmginfo:GetDamage() / 10, 0, 4))
+            target:GooStun(math.Clamp(dmginfo:GetDamage() / 10, 0, 4))
         end
     end
 end)
@@ -98,11 +98,14 @@ local tab = {
     ["$pp_colour_mulb"] = 0
 }
 
-hook.Add("RenderScreenspaceEffects", "FishEyeEffect", function()
-    local stunned, time = LocalPlayer():GetCumStunned()
+hook.Add("RenderScreenspaceEffects", "GooOnScreen", function()
+    local stunned, time = LocalPlayer():GetGooStunned()
     local opacity = math.min(time / 4, 1) / 50
     tab["$pp_colour_brightness"] = math.Clamp(time / 4, 0, 0.4)
-    DrawColorModify(tab)
+
+    if tab["$pp_colour_brightness"]>0 then
+        DrawColorModify(tab)
+    end
 
     if (time > 0) then
         DrawMaterialOverlay("pyroteknik/cum_overlay", opacity)
@@ -110,8 +113,8 @@ hook.Add("RenderScreenspaceEffects", "FishEyeEffect", function()
 end)
 
 hook.Add("SetupMove", "GooMovement", function(ply, mv, cmd)
-    if (ply:GetCumStunned()) then
-        local stunned, time = ply:GetCumStunned()
+    if (ply:GetGooStunned()) then
+        local stunned, time = ply:GetGooStunned()
         local div = Lerp(math.min(time / 4, 1),1,400)
 
         mv:SetForwardSpeed(mv:GetForwardSpeed() / div)
@@ -121,7 +124,7 @@ hook.Add("SetupMove", "GooMovement", function(ply, mv, cmd)
 end)
 
 hook.Add("CalcMainActivity", "GooEw", function(ply, vel)
-    if (ply:GetCumStunned()) then
+    if (ply:GetGooStunned()) then
         if (not ply:OnGround()) then return ACT_HL2MP_IDLE_CAMERA, -1 end
         if (vel:Length() < 40) then return ACT_HL2MP_IDLE_CAMERA, -1 end
 
@@ -204,6 +207,6 @@ end
 
 --lol i caught it
 function ENT:Use(ply)
-    ply:Give("weapon_kleinerbait")
+    ply:Give("weapon_goojar")
     self:Remove()
 end
