@@ -147,21 +147,6 @@ if (CLIENT) then
 	end
 end
 
-hook.Add("Initialize","AddPaintAmmo",function()
-
-	game.AddAmmoType( {
-		name = "spraypaint",
-		dmgtype = DMG_POISON,
-		tracer = TRACER_NONE,
-		plydmg = 0,
-		npcdmg = 0,
-		force = 2000,
-		maxcarry = 10000,
-		minsplash = 10,
-		maxsplash = 5 
-	} )
-
-end)
 
 
 
