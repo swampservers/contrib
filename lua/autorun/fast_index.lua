@@ -28,6 +28,7 @@ function Entity:__index(key)
     local val = Entity[key]
     if val ~= nil then return val end
     local tab = EntTable(self)
+
     if tab ~= nil then
         local val = tab[key]
         if val ~= nil then return val end
