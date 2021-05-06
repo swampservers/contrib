@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/player/neckbeard/logo"
+	"$halflambert" 1
+	"$alphatest" "1"
+}
