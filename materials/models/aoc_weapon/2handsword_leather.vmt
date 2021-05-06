@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	
+	"$baseTexture" "models\aoc_weapon/2handsword_leather"
+	"$surfaceprop" "wood"
+	"$model" 1
+	"$phong" "1"
+	"$phongexponent" "30"
+	"$phongboost" "6"	
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+	"$halflambert" 1
+}
