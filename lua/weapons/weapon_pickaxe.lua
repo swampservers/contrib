@@ -30,7 +30,9 @@ if CLIENT then
     end
 end
 
-hook.Add("PostDrawTranslucentRenderables", "DrawPickaxeBlockMarker", function()
+hook.Add("PostDrawTranslucentRenderables", "DrawPickaxeBlockMarker", function(depth, sky)
+    if sky or depth then return end
+
     if IsValid(LocalPlayer()) then
         local wep = LocalPlayer():GetActiveWeapon()
 

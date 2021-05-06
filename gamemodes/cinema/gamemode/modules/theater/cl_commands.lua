@@ -1,52 +1,84 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-CreateClientConVar("cinema_drawnames", 1, true, false)
-CreateClientConVar("cinema_lightfx", 0, true, false)
-CreateClientConVar("cinema_volume", 50, true, false)
-CreateClientConVar("cinema_muteall", 0, true, true)
-MuteAFKConVar = CreateClientConVar("cinema_muteafk", 0, true, true)
-MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true)
-GameVolumeConVar = CreateClientConVar("cinema_game_volume", 1, true, false)
-CreateClientConVar("cinema_hd", 0, true, false)
-CreateClientConVar("cinema_cc", 0, true, false)
-CreateClientConVar("cinema_hideinterface", 0, true, false)
-CreateClientConVar("cinema_resolution", 720, true, false)
-local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false)
-local ScrollAmount = CreateClientConVar("cinema_scrollamount", 60, true, false)
-local HidePlayers = CreateClientConVar("cinema_hideplayers", 0, true, false)
-local HideAmount = CreateClientConVar("cinema_hide_amount", 0.11, true, false)
+CreateClientConVar("cinema_volume", 50, true, false, "", 0, 100)
+GameVolumeConVar = CreateClientConVar("cinema_game_volume", 100, true, false, "", 0, 100)
 
---[[
-timer.Simple(2,function()
-	timer.Create("volumeUPDATEEDS",0.2,0,function()
+--reset it
+if GameVolumeConVar:GetInt() == 1 then
+    RunConsoleCommand("cinema_game_volume", "100")
+end
 
-		if GetConVarNumber("volume")>0 then RunConsoleCommand("cinema_gamevolume",GetConVarNumber("volume")) end
-		if LocalPlayer():InTheater() and GetConVarNumber("cinema_mutegame")>0 then --and (not isPauseMenuOpen) then --pause menu unmute?
-			if GetConVarNumber("volume")>0 then RunConsoleCommand("volume",0) end
-		else
-			if GetConVarNumber("volume")==0 then RunConsoleCommand("volume",GetConVarNumber("cinema_gamevolume")) end
-		end  
-	end)
+MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true, "", 0, 1)
+MuteVoiceConVar = CreateClientConVar("cinema_mute_voice", 0, true, true, "", 0, 4)
+HideNamesConVar = CreateClientConVar("cinema_hidenames", 0, true, false, "", 0, 1)
+CreateClientConVar("cinema_lightfx", 0, true, false, "", 0, 1)
+CreateClientConVar("cinema_quality", 1, true, false, "", 0, 3)
+CreateClientConVar("cinema_hideinterface", 0, true, false, "", 0, 1)
+local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false, "", 0, 1)
+local HidePlayers = CreateClientConVar("cinema_hideplayers", 0, true, false, "", 0, 1)
+
+-- CreateClientConVar("cinema_cc", 0, true, false, "",0,1) --maybe add this back if another deaf guy complains
+net.Receive("EntityEmitSound", function(len)
+    local ent = net.ReadEntity()
+    local soundname = net.ReadString()
+    local soundlevel = net.ReadFloat()
+    local pitch = net.ReadFloat()
+    local volume = net.ReadFloat()
+    local channel = net.ReadUInt(8) - 2
+    local flags = net.ReadUInt(10)
+    local dsp = net.ReadUInt(8)
+    if not IsValid(ent) then return end --unloaded ent
+    -- played in prediction, hopefully...?
+    if ent == LocalPlayer() or ent:IsWeapon() and ent.Owner == LocalPlayer() then return end
+    ent:EmitSound(soundname, soundlevel, pitch, volume, channel ~= -2 and channel or nil, flags, dsp)
 end)
 
-cvars.AddChangeCallback( "cinema_mutegame", function(cmd, old, new)
-	new = tonumber(new)
-	old = tonumber(old)
-	if old==0 and new==1 then
-		Derma_Message( "If you leave the game while in a theater with this enabled, your game stay muted! Go to Options > Audio and drag Game Volume back up to fix this.", "Warning", "OK" )
-	end
-end)]]
-hook.Add("EntityEmitSound", "CinemaMuteGame", function(s)
-    if IsValid(LocalPlayer()) and LocalPlayer():InTheater() then
-        if MuteGameConVar:GetBool() then return false end
-        local f = GameVolumeConVar:GetFloat()
+net.Receive("EmitSound", function(len)
+    local soundname = net.ReadString()
+    local pos = net.ReadVector()
+    local channel = net.ReadUInt(8) - 1
+    local volume = net.ReadFloat()
+    local soundlevel = net.ReadFloat()
+    local flags = net.ReadUInt(10)
+    local pitch = net.ReadFloat()
+    local dsp = net.ReadUInt(8)
+    -- EmitSound(soundname,pos,-1,channel,volume,soundlevel,flags,pitch,dsp)
+    sound.Play(soundname, pos, soundlevel, pitch, volume)
+end)
 
-        if f < 1 then
-            s.Volume = s.Volume * f
+function CinemaGameVolumeSetting()
+    if IsValid(LocalPlayer()) and LocalPlayer():InTheater() and MuteGameConVar:GetBool() then return 0 end
 
-            return true
-        end
+    return GameVolumeConVar:GetFloat() / 100
+end
+
+surface.PlaySoundOriginal = surface.PlaySoundOriginal or surface.PlaySound
+
+surface.PlaySound = function(fl)
+    if CinemaGameVolumeSetting() > 0 then
+        surface.PlaySoundOriginal(fl)
     end
+end
+
+hook.Add("EntityEmitSound", "CinemaMuteGame", function(s)
+    local f = CinemaGameVolumeSetting()
+    if f == 0 then return false end
+
+    if f < 1 then
+        s.Volume = s.Volume * f
+
+        return true
+    end
+end)
+
+local lastmuted = false
+timer.Create("SoundStopper",0.2,0,function()
+    local f = CinemaGameVolumeSetting()
+    local muted = f==0
+    if muted and not lastmuted then 
+        RunConsoleCommand('stopsound')
+    end
+    lastmuted = muted
 end)
 
 concommand.Add("cinema_requestlast", function()
@@ -74,30 +106,8 @@ concommand.Add("cinema_requestlast", function()
     end
 end)
 
-cvars.AddChangeCallback("cinema_hd", function(cmd, old, new)
-    new = tonumber(new)
-
-    if not new then
-        return
-    elseif new < 1 then
-        RunConsoleCommand("cinema_resolution", "720")
-    else
-        RunConsoleCommand("cinema_resolution", "1080")
-    end
-end)
-
-cvars.AddChangeCallback("cinema_resolution", function(cmd, old, new)
-    new = tonumber(new)
-
-    if not new then
-        return
-    elseif new < 2 then
-        RunConsoleCommand("cinema_resolution", 2)
-    elseif new > 1080 then
-        RunConsoleCommand("cinema_resolution", 1080)
-    else
-        theater.ResizePanel()
-    end
+cvars.AddChangeCallback("cinema_quality", function(cmd, old, new)
+    theater.ResizePanel()
 end)
 
 cvars.AddChangeCallback("cinema_volume", function(cmd, old, new)

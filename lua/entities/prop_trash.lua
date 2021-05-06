@@ -44,7 +44,7 @@ TrashLocationOverrides = {
     ['Janitor\'s Closet'] = TRASHLOC_BUILD,
     ['Outdoor Pool'] = TRASHLOC_BUILD,
     ['Golf'] = TRASHLOC_NOSPAWN,
-    ['Minecraft'] = TRASHLOC_BUILD,
+    ['In Minecraft'] = TRASHLOC_BUILD,
     ['Tree'] = TRASHLOC_BUILD,
     ['Shooting Range'] = TRASHLOC_NOSPAWN,
     ['Temple of Kek'] = TRASHLOC_BUILD,
@@ -163,11 +163,13 @@ if CLIENT then
                 dlight.Decay = 500
                 dlight.DieTime = CurTime() + 1
             end
+
+            self:SetNextClientThink(CurTime() + 0.1)
         else
             self:SetNextClientThink(CurTime() + 0.5)
-
-            return true
         end
+
+        return true
     end
 end
 

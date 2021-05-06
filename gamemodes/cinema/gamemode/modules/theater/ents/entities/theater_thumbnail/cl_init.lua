@@ -4,38 +4,29 @@ include('sh_init.lua')
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 local ThumbWidth = 512 -- Expected to be PO2
 local ThumbHeight = 384 -- Expected <= width
-local RenderScale = 0.2 * (480 / 512)
 local DefaultThumbnail = Material("theater/static.vmt")
 
 function ENT:Draw()
     self:DrawModel()
+    self:SetModelScale(0.8)
+    local scl = self:GetModelScale()
+    local rscl = 0.98 * 0.1875 * scl
+    local pos, ang = LocalToWorld(Vector(0.6, rscl * ThumbWidth * -0.5, rscl * ThumbHeight * 0.5), Angle(0, 90, 90), self:GetPos(), self:GetAngles())
 
-    if not self.Attach then
-        local attachId = self:LookupAttachment("thumb3d2d")
-        self.Attach = self:GetAttachment(attachId)
-
-        if self.Attach then
-            self.Attach.Ang = self.Attach.Ang + Angle(0, 90, 90)
-        else
-            return
-        end
-    end
-
-    if cam.StartCulled3D2D(self.Attach.Pos, self.Attach.Ang, RenderScale) then
+    cam.Culled3D2D(pos, ang, rscl, function()
         self:DrawThumbnail()
-        cam.End3D2D()
-    end
+    end)
 end
 
 function ENT:DrawThumbnail()
-    local theatername_esc = string.JavascriptSafe(self:GetTheaterName())
+    local theatername_esc = self:GetTheaterName():gsub("<", "&lt;")
 
     if self:GetNWBool("Rentable") then
         location = self:GetNWInt("Location")
         local tb = protectedTheaterTable[location]
 
         if tb ~= nil and tb["time"] > 1 then
-            theatername_esc = theatername_esc .. "<br>Protected"
+            theatername_esc = theatername_esc .. (theatername_esc ~= "" and "<br>" or "") .. [[<span style="color:#33ff33;">Protected</span>]]
         end
     end
 
@@ -43,16 +34,20 @@ function ENT:DrawThumbnail()
     local thumbnail = self:GetThumbnail()
 
     if thumbnail == "" then
-        thumbnail = "http://swampservers.net/video/logos/movie.png"
+        thumbnail = "http://swampservers.net/static/img/default_thumbnail.png"
     end
 
-    local background = [[background:black url(]] .. string.JavascriptSafe(thumbnail) .. [[) no-repeat fixed center;]]
+    local background = [[background:black url(]] .. thumbnail:gsub("<", "&lt;") .. [[) no-repeat fixed center;]]
 
     if self:GetService() == "" then
         surface.SetDrawColor(80, 80, 80)
         surface.SetMaterial(DefaultThumbnail)
         surface.DrawTexturedRect(0, 0, ThumbWidth - 1, ThumbHeight - 1)
         background = ""
+    elseif IsValid(LocalPlayer()) and LocalPlayer():FlashlightIsOn() then
+        surface.SetDrawColor(80, 80, 80)
+        surface.SetMaterial(DefaultThumbnail) --FIX WEIRD BUG
+        surface.DrawTexturedRect(0, 0, 1, 1)
     end
 
     local setting = theatername_esc .. ":" .. videotitle .. ":" .. background
@@ -60,7 +55,7 @@ function ENT:DrawThumbnail()
     if self.ThumbMat then
         local t = self.ThumbMat:GetTexture("$basetexture")
 
-        if self.ThumbMat:IsError() or t:IsError() or t:IsErrorTexture() then
+        if self.ThumbMat:IsError() or t == nil or t:IsError() or t:IsErrorTexture() then
             self.ThumbMat = nil
         end
     end
@@ -80,11 +75,12 @@ function ENT:DrawThumbnail()
             self.HTML:SetPaintedManually(true)
             self.HTML:SetKeyBoardInputEnabled(false)
             self.HTML:SetMouseInputEnabled(false)
+            --<link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&family=Righteous&display=swap" rel="stylesheet">
             self.HTML:SetHTML([[
                 <html>
                 <head>
                 <link rel="preconnect" href="https://fonts.gstatic.com">
-                <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&family=Righteous&display=swap" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
                 <style>
                 body {
                     margin:0;
@@ -97,7 +93,7 @@ function ENT:DrawThumbnail()
                     background-color: rgba(0,0,0,0.5);
                 }
                 #div1 {
-                    font-family: 'Righteous', sans-serif;
+                    font-family: 'Open Sans Condensed', sans-serif; /*'Righteous', sans-serif;*/
                     text-transform: uppercase;
                     font-size: 10vw;
                 }
@@ -111,10 +107,13 @@ function ENT:DrawThumbnail()
                 </head>
                 <body>
                     <div id="div1">]] .. theatername_esc .. [[</div>
-                    <div id="div2">]] .. string.JavascriptSafe(videotitle) .. [[</div>
+                    <div id="div2">]] .. videotitle:gsub("<", "&lt;") .. [[</div>
                     <script>
-                    var div = document.getElementById("div2");
-                    div.style.fontSize = Math.min(10,((div.innerText.length > 50 ? 400 : 200)/div.innerText.length))+"vw";
+                    function autofont(div) {
+                        div.style.fontSize = Math.min(10,((div.innerText.length > 45 ? 440 : 220)/div.innerText.length))+"vw";
+                    }
+                    autofont(document.getElementById("div1"));
+                    autofont(document.getElementById("div2"));
                     </script>
                 </body>
                 </html>
@@ -125,7 +124,7 @@ function ENT:DrawThumbnail()
             self.JSDelay = true
 
             -- Add delay to wait for JS to run
-            timer.Simple(0.01, function()
+            timer.Simple(0.1, function()
                 if not IsValid(self) then return end
                 if not ValidPanel(self.HTML) then return end
                 self.HTML:UpdateHTMLTexture()

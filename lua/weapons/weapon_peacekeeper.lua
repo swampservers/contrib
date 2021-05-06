@@ -25,7 +25,7 @@ game.AddAmmoType({
     maxsplash = 5
 })
 
-SWEP.Primary.Damage = 10
+SWEP.Primary.Damage = 15
 SWEP.Primary.ClipSize = 2
 SWEP.Primary.Ammo = "peaceshot"
 SWEP.Primary.Automatic = false
@@ -125,7 +125,7 @@ function SWEP:GetCone()
     local mc = math.max(((math.Clamp((self.Owner:GetVelocity():LengthSqr() + (20000)), 0, 70000)) * 0.000005) - 0.01, 0)
     -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 
-    return mc + 0.005
+    return mc + 0.005 + 0.002
 end
 
 function SWEP:PrimaryAttack()

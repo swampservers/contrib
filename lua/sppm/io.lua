@@ -2,12 +2,18 @@
 net.Receive("PonyCfg", function(len)
     local ply = net.ReadEntity()
     local cfg = net.ReadTable()
-    PPM_SetPonyCfg(ply, cfg)
+
+    if IsValid(ply) then
+        PPM_SetPonyCfg(ply, cfg)
+    end
 end)
 
 net.Receive("PonyInvalidate", function(len)
     local ply = net.ReadEntity()
-    ply.UpdatedPony = nil
+
+    if IsValid(ply) then
+        ply.UpdatedPony = nil
+    end
 end)
 
 function PPM_Load(filename)
@@ -44,7 +50,7 @@ function PPM_Randomize()
     ponydata.manel = math.Round(math.Rand(1, 12))
     ponydata.tail = math.Round(math.Rand(1, 14))
     ponydata.tailsize = math.Rand(0.8, 1)
-    ponydata.eye = math.Round(math.Rand(1, EYES_COUNT))
+    ponydata.eye = math.Round(math.Rand(1, PPM.EYES_COUNT))
     ponydata.eyelash = math.Round(math.Rand(1, 5))
     ponydata.coatcolor = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
 
@@ -57,7 +63,7 @@ function PPM_Randomize()
         ponydata["bodydetail" .. I .. "_c"] = Vector(0, 0, 0)
     end
 
-    ponydata.cmark = math.Round(math.Rand(1, MARK_COUNT))
+    ponydata.cmark = math.Round(math.Rand(1, PPM.MARK_COUNT))
     ponydata.bodyweight = math.Rand(0.8, 1.2)
     ponydata.bodyt0 = 1 --math.Round(math.Rand(1,4)) 
     ponydata.bodyt1_color = Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1))
@@ -71,7 +77,7 @@ function PPM_Randomize()
     ponydata.eyeholesize = 0.7 + math.Rand(-0.1, 0.1)
     ponydata.eyecolor_hole = Vector(0, 0, 0)
     -- TODO assert(ponydata == SanitizePonyCfg(ponydata))
-    PPM_SetPonyCfg(LocalPlayer(), ponydata)
+    PPM_SetPonyCfg(LocalPlayer(), SanitizePonyCfg(ponydata))
 end
 
 function PPM_Save(filename)

@@ -20,6 +20,7 @@ function PPM_PrePonyDraw(ent)
 
     if not ply.UpdatedPony then
         net.Start("PonyRequest")
+        print("REQ", ply)
         net.WriteEntity(ply)
         net.SendToServer()
         ply.UpdatedPony = true
@@ -28,77 +29,25 @@ function PPM_PrePonyDraw(ent)
     PPM_PONIES_NEARBY[ply] = true
 
     for k, v in ipairs(ply.ponymaterials or {}) do
+        if k == 10 and ((ply.ponydata or {}).imgurcmark or "") ~= "" then
+            -- big TODO: make imgur materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
+            v = ImgurMaterial({
+                id = ply.ponydata.imgurcmark,
+                owner = ent,
+                pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+                stretch = false,
+                shader = "VertexLitGeneric",
+                params = [[{["$translucent"]=1}]]
+            })
+        end
+
         ent:SetSubMaterial(k - 1, "!" .. v:GetName())
-    end
-
-    if ((ply.ponydata or {}).imgurcmark or "") ~= "" then
-        local mat = ImgurMaterial(ply.ponydata.imgurcmark, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), true, "VertexLitGeneric", {
-            ["$translucent"] = 1
-        })
-
-        ent:SetSubMaterial(9, "!" .. mat:GetName())
     end
 
     -- Only applies to editor models; ragdolls are handled in hook below and players are handled serverside
     if ent:EntIndex() == -1 then
         PPM_SetBodyGroups(ent)
     end
-end
-
-function PPM.PrePonyDraw(ent, localvals)
-    -- if true then return end
-    -- if ent:IsPlayer() and ent.ponydata ~= nil and IsValid(ent.ponydata.clothes1) then
-    --     ent.ponydata.clothes1:SetNoDraw(not ent:Alive())
-    -- end
-    -- if not PPM.isValidPonyLight(ent) then return end
-    -- local pony = PPM.getPonyValues(ent, localvals)
-    -- if table.IsEmpty(pony) then return end
-    -- if IsValid(LocalPlayer()) and LocalPlayer():Nick() == "Joker Gaming" and NEWPONYZ == nil then
-    --     NEWPONYZ = true
-    -- end
-    -- if NEWPONYZ then
-    --     if ent:EntIndex() == -1 then
-    --         print("CSMODEL")
-    --         ent:SetSubMaterial()
-    --         for k, v in pairs(PPM.rendertargettasks) do
-    --             v.render(ent, pony)
-    --         end
-    --         return
-    --     else
-    --         if ent.ponydata_tex then
-    --             for k, v in pairs(PPM.rendertargettasks) do
-    --                 -- print(k, ent.ponydata_tex[k.."_mat"])       
-    --                 for i, v2 in ipairs(ent.ponydata_tex[k .. "_mat"] or {}) do
-    --                     -- print(i)
-    --                     ent:SetSubMaterial(v2[2] - 1, "!" .. v2[1]:GetName())
-    --                 end
-    --             end
-    --         end
-    --     end
-    --     -- material gets updated as it loads so its a special case
-    --     if (pony.imgurcmark or "") ~= "" then
-    --         -- if ENT.isEditorPony then
-    --         --     ENT.imgurcmark = PONY.imgurcmark
-    --         --     PONY = ENT
-    --         -- end
-    --         local mat = ImgurMaterial(pony.imgurcmark, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), true, "VertexLitGeneric", {
-    --             ["$translucent"] = 1
-    --         })
-    --         ent:SetSubMaterial(9, "!" .. mat:GetName())
-    --     end
-    --     return
-    -- end
-    -- if PPM.m_hair1 == nil then return end
-    -- PPM.m_hair1:SetVector("$color2", pony.haircolor1)
-    -- PPM.m_hair2:SetVector("$color2", pony.haircolor2)
-    -- PPM.m_wings:SetVector("$color2", pony.coatcolor)
-    -- PPM.m_horn:SetVector("$color2", pony.coatcolor)
-    -- if ent.ponydata_tex ~= nil then
-    --     --NOTE: these are just changing the texture on the same material for each player and it causes all the lag
-    --     for k, v in pairs(PPM.rendertargettasks) do
-    --         v.render(ent, pony)
-    --     end
-    -- end
 end
 
 -- gets removed when the shop is present
@@ -116,112 +65,8 @@ function SS_PPM_SetSubMaterials(ent)
     RP_POP()
 end
 
--- hook.Add("PostDrawOpaqueRenderables", "test_Redraw", function()
---     if (not PPM.isLoaded) then
---         PPM.LOAD()
---     end
---     --//////////////////RENDER
---     for i, ent in pairs(PPM.ActivePonies) do
---         --and ent:Visible( LocalPlayer() )
---         if (IsValid(ent) and (not ent:GetNoDraw())) then
---             if (not ent:IsPlayer()) then
---                 if (PPM.isValidPonyLight(ent)) then
---                     if (ent:IsNPC()) then
---                         ent:SetNoDraw(true)
---                         PPM.PrePonyDraw(ent, false)
---                         ent:DrawModel()
---                     elseif (table.HasValue(PPM.VALIDPONY_CLASSES, ent:GetClass()) or string.match(ent:GetClass(), "^(npc_)") ~= nil) then
---                         if (not ent.isEditorPony) then
---                             --if(!PPM.isValidPony(ent)) then
---                             --PPM.randomizePony(ent)
---                             --end
---                             ent:SetNoDraw(true)
---                             if (ent.ponydata ~= nil and ent.ponydata.useLocalData) then
---                                 PPM.PrePonyDraw(ent, true)
---                             else
---                                 PPM.PrePonyDraw(ent, false)
---                             end
---                             --ent:SetupBones( )
---                             ent:DrawModel()
---                         end
---                     end
---                 end
---             else --///////////PONY IS PLAYER
---                 local plyrag = ent:GetRagdollEntity()
---                 if (plyrag ~= nil) then
---                     if PPM.isValidPonyLight(plyrag) then
---                         if (not PPM.isValidPony(plyrag)) then
---                             PPM.setupPony(plyrag)
---                             PPM.copyPonyTo(ent, plyrag)
---                             PPM.copyLocalTextureDataTo(ent, plyrag)
---                             plyrag.ponydata.useLocalData = true
---                             PPM.setBodygroups(plyrag, true)
---                             plyrag:SetNoDraw(true)
---                             if ent.ponydata ~= nil then
---                                 if plyrag.clothes1 == nil then
---                                     plyrag.clothes1 = ClientsideModel("models/ppm/player_default_clothes1.mdl", RENDERGROUP_TRANSLUCENT)
---                                     if IsValid(plyrag.clothes1) then
---                                         plyrag.clothes1:SetParent(plyrag)
---                                         plyrag.clothes1:AddEffects(EF_BONEMERGE)
---                                         if IsValid(ent.ponydata.clothes1) then
---                                             for I = 1, 14 do
---                                                 --MsgN(I,ent.ponydata.clothes1:GetBodygroup( I ))
---                                                 PPM.setBodygroupSafe(plyrag.clothes1, I, ent.ponydata.clothes1:GetBodygroup(I))
---                                             end
---                                         end
---                                         plyrag:CallOnRemove("clothing del", function()
---                                             plyrag.clothes1:Remove()
---                                         end)
---                                     end
---                                 end
---                             end
---                         else
---                             PPM.PrePonyDraw(plyrag, true)
---                             plyrag:DrawModel()
---                         end
---                     end
---                 else
---                     if ent.ponydata == nil then
---                         PPM.setupPony(ent)
---                     end
---                     if ent.ponydata.clothes1 == nil or ent.ponydata.clothes1 == NULL then
---                         ent.ponydata.clothes1 = ent:GetNetworkedEntity("pny_clothing")
---                     end
---                 end
---             end
---         end
---     end
--- end)
--- PPM.VALIDPONY_CLASSES = {"player", "prop_ragdoll", "prop_physics", "cpm_pony_npc"}
--- local pony_check_idx = 0
--- hook.Add("PreDrawHUD", "pony_render_textures3", function()
---     pony_check_idx = pony_check_idx + 1
---     local ent = PPM.ActivePonies[math.mod(pony_check_idx, #(PPM.ActivePonies)) + 1]
---     if not IsValid(ent) then return end
---     if PPM.isValidPonyLight(ent) then
---         local pony = PPM.getPonyValues(ent, ent.isEditorPony)
---         if not PPM.isValidPony(ent) then
---             PPM.setupPony(ent)
---         end
---         for k, v in pairs(PPM.rendertargettasks or {}) do
---             if (PPM.TextureIsOutdated(ent, k, v.hash(pony))) then
---                 ent.ponydata_tex = ent.ponydata_tex or {}
---                 PPM.currt_ent = ent
---                 PPM.currt_ponydata = pony
---                 PPM.currt_success = false
---                 ent.ponydata_tex[k] = PPM.CreateTexture(tostring(ent:EntIndex()) .. k, v)
---                 ent.ponydata_tex[k .. "_hash"] = v.hash(pony)
---                 ent.ponydata_tex[k .. "_draw"] = PPM.currt_success
---                 -- if PPM.currt_success then
---                 ent.ponydata_tex[k .. "_mat"] = PPM_CLONE_MATERIALS(v.render(ent, pony))
---                 -- end
---                 -- print(ent, k)
---                 -- once per frame
---                 return
---             end
---         end
---     end
--- end)
+local UNIQUEVALUE = tostring(os.time())
+
 -- draw textures
 hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
     for ply, _ in pairs(PPM_PONIES_NEARBY) do
@@ -237,7 +82,7 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 PPM.currt_ent = ply
                 PPM.currt_ponydata = ply.ponydata
                 PPM.currt_success = false
-                ply.ponydata_tex[k] = PPM.CreateTexture(tostring(ply:EntIndex()) .. k, v)
+                ply.ponydata_tex[k] = PPM_CreateTexture(UNIQUEVALUE .. tostring(ply:EntIndex()) .. k, v)
                 -- ply.ponydata_tex[k .. "_hash"] = v.hash(pony) --remove
                 ply.ponydata_tex[k .. "_draw"] = PPM.currt_success --remove
                 -- if PPM.currt_success then 
@@ -260,7 +105,7 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
     PPM_PONIES_NEARBY = {}
 end)
 
-PPM_NEXT_CLONE_MAT = PPM_NEXT_CLONE_MAT or 1
+PPM_NEXT_CLONE_MAT = PPM_NEXT_CLONE_MAT or 0
 
 function PPM_CLONE_MATERIAL(mat)
     PPM_NEXT_CLONE_MAT = PPM_NEXT_CLONE_MAT + 1

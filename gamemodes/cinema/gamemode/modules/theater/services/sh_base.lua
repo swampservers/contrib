@@ -72,6 +72,10 @@ if CLIENT then
         error("Can't get video info for " .. self:GetClass())
     end
 
+    function SERVICE:ShouldTrust(Video)
+        return true
+    end
+
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("http://swampservers.net/cinema/" .. self:GetClass() .. ".html")
         -- Let the webpage handle loading a video

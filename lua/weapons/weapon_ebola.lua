@@ -30,7 +30,7 @@ end
 if SERVER then
     ebprint = true
 
-    timer.Create("Ebolaaa", 1.7, 0, function()
+    timer.Create("Ebolaaa", 1.8, 0, function()
         EbolaAllPlayerCache = player.GetHumans()
         ebprint = not ebprint
 
@@ -40,11 +40,11 @@ if SERVER then
                     v:ChatPrint("[red]you died of coronavirus")
                     v:Kill()
                 else
-                    if math.random() < 0.25 then
+                    if math.random() < 0.2 then
                         v:GetWeapon("weapon_ebola"):PrimaryAttack()
                     end
 
-                    if math.random() < 0.01 then
+                    if math.random() < 0.03 then
                         v:ChatPrint("[green]coronavirus healed")
                         v:StripWeapon("weapon_ebola")
                     else

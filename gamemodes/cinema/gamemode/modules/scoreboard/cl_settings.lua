@@ -21,48 +21,6 @@ surface.CreateFont("ScoreboardHelp", {
 SETTINGS = {}
 SETTINGS.TitleHeight = BrandTitleBarHeight
 
---[[
-radiobutton0 = CreateClientConVar("radiobutton0","0",false,false)
-radiobutton1 = CreateClientConVar("radiobutton1","0",false,false)
-radiobutton2 = CreateClientConVar("radiobutton2","0",false,false)
-radiobutton3 = CreateClientConVar("radiobutton3","0",false,false)
-radiobutton4 = CreateClientConVar("radiobutton4","0",false,false)
-
-function setRadioButtons(name,old,new)
-	for n=0,4 do
-		RunConsoleCommand("radiobutton"..tostring(n),"0")
-	end
-	RunConsoleCommand("radiobutton"..tostring(new),"1")
-end
-
-cvars.AddChangeCallback("cinema_interface",setRadioButtons)
-timer.Simple(0, function() setRadioButtons("","",GetConVar("cinema_interface"):GetInt()) end)
-
-function updateRadioButton(name,old,new)
-	if tonumber(new)>0 then
-		local n = name:sub(name:len())
-		if cinemainterface:GetInt() ~= n then
-			RunConsoleCommand("cinema_interface",tostring(n))
-		end
-	else
-		timer.Simple(0,function()
-			local allzero = true
-			for n=0,4 do
-				allzero = allzero and GetConVar("radiobutton"..tostring(n)):GetInt()==0
-			end
-			if allzero then
-				RunConsoleCommand(name, "1")
-			end
-		end)
-	end
-end
-
-cvars.AddChangeCallback("radiobutton0",updateRadioButton)
-cvars.AddChangeCallback("radiobutton1",updateRadioButton)
-cvars.AddChangeCallback("radiobutton2",updateRadioButton)
-cvars.AddChangeCallback("radiobutton3",updateRadioButton)
-cvars.AddChangeCallback("radiobutton4",updateRadioButton)
-]]
 function SETTINGS:DoClick()
 end
 
@@ -127,15 +85,28 @@ function SETTINGS:PerformLayout()
 end
 
 function SETTINGS:Create()
-    -- Volume slider
-    local Volume = self:NewSetting("TheaterNumSlider", 'Video & Music Volume', "cinema_volume")
-    Volume:SetTooltip(T'Settings_VolumeTooltip')
-    Volume:SetMinMax(0, 100)
-    Volume:SetDecimals(0)
-    Volume:SetTall(50)
-    Volume.Wrap:DockPadding(16, 6, 16, 0)
-    Volume.Wrap:SetTall(Volume:GetTall() + 6)
-    self.TheaterList:AddItem(Volume.Wrap)
+    local function addSlider(title, convar, tooltip)
+        local Volume = self:NewSetting("TheaterNumSlider", title, convar)
+        Volume:SetTooltip(tooltip)
+        Volume:SetMinMax(0, 100)
+        Volume:SetDecimals(0)
+        Volume:SetTall(50)
+        Volume.Wrap:DockPadding(16, 6, 16, -10)
+        Volume.Wrap:SetTall(Volume:GetTall() + 6)
+        self.TheaterList:AddItem(Volume.Wrap)
+    end
+
+    local function addLabel(label)
+        local setting = self:NewSetting("DLabel", label)
+        setting:AlignLeft(16)
+        --setting:AlignTop( checkboxy + (checkboxs*checkboxn) )
+        setting:SetFont("LabelBigger")
+        setting:SetColor(color_white)
+        setting:SetTall(24)
+        setting.Wrap:DockPadding(16, 0, 16, 0)
+        setting.Wrap:SetTall(setting:GetTall())
+        self.TheaterList:AddItem(setting.Wrap)
+    end
 
     local function addCheckbox(label, convar, hover)
         local HD = self:NewSetting("TheaterCheckBoxLabel", label, convar)
@@ -153,42 +124,57 @@ function SETTINGS:Create()
         self.TheaterList:AddItem(HD.Wrap)
     end
 
-    local function addLabel(label)
-        local setting = self:NewSetting("DLabel", label)
-        setting:AlignLeft(16)
-        --setting:AlignTop( checkboxy + (checkboxs*checkboxn) )
-        setting:SetFont("LabelBigger")
-        setting:SetColor(color_white)
-        setting:SetTall(24)
-        setting.Wrap:DockPadding(16, 0, 16, 0)
-        setting.Wrap:SetTall(setting:GetTall())
-        self.TheaterList:AddItem(setting.Wrap)
+    local function addDropdown(title, convar, tooltip, selections, labelsize, comboboxsize)
+        local Wrap = vgui.Create("Panel", self)
+        Wrap:DockPadding(16, 6, 16, 4)
+        Wrap:SetTooltip(tooltip)
+        Wrap:SetTall(28)
+        local label = vgui.Create("DLabel", Wrap)
+        label:SetFont("LabelSmaller")
+        label:Dock(LEFT)
+        label:SetText(title)
+        label:SetSize(labelsize or 100, 18)
+        label:SetColor(color_white)
+        local DComboBox = vgui.Create("DComboBox", Wrap)
+        DComboBox:Dock(RIGHT)
+        DComboBox:SetSize(comboboxsize or 100, 18)
+        DComboBox:SetSortItems(false)
+
+        for i, v in ipairs(selections) do
+            DComboBox:AddChoice(v)
+        end
+
+        -- DComboBox:AddChoice( "Extreme (LOW FPS)" )
+        DComboBox:ChooseOptionID(math.Clamp(GetConVar(convar):GetInt() + 1, 1, #selections))
+
+        DComboBox.OnSelect = function(self, index, value)
+            RunConsoleCommand(convar, tostring(index - 1))
+        end
+
+        self.TheaterList:AddItem(Wrap)
     end
 
-    addLabel('Sound')
-    addCheckbox('Mute voice chat in theater', "cinema_muteall", 'Mute stupid micspammers')
-    addCheckbox('Mute AFK voice chat', "cinema_muteafk", 'Mute stupid micspammers 2')
-    addCheckbox('Mute game sound in theater', "cinema_mutegame", 'If this doesn\'t work, run "volume 0" in console. Also try "cinema_game_volume 0.1" if you want the sounds quieter but not muted.')
-    addCheckbox('Mute audio while alt-tabbed', "cinema_mute_nofocus", 'No background noise')
+    addSlider("Video & music volume", "cinema_volume", "cinema videos and background music")
+    addCheckbox('Mute video while alt-tabbed', "cinema_mute_nofocus", 'No background noise')
+    addSlider("Game sounds volume", "cinema_game_volume", "Gunshots, footsteps etc.\nIf this doesn't work well, try the settings in the escape menu.")
+    addCheckbox('Mute game sound in theater', "cinema_mutegame", 'Mute game sound in theater.')
+
+    addDropdown("Voice chat", "cinema_mute_voice", "When should voice chat be heard?", {"Everywhere", "Mute in theaters", "Mute AFK players", "Mute AFK and in theaters", "Mute everyone"}, 80, 120)
+
+    addLabel('Quality')
+
+    addDropdown("Video quality", "cinema_quality", "Video playback quality; affects FPS.\nSettings are 256p/512p/1024p", {"Low (best FPS)", "Medium", "High"})
+
+    addCheckbox('Dynamic theater lighting', "cinema_lightfx", 'Exclusive lighting effects (reduces fps)')
+    addCheckbox('Turbo button (increase FPS)', "swamp_fps_boost", "Put your gaymergear PC into overdrive")
     addLabel('Display')
-    addCheckbox('HD video playback', "cinema_hd", 'Stream in 1080p HD with DOLBY DIGITAL SURROUND')
-    addCheckbox('Show player names', "cinema_drawnames", "Big names in yo face")
-    addCheckbox('Don\'t load sprays', "cl_playerspraydisable", "May help performance (GMOD global)")
+    addCheckbox('Show hints', "swamp_showhints", 'Show hints on the top of your screen')
+    addCheckbox('Hide player names', "cinema_hidenames", "Big names in yo face")
+    addCheckbox('Hide sprays', "cl_playerspraydisable", "May help performance (GMOD global)")
     --addCheckbox('Don\'t load chat images',"fedorachat_hideimg","Hides all images in chat")
     addCheckbox('Hide interface', "cinema_hideinterface", "Clean Your Screen")
     addCheckbox('Hide players in theater', "cinema_hideplayers", 'For when trolls stand in front of your screen')
-    addCheckbox('Display Hints', "swamp_showhints", 'display occasional hints on how to play on the server')
-    addLabel('Performance')
-    addCheckbox('Turbo button', "swamp_fps_boost", "Put your gaymergear PC into overdrive")
-    addCheckbox('Dynamic theater lighting', "cinema_lightfx", 'Exclusive lighting effects (reduces fps)')
-    --addLabel('Interface')
-    --RunConsoleCommand("radiobutton"..cinemainterface:GetInt(),"1")
-    --addCheckbox('Show everything','radiobutton4','Show all images, potentially graphic.')
-    --addCheckbox('Hide explicit images','radiobutton3','Default setting')
-    --addCheckbox('Hide all images','radiobutton2','Don\'t load any images')
-    --addCheckbox('Hide chat completely','radiobutton1','Hide all distractions on your screen; show chat while typing only')
-    --addCheckbox('Hide everything','radiobutton0','')
-    addLabel('Adult Content (18+)')
+    addLabel('Adult content (18+)')
     addCheckbox('Videos & sprays (toggle: F6)', "swamp_mature_content", 'Show potentially mature videos & sprays')
     addCheckbox('Chatbox images (toggle: F7)', "swamp_mature_chatbox", 'Show potentially mature chatbox images')
     local LanguageSelect = self:NewSetting("DButton", "Chat Command List")

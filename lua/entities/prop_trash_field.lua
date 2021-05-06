@@ -63,7 +63,7 @@ function ENT:ProtectionRadius()
         field_size = field_size / 2
     end
 
-    if ln == "Minecraft" then
+    if ln == "In Minecraft" then
         field_size = field_size * 1.5
     end
 

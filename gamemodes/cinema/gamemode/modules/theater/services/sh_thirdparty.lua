@@ -43,6 +43,12 @@ if CLIENT then
 
     local loaded = false
 
+    function SERVICE:ShouldTrust(Video)
+        local t = util.JSONToTable(Video:Key())
+
+        return TRUSTED_VIDEO_HOST(t["key"])
+    end
+
     function SERVICE:LoadVideo(Video, panel)
         local t = util.JSONToTable(Video:Key())
         local referer = t["referer"]

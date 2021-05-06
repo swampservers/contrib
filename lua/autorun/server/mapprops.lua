@@ -108,13 +108,37 @@ function GetMapPropTable()
         {class="slotmachine",pos=Vector(-2600+math.random(-arcadeyposrnd,arcadeyposrnd),-414+math.random(-arcadexposrnd,arcadexposrnd),480),ang=Angle(0,0+math.random(-arcadeanglernd,arcadeanglernd),0)},]] --[[{class="slotmachine",betamt=1000,pos=Vector(2100+math.random(-arcadeyposrnd,arcadeyposrnd),1260+math.random(-arcadexposrnd,arcadexposrnd),0),ang=Angle(0,180+math.random(-arcadeanglernd,arcadeanglernd),0)},
         {class="slotmachine",betamt=1000,pos=Vector(2100+math.random(-arcadeyposrnd,arcadeyposrnd),1310+math.random(-arcadexposrnd,arcadexposrnd),0),ang=Angle(0,180+math.random(-arcadeanglernd,arcadeanglernd),0)},
         {class="slotmachine",betamt=1000,pos=Vector(2100+math.random(-arcadeyposrnd,arcadeyposrnd),1360+math.random(-arcadexposrnd,arcadexposrnd),0),ang=Angle(0,180+math.random(-arcadeanglernd,arcadeanglernd),0)},
-        {class="slotmachine",betamt=1000,pos=Vector(2100+math.random(-arcadeyposrnd,arcadeyposrnd),1410+math.random(-arcadexposrnd,arcadexposrnd),0),ang=Angle(0,180+math.random(-arcadeanglernd,arcadeanglernd),0)}, ]] --{class="arcade_doom",pos=Vector(1720,1320,0),ang=Angle(0,0,0)}, --{class="prop_dynamic",pos=Vector(31, -392, -5),ang=Angle(0,-90,0),model="models/swamponions/dedicationplaque.mdl"},
+        {class="slotmachine",betamt=1000,pos=Vector(2100+math.random(-arcadeyposrnd,arcadeyposrnd),1410+math.random(-arcadexposrnd,arcadexposrnd),0),ang=Angle(0,180+math.random(-arcadeanglernd,arcadeanglernd),0)}, ]] --{class="arcade_doom",pos=Vector(1720,1320,0),ang=Angle(0,0,0)}, --{class="prop_dynamic",pos=Vector(31, -392, -5),ang=Angle(0,-90,0),model="models/swamponions/dedicationplaque.mdl"}, -- { --     class = "prop_physics", --     pos = Vector(-26.000000, -386.343750, 75.5), --     ang = Angle(7.031, -115.884, 38.408), --     model = "models/swamponions/trumphat.mdl", --     noshadows = true -- },
         {
             class = "prop_physics",
-            pos = Vector(-26.000000, -386.343750, 75.5),
-            ang = Angle(7.031, -115.884, 38.408),
-            model = "models/swamponions/trumphat.mdl",
+            pos = Vector(608 + 16 + 384, 528 + 0.1, 84),
+            ang = Angle(90, 90, 0),
+            model = "models/swamponions/cinematext/1234.mdl",
             noshadows = true
+        },
+        {
+            class = "prop_physics",
+            pos = Vector(832, 1008 - 0.1, 84),
+            ang = Angle(90, -90, 0),
+            model = "models/swamponions/cinematext/56.mdl",
+            noshadows = true
+        },
+        {
+            class = "prop_physics",
+            pos = Vector(-480 + 0.1, 640 + 14, 108),
+            ang = Angle(90, 0, 0),
+            model = "models/swamponions/cinematext/public.mdl",
+            noshadows = true,
+            scale = 0.95
+        },
+        {
+            class = "prop_physics",
+            pos = Vector(-736 - 29.5 + 0.5, 1264 + 29.5 - 0.5, 116),
+            ang = Angle(90, -45, 0),
+            model = "models/swamponions/cinematext/movie.mdl",
+            noshadows = true,
+            scale = 0.95 --the curve doesnt quite line up now, but the map very well curved
+            
         },
     }
 

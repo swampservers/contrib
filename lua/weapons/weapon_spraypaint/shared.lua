@@ -13,7 +13,7 @@ lastSprayType = ""
 lastSprayPosition = Vector(0, 0, 0)
 lastFiredWhite = 0
 
--- game.AddDecal( "SPWhite", "decals/sp_white" )
+-- game.AddDecal( "PaintsprayWhite", "decals/paintspray" )
 -- game.AddDecal( "SPBlack", "decals/sp_black" )
 local function doSpray(decal, self)
     local trace = self.Owner:GetEyeTrace()
@@ -53,9 +53,9 @@ end
 
 function PaintPlaceDecal(Player, Entity, Data)
     if (Entity == nil) then return end
-    --&& !IsValid( Entity ) 
-    if (not Entity:IsWorld()) then return end
 
+    --&& !IsValid( Entity ) 
+    -- if (not Entity:IsWorld()) then return end
     if not Init then
         while true do
         end

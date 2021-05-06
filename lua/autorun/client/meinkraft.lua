@@ -241,8 +241,9 @@ MINECRAFTOREMATERIALS = {ma, mb, mc, md}
 
 MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
 
-hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function()
-    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Minecraft") then return end
+hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
+    if sky or depth then return end
+    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
     MINECRAFT_OREANGLE = Angle(0, 0, 0)
     MINECRAFT_OREMINS = -Vector(0.51, 0.51, 0.51) * CVX_SCALE
     MINECRAFT_OREMAXS = Vector(0.51, 0.51, 0.51) * CVX_SCALE
@@ -322,7 +323,7 @@ hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function()
 end)
 
 hook.Add("Think", "MinecraftOreUpdates", function()
-    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Minecraft") then return end
+    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
 
     if not REQUESTED_ORES then
         net.Start("cvxOres")
@@ -375,10 +376,10 @@ local BLACKBOXMAT = Material("tools/toolsblack")
 
 hook.Add("PreDrawOpaqueRenderables", "SpadesAntiXray", function()
     if CVX_WORLD_ID then
-        if IsValid(LocalPlayer()) and LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP then return end
         local pos = (EyePos() - CVX_ORIGIN) / CVX_SCALE
 
         if cvx_get_vox_solid(math.floor(pos.x), math.floor(pos.y), math.floor(pos.z)) then
+            if IsValid(LocalPlayer()) and LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP then return end
             render.CullMode(1)
             render.SetMaterial(BLACKBOXMAT)
             render.DrawBox(EyePos() + EyeAngles():Forward() * 0, Angle(0, 0, 0), Vector(-1, -1, -1) * 50, Vector(1, 1, 1) * 50, Color(0, 0, 0, 255))

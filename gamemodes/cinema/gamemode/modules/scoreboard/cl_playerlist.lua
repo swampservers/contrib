@@ -43,10 +43,20 @@ PLAYERLIST.TitleHeight = BrandTitleBarHeight
 PLAYERLIST.ServerHeight = 32
 PLAYERLIST.PlyHeight = 48
 
+concommand.Add("mute", function(ply, cmd, args, argss)
+    local v = Ply(argss)
+
+    if v then
+        v.ClickMuted = not v.ClickMuted
+        print(v.ClickMuted and "Muted" or "Unmuted", v)
+        UpdateMutes()
+    end
+end)
+
 function UpdateMutes()
     for k, v in pairs(player.GetAll()) do
         if v ~= LocalPlayer() then
-            v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteAFKConVar:GetBool()))
+            v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteVoiceConVar:GetInt() >= 2))
         end
     end
 end
@@ -415,7 +425,7 @@ end
 
 function SERVERNAME:Update()
     self.Name:SetText(game.GetMap())
-    local players = table.Count(player.GetHumans())
+    local players = SV_PLYCOUNT or table.Count(player.GetHumans())
     local ttext = tostring(players) .. " Players Online"
 
     if players == 1 then

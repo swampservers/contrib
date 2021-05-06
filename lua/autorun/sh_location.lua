@@ -526,7 +526,7 @@ Map = {
         Filter = function(pos) return pos.x > 2592 or pos.y > -1087 end
     },
     {
-        Name = "Minecraft",
+        Name = "In Minecraft",
         Min = Vector(672, -2996, -3000),
         Max = Vector(5844, 2443, -128),
         Filter = function(pos) return pos.x < 5600 or pos.y < 2164 end

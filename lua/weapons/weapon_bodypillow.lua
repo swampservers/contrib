@@ -30,8 +30,8 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
 function SWEP:GetHardened()
-    -- return self:GetNWBool("Hard", false)
-    return self.Owner:SteamID() == "STEAM_0:0:38422842"
+    -- return self.Owner:SteamID() == "STEAM_0:0:38422842"
+    return self:GetNWBool("Hard", false)
 end
 
 function SWEP:TimeScale()
@@ -39,7 +39,7 @@ function SWEP:TimeScale()
     return self:GetHardened() and 2 or 1
 end
 
-local function unjiggle(self)
+function bodypillow_unjiggle(self)
     if not self.Unjiggled then
         self:AddCallback("BuildBonePositions", function(e, nb)
             PILLOW_UNJIGGLE(e, nb)
@@ -51,10 +51,17 @@ end
 
 function PILLOW_UNJIGGLE(self, nb)
     pcall(function()
+        --or (self.wep and not self.wep:GetHardened()) 
+        if self:GetModel() ~= "models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
+
         for i = 0, nb - 1 do
             local i2 = i < 3 and i or 2 - i
             local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
             local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
+
+            if self:GetClass() == "prop_trash_pillow" then
+                ro, ra = self:GetPos(), self:GetAngles()
+            end
 
             if not ro then
                 if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
@@ -109,12 +116,22 @@ function SWEP:DrawWorldModel()
     self:SetupBones()
     local url, own = self:GetImgur()
 
+    if not url and self:GetHardened() then
+        url = "cogLTj5.png" -- the default texture, hacky solution
+    end
+
     if url then
-        render.MaterialOverride(ImgurMaterial(url, own, self:GetPos(), false))
+        render.MaterialOverride(ImgurMaterial({
+            id = url,
+            owner = own,
+            pos = self:GetPos(),
+            stretch = true,
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
+        }))
     end
 
     if self:GetHardened() then
-        unjiggle(self)
+        bodypillow_unjiggle(self)
     end
 
     self:DrawModel()
@@ -124,27 +141,32 @@ function SWEP:DrawWorldModel()
     end
 end
 
---[[
-function SWEP:Deploy()
-	if IsValid(self.Owner) then self.Owner:SetFlexScale(1.9) end
+function HardenedPillowArgs(hsh)
+    return string.format([[{["$detail"]="decals/decalstain%03da",["$detailscale"]="1",["$detailblendfactor"]="2"}]], (hsh % 15) + 1)
 end
 
-
-function SWEP:Holster()
-	if IsValid(self.Owner) then self.Owner:SetFlexScale(1) end
-	return true
-end]]
 function SWEP:PreDrawViewModel(vm, ply, wep)
-    local img, own = self:GetImgur()
+    self.PrintName = self:GetHardened() and "Body Pillow (Hardened)" or "Body Pillow"
+    self.Purpose = self:GetHardened() and "Stands up on its own" or "Gives the feeling of companionship"
+    local url, own = self:GetImgur()
 
-    if img then
-        --, shader, params
-        render.MaterialOverride(ImgurMaterial(img, own, self:GetPos(), false))
+    if not url and self:GetHardened() then
+        url = "cogLTj5.png" -- the default texture, hacky solution
+    end
+
+    if url then
+        render.MaterialOverride(ImgurMaterial({
+            id = url,
+            owner = own,
+            pos = self:GetPos(),
+            stretch = true,
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
+        }))
     end
 
     if self:GetHardened() then
         vm.wep = self
-        unjiggle(vm)
+        bodypillow_unjiggle(vm)
     end
 end
 
@@ -277,29 +299,32 @@ function SWEP:PrimaryAttack()
                     if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then
                         bcenter = bcenter + (VectorRand() * 16)
                         bcenter.z = bcenter.z + 8
-                        sound.Play("bodypillow/hit" .. tostring(math.random(1, 2)) .. ".wav", bcenter, 80, math.random(100, 115), 1)
+                        local sound2play = self:GetHardened() and "physics/plastic/plastic_barrel_impact_hard" .. tostring(math.random(1, 3)) .. ".wav" or "bodypillow/hit" .. tostring(math.random(1, 2)) .. ".wav"
+                        sound.Play(sound2play, bcenter, 80, math.random(100, 115) + (self:GetHardened() and -20 or 0), 1)
                         net.Start("pillowboof")
                         net.WriteVector(bcenter)
                         net.SendPVS(bcenter)
 
-                        if (not Safe(v)) and (not v:InVehicle()) then
+                        if (not Safe(v)) and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") then
                             if v:IsOnGround() then
                                 v:SetPos(v:GetPos() + Vector(0, 0, 2))
                             end
 
+                            local aimvel = aim
+
                             if self:GetHardened() then
-                                aim = aim * 4
+                                aimvel = aim * 5
                                 local dmg = DamageInfo()
                                 dmg:SetAttacker(self.Owner)
                                 dmg:SetInflictor(self)
-                                dmg:SetDamage(40)
+                                dmg:SetDamage(2)
                                 dmg:SetDamagePosition(v:LocalToWorld(v:OBBCenter()))
                                 dmg:SetDamageType(DMG_CLUB)
-                                dmg:SetDamageForce(aim * 50)
+                                dmg:SetDamageForce(aimvel * 30)
                                 v:TakeDamageInfo(dmg)
                             end
 
-                            v:SetVelocity(aim)
+                            v:SetVelocity(aimvel)
                         end
                     end
                 end
@@ -332,6 +357,7 @@ function SWEP:SecondaryAttack()
 
         if not CannotMakeTrash(self.Owner) then
             local e = ents.Create("prop_trash_pillow")
+            e:SetNWBool("Hard", self:GetHardened())
             local pos, ang = LocalToWorld(self.droppos or Vector(40, 0, 0), self.dropang or Angle(10, 240, -10), self.Owner:EyePos(), self.Owner:EyeAngles())
             local fwdv = self.Owner:EyeAngles():Forward() * 10
             local p2 = pos + fwdv

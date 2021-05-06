@@ -244,20 +244,22 @@ FullRefractLocation = {
 }
 
 SKYBOXLOC = -1
-PLAYERVISDISABLED = true
 
 concommand.Add("playervis", function(ply, cmd, args)
     for k, ply in ipairs(player.GetAll()) do
         DisableNoDraw(ply)
     end
 
-    PLAYERVISDISABLED = not PLAYERVISDISABLED
-    chat.AddText(PLAYERVISDISABLED and "disabled" or "enabled")
+    if (hook.GetTable()["PreDrawOpaqueRenderables"] or {})["PlayerVisPreDraw"] then
+        hook.Remove("PreDrawOpaqueRenderables", "PlayerVisPreDraw")
+        chat.AddText("Disabled")
+    else
+        hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", PlayerVisUpdate)
+        chat.AddText("Enabled")
+    end
 end)
 
-hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", function(depth, sky)
-    if PLAYERVISDISABLED then return end
-
+function PlayerVisUpdate(depth, sky)
     if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0) > 0 then
         for k, ply in ipairs(player.GetAll()) do
             DisableNoDraw(ply)
@@ -407,7 +409,7 @@ hook.Add("PreDrawOpaqueRenderables", "PlayerVisPreDraw", function(depth, sky)
             end
         end
     end
-end)
+end
 
 --local PlayerRenderClipDistSq = 600*600 --900*900
 --local PlayerRenderShadowDistSq = 450*450
@@ -449,13 +451,6 @@ hook.Add("PostPlayerDraw", "UndoPlayerBlend", function(ply)
     end
 end)
 
---todo: move to new file
-surface.CreateFont("3D2DName", {
-    font = "Bebas Neue",
-    size = 80,
-    weight = 600
-})
-
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
@@ -480,30 +475,28 @@ local function DrawName(ply, opacityScale)
 	else
 		pos = pos + Vector( 0, 0, 60 )
 	end
-	
+	 
 	]]
     --
     local name = string.upper(ply:GetName())
     cam.Start3D2D(pos, Angle(0, ang.y, 90), 0.15)
     -- render.OverrideDepthEnable(false, true)
-    draw.TheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
+    DrawTheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
 
-    if LocalPlayer():IsStaff() then
-        if ply:IsAFK() then
-            draw.TheaterText("[AFK]", "DermaLarge", 70, 70, Color(255, 255, 255, opacity))
-        end
+    if ply:IsAFK() then
+        DrawTheaterText("[AFK]", "TheaterDermaLarge", 70, 70, Color(255, 255, 255, opacity))
+    end
 
-        if ShowEyeAng then
-            draw.TheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "DermaLarge", 70, 100, Color(255, 255, 255, opacity))
-            draw.TheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "DermaLarge", 70, 130, Color(255, 255, 255, opacity))
-            ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
+    if LocalPlayer():IsStaff() and ShowEyeAng then
+        DrawTheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
+        DrawTheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
+        ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
 
-            if CurTime() - ply.lastrequestedmousepos > 0.5 then
-                ply.lastrequestedmousepos = CurTime()
-                net.Start("GetGUIMousePos")
-                net.WriteEntity(ply)
-                net.SendToServer()
-            end
+        if CurTime() - ply.lastrequestedmousepos > 0.5 then
+            ply.lastrequestedmousepos = CurTime()
+            net.Start("GetGUIMousePos")
+            net.WriteEntity(ply)
+            net.SendToServer()
         end
     end
 
@@ -516,7 +509,7 @@ local fadeTime = 2
 
 hook.Add("DrawTranslucentAccessories", "DrawPlayerNames2", function(ply)
     if not render.DrawingScreen() then return end
-    if not GetConVar("cinema_drawnames"):GetBool() then return end
+    if HideNamesConVar and HideNamesConVar:GetBool() then return end
     if not IsValid(LocalPlayer()) or not LocalPlayer().InTheater then return end
     if ply == LocalPlayer() then return end
     local fwd = EyeAngles():Forward()

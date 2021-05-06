@@ -320,11 +320,10 @@ SS_UniqueModelProduct({
     model = 'models/kemot44/models/joker_pm.mdl',
     workshop = "1899345304",
 })
-
-SS_UniqueModelProduct({
-    class = 'sans',
-    name = 'Sans Undertale',
-    description = "haha",
-    model = 'models/sirsmurfzalot/undertale/smh.mdl',
-    workshop = "1591120487",
-})
+-- SS_UniqueModelProduct({
+--     class = 'sans',
+--     name = 'Sans Undertale',
+--     description = "haha",
+--     model = 'models/sirsmurfzalot/undertale/smh.mdl',
+--     workshop = "1591120487",
+-- })

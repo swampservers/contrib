@@ -4,7 +4,6 @@ include('shared.lua')
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.Instructions = "Primary: Eat Popcorn\nSecondary: Throw Bucket"
-SWEP.WepSelectIcon = surface.GetTextureID("vgui/entities/weapon_popcorn")
 local emitter = ParticleEmitter(Vector(0, 0, 0))
 
 function SWEP:GetViewModelPosition(pos, ang)
