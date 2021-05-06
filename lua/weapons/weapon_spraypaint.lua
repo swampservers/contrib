@@ -23,7 +23,7 @@ SWEP.UseHands = true
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = true
-SWEP.Primary.Ammo = "spraypaint"
+SWEP.Primary.Ammo = "none"
 
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
@@ -104,7 +104,6 @@ end
 
 
 if (CLIENT) then
-language.Add("spraypaint_ammo", "Spraypaint")
 
 
 	local wepicon = Material("spraypaint/spraypaint_icon.png", "smooth")
@@ -215,41 +214,15 @@ function SWEP:Reload()
 end
 
 
-function SWEP:GetPaintLeft()
-	if(IsValid(self:GetOwner()) and self:GetOwner():IsBot())then return 9999 end
-	if(IsValid(self:GetOwner()))then return self:GetOwner():GetAmmoCount("spraypaint") end
-	return 0
-end
-
-function SWEP:SetPaintLeft(num)
-	if(IsValid(self:GetOwner()))then
-	self:GetOwner():SetAmmo( num, "spraypaint" )
-	end
-end
-
-
-function SWEP:AddPaintLeft(num)
-	if(IsValid(self:GetOwner()))then
-	self:SetPaintLeft(self:GetPaintLeft() + num)
-	end
-end
-
-function SWEP:GetFullPaintLeft()
-	return 500
-end
-
 function SWEP:Equip(ply)
 	if(SERVER)then 
 		net.Start("SpraypaintRequestCustomColor")
 		net.Send(ply)
 		self:UpdateCustomColor() 
 	end
-	
-	ply:SetAmmo(ply:GetAmmoCount("spraypaint")+self:GetFullPaintLeft(),"spraypaint")
 end
 
 function SWEP:EquipAmmo(ply)
-	ply:SetAmmo(ply:GetAmmoCount("spraypaint")+self:GetFullPaintLeft(),"spraypaint")
 end
 
 function SWEP:GetPaintDistance()
@@ -448,7 +421,7 @@ function SWEP:MakePaint(trace,delay)
 	local cc = self:GetCustomColor()
 	local alpha = math.Clamp(self:GetPaintAlpha(),0.25,1)
 	local size = self:GetPaintSize()
-	local alphamul = math.Clamp(self:GetPaintLeft() / 10,0,1)
+	local alphamul = 1
 	local color = Color(cc.x*255,cc.y*255,cc.z*255,alpha*255*alphamul)
 	if(CLIENT)then
 
@@ -470,8 +443,8 @@ function SWEP:MakePaint(trace,delay)
 			if(self.SpraySound:GetTime() >= 0.6)then 
 				self.SpraySound:SetTime(0.055+math.Rand(0,0.4)) 
 			end
-			local globpitch = math.Clamp(self:GetPaintLeft() / 100,0.7,1)
-			local globvol = math.Clamp(self:GetPaintLeft() / 100,0,1)
+			local globpitch = 1
+			local globvol = 1
 			self.SprayRand = self.SprayRand or 1
 			self.SprayRand = math.Clamp(self.SprayRand + math.Rand(-1,1)*FrameTime()*0.1,0.9,1.1)
 			self.SpraySound:SetPlaybackRate(globpitch * self.SprayRand)
@@ -541,17 +514,10 @@ end
 
 function SWEP:PrimaryAttack()
 	
-	
-	if (self:GetPaintLeft() <= 0) then
-		self:TossEmpty()
-		if(SERVER)then self:Remove() end
-		return
-	end
 
 	local trace = self:GetTrace()
 	if(!trace.Invalid)then
 		self:MakePaint(trace,(1/60))
-		self:SetPaintLeft(math.max(self:GetPaintLeft() - 1, 0))
 	end
 	self:SetNextPrimaryFire(CurTime() + (1/60))
 end
@@ -824,7 +790,7 @@ hook.Add("PreDrawEffects","DrawSprayPaintHUD",function()
 	ang:RotateAroundAxis(ang:Right(),-90)
 	ang:RotateAroundAxis(ang:Up(),90)
 	
-	if(wep:MovementAppropriate() and wep:GetPaintLeft() > 0 and !wep:GetTrace().Invalid)then
+	if(wep:MovementAppropriate() and !wep:GetTrace().Invalid)then
 		cam.Start3D2D(pos,ang,wep:GetPaintSize()/128)	
 		surface.DrawCircle( 0, 0 , 32, cc.x*255, cc.y*255, cc.z*255 , 128 )
 		surface.DrawCircle( 0, 0 , 34, cc.x*255, cc.y*255, cc.z*255 , 128 )
@@ -844,21 +810,6 @@ hook.Add("PreDrawEffects","DrawSprayPaintHUD",function()
 		surface.DrawLine( -r1-gap,-r1+gap,r1-gap,r1+gap )
 		surface.DrawLine( -r1+gap,-r1-gap,r1+gap,r1-gap )
 		cam.End3D2D()
-	end
-	
-	if(wep:MovementAppropriate() and wep:GetPaintLeft() > 0 and !wep:GetTrace().Invalid)then
-	cam.Start3D2D(pos,ang,1/128)
-	local col = Color(cc.x*255, cc.y*255, cc.z*255,255)
-		draw.SimpleText(
-			LocalPlayer():GetAmmoCount("spraypaint"),
-			"spraypaint_ammocounter",
-			0,
-			-8 -wep:GetPaintSize()*34, 
-			col,
-			TEXT_ALIGN_CENTER,
-			TEXT_ALIGN_BOTTOM
-		)
-	cam.End3D2D()	
 	end
 	
 end)
