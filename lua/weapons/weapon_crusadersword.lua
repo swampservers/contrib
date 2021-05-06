@@ -391,8 +391,8 @@ function SWEP:Think()
 					self:SetHitCount(0)
 					ply:ViewPunch(overhead and Angle(-15,0,0) or Angle(0,-15,0))
 					self:EmitSound(self.WallSound  , 80, 100, 1, CHAN_WEAPON)
-					vm:SendViewModelMatchingSequence( vm:LookupSequence( "swing1" ) )
-				vm:SetPlaybackRate(0.05)
+					vm:SendViewModelMatchingSequence( vm:LookupSequence( "idle_01" ) )
+				vm:SetPlaybackRate(1)
 				else
 					ply:SetVelocity(trace.HitNormal*25)
 					if(!self.HitFirstTarget)then 
