@@ -560,13 +560,11 @@ local MagicButtonOutcomes = {
         message = "and had their screen fucked up %s ;billhead;",
         weight = 2
     },
-    --[[
     { 
         func = MagicOutcomeSpawnObject,
         message = "and it spawned %s",
-        weight = 2000
+        weight = 2
     },
-    ]]
     {
         func = function(ply, button)
             ply:SetPos(button:FindSuitableCastOrigin().StartPos)
@@ -579,17 +577,17 @@ local MagicButtonOutcomes = {
     {
         func = MagicOutcomeBountyAll,
         message = "and [red]increased everyone's bounty by %s points! ;dougie;",
-        weight = 2
+        weight = 1
     },
     {
         func = MagicOutcomeButtonSpawn,
         message = "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location:[white] %s",
-        weight = 3
+        weight = 2
     },
     {
         func = MagicOutcomeExplode,
         message = "it exploded haha ;crazy;",
-        weight = 2
+        weight = 3
     },
     {
         func = function(ply, button)
