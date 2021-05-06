@@ -71,6 +71,16 @@ hook.Add("EntityEmitSound", "CinemaMuteGame", function(s)
     end
 end)
 
+local lastmuted = false
+timer.Create("SoundStopper",0.2,0,function()
+    local f = CinemaGameVolumeSetting()
+    local muted = f==0
+    if muted and not lastmuted then 
+        RunConsoleCommand('stopsound')
+    end
+    lastmuted = muted
+end)
+
 concommand.Add("cinema_requestlast", function()
     if LastURLRequested then
         RequestVideoURL(LastURLRequested)
