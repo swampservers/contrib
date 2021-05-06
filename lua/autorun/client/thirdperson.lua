@@ -44,8 +44,14 @@ hook.Add("Think", "ThirdPersonToggler", function()
     wasf4down = isf4down
 end)
 
+local force_thirdperson_sweps = {
+    ["weapon_fists"] = true,
+    ["weapon_coomhulk"] = true,
+
+}
+
 function UseThirdperson()
-    return THIRDPERSON or IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "weapon_fists"
+    return THIRDPERSON or IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and force_thirdperson_sweps[LocalPlayer():GetActiveWeapon():GetClass()]
 end
 
 hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
