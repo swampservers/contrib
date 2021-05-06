@@ -1,8 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-print("IMPORT SHELL")
-require("shell")
-print("OK")
+
 MVIS_LAST_REQUESTED_VIDEO = MVIS_LAST_REQUESTED_VIDEO or ""
 LOUNGE_DOORS = {}
 util.AddNetworkString("SetMusicVis")
@@ -55,6 +53,12 @@ timer.Create("musicvis_resetter", 0.5, 0, function()
         if MVIS_KILL_PREV then
             print("KILLL")
             MVIS_KILL_PREV()
+        end
+
+        if not Shell then
+            print("IMPORT SHELL")
+            require("shell")
+            print("OK")
         end
 
         MVIS_KILL_PREV = Shell.Execute({"/swamp/gm_shell/fft.sh", th:VideoKey()}, function(c, a, b)
