@@ -3,7 +3,7 @@
 SWEP.UseHands = true
 SWEP.PrintName = "Goo Jar"
 SWEP.Author = "PYROTEKNIK"
-SWEP.Instructions = "Left Click: Throw\nRight Click: Taunt\nLook Down to heal"
+SWEP.Instructions = "Left Click: Throw\nRight Click: Taunt"
 SWEP.Category = "PYROTEKNIK"
 SWEP.Spawnable = true
 SWEP.Slot = 5
@@ -30,7 +30,7 @@ end
 
 
 function SWEP:SecondaryAttack(undo)
-    if (self:GetNextSecondaryFire() > CurTime() or !self:ShouldFap()) then return end
+    if (self:GetNextSecondaryFire() > CurTime()) then return end
 
     local coom = math.random(1,4)
     while coom == self.LastTaunt do
@@ -68,47 +68,9 @@ function SWEP:PrimaryAttack()
    if SERVER and not self.Owner.HVP_EVOLVED then self:Remove() end
 end
 
-function SWEP:ShouldFap()
-    local ply = self:GetOwner()
-    if(ply:GetGooStunned())then
-        return false
-    end
-
-    if(ply:EyeAngles().pitch > 60)then
-        return true
-    end
-    return false
-end
 
 function SWEP:Think()
-    local ply = self:GetOwner()
-    if(self.NextFap == nil or self.NextFap <= CurTime() and self:ShouldFap())then
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_PHYSGUN, true)
-        ply:ViewPunch(Angle(-5,0,0))
-        ply:SetHealth(math.min(ply:Health()+1,ply:GetMaxHealth()))
-        self.NextFap = CurTime() + 0.2
-    end
-    local fap = self:ShouldFap()
-    if(fap)then
-        if(!self.FapSound)then
-            self.FapSound = CreateSound( self, "coomer/fap_loop.wav" )
-            self.FapSound:Play()
-        end
-        timer.Create(self:EntIndex().."FapMod",0.2,0,function() 
-            if(IsValid(self) and self.FapSound)then
-                self.FapSound:ChangePitch(math.Rand(80,110),0.2)
-                self.FapSound:ChangeVolume(math.Rand(0.8,1),0.2)
-            end
-        end)
-    else
-        if(self.FapSound)then
-            self.FapSound:Stop()
-            self.FapSound = nil
-        end
 
-end
-
-		
 end
 
 function SWEP:Deploy()
