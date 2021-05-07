@@ -46,12 +46,12 @@ end
 
 function SWEP:PrimaryAttack()
     if (self:GetNextPrimaryFire() > CurTime()) then return end
-    if self.Throwing then return end
+    -- if self.Throwing then return end
 
     local ply = self:GetOwner()
     self:SendWeaponAnim(ACT_VM_THROW)
     self:EmitSound("WeaponFrag.Throw")
-    self.Throwing = true
+    -- self.Throwing = true
     self:GetOwner():SetAnimation(PLAYER_ATTACK1)
     self:EmitSound("coomer/coom.ogg")
     if (SERVER) then
@@ -59,13 +59,13 @@ function SWEP:PrimaryAttack()
         bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
         bait:SetOwner(ply)
         bait:Spawn()
-        bait:SetVelocity(ply:GetAimVector() * 700)
+        bait:SetVelocity(ply:GetAimVector() * 800)
     end
-    self:SetNextPrimaryFire(CurTime() + 0.7)
-    self:SetNextSecondaryFire(CurTime() + 0.7)
+    self:SetNextPrimaryFire(CurTime() + 1)
+    self:SetNextSecondaryFire(CurTime() + 1)
 
     --added
-   if SERVER and not self.Owner.HVP_EVOLVED then self:Remove() end
+   self:Remove()
 end
 
 function SWEP:ShouldFap()

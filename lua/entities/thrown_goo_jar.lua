@@ -142,7 +142,7 @@ function ENT:Initialize()
         self.Entity:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
         self:SetUseType(SIMPLE_USE)
         self:SetSubMaterial(1, "models/shiny")
-        self:SetSubMaterial(2, "engine/occlusionproxy")
+        -- self:SetSubMaterial(2, "engine/occlusionproxy")
         local trail = util.SpriteTrail(self, 0, Color(255, 255, 255), false, 15, 1, 0.1, 1 / (15 + 1) * 0.5, "trails/laser")
     end
 end

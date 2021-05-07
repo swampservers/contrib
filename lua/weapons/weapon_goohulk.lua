@@ -1,7 +1,7 @@
 ﻿-- Copyright (C) 2021 Swamp Servers. https://github.com/swampservers/fatkid
 -- Use is subject to a restrictive license, please see: https://github.com/swampservers/fatkid/blob/master/LICENSE
-SWEP.PrintName = "Coom Hulk"
-SWEP.Purpose = "Protect coomer brethren"
+SWEP.PrintName = "Abomination"
+SWEP.Purpose = "COOM"
 SWEP.Instructions = "Primary: Beat"
 SWEP.Author = "PYROTEKNIK"
 SWEP.Category = "PYROTEKNIK"
@@ -14,9 +14,8 @@ SWEP.Slot = 0
 SWEP.SlotPos = 3
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = false
-SWEP.ViewModel = Model("models/weapons/c_arms.mdl")
---random model to give it appearance if it is dropped somehow
-SWEP.WorldModel = Model("models/props_junk/MetalBucket01a.mdl")
+SWEP.ViewModel = "models/chev/cumjar.mdl"
+SWEP.WorldModel = "models/chev/cumjar.mdl"
 SWEP.Weight = 5
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
@@ -142,6 +141,26 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+
+    if (self:GetNextSecondaryFire() > CurTime()) then return end
+    -- if self.Throwing then return end
+
+    local ply = self:GetOwner()
+    self:SendWeaponAnim(ACT_VM_THROW)
+    self:EmitSound("WeaponFrag.Throw")
+    -- self.Throwing = true
+    self:GetOwner():SetAnimation(PLAYER_ATTACK1)
+    self:EmitSound("coomer/coom.ogg")
+    if (SERVER) then
+        local bait = ents.Create("thrown_goo_jar")
+        bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
+        bait:SetOwner(ply)
+        bait:Spawn()
+        bait:SetVelocity(ply:GetAimVector() * 1600)
+    end
+    -- self:SetNextPrimaryFire(CurTime() + 1)
+    self:SetNextSecondaryFire(CurTime() + 1)
+
 
 end
 
