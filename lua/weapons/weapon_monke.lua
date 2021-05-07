@@ -141,10 +141,15 @@ end
 
 function SWEP:GetPlayerCurrentTauntActivity()
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return nil end
-    local act = (ply:GetSequenceInfo(ply:GetLayerSequence(0)) or {}).activityname
+    if (not IsValid(ply)) then return end
+    local seq = ply:GetLayerSequence(0)
+    if (seq == nil) then return end
+    local seqinfo = ply:GetSequenceInfo(seq)
+    if (seqinfo == nil) then return end
+    local act = seqinfo.activityname
+    local actID = seqinfo.activity
 
-    return _G[act], act
+    return actID, act
 end
 
 function SWEP:PrimaryAttack(networked)
@@ -340,6 +345,7 @@ end
 
 function SWEP:DropBanana(delay)
     delay = delay or 1
+    local ply = self:GetOwner()
     if (not IsFirstTimePredicted()) then return end
 
     if (self.BananaNextRender and self.BananaNextRender > CurTime()) then
@@ -357,6 +363,13 @@ function SWEP:DropBanana(delay)
     self.BananaGib = ents.CreateClientProp(self.WorldModel)
     if (not IsValid(self.BananaGib)) then return end
     local matrix = self:DrawWorldModel(nil, true)
+
+    if (not IsValid(matrix)) then
+        matrix = Matrix()
+        matrix:SetTranslation(ply:EyePos())
+        matrix:SetAngles(ply:EyeAngles())
+    end
+
     self.BananaGib:SetPos(matrix:GetTranslation())
     self.BananaGib:SetAngles(matrix:GetAngles())
     self.BananaGib.BananaGib = true

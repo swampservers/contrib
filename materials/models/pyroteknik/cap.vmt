@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	$basetexture "Models/Debug/debugwhite"
+	$envmap "env_cubemap"
+	$bumpmap "effects/flat_normal"
+	"$envmaptint" "[ .04 .04 .04 ]"
+	$phong 1
+	$phongexponent 15
+	$phongboost	12
+	$phongfresnelranges	"[0.05 0.5 1]"
+}

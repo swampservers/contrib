@@ -57,7 +57,9 @@ function math.power2(n)
     return math.pow(2, math.ceil(math.log(n) / math.log(2)))
 end
 
--- TABLE
+BLACK = Color(0, 0, 0, 255)
+WHITE = Color(255, 255, 255, 255)
+
 function table.sub(tab, a, b)
     local out = {}
 

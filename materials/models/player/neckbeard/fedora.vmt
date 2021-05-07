@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/player/neckbeard/fedora_diffuse"
+	"$surfaceprop" "Default"
+}
