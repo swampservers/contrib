@@ -45,7 +45,8 @@ hook.Add("Think", "ThirdPersonToggler", function()
 end)
 
 function UseThirdperson()
-    return THIRDPERSON or IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "weapon_fists"
+    local wc = IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass()
+    return THIRDPERSON or wc == "weapon_fists" or wc=="weapon_goohulk"
 end
 
 hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)

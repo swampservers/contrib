@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 AddCSLuaFile()
 HintConVar = CreateClientConVar("swamp_showhints", "1", true, false, "", 0, 1)
 

@@ -1,11 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 PPM = PPM or {}
 PPM.Playermodel = "models/ppm/player_default_base.mdl"
-
 local Entity = FindMetaTable("Entity")
 
-function Entity:IsPPMPony() return self:GetModel() == PPM.Playermodel end
+function Entity:IsPPMPony()
+    return self:GetModel() == PPM.Playermodel
+end
 
 function Entity:PonyPlayer()
     if self:IsPlayer() then return self end
