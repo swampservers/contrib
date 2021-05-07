@@ -55,7 +55,7 @@ SWEP.ChopDamageAfter  		= 50 	-- Damage to subsequent hit from chop
 SWEP.ChopDelay = 	  1.1			-- How long after chop is completed before we can hit again
 SWEP.ChopDelayHit 	= 1.1  	 		-- How long after chop interrupted we can chop again
 
-SWEP.ChargeAttackVelocity = 100		     --Velocity to apply during charge
+SWEP.ChargeAttackVelocity = 500		     --Velocity to apply during charge
 SWEP.ChargeAttackDamagePeak = 65		 --Damage to apply when moving at peak units per second
 SWEP.ChargeAttackVelocityPeak = 800		 --Peak speed for charge damage
 SWEP.ChargeDuration = 1					--Time to charge before stopping	
@@ -270,6 +270,16 @@ function SWEP:PrimaryAttack()
 end
 
 
+hook.Add( "SetupMove", "CrusaderSwordCharge", function( ply, mv, cmd )
+	local wep = ply:GetActiveWeapon()
+	if(IsValid(wep) and wep:GetClass() == "weapon_crusadersword" and wep:GetChargeEnd() > CurTime())then
+	
+		mv:SetMaxClientSpeed (wep.ChargeAttackVelocity*155 )
+		mv:SetForwardSpeed( wep.ChargeAttackVelocity*155 )
+		mv:SetVelocity(ply:GetRenderAngles():Forward()*wep.ChargeAttackVelocity)
+	end
+end )
+ 
 
 function SWEP:Think()
 	
@@ -318,9 +328,6 @@ function SWEP:Think()
 			ply:ViewPunch(Angle(25,24,0))
 			self:EmitSound(self.WallSound  , 80, 100, 1, CHAN_WEAPON)
 			end
-
-			else
-			ply:SetVelocity(ply:GetAimVector()*self.ChargeAttackVelocity*100*delta)
 		end
 
 	end
@@ -405,7 +412,7 @@ function SWEP:Think()
 					local effectdata = EffectData()
 					effectdata:SetOrigin( trace.HitPos )
 					effectdata:SetNormal(trace.HitNormal)
-					effectdata:SetMagnitude(1)
+					effectdata:SetMagnitude(0.5)
 					effectdata:SetAngles(VectorRand():AngleEx(trace.HitNormal))
 					util.Effect( "Sparks", effectdata ) 
 					util.Decal( "ManhackCut", trace.StartPos, trace.StartPos + trace.Normal*1000, tr.Filter )
