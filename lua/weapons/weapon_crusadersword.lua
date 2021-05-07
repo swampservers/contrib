@@ -475,27 +475,19 @@ hook.Add("KeyPress", "keypress_crusadersword", function(ply, key)
     if not IsValid(self) or self:GetClass() ~= "weapon_crusadersword" then return end
 	if !self.Owner:IsOnGround() then return end --self.Owner:SetPos(self.Owner:GetPos()+Vector(0,0,1))
 	self:Jump()
-	ply:SetFOV(0,0.5)
-	self:SetChargeEnd(CurTime() -1)
+	
 end)
 
 hook.Add("KeyRelease", "keyrelease_crusadersword", function(ply, key)
     if key ~= IN_JUMP then return end
 
-	if(ply.CrusaderGravity)then
-		ply:SetGravity(1)
-		ply.CrusaderGravity = nil
-	end
+
 end)
 
 function SWEP:Jump()
 	local ply = self:GetOwner()
-	ply:SetVelocity(Vector(0,0,100))
-
-	ply.CrusaderGravity = true
-	ply:SetGravity(0.4)
-	--self:EmitSound("aof/weapons/harp.wav",80,100, 1, CHAN_WEAPON)
-	
+	ply:SetFOV(0,0.5)
+	self:SetChargeEnd(CurTime() -1)
 	self.Weapon:SetNextSecondaryFire( CurTime() + 2)
 end
 
