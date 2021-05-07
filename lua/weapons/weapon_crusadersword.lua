@@ -265,7 +265,7 @@ function SWEP:PrimaryAttack()
 		local delay = overhead and self.ChopDelay or self.SlashDelay
 		self.Weapon:SetNextPrimaryFire( CurTime() + delay)
 		--self.Weapon:SendWeaponAnim(ACT_VM_MISSCENTER)
-		self:SetHitCount(20)
+		self:SetHitCount(10)
 		self:SetHitNext(CurTime() + 0.15)
 end
 
@@ -344,7 +344,7 @@ function SWEP:Think()
 		
 		
 		local count = self:GetHitCount()
-		local yaw = Lerp((20-(count-0.5))/20,-90,90)
+		local yaw = Lerp((10-(count-0.5))/10,-90,90)
 		local size = Lerp(math.abs(yaw)/90,8,1)
 		tr.mins = Vector(1,1,1)*-size
 		tr.maxs = Vector(1,1,1)*size
@@ -430,7 +430,7 @@ function SWEP:Think()
 		self.Owner:LagCompensation( false )
 
 		self:SetHitCount(self:GetHitCount() - 1)
-		self:SetHitNext(self:GetHitNext() + (overhead and !ply:OnGround() and 0.05 or 0.01))
+		self:SetHitNext(self:GetHitNext() + (overhead and !ply:OnGround() and 0.05 or 0.02))
 	end
 
 	self.LastThink = CurTime()
