@@ -171,7 +171,7 @@ function ENT:Touch(entity)
     local pos = trace.HitPos + trace.HitNormal * 48
     local decals = 0
     local dmg = DamageInfo()
-    dmg:SetDamage(35)
+    dmg:SetDamage(55)
     dmg:SetDamageType(DMG_ACID)
     dmg:SetDamageForce(self:GetVelocity() * 1000)
     dmg:SetAttacker(IsValid(self:GetOwner()) and self:GetOwner() or game.GetWorld())

@@ -273,6 +273,8 @@ end
 
 function SWEP:Think()
 	
+	local delta = CurTime() - (self.LastThink or CurTime()) 
+	--print(delta)
 	local ply = self:GetOwner()
 	self.SwingFilter = self.SwingFilter or {ply,self}
 	local overhead = self:GetOverhead()
@@ -282,7 +284,6 @@ function SWEP:Think()
 	if(overhead and ply:OnGround())then
 		--vm:SendViewModelMatchingSequence( vm:LookupSequence( "swing1" ) )
 		vm:SetPlaybackRate(1.7)
-		
 	end
 
 	if(charging)then
@@ -319,14 +320,14 @@ function SWEP:Think()
 			end
 
 			else
-			ply:SetVelocity(ply:GetAimVector()*self.ChargeAttackVelocity)
+			ply:SetVelocity(ply:GetAimVector()*self.ChargeAttackVelocity*100*delta)
 		end
 
 	end
 
 	
-
-	if(self:GetHitCount() > 0 and CurTime() >= self:GetHitNext())then
+	 
+	while (IsValid(self:GetOwner()) and self:GetHitCount() > 0 and CurTime() >= self:GetHitNext()) do
 		self.Owner:LagCompensation( true )
 		local tr = {}
 		local trace 
@@ -391,8 +392,8 @@ function SWEP:Think()
 					self:SetHitCount(0)
 					ply:ViewPunch(overhead and Angle(-15,0,0) or Angle(0,-15,0))
 					self:EmitSound(self.WallSound  , 80, 100, 1, CHAN_WEAPON)
-					vm:SendViewModelMatchingSequence( vm:LookupSequence( "swing1" ) )
-				vm:SetPlaybackRate(0.05)
+					vm:SendViewModelMatchingSequence( vm:LookupSequence( "idle_01" ) )
+				vm:SetPlaybackRate(1)
 				else
 					ply:SetVelocity(trace.HitNormal*25)
 					if(!self.HitFirstTarget)then 
@@ -422,10 +423,10 @@ function SWEP:Think()
 		self.Owner:LagCompensation( false )
 
 		self:SetHitCount(self:GetHitCount() - 1)
-		self:SetHitNext(CurTime() + (overhead and !ply:OnGround() and 0.05 or 0.005))
+		self:SetHitNext(self:GetHitNext() + (overhead and !ply:OnGround() and 0.05 or 0.01))
 	end
 
-	
+	self.LastThink = CurTime()
 
 end
 
