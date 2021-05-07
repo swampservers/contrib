@@ -40,7 +40,7 @@ local ClockCenter = Vector(0, 1039.4 + 155, 192 - 4)
 -- PostTranslucent so there is no z-fighting TODO this should be an entity with renderbounds
 hook.Add("PostDrawTranslucentRenderables", "lobbyclock", function(depth, sky)
     if sky or depth then return end
-    if EyePos().y > ClockCenter.y or EyePos():DistToSqr(ClockCenter)>5000000 then return end
+    if EyePos().y > ClockCenter.y or EyePos():DistToSqr(ClockCenter) > 5000000 then return end
     local seconds = Vector(0, -21, 0)
     local minutes = Vector(0, -25, 0)
     local hours = Vector(0, -18, 0)

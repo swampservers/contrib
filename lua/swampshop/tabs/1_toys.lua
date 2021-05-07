@@ -3,7 +3,6 @@
 SS_Tab("Toys", "star")
 SS_Heading("Free Toys")
 
-
 SS_WeaponProduct({
     class = "weapon_flappy",
     price = 0,
@@ -11,8 +10,6 @@ SS_WeaponProduct({
     description = "A dashing rainbow fedora. Tip it (press jump) to take flight.",
     model = 'models/fedora_rainbowdash/fedora_rainbowdash.mdl'
 })
-
-
 
 SS_WeaponProduct({
     class = "weapon_monster",
@@ -22,7 +19,6 @@ SS_WeaponProduct({
     model = "models/noz/monsterzero.mdl",
     extrapreviewgap = 2
 })
-
 
 SS_WeaponProduct({
     class = "weapon_spraypaint",
@@ -40,7 +36,6 @@ SS_WeaponProduct({
     model = 'models/MaxOfS2D/camera.mdl'
 })
 
-
 SS_WeaponProduct({
     class = "weapon_vape",
     price = 0,
@@ -49,8 +44,6 @@ SS_WeaponProduct({
     model = 'models/swamponions/vape.mdl'
 })
 
-
-
 SS_WeaponProduct({
     class = "weapon_anonymous",
     price = 0,
@@ -58,8 +51,6 @@ SS_WeaponProduct({
     description = "We are 9GAG. We are Legion.",
     model = "models/v/maskhq.mdl"
 })
-
-
 
 SS_WeaponProduct({
     class = "weapon_autism",
@@ -84,7 +75,6 @@ SS_WeaponProduct({
     description = "Reject modernity, Embrace tradition.",
     model = "models/props/cs_italy/bananna.mdl"
 })
-
 
 SS_WeaponProduct({
     class = "weapon_encyclopedia",
@@ -144,7 +134,6 @@ SS_WeaponProduct({
 
 SS_Heading("Expensive Toys")
 
-
 SS_WeaponProduct({
     name = 'Companion Pillow',
     description = "*boof*",
@@ -169,8 +158,6 @@ SS_WeaponProduct({
     class = 'weapon_sandcorn'
 })
 
-
-
 SS_WeaponProduct({
     class = "weapon_airhorn",
     price = 100,
@@ -194,8 +181,6 @@ SS_WeaponProduct({
 -- 	model = 'models/weapons/w_physics.mdl',
 -- 	class = 'weapon_physgun'
 -- })
-
-
 SS_WeaponProduct({
     name = 'Police Taser',
     description = "An electroshock weapon capable of paralyzing other players for up to 20 seconds.",

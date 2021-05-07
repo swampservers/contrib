@@ -102,6 +102,7 @@ function ENT:Think()
             self:SetPos(self:GetTruePos())
             self:SetAngles(self:GetTrueAng())
         end
+
         -- if IsValid(LocalPlayer()) and LocalPlayer():GetPos():Distance(self:GetPos()) < 500 then
         --     if self:GetZapping() then
         --         local dlight = DynamicLight( self:EntIndex() )
@@ -118,13 +119,12 @@ function ENT:Think()
         --         end
         --     end
         -- end
-    end
-
-    if SERVER then
+        self:NextThink(CurTime())
+    else
         local s = NULL
 
-        for k, v in pairs(player.GetAll()) do
-            if v:InVehicle() and v:GetPos():Distance(self:GetPos()) < 100 then
+        for k, v in pairs(Ents.player) do
+            if v:InVehicle() and v:GetPos():DistToSqr(self:GetPos()) < 10000 then
                 s = v
             end
         end
@@ -132,10 +132,10 @@ function ENT:Think()
         if self:GetSubject() ~= s then
             self:SetSubject(s)
         end
-        --self:SetPos(player.GetAll()[1]:GetPos())
-    end
 
-    self:NextThink(CurTime())
+        --self:SetPos(player.GetAll()[1]:GetPos())
+        self:NextThink(CurTime() + 0.1)
+    end
 
     return true
 end

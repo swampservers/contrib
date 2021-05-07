@@ -116,31 +116,30 @@ end
 
 function THEATERLIST:PerformLayout()
     local playerSort = function(a, b)
-        if not a or not a.th then return false end
-        if not b or not b.th then return true end
+        -- if not a or not a.th then return false end
+        -- if not b or not b.th then return true end
+        local an, bn = a.th.name:lower(), b.th.name:lower()
+
+        if an:find("other") then
+            if not bn:find("other") then return false end
+        else
+            if bn:find("other") then return true end
+        end
+
         local plyDiff = a.th.players - b.th.players
         if plyDiff > 0 then return true end
         if plyDiff < 0 then return false end
-        if a.th.name:lower():find("public") and not b.th.name:lower():find("public") then return true end
-        if not a.th.name:lower():find("public") and b.th.name:lower():find("public") then return false end
 
-        return string.lower(a.th.name) < string.lower(b.th.name)
+        if an:find("public") then
+            if not bn:find("public") then return true end
+        else
+            if bn:find("public") then return false end
+        end
+
+        return an < bn
     end
 
     table.sort(self.TheaterList.Items, playerSort)
-    --[[
-	local curY = BrandTitleBarHeight+6
-
-
-	for _, th in pairs( self.TheaterList.Items ) do
-
-		th.Panel:InvalidateLayout( true )
-		th.Panel:SetPos( 0, curY )
-		th.Panel:SetWide( self:GetWide() )
-
-		curY = curY + TheaterListTheaterHeight + 2
-
-	end ]]
     --self:Dock( FILL )
     self:SetTall(math.min(BrandTitleBarHeight + self.TheaterList:GetCanvas():GetTall(), (ScrH() * 0.8)))
     self.Title:SizeToContents()

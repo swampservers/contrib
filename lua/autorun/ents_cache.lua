@@ -1,8 +1,27 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 include('autorun/swamp_core.lua') --defaultdict needed
-local EntClass = FindMetaTable("Entity").GetClass
-local EntIndex = FindMetaTable("Entity").EntIndex
+local Entity = FindMetaTable("Entity")
+local EntClass = Entity.GetClass
+local EntIndex = Entity.EntIndex
+local EntTable = Entity.GetTable
 
+function _SetupEnts()
+    local _Ents = defaultdict(function() return {} end)
+
+    for i, v in ipairs(ents.GetAll()) do
+        local idx = EntIndex(v)
+
+        if idx > 0 then
+            _Ents[EntClass(v)][idx] = v
+        end
+    end
+
+    return _Ents
+end
+
+Ents = Ents or _SetupEnts()
+
+-- Ents = _SetupEnts()
 hook.Add("OnEntityCreated", "Ents_OnEntityCreated", function(v)
     local idx = EntIndex(v)
 
@@ -28,21 +47,33 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(v)
     end
 end)
 
-function _SetupEnts()
-    local _Ents = defaultdict(function() return {} end)
+function EntsWithPrefix(pfx)
+    local ok, ov, ik, iv
 
-    for i, v in ipairs(ents.GetAll()) do
-        local idx = EntIndex(v)
-
-        if idx > 0 then
-            _Ents[EntClass(v)][idx] = v
+    local function nextmatching()
+        while true do
+            ok, ov = next(Ents, ok)
+            if not ov then return nil end
+            if ok:StartWith(pfx) then return nov end
         end
     end
 
-    return _Ents
-end
+    nextmatching()
 
-Ents = Ents or _SetupEnts()
+    return function()
+        while true do
+            ik, iv = next(ov, ik)
+
+            if iv then
+                return iv
+            else
+                nextmatching()
+                if not ov then return end
+                ik = nil
+            end
+        end
+    end
+end
 
 function _TestEnts()
     local ShouldBe = _SetupEnts()

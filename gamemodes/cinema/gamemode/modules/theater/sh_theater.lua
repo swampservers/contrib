@@ -260,7 +260,7 @@ if SERVER then
             -- if IsValid(self:GetOwner()) then
             --     name = self:GetOwner():Name() .. "'s Theater"
             -- else
-                name = ""
+            name = ""
             -- end
         end
 

@@ -2,11 +2,33 @@
 -- INSTALL: CINEMA
 local wasf4down = false
 
+concommand.Add("gmod_undo", function()
+    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
+        THIRDPERSON = not THIRDPERSON
+    end
+end)
 
+concommand.Add("+gmod_undo", function()
+    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
+        THIRDPERSON = not THIRDPERSON
+    end
+end)
 
-concommand.Add("gmod_undo", function() if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then THIRDPERSON = not THIRDPERSON end end)
-concommand.Add("+gmod_undo", function() if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then THIRDPERSON = not THIRDPERSON end end)
-concommand.Add("swamp_thirdperson", function() THIRDPERSON = not THIRDPERSON end)
+concommand.Add("undo", function()
+    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
+        THIRDPERSON = not THIRDPERSON
+    end
+end)
+
+concommand.Add("+undo", function()
+    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
+        THIRDPERSON = not THIRDPERSON
+    end
+end)
+
+concommand.Add("swamp_thirdperson", function()
+    THIRDPERSON = not THIRDPERSON
+end)
 
 hook.Add("Think", "ThirdPersonToggler", function()
     local isf4down = input.IsKeyDown(KEY_F4)
@@ -15,7 +37,7 @@ hook.Add("Think", "ThirdPersonToggler", function()
         if (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
             THIRDPERSON = not THIRDPERSON
         else
-            LocalPlayerNotify("The thirdperson binding is now "..tostring(input.LookupBinding("gmod_undo") or "unbound"):upper().." (bind gmod_undo, or bind swamp_thirdperson, or set swamp_old_binds 1)")
+            LocalPlayerNotify("The thirdperson binding is now " .. tostring(input.LookupBinding("gmod_undo") or "unbound"):upper() .. " (bind gmod_undo, or bind swamp_thirdperson, or set swamp_old_binds 1)")
         end
     end
 
@@ -23,7 +45,9 @@ hook.Add("Think", "ThirdPersonToggler", function()
 end)
 
 function UseThirdperson()
-    return THIRDPERSON or IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "weapon_fists"
+    local wc = IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass()
+
+    return THIRDPERSON or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk")
 end
 
 hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)

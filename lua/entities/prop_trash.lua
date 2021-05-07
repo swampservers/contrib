@@ -163,11 +163,13 @@ if CLIENT then
                 dlight.Decay = 500
                 dlight.DieTime = CurTime() + 1
             end
+
+            self:SetNextClientThink(CurTime() + 0.1)
         else
             self:SetNextClientThink(CurTime() + 0.5)
-
-            return true
         end
+
+        return true
     end
 end
 

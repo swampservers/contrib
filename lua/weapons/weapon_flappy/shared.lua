@@ -23,10 +23,12 @@ function SWEP:Holster()
     return true
 end
 
+-- NOTE: If we make more weapons like this (with setupmove) we should make a single hook that calls a SetupMove member function on the weapon itself
+local CMoveDataKeyPressed = FindMetaTable("CMoveData").KeyPressed
+
 hook.Add("SetupMove", "flappy_SetupMove", function(ply, mv, cmd)
-    if mv:KeyPressed(IN_JUMP) and not ply:InVehicle() then
+    if CMoveDataKeyPressed(mv, IN_JUMP) and ply:UsingWeapon("weapon_flappy") and not ply:InVehicle() then
         local self = ply:GetActiveWeapon()
-        if not IsValid(self) or self:GetClass() ~= "weapon_flappy" then return end
         local power = 200
 
         if ply.InTheater and ply:InTheater() then

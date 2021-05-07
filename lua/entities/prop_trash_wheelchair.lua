@@ -14,8 +14,13 @@ end
 
 function ENT:OnRemove()
     if SERVER then
-        if IsValid(self.BackWheel) then self.BackWheel:Remove() end
-        if IsValid(self.FrontWheel) then self.FrontWheel:Remove() end
+        if IsValid(self.BackWheel) then
+            self.BackWheel:Remove()
+        end
+
+        if IsValid(self.FrontWheel) then
+            self.FrontWheel:Remove()
+        end
     end
 end
 

@@ -25,7 +25,7 @@ game.AddAmmoType({
     maxsplash = 5
 })
 
-SWEP.Primary.Damage = 10
+SWEP.Primary.Damage = 15
 SWEP.Primary.ClipSize = 2
 SWEP.Primary.Ammo = "peaceshot"
 SWEP.Primary.Automatic = false
@@ -125,7 +125,7 @@ function SWEP:GetCone()
     local mc = math.max(((math.Clamp((self.Owner:GetVelocity():LengthSqr() + (20000)), 0, 70000)) * 0.000005) - 0.01, 0)
     -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 
-    return mc + 0.005
+    return mc + 0.005 + 0.002
 end
 
 function SWEP:PrimaryAttack()
@@ -156,6 +156,11 @@ function SWEP:PrimaryAttack()
     --self.Owner:MuzzleFlash() -- Crappy muzzle light
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
+
+    if self.Owner.HVP_EVOLVED then
+        bullet.Damage = bullet.Damage * 2
+    end
+
     self.Owner:FireBullets(bullet)
     self:EmitSound("Double_Barrel.Single")
     self:TakePrimaryAmmo(1)
@@ -278,8 +283,11 @@ function SWEP:InsertShell()
                 self:ShellAnimCaller()
             end)
 
-            self.Owner:RemoveAmmo(1, self.Primary.Ammo, false) -- out of the frying pan
-            self.Weapon:SetClip1(self.Weapon:Clip1() + 1) --  into the fire
+            if not self.Owner.HVP_EVOLVED then
+                self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
+            end
+
+            self.Weapon:SetClip1(self.Weapon:Clip1() + 1)
         end
     else
         timer.Destroy(timerName) -- kill the timer
