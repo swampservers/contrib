@@ -45,7 +45,8 @@ SWEP.FleshSound 				= "aof/weapons/hitbod6.wav"
 SWEP.BigSwingSound 				= "physics/nearmiss/whoosh_large1.wav"
 
 SWEP.SlashDamage 			= 60 	-- Initial Damage for Horizontal Slash
-SWEP.SlashDamageAfter 		= 20 	-- Damage to subsequent hit from slash
+SWEP.SlashDamageAfter 		= )
+-- Damage to subsequent hit from slash
 SWEP.SlashDelay 			= 1	-- Delay between completed slash attacks
 SWEP.SlashDelayHit 	= 0.4  	 		-- How long after the blade is stopped by a wall we can attack again.
 
@@ -265,7 +266,7 @@ function SWEP:PrimaryAttack()
 		local delay = overhead and self.ChopDelay or self.SlashDelay
 		self.Weapon:SetNextPrimaryFire( CurTime() + delay)
 		--self.Weapon:SendWeaponAnim(ACT_VM_MISSCENTER)
-		self:SetHitCount(20)
+		self:SetHitCount(10)
 		self:SetHitNext(CurTime() + 0.15)
 end
 
@@ -344,8 +345,8 @@ function SWEP:Think()
 		
 		
 		local count = self:GetHitCount()
-		local yaw = Lerp((20-(count-0.5))/20,-90,90)
-		local size = Lerp(math.abs(yaw)/90,8,1)
+		local yaw = Lerp((10-(count-0.5))/10,-90,90)
+		local size = Lerp(math.abs(yaw)/90,8,2)
 		tr.mins = Vector(1,1,1)*-size
 		tr.maxs = Vector(1,1,1)*size
 		local yawoffset = yaw
