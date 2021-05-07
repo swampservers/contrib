@@ -72,9 +72,9 @@ if CLIENT then
         error("Can't get video info for " .. self:GetClass())
     end
 
-    --[[function SERVICE:ShouldTrust(Video)
+    function SERVICE:ShouldTrust(Video)
         return true
-    end]]
+    end
 
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("http://swampservers.net/cinema/" .. self:GetClass() .. ".html")

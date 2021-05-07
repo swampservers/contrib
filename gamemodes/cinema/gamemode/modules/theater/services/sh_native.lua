@@ -52,6 +52,10 @@ if CLIENT then
         vpanel:OpenURL(urll .. key)
     end
 
+    function SERVICE:ShouldTrust(Video)
+        return false
+    end
+
     function SERVICE:LoadVideo(Video, panel)
         local urll = "http://swampservers.net/cinema/file.html"
         panel:EnsureURL(urll)

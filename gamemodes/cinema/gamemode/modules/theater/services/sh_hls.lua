@@ -82,6 +82,10 @@ if CLIENT then
         end
     end
 
+    function SERVICE:ShouldTrust(Video)
+        return false
+    end
+
     function SERVICE:LoadVideo(Video, panel)
         local k = Video:Key()
 
