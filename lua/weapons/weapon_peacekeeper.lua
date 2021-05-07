@@ -150,17 +150,20 @@ function SWEP:PrimaryAttack()
     bullet.Force = self.Primary.Force
     bullet.Damage = self.Primary.Damage
     bullet.AmmoType = self.Primary.Ammo
-    
     local rnda = self.Primary.Recoil * -1
     local rndb = self.Primary.Recoil * math.random(-1, 1)
     local vm = self.Owner:GetViewModel()
     --self.Owner:MuzzleFlash() -- Crappy muzzle light
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
-    if self.Owner.HVP_EVOLVED then bullet.Damage = bullet.Damage*2 end
+
+    if self.Owner.HVP_EVOLVED then
+        bullet.Damage = bullet.Damage * 2
+    end
+
     self.Owner:FireBullets(bullet)
     self:EmitSound("Double_Barrel.Single")
-    self:TakePrimaryAmmo(1) 
+    self:TakePrimaryAmmo(1)
     self.Owner:ViewPunch(Angle(rnda, rndb, rnda))
     self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 end
@@ -280,10 +283,11 @@ function SWEP:InsertShell()
                 self:ShellAnimCaller()
             end)
 
-            if not self.Owner.HVP_EVOLVED then 
+            if not self.Owner.HVP_EVOLVED then
                 self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
             end
-            self.Weapon:SetClip1(self.Weapon:Clip1() + 1) 
+
+            self.Weapon:SetClip1(self.Weapon:Clip1() + 1)
         end
     else
         timer.Destroy(timerName) -- kill the timer

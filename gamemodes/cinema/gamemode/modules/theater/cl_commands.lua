@@ -30,7 +30,7 @@ net.Receive("EntityEmitSound", function(len)
     if not IsValid(ent) then return end --unloaded ent
     -- played in prediction, hopefully...?
     -- if ent == LocalPlayer() or ent:IsWeapon() and ent.Owner == LocalPlayer() then return end
-    if net.ReadEntity()== LocalPlayer() then return end --predictedplayer
+    if net.ReadEntity() == LocalPlayer() then return end --predictedplayer
     ent:EmitSound(soundname, soundlevel, pitch, volume, channel ~= -2 and channel or nil, flags, dsp)
 end)
 
@@ -43,7 +43,7 @@ net.Receive("EmitSound", function(len)
     local flags = net.ReadUInt(10)
     local pitch = net.ReadFloat()
     local dsp = net.ReadUInt(8)
-    if net.ReadEntity()== LocalPlayer() then return end --predictedplayer
+    if net.ReadEntity() == LocalPlayer() then return end --predictedplayer
     -- EmitSound(soundname,pos,-1,channel,volume,soundlevel,flags,pitch,dsp)
     sound.Play(soundname, pos, soundlevel, pitch, volume)
 end)

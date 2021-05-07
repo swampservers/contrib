@@ -10,19 +10,17 @@ if (SERVER) then
     util.AddNetworkString("gooeffect")
 end
 
-
 local pmeta = FindMetaTable("Player")
 
 function pmeta:GooStun(length)
-    
-
     self._gooendtime = (length == -1 and 0) or math.max(self._gooendtime or 0, CurTime() + length)
 
-    if (SERVER and length > 0) then --try to nicely coat the player in white stuff :)
-        for i=-2,2 do 
+    --try to nicely coat the player in white stuff :)
+    if (SERVER and length > 0) then
+        for i = -2, 2 do
             local tr = {}
             local dir = VectorRand() * Vector(1, 1, 0.1):GetNormalized()
-            local origin = self:WorldSpaceCenter() + Vector(0,0,16)*i
+            local origin = self:WorldSpaceCenter() + Vector(0, 0, 16) * i
             tr.start = origin + dir * 24
             tr.endpos = origin
 
@@ -63,20 +61,20 @@ if (CLIENT) then
     net.Receive("gooeffect", function(len)
         local ply = net.ReadEntity()
         local duration = net.ReadFloat()
-        if IsValid(ply) then ply:GooStun(duration) end
+
+        if IsValid(ply) then
+            ply:GooStun(duration)
+        end
     end)
 end
-
 
 hook.Add("PlayerSpawn", "GooStunReset", function(ply)
     ply:GooStun(-1)
 end)
 
 hook.Add("EntityTakeDamage", "GooStunGive", function(target, dmginfo)
+    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar" and dmginfo:GetAttacker() == target) then return true end
 
-    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar" and dmginfo:GetAttacker() == target) then
-        return true
-    end
     if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar") then
         local coomer = (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
 
@@ -103,7 +101,7 @@ hook.Add("RenderScreenspaceEffects", "GooOnScreen", function()
     local opacity = math.min(time / 4, 1) / 50
     tab["$pp_colour_brightness"] = math.Clamp(time / 4, 0, 0.4)
 
-    if tab["$pp_colour_brightness"]>0 then
+    if tab["$pp_colour_brightness"] > 0 then
         DrawColorModify(tab)
     end
 
@@ -115,8 +113,7 @@ end)
 hook.Add("SetupMove", "GooMovement", function(ply, mv, cmd)
     if (ply:GetGooStunned()) then
         local stunned, time = ply:GetGooStunned()
-        local div = Lerp(math.min(time / 4, 1),1,400)
-
+        local div = Lerp(math.min(time / 4, 1), 1, 400)
         mv:SetForwardSpeed(mv:GetForwardSpeed() / div)
         mv:SetSideSpeed(mv:GetSideSpeed() / div)
         ply:ViewPunch(AngleRand() * FrameTime() * 0.04)

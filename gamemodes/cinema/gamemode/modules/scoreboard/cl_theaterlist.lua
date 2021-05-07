@@ -118,25 +118,28 @@ function THEATERLIST:PerformLayout()
     local playerSort = function(a, b)
         -- if not a or not a.th then return false end
         -- if not b or not b.th then return true end
-        local an,bn = a.th.name:lower(), b.th.name:lower()
+        local an, bn = a.th.name:lower(), b.th.name:lower()
+
         if an:find("other") then
             if not bn:find("other") then return false end
         else
             if bn:find("other") then return true end
         end
+
         local plyDiff = a.th.players - b.th.players
         if plyDiff > 0 then return true end
         if plyDiff < 0 then return false end
+
         if an:find("public") then
             if not bn:find("public") then return true end
         else
             if bn:find("public") then return false end
         end
+
         return an < bn
     end
 
     table.sort(self.TheaterList.Items, playerSort)
-
     --self:Dock( FILL )
     self:SetTall(math.min(BrandTitleBarHeight + self.TheaterList:GetCanvas():GetTall(), (ScrH() * 0.8)))
     self.Title:SizeToContents()

@@ -21,24 +21,21 @@ SWEP.Primary.ClipSize = -1
 SWEP.Secondary.Ammo = "none"
 SWEP.Secondary.ClipSize = -1
 
-
 function SWEP:Initialize()
     self:SetHoldType("grenade")
-    self:SetSubMaterial(1,"models/shiny")
+    self:SetSubMaterial(1, "models/shiny")
     --  self:SetSubMaterial(2,"engine/occlusionproxy")
 end
 
-
 function SWEP:SecondaryAttack(undo)
     if (self:GetNextSecondaryFire() > CurTime()) then return end
+    local coom = math.random(1, 4)
 
-    local coom = math.random(1,4)
     while coom == self.LastTaunt do
-        coom = math.random(1,4)
+        coom = math.random(1, 4)
     end
 
-    self:EmitSound("coomer/coom_taunt"..coom..".ogg")
- 
+    self:EmitSound("coomer/coom_taunt" .. coom .. ".ogg")
     self.LastTaunt = coom
     self:SetNextPrimaryFire(CurTime() + 1)
     self:SetNextSecondaryFire(CurTime() + 1)
@@ -47,13 +44,13 @@ end
 function SWEP:PrimaryAttack()
     if (self:GetNextPrimaryFire() > CurTime()) then return end
     if self.Throwing then return end
-
     local ply = self:GetOwner()
     self:SendWeaponAnim(ACT_VM_THROW)
     self:EmitSound("WeaponFrag.Throw")
     self.Throwing = true
     self:GetOwner():SetAnimation(PLAYER_ATTACK1)
     self:EmitSound("coomer/coom.ogg")
+
     if (SERVER) then
         local bait = ents.Create("thrown_goo_jar")
         bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
@@ -61,28 +58,30 @@ function SWEP:PrimaryAttack()
         bait:Spawn()
         bait:SetVelocity(ply:GetAimVector() * 700)
     end
+
     self:SetNextPrimaryFire(CurTime() + 0.7)
     self:SetNextSecondaryFire(CurTime() + 0.7)
 
     --added
-   if SERVER and not self.Owner.HVP_EVOLVED then self:Remove() end
+    if SERVER and not self.Owner.HVP_EVOLVED then
+        self:Remove()
+    end
 end
 
-
 function SWEP:Think()
-
 end
 
 function SWEP:Deploy()
     local ply = self:GetOwner()
-
     self:SetNextPrimaryFire(CurTime() + 0.5)
     self:SetNextSecondaryFire(CurTime() + 0.5)
-
 end
 
 function SWEP:Holster()
-    if(self.FapSound )then self.FapSound:Stop() end
+    if (self.FapSound) then
+        self.FapSound:Stop()
+    end
+
     return true
 end
 
@@ -90,16 +89,13 @@ local whitemat = Material("models/shiny")
 local nomat = Material("engine/occlusionproxy")
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
-    render.MaterialOverrideByIndex( 1, whitemat )
+    render.MaterialOverrideByIndex(1, whitemat)
     -- render.MaterialOverrideByIndex( 2, nomat )
-
-    
 end
 
 function SWEP:PostDrawViewModel(vm, weapon, ply)
-    render.MaterialOverrideByIndex( 1)
-    render.MaterialOverrideByIndex( 2)
-    
+    render.MaterialOverrideByIndex(1)
+    render.MaterialOverrideByIndex(2)
 end
 
 function SWEP:DrawWorldModel(flags, check)
@@ -155,7 +151,6 @@ function SWEP:DrawWorldModel(flags, check)
             end
         else
             if (not check) then
-                
                 self:DrawModel()
 
                 return
@@ -174,13 +169,10 @@ function SWEP:DrawWorldModel(flags, check)
     return mrt
 end
 
+function SWEP:GetViewModelPosition(pos, ang)
+    pos = pos + ang:Right() * 4
+    pos = pos + ang:Forward() * 16
+    pos = pos + ang:Up() * -4
 
-
-function SWEP:GetViewModelPosition(pos,ang)
-pos = pos + ang:Right()*4
-pos = pos + ang:Forward()*16
-pos = pos + ang:Up()*-4
-
-
-return pos,ang
+    return pos, ang
 end

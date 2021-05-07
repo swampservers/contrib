@@ -305,8 +305,7 @@ function SWEP:PrimaryAttack()
                         net.WriteVector(bcenter)
                         net.SendPVS(bcenter)
 
-                        if (not Safe(v)) and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub")
-                            and not (self.Owner.hvp and self.Owner.hvp==v.hvp) then
+                        if (not Safe(v)) and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") and not (self.Owner.hvp and self.Owner.hvp == v.hvp) then
                             if v:IsOnGround() then
                                 v:SetPos(v:GetPos() + Vector(0, 0, 2))
                             end
@@ -321,7 +320,7 @@ function SWEP:PrimaryAttack()
                                 dmg:SetDamage(20)
                                 dmg:SetDamagePosition(v:LocalToWorld(v:OBBCenter()))
                                 dmg:SetDamageType(DMG_CLUB)
-                                dmg:SetDamageForce(aimvel * 30*10)
+                                dmg:SetDamageForce(aimvel * 30 * 10)
                                 v:TakeDamageInfo(dmg)
                             end
 
