@@ -78,7 +78,7 @@ hook.Add("EntityTakeDamage", "GooStunGive", function(target, dmginfo)
     if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar") then
         local coomer = target.hvp==2 -- (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
 
-        if (not coomer or true) then
+        if (not coomer) then -- or true) then
             target:GooStun(math.Clamp(dmginfo:GetDamage() / 10, 0, 4))
         end
     end
@@ -173,7 +173,7 @@ function ENT:Touch(entity)
     dmg:SetDamageForce(self:GetVelocity() * 1000)
     dmg:SetAttacker(IsValid(self:GetOwner()) and self:GetOwner() or game.GetWorld())
     dmg:SetInflictor(self)
-    util.BlastDamageInfo(dmg, trace.HitPos, 128)
+    util.BlastDamageInfo(dmg, trace.HitPos, 180) --128)
 
     while decals < 5 do
         local tr = {}

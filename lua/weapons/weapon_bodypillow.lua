@@ -36,7 +36,7 @@ end
 
 function SWEP:TimeScale()
     -- return self:GetNWBool("Hard", false)
-    return self:GetHardened() and 2 or 1
+    return self:GetHardened() and 1.5 or 1
 end
 
 function bodypillow_unjiggle(self)
@@ -178,7 +178,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     --local of,_ = LocalToWorld(self.Owner:GetCurrentViewOffset(),Angle(0,0,0),Vector(0,0,0),ang)
     --pos = pos - (of*0.5)
     pos = pos - (self.Owner:GetCurrentViewOffset() * 0.5)
-    local pf = self:Boof()
+    local pf = self:Boof(true)
     local v = ang:Forward()
 
     if math.abs(v.z) == 1 then
@@ -270,10 +270,11 @@ else
 end
 
 function SWEP:PrimaryAttack()
-    if CLIENT and not IsFirstTimePredicted() then return end
     self:SetNextPrimaryFire(CurTime() + (0.6 / self:TimeScale()))
+    if CLIENT and not IsFirstTimePredicted() then return end
 
-    --if CLIENT then self.localpf = RealTime() end
+    if CLIENT then self.localpf = RealTime() end
+
     if SERVER then
         if not self.Owner:IsPony() then
             setPlayerGesture(self.Owner, GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE, true)
@@ -296,7 +297,7 @@ function SWEP:PrimaryAttack()
                 for k, v in pairs(player.GetAll()) do
                     local bcenter = v:LocalToWorld(v:OBBCenter())
 
-                    if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < 70 then --(self:GetHardened() and 100 or 70) then
+                    if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then
                         bcenter = bcenter + (VectorRand() * 16)
                         bcenter.z = bcenter.z + 8
                         local sound2play = self:GetHardened() and "physics/plastic/plastic_barrel_impact_hard" .. tostring(math.random(1, 3)) .. ".wav" or "bodypillow/hit" .. tostring(math.random(1, 2)) .. ".wav"
@@ -317,7 +318,7 @@ function SWEP:PrimaryAttack()
                                 local dmg = DamageInfo()
                                 dmg:SetAttacker(self.Owner)
                                 dmg:SetInflictor(self)
-                                dmg:SetDamage(20)
+                                dmg:SetDamage(30)
                                 dmg:SetDamagePosition(v:LocalToWorld(v:OBBCenter()))
                                 dmg:SetDamageType(DMG_CLUB)
                                 dmg:SetDamageForce(aimvel * 30 * 10)
@@ -325,6 +326,8 @@ function SWEP:PrimaryAttack()
                             end
 
                             v:SetVelocity(aimvel)
+
+                            if self:GetHardened() then break end
                         end
                     end
                 end
@@ -336,11 +339,11 @@ function SWEP:PrimaryAttack()
     self:EmitSound("bodypillow/swing" .. tostring(math.random(1, 2)) .. ".wav", 60, math.random(100, 115), 0.1)
 end
 
-function SWEP:Boof()
+function SWEP:Boof(locl)
     local pf = self:GetNWFloat("pf")
     local ct = CurTime()
 
-    if self.localpf then
+    if locl and self.localpf then
         pf = self.localpf
         ct = RealTime()
     end
