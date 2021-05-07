@@ -206,21 +206,17 @@ if SERVER then
 end
 
 if CLIENT then
-	local TrustConvar = CreateClientConVar("cinema_load_all_urls","0",true,false,"",0,1)
-    local TEMP_TRUST = {}
-    
+    local TrustConvar = CreateClientConVar("cinema_load_all_urls","0",true,false,"",0,1)
+    TRUSTED_DOMAINS = {
+        ["www.swampservers.net"] = true,
+        ["www.dropbox.com"] = true,
+        ["www.puu.sh"] = true,
+        ["cdn.discordapp.com"] = true
+    }
+
     function VIDEO:ShouldTrust()
-        return self:Service():ShouldTrust(self) or TEMP_TRUST[url.parse2(self:Key()).host] or TrustConvar:GetInt()==1 or self.FORCETRUST
+        return self.FORCETRUST or TrustConvar:GetInt()==1 or TRUSTED_DOMAINS[url.parse2(self:Key()).host]
     end
-
-    --used by services
-    function TRUSTED_VIDEO_HOST(k)
-        local t = url.parse2(k)
-
-        return t.host == "www.swampservers.net" or t.host == "www.dropbox.com" or t.host == "www.puu.sh" or t.host == "cdn.discordapp.com"
-    end
-
-    _G.TRUSTED_VIDEO_HOST = TRUSTED_VIDEO_HOST
 
     hook.Add("Think", "VideoTrust", function()
         if input.IsKeyDown(KEY_F8) then
@@ -232,7 +228,7 @@ if CLIENT then
 
                     if v and not v:ShouldTrust() then
                         v.FORCETRUST = true
-                        TEMP_TRUST[url.parse2(v:Key()).host] = true
+                        TRUSTED_DOMAINS[url.parse2(v:Key()).host] = true
                         RunConsoleCommand("cinema_refresh")
                     end
                 end

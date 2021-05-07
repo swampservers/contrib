@@ -96,10 +96,6 @@ if CLIENT then
         end)
     end
 
-    function SERVICE:ShouldTrust(Video)
-        return TRUSTED_VIDEO_HOST(Video:Key())
-    end
-
     function SERVICE:LoadVideo(Video, panel)
         local urll = "http://swampservers.net/cinema/file.html"
         --if string.StartWith(Video:Key():lower(), "rtmp") then
