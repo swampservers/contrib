@@ -215,7 +215,7 @@ if CLIENT then
     }
 
     function VIDEO:ShouldTrust()
-        return self.FORCETRUST or TrustConvar:GetInt()==1 or TRUSTED_DOMAINS[url.parse2(self:Key()).host]
+        return self:Service():ShouldTrust(self) or self.FORCETRUST or TrustConvar:GetInt()==1 or TRUSTED_DOMAINS[url.parse2(self:Key()).host]
     end
 
     hook.Add("Think", "VideoTrust", function()
