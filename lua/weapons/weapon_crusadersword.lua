@@ -55,7 +55,7 @@ SWEP.ChopDamageAfter  		= 50 	-- Damage to subsequent hit from chop
 SWEP.ChopDelay = 	  1.1			-- How long after chop is completed before we can hit again
 SWEP.ChopDelayHit 	= 1.1  	 		-- How long after chop interrupted we can chop again
 
-SWEP.ChargeAttackVelocity = 500		     --Velocity to apply during charge
+SWEP.ChargeAttackVelocity = 750		     --Velocity to apply during charge
 SWEP.ChargeAttackDamagePeak = 65		 --Damage to apply when moving at peak units per second
 SWEP.ChargeAttackVelocityPeak = 800		 --Peak speed for charge damage
 SWEP.ChargeDuration = 1					--Time to charge before stopping	
