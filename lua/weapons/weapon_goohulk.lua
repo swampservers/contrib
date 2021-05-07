@@ -181,32 +181,26 @@ function SWEP:DrawWorldModel()
 end
 
 if CLIENT then
-hook.Add("OnEntityCreated","COOMERBONESFIX",function(ent)
-    ent:AddCallback("BuildBonePositions", function(e,nb) if e:GetModel()=="models/player/soldier_stripped.mdl" then
-        return BUILDCOOMERBONES(e,nb)
-    end end)
+    hook.Add("OnEntityCreated","COOMERBONESFIX",function(ent)
+        ent:AddCallback("BuildBonePositions", function(e,nb) if e:GetModel()=="models/player/soldier_stripped.mdl" then
+            return BUILDCOOMERBONES(e,nb)
+        end end)
 
-end)
+    end)
 
-local mods2do = {
-    [9] = 2,
-    -- [10] = 20,
-    -- [11] = 20,
-    -- [12] = 20,
-}
+    local mods2do = {
+        [9] = Vector(1,2,2),
+        [10] = Vector(1,2,2),
+        -- [11] = 2,
+    }
 
-function BUILDCOOMERBONES(e,nb)
-
-    for k,v in pairs(mods2do) do
-        local mat = e:GetBoneMatrix(k)
-        if mat then
-            mat:Scale(Vector(v,v,v))
-            e:SetBoneMatrix(8,mat)
+    function BUILDCOOMERBONES(e,nb)
+        for k,v in pairs(mods2do) do
+            local mat = e:GetBoneMatrix(k)
+            if mat then
+                mat:Scale(v)
+                e:SetBoneMatrix(k,mat)
+            end
         end
     end
-
-    
-end
-
-
 end

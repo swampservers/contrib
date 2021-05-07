@@ -321,7 +321,7 @@ function SWEP:PrimaryAttack()
                                 dmg:SetDamage(20)
                                 dmg:SetDamagePosition(v:LocalToWorld(v:OBBCenter()))
                                 dmg:SetDamageType(DMG_CLUB)
-                                dmg:SetDamageForce(aimvel * 30*4)
+                                dmg:SetDamageForce(aimvel * 30*10)
                                 v:TakeDamageInfo(dmg)
                             end
 
