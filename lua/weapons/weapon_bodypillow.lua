@@ -296,7 +296,7 @@ function SWEP:PrimaryAttack()
                 for k, v in pairs(player.GetAll()) do
                     local bcenter = v:LocalToWorld(v:OBBCenter())
 
-                    if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then
+                    if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < 70 then --(self:GetHardened() and 100 or 70) then
                         bcenter = bcenter + (VectorRand() * 16)
                         bcenter.z = bcenter.z + 8
                         local sound2play = self:GetHardened() and "physics/plastic/plastic_barrel_impact_hard" .. tostring(math.random(1, 3)) .. ".wav" or "bodypillow/hit" .. tostring(math.random(1, 2)) .. ".wav"
