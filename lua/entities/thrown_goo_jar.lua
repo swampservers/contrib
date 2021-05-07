@@ -78,9 +78,9 @@ hook.Add("EntityTakeDamage", "GooStunGive", function(target, dmginfo)
         return true
     end
     if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar") then
-        local coomer = (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
+        local coomer = (target:GetModel()=="models/player/soldier_stripped.mdl")
 
-        if (not coomer or true) then
+        if (not coomer) then
             target:GooStun(math.Clamp(dmginfo:GetDamage() / 10, 0, 4))
         end
     end
