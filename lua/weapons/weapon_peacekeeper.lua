@@ -157,7 +157,7 @@ function SWEP:PrimaryAttack()
     --self.Owner:MuzzleFlash() -- Crappy muzzle light
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
-    if self.Owner.EVOLVED then bullet.Damage = bullet.Damage*2 end
+    if self.Owner.HVP_EVOLVED then bullet.Damage = bullet.Damage*2 end
     self.Owner:FireBullets(bullet)
     self:EmitSound("Double_Barrel.Single")
     self:TakePrimaryAmmo(1) 
@@ -280,7 +280,7 @@ function SWEP:InsertShell()
                 self:ShellAnimCaller()
             end)
 
-            if not self.Owner.EVOLVED then 
+            if not self.Owner.HVP_EVOLVED then 
                 self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
             end
             self.Weapon:SetClip1(self.Weapon:Clip1() + 1) 
