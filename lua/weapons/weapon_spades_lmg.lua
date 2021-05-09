@@ -28,7 +28,7 @@ SWEP.Weight 				= 50
 SWEP.DrawCrosshair 			= false
 SWEP.DrawAmmo 				= true
 
-SWEP.Primary.Damage 		= 13
+SWEP.Primary.Damage 		= 30
 SWEP.Primary.ClipSize 		= 100
 SWEP.Primary.Ammo 			= "lmg"
 SWEP.Primary.DefaultClip 	= 100
@@ -73,40 +73,40 @@ end
 function SWEP:DrawWorldModel()
 	local ply = self:GetOwner()
 
-	if(IsValid(ply))then
+	-- if(IsValid(ply))then
 
-		local bn = "ValveBiped.Bip01_R_Hand"
-		local bon = ply:LookupBone(bn) or 0
+	-- 	local bn = "ValveBiped.Bip01_R_Hand"
+	-- 	local bon = ply:LookupBone(bn) or 0
 
-		local opos = self:GetPos()
-		local oang = self:GetAngles()
-		local bp,ba = ply:GetBonePosition(bon)
-		if(bp)then opos = bp end
-		if(ba)then oang = ba end
-		oang:RotateAroundAxis(oang:Up(),-90)
-		oang:RotateAroundAxis(oang:Forward(),-92)
+	-- 	local opos = self:GetPos()
+	-- 	local oang = self:GetAngles()
+	-- 	local bp,ba = ply:GetBonePosition(bon)
+	-- 	if(bp)then opos = bp end
+	-- 	if(ba)then oang = ba end
+	-- 	oang:RotateAroundAxis(oang:Up(),-90)
+	-- 	oang:RotateAroundAxis(oang:Forward(),-92)
 
-		oang:RotateAroundAxis(oang:Right(),12)
-		oang:RotateAroundAxis(oang:Forward(),-5)
-		oang:RotateAroundAxis(oang:Up(),15)
-		opos = opos + oang:Right()*-2
+	-- 	oang:RotateAroundAxis(oang:Right(),12)
+	-- 	oang:RotateAroundAxis(oang:Forward(),-5)
+	-- 	oang:RotateAroundAxis(oang:Up(),15)
+	-- 	opos = opos + oang:Right()*-2
 
-		if ply:Crouching() then
-			oang:RotateAroundAxis(oang:Forward(),5)
-			opos = opos + oang:Right()*5
-		end
-		--oang:RotateAroundAxis(oang:Right(),180)
-		self:SetupBones()
+	-- 	if ply:Crouching() then
+	-- 		oang:RotateAroundAxis(oang:Forward(),5)
+	-- 		opos = opos + oang:Right()*5
+	-- 	end
+	-- 	--oang:RotateAroundAxis(oang:Right(),180)
+	-- 	self:SetupBones()
 
-		self:SetModelScale(1.25,0)
-		local mrt = self:GetBoneMatrix(0)
-		if(mrt)then
-		mrt:SetTranslation(opos)
-		mrt:SetAngles(oang)
+	-- 	self:SetModelScale(1.25,0)
+	-- 	local mrt = self:GetBoneMatrix(0)
+	-- 	if(mrt)then
+	-- 	mrt:SetTranslation(opos)
+	-- 	mrt:SetAngles(oang)
 
-		self:SetBoneMatrix(0, mrt )
-		end
-	end
+	-- 	self:SetBoneMatrix(0, mrt )
+	-- 	end
+	-- end
 		
 	self:DrawModel()
 end
@@ -123,7 +123,7 @@ function SWEP:GetViewModelPosition(pos,ang)
 	pos = pos+ang:Up()*-2
 	--pos = pos+ang:Right()*-0
 
-	ang:RotateAroundAxis(ang:Right(),PlayerSprintingness(self.Owner)*-15)
+	-- ang:RotateAroundAxis(ang:Right(),PlayerSprintingness(self.Owner)*-15)
 
 	return pos,ang
 end
@@ -159,17 +159,19 @@ function SWEP:GetCone()
 end
 
 function SWEP:Bipod()
-	local bc = self.Owner:EyePos() + self.Owner:GetAimVector()*30
-	local bl = bc/CVX_SCALE
-	local x = math.floor(bl.x)
-	local y = math.floor(bl.y)
-	local z = math.floor(bl.z)
+	-- local bc = self.Owner:EyePos() + self.Owner:GetAimVector()*30
+	-- local bl = bc/CVX_SCALE
+	-- local x = math.floor(bl.x)
+	-- local y = math.floor(bl.y)
+	-- local z = math.floor(bl.z)
 
-	if not cvx_get_vox_solid(x,y,z) and cvx_get_vox_solid(x,y,z-1) then
-		return true
-	end
+	-- if not cvx_get_vox_solid(x,y,z) and cvx_get_vox_solid(x,y,z-1) then
+	-- 	return true
+	-- end
 
-	return false
+	-- return false
+
+	return self.Owner:Crouching()
 end
 
 function SWEP:PrimaryAttack()
@@ -181,7 +183,9 @@ function SWEP:PrimaryAttack()
 
 	if CLIENT and IsFirstTimePredicted() then
 		--this is such crap
-		local ps,ng = vm:GetBonePosition(vm:LookupBone("ValveBiped.bolt"))
+		local bb = vm:LookupBone("ValveBiped.bolt")
+		if not bb then return end
+		local ps,ng = vm:GetBonePosition(bb)
 		--if self.setsight then
 		--	ps,ng = LocalToWorld( Vector(10,-2,0), Angle(0,-45,0), ps,ng)
 		--else
@@ -215,7 +219,7 @@ function SWEP:PrimaryAttack()
 	self.Owner:FireBullets( bullet ) 
 
 	self.Owner:MuzzleFlash()
-	if SERVER or IsFirstTimePredicted() then SpadesMuzzleFlash(self.Owner) end
+	-- if SERVER or IsFirstTimePredicted() then SpadesMuzzleFlash(self.Owner) end
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
 	--[[local rnda = -0.5

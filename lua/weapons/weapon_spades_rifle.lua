@@ -86,7 +86,7 @@ end]]
 
 function SWEP:Think()
 	if IsValid(self.Owner) then
-		local desiredHoldType = self.Owner:IsSprinting() and "passive" or self.HoldType
+		local desiredHoldType = self.HoldType --self.Owner:IsSprinting() and "passive" or self.HoldType
 		if desiredHoldType~=self:GetHoldType() then
 			self:SetHoldType(desiredHoldType)
 		end
@@ -145,7 +145,7 @@ function SWEP:GetViewModelPosition(pos,ang)
 
 	pos = pos+ang:Up()*2
 	pos = pos+ang:Right()*-2
-	ang:RotateAroundAxis(ang:Right(),PlayerSprintingness(self.Owner)*-15)
+	-- ang:RotateAroundAxis(ang:Right(),PlayerSprintingness(self.Owner)*-15)
 
 	return pos,ang
 end
@@ -204,7 +204,7 @@ function SWEP:DrawHUD()
 
 	surface.SetDrawColor(255,255,255,255)
 
-	if not self.setsight and not PlayerIsSprintRecovering(self.Owner) then
+	if not self.setsight then --and not PlayerIsSprintRecovering(self.Owner) then
 		local ftan = math.tan(math.rad((self.lastfov or 90)*0.5))/math.sqrt(16.0/9.0)
 		local spread = 0.5 * ScrH() * self:GetCone()/ftan
 		spread = math.floor(spread)
@@ -280,7 +280,7 @@ function SWEP:PrimaryAttack()
 	self.Owner:FireBullets( bullet ) 
 
 	self.Owner:MuzzleFlash()
-	if SERVER or IsFirstTimePredicted() then SpadesMuzzleFlash(self.Owner) end
+	-- if SERVER or IsFirstTimePredicted() then SpadesMuzzleFlash(self.Owner) end
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
 

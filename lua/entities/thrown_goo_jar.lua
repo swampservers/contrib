@@ -113,7 +113,7 @@ end)
 hook.Add("SetupMove", "GooMovement", function(ply, mv, cmd)
     if (ply:GetGooStunned()) then
         local stunned, time = ply:GetGooStunned()
-        local div = Lerp(math.min(time / 4, 1), 1, 400)
+        local div = Lerp(math.min(time / 4, 1), 1, 100)
         mv:SetForwardSpeed(mv:GetForwardSpeed() / div)
         mv:SetSideSpeed(mv:GetSideSpeed() / div)
         ply:ViewPunch(AngleRand() * FrameTime() * 0.04)
@@ -168,12 +168,12 @@ function ENT:Touch(entity)
     local pos = trace.HitPos + trace.HitNormal * 48
     local decals = 0
     local dmg = DamageInfo()
-    dmg:SetDamage(55)
+    dmg:SetDamage(65)
     dmg:SetDamageType(DMG_ACID)
     dmg:SetDamageForce(self:GetVelocity() * 1000)
     dmg:SetAttacker(IsValid(self:GetOwner()) and self:GetOwner() or game.GetWorld())
     dmg:SetInflictor(self)
-    util.BlastDamageInfo(dmg, trace.HitPos, 180) --128)
+    util.BlastDamageInfo(dmg, trace.HitPos, 200) --128)
 
     while decals < 5 do
         local tr = {}

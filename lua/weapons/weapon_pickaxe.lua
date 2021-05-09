@@ -13,6 +13,9 @@ SWEP.Primary.Automatic = true
 SWEP.SWINGINTERVAL = 0.3
 SWEP.TARGETDISTANCE = 120
 
+
+local DIAMONDMAT = Material("models/props_mining/pickaxe01_diamond")
+
 function SWEP:Initialize()
     self:SetHoldType("melee2")
 end
@@ -146,6 +149,8 @@ function SWEP:PrimaryAttack()
                         dmg = 0.04
                     end
 
+                    if self:IsDiamond() then dmg=dmg*2 end
+
                     ch = ch - dmg
 
                     if self.Owner:GetMoveType() == MOVETYPE_NOCLIP then
@@ -193,6 +198,10 @@ function SWEP:SecondaryAttack()
     end
 end
 
+function SWEP:IsDiamond()
+    return false
+end
+
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
@@ -233,7 +242,20 @@ function SWEP:DrawWorldModel()
         end
     end
 
+    if self:IsDiamond() then render.MaterialOverride(DIAMONDMAT) end
+
     self:DrawModel()
+
+    render.MaterialOverride()
+end
+
+
+function SWEP:PreDrawViewModel()
+    if self:IsDiamond() then render.MaterialOverride(DIAMONDMAT) end
+end
+
+function SWEP:PostDrawViewModel()
+    render.MaterialOverride()
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
@@ -254,6 +276,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     return pos, ang
 end
+
+
 
 function SWEP:DrawHUD()
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 100))

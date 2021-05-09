@@ -36,7 +36,7 @@ end
 
 function SWEP:TimeScale()
     -- return self:GetNWBool("Hard", false)
-    return self:GetHardened() and 1.5 or 1
+    return 1 -- self:GetHardened() and 1.5 or 1
 end
 
 function bodypillow_unjiggle(self)
@@ -318,10 +318,10 @@ function SWEP:PrimaryAttack()
                                 local dmg = DamageInfo()
                                 dmg:SetAttacker(self.Owner)
                                 dmg:SetInflictor(self)
-                                dmg:SetDamage(30)
+                                dmg:SetDamage(15)
                                 dmg:SetDamagePosition(v:LocalToWorld(v:OBBCenter()))
                                 dmg:SetDamageType(DMG_CLUB)
-                                dmg:SetDamageForce(aimvel * 30 * 10)
+                                dmg:SetDamageForce(aimvel * 30 * 20)
                                 v:TakeDamageInfo(dmg)
                             end
 

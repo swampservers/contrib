@@ -51,6 +51,15 @@ SS_WeaponProduct({
 })
 
 SS_WeaponProduct({
+    name = 'Light Machine Gun',
+    description = "Crouch for better control",
+    price = 10000,
+    model = 'models/weapons/w_mg42bu.mdl',
+    class = 'weapon_spades_lmg'
+})
+
+
+SS_WeaponProduct({
     name = 'Suicide Bombing',
     description = "A powerful suicide bomb attack capable of killing seated players.",
     price = 15000,
@@ -146,4 +155,12 @@ SS_AmmoProduct({
     model = 'models/Items/357ammo.mdl',
     ammotype = "357",
     amount = 6
+})
+
+SS_AmmoProduct({
+    name = 'LMG x 100',
+    model = 'models/weapons/w_mg42bu.mdl',
+    price = 5000,
+    ammotype = "lmg",
+    amount = 100
 })

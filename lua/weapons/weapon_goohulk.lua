@@ -61,7 +61,7 @@ function SWEP:Holster()
 end
 
 hook.Add("EntityTakeDamage", "CumHulkDamage", function(target, dmginfo)
-    if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "weapon_goohulk" and dmginfo:GetAttacker() == target) then return true end --don't damage yourself with the coom fist
+    if (target:IsPlayer() and IsValid(dmginfo:GetInflictor()) and dmginfo:GetInflictor():GetClass() == "weapon_goohulk" and dmginfo:GetAttacker() == target) then return true end --don't damage yourself with the coom fist
 end)
 
 function SWEP:MakeCumBlast(trace)
@@ -145,7 +145,7 @@ function SWEP:SecondaryAttack()
         bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
         bait:SetOwner(ply)
         bait:Spawn()
-        bait:SetVelocity(ply:GetAimVector() * 1600)
+        bait:SetVelocity(ply:GetAimVector() * 1200)
     end
 
     -- self:SetNextPrimaryFire(CurTime() + 1)
@@ -179,11 +179,41 @@ if CLIENT then
 
     -- [11] = 2,
     function BUILDCOOMERBONES(e, nb)
-        for k, v in pairs(mods2do) do
+        -- print(e:GetModelScale())
+        local m = mods2do
+        local s = {}
+        if e:GetModelScale()>1 then
+            m = {
+                [9] = Vector(1, 3, 3),
+                [10] = Vector(1, 3, 3),
+            }
+            s = {
+                [1] = Vector(0, -4, 0),
+
+                [2] = Vector(0, -6, 0),
+                [3] = Vector(0, -2, 0),
+                [6] = Vector(0, -4, 0),
+                [8] = Vector(0, 4, 0),
+                -- [9] = Vector(1, 3, 3),
+                -- [10] = Vector(0,0,0),
+            }
+
+        end
+
+        for k, v in pairs(m) do
             local mat = e:GetBoneMatrix(k)
 
             if mat then
                 mat:Scale(v)
+                e:SetBoneMatrix(k, mat)
+            end
+        end
+
+        for k, v in pairs(s) do
+            local mat = e:GetBoneMatrix(k)
+
+            if mat then
+                mat:Translate(v)
                 e:SetBoneMatrix(k, mat)
             end
         end
