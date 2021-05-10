@@ -61,7 +61,7 @@ function SWEP:Holster()
 end
 
 hook.Add("EntityTakeDamage", "CumHulkDamage", function(target, dmginfo)
-    if (target:IsPlayer() and IsValid(dmginfo:GetInflictor()) and dmginfo:GetInflictor():GetClass() == "weapon_goohulk" and dmginfo:GetAttacker() == target) then return true end --don't damage yourself with the coom fist
+    -- if (target:IsPlayer() and IsValid(dmginfo:GetInflictor()) and dmginfo:GetInflictor():GetClass() == "weapon_goohulk" and dmginfo:GetAttacker() == target) then return true end --don't damage yourself with the coom fist
 end)
 
 function SWEP:MakeCumBlast(trace)
@@ -126,7 +126,7 @@ function SWEP:PrimaryAttack()
     tr.mask = MASK_SHOT
     tr.filter = filt
     local trace = util.TraceHull(tr)
-    local dir = trace.Normal
+    -- local dir = trace.Normal
     self:MakeCumBlast(trace)
 end
 
@@ -145,11 +145,11 @@ function SWEP:SecondaryAttack()
         bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
         bait:SetOwner(ply)
         bait:Spawn()
-        bait:SetVelocity(ply:GetAimVector() * 1200)
+        bait:SetVelocity(ply:GetAimVector() * 4200)
     end
 
     -- self:SetNextPrimaryFire(CurTime() + 1)
-    self:SetNextSecondaryFire(CurTime() + 1)
+    self:SetNextSecondaryFire(CurTime() + 0.3)
 end
 
 function SWEP:DrawWorldModel()

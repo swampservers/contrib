@@ -199,7 +199,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:IsDiamond()
-    return false
+    return true --false
 end
 
 function SWEP:DrawWorldModel()
@@ -300,3 +300,4 @@ if CLIENT then
         pickaxepointdirx = math.Rand(-0.4, 0.4)
     end)
 end
+

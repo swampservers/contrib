@@ -28,7 +28,7 @@ SWEP.Weight 				= 50
 SWEP.DrawCrosshair 			= false
 SWEP.DrawAmmo 				= true
 
-SWEP.Primary.Damage 		= 30
+SWEP.Primary.Damage 		= 26
 SWEP.Primary.ClipSize 		= 100
 SWEP.Primary.Ammo 			= "lmg"
 SWEP.Primary.DefaultClip 	= 100
@@ -61,7 +61,7 @@ sound.Add({
 	name = 			"DOD_MG42.Fire",
 	channel = 		CHAN_STATIC,
 	volume = 		0.85,
-	level = 105,
+	level = 85,
 	sound = 			"weapons/dod_mg42/negev-1.wav"
 })
 

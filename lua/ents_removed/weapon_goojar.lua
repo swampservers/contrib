@@ -56,11 +56,11 @@ function SWEP:PrimaryAttack()
         bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
         bait:SetOwner(ply)
         bait:Spawn()
-        bait:SetVelocity(ply:GetAimVector() * 1000)
+        bait:SetVelocity(ply:GetAimVector() * (self.Owner.HVP_EVOLVED and 1500 or 1000))
     end
 
-    self:SetNextPrimaryFire(CurTime() + 4.7)
-    self:SetNextSecondaryFire(CurTime() + 4.7)
+    self:SetNextPrimaryFire(CurTime() + 3.7) --2.7)
+    self:SetNextSecondaryFire(CurTime() + 3.7) --2.7)
 
     --added
     -- if SERVER and not self.Owner.HVP_EVOLVED then

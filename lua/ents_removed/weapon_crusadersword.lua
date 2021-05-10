@@ -44,19 +44,19 @@ SWEP.WallSound 					= "aof/weapons/block_shield5.wav"
 SWEP.FleshSound 				= "aof/weapons/hitbod6.wav"
 SWEP.BigSwingSound 				= "physics/nearmiss/whoosh_large1.wav"
 
-SWEP.SlashDamage 			= 70 	-- Initial Damage for Horizontal Slash
+SWEP.SlashDamage 			= 60 	-- Initial Damage for Horizontal Slash
 SWEP.SlashDamageAfter 		= 20 -- Damage to subsequent hit from slash
 SWEP.SlashDelay 			= 1 -0.2	-- Delay between completed slash attacks
 SWEP.SlashDelayHit 	= 0.4  	 		-- How long after the blade is stopped by a wall we can attack again.
 
 
-SWEP.ChopDamage 			= 130 	-- Initial Damage For Overhead Chop
+SWEP.ChopDamage 			= 120 	-- Initial Damage For Overhead Chop
 SWEP.ChopDamageAfter  		= 50 	-- Damage to subsequent hit from chop
 SWEP.ChopDelay = 	  1.1 -0.2			-- How long after chop is completed before we can hit again
 SWEP.ChopDelayHit 	= 1.1 -0.2 	 		-- How long after chop interrupted we can chop again
 
 SWEP.ChargeAttackVelocity = 750		     --Velocity to apply during charge
-SWEP.ChargeAttackDamagePeak = 80		 --Damage to apply when moving at peak units per second
+SWEP.ChargeAttackDamagePeak = 70		 --Damage to apply when moving at peak units per second
 SWEP.ChargeAttackVelocityPeak = 800		 --Peak speed for charge damage
 SWEP.ChargeDuration = 1					--Time to charge before stopping	
 

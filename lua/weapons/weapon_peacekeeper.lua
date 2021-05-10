@@ -159,7 +159,7 @@ function SWEP:PrimaryAttack()
 
     if self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp")==1 then
         bullet.Damage = bullet.Damage
-        bullet.Num = bullet.Num * 2
+        bullet.Num = bullet.Num * 2 --math.floor(bullet.Num * 1.5)
         bullet.Spread.x = 2.5*bullet.Spread.x
     end
 
