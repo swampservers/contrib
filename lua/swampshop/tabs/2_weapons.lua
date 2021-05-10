@@ -58,7 +58,6 @@ SS_WeaponProduct({
     class = 'weapon_spades_lmg'
 })
 
-
 SS_WeaponProduct({
     name = 'Suicide Bombing',
     description = "A powerful suicide bomb attack capable of killing seated players.",

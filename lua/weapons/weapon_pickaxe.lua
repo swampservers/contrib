@@ -12,8 +12,6 @@ SWEP.WorldModel = Model("models/staticprop/props_mining/pickaxe01.mdl")
 SWEP.Primary.Automatic = true
 SWEP.SWINGINTERVAL = 0.3
 SWEP.TARGETDISTANCE = 120
-
-
 local DIAMONDMAT = Material("models/props_mining/pickaxe01_diamond")
 
 function SWEP:Initialize()
@@ -149,7 +147,9 @@ function SWEP:PrimaryAttack()
                         dmg = 0.04
                     end
 
-                    if self:IsDiamond() then dmg=dmg*2 end
+                    if self:IsDiamond() then
+                        dmg = dmg * 2
+                    end
 
                     ch = ch - dmg
 
@@ -199,7 +199,8 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:IsDiamond()
-    return true --false
+    --false
+    return true
 end
 
 function SWEP:DrawWorldModel()
@@ -242,16 +243,18 @@ function SWEP:DrawWorldModel()
         end
     end
 
-    if self:IsDiamond() then render.MaterialOverride(DIAMONDMAT) end
+    if self:IsDiamond() then
+        render.MaterialOverride(DIAMONDMAT)
+    end
 
     self:DrawModel()
-
     render.MaterialOverride()
 end
 
-
 function SWEP:PreDrawViewModel()
-    if self:IsDiamond() then render.MaterialOverride(DIAMONDMAT) end
+    if self:IsDiamond() then
+        render.MaterialOverride(DIAMONDMAT)
+    end
 end
 
 function SWEP:PostDrawViewModel()
@@ -277,8 +280,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     return pos, ang
 end
 
-
-
 function SWEP:DrawHUD()
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 100))
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 100))
@@ -300,4 +301,3 @@ if CLIENT then
         pickaxepointdirx = math.Rand(-0.4, 0.4)
     end)
 end
-

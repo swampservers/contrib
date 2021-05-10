@@ -61,7 +61,6 @@ function SWEP:PrimaryAttack()
 
     self:SetNextPrimaryFire(CurTime() + 3.7) --2.7)
     self:SetNextSecondaryFire(CurTime() + 3.7) --2.7)
-
     --added
     -- if SERVER and not self.Owner.HVP_EVOLVED then
     --     self:Remove()

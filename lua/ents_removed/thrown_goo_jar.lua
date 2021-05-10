@@ -32,7 +32,6 @@ function pmeta:GooStun(length)
 
             local trc = util.TraceLine(tr)
 
-            
             if (trc.Hit and trc.Entity == self) then
                 util.Decal("PaintSplatBlue", trc.HitPos, trc.Normal)
             end
@@ -77,9 +76,10 @@ hook.Add("EntityTakeDamage", "GooStunGive", function(target, dmginfo)
     if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar" and dmginfo:GetAttacker() == target) then return true end
 
     if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar") then
-        local coomer = target.hvp==2 -- (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
+        local coomer = target.hvp == 2 -- (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
 
-        if (not coomer) then -- or true) then
+        -- or true) then
+        if (not coomer) then
             target:GooStun(math.Clamp(dmginfo:GetDamage() / 10, 0, 4))
         end
     end
@@ -150,16 +150,18 @@ TRIGGER_BLACKLIST["trigger_hurt"] = true
 
 --TRIGGER_BLACKLIST[FSOLID_NOT_SOLID] = true
 --TRIGGER_BLACKLIST[FSOLID_TRIGGER] = true
-
 function ENT:Touch(entity)
     if (TRIGGER_BLACKLIST[entity:GetClass()]) then return end
 
     for flag, _ in pairs(TRIGGER_BLACKLIST) do
         if (type(flag) == "number" and self:GetSolidFlags() >= flag) then return end
     end
+
     local trace = self:GetTouchTrace()
+
     if (trace.HitSky) then
         self:Remove()
+
         return
     end
 
@@ -168,7 +170,6 @@ function ENT:Touch(entity)
     local decals = 0
     local dmg = DamageInfo()
     dmg:SetDamage(65)
-
     dmg:SetDamageType(DMG_ACID)
     dmg:SetDamageForce(self:GetVelocity() * 1000)
     dmg:SetAttacker(IsValid(self:GetOwner()) and self:GetOwner() or game.GetWorld())
@@ -179,23 +180,19 @@ function ENT:Touch(entity)
         local tr = {}
         tr.start = pos
         tr.endpos = pos + dir:GetNormalized() * 64
-
         local trc = util.TraceLine(tr)
 
-        
         if (trc.Hit) then
             util.Decal("PaintSplatBlue", tr.start, tr.endpos, {self})
 
             local vPoint = self:GetPos()
-
             local effectdata = EffectData()
             effectdata:SetOrigin(trc.HitPos)
             effectdata:SetAngles(VectorRand():AngleEx(trace.HitNormal))
             effectdata:SetNormal(trc.HitNormal)
             effectdata:SetScale(10)
             util.Effect("watersplash", effectdata)
-            
-            decals = decals + 1    
+            decals = decals + 1
         else
             decals = decals + 0.1 ----------THIS WASNT HERE AND WAS FREEZING THE SERVER
         end

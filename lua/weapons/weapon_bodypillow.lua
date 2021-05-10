@@ -36,7 +36,8 @@ end
 
 function SWEP:TimeScale()
     -- return self:GetNWBool("Hard", false)
-    return 1 -- self:GetHardened() and 1.5 or 1
+    -- self:GetHardened() and 1.5 or 1
+    return 1
 end
 
 function bodypillow_unjiggle(self)
@@ -273,7 +274,9 @@ function SWEP:PrimaryAttack()
     self:SetNextPrimaryFire(CurTime() + (0.6 / self:TimeScale()))
     if CLIENT and not IsFirstTimePredicted() then return end
 
-    if CLIENT then self.localpf = RealTime() end
+    if CLIENT then
+        self.localpf = RealTime()
+    end
 
     if SERVER then
         if not self.Owner:IsPony() then
@@ -326,7 +329,6 @@ function SWEP:PrimaryAttack()
                             end
 
                             v:SetVelocity(aimvel)
-
                             if self:GetHardened() then break end
                         end
                     end

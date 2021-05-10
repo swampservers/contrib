@@ -33,15 +33,14 @@ surface.CreateFont('SS_INCOMEFONT', {
 surface.CreateFont('SS_JOINFONT', {
     font = 'Lato',
     size = 18,
-    weight=700
+    weight = 700
 })
 
 surface.CreateFont('SS_JOINFONTBIG', {
     font = 'Lato',
     size = 22,
-    weight=700
+    weight = 700
 })
-
 
 surface.CreateFont('SS_DESCTITLEFONT', {
     font = 'Righteous',
@@ -506,62 +505,65 @@ function PANEL:Init()
     end
 
     local xo = p:GetWide() + SS_BOTBARHEIGHT
-
     -- if IN_DISCORD~=1 then
-        p = vgui.Create("DButton", self)
-        p:SetZPos(1000)
-        p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
-        p:SetSize(230, 72+50)
-        p:SetWrap(true)
-        p:SetTextInset(16, 0)
-        -- p:SetFont("SS_JOINFONT")
-        -- p:SetText("Click here to join our Discord for double income!")
-        p:SetText("")
-        p:NoClipping(true)
+    p = vgui.Create("DButton", self)
+    p:SetZPos(1000)
+    p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
+    p:SetSize(230, 72 + 50)
+    p:SetWrap(true)
+    p:SetTextInset(16, 0)
+    -- p:SetFont("SS_JOINFONT")
+    -- p:SetText("Click here to join our Discord for double income!")
+    p:SetText("")
+    p:NoClipping(true)
+    local DISCORDMATERIAL = Material("vgui/discordlogo.png")
 
-        local DISCORDMATERIAL = Material("vgui/discordlogo.png")
+    function p:Paint(w, h)
+        local l = (math.sin(SysTime() * 3) + 1) * 0.1
+        local c = Color(Lerp(l, 114 * 0.9, 255), Lerp(l, 137 * 0.9, 255), Lerp(l, 218 * 0.9, 255))
+        draw.RoundedBox(16, 0, 0, w, h - 50, c)
+        local x1, y1 = 100, 40
 
-        function p:Paint(w,h)
+        local triangle = {
+            {
+                x = x1,
+                y = y1
+            },
+            {
+                x = x1 + 100,
+                y = y1
+            },
+            {
+                x = x1 + 50,
+                y = y1 + 50
+            },
+        }
 
-            local l = (math.sin(SysTime()*3) + 1) * 0.1
+        surface.SetDrawColor(c.r, c.g, c.b, 255)
+        draw.NoTexture()
+        surface.DrawPoly(triangle)
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.SetMaterial(DISCORDMATERIAL) -- Use our cached material
+        surface.DrawTexturedRect(4, 6, 64, 64)
+        draw.DrawText("Join our Discord for", 'SS_JOINFONT', 70, 4)
+        draw.DrawText("Double income &\n20,000 points!", 'SS_JOINFONTBIG', 70, 22)
+    end
 
-            local c=Color(Lerp(l,114*0.9,255),Lerp(l,137*0.9,255),Lerp(l,218*0.9,255))
-
-            draw.RoundedBox(16, 0,0,w,h-50, c)
-
-            local x1,y1 = 100,40
-            local triangle = {
-                { x = x1, y = y1 },
-                { x = x1+100, y = y1 },
-                { x = x1+50, y = y1+50 },
-            }
-            
-            surface.SetDrawColor(c.r,c.g,c.b,255)
-            draw.NoTexture()
-            surface.DrawPoly( triangle )
-
-            surface.SetDrawColor( 255, 255, 255, 255 ) 
-            surface.SetMaterial( DISCORDMATERIAL ) -- Use our cached material
-            surface.DrawTexturedRect( 4, 6, 64,64 )
-
-            draw.DrawText("Join our Discord for",'SS_JOINFONT',70,4)
-            draw.DrawText("Double income &\n20,000 points!",'SS_JOINFONTBIG',70,22)
-            
+    p.Think = function(pnl)
+        -- pnl:SetVisible(IN_DISCORD~=1)
+        if IN_DISCORD == 1 then
+            pnl:Remove()
         end
+    end
 
-        p.Think = function(pnl)
-            -- pnl:SetVisible(IN_DISCORD~=1)
-            if IN_DISCORD==1 then pnl:Remove() end
-        end
+    p.DoClick = function()
+        -- if IN_DISCORD~=1 then
+        gui.OpenURL('http://swampservers.net/discord')
+    end
 
-        p.DoClick = function()
-            -- if IN_DISCORD~=1 then
-            gui.OpenURL('http://swampservers.net/discord')
-            -- gui.OpenURL('https://steamcommunity.com/groups/swampservers')
-            -- end
-        end
+    -- gui.OpenURL('https://steamcommunity.com/groups/swampservers')
     -- end
-
+    -- end
     PointshopDollarParticlePoints = -0.2
     PointshopDollarParticles = {}
     p = vgui.Create("DButton", self.botbar)

@@ -166,7 +166,7 @@ function SS_ApplyMaterialMods(ent, mods)
         SS_PPM_SetSubMaterials(ent)
     end
 
-    if ent:GetModel()==HumanTeamModel or ent:GetModel()==PonyTeamModel then return end
+    if ent:GetModel() == HumanTeamModel or ent:GetModel() == PonyTeamModel then return end
 
     for _, item in ipairs(mods) do
         if item.materialmod then

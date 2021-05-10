@@ -157,10 +157,10 @@ function SWEP:PrimaryAttack()
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
 
-    if self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp")==1 then
+    if self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1 then
         bullet.Damage = bullet.Damage
         bullet.Num = bullet.Num * 2 --math.floor(bullet.Num * 1.5)
-        bullet.Spread.x = 2.5*bullet.Spread.x
+        bullet.Spread.x = 2.5 * bullet.Spread.x
     end
 
     self.Owner:FireBullets(bullet)
@@ -171,7 +171,6 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-
 end
 
 function SWEP:Reload()
@@ -180,20 +179,17 @@ function SWEP:Reload()
     if not self.Owner:IsPlayer() then return end
     local maxcap = self.Primary.ClipSize
     local spaceavail = self.Weapon:Clip1()
-    local shellz = (maxcap) - (spaceavail)  + 1
+    local shellz = (maxcap) - (spaceavail) + 1
     if (timer.Exists("ShotgunReload_" .. self.Owner:UniqueID())) or (self.Owner.NextReload or 0) > CurTime() or maxcap == spaceavail then return end
 
     if self.Owner:IsPlayer() then
         if self.Owner:GetAmmoCount(self.Primary.Ammo) == 0 then return end
+        local TIMESCALE = (self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1) and 0.5 or 1
+        local DLY = 2 * TIMESCALE
 
-        local TIMESCALE = ( self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp")==1 ) and 0.5 or 1
-
-        local DLY = 2 * TIMESCALE 
-
-            if self.Weapon:GetNextPrimaryFire() <= (CurTime() + DLY) then
-                self.Weapon:SetNextPrimaryFire(CurTime() + DLY) -- wait TWO seconds before you can shoot again
-            end
-
+        if self.Weapon:GetNextPrimaryFire() <= (CurTime() + DLY) then
+            self.Weapon:SetNextPrimaryFire(CurTime() + DLY) -- wait TWO seconds before you can shoot again
+        end
 
         self.Weapon:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START) -- sending start reload anim
         self.Owner:SetAnimation(PLAYER_RELOAD)
@@ -207,7 +203,7 @@ function SWEP:Reload()
         if SERVER and self.Owner:Alive() then
             local timerName = "ShotgunReload_" .. self.Owner:UniqueID()
 
-            timer.Create(timerName, (.5 + .05)*TIMESCALE, shellz, function()
+            timer.Create(timerName, (.5 + .05) * TIMESCALE, shellz, function()
                 if not IsValid(self) then return end
 
                 if IsValid(self.Owner) and IsValid(self.Weapon) then

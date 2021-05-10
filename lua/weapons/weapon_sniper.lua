@@ -111,10 +111,15 @@ end
 function SWEP:CalcView(ply, pos, ang, fov)
     if SERVER then return pos, ang, fov end
     -- fov = fov - self:GetNWInt("sc", 0) * 33
-
     local sc = self:GetNWInt("sc", 0)
-    if sc==1 then fov = 40 end
-    if sc==2 then fov = 15 end
+
+    if sc == 1 then
+        fov = 40
+    end
+
+    if sc == 2 then
+        fov = 15
+    end
 
     return pos, ang, fov
 end

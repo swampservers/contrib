@@ -388,24 +388,30 @@ hook.Add("PreDrawOpaqueRenderables", "SpadesAntiXray", function()
     end
 end)
 
+timer.Create("MinecraftPlayerLighting", 0.1, 0, function()
+    if IsValid(LocalPlayer()) and LocalPlayer().GetLocationName and LocalPlayer():GetLocationName() == "In Minecraft" then
+        --hack but it works
+        hook.Add("PrePlayerDraw", "MCPRPD", function(ply)
+            cvx_pre_draw_leaf(ply)
+        end)
 
-timer.Create("MinecraftPlayerLighting",0.1,0,function()
-    if IsValid(LocalPlayer()) and LocalPlayer().GetLocationName and LocalPlayer():GetLocationName()=="In Minecraft" then
-        hook.Add("PrePlayerDraw","MCPRPD", function(ply) cvx_pre_draw_leaf(ply) end) --hack but it works
-        hook.Add("PostPlayerDraw","MCPOPD", function(ply) cvx_post_draw_leaf() end)
-        hook.Add("HUDPaint","MinecraftCompass",function()
-                local fw = LocalPlayer():EyeAngles():Forward()
-                fw.z=0
-                fw:Normalize()
-                surface.SetDrawColor(255,255,255,255)
-                local c = 45
-                surface.DrawCircle(c,c,30,255,255,255)
-                surface.DrawLine(c,c,c+30*-fw.x,c+30*-fw.y)
-                draw.SimpleText("N","DermaDefault",c+38*-fw.x,c+38*-fw.y,Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+        hook.Add("PostPlayerDraw", "MCPOPD", function(ply)
+            cvx_post_draw_leaf()
+        end)
+
+        hook.Add("HUDPaint", "MinecraftCompass", function()
+            local fw = LocalPlayer():EyeAngles():Forward()
+            fw.z = 0
+            fw:Normalize()
+            surface.SetDrawColor(255, 255, 255, 255)
+            local c = 45
+            surface.DrawCircle(c, c, 30, 255, 255, 255)
+            surface.DrawLine(c, c, c + 30 * -fw.x, c + 30 * -fw.y)
+            draw.SimpleText("N", "DermaDefault", c + 38 * -fw.x, c + 38 * -fw.y, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end)
     else
-        hook.Remove("PrePlayerDraw","MCPRPD")
-        hook.Remove("PostPlayerDraw","MCPOPD")
-        hook.Remove("HUDPaint","MinecraftCompass")
+        hook.Remove("PrePlayerDraw", "MCPRPD")
+        hook.Remove("PostPlayerDraw", "MCPOPD")
+        hook.Remove("HUDPaint", "MinecraftCompass")
     end
 end)
