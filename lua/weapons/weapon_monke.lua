@@ -60,7 +60,7 @@ function SWEP:Reload(networked)
     local ply = self:GetOwner()
 
     if (SERVER) then
-        ply:SetHealth(math.min(self.Owner:Health() + math.random(8, 50), self.Owner:GetMaxHealth()))
+        ply:SetHealth(math.min(self.Owner:Health() + math.random(8, 30), self.Owner:GetMaxHealth()))
     end
 
     ply.ChewScale = 1

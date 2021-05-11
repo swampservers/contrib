@@ -464,11 +464,9 @@ local function DrawName(ply, opacityScale)
     local ang = LocalPlayer():EyeAngles()
     ang:RotateAroundAxis(ang:Forward(), 90)
     ang:RotateAroundAxis(ang:Right(), 90)
-
-    if LocalPlayer():InVehicle() then
-        ang:RotateAroundAxis(ang:Right(), -LocalPlayer():GetVehicle():GetAngles().y)
-    end
-
+    -- if LocalPlayer():InVehicle() then
+    --     ang:RotateAroundAxis(ang:Right(), -LocalPlayer():GetVehicle():GetAngles().y)
+    -- end
     --[[
 	if ply:InVehicle() then
 		pos = pos + Vector( 0, 0, 30 )
@@ -518,8 +516,8 @@ hook.Add("DrawTranslucentAccessories", "DrawPlayerNames2", function(ply)
     to = to / dist
     local dot = fwd:Dot(to)
 
-    if LocalPlayer():InTheater() then
-        if theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool() then return end
+    if LocalPlayer():InTheater() or LocalPlayer():InVehicle() then
+        if LocalPlayer():InTheater() and (theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool()) then return end
         DrawName(ply, 0.5 * math.min(1, ((dot - 0.85) * 6.66 + math.max(-0.5, (1 - dist) * 0.01))))
     else
         DrawName(ply, math.min(1, (dot - 0.8) * 5 + math.max(0, (200 - dist) * 0.01)))

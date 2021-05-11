@@ -76,9 +76,10 @@ hook.Add("EntityTakeDamage", "GooStunGive", function(target, dmginfo)
     if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar" and dmginfo:GetAttacker() == target) then return true end
 
     if (target:IsPlayer() and dmginfo:GetInflictor():GetClass() == "thrown_goo_jar") then
-        local coomer = target.hvp==2 -- (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
+        local coomer = target.hvp == 2 -- (IsValid(target:GetActiveWeapon()) and target:GetActiveWeapon():GetClass() == "weapon_coomjar")
 
-        if (not coomer) then -- or true) then
+        -- or true) then
+        if (not coomer) then
             target:GooStun(math.Clamp(dmginfo:GetDamage() / 10, 0, 4))
         end
     end
@@ -113,7 +114,7 @@ end)
 hook.Add("SetupMove", "GooMovement", function(ply, mv, cmd)
     if (ply:GetGooStunned()) then
         local stunned, time = ply:GetGooStunned()
-        local div = Lerp(math.min(time / 4, 1), 1, 400)
+        local div = Lerp(math.min(time / 4, 1), 1, 100)
         mv:SetForwardSpeed(mv:GetForwardSpeed() / div)
         mv:SetSideSpeed(mv:GetSideSpeed() / div)
         ply:ViewPunch(AngleRand() * FrameTime() * 0.04)
@@ -168,12 +169,12 @@ function ENT:Touch(entity)
     local pos = trace.HitPos + trace.HitNormal * 48
     local decals = 0
     local dmg = DamageInfo()
-    dmg:SetDamage(55)
+    dmg:SetDamage(65)
     dmg:SetDamageType(DMG_ACID)
     dmg:SetDamageForce(self:GetVelocity() * 1000)
     dmg:SetAttacker(IsValid(self:GetOwner()) and self:GetOwner() or game.GetWorld())
     dmg:SetInflictor(self)
-    util.BlastDamageInfo(dmg, trace.HitPos, 180) --128)
+    util.BlastDamageInfo(dmg, trace.HitPos, 300) --128)
 
     while decals < 5 do
         local tr = {}
@@ -192,6 +193,8 @@ function ENT:Touch(entity)
             effectdata:SetScale(10)
             util.Effect("watersplash", effectdata)
             decals = decals + 1
+        else
+            decals = decals + 0.1 ----------THIS WASNT HERE AND WAS FREEZING THE SERVER
         end
 
         dir = VectorRand()
