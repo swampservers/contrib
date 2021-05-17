@@ -630,6 +630,10 @@ timer.Create("AreaMusicController", 0.5, 0, function()
         target = "gym"
     end
 
+    if ValidPanel(HELLTAKERFRAME) then
+        target = "helltaker"
+    end
+
     if MusicPagePanel then
         if target == MusicPagePanel.target then
             -- MusicPagePanel:RunJavascript("setAttenuation(" .. (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1") .. ")")

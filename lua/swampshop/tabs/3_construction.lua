@@ -7,13 +7,6 @@ local function CannotBuyTrash(self, ply)
     if SERVER then return CannotMakeTrash(ply) end
 end
 
-SS_WeaponProduct({
-    class = "weapon_trash_paint",
-    name = 'Paint Tool',
-    description = "Paint a solid color onto props. Also changes the color of lights.",
-    model = 'models/props_junk/metal_paintcan001a.mdl',
-    price = 2000
-})
 
 SS_WeaponProduct({
     class = "weapon_trash_tape",
@@ -21,6 +14,15 @@ SS_WeaponProduct({
     name = 'Tape Tool',
     description = "Use this to tape (freeze) and un-tape props.",
     model = 'models/swamponions/ducktape.mdl'
+})
+
+
+SS_WeaponProduct({
+    class = "weapon_trash_paint",
+    name = 'Paint Tool',
+    description = "Paint a solid color onto props. Also changes the color of lights.",
+    model = 'models/props_junk/metal_paintcan001a.mdl',
+    price = 2000
 })
 
 SS_Product({

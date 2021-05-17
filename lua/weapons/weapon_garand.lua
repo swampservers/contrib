@@ -64,8 +64,11 @@ sound.Add({
     name = "DOD_Garand.Fire",
     channel = CHAN_STATIC,
     volume = 0.9,
-    level = 80,
-    sound = {"dod_garand/scar20_01.wav", "dod_garand/scar20_02.wav", "dod_garand/scar20_03.wav"}
+    level = 70,
+    sound = {
+        "dod_garand/scar20_01.wav", "dod_garand/scar20_02.wav",
+        "dod_garand/scar20_03.wav"
+    }
 })
 
 function SWEP:SprintMod()
@@ -73,13 +76,14 @@ function SWEP:SprintMod()
 end
 
 function SWEP:IsSprinting()
-    return self.Owner:GetVelocity():Length() > (self.Owner:GetWalkSpeed() + self.Owner:GetRunSpeed()) * 0.5
+    return self.Owner:GetVelocity():Length() >
+               (self.Owner:GetWalkSpeed() + self.Owner:GetRunSpeed()) * 0.5
 end
 
 function SWEP:DrawWorldModel()
-    --self:SetupBones()
+    -- self:SetupBones()
     local mrt = self:GetBoneMatrix(0)
-    if (mrt) then end --mrt:SetTranslation(mrt:GetTranslation()+(mrt:GetUp()*-0.8)) --self:SetBoneMatrix(0, mrt )
+    if (mrt) then end -- mrt:SetTranslation(mrt:GetTranslation()+(mrt:GetUp()*-0.8)) --self:SetBoneMatrix(0, mrt )
     self:DrawModel()
 end
 
@@ -97,12 +101,15 @@ end
 function SWEP:DrawHUD()
     local mx = ScrW() / 2
     local my = ScrH() / 2
-    self.XHairspread = (EyePos() + EyeAngles():Forward() + EyeAngles():Right() * self:GetCone()):ToScreen().x - mx
+    self.XHairspread = (EyePos() + EyeAngles():Forward() + EyeAngles():Right() *
+                           self:GetCone()):ToScreen().x - mx
     local spread = self.XHairspread
     local len = 10
     local mx = ScrW() / 2
     local my = ScrH() / 2
-    surface.SetDrawColor(255, 200, 20, Lerp(math.Clamp((self:GetCone() - 0.3) * 10, 0, 1), 255, 0))
+    surface.SetDrawColor(255, 200, 20, Lerp(
+                             math.Clamp((self:GetCone() - 0.3) * 10, 0, 1), 255,
+                             0))
     surface.DrawLine(mx - (spread + len), my, mx - spread, my)
     surface.DrawLine(mx + (spread + len), my, mx + spread, my)
     surface.DrawLine(mx, my - (spread + len), mx, my - spread)
@@ -119,7 +126,8 @@ if CLIENT then
             changesprintness = -1 * changesprintness
         end
 
-        self.SprintNess = math.Clamp((self.SprintNess or 0) - changesprintness, 0, 1)
+        self.SprintNess = math.Clamp((self.SprintNess or 0) - changesprintness,
+                                     0, 1)
     end
 end
 
@@ -129,7 +137,8 @@ function SWEP:Initialize()
 end
 
 function SWEP:GetCone()
-    local mc = math.max((self.Owner:GetVelocity():LengthSqr() * 0.000005) - 0.01, 0)
+    local mc = math.max(
+                   (self.Owner:GetVelocity():LengthSqr() * 0.000005) - 0.01, 0)
     -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 
     return mc + 0.005
@@ -164,7 +173,8 @@ function SWEP:PrimaryAttack()
     local vm = self.Owner:GetViewModel()
     self.Owner:MuzzleFlash() -- Crappy muzzle light
     self.Owner:SetAnimation(PLAYER_ATTACK1)
-    vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
+    vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(
+                                         ACT_VM_PRIMARYATTACK))
     vm:SetPlaybackRate(BOLTACTIONSPEED)
     self.Owner:FireBullets(bullet)
     self:EmitSound("DOD_Garand.Fire")
@@ -180,25 +190,21 @@ function SWEP:PrimaryAttack()
     self:TakePrimaryAmmo(1)
     self.Owner:ViewPunch(Angle(rnda, rndb, rnda))
     self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-    --self.Owner:SetAnimation( PLAYER_ATTACK1 )
-    --timer.Simple( 2, function() self:SendWeaponAnim( ACT_VM_SECONDARYATTACK ) end )
-    --timer.Simple( self:SequenceDuration(), function() if ( !IsValid( self ) ) then return end self:SendWeaponAnim( ACT_VM_IDLE ) end ) 
+    -- self.Owner:SetAnimation( PLAYER_ATTACK1 )
+    -- timer.Simple( 2, function() self:SendWeaponAnim( ACT_VM_SECONDARYATTACK ) end )
+    -- timer.Simple( self:SequenceDuration(), function() if ( !IsValid( self ) ) then return end self:SendWeaponAnim( ACT_VM_IDLE ) end ) 
 end
 
-function SWEP:SecondaryAttack()
-    if (not self:CanPrimaryAttack()) then return end
-end
+function SWEP:SecondaryAttack() if (not self:CanPrimaryAttack()) then return end end
 
 function SWEP:Reload()
     if self.Weapon:GetNextPrimaryFire() > CurTime() then return end
     local wep = self.Weapon
     local owner = self.Owner
 
-    --if wep:Clip1() == 8 then return false end
+    -- if wep:Clip1() == 8 then return false end
     if not InGarandZone(self.Owner) then
-        if SERVER then
-            self.Owner:Notify("There's no ammo here!")
-        end
+        if SERVER then self.Owner:Notify("There's no ammo here!") end
 
         return false
     end
@@ -220,8 +226,11 @@ killicon.Add( "weapon_sniper", "HUD/killicons/kcon_kar98", Color ( 0, 255, 0, 25
 end
 ]]
 function InGarandZone(v)
-    if v:GetPos():WithinAABox(Vector(-959, -1732, 332), Vector(-276, -1048, 431)) then
-        if v:GetPos():DistToSqr(Vector(-618, -1390, 382)) < 168 * 168 then return true end
+    if v:GetPos()
+        :WithinAABox(Vector(-959, -1732, 332), Vector(-276, -1048, 431)) then
+        if v:GetPos():DistToSqr(Vector(-618, -1390, 382)) < 168 * 168 then
+            return true
+        end
     end
 
     return false
@@ -229,8 +238,6 @@ end
 
 hook.Add("ScalePlayerDamage", "garandthing", function(ply, hg, dmg)
     if dmg:GetAmmoType() == game.GetAmmoID("garand") then
-        if ply:GetLocationName() ~= "The Pit" then
-            dmg:SetDamage(10)
-        end
+        if ply:GetLocationName() ~= "The Pit" then dmg:SetDamage(10) end
     end
 end)

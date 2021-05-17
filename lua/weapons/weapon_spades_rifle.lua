@@ -19,7 +19,7 @@ SWEP.FiresUnderwater = true
 SWEP.Weight = 50
 SWEP.DrawCrosshair = false
 SWEP.DrawAmmo = true
---gets multiplied by 1.6 for player
+-- gets multiplied by 1.6 for player
 SWEP.Primary.Damage = 25
 SWEP.Primary.ClipSize = 8
 SWEP.Primary.Ammo = "semiauto"
@@ -48,13 +48,13 @@ game.AddAmmoType({
     maxsplash = 5
 })
 
-sound.Add({
-    name = "DOD_Garand.Fire",
-    channel = CHAN_STATIC,
-    volume = 0.9,
-    level = 110,
-    sound = {"dod_garand/scar20_01.wav", "dod_garand/scar20_02.wav", "dod_garand/scar20_03.wav"}
-})
+-- sound.Add({
+--     name = "DOD_Garand.Fire",
+--     channel = CHAN_STATIC,
+--     volume = 0.9,
+--     level = 110,
+--     sound = {"dod_garand/scar20_01.wav", "dod_garand/scar20_02.wav", "dod_garand/scar20_03.wav"}
+-- })
 
 if SERVER then
     util.AddNetworkString("SpadesMuzzleFlash")
@@ -65,9 +65,8 @@ if SERVER then
         net.SendOmit(ply)
     end
 else
-    net.Receive("SpadesMuzzleFlash", function()
-        SpadesMuzzleFlash(net.ReadEntity())
-    end)
+    net.Receive("SpadesMuzzleFlash",
+                function() SpadesMuzzleFlash(net.ReadEntity()) end)
 end
 
 --[[
@@ -76,7 +75,7 @@ function SWEP:Initialize()
 end]]
 function SWEP:Think()
     if IsValid(self.Owner) then
-        local desiredHoldType = self.HoldType --self.Owner:IsSprinting() and "passive" or self.HoldType
+        local desiredHoldType = self.HoldType -- self.Owner:IsSprinting() and "passive" or self.HoldType
 
         if desiredHoldType ~= self:GetHoldType() then
             self:SetHoldType(desiredHoldType)
@@ -94,13 +93,9 @@ function SWEP:DrawWorldModel()
         local oang = self:GetAngles()
         local bp, ba = ply:GetBonePosition(bon)
 
-        if (bp) then
-            opos = bp
-        end
+        if (bp) then opos = bp end
 
-        if (ba) then
-            oang = ba
-        end
+        if (ba) then oang = ba end
 
         oang:RotateAroundAxis(oang:Up(), -90)
         oang:RotateAroundAxis(oang:Forward(), -92)
@@ -114,7 +109,7 @@ function SWEP:DrawWorldModel()
             opos = opos + oang:Right() * 5
         end
 
-        --oang:RotateAroundAxis(oang:Right(),180)
+        -- oang:RotateAroundAxis(oang:Right(),180)
         self:SetupBones()
         self:SetModelScale(1.25, 0)
         local mrt = self:GetBoneMatrix(0)
@@ -131,8 +126,8 @@ end
 
 function SWEP:GetViewModelPosition(pos, ang)
     if self.setsight then
-        self.ViewModelFOV = 40 --this and 67 are like added together
-        --set it later to disable sway + lag
+        self.ViewModelFOV = 40 -- this and 67 are like added together
+        -- set it later to disable sway + lag
 
         return pos, ang
     end
@@ -146,21 +141,15 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 function SWEP:CalcView(ply, pos, ang, fov)
-    --fov = fov - self:GetNWInt("sc",0)*33
-    if self.setsight then
-        fov = math.min(fov, 66)
-    end
+    -- fov = fov - self:GetNWInt("sc",0)*33
+    if self.setsight then fov = math.min(fov, 66) end
 
-    if CLIENT then
-        self.lastfov = fov
-    end
+    if CLIENT then self.lastfov = fov end
 
     return pos, ang, fov
 end
 
-function SWEP:AdjustMouseSensitivity()
-    return self.setsight and 0.6 or 1.0
-end
+function SWEP:AdjustMouseSensitivity() return self.setsight and 0.6 or 1.0 end
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     self.DrawDot = false
@@ -168,12 +157,14 @@ function SWEP:PreDrawViewModel(vm, weapon, ply)
     if self.setsight then
         local trupos = EyePos()
         local truang = EyeAngles()
-        trupos, truang = LocalToWorld(Vector(-2, 6.947, 5.085), Angle(0, 0, 0), trupos, truang)
+        trupos, truang = LocalToWorld(Vector(-2, 6.947, 5.085), Angle(0, 0, 0),
+                                      trupos, truang)
         vm:SetPos(trupos)
         vm:SetAngles(truang)
 
-        --this resets the animation early
-        if vm:GetSequenceActivity(vm:GetSequence()) ~= ACT_VM_PRIMARYATTACK or vm:GetCycle() > 0.35 then
+        -- this resets the animation early
+        if vm:GetSequenceActivity(vm:GetSequence()) ~= ACT_VM_PRIMARYATTACK or
+            vm:GetCycle() > 0.35 then
             vm:SendViewModelMatchingSequence(1)
             vm:SetCycle(1)
             self.DrawDot = true
@@ -186,33 +177,30 @@ end
 function SWEP:DrawHUD()
     local mx = ScrW() / 2
     local my = ScrH() / 2
-    --TODO
+    -- TODO
     --[[
 	]]
-    if RETICLETOSCREEN then end --mx = RETICLETOSCREEN.x --my = RETICLETOSCREEN.y
+    if RETICLETOSCREEN then end -- mx = RETICLETOSCREEN.x --my = RETICLETOSCREEN.y
     surface.SetDrawColor(255, 255, 255, 255)
 
-    --and not PlayerIsSprintRecovering(self.Owner) then
+    -- and not PlayerIsSprintRecovering(self.Owner) then
     if not self.setsight then
-        local ftan = math.tan(math.rad((self.lastfov or 90) * 0.5)) / math.sqrt(16.0 / 9.0)
+        local ftan = math.tan(math.rad((self.lastfov or 90) * 0.5)) /
+                         math.sqrt(16.0 / 9.0)
         local spread = 0.5 * ScrH() * self:GetCone() / ftan
         spread = math.floor(spread)
         local lastx = math.floor(spread) - 1
         local lasty = 0
-        local angstep = 5 --360/16
+        local angstep = 5 -- 360/16
 
         for i = angstep, 360, angstep do
             local rad = math.rad(i)
             local nextx = math.Round(math.cos(rad) * spread)
             local nexty = math.Round(math.sin(rad) * spread)
 
-            if nextx > 0 then
-                nextx = nextx - 1
-            end
+            if nextx > 0 then nextx = nextx - 1 end
 
-            if nexty > 0 then
-                nexty = nexty - 1
-            end
+            if nexty > 0 then nexty = nexty - 1 end
 
             surface.DrawLine(mx + lastx, my + lasty, mx + nextx, my + nexty)
             lastx = nextx
@@ -228,9 +216,7 @@ function SWEP:DrawHUD()
     surface.DrawRect(mx - 1, my - 1, 2, 2)
 end
 
-function SWEP:GetCone()
-    return self.setsight and 0 or 0.018
-end
+function SWEP:GetCone() return self.setsight and 0 or 0.018 end
 
 function SWEP:PrimaryAttack()
     if self:IsReloading() then return end
@@ -238,7 +224,7 @@ function SWEP:PrimaryAttack()
     local vm = self.Owner:GetViewModel()
 
     if CLIENT and IsFirstTimePredicted() then
-        --this is such crap
+        -- this is such crap
         local ps, ng = vm:GetBonePosition(vm:LookupBone("ValveBiped.bolt"))
 
         if self.setsight then
@@ -268,9 +254,7 @@ function SWEP:PrimaryAttack()
     bullet.Distance = 5000
 
     if IsFirstTimePredicted() then
-        bullet.Callback = function(att, tr, dmg)
-            cvx_shot(tr, 0.34, att)
-        end
+        bullet.Callback = function(att, tr, dmg) cvx_shot(tr, 0.34, att) end
     end
 
     self.Owner:FireBullets(bullet)
@@ -280,9 +264,10 @@ function SWEP:PrimaryAttack()
     --[[ local rnda = -0.5
 	local rndb = math.random(-1, 1)*0.5
 	self.Owner:ViewPunch( Angle( rnda,rndb,rnda ) ) ]]
-    --was 1,0.6
+    -- was 1,0.6
     self:DoRecoilOffset(1.1, 0.6)
-    vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
+    vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(
+                                         ACT_VM_PRIMARYATTACK))
     vm:SetPlaybackRate(1.2)
     self:EmitSound("DOD_Garand.Fire")
     self:TakePrimaryAmmo(1)
@@ -297,12 +282,15 @@ end
 
 function SWEP:DoRecoilOffset(vd, hd)
     if CLIENT and IsFirstTimePredicted() then
-        --self.Owner:SetEyeAngles(self.Owner:EyeAngles() + Angle(-vd,Lerp(CurTime()%1,hd,-hd),0))
-        --RecoilAngleOffset = RecoilAngleOffset + Vector(-vd,Lerp(CurTime()%1,hd,-hd),0)
-        --aos seems like a 1sec sin wave but a bit sharper?
+        -- self.Owner:SetEyeAngles(self.Owner:EyeAngles() + Angle(-vd,Lerp(CurTime()%1,hd,-hd),0))
+        -- RecoilAngleOffset = RecoilAngleOffset + Vector(-vd,Lerp(CurTime()%1,hd,-hd),0)
+        -- aos seems like a 1sec sin wave but a bit sharper?
         local s = math.sin(CurTime() * 4.2)
         local sign = s > 0 and 1 or -1
-        RecoilAngleOffset = RecoilAngleOffset + Vector(-vd, sign * hd * math.pow(math.abs(s), 0.25), 0)
+        RecoilAngleOffset = RecoilAngleOffset +
+                                Vector(-vd,
+                                       sign * hd * math.pow(math.abs(s), 0.25),
+                                       0)
     end
 end
 
@@ -314,13 +302,12 @@ if CLIENT then
         local mult = 1.0 / math.pow(2, RealFrameTime() * 50)
         local nxt = RecoilAngleOffset * mult
 
-        if nxt:Length() < 0.01 then
-            nxt = Vector(0, 0, 0)
-        end
+        if nxt:Length() < 0.01 then nxt = Vector(0, 0, 0) end
 
         if IsValid(LocalPlayer()) then
             local diff = RecoilAngleOffset - nxt
-            LocalPlayer():SetEyeAngles(LocalPlayer():EyeAngles() + Angle(diff.x, diff.y, 0))
+            LocalPlayer():SetEyeAngles(LocalPlayer():EyeAngles() +
+                                           Angle(diff.x, diff.y, 0))
         end
 
         RecoilAngleOffset = nxt
@@ -329,9 +316,7 @@ if CLIENT then
     hook.Add("Think", "RecoilUpdater", RecoilUpdateFunction)
 end
 
-function SWEP:Deploy()
-    self:DisableSight()
-end
+function SWEP:Deploy() self:DisableSight() end
 
 function SWEP:SecondaryAttack()
     if self:IsReloading() then return end
@@ -339,9 +324,7 @@ function SWEP:SecondaryAttack()
     if SERVER or (CLIENT and IsFirstTimePredicted()) then
         self.setsight = not self:GetNWBool("sight", false)
 
-        if SERVER then
-            self:SetNWBool("sight", self.setsight or false)
-        end
+        if SERVER then self:SetNWBool("sight", self.setsight or false) end
     end
 
     self.Weapon:SetNextSecondaryFire(CurTime())
@@ -366,9 +349,7 @@ function SWEP:Reload()
 
             self:EmitSound("dod_garand/awp_draw.wav")
 
-            if SERVER then
-                SuppressHostEvents()
-            end
+            if SERVER then SuppressHostEvents() end
         end
     end)
 
@@ -380,17 +361,13 @@ function SWEP:Reload()
 
             self:EmitSound("dod_garand/bizon_boltforward.wav")
 
-            if SERVER then
-                SuppressHostEvents()
-            end
+            if SERVER then SuppressHostEvents() end
         end
     end)
 end
 
---this is only necessary due to the custom playbackrate
-function SWEP:IsReloading()
-    return CurTime() < (self.ReloadEndTime or 0)
-end
+-- this is only necessary due to the custom playbackrate
+function SWEP:IsReloading() return CurTime() < (self.ReloadEndTime or 0) end
 
 function SWEP:DisableSight()
     self.setsight = false
