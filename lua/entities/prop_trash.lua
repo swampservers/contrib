@@ -58,7 +58,8 @@ TrashLocationOverrides = {
 }
 
 TrashNoFreezeNodes = {
-    {Vector(-2040, -60, 80), 120}, {Vector(-1970, -1120, 100), 150}
+    {Vector(-2040, -60, 80), 120},
+    {Vector(-1970, -1120, 100), 150}
 }
 
 -- {Vector(660,-1860,36),100},
@@ -85,7 +86,9 @@ function ENT:Initialize()
         self:UnTape()
 
         if PropTrashExplosiveModels[self:GetModel()] then
-            self.OnShoot = function(this) this:Remove() end
+            self.OnShoot = function(this)
+                this:Remove()
+            end
 
             self.OnRemove = function()
                 local effectdata = EffectData()
@@ -136,9 +139,7 @@ if CLIENT then
     function ENT:Think()
         local light = PropTrashLightData[self:GetModel()]
 
-        if light and (self:GetTaped() or light.untaped) and
-            EyePos():Distance(self:GetPos()) <
-            (self:GetPos().z > -48 and 1000 or 3000) then
+        if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then
             local dlight = DynamicLight(self:EntIndex())
 
             if dlight then
@@ -148,8 +149,7 @@ if CLIENT then
                 dlight.b = self:GetColor().b
                 dlight.brightness = light.brightness
                 dlight.Size = light.size
-                dlight.style = (light.style == -1) and self:EntIndex() % 12 or
-                                   light.style
+                dlight.style = (light.style == -1) and self:EntIndex() % 12 or light.style
 
                 if light.dir then
                     local d = Vector(0, 0, 0)
@@ -174,8 +174,7 @@ if CLIENT then
 end
 
 function ENT:Draw()
-    if self:GetPos():DistToSqr(EyePos()) > AutoCullBase() *
-        (self:GetModelRadius() or 1) * 3.5 then return end
+    if self:GetPos():DistToSqr(EyePos()) > AutoCullBase() * (self:GetModelRadius() or 1) * 3.5 then return end
 
     if PropTrashLookedAt == self then
         local cr, cg, cb = render.GetColorModulation()
@@ -198,8 +197,7 @@ function ENT:Draw()
 
     if self:GetMaterial() == "phoenix_storms/gear" then
         local cr, cg, cb = render.GetColorModulation()
-        render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3,
-                                  (cb * 1.6) + 0.3)
+        render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3, (cb * 1.6) + 0.3)
     end
 
     BaseClass.Draw(self) -- , true)
@@ -216,8 +214,7 @@ function ENT:Use(ply)
                 SitInSeat(ply, self, ply:EyePos())
                 self:SetOwnerID(ply:SteamID())
             else
-                if self:GetClass() == "prop_trash_wheelchair" and
-                    IsValid((self.UseTable or {})[1]) then
+                if self:GetClass() == "prop_trash_wheelchair" and IsValid((self.UseTable or {})[1]) then
                     ply:Notify("Too heavy!")
 
                     return
@@ -249,11 +246,12 @@ function ENT:UnTape()
     self.UpdateTime = CurTime()
 end
 
-function ENT:IsUnTaped() return not self:GetTaped() end
+function ENT:IsUnTaped()
+    return not self:GetTaped()
+end
 
 function ENT:GetLocation()
-    if (self.LastLocationCoords == nil) or
-        (self:GetPos():DistToSqr(self.LastLocationCoords) > 1) then
+    if (self.LastLocationCoords == nil) or (self:GetPos():DistToSqr(self.LastLocationCoords) > 1) then
         self.LastLocationCoords = self:GetPos()
         self.LastLocationIndex = Location.Find(self)
     end
@@ -268,9 +266,7 @@ function ENT:GetLocationClass()
     local t = theater.GetByLocation(locid)
 
     if t then
-        if t:IsPrivate() and not IsValid(t:GetOwner()) then
-            return TRASHLOC_NOBUILD
-        end
+        if t:IsPrivate() and not IsValid(t:GetOwner()) then return TRASHLOC_NOBUILD end
 
         return TRASHLOC_NOSPAWN
     end
@@ -324,7 +320,9 @@ end
 
 -- MIGHT BE A FILE RUN ORDER ISSUE
 if HumanTeamName then
-    function ENT:CanExist() return true end
+    function ENT:CanExist()
+        return true
+    end
 else
     function ENT:CanExist()
         -- local vec = self:GetPos()
@@ -333,8 +331,7 @@ else
         -- someone sitting in the seat
         if IsValid((self.UseTable or {})[1]) then return true end
 
-        return not (self:GetLocationClass() == TRASHLOC_NOSPAWN and
-                   self:GetOwnerID() ~= self:GetLocationOwner())
+        return not (self:GetLocationClass() == TRASHLOC_NOSPAWN and self:GetOwnerID() ~= self:GetLocationOwner())
     end
 end
 
@@ -351,8 +348,9 @@ function ENT:CanTape(userid)
 
     local lown = self:GetLocationOwner()
 
-    return ((self:GetOwnerID() == userid) and (lown == nil) and
-               (self:GetLocationClass() == TRASHLOC_BUILD)) or (lown == userid)
+    return ((self:GetOwnerID() == userid) and (lown == nil) and (self:GetLocationClass() == TRASHLOC_BUILD)) or (lown == userid)
 end
 
-function ENT:OnShoot() self:UnTape() end
+function ENT:OnShoot()
+    self:UnTape()
+end

@@ -71,7 +71,7 @@ local UNIQUEVALUE = tostring(os.time())
 hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
     for ply, _ in pairs(PPM_PONIES_NEARBY) do
         if ply.ponydata and not ply.ponymaterials then
-            ply.ponydata_tex = {} --todo remove this
+            ply.ponydata_tex = {} -- todo remove this
             ply.ponymaterials = {}
 
             for _, v in ipairs(PPM_player_mat) do
@@ -84,7 +84,7 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 PPM.currt_success = false
                 ply.ponydata_tex[k] = PPM_CreateTexture(UNIQUEVALUE .. tostring(ply:EntIndex()) .. k, v)
                 -- ply.ponydata_tex[k .. "_hash"] = v.hash(pony) --remove
-                ply.ponydata_tex[k .. "_draw"] = PPM.currt_success --remove
+                ply.ponydata_tex[k .. "_draw"] = PPM.currt_success -- remove
                 -- if PPM.currt_success then 
                 v.render(ply, ply.ponymaterials)
                 -- print(k)
@@ -165,7 +165,8 @@ function PPM_RagdollRender(self)
 end
 
 hook.Add("CreateClientsideRagdoll", "PPM_CreateClientsideRagdoll", function(entity, ragdoll)
-    if entity:IsPlayer() then
+    -- IsPPMPony check added because of outfitter issue
+    if entity:IsPlayer() and entity:IsPPMPony() then
         ragdoll.RagdollSourcePlayer = entity
         PPM_SetBodyGroups(ragdoll)
         ragdoll.RenderOverride = PPM_RagdollRender

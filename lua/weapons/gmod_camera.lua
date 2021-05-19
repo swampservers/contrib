@@ -206,17 +206,18 @@ function SWEP:DrawWorldModel()
     self:DrawModel()
 end
 
-
 function CameraHUDVisible()
-    return not (IsValid(LocalPlayer()) and LocalPlayer():UsingWeapon("gmod_camera") )
+    return not (IsValid(LocalPlayer()) and LocalPlayer():UsingWeapon("gmod_camera"))
 end
 
-if CLIENT then 
-    hook.Add("Think","RemoveVoiceIcons",function()
-        local visible = CameraHUDVisible() 
+if CLIENT then
+    hook.Add("Think", "RemoveVoiceIcons", function()
+        local visible = CameraHUDVisible()
+
         if ValidPanel(g_VoicePanelList) then
             g_VoicePanelList:SetVisible(visible)
         end
+
         if SwampChat and ValidPanel(SwampChat.Panel) then
             SwampChat.Panel:SetVisible(visible)
         end

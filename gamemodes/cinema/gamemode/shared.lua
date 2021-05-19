@@ -25,7 +25,8 @@ if file.Exists( strMap, "LUA" ) then
 end
 ]]
 --
-function GM:CreateTeams() end
+function GM:CreateTeams()
+end
 
 --[[---------------------------------------------------------
 	 Name: gamemode:PlayerShouldTakeDamage
@@ -36,8 +37,7 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
     if attacker.dodgeball then return false end
 
     if Safe(ply) or Safe(attacker) then
-        if attacker:IsPlayer() and ply:InTheater() and
-            ply:GetTheater():GetOwner() == attacker then return true end
+        if attacker:IsPlayer() and ply:InTheater() and ply:GetTheater():GetOwner() == attacker then return true end
 
         return false
     end
@@ -46,7 +46,9 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 end
 
 function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
-    if hitgroup == HITGROUP_HEAD then dmginfo:ScaleDamage(2) end
+    if hitgroup == HITGROUP_HEAD then
+        dmginfo:ScaleDamage(2)
+    end
 
     if ply:InVehicle() and dmginfo:GetDamageType() == DMG_BURN then
         dmginfo:ScaleDamage(0)
@@ -56,37 +58,30 @@ end
 function GM:EntityTakeDamage(target, dmginfo)
     att = dmginfo:GetAttacker()
 
-    if (dmginfo:GetInflictor() and dmginfo:GetInflictor():IsValid() and
-        dmginfo:GetInflictor():GetClass() == "npc_grenade_frag") then
+    if (dmginfo:GetInflictor() and dmginfo:GetInflictor():IsValid() and dmginfo:GetInflictor():GetClass() == "npc_grenade_frag") then
         dmginfo:ScaleDamage(100)
     end
 
-    if (dmginfo:GetAttacker() and dmginfo:GetAttacker():IsValid() and
-        dmginfo:GetAttacker():GetClass() == "player" and
-        dmginfo:GetAttacker():GetActiveWeapon() and
-        dmginfo:GetAttacker():GetActiveWeapon():IsValid() and
-        dmginfo:GetAttacker():GetActiveWeapon():GetClass() == "weapon_shotgun") then
+    if (dmginfo:GetAttacker() and dmginfo:GetAttacker():IsValid() and dmginfo:GetAttacker():GetClass() == "player" and dmginfo:GetAttacker():GetActiveWeapon() and dmginfo:GetAttacker():GetActiveWeapon():IsValid() and dmginfo:GetAttacker():GetActiveWeapon():GetClass() == "weapon_shotgun") then
         dmginfo:ScaleDamage(2)
     end
 
-    if (dmginfo:GetAttacker() and dmginfo:GetAttacker():IsValid() and
-        dmginfo:GetAttacker():GetClass() == "player" and
-        dmginfo:GetAttacker():GetActiveWeapon() and
-        dmginfo:GetAttacker():GetActiveWeapon():IsValid() and
-        dmginfo:GetAttacker():GetActiveWeapon():GetClass() == "weapon_slam") then
+    if (dmginfo:GetAttacker() and dmginfo:GetAttacker():IsValid() and dmginfo:GetAttacker():GetClass() == "player" and dmginfo:GetAttacker():GetActiveWeapon() and dmginfo:GetAttacker():GetActiveWeapon():IsValid() and dmginfo:GetAttacker():GetActiveWeapon():GetClass() == "weapon_slam") then
         dmginfo:ScaleDamage(1.5)
     end
 
-    if IsValid(att) and att:GetClass() == "player" and
-        IsValid(att:GetActiveWeapon()) and att:GetActiveWeapon():GetClass() ==
-        "weapon_crowbar" then
+    if IsValid(att) and att:GetClass() == "player" and IsValid(att:GetActiveWeapon()) and att:GetActiveWeapon():GetClass() == "weapon_crowbar" then
         dmginfo:SetDamage(25) -- gmod june 2020 update sets crowbar damage to 10, set it back to 25
     end
 end
 
-function GM:GetGameDescription() return self.Name end
+function GM:GetGameDescription()
+    return self.Name
+end
 
-function GM:ShouldCollide(Ent1, Ent2) return false end
+function GM:ShouldCollide(Ent1, Ent2)
+    return false
+end
 
 function GM:Move(ply, mv)
     -- if (player_manager.RunClass(ply, "Move", mv)) then return true end
@@ -103,8 +98,7 @@ end
 -- Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
 function GM:PhysgunPickup(ply, ent)
     if (ent:GetClass():lower() == "player") then
-        if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) and
-            not ent:IsFrozen() then
+        if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) and not ent:IsFrozen() then
             ply.physgunHeld = ent
 
             return true
