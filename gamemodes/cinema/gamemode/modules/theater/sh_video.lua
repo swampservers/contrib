@@ -229,7 +229,7 @@ if CLIENT then
                     local v = th:GetVideo()
 
                     if v and not v:ShouldTrust() then
-						local host = v:Service():GetHost(v)
+                        local host = v:Service():GetHost(v)
                         if host~=nil then TRUSTED_HOST[host] = true end
                         RunConsoleCommand("cinema_refresh")
                     end
