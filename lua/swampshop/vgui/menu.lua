@@ -32,7 +32,14 @@ surface.CreateFont('SS_INCOMEFONT', {
 
 surface.CreateFont('SS_JOINFONT', {
     font = 'Lato',
-    size = 18
+    size = 18,
+    weight = 700
+})
+
+surface.CreateFont('SS_JOINFONTBIG', {
+    font = 'Lato',
+    size = 22,
+    weight = 700
 })
 
 surface.CreateFont('SS_DESCTITLEFONT', {
@@ -498,32 +505,65 @@ function PANEL:Init()
     end
 
     local xo = p:GetWide() + SS_BOTBARHEIGHT
+    -- if IN_DISCORD~=1 then
+    p = vgui.Create("DButton", self)
+    p:SetZPos(1000)
+    p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
+    p:SetSize(230, 72 + 50)
+    p:SetWrap(true)
+    p:SetTextInset(16, 0)
+    -- p:SetFont("SS_JOINFONT")
+    -- p:SetText("Click here to join our Discord for double income!")
+    p:SetText("")
+    p:NoClipping(true)
+    local DISCORDMATERIAL = Material("vgui/discordlogo.png")
 
-    if LocalPlayer().HasHalfPoints then
-        p = vgui.Create("DButton", self)
-        p:SetZPos(1000)
-        p:SetPos(6, self:GetTall() - (52 + SS_BOTBARHEIGHT))
-        p:SetSize(200, 48)
-        p:SetWrap(true)
-        p:SetTextInset(16, 0)
-        p:SetFont("SS_JOINFONT")
-        p:SetText("Click here to join our Steam group for double income!")
+    function p:Paint(w, h)
+        local l = (math.sin(SysTime() * 3) + 1) * 0.1
+        local c = Color(Lerp(l, 114 * 0.9, 255), Lerp(l, 137 * 0.9, 255), Lerp(l, 218 * 0.9, 255))
+        draw.RoundedBox(16, 0, 0, w, h - 50, c)
+        local x1, y1 = 100, 40
 
-        p.UpdateColours = function(pnl)
-            pnl:SetTextColor(SS_ColorBlack)
-        end
+        local triangle = {
+            {
+                x = x1,
+                y = y1
+            },
+            {
+                x = x1 + 100,
+                y = y1
+            },
+            {
+                x = x1 + 50,
+                y = y1 + 50
+            },
+        }
 
-        p.Think = function(pnl)
-            if not LocalPlayer().HasHalfPoints then
-                pnl:Remove()
-            end
-        end
+        surface.SetDrawColor(c.r, c.g, c.b, 255)
+        draw.NoTexture()
+        surface.DrawPoly(triangle)
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.SetMaterial(DISCORDMATERIAL) -- Use our cached material
+        surface.DrawTexturedRect(4, 6, 64, 64)
+        draw.DrawText("Join our Discord for", 'SS_JOINFONT', 70, 4)
+        draw.DrawText("Double income &\n20,000 points!", 'SS_JOINFONTBIG', 70, 22)
+    end
 
-        p.DoClick = function()
-            gui.OpenURL('https://steamcommunity.com/groups/swampservers')
+    p.Think = function(pnl)
+        -- pnl:SetVisible(IN_DISCORD~=1)
+        if IN_DISCORD == 1 then
+            pnl:Remove()
         end
     end
 
+    p.DoClick = function()
+        -- if IN_DISCORD~=1 then
+        gui.OpenURL('http://swampservers.net/discord')
+    end
+
+    -- gui.OpenURL('https://steamcommunity.com/groups/swampservers')
+    -- end
+    -- end
     PointshopDollarParticlePoints = -0.2
     PointshopDollarParticles = {}
     p = vgui.Create("DButton", self.botbar)

@@ -455,20 +455,18 @@ local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
     if (not LocalPlayer():IsStaff()) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
-    local dist = LocalPlayer():GetPos():Distance(ply:GetPos())
+    local dist = EyePos():Distance(ply:EyePos())
     if (dist >= 800) then return end
     local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
     opacity = opacity * opacityScale
     if opacity <= 0 then return end
     local pos = ply:EyePos() - Vector(0, 0, 4)
-    local ang = LocalPlayer():EyeAngles()
+    local ang = EyeAngles()
     ang:RotateAroundAxis(ang:Forward(), 90)
     ang:RotateAroundAxis(ang:Right(), 90)
-
-    if LocalPlayer():InVehicle() then
-        ang:RotateAroundAxis(ang:Right(), -LocalPlayer():GetVehicle():GetAngles().y)
-    end
-
+    -- if LocalPlayer():InVehicle() then
+    --     ang:RotateAroundAxis(ang:Right(), -LocalPlayer():GetVehicle():GetAngles().y)
+    -- end
     --[[
 	if ply:InVehicle() then
 		pos = pos + Vector( 0, 0, 30 )
@@ -518,8 +516,8 @@ hook.Add("DrawTranslucentAccessories", "DrawPlayerNames2", function(ply)
     to = to / dist
     local dot = fwd:Dot(to)
 
-    if LocalPlayer():InTheater() then
-        if theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool() then return end
+    if LocalPlayer():InTheater() or LocalPlayer():InVehicle() then
+        if LocalPlayer():InTheater() and (theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool()) then return end
         DrawName(ply, 0.5 * math.min(1, ((dot - 0.85) * 6.66 + math.max(-0.5, (1 - dist) * 0.01))))
     else
         DrawName(ply, math.min(1, (dot - 0.8) * 5 + math.max(0, (200 - dist) * 0.01)))
@@ -630,6 +628,10 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 
     if loc == "Gym" then
         target = "gym"
+    end
+
+    if ValidPanel(HELLTAKERFRAME) then
+        target = "helltaker"
     end
 
     if MusicPagePanel then

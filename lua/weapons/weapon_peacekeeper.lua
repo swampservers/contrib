@@ -122,7 +122,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:GetCone()
-    local mc = math.max(((math.Clamp((self.Owner:GetVelocity():LengthSqr() + (20000)), 0, 70000)) * 0.000005) - 0.01, 0)
+    local mc = 0.1 --math.max(((math.Clamp((self.Owner:GetVelocity():LengthSqr() + (20000)), 0, 70000)) * 0.000005) - 0.01, 0)
     -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 
     return mc + 0.005 + 0.002
@@ -157,8 +157,10 @@ function SWEP:PrimaryAttack()
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
 
-    if self.Owner.HVP_EVOLVED then
-        bullet.Damage = bullet.Damage * 2
+    if self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1 then
+        bullet.Damage = bullet.Damage
+        bullet.Num = bullet.Num * 2 --math.floor(bullet.Num * 1.5)
+        bullet.Spread.x = 2.5 * bullet.Spread.x
     end
 
     self.Owner:FireBullets(bullet)
@@ -169,49 +171,6 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    --[[
-	local timerName = "ShotgunReload_" ..  self.Owner:UniqueID()
-	if (timer.Exists(timerName)) then return end
-
-	if self:Clip1()==0 then
-		self:Reload()
-		return
-	end
-
-	if ( !self:CanPrimaryAttack() ) then return end
-	local bullet = {}
-		bullet.Num = self.Primary.NumberofShots*2
-		bullet.Src = self.Owner:GetShootPos()
-		bullet.Dir = self.Owner:GetAimVector()
-		local ac = self:GetCone()
-		bullet.Spread = Vector(ac, ac, 0)
-		bullet.Tracer = 2
-		bullet.TracerName = "Tracer"
-		bullet.Force = self.Primary.Force
-		bullet.Damage = self.Primary.Damage
-		bullet.AmmoType = self.Primary.Ammo
-	local rnda = self.Primary.Recoil * -1 
-	local rndb = self.Primary.Recoil * math.random(-1, 1) 
-		local vm = self.Owner:GetViewModel()
-
-		--self.Owner:MuzzleFlash() -- Crappy muzzle light
-		self.Owner:SetAnimation( PLAYER_ATTACK1 )
-		vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence( ACT_VM_PRIMARYATTACK ))
-		vm:SetPlaybackRate(BOLTACTIONSPEED)
-
-		self.Owner:FireBullets( bullet )
-		--self:EmitSound("dbarrel_dblast")
-	
-		self:TakePrimaryAmmo(2)
-		self.Owner:ViewPunch( Angle( rnda,rndb,rnda ) )
-		self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
-		--self.Owner:SetAnimation( PLAYER_ATTACK1 )
-
-		
-		--timer.Simple( 2, function() self:SendWeaponAnim( ACT_VM_SECONDARYATTACK ) end )
-
-	--timer.Simple( self:SequenceDuration(), function() if ( !IsValid( self ) ) then return end self:SendWeaponAnim( ACT_VM_IDLE ) end )
-	--]]
 end
 
 function SWEP:Reload()
@@ -225,9 +184,11 @@ function SWEP:Reload()
 
     if self.Owner:IsPlayer() then
         if self.Owner:GetAmmoCount(self.Primary.Ammo) == 0 then return end
+        local TIMESCALE = (self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1) and 0.5 or 1
+        local DLY = 2 * TIMESCALE
 
-        if self.Weapon:GetNextPrimaryFire() <= (CurTime() + 2) then
-            self.Weapon:SetNextPrimaryFire(CurTime() + 2) -- wait TWO seconds before you can shoot again
+        if self.Weapon:GetNextPrimaryFire() <= (CurTime() + DLY) then
+            self.Weapon:SetNextPrimaryFire(CurTime() + DLY) -- wait TWO seconds before you can shoot again
         end
 
         self.Weapon:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START) -- sending start reload anim
@@ -242,7 +203,7 @@ function SWEP:Reload()
         if SERVER and self.Owner:Alive() then
             local timerName = "ShotgunReload_" .. self.Owner:UniqueID()
 
-            timer.Create(timerName, (.5 + .05), shellz, function()
+            timer.Create(timerName, (.5 + .05) * TIMESCALE, shellz, function()
                 if not IsValid(self) then return end
 
                 if IsValid(self.Owner) and IsValid(self.Weapon) then

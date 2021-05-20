@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\weapons\v_models\mg42/v_mg42"
+	"$envmap" "env_cubemap"
+	"$basealphaenvmapmask" 1
+	"$envmapsaturation" .1 .5 .5
+	"$model" 1
+}
+
+	
+
+

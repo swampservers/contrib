@@ -37,17 +37,17 @@ function SWEP:SecondaryAttack(undo)
 
     self:EmitSound("coomer/coom_taunt" .. coom .. ".ogg")
     self.LastTaunt = coom
-    self:SetNextPrimaryFire(CurTime() + 1)
+    -- self:SetNextPrimaryFire(CurTime() + 1)
     self:SetNextSecondaryFire(CurTime() + 1)
 end
 
 function SWEP:PrimaryAttack()
     if (self:GetNextPrimaryFire() > CurTime()) then return end
-    if self.Throwing then return end
+    -- if self.Throwing then return end
     local ply = self:GetOwner()
     self:SendWeaponAnim(ACT_VM_THROW)
     self:EmitSound("WeaponFrag.Throw")
-    self.Throwing = true
+    -- self.Throwing = true
     self:GetOwner():SetAnimation(PLAYER_ATTACK1)
     self:EmitSound("coomer/coom.ogg")
 
@@ -56,16 +56,15 @@ function SWEP:PrimaryAttack()
         bait:SetPos(ply:GetShootPos() + (ply:GetVelocity() * FrameTime()))
         bait:SetOwner(ply)
         bait:Spawn()
-        bait:SetVelocity(ply:GetAimVector() * 700)
+        bait:SetVelocity(ply:GetAimVector() * (self.Owner.HVP_EVOLVED and 1500 or 1000))
     end
 
-    self:SetNextPrimaryFire(CurTime() + 0.7)
-    self:SetNextSecondaryFire(CurTime() + 0.7)
-
+    self:SetNextPrimaryFire(CurTime() + 3.7) --2.7)
+    self:SetNextSecondaryFire(CurTime() + 3.7) --2.7)
     --added
-    if SERVER and not self.Owner.HVP_EVOLVED then
-        self:Remove()
-    end
+    -- if SERVER and not self.Owner.HVP_EVOLVED then
+    --     self:Remove()
+    -- end
 end
 
 function SWEP:Think()
@@ -73,7 +72,7 @@ end
 
 function SWEP:Deploy()
     local ply = self:GetOwner()
-    self:SetNextPrimaryFire(CurTime() + 0.5)
+    -- self:SetNextPrimaryFire(CurTime() + 0.5)
     self:SetNextSecondaryFire(CurTime() + 0.5)
 end
 
@@ -91,6 +90,7 @@ local nomat = Material("engine/occlusionproxy")
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     render.MaterialOverrideByIndex(1, whitemat)
     -- render.MaterialOverrideByIndex( 2, nomat )
+    if (self:GetNextPrimaryFire() > CurTime()) then return true end
 end
 
 function SWEP:PostDrawViewModel(vm, weapon, ply)

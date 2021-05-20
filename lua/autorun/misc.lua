@@ -9,7 +9,7 @@ function Safe(ent)
         name = Location.GetLocationNameByIndex(loc)
     end
 
-    if HumanTeamName ~= nil  then return false end --and name ~= "Movie Theater"
+    if HumanTeamName ~= nil then return false end --and name ~= "Movie Theater"
     if name == "Movie Theater" and (ent:GetPos().y > 1400 or ent:GetPos().z > 150) then return true end
 
     if name == "Golf" then
