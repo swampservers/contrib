@@ -45,7 +45,7 @@ if CLIENT then
 
     function SERVICE:GetHost(Video)
         local t = util.JSONToTable(Video:Key())
-        return url.parse2(t).host
+        return url.parse2(t["key"]).host
     end
 
     function SERVICE:LoadVideo(Video, panel)
