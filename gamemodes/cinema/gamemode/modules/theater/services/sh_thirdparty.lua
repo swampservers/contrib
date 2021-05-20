@@ -43,11 +43,10 @@ if CLIENT then
 
     local loaded = false
 
-    --[[function SERVICE:ShouldTrust(Video)
+    function SERVICE:GetHost(Video)
         local t = util.JSONToTable(Video:Key())
-
-        return TRUSTED_VIDEO_HOST(t["key"])
-    end]]
+        return url.parse2(t).host
+    end
 
     function SERVICE:LoadVideo(Video, panel)
         local t = util.JSONToTable(Video:Key())
