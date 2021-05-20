@@ -199,8 +199,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:IsDiamond()
-    --false
-    return true
+    return false
 end
 
 function SWEP:DrawWorldModel()

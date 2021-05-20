@@ -64,7 +64,7 @@ sound.Add({
     name = "DOD_Garand.Fire",
     channel = CHAN_STATIC,
     volume = 0.9,
-    level = 80,
+    level = 70,
     sound = {"dod_garand/scar20_01.wav", "dod_garand/scar20_02.wav", "dod_garand/scar20_03.wav"}
 })
 
@@ -77,9 +77,9 @@ function SWEP:IsSprinting()
 end
 
 function SWEP:DrawWorldModel()
-    --self:SetupBones()
+    -- self:SetupBones()
     local mrt = self:GetBoneMatrix(0)
-    if (mrt) then end --mrt:SetTranslation(mrt:GetTranslation()+(mrt:GetUp()*-0.8)) --self:SetBoneMatrix(0, mrt )
+    if (mrt) then end -- mrt:SetTranslation(mrt:GetTranslation()+(mrt:GetUp()*-0.8)) --self:SetBoneMatrix(0, mrt )
     self:DrawModel()
 end
 
@@ -180,9 +180,9 @@ function SWEP:PrimaryAttack()
     self:TakePrimaryAmmo(1)
     self.Owner:ViewPunch(Angle(rnda, rndb, rnda))
     self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-    --self.Owner:SetAnimation( PLAYER_ATTACK1 )
-    --timer.Simple( 2, function() self:SendWeaponAnim( ACT_VM_SECONDARYATTACK ) end )
-    --timer.Simple( self:SequenceDuration(), function() if ( !IsValid( self ) ) then return end self:SendWeaponAnim( ACT_VM_IDLE ) end ) 
+    -- self.Owner:SetAnimation( PLAYER_ATTACK1 )
+    -- timer.Simple( 2, function() self:SendWeaponAnim( ACT_VM_SECONDARYATTACK ) end )
+    -- timer.Simple( self:SequenceDuration(), function() if ( !IsValid( self ) ) then return end self:SendWeaponAnim( ACT_VM_IDLE ) end ) 
 end
 
 function SWEP:SecondaryAttack()
@@ -194,7 +194,7 @@ function SWEP:Reload()
     local wep = self.Weapon
     local owner = self.Owner
 
-    --if wep:Clip1() == 8 then return false end
+    -- if wep:Clip1() == 8 then return false end
     if not InGarandZone(self.Owner) then
         if SERVER then
             self.Owner:Notify("There's no ammo here!")

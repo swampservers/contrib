@@ -71,7 +71,7 @@ function GM:EntityTakeDamage(target, dmginfo)
     end
 
     if IsValid(att) and att:GetClass() == "player" and IsValid(att:GetActiveWeapon()) and att:GetActiveWeapon():GetClass() == "weapon_crowbar" then
-        dmginfo:SetDamage(25) --gmod june 2020 update sets crowbar damage to 10, set it back to 25
+        dmginfo:SetDamage(25) -- gmod june 2020 update sets crowbar damage to 10, set it back to 25
     end
 end
 
@@ -95,10 +95,10 @@ function GM:FinishMove(ply, mv)
     -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 end
 
---Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
+-- Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
 function GM:PhysgunPickup(ply, ent)
     if (ent:GetClass():lower() == "player") then
-        if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) then
+        if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) and not ent:IsFrozen() then
             ply.physgunHeld = ent
 
             return true

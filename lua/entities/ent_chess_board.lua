@@ -144,7 +144,8 @@ function ENT:Initialize()
         local height = (tbl:OBBMaxs()[3] - tbl:OBBMins()[3])
         local BlackSeat = ents.Create("prop_vehicle_prisoner_pod")
         BlackSeat:SetModel("models/props_c17/FurnitureChair001a.mdl") --models/nova/chair_plastic01.mdl")
-        BlackSeat:SetPos(pos + (self:GetRight() * 40))
+        BlackSeat:SetPos(pos + (self:GetRight() * 40) + self:GetUp() * 15)
+        ang:RotateAroundAxis(self:GetUp(), 90)
         BlackSeat:SetAngles(ang)
         BlackSeat:Spawn()
         BlackSeat:SetMoveType(MOVETYPE_NONE)
@@ -152,10 +153,10 @@ function ENT:Initialize()
         BlackSeat.IsChessEntity = true
         local WhiteSeat = ents.Create("prop_vehicle_prisoner_pod")
         WhiteSeat:SetModel("models/props_c17/FurnitureChair001a.mdl") --models/nova/chair_plastic01.mdl")
-        WhiteSeat:SetPos(pos + (self:GetRight() * -40))
+        WhiteSeat:SetPos(pos + (self:GetRight() * -40) + self:GetUp() * 15)
         ang:RotateAroundAxis(self:GetUp(), 180)
         WhiteSeat:SetAngles(ang)
-        ang:RotateAroundAxis(self:GetUp(), 180)
+        ang:RotateAroundAxis(self:GetUp(), 90)
         WhiteSeat:Spawn()
         WhiteSeat:SetMoveType(MOVETYPE_NONE)
         WhiteSeat:SetCollisionGroup(COLLISION_GROUP_WORLD)
@@ -1983,7 +1984,7 @@ if CLIENT then
                 WagerPanel:Remove()
             end
 
-            local ViewPos = ActiveBoard:GetPos() + Vector(0, 0, 30) + (IsValid(seat) and seat:GetRight() * 15 or ply:GetForward() * -15) --pos+Vector(0,0,20)+ (IsValid(seat) and seat:GetRight()*-15 or ply:GetForward()*15)
+            local ViewPos = ActiveBoard:GetPos() + Vector(0, 0, 30) + (IsValid(seat) and seat:GetForward() * -15 or ply:GetForward() * -15) --pos+Vector(0,0,20)+ (IsValid(seat) and seat:GetRight()*-15 or ply:GetForward()*15)
             local ViewAng = (ActiveBoard:GetPos() - ViewPos):Angle()
 
             if input.IsKeyDown(KEY_LALT) then

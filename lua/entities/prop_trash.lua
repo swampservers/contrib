@@ -54,7 +54,7 @@ TrashLocationOverrides = {
     ['Potassium Palace'] = TRASHLOC_BUILD,
     ['Sewer Tunnels'] = TRASHLOC_BUILD,
     ['Outside'] = TRASHLOC_BUILD,
-    ['Way Outside'] = TRASHLOC_BUILD,
+    ['Way Outside'] = TRASHLOC_BUILD
 }
 
 TrashNoFreezeNodes = {
@@ -62,7 +62,7 @@ TrashNoFreezeNodes = {
     {Vector(-1970, -1120, 100), 150}
 }
 
---{Vector(660,-1860,36),100},
+-- {Vector(660,-1860,36),100},
 AddCSLuaFile()
 DEFINE_BASECLASS("base_gmodentity")
 ENT.CanChangeTrashOwner = true
@@ -75,7 +75,7 @@ end
 PropTrashExplosiveModels = {
     ["models/props_c17/oildrum001_explosive.mdl"] = true,
     ["models/props_phx/oildrum001_explosive.mdl"] = true,
-    ["models/props_phx/ww2bomb.mdl"] = true,
+    ["models/props_phx/ww2bomb.mdl"] = true
 }
 
 function ENT:Initialize()
@@ -95,7 +95,7 @@ function ENT:Initialize()
                 effectdata:SetOrigin(self:GetPos())
                 effectdata:SetMagnitude(0)
                 util.Effect("Explosion", effectdata, true, true)
-                util.BlastDamage(self, self, self:GetPos(), 256, 80)
+                util.BlastDamage(self, self, self:GetPos(), 256, 120)
             end
         end
     end
@@ -200,7 +200,7 @@ function ENT:Draw()
         render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3, (cb * 1.6) + 0.3)
     end
 
-    BaseClass.Draw(self) --, true)
+    BaseClass.Draw(self) -- , true)
 end
 
 function ENT:Use(ply)
@@ -309,7 +309,7 @@ function ENT:GetLocationOwner()
         if IsValid(t:GetOwner()) then return t:GetOwner():SteamID() end
     end
 
-    if class ~= TRASHLOC_BUILD then return nil end --The only way to own a non build area is with a theater. Not a field.
+    if class ~= TRASHLOC_BUILD then return nil end -- The only way to own a non build area is with a theater. Not a field.
 
     for k, v in ipairs(GetTrashFields()) do
         if IsValid(v) and v:Protects(self) then return v:GetOwnerID() end
@@ -318,17 +318,17 @@ function ENT:GetLocationOwner()
     return nil
 end
 
---MIGHT BE A FILE RUN ORDER ISSUE
+-- MIGHT BE A FILE RUN ORDER ISSUE
 if HumanTeamName then
     function ENT:CanExist()
         return true
     end
 else
     function ENT:CanExist()
-        --local vec = self:GetPos()
-        --vec.x = math.abs(vec.x)
-        --if vec:DistToSqr(Vector(160,160,80)) < 65536 then return false end --theater enterance
-        --someone sitting in the seat
+        -- local vec = self:GetPos()
+        -- vec.x = math.abs(vec.x)
+        -- if vec:DistToSqr(Vector(160,160,80)) < 65536 then return false end --theater enterance
+        -- someone sitting in the seat
         if IsValid((self.UseTable or {})[1]) then return true end
 
         return not (self:GetLocationClass() == TRASHLOC_NOSPAWN and self:GetOwnerID() ~= self:GetLocationOwner())
