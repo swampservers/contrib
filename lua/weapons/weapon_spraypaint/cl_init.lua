@@ -4,12 +4,16 @@ include("shared.lua")
 
 function SWEP:ShakeCan()
     timer.Create("capshakesnd__" .. self:EntIndex(), 0.3, 1, function()
-        self:EmitSound(self.ShakeSound, 80)
+        if (IsValid(self)) then
+            self:EmitSound(self.ShakeSound, 80)
+        end
     end)
 
     timer.Create("capshake__" .. self:EntIndex(), 0.1, 1, function()
         timer.Create("capshake_" .. self:EntIndex(), 0.2, 3, function()
-            self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
+            if (IsValid(self) and IsValid(self.Owner)) then
+                self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
+            end
         end)
     end)
 end
@@ -63,87 +67,82 @@ function SWEP:CancelAllAnimations()
 end
 
 function SWEP:MakeCap()
-    if (CLIENT) then
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
-        self.CapOn = false
-        self:EmitSound(self.PopCapSound)
-        local matrix, opos, oang = self:DrawWorldModel(true)
+    self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
+    self.CapOn = false
+    self:EmitSound(self.PopCapSound)
+    local matrix, opos, oang = self:DrawWorldModel(true)
 
-        if (IsValid(self.CapGib)) then
-            self.CapGib:Remove()
-        end
-
-        local cc = self:GetCustomColor()
-        local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
-        self.CapGib = ents.CreateClientProp(self.CapModel)
-        if (not IsValid(self.CapGib)) then return end
-        self.CapGib:SetPos(opos)
-        self.CapGib:SetAngles(oang)
-        self.CapGib:SetColor(color)
-        self.CapGib:Spawn()
-        self.CapGib:Activate()
-
-        if (IsValid(self.CapGib) and IsValid(self.CapGib:GetPhysicsObject())) then
-            self.CapGib:GetPhysicsObject():ApplyForceCenter(matrix:GetAngles():Up() * math.Rand(50, 80))
-            self.CapGib:GetPhysicsObject():ApplyTorqueCenter(VectorRand() * 10)
-        end
-
-        local gib = self.CapGib
-
-        timer.Create(self:EntIndex() .. "capremovegib", 10, 1, function()
-            if (IsValid(gib)) then
-                gib:Remove()
-            end
-        end)
+    if (IsValid(self.CapGib)) then
+        self.CapGib:Remove()
     end
+
+    local cc = self:GetCustomColor()
+    local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
+    self.CapGib = ents.CreateClientProp(self.CapModel)
+    if (not IsValid(self.CapGib)) then return end
+    self.CapGib:SetPos(opos)
+    self.CapGib:SetAngles(oang)
+    self.CapGib:SetColor(color)
+    self.CapGib:Spawn()
+    self.CapGib:Activate()
+
+    if (IsValid(self.CapGib) and IsValid(self.CapGib:GetPhysicsObject())) then
+        self.CapGib:GetPhysicsObject():ApplyForceCenter(matrix:GetAngles():Up() * math.Rand(50, 80))
+        self.CapGib:GetPhysicsObject():ApplyTorqueCenter(VectorRand() * 10)
+    end
+
+    local gib = self.CapGib
+
+    timer.Create(self:EntIndex() .. "capremovegib", 10, 1, function()
+        if (IsValid(gib)) then
+            gib:Remove()
+        end
+    end)
 end
 
 function SWEP:TossEmpty(colorvec)
-    if (CLIENT) then
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
-        self:SetNoDraw(true)
-        local matrix, opos, oang = self:DrawWorldModel(true)
+    self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
+    self:SetNoDraw(true)
+    local matrix, opos, oang = self:DrawWorldModel(true)
 
-        if (IsValid(self.EmptyGib)) then
-            self.EmptyGib:Remove()
-        end
-
-        local cc = colorvec or self:GetCustomColor()
-        local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
-        local ply = self:GetOwner()
-        self.EmptyGib = ents.CreateClientProp(self.WorldModel)
-        if (not IsValid(self.EmptyGib)) then return end
-        self.EmptyGib:SetPos(opos)
-        self.EmptyGib:SetAngles(oang)
-        self.EmptyGib:SetBodygroup(1, 1)
-        self.EmptyGib:SetColor(color)
-        self.EmptyGib:Spawn()
-        self.EmptyGib:Activate()
-
-        if (IsValid(self.EmptyGib) and IsValid(self.EmptyGib:GetPhysicsObject())) then
-            local dir = Angle(0, ply:EyeAngles().yaw, 0)
-            self.EmptyGib:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 150) + dir:Forward() * -100)
-            self.EmptyGib:GetPhysicsObject():ApplyTorqueCenter(VectorRand() * 10)
-        end
-
-        local gib = self.EmptyGib
-
-        timer.Create(gib:EntIndex() .. "emptyremovegib", 10, 1, function()
-            if (IsValid(gib)) then
-                gib:Remove()
-            end
-        end)
+    if (IsValid(self.EmptyGib)) then
+        self.EmptyGib:Remove()
     end
+
+    local cc = colorvec or self:GetCustomColor()
+    local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
+    local ply = self:GetOwner()
+    self.EmptyGib = ents.CreateClientProp(self.WorldModel)
+    if (not IsValid(self.EmptyGib)) then return end
+    self.EmptyGib:SetPos(opos)
+    self.EmptyGib:SetAngles(oang)
+    self.EmptyGib:SetBodygroup(1, 1)
+    self.EmptyGib:SetColor(color)
+    self.EmptyGib:Spawn()
+    self.EmptyGib:Activate()
+
+    if (IsValid(self.EmptyGib) and IsValid(self.EmptyGib:GetPhysicsObject())) then
+        local dir = Angle(0, ply:EyeAngles().yaw, 0)
+        self.EmptyGib:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 150) + dir:Forward() * -100)
+        self.EmptyGib:GetPhysicsObject():ApplyTorqueCenter(VectorRand() * 10)
+    end
+
+    local gib = self.EmptyGib
+
+    timer.Create(gib:EntIndex() .. "emptyremovegib", 10, 1, function()
+        if (IsValid(gib)) then
+            gib:Remove()
+        end
+    end)
 end
 
-
-SPRAYMATS = {}
+SPRAYPAINTMATS = {}
 
 local function GetPaintMaterial(color)
     color = Color(255, 255, 255, 255)
-    SPRAYMATS = SPRAYMATS or {}
+    SPRAYPAINTMATS = SPRAYPAINTMATS or {}
 
-    SPRAYMATS[color] = SPRAYMATS[color] or {
+    SPRAYPAINTMATS[color] = SPRAYPAINTMATS[color] or {
         CreateMaterial("spraypaint" .. tostring(color), "LightmappedGeneric", {
             ["$basetexture"] = "spray/dot",
             ["$decal"] = 1,
@@ -165,9 +164,8 @@ local function GetPaintMaterial(color)
         })
     }
 
-    return SPRAYMATS[color][1]
-end
-
+    return SPRAYPAINTMATS[color][1]
+end 
 
 net.Receive("spraypaint_networkdecal", function(len)
     local pos = net.ReadVector()
