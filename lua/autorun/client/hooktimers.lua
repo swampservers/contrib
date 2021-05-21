@@ -82,6 +82,7 @@ timer.Simple(2, function()
 	end
 	DiscordTry(6463, callback)
 end) ]]
+
 timer.Simple(1, function()
     net.Start("setcntry")
     net.WriteString(string.lower(system.GetCountry()))
