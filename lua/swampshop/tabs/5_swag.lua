@@ -126,7 +126,7 @@ SS_Item({
 
 SS_Item({
     class = "combinehelmet",
-    price = 1500,
+    price = 150000,
     name = 'Combine Helmet',
     description = "Hide your identity while upholding the law.",
     model = 'models/nova/w_headgear.mdl',
