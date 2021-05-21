@@ -125,6 +125,28 @@ SS_Item({
 })
 
 SS_Item({
+    class = "combinehelmet",
+    price = 1500,
+    name = 'Combine Helmet',
+    description = "Hide your identity while upholding the law.",
+    model = 'models/nova/w_headgear.mdl',
+    color = Vector(1,1,1),
+    maxscale = 2.7,
+    wear = {
+        attach = "head",
+        scale = 1,
+        translate = Vector(0, 0, 0),
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "head",
+            scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+SS_Item({
     class = "conehattest",
     price = 1000,
     name = 'Cone Head',
