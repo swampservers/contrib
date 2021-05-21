@@ -304,7 +304,7 @@ end
 function ButtonMoneyPrize()
     local min, max = 1000, 300000
 
-    return math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3)
+    return string.Comma(math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3))
 end
 
 local function MagicOutcomePrize(ply)
@@ -312,7 +312,7 @@ local function MagicOutcomePrize(ply)
     if (ply.SS_GivePoints == nil) then return nil end
     ply:SS_GivePoints(amount)
 
-    return amount
+    return string.Comma(amount)
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
@@ -322,7 +322,7 @@ local function MagicOutcomeBountyAndPrize(ply)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
 
-    return amount
+    return string.Comma(amount)
 end
 
 local function MagicOutcomeBountyAll(ply)
@@ -338,7 +338,7 @@ local function MagicOutcomeBountyAll(ply)
         SetPlayerBounty(v, add)
     end
 
-    return amount
+    return string.Comma(amount)
 end
 
 local function MagicOutcomeKleinerFanclub(ply)
@@ -458,33 +458,30 @@ local function MagicOutcomeButtonSpawn(ply)
 end
 
 local function MagicOutcomeSpawnObject(ply, button)
-    local classes = {}
-
-    classes["sent_ball"] = {
-        "Bouncy Ball", 10, function(ent)
-            ent:SetBallSize(24)
-            ent:GetPhysicsObject():SetVelocity(VectorRand() * 20)
-        end
-    }
-
-    classes["npc_headcrab"] = {
-        "Headcrab", math.random(1, 5), function(ent, button)
-            local pos = table.Random(navmesh.Find(button:GetPos() + button:GetUp() * 50, 100, 2000, 2000)):GetRandomPoint()
-            ent:SetPos(pos)
-        end
-    }
-
-    classes["npc_grenade_frag"] = {
-        "Live Grenade", math.random(1, 10), function(ent, button)
-            ent:GetPhysicsObject():SetVelocity(VectorRand() * 100)
-            ent:Fire("SetTimer", math.random(2, 6))
-        end
-    }
-
-    classes["dodgeball"] = {
-        "Dodgeball", 1, function(ent, button)
-            ent:GetPhysicsObject():SetVelocity(button:GetUp() * 500)
-        end
+    local classes = {
+        sent_ball = {
+            "Bouncy Ball", 10, function(ent)
+                ent:SetBallSize(24)
+                ent:GetPhysicsObject():SetVelocity(VectorRand() * 20)
+            end
+        },
+        npc_headcrab = {
+            "Headcrab", math.random(1, 5), function(ent, button)
+                local pos = table.Random(navmesh.Find(button:GetPos() + button:GetUp() * 50, 100, 2000, 2000)):GetRandomPoint()
+                ent:SetPos(pos)
+            end
+        },
+        npc_grenade_frag = {
+            "Live Grenade", math.random(1, 10), function(ent, button)
+                ent:GetPhysicsObject():SetVelocity(VectorRand() * 100)
+                ent:Fire("SetTimer", math.random(2, 6))
+            end
+        },
+        dodgeball = {
+            "Dodgeball", 1, function(ent, button)
+                ent:GetPhysicsObject():SetVelocity(button:GetUp() * 500)
+            end
+        },
     }
 
     local dat, class = table.Random(classes)
@@ -560,7 +557,7 @@ local MagicButtonOutcomes = {
         message = "and had their screen fucked up %s ;billhead;",
         weight = 2
     },
-    { 
+    {
         func = MagicOutcomeSpawnObject,
         message = "and it spawned %s",
         weight = 2
@@ -643,10 +640,6 @@ function ENT:Effect(ply)
         if (item ~= nil) then break end
     end
 
-    if (type(item) == "number") then
-        item = string.Comma(item)
-    end
-
     return string.format(effect.message, item, item)
 end
 
@@ -669,13 +662,7 @@ function ENT:Use(activator)
         local message = self:Effect(activator)
         assert(message ~= nil)
         message = "[white]" .. activator:Nick() .. "[fbc] pressed a hidden button " .. message
-
-        if (BotSayGlobal) then
-            BotSayGlobal(";clap;[fbc]" .. message)
-        else
-            PrintMessage(HUD_PRINTTALK, message)
-        end
-
+        BotSayGlobal(";clap;[fbc]" .. message)
         local c2 = self:GetColor()
         c2.r = c2.r / 5
         c2.g = c2.g / 5
