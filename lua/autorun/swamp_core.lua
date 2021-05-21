@@ -57,6 +57,8 @@ function math.power2(n)
     return math.pow(2, math.ceil(math.log(n) / math.log(2)))
 end
 
+math.nextpow2 = math.power2
+
 -- TABLE
 function table.sub(tab, a, b)
     local out = {}

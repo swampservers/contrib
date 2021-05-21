@@ -52,7 +52,7 @@ sound.Add({
     name = "DOD_MG42.Fire",
     channel = CHAN_STATIC,
     volume = 0.85,
-    level = 85,
+    level = 75,
     sound = "weapons/dod_mg42/negev-1.wav"
 })
 

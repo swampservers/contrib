@@ -1,7 +1,13 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 local cvar = GetConVar("r_decals"):GetInt()
-RunConsoleCommand("r_decals", tostring(math.max(cvar, 2048)))
+RunConsoleCommand("r_decals", tostring(math.max(cvar, 4096)))
+
+cvar = GetConVar("mp_decals"):GetInt()
+RunConsoleCommand("mp_decals", tostring(math.max(cvar, 4096)))
+
+
+
 --RunConsoleCommand("r_maxmodeldecal","32")
 SWEP.PrintName = "Spraypaint"
 SWEP.Slot = 1
