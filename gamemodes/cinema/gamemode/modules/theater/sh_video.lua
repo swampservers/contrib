@@ -206,7 +206,8 @@ if SERVER then
 end
 
 if CLIENT then
-    local TrustConvar = CreateClientConVar("cinema_load_all_urls","0",true,false,"",0,1)
+    local TrustConvar = CreateClientConVar("cinema_load_all_urls", "0", true, false, "", 0, 1)
+
     TRUSTED_HOST = {
         ["www.swampservers.net"] = true,
         ["www.dropbox.com"] = true,
@@ -217,7 +218,8 @@ if CLIENT then
 
     function VIDEO:ShouldTrust()
         local host = self:Service():GetHost(self)
-        return TrustConvar:GetInt()==1 or host==nil or TRUSTED_HOST[host]
+
+        return TrustConvar:GetInt() == 1 or host == nil or TRUSTED_HOST[host]
     end
 
     hook.Add("Think", "VideoTrust", function()
@@ -230,7 +232,11 @@ if CLIENT then
 
                     if v and not v:ShouldTrust() then
                         local host = v:Service():GetHost(v)
-                        if host~=nil then TRUSTED_HOST[host] = true end
+
+                        if host ~= nil then
+                            TRUSTED_HOST[host] = true
+                        end
+
                         RunConsoleCommand("cinema_refresh")
                     end
                 end

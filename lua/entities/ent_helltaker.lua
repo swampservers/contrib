@@ -13,9 +13,13 @@ function ENT:Initialize()
     self:DrawShadow(false)
     local phys = self:GetPhysicsObject()
 
-    if IsValid(phys) then phys:EnableMotion(false) end
+    if IsValid(phys) then
+        phys:EnableMotion(false)
+    end
 
-    if SERVER then self:SetUseType(SIMPLE_USE) end
+    if SERVER then
+        self:SetUseType(SIMPLE_USE)
+    end
 end
 
 function ENT:Use(act)
@@ -27,6 +31,7 @@ end
 
 if CLIENT then
     DRAWN_HT_ENTS = {}
+
     function ENT:Draw()
         table.insert(DRAWN_HT_ENTS, self)
         self:DrawModel()
@@ -38,30 +43,29 @@ if CLIENT then
         end
 
         if #DRAWN_HT_ENTS > 0 then
-            if IsValid(HELLTAKERHTML) then 
+            if IsValid(HELLTAKERHTML) then
                 HELLTAKERHTML:UpdateHTMLTexture()
-
                 local m = HELLTAKERHTML:GetHTMLMaterial() or Material("tools/toolsblack")
 
                 if m then
                     surface.SetMaterial(m)
-                    surface.SetDrawColor(255,255,255)
-                    for i, v in ipairs(DRAWN_HT_ENTS) do
-                        local p, a = LocalToWorld(Vector(0,-7,59), Angle(0, 0, 61), v:GetPos(), v:GetAngles())
+                    surface.SetDrawColor(255, 255, 255)
 
-                        local w,h = HELLTAKERHTML:GetSize()
+                    for i, v in ipairs(DRAWN_HT_ENTS) do
+                        local p, a = LocalToWorld(Vector(0, -7, 59), Angle(0, 0, 61), v:GetPos(), v:GetAngles())
+                        local w, h = HELLTAKERHTML:GetSize()
                         local tw = 310
-                        local th = h*tw/w
+                        local th = h * tw / w
 
                         cam.Culled3D2D(p, a, 0.1, function()
                             cam.IgnoreZ(true)
-                            surface.DrawTexturedRectUV(-(tw/2),-(th/2),tw,th,0,0,w/math.nextpow2(w),h/math.nextpow2(h))
+                            surface.DrawTexturedRectUV(-(tw / 2), -(th / 2), tw, th, 0, 0, w / math.nextpow2(w), h / math.nextpow2(h))
                             cam.IgnoreZ(false)
-                            
                         end)
                     end
                 end
             end
+
             DRAWN_HT_ENTS = {}
         end
     end)
@@ -70,23 +74,26 @@ if CLIENT then
         -- if LocalPlayer():Nick() ~= "Joker Gaming" then return end
         if IsValid(HELLTAKERFRAME) then
             HELLTAKERFRAME:Close()
+
             return
         end
 
         HELLTAKERFRAME = vgui.Create("DFrame")
         -- HELLTAKERFRAME:SetTitle("") --"Helltaker (WIP)")
         -- HELLTAKERFRAME:ShowCloseButton(false)
-        HELLTAKERFRAME:SetSize(900, 890+24)
+        HELLTAKERFRAME:SetSize(900, 890 + 24)
         HELLTAKERFRAME:Center()
         HELLTAKERFRAME:MakePopup()
         HELLTAKERFRAME:SetZPos(-1000)
+
         -- HELLTAKERFRAME:SetPos(0,1100)
         -- 'function Frame:Paint( w, h )' works too
         -- Frame.Paint = function(self, w, h)
         --     draw.RoundedBox(0, 0, 0, w, h, Color(255, 255, 255, 150))
         -- end
+        function HELLTAKERFRAME:Paint()
+        end
 
-        function HELLTAKERFRAME:Paint() end
         HELLTAKERHTML = vgui.Create("HTML", HELLTAKERFRAME)
         HELLTAKERHTML:SetPos(0, 24)
         HELLTAKERHTML:SetSize(900, 890)
@@ -125,14 +132,16 @@ if CLIENT then
                 HELLTAKERHTML:RunJavascript('DOMOVE("' .. map[code] .. '");')
             else
                 local b = input.LookupKeyBinding(code)
-                if code == KEY_E or b=="use" or b=="+use" then self:Close() end
+
+                if code == KEY_E or b == "use" or b == "+use" then
+                    self:Close()
+                end
             end
         end
 
         HELLTAKERFRAME:SetAlpha(0)
 
         -- HELLTAKERFRAME:SetVisible(false)
-
         function HELLTAKERFRAME:OnClose()
             net.Start("HT_Unlock")
             net.SendToServer()
@@ -158,7 +167,6 @@ if SERVER then
         e:SetPos(Vector(-520, 1355, -8))
         e:Spawn()
         e:Activate()
-
         e = ents.Create("ent_helltaker")
         e:SetAngles(Angle(0, 180, 0))
         e:SetPos(Vector(-2060, -1025, -8))
@@ -169,5 +177,7 @@ if SERVER then
     timer.Simple(0, SETUPHELLTAKER)
     util.AddNetworkString("HT_Unlock")
 
-    net.Receive("HT_Unlock", function(len, ply) ply:UnLock() end)
+    net.Receive("HT_Unlock", function(len, ply)
+        ply:UnLock()
+    end)
 end

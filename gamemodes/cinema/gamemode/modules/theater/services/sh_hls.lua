@@ -84,9 +84,11 @@ if CLIENT then
 
     function SERVICE:GetHost(Video)
         local k = Video:Key()
+
         if (string.len(Video:Data()) > 1 and Video:Data() ~= "true") then
             k = Video:Data()
         end
+
         return url.parse2(k).host
     end
 
