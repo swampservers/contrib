@@ -23,7 +23,7 @@ function Entity:TimerCreate(identifier, delay, repetitions, callback)
         if IsValid(self) then
             callback(self)
         else
-            timers.Remove(timername)
+            timer.Remove(timername)
         end
     end)
 end
