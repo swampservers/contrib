@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/player/neckbeard/ladiesman"
+	"$halflambert" 1
+	"$blendtintbybasealpha" "1"
+	Proxies
+		{
+		PlayerColor
+			{
+			resultVar $color2
+			}
+		}
+}

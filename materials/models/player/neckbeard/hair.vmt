@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/player/neckbeard/hair"
+	"$halflambert" 1
+	"$translucent" "1"
+	"$nocull" "1"
+}

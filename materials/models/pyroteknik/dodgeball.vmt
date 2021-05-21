@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "color/white"
+	"$bumpmap" "models/pyroteknik/dodgeball_normal"
+	"$phong" "1"
+	"$phongboost" "4"
+	"$nodecal" "1"
+	"$phongexponent" 4
+	"$phongfresnelranges"	"[.1 .5 1]"
+}
+ 
