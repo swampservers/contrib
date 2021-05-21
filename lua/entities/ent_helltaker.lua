@@ -24,9 +24,15 @@ end
 
 function ENT:Use(act)
     if act:IsPlayer() then
-        act:SendLua("PlayHelltaker()")
+        net.Start("HELLTAKER")
+        net.WriteEntity(self)
+        net.Send(act)
         act:Lock()
     end
+end
+
+function ENT:ScreenCenter()
+    return LocalToWorld(Vector(0, -7, 59), Angle(0, 0, 61), self:GetPos(), self:GetAngles())
 end
 
 if CLIENT then
@@ -37,11 +43,41 @@ if CLIENT then
         self:DrawModel()
     end
 
-    hook.Add("PostDrawTranslucentRenderables", "DrawHTScreen", function()
-        if IsValid(LocalPlayer()) and LocalPlayer():InVehicle() and IsValid(HELLTAKERFRAME) then
-            HELLTAKERFRAME:Close()
-        end
+    hook.Add( "CalcView", "HellTakerView", function( ply, pos, angles, fov )
 
+        if IsValid(HELLTAKERFRAME) then
+            if IsValid(LocalPlayer()) and LocalPlayer():InVehicle() then
+                HELLTAKERFRAME:Close()
+                return
+            end
+
+            if IsValid(HELLTAKERPLAYENT) then
+                local p, a = HELLTAKERPLAYENT:ScreenCenter()
+
+                a:RotateAroundAxis(a:Up(),90)
+
+                a:RotateAroundAxis(a:Right(),-90)
+
+                local lerp = math.min(1, (SysTime() - HELLTAKERPLAYENTTIME) * 2)
+
+                lerp = 0.5-0.5*math.cos(lerp*math.pi)
+
+                return {
+                    origin = LerpVector(lerp, pos, p - a:Forward()*50 - a:Up()*1),
+                    angles = LerpAngle(lerp, angles, a),
+                    fov = Lerp(lerp, fov, 60),
+                    drawviewer = false
+                }
+            end
+        end
+    end )
+
+    hook.Add( "PreDrawViewModel", "HelltakerRemoveVM", function()
+        if IsValid(HELLTAKERFRAME) then return true end
+    end)
+
+
+    hook.Add("PostDrawTranslucentRenderables", "DrawHTScreen", function()
         if #DRAWN_HT_ENTS > 0 then
             if IsValid(HELLTAKERHTML) then
                 HELLTAKERHTML:UpdateHTMLTexture()
@@ -52,7 +88,7 @@ if CLIENT then
                     surface.SetDrawColor(255, 255, 255)
 
                     for i, v in ipairs(DRAWN_HT_ENTS) do
-                        local p, a = LocalToWorld(Vector(0, -7, 59), Angle(0, 0, 61), v:GetPos(), v:GetAngles())
+                        local p, a = v:ScreenCenter()
                         local w, h = HELLTAKERHTML:GetSize()
                         local tw = 310
                         local th = h * tw / w
@@ -143,10 +179,16 @@ if CLIENT then
 
         -- HELLTAKERFRAME:SetVisible(false)
         function HELLTAKERFRAME:OnClose()
-            net.Start("HT_Unlock")
+            net.Start("HELLTAKER")
             net.SendToServer()
         end
     end
+
+    net.Receive("HELLTAKER", function(len)
+        HELLTAKERPLAYENT = net.ReadEntity()
+        HELLTAKERPLAYENTTIME = SysTime()
+        PlayHelltaker()
+    end)
 end
 
 if SERVER then
@@ -175,9 +217,9 @@ if SERVER then
     end
 
     timer.Simple(0, SETUPHELLTAKER)
-    util.AddNetworkString("HT_Unlock")
+    util.AddNetworkString("HELLTAKER")
 
-    net.Receive("HT_Unlock", function(len, ply)
+    net.Receive("HELLTAKER", function(len, ply)
         ply:UnLock()
     end)
 end
