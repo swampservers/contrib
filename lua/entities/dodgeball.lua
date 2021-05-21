@@ -7,15 +7,17 @@ ENT.PrintName = "Dodgeball"
 
 function ENT:Initialize()
     if CLIENT then return end
-    self:SetModel("models/XQM/Rails/gumball_1.mdl")
+    self:SetModel("models/pyroteknik/dodgeball.mdl")
     self:SetColor(Color(255, 0, 0, 255))
-    self:PhysicsInit(SOLID_VPHYSICS)
+    self:PhysicsInitSphere(8,"rubber")
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     local phys = self:GetPhysicsObject()
     phys:Wake()
     phys:SetMass(phys:GetMass() * 1.75)
     phys:SetMaterial("rubber")
+    phys:SetBuoyancyRatio(0.9)
+
     self.birth = CurTime()
 end
 
@@ -72,14 +74,12 @@ function ENT:PhysicsCollide(data, phys)
             self:Pickup(ent)
         end
     else
-        if data.Speed > 100 then
-            local st = "soft"
-
-            if data.Speed > 200 then
-                st = "hard"
-            end
-
-            self:EmitSound("physics/rubber/rubber_tire_impact_" .. st .. tostring(math.random(3)) .. ".wav")
+        local max = 300 
+        local scale = math.Clamp(data.Speed - 100,0,max)/max
+        if(scale > 0)then
+            local pitch = Lerp(scale,80,110)
+            local vol = Lerp(scale,0.2,1)
+            self:EmitSound("dodgeball_hithard.wav", 100,pitch,vol)
         end
     end
 end
