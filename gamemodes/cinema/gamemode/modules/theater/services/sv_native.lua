@@ -32,7 +32,7 @@ sv_GetVideoInfo.native = function(self, key, ply, onSuccess, onFailure)
 
     theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
         --don't accept links that can't be viewed by both the client and the server
-        HTTP({
+        --[[HTTP({
             method = "HEAD",
             url = key,
             success = function(code)
@@ -46,6 +46,7 @@ sv_GetVideoInfo.native = function(self, key, ply, onSuccess, onFailure)
                 ply:PrintMessage(HUD_PRINTCONSOLE, err)
                 onFailure('File is only available to you')
             end
-        })
+        })]]
+        onReceive(info)
     end, onFailure)
 end

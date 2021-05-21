@@ -27,10 +27,6 @@ if CLIENT then
         error("Can't get video info for " .. self:GetClass())
     end
 
-    -- whitelist above
-    -- function SERVICE:ShouldTrust(Video)
-    --     return TRUSTED_VIDEO_HOST(Video:Key())
-    -- end
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL(Video:Key())
     end

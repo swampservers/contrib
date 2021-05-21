@@ -82,8 +82,12 @@ if CLIENT then
         end
     end
 
-    function SERVICE:ShouldTrust(Video)
-        return TRUSTED_VIDEO_HOST(Video:Key())
+    function SERVICE:GetHost(Video)
+        local k = Video:Key()
+        if (string.len(Video:Data()) > 1 and Video:Data() ~= "true") then
+            k = Video:Data()
+        end
+        return url.parse2(k).host
     end
 
     function SERVICE:LoadVideo(Video, panel)

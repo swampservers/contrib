@@ -206,18 +206,19 @@ if SERVER then
 end
 
 if CLIENT then
+    local TrustConvar = CreateClientConVar("cinema_load_all_urls","0",true,false,"",0,1)
+    TRUSTED_HOST = {
+        ["www.swampservers.net"] = true,
+        ["www.dropbox.com"] = true,
+        ["www.puu.sh"] = true,
+        ["cdn.discordapp.com"] = true,
+        ["files.catbox.moe"] = true
+    }
+
     function VIDEO:ShouldTrust()
-        return self:Service():ShouldTrust(self) or self.FORCETRUST
+        local host = self:Service():GetHost(self)
+        return TrustConvar:GetInt()==1 or host==nil or TRUSTED_HOST[host]
     end
-
-    --used by services
-    function TRUSTED_VIDEO_HOST(k)
-        k = k:lower():gsub("https", "http"):gsub("http://", ""):gsub("www.", "")
-
-        return k:StartWith("swampservers.net/") or k:StartWith("dropbox.com/") or k:StartWith("puu.sh/") or k:StartWith("discord.gg/") or k:StartWith("discord.com/")
-    end
-
-    _G.TRUSTED_VIDEO_HOST = TRUSTED_VIDEO_HOST
 
     hook.Add("Think", "VideoTrust", function()
         if input.IsKeyDown(KEY_F8) then
@@ -228,7 +229,8 @@ if CLIENT then
                     local v = th:GetVideo()
 
                     if v and not v:ShouldTrust() then
-                        v.FORCETRUST = true
+                        local host = v:Service():GetHost(v)
+                        if host~=nil then TRUSTED_HOST[host] = true end
                         RunConsoleCommand("cinema_refresh")
                     end
                 end

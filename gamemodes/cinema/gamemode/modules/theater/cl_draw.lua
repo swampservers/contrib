@@ -139,11 +139,12 @@ hook.Add("PostDrawOpaqueRenderables", "DrawTheaterScreen", function(depth, sky)
                 surface.DrawRect(0, 0, iw, ih)
 
                 if untrusted then
-                    DrawTheaterText("This video is hosted at: ", "VideoInfoMedium", iw / 2, ih * 0.34, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    DrawTheaterText(string.Explode("/", CurrentVideo:Key():lower():gsub("https://", ""):gsub("http://", ""))[1], "VideoInfoMedium", iw / 2, ih * 0.46, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    DrawTheaterText("Press F8 to load it.", "VideoInfoALittleSmaller", iw / 2, ih * 0.58, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    DrawTheaterText("This may reveal your IP address to the host;", "VideoInfoALittleSmaller", iw / 2, ih * 0.67, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    DrawTheaterText("you can use a VPN to hide it.", "VideoInfoALittleSmaller", iw / 2, ih * 0.76, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("This video is hosted at: ", "VideoInfoMedium", iw / 2, ih * 0.3, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText(string.Explode("/",CurrentVideo:Key():lower():gsub("https://",""):gsub("http://",""))[1], "VideoInfoMedium", iw / 2, ih * 0.42, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("Press F8 to load it.", "VideoInfoALittleSmaller", iw / 2, ih * 0.54, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("This may reveal your IP address to the host;", "VideoInfoALittleSmaller", iw / 2, ih * 0.63, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("you can use a VPN to hide it.", "VideoInfoALittleSmaller", iw / 2, ih * 0.72, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    DrawTheaterText("run \"cinema_load_all_urls 1\" to never see this again", "VideoInfoALittleSmaller", iw / 2, ih * 0.83, Color(255, 50, 50, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 end
             else
                 surface.SetMaterial(NoVideoScreen)

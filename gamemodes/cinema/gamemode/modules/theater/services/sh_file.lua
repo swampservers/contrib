@@ -96,8 +96,8 @@ if CLIENT then
         end)
     end
 
-    function SERVICE:ShouldTrust(Video)
-        return TRUSTED_VIDEO_HOST(Video:Key())
+    function SERVICE:GetHost(Video)
+        return url.parse2(Video:Key()).host
     end
 
     function SERVICE:LoadVideo(Video, panel)

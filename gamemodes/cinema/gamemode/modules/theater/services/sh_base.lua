@@ -72,8 +72,8 @@ if CLIENT then
         error("Can't get video info for " .. self:GetClass())
     end
 
-    function SERVICE:ShouldTrust(Video)
-        return true
+    function SERVICE:GetHost(Video)
+        return nil
     end
 
     function SERVICE:LoadVideo(Video, panel)
