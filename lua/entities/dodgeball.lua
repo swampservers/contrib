@@ -9,7 +9,7 @@ function ENT:Initialize()
     if CLIENT then return end
     self:SetModel("models/pyroteknik/dodgeball.mdl")
     self:SetColor(Color(255, 0, 0, 255))
-    self:PhysicsInitSphere(8,"rubber")
+    self:PhysicsInitSphere(8, "rubber")
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     local phys = self:GetPhysicsObject()
@@ -17,7 +17,6 @@ function ENT:Initialize()
     phys:SetMass(phys:GetMass() * 1.75)
     phys:SetMaterial("rubber")
     phys:SetBuoyancyRatio(0.9)
-
     self.birth = CurTime()
 end
 
@@ -74,12 +73,13 @@ function ENT:PhysicsCollide(data, phys)
             self:Pickup(ent)
         end
     else
-        local max = 300 
-        local scale = math.Clamp(data.Speed - 100,0,max)/max
-        if(scale > 0)then
-            local pitch = Lerp(scale,80,110)
-            local vol = Lerp(scale,0.2,1)
-            self:EmitSound("dodgeball_hithard.wav", 100,pitch,vol)
+        local max = 300
+        local scale = math.Clamp(data.Speed - 100, 0, max) / max
+
+        if (scale > 0) then
+            local pitch = Lerp(scale, 80, 110)
+            local vol = Lerp(scale, 0.2, 1)
+            self:EmitSound("dodgeball_hithard.wav", 100, pitch, vol)
         end
     end
 end

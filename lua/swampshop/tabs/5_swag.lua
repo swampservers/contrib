@@ -130,7 +130,7 @@ SS_Item({
     name = 'Combine Helmet',
     description = "Hide your identity while upholding the law.",
     model = 'models/nova/w_headgear.mdl',
-    color = Vector(1,1,1),
+    color = Vector(1, 1, 1),
     maxscale = 2.7,
     wear = {
         attach = "head",
