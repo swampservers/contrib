@@ -2,8 +2,6 @@
 -- INSTALL: CINEMA
 include("shared.lua")
 CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
-
-
 SPRAYPAINTMATS = {}
 
 local function GetPaintMaterial(color)
@@ -95,24 +93,26 @@ function SWEP:DrawWorldModel(flags)
         local isPony = ply:IsPony()
         local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
-        local bp, ba = ply:GetBonePosition(bon)
-        bp = bp or self:GetPos() 
-        ba = ba or self:GetAngles()
-        if bp then
-            opos = bp
-        end
 
-        if ba then
-            oang = ba
-        end
+        if (bon) then
+            local bp, ba = ply:GetBonePosition(bon)
+            bp = bp or self:GetPos()
+            ba = ba or self:GetAngles()
 
-        if isPony then
-            opos = opos + (oang:Forward() * 6.4) + (oang:Right() * -1.8) + (oang:Up() * 0)
-            oang:RotateAroundAxis(oang:Right(), 80)
-            oang:RotateAroundAxis(oang:Forward(), 12)
-            oang:RotateAroundAxis(oang:Up(), 20)
-        else
-            
+            if bp then
+                opos = bp
+            end
+
+            if ba then
+                oang = ba
+            end
+
+            if isPony then
+                opos = opos + (oang:Forward() * 6.4) + (oang:Right() * -1.8) + (oang:Up() * 0)
+                oang:RotateAroundAxis(oang:Right(), 80)
+                oang:RotateAroundAxis(oang:Forward(), 12)
+                oang:RotateAroundAxis(oang:Up(), 20)
+            else
                 oang:RotateAroundAxis(oang:Forward(), 90)
                 oang:RotateAroundAxis(oang:Right(), 90)
                 oang:RotateAroundAxis(oang:Forward(), 90)
@@ -120,36 +120,35 @@ function SWEP:DrawWorldModel(flags)
                 opos = opos + oang:Forward() * 2
                 opos = opos + oang:Up() * 0
                 oang:RotateAroundAxis(oang:Up(), -90)
-           
-        end
-
-        if (isPony) then
-            if (horn) then
-                opos = opos - oang:Up() * 5
-            else
-                opos = opos + oang:Up() * 3
             end
-        end
 
-        self:SetupBones()
-        matrix = self:GetBoneMatrix(0)
+            if (isPony) then
+                if (horn) then
+                    opos = opos - oang:Up() * 5
+                else
+                    opos = opos + oang:Up() * 3
+                end
+            end
 
-        if matrix then
-            matrix:SetTranslation(opos)
-            matrix:SetAngles(oang)
-            self:SetBoneMatrix(0, matrix)
+            self:SetupBones()
+            matrix = self:GetBoneMatrix(0)
+
+            if matrix then
+                matrix:SetTranslation(opos)
+                matrix:SetAngles(oang)
+                self:SetBoneMatrix(0, matrix)
+            end
         end
     end
 
-        render.MaterialOverride()
-        draw.NoTexture()
-        local cl = self:GetDecalColor()
-        render.SetColorModulation(cl.x, cl.y, cl.z)
-        render.SetBlend(1)
-        self:SetBodygroup(1, 1)
-        self:DrawModel()
-
-        render.SetColorModulation(1, 1, 1)
+    render.MaterialOverride()
+    draw.NoTexture()
+    local cl = self:GetDecalColor()
+    render.SetColorModulation(cl.x, cl.y, cl.z)
+    render.SetBlend(1)
+    self:SetBodygroup(1, 1)
+    self:DrawModel()
+    render.SetColorModulation(1, 1, 1)
 end
 
 function SWEP:GetViewModelPosition(epos, eang)
@@ -172,9 +171,9 @@ function SWEP:GetViewModelPosition(epos, eang)
     self.ViewmodelDown = self.ViewmodelDown or 0
 
     if (IsValid(SpraypaintMenu) or self:GetTrace().Invalid) then
-        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 1, FrameTime()*2)
+        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 1, FrameTime() * 2)
     else
-        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 0, FrameTime()*2)
+        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 0, FrameTime() * 2)
     end
 
     eang:RotateAroundAxis(eang:Right(), self.ViewmodelDown * -45)
@@ -183,7 +182,6 @@ function SWEP:GetViewModelPosition(epos, eang)
 end
 
 function SWEP:AdjustMouseSensitivity()
-
 end
 
 function SWEP:DrawHUD()
@@ -201,7 +199,7 @@ function SWEP:DoParticle(pos, color, size)
         local particle = self.SprayEmitter:Add(string.format("particle/smokesprites_00%02d", math.random(7, 16)), pos)
         particle:SetColor(color.r, color.g, color.b, color.a)
         particle:SetStartAlpha(color.a)
-        particle:SetVelocity(VectorRand()*6)
+        particle:SetVelocity(VectorRand() * 6)
         particle:SetGravity(Vector(0, 0, 0))
         particle:SetLifeTime(0)
         particle:SetLighting(false)
@@ -217,126 +215,123 @@ function SWEP:DoParticle(pos, color, size)
     end
 end
 
+SPRAYPAINT_DECALCOLOR_CACHE = SPRAYPAINT_DECALCOLOR_CACHE or {}
+SpraypaintMenu = nil
 
-    SPRAYPAINT_DECALCOLOR_CACHE = SPRAYPAINT_DECALCOLOR_CACHE or {}
-    SpraypaintMenu = nil
+function SWEP:GetDecalColor()
+    local ply = self:GetOwner()
+    if (not IsValid(ply)) then return Vector(1, 1, 1) end
+    local decal = ply:GetInfo(self.ConVar)
+    if (SPRAYPAINT_DECALCOLOR_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal] end
+    local mat = Material(util.DecalMaterial(decal))
 
-    function SWEP:GetDecalColor()
-        local ply = self:GetOwner()
-        if (not IsValid(ply)) then return Vector(1, 1, 1) end
-        local decal = ply:GetInfo(self.ConVar)
-        if (SPRAYPAINT_DECALCOLOR_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal] end
-        local mat = Material(util.DecalMaterial(decal))
+    if (mat) then
+        SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2")
 
-        if (mat) then
-            SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2")
-
-            return mat:GetVector("$color2") or Vector(1, 1, 1)
-        end
-
-        return Vector(1, 1, 1)
+        return mat:GetVector("$color2") or Vector(1, 1, 1)
     end
 
-    function SWEP:SpraypaintOpenPanel()
-        if IsValid(SpraypaintMenu) then return end
-        local Frame = vgui.Create("DFrame")
-        Frame:SetSize((48 + 4) * self.MenuColumns + 4 + 2, 280) --good size for example
-        Frame:SetTitle(self.WindowTitle)
-        Frame:Center()
-        Frame:MakePopup()
-        Frame.KeyCodeBinding = {}
+    return Vector(1, 1, 1)
+end
 
-        --auto-pressed buttons if associated with a specific key
-        function Frame:OnKeyCodePressed(keycode)
-            if (self.KeyCodeBinding[keycode]) then
-                self.KeyCodeBinding[keycode]:DoClick()
-            end
-        end 
+function SWEP:SpraypaintOpenPanel()
+    if IsValid(SpraypaintMenu) then return end
+    local Frame = vgui.Create("DFrame")
+    Frame:SetSize((48 + 4) * self.MenuColumns + 4 + 2, 280) --good size for example
+    Frame:SetTitle(self.WindowTitle)
+    Frame:Center()
+    Frame:MakePopup()
+    Frame.KeyCodeBinding = {}
 
-        surface.PlaySound(self.ShakeSound)
-        local List = vgui.Create("DIconLayout", Frame)
-        List:Center()
-        List:SetSpaceY(4) -- Sets the space in between the panels on the Y Axis by 5
-        List:SetSpaceX(4) -- Sets the space in between the panels on the X Axis by 5
-        local columncounter = 1
-        local rows = 1
-
-        for k, v in pairs(list.Get(self.DecalSet)) do
-           
-
-            local DButton = List:Add("DButton")
-            DButton:SetPos(128, 240)
-            DButton:SetText("")
-            DButton:SetSize(48, 48)
-            local keycode = list.Get(self.DecalSet .. "_keycodes")[k]
-
-            if (keycode) then
-                Frame.KeyCodeBinding[keycode] = DButton
-            end
-
-            DButton.PerformLayout = function() end
-            local mat = Material(util.DecalMaterial(v))
-            local dispmat = mat:GetName() --mat:GetString("$modelmaterial")
-            local color = mat:GetVector("$color2"):ToColor() or Color(255, 255, 255)
-            local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
-
-            DButton.Paint = function(self)
-                local w, h = self:GetSize()
-                draw.RoundedBox(4, 0, 0, w, h, Color(48, 48, 48, 255))
-            end
-
-            DButton:SetMaterial("models/shiny")
-            DButton.FixVertexLitMaterial = function() end
-
-            function DButton.m_Image:FixImage()
-                --
-                -- If it's a vertexlitgeneric material we need to change it to be
-                -- UnlitGeneric so it doesn't go dark when we enter a dark room
-                -- and flicker all about
-                --
-                local Mat = self:GetMaterial()
-                local strImage = Mat:GetName()
-                local t = Mat:GetString("$basetexture")
-                local f = Mat:GetFloat("$frame")
-                local c = Mat:GetVector("$color2")
-
-                if (t) then
-                    local params = {}
-                    params["$basetexture"] = t
-                    params["$frame"] = f
-                    params["$color2"] = c
-                    params["$vertexcolor"] = 1
-                    params["$vertexalpha"] = 1
-                    Mat = CreateMaterial(strImage .. "_DImage_1", "UnlitGeneric", params)
-                end
-
-                self:SetMaterial(Mat)
-            end
-
-            DButton.m_Image:SetMaterial(dispmat)
-            DButton.m_Image:FixImage()
-            DButton.m_Image:SetImageColor(color)
-            DButton.m_Image:Dock(NODOCK)
-            local isize = math.Clamp(size * 3, 0, 48)
-            DButton.m_Image:SetSize(isize, isize)
-            DButton.m_Image:Center()
-
-            DButton.DoClick = function()
-                RunConsoleCommand(self.ConVar, v)
-                Frame:Remove()
-            end
-            columncounter = columncounter + 1
-
-            if (columncounter > self.MenuColumns) then
-                columncounter = 0
-                rows = rows + 1
-            end
+    --auto-pressed buttons if associated with a specific key
+    function Frame:OnKeyCodePressed(keycode)
+        if (self.KeyCodeBinding[keycode]) then
+            self.KeyCodeBinding[keycode]:DoClick()
         end
-
-        List:Dock(FILL)
-        Frame:SizeToContents()
-        Frame:SetTall((rows ) * (48 + 4) + 30)
-        Frame:Center()
-        SpraypaintMenu = Frame
     end
 
+    surface.PlaySound(self.ShakeSound)
+    local List = vgui.Create("DIconLayout", Frame)
+    List:Center()
+    List:SetSpaceY(4) -- Sets the space in between the panels on the Y Axis by 5
+    List:SetSpaceX(4) -- Sets the space in between the panels on the X Axis by 5
+    local columncounter = 1
+    local rows = 1
+
+    for k, v in pairs(list.Get(self.DecalSet)) do
+        local DButton = List:Add("DButton")
+        DButton:SetPos(128, 240)
+        DButton:SetText("")
+        DButton:SetSize(48, 48)
+        local keycode = list.Get(self.DecalSet .. "_keycodes")[k]
+
+        if (keycode) then
+            Frame.KeyCodeBinding[keycode] = DButton
+        end
+
+        DButton.PerformLayout = function() end
+        local mat = Material(util.DecalMaterial(v))
+        local dispmat = mat:GetName() --mat:GetString("$modelmaterial")
+        local color = mat:GetVector("$color2"):ToColor() or Color(255, 255, 255)
+        local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
+
+        DButton.Paint = function(self)
+            local w, h = self:GetSize()
+            draw.RoundedBox(4, 0, 0, w, h, Color(48, 48, 48, 255))
+        end
+
+        DButton:SetMaterial("models/shiny")
+        DButton.FixVertexLitMaterial = function() end
+
+        function DButton.m_Image:FixImage()
+            --
+            -- If it's a vertexlitgeneric material we need to change it to be
+            -- UnlitGeneric so it doesn't go dark when we enter a dark room
+            -- and flicker all about
+            --
+            local Mat = self:GetMaterial()
+            local strImage = Mat:GetName()
+            local t = Mat:GetString("$basetexture")
+            local f = Mat:GetFloat("$frame")
+            local c = Mat:GetVector("$color2")
+
+            if (t) then
+                local params = {}
+                params["$basetexture"] = t
+                params["$frame"] = f
+                params["$color2"] = c
+                params["$vertexcolor"] = 1
+                params["$vertexalpha"] = 1
+                Mat = CreateMaterial(strImage .. "_DImage_1", "UnlitGeneric", params)
+            end
+
+            self:SetMaterial(Mat)
+        end
+
+        DButton.m_Image:SetMaterial(dispmat)
+        DButton.m_Image:FixImage()
+        DButton.m_Image:SetImageColor(color)
+        DButton.m_Image:Dock(NODOCK)
+        local isize = math.Clamp(size * 3, 0, 48)
+        DButton.m_Image:SetSize(isize, isize)
+        DButton.m_Image:Center()
+
+        DButton.DoClick = function()
+            RunConsoleCommand(self.ConVar, v)
+            Frame:Remove()
+        end
+
+        columncounter = columncounter + 1
+
+        if (columncounter > self.MenuColumns) then
+            columncounter = 0
+            rows = rows + 1
+        end
+    end
+
+    List:Dock(FILL)
+    Frame:SizeToContents()
+    Frame:SetTall((rows) * (48 + 4) + 30)
+    Frame:Center()
+    SpraypaintMenu = Frame
+end
