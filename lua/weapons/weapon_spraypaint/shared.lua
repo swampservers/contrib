@@ -119,7 +119,7 @@ function SWEP:GetTrace()
     tr.filter = ply
     local trace = util.TraceLine(tr)
     if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then end --trace.Invalid = true
-
+    if(trace.HitPos:Distance(org) > 128)then trace.Invalid = true end
     return trace
 end
 

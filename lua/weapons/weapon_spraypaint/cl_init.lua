@@ -96,7 +96,7 @@ function SWEP:DrawWorldModel(flags)
         local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local bp, ba = ply:GetBonePosition(bon)
-        bp = bp or self:GetPos()
+        bp = bp or self:GetPos() 
         ba = ba or self:GetAngles()
         if bp then
             opos = bp
@@ -112,7 +112,7 @@ function SWEP:DrawWorldModel(flags)
             oang:RotateAroundAxis(oang:Forward(), 12)
             oang:RotateAroundAxis(oang:Up(), 20)
         else
-            if (bn ~= 0) then
+            
                 oang:RotateAroundAxis(oang:Forward(), 90)
                 oang:RotateAroundAxis(oang:Right(), 90)
                 oang:RotateAroundAxis(oang:Forward(), 90)
@@ -120,7 +120,7 @@ function SWEP:DrawWorldModel(flags)
                 opos = opos + oang:Forward() * 2
                 opos = opos + oang:Up() * 0
                 oang:RotateAroundAxis(oang:Up(), -90)
-            end
+           
         end
 
         if (isPony) then
@@ -137,10 +137,7 @@ function SWEP:DrawWorldModel(flags)
         if matrix then
             matrix:SetTranslation(opos)
             matrix:SetAngles(oang)
-
-           
-                self:SetBoneMatrix(0, matrix)
-
+            self:SetBoneMatrix(0, matrix)
         end
     end
 
@@ -174,10 +171,10 @@ function SWEP:GetViewModelPosition(epos, eang)
     epos = epos + eang:Forward() * self.ViewmodelFwd * 10
     self.ViewmodelDown = self.ViewmodelDown or 0
 
-    if (IsValid(SpraypaintMenu)) then
-        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 1, FrameTime())
+    if (IsValid(SpraypaintMenu) or self:GetTrace().Invalid) then
+        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 1, FrameTime()*2)
     else
-        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 0, FrameTime())
+        self.ViewmodelDown = math.Approach(self.ViewmodelDown, 0, FrameTime()*2)
     end
 
     eang:RotateAroundAxis(eang:Right(), self.ViewmodelDown * -45)
@@ -186,7 +183,7 @@ function SWEP:GetViewModelPosition(epos, eang)
 end
 
 function SWEP:AdjustMouseSensitivity()
-    if (self.SensToggle) then return 0.2 end
+
 end
 
 function SWEP:DrawHUD()
@@ -220,24 +217,6 @@ function SWEP:DoParticle(pos, color, size)
     end
 end
 
-if CLIENT then
-    surface.CreateFont("spraypaint_ammocounter", {
-        font = "Coolvetica", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
-        extended = false,
-        size = 128,
-        weight = 500,
-        blursize = 2,
-        scanlines = 0,
-        antialias = true,
-        underline = false,
-        italic = false,
-        strikeout = false,
-        symbol = false,
-        rotary = false,
-        shadow = false,
-        additive = false,
-        outline = false,
-    })
 
     SPRAYPAINT_DECALCOLOR_CACHE = SPRAYPAINT_DECALCOLOR_CACHE or {}
     SpraypaintMenu = nil
@@ -360,4 +339,4 @@ if CLIENT then
         Frame:Center()
         SpraypaintMenu = Frame
     end
-end
+
