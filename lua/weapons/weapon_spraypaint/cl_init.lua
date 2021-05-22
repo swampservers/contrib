@@ -231,8 +231,7 @@ function SWEP:DrawWorldModel(query)
     local oang = self:GetAngles()
 
     if IsValid(ply) then
-        local modelStr = ply:GetModel():sub(1, 17)
-        local isPony = modelStr == "models/ppm/player" or modelStr == "models/mlp/player" or modelStr == "models/cppm/playe"
+        local isPony = ply:IsPony()
         local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local bp, ba = ply:GetBonePosition(bon)
