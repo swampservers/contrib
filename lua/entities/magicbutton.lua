@@ -520,7 +520,7 @@ local function MagicOutcomeOverlay(ply, button)
         end
     end)
 
-    return "and had their screen fucked up %s ;billhead;"
+    return "and had their screen fucked up ;billhead;"
 end
 
 local MagicButtonOutcomes = {
