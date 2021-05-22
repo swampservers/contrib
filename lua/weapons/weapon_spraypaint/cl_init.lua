@@ -422,7 +422,7 @@ if CLIENT then
         if IsValid(SpraypaintMenu) then return end
         local Frame = vgui.Create("DFrame")
         Frame:SetSize((48 + 4) * self.MenuColumns + 4 + 2, 280) --good size for example
-        Frame:SetTitle("Spraypaint Color")
+        Frame:SetTitle(self.WindowTitle)
         Frame:Center()
         Frame:MakePopup()
         Frame.KeyCodeBinding = {}
@@ -432,7 +432,7 @@ if CLIENT then
             if (self.KeyCodeBinding[keycode]) then
                 self.KeyCodeBinding[keycode]:DoClick()
             end
-        end
+        end 
 
         surface.PlaySound(self.ShakeSound)
         local List = vgui.Create("DIconLayout", Frame)
@@ -443,12 +443,7 @@ if CLIENT then
         local rows = 1
 
         for k, v in pairs(list.Get(self.DecalSet)) do
-            columncounter = columncounter + 1
-
-            if (columncounter > self.MenuColumns) then
-                columncounter = 1
-                rows = rows + 1
-            end
+           
 
             local DButton = List:Add("DButton")
             DButton:SetPos(128, 240)
@@ -511,11 +506,18 @@ if CLIENT then
                 RunConsoleCommand(self.ConVar, v)
                 Frame:Remove()
             end
+            columncounter = columncounter + 1
+
+            if (columncounter > self.MenuColumns) then
+                columncounter = 0
+                rows = rows + 1
+            end
         end
 
         List:Dock(FILL)
         Frame:SizeToContents()
-        Frame:SetTall((rows - 1) * (48 + 4) + 30)
+        print(rows)
+        Frame:SetTall((rows ) * (48 + 4) + 30)
         SpraypaintMenu = Frame
     end
 end

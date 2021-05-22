@@ -50,7 +50,7 @@ CreateDecals()
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
 SWEP.ConVar = "spraypaint_decal"
-
+SWEP.WindowTitle = "Spraypaint Color"
 function SWEP:SetupDataTables()
 end
 
@@ -130,6 +130,9 @@ hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key) end)
 function SWEP:MakePaint(trace, delay)
     local ply = self:GetOwner()
 
+    if(self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < 1)then
+        return
+    end
     if (CLIENT) then
         local color = self:GetDecalColor():ToColor()
         self:DoParticle(trace.StartPos, trace.HitPos, color)
@@ -171,6 +174,7 @@ function SWEP:MakePaint(trace, delay)
         return
     end
 
+    self.LastPaintPos = trace.HitPos
     if (trace.HitSky) then return end
     if (not trace.Hit) then return end
     local pos = trace.HitPos * 1
@@ -181,6 +185,7 @@ function SWEP:MakePaint(trace, delay)
     if (SERVER) then
         util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
     end
+    
 end
 
 function SWEP:EquipAmmo(ply)

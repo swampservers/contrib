@@ -8,6 +8,7 @@ SWEP.Category = "PYROTEKNIK"
 SWEP.Primary.Automatic = false
 SWEP.Instructions = "Left Click to Draw, Right click to change stencil"
 SWEP.PaintDelay = 0.25
+SWEP.WindowTitle = "Pick a Stencil (You can use your keyboard to choose)"
 
 if (CLIENT) then
     CreateClientConVar("spraypaint_stencil", "stencil_decal27", true, true, "decal to spray from the can")
@@ -27,6 +28,12 @@ local function CreateDecals()
             list.Set("SprayPaintStencils_keycodes", i, 10 + i)
         end
     end
+    list.Set("SprayPaintStencils", 33, "Noughtsncrosses")
+    list.Set("SprayPaintStencils", 34, "Nought")
+    list.Set("SprayPaintStencils", 35, "Cross")
+    list.Set("SprayPaintStencils", 36, "Eye")
+    list.Set("SprayPaintStencils", 37, "Smile")
+    
 end
 
 CreateDecals()
@@ -41,6 +48,8 @@ function SWEP:GetDecalMat()
     local mat = Material(util.DecalMaterial(decal))
     local t = mat:GetString("$basetexture")
     local f = mat:GetFloat("$frame")
+    local sc = mat:GetFloat("$decalscale")
+    
     local c = mat:GetVector("$color2")
 
     if (self.PREVIEWMAT[decal] == nil) then
@@ -50,7 +59,8 @@ function SWEP:GetDecalMat()
         params["$color2"] = c
         params["$vertexcolor"] = 1
         params["$vertexalpha"] = 1
-        self.PREVIEWMAT[decal] = CreateMaterial(decal .. "stencilpreviewmat", "UnlitGeneric", params)
+        params["$decalscale"] = sc
+        self.PREVIEWMAT[decal] = CreateMaterial(decal .. "stencilpreviewmat1", "UnlitGeneric", params)
     end
 
     return self.PREVIEWMAT[decal]
@@ -64,6 +74,9 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
     if (trace.HitSky) then return end
     local pos = trace.HitPos + trace.HitNormal * 0.1
     local ang = trace.HitNormal:Angle()
+    local mat = wep:GetDecalMat()
+    local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
+
     ang:RotateAroundAxis(ang:Up(), 90)
     ang:RotateAroundAxis(ang:Forward(), 90)
 
@@ -72,9 +85,11 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
     end
 
     local cc = Vector(1, 1, 1)
+    if(mat and size)then
     cam.Start3D2D(pos, ang, 1)
     surface.SetDrawColor(255, 255, 255, 64)
-    surface.SetMaterial(wep:GetDecalMat())
-    surface.DrawTexturedRect(-8, -8, 16, 16)
+    surface.SetMaterial(mat)
+    surface.DrawTexturedRect(-size/2, -size/2, size, size)
     cam.End3D2D()
+    end
 end)
