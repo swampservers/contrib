@@ -55,8 +55,7 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Initialize()
-    self.CapOn = true
-    self:SetHoldType("passive")
+    self:SetHoldType("pistol")
 end
 
 function SWEP:PrimaryAttack()
@@ -84,7 +83,6 @@ function SWEP:Deploy()
         self:SendWeaponAnim(ACT_VM_DRAW)
     end
 
-    self:PlayEquipAnimation()
 
     return true
 end
@@ -135,41 +133,9 @@ function SWEP:MakePaint(trace, delay)
     end
     if (CLIENT) then
         local color = self:GetDecalColor():ToColor()
-        self:DoParticle(trace.StartPos, trace.HitPos, color)
+        self:DoParticle(trace.HitPos, color)
 
-        if (not self.SpraySound) then
-            sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
-                if (IsValid(sound)) then
-                    self.SpraySound = sound
-                    sound:SetPos(self:GetPos())
-                end
-            end)
-        end
-
-        if (self.SpraySound) then
-            self.SpraySound:SetPos(self:GetPos())
-
-            if (self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING) then
-                self.SpraySound:Play()
-            end
-
-            if (self.SpraySound:GetTime() >= 0.6) then
-                self.SpraySound:SetTime(0.055 + math.Rand(0, 0.4))
-            end
-
-            local globpitch = 1
-            local globvol = 1
-            self.SprayRand = self.SprayRand or 1
-            self.SprayRand = math.Clamp(self.SprayRand + math.Rand(-1, 1) * FrameTime() * 0.1, 0.9, 1.1)
-            self.SpraySound:SetPlaybackRate(globpitch * self.SprayRand)
-            self.SpraySound:SetVolume(globvol)
-
-            timer.Create(self:EntIndex() .. "spraysoundend", delay * 1.04, 1, function()
-                if (IsValid(self.SpraySound)) then
-                    self.SpraySound:SetTime(0.665)
-                end
-            end)
-        end
+        self:DoSound(delay)
 
         return
     end
@@ -188,6 +154,45 @@ function SWEP:MakePaint(trace, delay)
     
 end
 
+function SWEP:DoSound(delay)
+
+
+    if (not self.SpraySound) then
+        sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
+            if (IsValid(sound)) then
+                self.SpraySound = sound
+                sound:SetPos(self:GetPos())
+            end
+        end)
+    end
+
+    if (self.SpraySound) then
+        self.SpraySound:SetPos(self:GetPos())
+
+        if (self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING) then
+            self.SpraySound:Play()
+        end
+
+        if (self.SpraySound:GetTime() >= 0.6) then
+            self.SpraySound:SetTime(0.055 + math.Rand(0, 0.4))
+        end
+
+        local globpitch = 1
+        local globvol = 1
+        self.SprayRand = self.SprayRand or 1
+        self.SprayRand = math.Clamp(self.SprayRand + math.Rand(-1, 1) * FrameTime() * 0.1, 0.9, 1.1)
+        self.SpraySound:SetPlaybackRate(globpitch * self.SprayRand)
+        self.SpraySound:SetVolume(globvol)
+
+        timer.Create(self:EntIndex() .. "spraysoundend", delay * 1.04, 1, function()
+            if (IsValid(self.SpraySound)) then
+                self.SpraySound:SetTime(0.665)
+            end
+        end)
+    end
+end
+
+
 function SWEP:EquipAmmo(ply)
 end
 
@@ -195,47 +200,7 @@ function SWEP:GetPaintDistance()
     return 128
 end
 
-net.Receive("spraypaint_equipanim", function(len)
-    local wep = net.ReadEntity()
-    local spawnempty = net.ReadBool()
-    local ecolor = (spawnempty and net.ReadVector()) or nil
 
-    if (IsValid(wep) and wep.PlayEquipAnimation) then
-        wep:PlayEquipAnimation(spawnempty, ecolor)
-    end
-end)
-
-function SWEP:PlayEquipAnimation(spawnempty, ecolor)
-    self.ViewmodelDown = 1
-
-    if (SERVER) then
-        net.Start("spraypaint_equipanim", true)
-        net.WriteEntity(self)
-        net.WriteBool(spawnempty)
-
-        if (spawnempty and ecolor) then
-            net.WriteVector(ecolor)
-        end
-
-        net.SendPVS(self:GetPos())
-    end
-
-    self.CapOn = true
-    self:SetHoldType("normal")
-
-    if (CLIENT) then
-        if (spawnempty) then
-            self:TossEmpty(ecolor)
-        end
-
-        timer.Create("uncap_" .. self:EntIndex(), 0.3, 1, function()
-            self:SetNoDraw(false)
-            self:MakeCap()
-            self:SetHoldType("pistol")
-        end)
-    end
-    --if(spawnempty)then self:ShakeCan() end
-end
 
 function SWEP:CancelAllAnimations()
     self.CapOn = true

@@ -66,9 +66,16 @@ function SWEP:GetDecalMat()
     return self.PREVIEWMAT[decal]
 end
 
+function SWEP:DoSound(delay)
+self:EmitSound("spraypaint/spraypaint.wav",40,230,0.2)
+
+end
+
+
 hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
     local wep = LocalPlayer():GetActiveWeapon()
     if (not IsValid(wep) or wep:GetClass() ~= "weapon_stencilpaint") then return end
+    if (CurTime() < wep:GetNextPrimaryFire())then return end
     local trace = wep:GetTrace()
     if (not trace.Hit or trace.HitPos:Distance(EyePos()) > wep:GetPaintDistance()) then return end
     if (trace.HitSky) then return end

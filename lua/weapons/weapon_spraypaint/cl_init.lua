@@ -3,139 +3,6 @@
 include("shared.lua")
 CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
 
-function SWEP:ShakeCan()
-    timer.Create("capshakesnd__" .. self:EntIndex(), 0.3, 1, function()
-        if (IsValid(self)) then
-            self:EmitSound(self.ShakeSound, 80)
-        end
-    end)
-
-    timer.Create("capshake__" .. self:EntIndex(), 0.1, 1, function()
-        timer.Create("capshake_" .. self:EntIndex(), 0.2, 3, function()
-            if (IsValid(self) and IsValid(self.Owner)) then
-                self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
-            end
-        end)
-    end)
-end
-
-net.Receive("spraypaint_equipanim", function(len)
-    local wep = net.ReadEntity()
-    local spawnempty = net.ReadBool()
-    local ecolor = (spawnempty and net.ReadVector()) or nil
-
-    if (IsValid(wep) and wep.PlayEquipAnimation) then
-        wep:PlayEquipAnimation(spawnempty, ecolor)
-    end
-end)
-
-function SWEP:PlayEquipAnimation(spawnempty, ecolor)
-    self.ViewmodelDown = 1
-
-    if (SERVER) then
-        net.Start("spraypaint_equipanim", true)
-        net.WriteEntity(self)
-        net.WriteBool(spawnempty)
-
-        if (spawnempty and ecolor) then
-            net.WriteVector(ecolor)
-        end
-
-        net.SendPVS(self:GetPos())
-    end
-
-    if (spawnempty) then
-        self:TossEmpty(ecolor)
-    end
-
-    self.CapOn = true
-    self:SetHoldType("normal")
-
-    timer.Create("uncap_" .. self:EntIndex(), 0.3, 1, function()
-        self:SetNoDraw(false)
-        self:MakeCap()
-        self:SetHoldType("pistol")
-    end)
-    --if(spawnempty)then self:ShakeCan() end 
-end
-
-function SWEP:CancelAllAnimations()
-    self.CapOn = true
-    timer.Destroy("capshake_" .. self:EntIndex())
-    timer.Destroy("capshakesnd__" .. self:EntIndex())
-    timer.Destroy("uncap_" .. self:EntIndex())
-    timer.Destroy("capshake_" .. self:EntIndex())
-end
-
-function SWEP:MakeCap()
-    self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
-    self.CapOn = false
-    self:EmitSound(self.PopCapSound)
-    local matrix, opos, oang = self:DrawWorldModel(true)
-
-    if (IsValid(self.CapGib)) then
-        self.CapGib:Remove()
-    end
-
-    local cc = self:GetDecalColor()
-    local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
-    self.CapGib = ents.CreateClientProp(self.CapModel)
-    if (not IsValid(self.CapGib)) then return end
-    self.CapGib:SetPos(opos)
-    self.CapGib:SetAngles(oang)
-    self.CapGib:SetColor(color)
-    self.CapGib:Spawn()
-    self.CapGib:Activate()
-
-    if (IsValid(self.CapGib) and IsValid(self.CapGib:GetPhysicsObject())) then
-        self.CapGib:GetPhysicsObject():ApplyForceCenter(matrix:GetAngles():Up() * math.Rand(50, 80))
-        self.CapGib:GetPhysicsObject():ApplyTorqueCenter(VectorRand() * 10)
-    end
-
-    local gib = self.CapGib
-
-    timer.Create(self:EntIndex() .. "capremovegib", 10, 1, function()
-        if (IsValid(gib)) then
-            gib:Remove()
-        end
-    end)
-end
-
-function SWEP:TossEmpty(colorvec)
-    self.Owner:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, true)
-    self:SetNoDraw(true)
-    local matrix, opos, oang = self:DrawWorldModel(true)
-
-    if (IsValid(self.EmptyGib)) then
-        self.EmptyGib:Remove()
-    end
-
-    local cc = colorvec or self:GetDecalColor()
-    local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
-    local ply = self:GetOwner()
-    self.EmptyGib = ents.CreateClientProp(self.WorldModel)
-    if (not IsValid(self.EmptyGib)) then return end
-    self.EmptyGib:SetPos(opos)
-    self.EmptyGib:SetAngles(oang)
-    self.EmptyGib:SetBodygroup(1, 1)
-    self.EmptyGib:SetColor(color)
-    self.EmptyGib:Spawn()
-    self.EmptyGib:Activate()
-
-    if (IsValid(self.EmptyGib) and IsValid(self.EmptyGib:GetPhysicsObject())) then
-        local dir = Angle(0, ply:EyeAngles().yaw, 0)
-        self.EmptyGib:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 150) + dir:Forward() * -100)
-        self.EmptyGib:GetPhysicsObject():ApplyTorqueCenter(VectorRand() * 10)
-    end
-
-    local gib = self.EmptyGib
-
-    timer.Create(gib:EntIndex() .. "emptyremovegib", 10, 1, function()
-        if (IsValid(gib)) then
-            gib:Remove()
-        end
-    end)
-end
 
 SPRAYPAINTMATS = {}
 
@@ -190,7 +57,7 @@ function SWEP:DrawWeaponSelection(x, y, wide, tall, alpha)
 end
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
-    self:SetBodygroup(2, (self.CapOn and 0) or 1)
+    self:SetBodygroup(2, 1)
     local cl = self:GetDecalColor()
     render.SetColorModulation(cl.x, cl.y, cl.z)
     local down = ply:KeyDown(IN_ATTACK)
@@ -215,7 +82,7 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
     render.SetColorModulation(1, 1, 1)
 end
 
-function SWEP:DrawWorldModel(query)
+function SWEP:DrawWorldModel(flags)
     local ply = self:GetOwner()
     self:SetModelScale(1, 0)
     self:SetSubMaterial()
@@ -229,7 +96,8 @@ function SWEP:DrawWorldModel(query)
         local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local bp, ba = ply:GetBonePosition(bon)
-
+        bp = bp or self:GetPos()
+        ba = ba or self:GetAngles()
         if bp then
             opos = bp
         end
@@ -270,29 +138,21 @@ function SWEP:DrawWorldModel(query)
             matrix:SetTranslation(opos)
             matrix:SetAngles(oang)
 
-            if (query ~= true) then
+           
                 self:SetBoneMatrix(0, matrix)
-            end
+
         end
     end
 
-    if (query ~= true) then
         render.MaterialOverride()
         draw.NoTexture()
         local cl = self:GetDecalColor()
         render.SetColorModulation(cl.x, cl.y, cl.z)
         render.SetBlend(1)
-        self:SetBodygroup(1, (self.CapOn and 0) or 1)
+        self:SetBodygroup(1, 1)
         self:DrawModel()
 
-        for i = 0, 128 do
-            --print(i,self:GetBoneName(i))
-        end
-
         render.SetColorModulation(1, 1, 1)
-    end
-
-    if (query == true) then return matrix, opos, oang end
 end
 
 function SWEP:GetViewModelPosition(epos, eang)
@@ -336,41 +196,21 @@ if not SpraypaintParticleEmitter then
     SpraypaintParticleEmitter = ParticleEmitter(Vector(0, 0, 0))
 end
 
-function SWEP:DoParticle(pos, endpos, color, size)
+function SWEP:DoParticle(pos, color, size)
     for i = 1, 5 do
-        local matrix, opos, oang = self:DrawWorldModel(true)
-        pos = opos + oang:Up() * 5
-
-        if (self:GetOwner() == LocalPlayer() and not self:GetOwner():ShouldDrawLocalPlayer()) then
-            local vm = self:GetOwner():GetViewModel()
-            local bone = vm:LookupBone("plunger")
-
-            if (bone) then
-                local matrix = vm:GetBoneMatrix(bone)
-
-                if (matrix) then
-                    pos = matrix:GetTranslation() + matrix:GetAngles():Forward() * -5 + matrix:GetAngles():Up() * -1
-                end
-            end
-        end
-
-        local dir = (endpos - pos):GetNormal()
-        local tv = dir * 500
-        pos = pos + dir * math.Rand(0, tv:Length()) * FrameTime()
         self.SprayEmitter = self.SprayEmitter or ParticleEmitter(pos)
         if (not SpraypaintParticleEmitter) then return end
         self.SprayEmitter:SetPos(pos)
         local particle = self.SprayEmitter:Add(string.format("particle/smokesprites_00%02d", math.random(7, 16)), pos)
-        --if DisableConvar:GetBool() then return end
         particle:SetColor(color.r, color.g, color.b, color.a)
         particle:SetStartAlpha(color.a)
-        particle:SetVelocity(tv)
+        particle:SetVelocity(VectorRand()*6)
         particle:SetGravity(Vector(0, 0, 0))
         particle:SetLifeTime(0)
         particle:SetLighting(false)
         particle:SetDieTime(math.Rand(0.1, 0.3))
         particle:SetStartSize(1)
-        particle:SetEndSize(8)
+        particle:SetEndSize(16)
         particle:SetEndAlpha(0)
         particle:SetCollide(true)
         particle:SetBounce(0)
@@ -516,8 +356,8 @@ if CLIENT then
 
         List:Dock(FILL)
         Frame:SizeToContents()
-        print(rows)
         Frame:SetTall((rows ) * (48 + 4) + 30)
+        Frame:Center()
         SpraypaintMenu = Frame
     end
 end
