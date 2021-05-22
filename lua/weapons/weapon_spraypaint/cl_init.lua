@@ -229,7 +229,7 @@ function SWEP:GetDecalColor()
 
     return Vector(1, 1, 1)
 end
-
+ 
 function SWEP:SpraypaintOpenPanel()
     if IsValid(SpraypaintMenu) then return end
     local Frame = vgui.Create("DFrame")
@@ -325,7 +325,7 @@ function SWEP:SpraypaintOpenPanel()
         end
     end
 
-    List:Dock(FILL)
+    List:Dock(FILL) 
     Frame:SizeToContents()
     Frame:SetTall((rows) * (48 + 4) + 30)
     Frame:Center()

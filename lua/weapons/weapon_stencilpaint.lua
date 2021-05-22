@@ -17,24 +17,23 @@ end
 local function CreateDecals()
     SPRAYPAINT_STENCILS = {}
 
-    for i = 1, 32 do
+    for i = 1, 40 do
         local dname = "stencil_decal" .. i
         local matname = "spray/" .. dname
         SPRAYPAINT_STENCILS[i] = dname
         game.AddDecal(dname, matname)
         list.Set("SprayPaintStencils", i, dname)
-
         if (10 + i <= 36) then
             list.Set("SprayPaintStencils_keycodes", i, 10 + i)
         end
     end
-    list.Set("SprayPaintStencils", 33, "Noughtsncrosses")
-    list.Set("SprayPaintStencils", 34, "Nought")
-    list.Set("SprayPaintStencils", 35, "Cross")
-    list.Set("SprayPaintStencils", 36, "Eye")
-    list.Set("SprayPaintStencils", 37, "Smile")
+    list.Set("SprayPaintStencils", 41, "Noughtsncrosses")
+    list.Set("SprayPaintStencils", 42, "Nought")
+    list.Set("SprayPaintStencils", 43, "Cross")
+    list.Set("SprayPaintStencils", 44, "Eye")
+    list.Set("SprayPaintStencils", 45, "Smile")
     
-end
+end 
 
 CreateDecals()
 SWEP.DecalSet = "SprayPaintStencils"
@@ -67,7 +66,7 @@ function SWEP:GetDecalMat()
 end
 
 function SWEP:DoSound(delay)
-self:EmitSound("spraypaint/spraypaint.wav",40,230,0.2)
+self:EmitSound("spraypaint/spraypaint.wav",100,230,0.5)
 
 end
 

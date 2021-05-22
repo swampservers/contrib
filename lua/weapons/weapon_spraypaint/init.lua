@@ -5,4 +5,4 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
 function SWEP:OwnerChanged()
-end
+end 

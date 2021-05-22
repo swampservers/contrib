@@ -29,7 +29,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = true
-SWEP.DrawCrosshair = false
+SWEP.DrawCrosshair = true 
 SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
@@ -57,8 +57,24 @@ end
 function SWEP:Initialize()
     self:SetHoldType("pistol")
 end
+if(SERVER)then
+    util.AddNetworkString("SpraypaintNetworked")
+end
+
+if(CLIENT)then
+    net.Receive("SpraypaintNetworked",function(len)
+    local ent = net.ReadEntity()
+
+    ent:PrimaryAttack()
+    end)
+end
 
 function SWEP:PrimaryAttack()
+    if(SERVER)then
+        net.Start("SpraypaintNetworked")
+        net.WriteEntity(self)
+        net.SendPVS(self:GetOwner():GetPos())
+    end
     local trace = self:GetTrace()
 
     if (not trace.Invalid) then
