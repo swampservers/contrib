@@ -311,8 +311,7 @@ local function MagicOutcomePrize(ply)
     local amount = ButtonMoneyPrize()
     if (ply.SS_GivePoints == nil) then return nil end
     ply:SS_GivePoints(amount)
-
-    return string.Comma(amount)
+    return "and won [white]"..string.Comma(amount).." points![fbc];coins;"
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
@@ -321,8 +320,8 @@ local function MagicOutcomeBountyAndPrize(ply)
     ply:SS_GivePoints(amount)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
-
-    return string.Comma(amount)
+    
+    return "and won [red]"..string.Comma(amount).." points[fbc] and also a [red]"..string.Comma(amount).." point bounty[fbc] on themself! ;fingers;"
 end
 
 local function MagicOutcomeBountyAll(ply)
@@ -338,7 +337,7 @@ local function MagicOutcomeBountyAll(ply)
         SetPlayerBounty(v, add)
     end
 
-    return string.Comma(amount)
+    return "and [red]increased everyone's bounty by "..string.Comma(amount).." points! ;dougie;"
 end
 
 local function MagicOutcomeKleinerFanclub(ply)
@@ -369,7 +368,7 @@ local function MagicOutcomeExplode(ply, button)
     explosion:SetKeyValue("iMagnitude", "150") -- the magnitude of the explosion
     explosion:Fire("Explode", 0, 0) -- explode
 
-    return ""
+    return "it exploded haha ;crazy;"
 end
 
 local function MagicOutcomeKleinerSlur(ply)
@@ -452,8 +451,7 @@ local function MagicOutcomeButtonSpawn(ply)
 
             locname = locname .. " (" .. nearestname .. ")"
         end
-
-        return locname or "Somewhere stupid"
+        return "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location:[white]".. (locname or "Somewhere stupid")
     end
 end
 
@@ -503,12 +501,11 @@ local function MagicOutcomeSpawnObject(ply, button)
     local what = name or ent.PrintName or ent:GetClass()
 
     if (number > 1) then
-        what = number .. " " .. what .. "s"
+        return "and it spawned " .. number .. " " .. what .. "s!"
     else
-        what = "a " .. what
+        return "and it spawned a " .. what.."!"
     end
 
-    return what
 end
 
 local function MagicOutcomeOverlay(ply, button)
@@ -523,67 +520,56 @@ local function MagicOutcomeOverlay(ply, button)
         end
     end)
 
-    return ""
+    return "and had their screen fucked up %s ;billhead;"
 end
 
 local MagicButtonOutcomes = {
     {
         func = MagicOutcomePrize,
-        message = "and won [white]%s points![fbc];coins;",
         weight = 1
     },
     {
         func = MagicOutcomeBountyAndPrize,
-        message = "and won [red]%s points[fbc] and also a [red]%s point bounty[fbc] on themself! ;fingers;",
         weight = 3
     },
     {
         func = MagicOutcomeKleinerFanclub,
-        message = "%s",
         weight = 5
     },
     {
         func = MagicOutcomeKleinerTeleported,
-        message = "%s",
         weight = 4,
     },
     {
         func = MagicOutcomeKleinerSlur,
-        message = "%s",
         weight = 3
     },
     {
         func = MagicOutcomeOverlay,
-        message = "and had their screen fucked up %s ;billhead;",
         weight = 2
     },
     {
         func = MagicOutcomeSpawnObject,
-        message = "and it spawned %s",
         weight = 2
     },
     {
         func = function(ply, button)
             ply:SetPos(button:FindSuitableCastOrigin().StartPos)
 
-            return table.Random({";blackwhat;", "", "", ""})
+            return "and teleported somewhere mysterious! ".. table.Random({";blackwhat;", ";billhead;", "", ""})
         end,
-        message = "and teleported somewhere mysterious! %s",
         weight = 2
     },
     {
         func = MagicOutcomeBountyAll,
-        message = "and [red]increased everyone's bounty by %s points! ;dougie;",
         weight = 1
     },
     {
         func = MagicOutcomeButtonSpawn,
-        message = "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location:[white] %s",
         weight = 2
     },
     {
         func = MagicOutcomeExplode,
-        message = "it exploded haha ;crazy;",
         weight = 3
     },
     {
@@ -597,23 +583,23 @@ local MagicButtonOutcomes = {
             bang.pitch = -eang.roll
             ply:ManipulateBoneAngles(bone, bang)
 
-            return ""
+            return "and got a sore neck"
         end,
-        message = "and got a sore neck",
         weight = 3
     },
     {
         func = function(ply, button)
-            return table.Random({";baby;", ";bad;", ";biggestloser;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
+            return "but nothing happened! " ..table.Random({";baby;", ";bad;", ";biggestloser;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
         end,
-        message = "but nothing happened! %s",
         weight = 2
     },
     {
         func = function(ply, button)
-            if (OpenAPresent) then return OpenAPresent(ply, button:GetPos()) end
+            if (OpenAPresent) then
+                local content = OpenAPresent(ply, button:GetPos()) 
+                return "and got [white]"..content.."[fbc]! ;alien;"
+            end
         end,
-        message = "and got [white]%s[fbc]! ;alien;",
         weight = 8
     }
 }
@@ -640,7 +626,7 @@ function ENT:Effect(ply)
         if (item ~= nil) then break end
     end
 
-    return string.format(effect.message, item, item)
+    return item
 end
 
 function ENT:Use(activator)
