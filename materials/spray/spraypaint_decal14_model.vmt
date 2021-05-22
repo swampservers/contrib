@@ -3,5 +3,5 @@
                     "$basetexture" "spray/dot"
                     "$translucent" 1
                     "$decalscale" "0.1875"
-                    "$color2" "[0.047058824449778 0.047058824449778 0.93333333730698]"
+                    "$color2" "[0 0 1]"
                 }

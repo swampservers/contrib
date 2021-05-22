@@ -4,5 +4,5 @@
                     "$translucent" "1"
                     "$decalscale" "0.375"
                     "$modelmaterial" "spray/spraypaint_decal5_model"
-                    "$color2" "[0.047058824449778 0.047058824449778 0.93333333730698]"
+                    "$color2" "[0 0 1]"
                 }
