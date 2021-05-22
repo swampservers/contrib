@@ -1,12 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
 -- weapons.GetStored("weapon_base").WepSelectIcon 
- 
-BASEDRAWWEAPONSELECTION = BASEDRAWWEAPONSELECTION or weapons.GetStored("weapon_base").DrawWeaponSelection
-SWEPCOLORMATERIAL = Material("models/debug/debugwhite")
-weapons.GetStored("weapon_base").DrawWeaponSelection = function(self, x, y, wide, tall, alpha)
-    if self.WorldModel=="" then return BASEDRAWWEAPONSELECTION(self, x, y, wide, tall, alpha) end
-    
+
+function ALTDRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
     y = y + 40
     tall = tall - 40
 
@@ -63,5 +59,12 @@ weapons.GetStored("weapon_base").DrawWeaponSelection = function(self, x, y, wide
     -- render.ResetModelLighting(1,1,1)
 
     render.SuppressEngineLighting(false)   
+end
+ 
+BASEDRAWWEAPONSELECTION = BASEDRAWWEAPONSELECTION or weapons.GetStored("weapon_base").DrawWeaponSelection
+SWEPCOLORMATERIAL = Material("models/debug/debugwhite")
+weapons.GetStored("weapon_base").DrawWeaponSelection = function(self, x, y, wide, tall, alpha)
+    if self.WorldModel=="" then return BASEDRAWWEAPONSELECTION(self, x, y, wide, tall, alpha) end
+    return ALTDRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
 end
 
