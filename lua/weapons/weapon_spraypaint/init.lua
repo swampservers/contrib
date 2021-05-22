@@ -8,9 +8,7 @@ function SWEP:Initialize()
     self:SetHoldType("pistol")
 end
 
-util.AddNetworkString("spraypaint_equipanim" )
+util.AddNetworkString("spraypaint_equipanim")
 
 function SWEP:OwnerChanged()
-
 end
-

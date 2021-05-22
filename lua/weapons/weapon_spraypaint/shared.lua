@@ -18,7 +18,7 @@ SWEP.WorldModel = Model("models/pyroteknik/w_spraypaint.mdl")
 SWEP.CapModel = Model("models/pyroteknik/w_spraypaint_cap.mdl")
 SWEP.ShakeSound = Sound("spraypaint/spray_shake.wav")
 SWEP.PopCapSound = Sound("spraypaint/spray_capoff.wav")
-SWEP.ViewModelFOV = 70 
+SWEP.ViewModelFOV = 70
 SWEP.UseHands = true
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
@@ -36,17 +36,17 @@ SWEP.PaintDelay = 1 / 30
 
 local function CreateDecals()
     SPRAYPAINT_DECALS = {}
-        for i=1,27 do
-            local dname = "spraypaint_decal"..i
-            local matname = "spray/"..dname
-            SPRAYPAINT_DECALS[i] = dname
 
-            game.AddDecal( dname, matname )
-            list.Set( "SprayPaintDecals",i, dname )
-        end
+    for i = 1, 27 do
+        local dname = "spraypaint_decal" .. i
+        local matname = "spray/" .. dname
+        SPRAYPAINT_DECALS[i] = dname
+        game.AddDecal(dname, matname)
+        list.Set("SprayPaintDecals", i, dname)
+    end
 end
-CreateDecals()
 
+CreateDecals()
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
 SWEP.ConVar = "spraypaint_decal"
@@ -64,7 +64,7 @@ function SWEP:PrimaryAttack()
 
     if (not trace.Invalid) then
         self:MakePaint(trace, (self.PaintDelay))
-    end 
+    end
 
     self:SetNextPrimaryFire(CurTime() + (self.PaintDelay))
 end
@@ -73,6 +73,7 @@ function SWEP:SecondaryAttack()
     if (CLIENT) then
         self:SpraypaintOpenPanel()
     end
+
     self:SetNextSecondaryFire(CurTime() + 0.01)
 
     return true
@@ -98,7 +99,6 @@ function SWEP:Holster()
 end
 
 function SWEP:Reload()
-    
 end
 
 function SWEP:OnRemove()
@@ -109,7 +109,6 @@ function SWEP:Think()
 end
 
 function SWEP:Equip(ply)
-
 end
 
 function SWEP:GetTrace()
@@ -121,25 +120,18 @@ function SWEP:GetTrace()
     --tr.mask = MASK_VISIBLE
     tr.filter = ply
     local trace = util.TraceLine(tr)
-
-    if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then
-        --trace.Invalid = true
-    end
+    if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then end --trace.Invalid = true
 
     return trace
 end
 
-hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key)
-
-end)
+hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key) end)
 
 function SWEP:MakePaint(trace, delay)
-
     local ply = self:GetOwner()
-    
+
     if (CLIENT) then
         local color = self:GetDecalColor():ToColor()
-
         self:DoParticle(trace.StartPos, trace.HitPos, color)
 
         if (not self.SpraySound) then
@@ -183,11 +175,11 @@ function SWEP:MakePaint(trace, delay)
     if (not trace.Hit) then return end
     local pos = trace.HitPos * 1
     local normal = trace.HitNormal * 1
-
     local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
     local decalname = ply:GetInfo(self.ConVar)
+
     if (SERVER) then
-        util.Decal(  decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply} )
+        util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
     end
 end
 
@@ -195,7 +187,7 @@ function SWEP:EquipAmmo(ply)
 end
 
 function SWEP:GetPaintDistance()
-    return 128 
+    return 128
 end
 
 net.Receive("spraypaint_equipanim", function(len)
@@ -223,20 +215,19 @@ function SWEP:PlayEquipAnimation(spawnempty, ecolor)
         net.SendPVS(self:GetPos())
     end
 
-    
-
     self.CapOn = true
     self:SetHoldType("normal")
 
-    if(CLIENT)then
-    if (spawnempty) then
-        self:TossEmpty(ecolor)
-    end
-    timer.Create("uncap_" .. self:EntIndex(), 0.3, 1, function()
-        self:SetNoDraw(false)
-        self:MakeCap()
-        self:SetHoldType("pistol")
-    end)
+    if (CLIENT) then
+        if (spawnempty) then
+            self:TossEmpty(ecolor)
+        end
+
+        timer.Create("uncap_" .. self:EntIndex(), 0.3, 1, function()
+            self:SetNoDraw(false)
+            self:MakeCap()
+            self:SetHoldType("pistol")
+        end)
     end
     --if(spawnempty)then self:ShakeCan() end
 end

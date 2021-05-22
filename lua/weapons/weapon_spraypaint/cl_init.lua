@@ -1,8 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("shared.lua")
-
-CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true,true,"decal to spray from the can")
+CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
 
 function SWEP:ShakeCan()
     timer.Create("capshakesnd__" .. self:EntIndex(), 0.3, 1, function()
@@ -19,7 +18,6 @@ function SWEP:ShakeCan()
         end)
     end)
 end
-
 
 net.Receive("spraypaint_equipanim", function(len)
     local wep = net.ReadEntity()
@@ -145,12 +143,8 @@ local function GetPaintMaterial(color)
     color = Color(255, 255, 255, 255)
     SPRAYPAINTMATS = SPRAYPAINTMATS or {}
 
-
-
     return SPRAYPAINTMATS[color][1]
-end 
-
-
+end
 
 local wepicon = Material("spraypaint/spraypaint_icon.png", "smooth")
 
@@ -405,146 +399,123 @@ if CLIENT then
         outline = false,
     })
 
-
-
-    
     SPRAYPAINT_DECALCOLOR_CACHE = SPRAYPAINT_DECALCOLOR_CACHE or {}
     SpraypaintMenu = nil
+
     function SWEP:GetDecalColor()
         local ply = self:GetOwner()
-        if(!IsValid(ply))then return Vector(1,1,1) end
+        if (not IsValid(ply)) then return Vector(1, 1, 1) end
         local decal = ply:GetInfo(self.ConVar)
-        if(SPRAYPAINT_DECALCOLOR_CACHE[decal])then
-            return SPRAYPAINT_DECALCOLOR_CACHE[decal]
+        if (SPRAYPAINT_DECALCOLOR_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal] end
+        local mat = Material(util.DecalMaterial(decal))
+
+        if (mat) then
+            SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2")
+
+            return mat:GetVector("$color2") or Vector(1, 1, 1)
         end
-        local mat = Material(util.DecalMaterial( decal ))
-        if(mat)then
-           
-            SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2") 
-            return mat:GetVector("$color2") or Vector(1,1,1)
-        end
-        
-        return Vector(1,1,1)
+
+        return Vector(1, 1, 1)
     end
 
     function SWEP:SpraypaintOpenPanel()
         if IsValid(SpraypaintMenu) then return end
         local Frame = vgui.Create("DFrame")
-        Frame:SetSize((48+4)*self.MenuColumns + 4 + 2, 280) --good size for example
+        Frame:SetSize((48 + 4) * self.MenuColumns + 4 + 2, 280) --good size for example
         Frame:SetTitle("Spraypaint Color")
         Frame:Center()
-        
         Frame:MakePopup()
         Frame.KeyCodeBinding = {}
-        function Frame:OnKeyCodePressed(keycode) --auto-pressed buttons if associated with a specific key
-            if(self.KeyCodeBinding[keycode])then
+
+        --auto-pressed buttons if associated with a specific key
+        function Frame:OnKeyCodePressed(keycode)
+            if (self.KeyCodeBinding[keycode]) then
                 self.KeyCodeBinding[keycode]:DoClick()
             end
         end
-        surface.PlaySound(self.ShakeSound)
 
-        local List = vgui.Create( "DIconLayout", Frame )
-      
+        surface.PlaySound(self.ShakeSound)
+        local List = vgui.Create("DIconLayout", Frame)
         List:Center()
-        List:SetSpaceY( 4 ) -- Sets the space in between the panels on the Y Axis by 5
-        List:SetSpaceX( 4 ) -- Sets the space in between the panels on the X Axis by 5
+        List:SetSpaceY(4) -- Sets the space in between the panels on the Y Axis by 5
+        List:SetSpaceX(4) -- Sets the space in between the panels on the X Axis by 5
         local columncounter = 1
         local rows = 1
-        for k,v in pairs(list.Get(self.DecalSet))do
+
+        for k, v in pairs(list.Get(self.DecalSet)) do
             columncounter = columncounter + 1
-            if(columncounter > self.MenuColumns)then
+
+            if (columncounter > self.MenuColumns) then
                 columncounter = 1
                 rows = rows + 1
             end
 
-            local DButton = List:Add( "DButton" )
+            local DButton = List:Add("DButton")
             DButton:SetPos(128, 240)
             DButton:SetText("")
             DButton:SetSize(48, 48)
-            local keycode = list.Get(self.DecalSet.."_keycodes")[k]
-            if(keycode)then
+            local keycode = list.Get(self.DecalSet .. "_keycodes")[k]
+
+            if (keycode) then
                 Frame.KeyCodeBinding[keycode] = DButton
             end
-            DButton.PerformLayout = function() end 
-            
-            local mat = Material(util.DecalMaterial( v ))
-            local dispmat = mat:GetName()//mat:GetString("$modelmaterial")
-            local color = mat:GetVector("$color2"):ToColor() or Color(255,255,255)
+
+            DButton.PerformLayout = function() end
+            local mat = Material(util.DecalMaterial(v))
+            local dispmat = mat:GetName() --mat:GetString("$modelmaterial")
+            local color = mat:GetVector("$color2"):ToColor() or Color(255, 255, 255)
             local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
+
             DButton.Paint = function(self)
-                local w,h = self:GetSize()
-                draw.RoundedBox( 4, 0, 0, w, h, Color(48,48,48,255) )
+                local w, h = self:GetSize()
+                draw.RoundedBox(4, 0, 0, w, h, Color(48, 48, 48, 255))
             end
 
             DButton:SetMaterial("models/shiny")
-            DButton.FixVertexLitMaterial =  function() end
+            DButton.FixVertexLitMaterial = function() end
 
             function DButton.m_Image:FixImage()
-
                 --
                 -- If it's a vertexlitgeneric material we need to change it to be
                 -- UnlitGeneric so it doesn't go dark when we enter a dark room
                 -- and flicker all about
                 --
-            
                 local Mat = self:GetMaterial()
                 local strImage = Mat:GetName()
-            
-                
-            
-                    local t = Mat:GetString( "$basetexture" )
-                    local f = Mat:GetFloat( "$frame" )
-                    local c = Mat:GetVector( "$color2" )
-            
-                    if ( t ) then
-                        local params = {}
-                        params[ "$basetexture" ] = t
-                        params[ "$frame" ] = f
-                        params[ "$color2"] = c
-                        params[ "$vertexcolor" ] = 1
-                        params[ "$vertexalpha" ] = 1
-                        Mat = CreateMaterial( strImage .. "_DImage_1", "UnlitGeneric", params )
-                    end
-            
-            
-                self:SetMaterial( Mat )
-            
+                local t = Mat:GetString("$basetexture")
+                local f = Mat:GetFloat("$frame")
+                local c = Mat:GetVector("$color2")
+
+                if (t) then
+                    local params = {}
+                    params["$basetexture"] = t
+                    params["$frame"] = f
+                    params["$color2"] = c
+                    params["$vertexcolor"] = 1
+                    params["$vertexalpha"] = 1
+                    Mat = CreateMaterial(strImage .. "_DImage_1", "UnlitGeneric", params)
+                end
+
+                self:SetMaterial(Mat)
             end
+
             DButton.m_Image:SetMaterial(dispmat)
             DButton.m_Image:FixImage()
-
-            
-
-
             DButton.m_Image:SetImageColor(color)
             DButton.m_Image:Dock(NODOCK)
-
-           
-
-            local isize = math.Clamp(size*3,0,48)
-
-            DButton.m_Image:SetSize(isize,isize)
-            DButton.m_Image:Center() 
-
+            local isize = math.Clamp(size * 3, 0, 48)
+            DButton.m_Image:SetSize(isize, isize)
+            DButton.m_Image:Center()
 
             DButton.DoClick = function()
                 RunConsoleCommand(self.ConVar, v)
                 Frame:Remove()
             end
-            
-            
-
-
         end
 
-        List:Dock( FILL )
+        List:Dock(FILL)
         Frame:SizeToContents()
-        Frame:SetTall((rows-1)*(48 + 4) + 30)
+        Frame:SetTall((rows - 1) * (48 + 4) + 30)
         SpraypaintMenu = Frame
     end
 end
-
-///GENERATES DECAL MATERIALS
-
-
-
