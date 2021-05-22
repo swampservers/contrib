@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+                {
+                    "$basetexture" "spray/stencils"
+                    "$translucent" "1"
+                    "$decalsecondpass" "1"
+                    "$frame" "18"
+                    "$decalscale" "0.25"
+                    "$color2" "[1 1 1]"
+                }

@@ -6,9 +6,9 @@ cvar = GetConVar("mp_decals"):GetInt()
 RunConsoleCommand("mp_decals", tostring(math.max(cvar, 4096)))
 --RunConsoleCommand("r_maxmodeldecal","32")
 SWEP.PrintName = "Spraypaint"
-SWEP.Author = "PYROTEKNIK &"
+SWEP.Author = "PYROTEKNIK"
 SWEP.Category = "PYROTEKNIK"
-SWEP.Instructions = "Left Click to Draw, Hold Right mouse to reduce mouse sensitivity, Press R to change color and paint size"
+SWEP.Instructions = "Left Click to Draw, Right click to change paint style"
 SWEP.Purpose = "Point it in someone's eye :)"
 SWEP.Slot = 1
 SWEP.SlotPos = 100
@@ -32,41 +32,47 @@ SWEP.DrawAmmo = true
 SWEP.DrawCrosshair = false
 SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
+SWEP.PaintDelay = 1 / 30
+
+local function CreateDecals()
+    SPRAYPAINT_DECALS = {}
+        for i=1,27 do
+            local dname = "spraypaint_decal"..i
+            local matname = "spray/"..dname
+            SPRAYPAINT_DECALS[i] = dname
+
+            game.AddDecal( dname, matname )
+            list.Set( "SprayPaintDecals",i, dname )
+        end
+end
+CreateDecals()
+
+SWEP.DecalSet = "SprayPaintDecals"
+SWEP.MenuColumns = 9
+SWEP.ConVar = "spraypaint_decal"
 
 function SWEP:SetupDataTables()
-    self:NetworkVar("Vector", 0, "CustomColor")
-    self:NetworkVar("Float", 0, "PaintAlpha")
-    self:NetworkVar("Float", 1, "PaintSize")
 end
 
 function SWEP:Initialize()
     self.CapOn = true
     self:SetHoldType("passive")
-
-    if (SERVER) then
-        if (not IsValid(self:GetOwner())) then
-            local randcol = HSVToColor(math.Rand(0, 360), 1, 1)
-            local c = Vector(randcol.r / 255, randcol.g / 255, randcol.b / 255)
-            self:SetCustomColor(Vector(c.x, c.y, c.z))
-        end
-    end
 end
 
 function SWEP:PrimaryAttack()
     local trace = self:GetTrace()
 
     if (not trace.Invalid) then
-        self:MakePaint(trace, (1 / 60))
+        self:MakePaint(trace, (self.PaintDelay))
     end 
 
-    self:SetNextPrimaryFire(CurTime() + (1 / 60))
+    self:SetNextPrimaryFire(CurTime() + (self.PaintDelay))
 end
 
 function SWEP:SecondaryAttack()
     if (CLIENT) then
-        self.SensToggle = not self.SensToggle
+        self:SpraypaintOpenPanel()
     end
-
     self:SetNextSecondaryFire(CurTime() + 0.01)
 
     return true
@@ -75,10 +81,6 @@ end
 function SWEP:Deploy()
     if (SERVER) then
         self:SendWeaponAnim(ACT_VM_DRAW)
-    end
-
-    if (SERVER) then
-        self:UpdateCustomColor()
     end
 
     self:PlayEquipAnimation()
@@ -96,7 +98,7 @@ function SWEP:Holster()
 end
 
 function SWEP:Reload()
-    return true
+    
 end
 
 function SWEP:OnRemove()
@@ -107,11 +109,7 @@ function SWEP:Think()
 end
 
 function SWEP:Equip(ply)
-    if (SERVER) then
-        net.Start("SpraypaintRequestCustomColor")
-        net.Send(ply)
-        self:UpdateCustomColor()
-    end
+
 end
 
 function SWEP:GetTrace()
@@ -120,36 +118,29 @@ function SWEP:GetTrace()
     local tr = {}
     tr.start = org
     tr.endpos = org + ply:GetAimVector() * (self:GetPaintDistance() + 5)
-    tr.mask = MASK_VISIBLE
+    --tr.mask = MASK_VISIBLE
     tr.filter = ply
     local trace = util.TraceLine(tr)
 
     if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then
-        trace.Invalid = true
+        --trace.Invalid = true
     end
 
     return trace
 end
 
 hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key)
-    local wep = ply:GetActiveWeapon()
 
-    if (key == IN_RELOAD and IsValid(wep) and wep:GetClass() == "weapon_spraypaint") then
-        if (CLIENT) then
-            wep:SpraypaintOpenPanel()
-        end
-    end
 end)
 
 function SWEP:MakePaint(trace, delay)
-    local cc = self:GetCustomColor()
-    local alpha = math.Clamp(self:GetPaintAlpha(), 0.25, 1)
-    local size = self:GetPaintSize()
-    local alphamul = 1
-    local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, alpha * 255 * alphamul)
 
+    local ply = self:GetOwner()
+    
     if (CLIENT) then
-        self:DoParticle(trace.StartPos, trace.HitPos, color, size)
+        local color = self:GetDecalColor():ToColor()
+
+        self:DoParticle(trace.StartPos, trace.HitPos, color)
 
         if (not self.SpraySound) then
             sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
@@ -192,17 +183,11 @@ function SWEP:MakePaint(trace, delay)
     if (not trace.Hit) then return end
     local pos = trace.HitPos * 1
     local normal = trace.HitNormal * 1
-    local cc = self:GetCustomColor()
-    local alpha = math.Clamp(self:GetPaintAlpha(), 0.25, 1)
-    local size = self:GetPaintSize()
-    local fcolor = Color(cc.x * 255, cc.y * 255, cc.z * 255, alpha * 255 * alphamul)
-    local pos2
-    local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
 
+    local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
+    local decalname = ply:GetInfo(self.ConVar)
     if (SERVER) then
-        if (SPRAYPAINT_MAKEDOT) then
-            SPRAYPAINT_MAKEDOT(trace, size, fcolor)
-        end
+        util.Decal(  decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply} )
     end
 end
 
@@ -210,7 +195,7 @@ function SWEP:EquipAmmo(ply)
 end
 
 function SWEP:GetPaintDistance()
-    return 128 + (self:GetPaintSize() * 4)
+    return 128 
 end
 
 net.Receive("spraypaint_equipanim", function(len)

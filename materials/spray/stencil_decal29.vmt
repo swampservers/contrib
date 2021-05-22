@@ -1,0 +1,10 @@
+"LightmappedGeneric"
+                {
+                    "$basetexture" "spray/stencils"
+                    "$translucent" "1"
+                    "$decalsecondpass" "1"
+                    "$frame" "28"
+                    "$decalscale" "0.25"
+                    "$modelmaterial" "spray/stencil_decal29_model"
+                    "$color2" "[1 1 1]"
+                }

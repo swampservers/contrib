@@ -2,6 +2,8 @@
 -- INSTALL: CINEMA
 include("shared.lua")
 
+CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true,true,"decal to spray from the can")
+
 function SWEP:ShakeCan()
     timer.Create("capshakesnd__" .. self:EntIndex(), 0.3, 1, function()
         if (IsValid(self)) then
@@ -17,6 +19,7 @@ function SWEP:ShakeCan()
         end)
     end)
 end
+
 
 net.Receive("spraypaint_equipanim", function(len)
     local wep = net.ReadEntity()
@@ -76,7 +79,7 @@ function SWEP:MakeCap()
         self.CapGib:Remove()
     end
 
-    local cc = self:GetCustomColor()
+    local cc = self:GetDecalColor()
     local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
     self.CapGib = ents.CreateClientProp(self.CapModel)
     if (not IsValid(self.CapGib)) then return end
@@ -109,7 +112,7 @@ function SWEP:TossEmpty(colorvec)
         self.EmptyGib:Remove()
     end
 
-    local cc = colorvec or self:GetCustomColor()
+    local cc = colorvec or self:GetDecalColor()
     local color = Color(cc.x * 255, cc.y * 255, cc.z * 255, 255)
     local ply = self:GetOwner()
     self.EmptyGib = ents.CreateClientProp(self.WorldModel)
@@ -142,39 +145,12 @@ local function GetPaintMaterial(color)
     color = Color(255, 255, 255, 255)
     SPRAYPAINTMATS = SPRAYPAINTMATS or {}
 
-    SPRAYPAINTMATS[color] = SPRAYPAINTMATS[color] or {
-        CreateMaterial("spraypaint" .. tostring(color), "LightmappedGeneric", {
-            ["$basetexture"] = "spray/dot",
-            ["$decal"] = 1,
-            ["$translucent"] = 1,
-            ["$decalscale"] = 1 / 16,
-            ["$modelmaterial"] = "spraypaint" .. tostring(color) .. "_model",
-            ["$vertexcolor"] = 1,
-            ["$color2"] = color:ToVector(),
-            ["$alpha"] = color.a / 255,
-        }),
-        CreateMaterial("spraypaint" .. tostring(color) .. "_model", "VertexLitGeneric", {
-            ["$basetexture"] = "spray/dot",
-            ["$decal"] = 1,
-            ["$translucent"] = 1,
-            ["$decalscale"] = 1 / 16,
-            ["$vertexcolor"] = 1,
-            ["$color2"] = color:ToVector(),
-            ["$alpha"] = color.a / 255,
-        })
-    }
+
 
     return SPRAYPAINTMATS[color][1]
 end 
 
-net.Receive("spraypaint_networkdecal", function(len)
-    local pos = net.ReadVector()
-    local normal = net.ReadVector()
-    local color = net.ReadColor()
-    local size = net.ReadFloat()
-    local ent = net.ReadEntity()
-    util.DecalEx(GetPaintMaterial(color), ent, pos, normal, color, size, size)
-end)
+
 
 local wepicon = Material("spraypaint/spraypaint_icon.png", "smooth")
 
@@ -202,7 +178,7 @@ function SWEP:DrawWeaponSelection(x, y, wide, tall, alpha)
 
         render.SetModelLighting(4, 1, 1, 1)
         render.SetModelLighting(5, 0, 0, 0)
-        local cl = self:GetCustomColor() or Vector(1, 0, 1)
+        local cl = self:GetDecalColor() or Vector(1, 0, 1)
         render.SetColorModulation(cl.x, cl.y, cl.z)
         self.TempModel:DrawModel()
         render.SuppressEngineLighting(false)
@@ -221,7 +197,7 @@ end
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     self:SetBodygroup(2, (self.CapOn and 0) or 1)
-    local cl = self:GetCustomColor()
+    local cl = self:GetDecalColor()
     render.SetColorModulation(cl.x, cl.y, cl.z)
     local down = ply:KeyDown(IN_ATTACK)
     self.FingerLerp = self.FingerLerp or 0
@@ -310,7 +286,7 @@ function SWEP:DrawWorldModel(query)
     if (query ~= true) then
         render.MaterialOverride()
         draw.NoTexture()
-        local cl = self:GetCustomColor()
+        local cl = self:GetDecalColor()
         render.SetColorModulation(cl.x, cl.y, cl.z)
         render.SetBlend(1)
         self:SetBodygroup(1, (self.CapOn and 0) or 1)
@@ -400,8 +376,8 @@ function SWEP:DoParticle(pos, endpos, color, size)
         particle:SetLifeTime(0)
         particle:SetLighting(false)
         particle:SetDieTime(math.Rand(0.1, 0.3))
-        particle:SetStartSize(0)
-        particle:SetEndSize(size * 0.25)
+        particle:SetStartSize(1)
+        particle:SetEndSize(8)
         particle:SetEndAlpha(0)
         particle:SetCollide(true)
         particle:SetBounce(0)
@@ -430,145 +406,192 @@ if CLIENT then
         outline = false,
     })
 
-    hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
-        local wep = LocalPlayer():GetActiveWeapon()
-        if (not IsValid(wep) or wep:GetClass() ~= "weapon_spraypaint") then return end
-        local trace = wep:GetTrace()
-        if (not trace.Hit or trace.HitPos:Distance(EyePos()) > wep:GetPaintDistance()) then return end
-        if (trace.HitSky) then return end
-        local cc = wep:GetCustomColor()
-        local alpha = wep:GetPaintAlpha()
-        local pos = trace.HitPos + trace.HitNormal * 0.1
-        local ang = trace.HitNormal:AngleEx(EyeAngles():Up())
-        ang:RotateAroundAxis(ang:Right(), -90)
-        ang:RotateAroundAxis(ang:Up(), 90)
 
-        if (not wep:GetTrace().Invalid) then
-            cam.Start3D2D(pos, ang, wep:GetPaintSize() / 128)
-            surface.DrawCircle(0, 0, 32, cc.x * 255, cc.y * 255, cc.z * 255, 128)
-            surface.DrawCircle(0, 0, 34, cc.x * 255, cc.y * 255, cc.z * 255, 128)
-            local r1 = 18
-            local r2 = 24
-            surface.DrawLine(r1, 0, r2, 0)
-            surface.DrawLine(-r1, 0, -r2, 0)
-            surface.DrawLine(0, r1, 0, r2)
-            surface.DrawLine(0, -r1, 0, -r2)
-            cam.End3D2D()
-        else
-            cam.Start3D2D(pos, ang, wep:GetPaintSize() / 128)
-            surface.DrawCircle(0, 0, 32, cc.x * 255, cc.y * 255, cc.z * 255, 255)
-            surface.DrawCircle(0, 0, 34, cc.x * 255, cc.y * 255, cc.z * 255, 255)
-            local r1 = 23
-            local gap = 0.8
-            surface.DrawLine(-r1 - gap, -r1 + gap, r1 - gap, r1 + gap)
-            surface.DrawLine(-r1 + gap, -r1 - gap, r1 + gap, r1 - gap)
-            cam.End3D2D()
-        end
-    end)
 
-    CreateConVar("spraypaint_color", "1 1 1", FCVAR_ARCHIVE, "The value is a Vector - so between 0-1 - not between 0-255")
-    CreateConVar("spraypaint_alpha", "1", FCVAR_ARCHIVE, "Brush opacity! one number between 0 and 1")
-    CreateConVar("spraypaint_brushsize", "16", FCVAR_ARCHIVE, "Basically the pen size. Clamped between 4 and 32")
+    
+    SPRAYPAINT_DECALCOLOR_CACHE = SPRAYPAINT_DECALCOLOR_CACHE or {}
     SpraypaintMenu = nil
+    function SWEP:GetDecalColor()
+        local ply = self:GetOwner()
+        if(!IsValid(ply))then return Vector(1,1,1) end
+        local decal = ply:GetInfo(self.ConVar)
+        if(SPRAYPAINT_DECALCOLOR_CACHE[decal])then
+            return SPRAYPAINT_DECALCOLOR_CACHE[decal]
+        end
+        local mat = Material(util.DecalMaterial( decal ))
+        if(mat)then
+           
+            SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2") 
+            return mat:GetVector("$color2") or Vector(1,1,1)
+        end
+        
+        return Vector(1,1,1)
+    end
 
     function SWEP:SpraypaintOpenPanel()
         if IsValid(SpraypaintMenu) then return end
         local Frame = vgui.Create("DFrame")
-        Frame:SetSize(480, 280) --good size for example
+        Frame:SetSize((48+4)*self.MenuColumns + 4 + 2, 280) --good size for example
         Frame:SetTitle("Spraypaint Color")
         Frame:Center()
+        
         Frame:MakePopup()
+        Frame.KeyCodeBinding = {}
+        function Frame:OnKeyCodePressed(keycode) --auto-pressed buttons if associated with a specific key
+            if(self.KeyCodeBinding[keycode])then
+                self.KeyCodeBinding[keycode]:DoClick()
+            end
+        end
         surface.PlaySound(self.ShakeSound)
-        local Mixer = vgui.Create("DColorMixer", Frame)
-        Mixer:Dock(FILL)
-        Mixer:SetPalette(true)
-        Mixer:SetAlphaBar(false)
-        Mixer:SetWangs(true)
-        local cvec = Vector(GetConVarString("spraypaint_color"))
-        local alpha = GetConVarNumber("spraypaint_alpha")
-        local color = Color(cvec.x * 255, cvec.y * 255, cvec.z * 255, math.Clamp(alpha, 0.25, 1) * 255)
-        Mixer:SetColor(color)
-        Mixer:DockPadding(0, 0, 0, 0)
-        Mixer:SetAlphaBar(true)
 
-        Mixer.Alpha.OnChange = function(ctrl, fAlpha)
-            fAlpha = math.Clamp(fAlpha, 0.25, 1)
-            local color = Mixer:GetColor()
-            color.a = math.floor(fAlpha * 255)
-            Mixer:UpdateColor(color)
+        local List = vgui.Create( "DIconLayout", Frame )
+      
+        List:Center()
+        List:SetSpaceY( 4 ) -- Sets the space in between the panels on the Y Axis by 5
+        List:SetSpaceX( 4 ) -- Sets the space in between the panels on the X Axis by 5
+        local columncounter = 1
+        local rows = 1
+        for k,v in pairs(list.Get(self.DecalSet))do
+            columncounter = columncounter + 1
+            if(columncounter > self.MenuColumns)then
+                columncounter = 1
+                rows = rows + 1
+            end
+
+            local DButton = List:Add( "DButton" )
+            DButton:SetPos(128, 240)
+            DButton:SetText("")
+            DButton:SetSize(48, 48)
+            local keycode = list.Get(self.DecalSet.."_keycodes")[k]
+            if(keycode)then
+                Frame.KeyCodeBinding[keycode] = DButton
+            end
+            DButton.PerformLayout = function() end 
+            
+            local mat = Material(util.DecalMaterial( v ))
+            local dispmat = mat:GetName()//mat:GetString("$modelmaterial")
+            local color = mat:GetVector("$color2"):ToColor() or Color(255,255,255)
+            local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
+            DButton.Paint = function(self)
+                local w,h = self:GetSize()
+                draw.RoundedBox( 4, 0, 0, w, h, Color(48,48,48,255) )
+            end
+
+            DButton:SetMaterial("models/shiny")
+            DButton.FixVertexLitMaterial =  function() end
+
+            function DButton.m_Image:FixImage()
+
+                --
+                -- If it's a vertexlitgeneric material we need to change it to be
+                -- UnlitGeneric so it doesn't go dark when we enter a dark room
+                -- and flicker all about
+                --
+            
+                local Mat = self:GetMaterial()
+                local strImage = Mat:GetName()
+            
+                
+            
+                    local t = Mat:GetString( "$basetexture" )
+                    local f = Mat:GetFloat( "$frame" )
+                    local c = Mat:GetVector( "$color2" )
+            
+                    if ( t ) then
+                        local params = {}
+                        params[ "$basetexture" ] = t
+                        params[ "$frame" ] = f
+                        params[ "$color2"] = c
+                        params[ "$vertexcolor" ] = 1
+                        params[ "$vertexalpha" ] = 1
+                        Mat = CreateMaterial( strImage .. "_DImage_1", "UnlitGeneric", params )
+                    end
+            
+            
+                self:SetMaterial( Mat )
+            
+            end
+            DButton.m_Image:SetMaterial(dispmat)
+            DButton.m_Image:FixImage()
+
+            
+
+
+            DButton.m_Image:SetImageColor(color)
+            DButton.m_Image:Dock(NODOCK)
+
+           
+
+            local isize = math.Clamp(size*3,0,48)
+
+            DButton.m_Image:SetSize(isize,isize)
+            DButton.m_Image:Center() 
+
+
+            DButton.DoClick = function()
+                RunConsoleCommand(self.ConVar, v)
+                Frame:Remove()
+            end
+            
+            
+
+
         end
 
-        local DisplayContainer = vgui.Create("DPanel", Frame)
-        DisplayContainer:SetWide(128)
-        DisplayContainer:Dock(LEFT)
-        DisplayContainer:DockMargin(0, 0, 4, 0)
-        DisplayContainer:DockPadding(4, 4, 4, 4)
-        local Display = vgui.Create("DModelPanel", DisplayContainer)
-        Display:SetPos(128, 240)
-        Display:SetModel("models/pyroteknik/w_spraypaint.mdl")
-        Display:SetLookAt(Vector(0, 0, 0))
-        Display:SetCamPos(Vector(40, 0, 0))
-        Display:SetFOV(15)
-        Display:Dock(FILL)
-        Display:SetSize(64, 24)
-
-        function Display:LayoutEntity(ent)
-            local col = table.Copy(Mixer:GetColor())
-            col.a = 255
-            Display:SetColor(col)
-            ent.TumbleVector = ent.TumbleVector or VectorRand()
-            ent.TumbleVector2 = ent.TumbleVector2 or VectorRand() * 0.1
-            ent.TumbleVector2 = ent.TumbleVector2 + VectorRand() * 0.1
-            ent.TumbleVector = ent.TumbleVector + ent.TumbleVector2 * FrameTime()
-            ent.TumbleVector = ent.TumbleVector:GetNormal() * math.Clamp(ent.TumbleVector:Length(), 0, 1)
-            ent.TumbleVector2 = ent.TumbleVector2:GetNormal() * math.Clamp(ent.TumbleVector2:Length(), 0, 1)
-            local ang = ent:GetAngles()
-            ang:RotateAroundAxis((ent.TumbleVector):GetNormal(), FrameTime() * 37)
-            ent:SetAngles(ang)
-        end
-
-        local DButton = vgui.Create("DButton", DisplayContainer)
-        DButton:SetPos(128, 240)
-        DButton:SetText("Okay")
-        DButton:Dock(BOTTOM)
-        DButton:SetSize(64, 24)
-        local Slider = vgui.Create("DNumSlider", Frame)
-        Slider:SetPos(128, 200)
-        Slider:Dock(BOTTOM)
-        Slider:SetText("Size")
-        Slider:SetDecimals(1)
-        Slider:SetMinMax(2, 64)
-        Slider:SetSize(32, 32)
-        Slider:SetConVar("spraypaint_brushsize")
-
-        DButton.DoClick = function()
-            local cvec = Mixer:GetVector()
-            local alpha = math.Clamp(Mixer:GetColor().a / 255, 0.25, 1)
-            local refcolor = Color(math.ceil(cvec.x * 255), math.ceil(cvec.y * 255), math.ceil(cvec.z * 255), math.ceil(alpha * 255))
-            local size = Slider:GetValue()
-            RunConsoleCommand('spraypaint_color', tostring(cvec))
-            RunConsoleCommand('spraypaint_alpha', tostring(alpha))
-            Frame:Remove()
-
-            timer.Simple(0.1, function()
-                net.Start("SpraypaintUpdateCustomColor")
-                net.WriteVector(cvec)
-                net.WriteFloat(alpha)
-                net.WriteFloat(size)
-                net.WriteBool(true)
-                net.SendToServer()
-            end)
-        end
-
+        List:Dock( FILL )
+        Frame:SizeToContents()
+        Frame:SetTall((rows-1)*(48 + 4) + 30)
         SpraypaintMenu = Frame
     end
-
-    net.Receive("SpraypaintRequestCustomColor", function(len)
-        net.Start("SpraypaintUpdateCustomColor")
-        net.WriteVector(Vector(GetConVarString("spraypaint_color")))
-        net.WriteFloat(GetConVarNumber("spraypaint_alpha"))
-        net.WriteFloat(GetConVarNumber("spraypaint_brushsize"))
-        net.WriteBool(false)
-        net.SendToServer()
-    end)
 end
+
+///GENERATES DECAL MATERIALS
+
+
+local function CreateDecalMats()
+    local Colors = {
+        Color(255,0,0),
+        Color(255,64,0),
+        Color(255,255,0),
+        Color(0,255,0),
+        Color(12,12,238),
+        Color(126,10,243),
+        Color(255,23,139),
+        Color(255,255,255),
+        Color(0,0,0),
+    }
+    local Sizes = {24,12,6} 
+
+    local index = 0
+    for k, size in pairs(Sizes)do
+        for g, color in pairs(Colors)do
+            index = index + 1
+            local dname = "spraypaint_decal"..index
+            local matname = dname
+            local dirname = "spray/"..dname
+            local color = color:ToVector()
+            local cstring = "["..color.x.." "..color.y.." "..color.z.."]"
+                
+                local mat1 = [["LightmappedGeneric" 
+                {
+                    "$basetexture" "spray/dot"
+                    "$translucent" "1"
+                    "$decalscale" "]]..(1 / 64)*size..[["
+                    "$modelmaterial" "]]..dirname .. [[_model"
+                    "$color2" "]]..cstring..[["
+                }]]
+
+                local mat2 = [["VertexLitGeneric"
+                {
+                    "$basetexture" "spray/dot"
+                    "$translucent" 1
+                    "$decalscale" "]]..(1 / 64)*size..[["
+                    "$color2" "]]..cstring..[["
+                }]]
+                file.CreateDir("chungus")
+                file.Write("chungus/"..matname..".vmt",mat1)
+                file.Write("chungus/"..matname.."_model.vmt",mat2)  
+        end
+    end
+end
+CreateDecalMats()
