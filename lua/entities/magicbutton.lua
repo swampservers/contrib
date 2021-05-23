@@ -311,7 +311,8 @@ local function MagicOutcomePrize(ply)
     local amount = ButtonMoneyPrize()
     if (ply.SS_GivePoints == nil) then return nil end
     ply:SS_GivePoints(amount)
-    return "and won [white]"..string.Comma(amount).." points![fbc];coins;"
+
+    return "and won [white]" .. string.Comma(amount) .. " points![fbc];coins;"
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
@@ -320,8 +321,8 @@ local function MagicOutcomeBountyAndPrize(ply)
     ply:SS_GivePoints(amount)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
-    
-    return "and won [red]"..string.Comma(amount).." points[fbc] and also a [red]"..string.Comma(amount).." point bounty[fbc] on themself! ;fingers;"
+
+    return "and won [red]" .. string.Comma(amount) .. " points[fbc] and also a [red]" .. string.Comma(amount) .. " point bounty[fbc] on themself! ;fingers;"
 end
 
 local function MagicOutcomeBountyAll(ply)
@@ -337,7 +338,7 @@ local function MagicOutcomeBountyAll(ply)
         SetPlayerBounty(v, add)
     end
 
-    return "and [red]increased everyone's bounty by "..string.Comma(amount).." points! ;dougie;"
+    return "and [red]increased everyone's bounty by " .. string.Comma(amount) .. " points! ;dougie;"
 end
 
 local function MagicOutcomeKleinerFanclub(ply)
@@ -369,6 +370,24 @@ local function MagicOutcomeExplode(ply, button)
     explosion:Fire("Explode", 0, 0) -- explode
 
     return "it exploded haha ;crazy;"
+end
+
+local function MagicOutcomeDecals(ply, button)
+    Sound("coomer/splort.ogg")
+
+    local decal = SPRAYPAINT_STENCILS ~= nil and ("stencil_decal" .. math.random(36, 40)) or (table.Random({"Eye", "Smile", "beersplash"}))
+    local navareas = navmesh.GetAllNavAreas()
+    local spamcounter = 0
+    local pos = button:GetPos() + button:GetUp() * 64
+    button:EmitSound("coomer/splort.ogg")
+    timer.Create("Splats", 0.01, 10, function()
+        for g = 1, 100 do
+            util.Decal(decal, pos, pos + ((VectorRand() * Vector(1, 1, 0.3)):GetNormalized() * 3000), ply)
+        end
+
+        pos = table.Random(navareas):GetCenter() + Vector(0, 0, 40)
+    end)
+    return "it sprayed a bunch of funny decals everywhere"
 end
 
 local function MagicOutcomeKleinerSlur(ply)
@@ -451,7 +470,8 @@ local function MagicOutcomeButtonSpawn(ply)
 
             locname = locname .. " (" .. nearestname .. ")"
         end
-        return "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location:[white]".. (locname or "Somewhere stupid")
+
+        return "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location:[white]" .. (locname or "Somewhere stupid")
     end
 end
 
@@ -503,9 +523,8 @@ local function MagicOutcomeSpawnObject(ply, button)
     if (number > 1) then
         return "and it spawned " .. number .. " " .. what .. "s!"
     else
-        return "and it spawned a " .. what.."!"
+        return "and it spawned a " .. what .. "!"
     end
-
 end
 
 local function MagicOutcomeOverlay(ply, button)
@@ -556,7 +575,7 @@ local MagicButtonOutcomes = {
         func = function(ply, button)
             ply:SetPos(button:FindSuitableCastOrigin().StartPos)
 
-            return "and teleported somewhere mysterious! ".. table.Random({";blackwhat;", ";billhead;", "", ""})
+            return "and teleported somewhere mysterious! " .. table.Random({";blackwhat;", ";billhead;", "", ""})
         end,
         weight = 2
     },
@@ -571,6 +590,10 @@ local MagicButtonOutcomes = {
     {
         func = MagicOutcomeExplode,
         weight = 3
+    },
+    {
+        func = MagicOutcomeDecals,
+        weight = 2
     },
     {
         func = function(ply, button)
@@ -589,15 +612,16 @@ local MagicButtonOutcomes = {
     },
     {
         func = function(ply, button)
-            return "but nothing happened! " ..table.Random({";baby;", ";bad;", ";biggestloser;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
+            return "but nothing happened! " .. table.Random({";baby;", ";bad;", ";biggestloser;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
         end,
         weight = 2
     },
     {
         func = function(ply, button)
             if (OpenAPresent) then
-                local content = OpenAPresent(ply, button:GetPos()) 
-                return "and got [white]"..content.."[fbc]! ;alien;"
+                local content = OpenAPresent(ply, button:GetPos())
+
+                return "and got [white]" .. content .. "[fbc]! ;alien;"
             end
         end,
         weight = 8
