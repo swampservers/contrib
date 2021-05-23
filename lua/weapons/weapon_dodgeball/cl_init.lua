@@ -28,7 +28,9 @@ function SWEP:DrawWorldModel()
             oang:RotateAroundAxis(oang:Up(), -90)
             opos = opos + (oang:Up() * -12) + (oang:Right() * -12)
         else
-            opos = opos + oang:Right() * 12.5
+            opos = opos + oang:Forward() * 5
+            opos = opos + oang:Right() * 8
+            opos = opos + oang:Up() * -0.5
         end
 
         self:SetupBones()

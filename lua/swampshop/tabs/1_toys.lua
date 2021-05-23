@@ -25,7 +25,7 @@ SS_WeaponProduct({
     price = 0,
     name = "Spraypaint",
     description = "Deface the server with this handy graffiti tool.",
-    model = "models/props_junk/propane_tank001a.mdl"
+    model = "models/pyroteknik/w_spraypaint.mdl"
 })
 
 SS_WeaponProduct({
@@ -133,6 +133,14 @@ SS_WeaponProduct({
 })
 
 SS_Heading("Expensive Toys")
+
+SS_WeaponProduct({
+    class = "weapon_stencilpaint",
+    price = 2000,
+    name = "Stencil Paint",
+    description = "Like the spraypaint, but prints single shapes.",
+    model = "models/pyroteknik/w_spraypaint.mdl"
+})
 
 SS_WeaponProduct({
     name = 'Companion Pillow',
