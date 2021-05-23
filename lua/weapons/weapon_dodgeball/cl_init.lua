@@ -31,7 +31,6 @@ function SWEP:DrawWorldModel()
             opos = opos + oang:Forward() * 5
             opos = opos + oang:Right() * 8
             opos = opos + oang:Up() * -0.5
-            
         end
 
         self:SetupBones()
