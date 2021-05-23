@@ -304,7 +304,7 @@ end
 function ButtonMoneyPrize()
     local min, max = 1000, 300000
 
-    return string.Comma(math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3))
+    return math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3)
 end
 
 local function MagicOutcomePrize(ply)
