@@ -32,6 +32,7 @@ SWEP.DrawCrosshair = true
 SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
+SWEP.MaxMovementDistance = 128 -- Maxmimum distance the player can move while drawing before it's prevented
 
 local function CreateDecals()
     SPRAYPAINT_DECALS = {}
@@ -73,20 +74,37 @@ if (CLIENT) then
 end
 
 function SWEP:PrimaryAttack()
+    local ply = self:GetOwner()
+
     if (SERVER) then
         local filt = RecipientFilter()
-        filt:AddPVS(self:GetOwner():GetPos())
-        filt:RemovePlayer(self:GetOwner())
+        filt:AddPVS(ply:GetPos())
+        filt:RemovePlayer(ply)
         net.Start("SpraypaintNetworked", true)
         net.WriteEntity(self)
         net.Send(filt)
     end
 
     local trace = self:GetTrace()
+    local originref = ply:GetPos()
+    self.SprayStartOrigin = self.SprayStartOrigin or originref
+    local origin = self.SprayStartOrigin
+
+    if (origin:Distance(originref) > self.MaxMovementDistance or self.SprayMovementBad) then
+        self.SprayMovementBad = true
+        trace.Invalid = true
+    end
 
     if (not trace.Invalid) then
         self:MakePaint(trace, (self.PaintDelay))
     end
+
+    timer.Create("paintorigin_reset", self.PaintDelay + FrameTime(), 1, function()
+        if (IsValid(self)) then
+            self.SprayMovementBad = nil
+            self.SprayStartOrigin = nil
+        end
+    end)
 
     self:SetNextPrimaryFire(CurTime() + (self.PaintDelay))
 end
@@ -113,7 +131,6 @@ function SWEP:OnDrop()
 end
 
 function SWEP:Holster()
-
     return true
 end
 
@@ -243,4 +260,3 @@ end
 function SWEP:GetPaintDistance()
     return 128
 end
-

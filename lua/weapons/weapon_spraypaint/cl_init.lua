@@ -212,6 +212,7 @@ end
 function SWEP:SpraypaintOpenPanel()
     if IsValid(SpraypaintMenu) then
         SpraypaintMenu:Remove()
+
         return
     end
 
