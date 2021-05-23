@@ -606,7 +606,7 @@ SS_Item({
     price = 19450,
     name = 'WWII American Army Helmet',
     description = "Perfect for re-enacting horrifying war scenarios. Smells faintly of the beach.",
-    model = 'models/pyroteknik/hats/german.mdl',
+    model = 'models/pyroteknik/hats/american.mdl',
     color = Vector(1, 1, 1),
     maxscale = 3.7,
     wear = {
@@ -628,7 +628,7 @@ SS_Item({
     price = 88000,
     name = 'WWII German Army Helmet',
     description = "Perfect for re-enacting horrifying war scenarios. Smells faintly of sausage",
-    model = 'models/pyroteknik/hats/american.mdl',
+    model = 'models/pyroteknik/hats/german.mdl',
     color = Vector(1, 1, 1),
     maxscale = 3.7,
     wear = {

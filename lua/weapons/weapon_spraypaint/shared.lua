@@ -64,8 +64,7 @@ end
 if(CLIENT)then
     net.Receive("SpraypaintNetworked",function(len)
     local ent = net.ReadEntity()
-
-    ent:PrimaryAttack()
+    if IsValid(ent) then ent:PrimaryAttack() end
     end)
 end
 
