@@ -544,14 +544,14 @@ SS_Item({
     color = Vector(1, 1, 1),
     maxscale = 3.7,
     wear = {
-        attach = "head",
+        attach = "eyes",
         scale = 1,
-        translate = Vector(0, 0, 0),
-        rotate = Angle(0, 0, 0),
+        translate = Vector(-3, 0, 0),
+        rotate = Angle(-10, 0, 0),
         pony = {
-            attach = "head",
+            attach = "eyes",
             scale = 2,
-            translate = Vector(0, 0, 0),
+            translate = Vector(-8, 0, 4),
             rotate = Angle(0, 0, 0),
         }
     }
@@ -566,14 +566,14 @@ SS_Item({
     color = Vector(1, 1, 1),
     maxscale = 3.7,
     wear = {
-        attach = "head",
+        attach = "eyes",
         scale = 1,
-        translate = Vector(0, 0, 0),
-        rotate = Angle(0, 0, 0),
+        translate = Vector(-2, 0, -1),
+        rotate = Angle(-10, 0, 0),
         pony = {
-            attach = "head",
-            scale = 2,
-            translate = Vector(0, 0, 0),
+            attach = "eyes",
+            scale = 2.2,
+            translate = Vector(-7, 0, 2),
             rotate = Angle(0, 0, 0),
         }
     }
@@ -588,19 +588,18 @@ SS_Item({
     color = Vector(1, 1, 1),
     maxscale = 3.7,
     wear = {
-        attach = "head",
-        scale = 1,
-        translate = Vector(0, 0, 0),
-        rotate = Angle(0, 0, 0),
+        attach = "eyes",
+        scale = 1.04,
+        translate = Vector(-2.7, 0, 0),
+        rotate = Angle(-10, 0, 0),
         pony = {
-            attach = "head",
-            scale = 2,
-            translate = Vector(0, 0, 0),
+            attach = "eyes",
+            scale = 2.2,
+            translate = Vector(-8, 0, 5),
             rotate = Angle(0, 0, 0),
         }
     }
 })
-
 SS_Item({
     class = "americanhelmet",
     price = 19450,
@@ -610,19 +609,18 @@ SS_Item({
     color = Vector(1, 1, 1),
     maxscale = 3.7,
     wear = {
-        attach = "head",
+        attach = "eyes",
         scale = 1,
-        translate = Vector(0, 0, 0),
-        rotate = Angle(0, 0, 0),
+        translate = Vector(-3, 0, 0),
+        rotate = Angle(-10, 0, 0),
         pony = {
-            attach = "head",
+            attach = "eyes",
             scale = 2,
-            translate = Vector(0, 0, 0),
+            translate = Vector(-8, 0, 5),
             rotate = Angle(0, 0, 0),
         }
     }
 })
-
 SS_Item({
     class = "germanhelmet",
     price = 88000,
@@ -632,19 +630,18 @@ SS_Item({
     color = Vector(1, 1, 1),
     maxscale = 3.7,
     wear = {
-        attach = "head",
+        attach = "eyes",
         scale = 1,
-        translate = Vector(0, 0, 0),
-        rotate = Angle(0, 0, 0),
+        translate = Vector(-3, 0, 0),
+        rotate = Angle(-10, 0, 0),
         pony = {
-            attach = "head",
+            attach = "eyes",
             scale = 2,
-            translate = Vector(0, 0, 0),
+            translate = Vector(-10, 0, 5),
             rotate = Angle(0, 0, 0),
         }
     }
 })
-
 SS_Item({
     class = "bone",
     price = 9000,
@@ -654,15 +651,15 @@ SS_Item({
     color = Vector(1, 1, 1),
     maxscale = 2.7,
     wear = {
-        attach = "head",
+        attach = "eyes",
         scale = 1,
-        translate = Vector(0, 0, 0),
-        rotate = Angle(0, 0, 0),
+        translate = Vector(-3, 0, 0),
+        rotate = Angle(0, 90, 90),
         pony = {
-            attach = "head",
-            scale = 2,
-            translate = Vector(0, 0, 0),
-            rotate = Angle(0, 0, 0),
+            attach = "eyes",
+            scale = 1.8,
+            translate = Vector(-9, 0,5),
+            rotate = Angle(0, 90, 90),
         }
     }
 })
