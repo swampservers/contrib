@@ -2,14 +2,7 @@
 -- INSTALL: CINEMA
 include("shared.lua")
 CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
-SPRAYPAINTMATS = {}
 
-local function GetPaintMaterial(color)
-    color = Color(255, 255, 255, 255)
-    SPRAYPAINTMATS = SPRAYPAINTMATS or {}
-
-    return SPRAYPAINTMATS[color][1]
-end
 
 local wepicon = Material("spraypaint/spraypaint_icon.png", "smooth")
 
@@ -17,18 +10,6 @@ function SWEP:PreDrawViewModel(vm, weapon, ply)
     self:SetBodygroup(2, 1)
     local cl = self:GetDecalColor()
     render.SetColorModulation(cl.x, cl.y, cl.z)
-    local down = ply:KeyDown(IN_ATTACK)
-    self.FingerLerp = self.FingerLerp or 0
-
-    if (down) then
-        self.FingerLerp = math.min(self.FingerLerp + FrameTime() * 12, 1)
-    end
-
-    if (not down) then
-        self.FingerLerp = math.max(self.FingerLerp - FrameTime() * 8, 0)
-    end
-
-    vm:SetPoseParameter("press", self.FingerLerp)
 end
 
 hook.Add("PostDrawViewModel", "paint_handsfix", function(vm, ply, weapon)
