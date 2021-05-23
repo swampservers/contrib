@@ -17,6 +17,9 @@ function SWEP:ThrowBall(force)
     self:SetHoldType("melee")
 
     if SERVER then
+        if self.THREW then return end
+        self.THREW=true
+        
         timer.Simple(.1, function()
             self.Owner:SetAnimation(PLAYER_ATTACK1)
 
@@ -56,7 +59,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    self:ThrowBall(200)
+    self:ThrowBall(600)
 end
 
 function SWEP:Reload()

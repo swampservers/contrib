@@ -27,7 +27,7 @@ function ENT:Use(act)
         net.Start("HELLTAKER")
         net.WriteEntity(self)
         net.Send(act)
-        act:Lock()
+        -- act:Lock()
     end
 end
 
@@ -215,6 +215,6 @@ if SERVER then
     util.AddNetworkString("HELLTAKER")
 
     net.Receive("HELLTAKER", function(len, ply)
-        ply:UnLock()
+        -- ply:UnLock()
     end)
 end
