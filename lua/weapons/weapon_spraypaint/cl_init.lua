@@ -114,6 +114,7 @@ function SWEP:GetViewModelPosition(epos, eang)
     self.ViewmodelDown = self.ViewmodelDown or 0
     self.ViewmodelDown = math.Approach(self.ViewmodelDown, IsValid(SpraypaintMenu) and 1 or 0, FrameTime() * 2)
     eang:RotateAroundAxis(eang:Right(), self.ViewmodelDown * -45)
+
     return epos, eang
 end
 

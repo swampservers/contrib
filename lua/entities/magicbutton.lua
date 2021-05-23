@@ -370,10 +370,12 @@ local function MagicOutcomeDecals(ply, button)
     Sound("coomer/splort.ogg")
 
     local decal = SPRAYPAINT_STENCILS ~= nil and ("stencil_decal" .. math.random(36, 40)) or (table.Random({"Eye", "Smile", "beersplash"}))
+
     local navareas = navmesh.GetAllNavAreas()
     local spamcounter = 0
     local pos = button:GetPos() + button:GetUp() * 64
     button:EmitSound("coomer/splort.ogg")
+
     timer.Create("Splats", 0.01, 10, function()
         for g = 1, 100 do
             util.Decal(decal, pos, pos + ((VectorRand() * Vector(1, 1, 0.3)):GetNormalized() * 3000), ply)
@@ -381,6 +383,7 @@ local function MagicOutcomeDecals(ply, button)
 
         pos = table.Random(navareas):GetCenter() + Vector(0, 0, 40)
     end)
+
     return "it sprayed a bunch of funny decals everywhere"
 end
 

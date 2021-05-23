@@ -612,7 +612,7 @@ SS_Item({
     wear = {
         attach = "head",
         scale = 1,
-        translate = Vector(0, 0, 0), 
+        translate = Vector(0, 0, 0),
         rotate = Angle(0, 0, 0),
         pony = {
             attach = "head",
@@ -666,7 +666,6 @@ SS_Item({
         }
     }
 })
-
 
 SS_Heading("Primitives")
 

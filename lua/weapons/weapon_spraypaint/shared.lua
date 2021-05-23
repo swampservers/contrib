@@ -29,7 +29,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = true
-SWEP.DrawCrosshair = true 
+SWEP.DrawCrosshair = true
 SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
@@ -51,29 +51,35 @@ SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
 SWEP.ConVar = "spraypaint_decal"
 SWEP.WindowTitle = "Spraypaint Color"
+
 function SWEP:SetupDataTables()
 end
 
 function SWEP:Initialize()
     self:SetHoldType("pistol")
 end
-if(SERVER)then
+
+if (SERVER) then
     util.AddNetworkString("SpraypaintNetworked")
 end
 
-if(CLIENT)then
-    net.Receive("SpraypaintNetworked",function(len)
-    local ent = net.ReadEntity()
-    if IsValid(ent) then ent:PrimaryAttack() end
+if (CLIENT) then
+    net.Receive("SpraypaintNetworked", function(len)
+        local ent = net.ReadEntity()
+
+        if IsValid(ent) then
+            ent:PrimaryAttack()
+        end
     end)
 end
 
 function SWEP:PrimaryAttack()
-    if(SERVER)then
+    if (SERVER) then
         net.Start("SpraypaintNetworked")
         net.WriteEntity(self)
         net.SendPVS(self:GetOwner():GetPos())
     end
+
     local trace = self:GetTrace()
 
     if (not trace.Invalid) then
@@ -97,7 +103,6 @@ function SWEP:Deploy()
     if (SERVER) then
         self:SendWeaponAnim(ACT_VM_DRAW)
     end
-
 
     return true
 end
@@ -134,7 +139,11 @@ function SWEP:GetTrace()
     tr.filter = ply
     local trace = util.TraceLine(tr)
     if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then end --trace.Invalid = true
-    if(trace.HitPos:Distance(org) > 128)then trace.Invalid = true end
+
+    if (trace.HitPos:Distance(org) > 128) then
+        trace.Invalid = true
+    end
+
     return trace
 end
 
@@ -142,14 +151,11 @@ hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key) end)
 
 function SWEP:MakePaint(trace, delay)
     local ply = self:GetOwner()
+    if (self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < 1) then return end
 
-    if(self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < 1)then
-        return
-    end
     if (CLIENT) then
         local color = self:GetDecalColor():ToColor()
         self:DoParticle(trace.HitPos, color)
-
         self:DoSound(delay)
 
         return
@@ -166,12 +172,9 @@ function SWEP:MakePaint(trace, delay)
     if (SERVER) then
         util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
     end
-    
 end
 
 function SWEP:DoSound(delay)
-
-
     if (not self.SpraySound) then
         sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
             if (IsValid(sound)) then
@@ -207,15 +210,12 @@ function SWEP:DoSound(delay)
     end
 end
 
-
 function SWEP:EquipAmmo(ply)
 end
 
 function SWEP:GetPaintDistance()
     return 128
 end
-
-
 
 function SWEP:CancelAllAnimations()
     self.CapOn = true
