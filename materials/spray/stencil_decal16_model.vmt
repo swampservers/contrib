@@ -1,0 +1,9 @@
+"DecalModulate"
+                {
+                    "$basetexture" "spray/stencils"
+                    "$translucent" "1"
+                    "$decal" "1"
+                    "$decalsecondpass" "1"
+                    "$frame" "15"
+                    "$decalscale" "0.25"
+                }
