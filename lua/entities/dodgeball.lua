@@ -87,7 +87,6 @@ end
 hook.Add("EntityTakeDamage", "nododgeballphysicskill", function(target, dmg)
     if IsValid(target) and target:IsPlayer() and IsValid(dmg:GetInflictor()) and dmg:GetInflictor():GetClass() == "dodgeball" and dmg:GetDamageType() == 1 then return true end
 end)
-
-if CLIENT then
-    killicon.AddAlias("dodgeball", "prop_physics")
-end
+-- if CLIENT then
+--     killicon.AddAlias("dodgeball", "prop_physics")
+-- end
