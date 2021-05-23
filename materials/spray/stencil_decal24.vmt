@@ -1,10 +1,9 @@
-"LightmappedGeneric"
+"DecalModulate"
                 {
                     "$basetexture" "spray/stencils"
                     "$translucent" "1"
                     "$decal" "1"
                     "$decalsecondpass" "1"
-                    "$vertexcolor" "1"
                     "$frame" "23"
                     "$decalscale" "0.25"
                     "$modelmaterial" "spray/stencil_decal24_model"

@@ -1,10 +1,9 @@
-"VertexLitGeneric"
+"DecalModulate"
                 {
                     "$basetexture" "spray/stencils"
                     "$translucent" "1"
                     "$decal" "1"
                     "$decalsecondpass" "1"
-                    "$vertexcolor" "1"
                     "$frame" "16"
                     "$decalscale" "0.25"
                 }

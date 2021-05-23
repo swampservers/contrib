@@ -4,6 +4,8 @@ include("shared.lua")
 CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
 SPRAYPAINTMATS = {}
 
+
+
 local function GetPaintMaterial(color)
     color = Color(255, 255, 255, 255)
     SPRAYPAINTMATS = SPRAYPAINTMATS or {}
@@ -13,46 +15,7 @@ end
 
 local wepicon = Material("spraypaint/spraypaint_icon.png", "smooth")
 
-function SWEP:DrawWeaponSelection(x, y, wide, tall, alpha)
-    self.SelNeeded = 5
 
-    if (not IsValid(self.TempModel)) then
-        self.TempModel = ClientsideModel(self.WorldModel)
-        self.TempModel:SetNoDraw(true)
-    else
-        local pan = Angle(0, 0, 0)
-        pan:RotateAroundAxis(Vector(0, 1, 0), -25)
-        pan:RotateAroundAxis(Vector(0, 0, 1), CurTime() * 270)
-        self.TempModel:SetAngles(pan)
-    end
-
-    if (IsValid(self.TempModel)) then
-        cam.Start2D()
-        cam.Start3D(Vector(0, -37, 1), Angle(0, 90, 0), 32, x, y, wide, tall)
-        render.SuppressEngineLighting(true)
-
-        for i = 0, 5 do
-            render.SetModelLighting(i, 0.5, 0.5, 0.5)
-        end
-
-        render.SetModelLighting(4, 1, 1, 1)
-        render.SetModelLighting(5, 0, 0, 0)
-        local cl = self:GetDecalColor() or Vector(1, 0, 1)
-        render.SetColorModulation(cl.x, cl.y, cl.z)
-        self.TempModel:DrawModel()
-        render.SuppressEngineLighting(false)
-        cam.End3D()
-        cam.End2D()
-        local shit = self.TempModel
-        timer.Remove("WEPSEL_SPRAYPAINT_" .. self.TempModel:EntIndex())
-
-        timer.Create("WEPSEL_SPRAYPAINT_" .. self.TempModel:EntIndex(), 0.2, 1, function()
-            if (IsValid(shit)) then
-                shit:Remove()
-            end
-        end)
-    end
-end
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     self:SetBodygroup(2, 1)
@@ -187,21 +150,22 @@ if not SpraypaintParticleEmitter then
     SpraypaintParticleEmitter = ParticleEmitter(Vector(0, 0, 0))
 end
 
-function SWEP:DoParticle(pos, color, size)
+function SWEP:DoParticle(pos)
+    local color,size = self:GetDecalColor()
     for i = 1, 5 do
         self.SprayEmitter = self.SprayEmitter or ParticleEmitter(pos)
         if (not SpraypaintParticleEmitter) then return end
         self.SprayEmitter:SetPos(pos)
         local particle = self.SprayEmitter:Add(string.format("particle/smokesprites_00%02d", math.random(7, 16)), pos)
-        particle:SetColor(color.r, color.g, color.b, color.a)
-        particle:SetStartAlpha(color.a)
+        particle:SetColor(color.x*255, color.y*255, color.z*255, 255)
+        particle:SetStartAlpha(32)
         particle:SetVelocity(VectorRand() * 6)
         particle:SetGravity(Vector(0, 0, 0))
         particle:SetLifeTime(0)
         particle:SetLighting(false)
         particle:SetDieTime(math.Rand(0.1, 0.3))
         particle:SetStartSize(1)
-        particle:SetEndSize(16)
+        particle:SetEndSize((size or 1)/2)
         particle:SetEndAlpha(0)
         particle:SetCollide(true)
         particle:SetBounce(0)
@@ -211,23 +175,27 @@ function SWEP:DoParticle(pos, color, size)
     end
 end
 
-SPRAYPAINT_DECALCOLOR_CACHE = SPRAYPAINT_DECALCOLOR_CACHE or {}
+SPRAYPAINT_DECALCOLOR_CACHE = {}
+SPRAYPAINT_DECALSIZE_CACHE = {}
 SpraypaintMenu = nil
 
 function SWEP:GetDecalColor()
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return Vector(1, 1, 1) end
+    if (not IsValid(ply)) then return Vector(1, 1, 1) , 1 end
     local decal = ply:GetInfo(self.ConVar)
-    if (SPRAYPAINT_DECALCOLOR_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal] end
+    if (SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal] , SPRAYPAINT_DECALSIZE_CACHE[decal] end
     local mat = Material(util.DecalMaterial(decal))
-
+    
     if (mat) then
+        local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
+        size = size or 1
         SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2")
+        SPRAYPAINT_DECALSIZE_CACHE[decal] = size
 
-        return mat:GetVector("$color2") or Vector(1, 1, 1)
+        return mat:GetVector("$color2") or Vector(1, 1, 1),size
     end
-
-    return Vector(1, 1, 1)
+ 
+    return Vector(1, 1, 1),1
 end
  
 function SWEP:SpraypaintOpenPanel()
@@ -267,13 +235,13 @@ function SWEP:SpraypaintOpenPanel()
 
         DButton.PerformLayout = function() end
         local mat = Material(util.DecalMaterial(v))
-        local dispmat = mat:GetName() --mat:GetString("$modelmaterial")
+        local dispmat = mat:GetString("$modelmaterial")
         local color = mat:GetVector("$color2"):ToColor() or Color(255, 255, 255)
         local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
 
         DButton.Paint = function(self)
             local w, h = self:GetSize()
-            draw.RoundedBox(4, 0, 0, w, h, Color(48, 48, 48, 255))
+            draw.RoundedBox(4, 0, 0, w, h, Color(114, 115, 128))
         end
 
         DButton:SetMaterial("models/shiny")
@@ -289,8 +257,14 @@ function SWEP:SpraypaintOpenPanel()
             local strImage = Mat:GetName()
             local t = Mat:GetString("$basetexture")
             local f = Mat:GetFloat("$frame")
-            local c = Mat:GetVector("$color2")
-
+            local c = Mat:GetVector("$color2") 
+            local shader = mat:GetShader()
+            if(shader == "VertexLitGeneric")then
+                shader = "UnlitGeneric"
+            end
+            if(shader == "LightmappedGeneric")then
+                shader = "UnlitGeneric"
+            end
             if (t) then
                 local params = {}
                 params["$basetexture"] = t
@@ -298,7 +272,7 @@ function SWEP:SpraypaintOpenPanel()
                 params["$color2"] = c
                 params["$vertexcolor"] = 1
                 params["$vertexalpha"] = 1
-                Mat = CreateMaterial(strImage .. "_DImage_1", "UnlitGeneric", params)
+                Mat = CreateMaterial(strImage .. "_DecalPreview", shader, params)
             end
 
             self:SetMaterial(Mat)

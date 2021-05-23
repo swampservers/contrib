@@ -8,6 +8,7 @@ SWEP.Category = "PYROTEKNIK"
 SWEP.Primary.Automatic = false
 SWEP.Instructions = "Left Click to Draw, Right click to change stencil"
 SWEP.PaintDelay = 0.25
+SWEP.SlotPos = 101
 SWEP.WindowTitle = "Pick a Stencil (You can use your keyboard to choose)"
 
 if (CLIENT) then
@@ -36,9 +37,15 @@ local function CreateDecals()
 end 
 
 CreateDecals()
+
+ 
 SWEP.DecalSet = "SprayPaintStencils"
 SWEP.MenuColumns = 8
 SWEP.ConVar = "spraypaint_stencil"
+
+function SWEP:GetDecalColor()
+return Vector(0,0,0)
+end
 
 function SWEP:GetDecalMat()
     self.PREVIEWMAT = self.PREVIEWMAT or {}
@@ -50,6 +57,13 @@ function SWEP:GetDecalMat()
     local sc = mat:GetFloat("$decalscale")
     
     local c = mat:GetVector("$color2")
+    local shader = mat:GetShader() or "VertexLitGeneric"
+    if(shader == "VertexLitGeneric")then
+        shader = "UnlitGeneric"
+    end
+    if(shader == "LightmappedGeneric")then
+        shader = "UnlitGeneric"
+    end
 
     if (self.PREVIEWMAT[decal] == nil) then
         local params = {}
@@ -59,7 +73,7 @@ function SWEP:GetDecalMat()
         params["$vertexcolor"] = 1
         params["$vertexalpha"] = 1
         params["$decalscale"] = sc
-        self.PREVIEWMAT[decal] = CreateMaterial(decal .. "stencilpreviewmat1", "UnlitGeneric", params)
+        self.PREVIEWMAT[decal] = CreateMaterial(decal .. "stencilpreviewmat1", shader, params)
     end
 
     return self.PREVIEWMAT[decal]
@@ -81,6 +95,7 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
     local pos = trace.HitPos + trace.HitNormal * 0.1
     local ang = trace.HitNormal:Angle()
     local mat = wep:GetDecalMat()
+    if(mat)then
     local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
 
     ang:RotateAroundAxis(ang:Up(), 90)
@@ -94,8 +109,11 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
     if(mat and size)then
     cam.Start3D2D(pos, ang, 1)
     surface.SetDrawColor(255, 255, 255, 64)
+    render.SetBlend(0.5)
     surface.SetMaterial(mat)
     surface.DrawTexturedRect(-size/2, -size/2, size, size)
+    render.SetBlend(1)
     cam.End3D2D()
+    end
     end
 end)
