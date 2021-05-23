@@ -17,7 +17,6 @@ SWEP.ViewModel = Model("models/pyroteknik/v_spraypaint.mdl")
 SWEP.WorldModel = Model("models/pyroteknik/w_spraypaint.mdl")
 SWEP.CapModel = Model("models/pyroteknik/w_spraypaint_cap.mdl")
 SWEP.ShakeSound = Sound("spraypaint/spray_shake.wav")
-
 SWEP.ViewModelFOV = 70
 SWEP.UseHands = true
 SWEP.Primary.ClipSize = -1

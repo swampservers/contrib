@@ -2,7 +2,6 @@
 -- INSTALL: CINEMA
 include("shared.lua")
 CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
-local wepicon = Material("spraypaint/spraypaint_icon.png", "smooth")
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     self:SetBodygroup(2, 1)
@@ -213,7 +212,6 @@ end
 function SWEP:SpraypaintOpenPanel()
     if IsValid(SpraypaintMenu) then
         SpraypaintMenu:Remove()
-
         return
     end
 

@@ -240,6 +240,12 @@ function ENT:Initialize()
             local trace = self:FindHidingSpot()
             self:MoveToTraceResult(trace)
         end
+
+        timer.Simple(60 * 60, function()
+            if (IsValid(self)) then
+                self:Remove()
+            end
+        end)
     end
 
     if (CLIENT) then
@@ -295,6 +301,14 @@ function ButtonMoneyPrize()
     return math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3)
 end
 
+local function MagicOutcomePrize(ply)
+    local amount = ButtonMoneyPrize()
+    if (ply.SS_GivePoints == nil) then return nil end
+    ply:SS_GivePoints(amount)
+
+    return "and won [white]" .. string.Comma(amount) .. " points![fbc];coins;"
+end
+
 local function MagicOutcomeBountyAndPrize(ply)
     local amount = ButtonMoneyPrize()
     if (ply.SS_GivePoints == nil or SetPlayerBounty == nil or GetPlayerBounty == nil) then return nil end
@@ -302,45 +316,314 @@ local function MagicOutcomeBountyAndPrize(ply)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
 
-    return amount
+    return "and won [red]" .. string.Comma(amount) .. " points[fbc] and also a [red]" .. string.Comma(amount) .. " point bounty[fbc] on themself! ;fingers;"
+end
+
+local function MagicOutcomeBountyAll(ply)
+    if (SetPlayerBounty == nil or GetPlayerBounty == nil) then return nil end
+    local amount = 1000
+
+    if (math.random(1, 20) == 1) then
+        amount = math.random(2, 45)
+    end
+
+    for k, v in pairs(player.GetAll()) do
+        local add = GetPlayerBounty(v) + amount
+        SetPlayerBounty(v, add)
+    end
+
+    return "and [red]increased everyone's bounty by " .. string.Comma(amount) .. " points! ;dougie;"
 end
 
 local function MagicOutcomeKleinerFanclub(ply)
-    KLEINER_OVERRIDE_TARGET = ply
+    if (KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0) then
+        local someoneelse
 
-    timer.Create("KLEINER_GOD_EXPIRE", 60 * 15, 1, function()
-        KLEINER_OVERRIDE_TARGET = nil
+        if (math.random(1, 20) == 1) then
+            ply = table.Random(player.GetAll())
+            someoneelse = true
+        end
+
+        KLEINER_OVERRIDE_TARGET = ply
+
+        timer.Create("KLEINER_GOD_EXPIRE", 60 * 15, 1, function()
+            KLEINER_OVERRIDE_TARGET = nil
+        end)
+
+        if (someoneelse) then return "and it made " .. ply:Nick() .. " really popular with kleiners! ;kleinerfortnite;" end
+
+        return "and it made them really popular with kleiners! ;kleinerfortnite;"
+    end
+end
+
+local function MagicOutcomeExplode(ply, button)
+    local explosion = ents.Create("env_explosion") -- The explosion entity
+    explosion:SetPos(button:GetPos() + button:GetUp() * 3) -- Put the position of the explosion at the position of the entity
+    explosion:Spawn() -- Spawn the explosion
+    explosion:SetKeyValue("iMagnitude", "150") -- the magnitude of the explosion
+    explosion:Fire("Explode", 0, 0) -- explode
+
+    return "it exploded haha ;crazy;"
+end
+
+local function MagicOutcomeDecals(ply, button)
+    Sound("coomer/splort.ogg")
+
+    local decal = SPRAYPAINT_STENCILS ~= nil and ("stencil_decal" .. math.random(36, 40)) or (table.Random({"Eye", "Smile", "beersplash"}))
+
+    local navareas = navmesh.GetAllNavAreas()
+    local spamcounter = 0
+    local pos = button:GetPos() + button:GetUp() * 64
+    button:EmitSound("coomer/splort.ogg")
+
+    timer.Create("Splats", 0.01, 10, function()
+        for g = 1, 100 do
+            util.Decal(decal, pos, pos + ((VectorRand() * Vector(1, 1, 0.3)):GetNormalized() * 3000), ply)
+        end
+
+        pos = table.Random(navareas):GetCenter() + Vector(0, 0, 40)
     end)
 
-    return ""
+    return "it sprayed a bunch of funny decals everywhere"
+end
+
+local function MagicOutcomeKleinerSlur(ply)
+    if (KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0) then
+        local someoneelse
+
+        if (math.random(1, 20) == 1) then
+            ply = table.Random(player.GetAll())
+            someoneelse = true
+        end
+
+        KLEINER_BULLIES[ply:SteamID()] = 5000
+        if (someoneelse) then return "and it sent the kleiner mob after " .. ply:Nick() .. "! ;antikleiner;" end
+
+        return "and it made them accidentally say a anti-kleiner slur! Now you're gonna get it! ;antikleiner;"
+    end
+end
+
+local function MagicOutcomeKleinerTeleported(ply)
+    if (KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0) then
+        local someoneelse
+
+        if (math.random(1, 20) == 1) then
+            ply = table.Random(player.GetAll())
+            someoneelse = true
+        end
+
+        for k, v in pairs(ents.FindByClass("kleiner")) do
+            v:TeleportSafe(ply:GetPos())
+        end
+
+        if (someoneelse) then return "and it teleported all kleiners to the player [white]" .. ply:Nick() .. ";hahaha;" end
+
+        return "and it teleported all kleiners to them! ;kleinerfortnite;"
+    end
+end
+
+local landmarks = {
+    ["Near The Drunken Clam"] = Vector(-2518, -802, 64),
+    ["Near Trump Tower"] = Vector(-2528, -66, 64),
+    ["Near Sushi Theater"] = Vector(-2537, -1613, 104),
+    ["Near The Pit"] = Vector(-126, -1355, 19),
+    ["Somewhere on the roof"] = Vector(-1179, 1020, 522),
+    ["Somewhere on the roof"] = Vector(-234, 990, 633),
+    ["Somewhere on the roof"] = Vector(1616, 810, 606),
+    ["Somewhere on the roof"] = Vector(-427, 1352, 688),
+    ["Near Mini Golf"] = Vector(2113, -589, 119),
+    ["Near AFK Corral"] = Vector(2831, 1062, 129),
+    ["Somewhere behind the theater"] = Vector(1780, 1730, 108),
+    ["Near the cabin"] = Vector(-107, 2930, 97),
+    ["Near SportZone"] = Vector(1667, -1918, 85),
+}
+
+local function MagicOutcomeButtonSpawn(ply)
+    local button = ents.Create("magicbutton")
+    button:Spawn()
+    local trace = button:FindHidingSpot()
+
+    if (trace) then
+        button:MoveToTraceResult(trace)
+    end
+
+    if (IsValid(button)) then
+        local loc = Location.Find(button)
+        local locd = Location.GetLocationByIndex(loc or -1)
+        local locname = locd.Name
+
+        if (locname == "Outside") then
+            local nearest = 1000000
+            local nearestname
+            local secondnearestname
+
+            for k, v in pairs(landmarks) do
+                if (v:Distance(button:GetPos()) < nearest) then
+                    secondnearestname = nearestname
+                    nearestname = k
+                    nearest = v:Distance(button:GetPos())
+                end
+            end
+
+            locname = locname .. " (" .. nearestname .. ")"
+        end
+
+        return "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location:[white]" .. (locname or "Somewhere stupid")
+    end
+end
+
+local function MagicOutcomeSpawnObject(ply, button)
+    local classes = {
+        sent_ball = {
+            "Bouncy Ball", 10, function(ent)
+                ent:SetBallSize(24)
+                ent:GetPhysicsObject():SetVelocity(VectorRand() * 20)
+            end
+        },
+        npc_headcrab = {
+            "Headcrab", math.random(1, 5), function(ent, button)
+                local pos = table.Random(navmesh.Find(button:GetPos() + button:GetUp() * 50, 100, 2000, 2000)):GetRandomPoint()
+                ent:SetPos(pos)
+            end
+        },
+        npc_grenade_frag = {
+            "Live Grenade", math.random(1, 10), function(ent, button)
+                ent:GetPhysicsObject():SetVelocity(VectorRand() * 100)
+                ent:Fire("SetTimer", math.random(2, 6))
+            end
+        },
+        dodgeball = {
+            "Dodgeball", 1, function(ent, button)
+                ent:GetPhysicsObject():SetVelocity(button:GetUp() * 500)
+            end
+        },
+    }
+
+    local dat, class = table.Random(classes)
+    local number = dat[2] or 1
+    local name = dat[1]
+    local func = dat[3]
+
+    for i = 1, number do
+        local ent = ents.Create(class)
+        ent:Spawn()
+        ent:SetPos(button:GetPos() + button:GetUp() * ent:BoundingRadius())
+        SafeRemoveEntityDelayed(ent, 60 * 5) --whatever we spawn, make sure it's gone after 5 minutes
+
+        if (func) then
+            func(ent, button)
+        end
+    end
+
+    local what = name or ent.PrintName or ent:GetClass()
+
+    if (number > 1) then
+        return "and it spawned " .. number .. " " .. what .. "s!"
+    else
+        return "and it spawned a " .. what .. "!"
+    end
+end
+
+local function MagicOutcomeOverlay(ply, button)
+    local overlays = {"models/shadertest/shader4", "models/props_c17/fisheyelens", "effects/combine_binocoverlay", "models/props_combine/stasisshield_sheet", "models/shadertest/shader5", "effects/water_warp01", "effects/distortion_normal001", "effects/tp_eyefx/tpeye"}
+
+    ply:ConCommand("pp_mat_overlay_refractamount -0.06")
+    ply:ConCommand("pp_mat_overlay " .. table.Random(overlays))
+
+    timer.Simple(30, function()
+        if (IsValid(ply)) then
+            ply:ConCommand("pp_mat_overlay ''")
+        end
+    end)
+
+    return "and had their screen fucked up ;billhead;"
 end
 
 local MagicButtonOutcomes = {
     {
-        func = MagicOutcomeBountyAndPrize,
-        message = "and won %s points and also a %s point bounty on themself!",
+        func = MagicOutcomePrize,
+        weight = 1
     },
-    -- { --     func = MagicOutcomeKleinerFanclub, --     message = "and won the attention of every kleiner on the map!", -- }, -- { --     func = function(ply) KLEINER_BULLIES[ply:SteamID()] = 5000 return "" end, --     message = "and said an anti-kleiner slur! watch out!", -- },
+    {
+        func = MagicOutcomeBountyAndPrize,
+        weight = 3
+    },
+    {
+        func = MagicOutcomeKleinerFanclub,
+        weight = 5
+    },
+    {
+        func = MagicOutcomeKleinerTeleported,
+        weight = 4,
+    },
+    {
+        func = MagicOutcomeKleinerSlur,
+        weight = 3
+    },
+    {
+        func = MagicOutcomeOverlay,
+        weight = 2
+    },
+    {
+        func = MagicOutcomeSpawnObject,
+        weight = 2
+    },
     {
         func = function(ply, button)
             ply:SetPos(button:FindSuitableCastOrigin().StartPos)
 
-            return ""
+            return "and teleported somewhere mysterious! " .. table.Random({";blackwhat;", ";billhead;", "", ""})
         end,
-        message = "and teleported somewhere mysterious!",
+        weight = 2
     },
     {
-        func = function(ply, button) return "" end,
-        message = "but nothing happened!",
+        func = MagicOutcomeBountyAll,
+        weight = 1
+    },
+    {
+        func = MagicOutcomeButtonSpawn,
+        weight = 2
+    },
+    {
+        func = MagicOutcomeExplode,
+        weight = 3
+    },
+    {
+        func = MagicOutcomeDecals,
+        weight = 2
+    },
+    {
+        func = function(ply, button)
+            ply:EmitSound("physics/flesh/flesh_strider_impact_bullet1.wav")
+            local eang = ply:EyeAngles()
+            eang.roll = eang.roll + 15
+            ply:SetEyeAngles(eang)
+            local bone = ply:LookupBone("ValveBiped.Bip01_Head1") or ply:LookupBone("LRigScull")
+            local bang = ply:GetManipulateBoneAngles(bone)
+            bang.pitch = -eang.roll
+            ply:ManipulateBoneAngles(bone, bang)
+
+            return "and got a sore neck"
+        end,
+        weight = 3
+    },
+    {
+        func = function(ply, button)
+            return "but nothing happened! " .. table.Random({";baby;", ";bad;", ";biggestloser;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
+        end,
+        weight = 2
+    },
+    {
+        func = function(ply, button)
+            if (OpenAPresent) then
+                local content = OpenAPresent(ply, button:GetPos())
+
+                return "and got [white]" .. content .. "[fbc]! ;alien;"
+            end
+        end,
+        weight = 8
     }
 }
-
-for i = 1, 3 do
-    table.insert(MagicButtonOutcomes, {
-        func = function(ply, button) return OpenAPresent(ply, button:GetPos()) end,
-        message = "and got %s!",
-    })
-end
 
 --NOTE: On these functions, please return a string if there was a success, and nil if there was not.
 function ENT:Effect(ply)
@@ -349,21 +632,22 @@ function ENT:Effect(ply)
     local outcometable = {}
 
     for k, v in pairs(MagicButtonOutcomes) do
-        table.insert(outcometable, math.random(1, #outcometable + 1), k)
+        for i = 1, v.weight or 1 do
+            table.insert(outcometable, math.random(1, #outcometable + 1), k)
+        end
     end
 
     for _, index in pairs(outcometable) do
         effect = MagicButtonOutcomes[index]
-        print(effect.message)
-        item = effect.func(ply, self)
+
+        if (effect.func ~= nil) then
+            item = effect.func(ply, self)
+        end
+
         if (item ~= nil) then break end
     end
 
-    if (type(item) == "number") then
-        item = string.Comma(item)
-    end
-
-    return string.format(effect.message, item, item)
+    return item
 end
 
 function ENT:Use(activator)
@@ -384,14 +668,8 @@ function ENT:Use(activator)
 
         local message = self:Effect(activator)
         assert(message ~= nil)
-        message = activator:Nick() .. " pressed a hidden button " .. message
-
-        if (BotSayGlobal) then
-            BotSayGlobal("[fbc]" .. message)
-        else
-            PrintMessage(HUD_PRINTTALK, message)
-        end
-
+        message = "[white]" .. activator:Nick() .. "[fbc] pressed a hidden button " .. message
+        BotSayGlobal(";clap;[fbc]" .. message)
         local c2 = self:GetColor()
         c2.r = c2.r / 5
         c2.g = c2.g / 5

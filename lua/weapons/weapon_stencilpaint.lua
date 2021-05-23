@@ -36,7 +36,7 @@ local function CreateDecals()
     
 end 
 
-CreateDecals()
+hook.Add("InitPostEntity", "StencilPaint_RegisterDecals", CreateDecals())
 
  
 SWEP.DecalSet = "SprayPaintStencils"
