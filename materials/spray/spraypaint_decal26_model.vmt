@@ -3,6 +3,7 @@
                     "$basetexture" "spray/dot"
                     "$translucent" 1
                     "$decal" "1"
+                    "$vertexcolor" "1"
                     "$decalscale" "0.09375"
                     "$color2" "[1 1 1]"
                 }

@@ -2,6 +2,8 @@
                 {
                     "$basetexture" "spray/dot"
                     "$translucent" "1"
+                    "$decal" "1"
+                    "$vertexcolor" "1"
                     "$decalscale" "0.375"
                     "$modelmaterial" "spray/spraypaint_decal2_model"
                     "$color2" "[1 0.25098040699959 0]"
