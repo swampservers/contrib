@@ -17,7 +17,7 @@ end
 
 local function CreateDecals()
     SPRAYPAINT_STENCILS = {}
-
+ 
     for i = 1, 40 do
         local dname = "stencil_decal" .. i
         local matname = "spray/" .. dname

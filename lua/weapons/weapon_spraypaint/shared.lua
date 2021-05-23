@@ -9,7 +9,7 @@ SWEP.PrintName = "Spraypaint"
 SWEP.Author = "PYROTEKNIK"
 SWEP.Category = "PYROTEKNIK"
 SWEP.Instructions = "Left Click to Draw, Right click to change paint style"
-SWEP.Purpose = "Point it in someone's eye :)"
+SWEP.Purpose = "Draw funny pictures :)"
 SWEP.Slot = 1
 SWEP.SlotPos = 100
 SWEP.Spawnable = true
@@ -17,7 +17,7 @@ SWEP.ViewModel = Model("models/pyroteknik/v_spraypaint.mdl")
 SWEP.WorldModel = Model("models/pyroteknik/w_spraypaint.mdl")
 SWEP.CapModel = Model("models/pyroteknik/w_spraypaint_cap.mdl")
 SWEP.ShakeSound = Sound("spraypaint/spray_shake.wav")
-SWEP.PopCapSound = Sound("spraypaint/spray_capoff.wav")
+
 SWEP.ViewModelFOV = 70
 SWEP.UseHands = true
 SWEP.Primary.ClipSize = -1
@@ -29,10 +29,10 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = true
-SWEP.DrawCrosshair = true 
+SWEP.DrawCrosshair = true
 SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
-SWEP.PaintDelay = 1 / 60
+SWEP.PaintDelay = 1 / 30
 
 local function CreateDecals()
     SPRAYPAINT_DECALS = {}
@@ -46,40 +46,43 @@ local function CreateDecals()
     end
 end
 
-hook.Add("InitPostEntity","SprayPaint_RegisterDecals",CreateDecals())
-
+hook.Add("InitPostEntity", "SprayPaint_RegisterDecals", CreateDecals())
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
 SWEP.ConVar = "spraypaint_decal"
 SWEP.WindowTitle = "Spraypaint Color"
+
 function SWEP:SetupDataTables()
 end
 
 function SWEP:Initialize()
     self:SetHoldType("pistol")
 end
-if(SERVER)then
+
+if (SERVER) then
     util.AddNetworkString("SpraypaintNetworked")
 end
 
-if(CLIENT)then
-    net.Receive("SpraypaintNetworked",function(len)
-    local ent = net.ReadEntity()
-    if(ent:IsValid())then
-        ent:PrimaryAttack()
-    end
+if (CLIENT) then
+    net.Receive("SpraypaintNetworked", function(len)
+        local ent = net.ReadEntity()
+
+        if (ent:IsValid()) then
+            ent:PrimaryAttack()
+        end
     end)
 end
 
 function SWEP:PrimaryAttack()
-    if(SERVER)then
+    if (SERVER) then
         local filt = RecipientFilter()
         filt:AddPVS(self:GetOwner():GetPos())
         filt:RemovePlayer(self:GetOwner())
-        net.Start("SpraypaintNetworked",true)
+        net.Start("SpraypaintNetworked", true)
         net.WriteEntity(self)
         net.Send(filt)
     end
+
     local trace = self:GetTrace()
 
     if (not trace.Invalid) then
@@ -104,7 +107,6 @@ function SWEP:Deploy()
         self:SendWeaponAnim(ACT_VM_DRAW)
     end
 
-
     return true
 end
 
@@ -112,7 +114,6 @@ function SWEP:OnDrop()
 end
 
 function SWEP:Holster()
-    self:CancelAllAnimations()
 
     return true
 end
@@ -140,7 +141,11 @@ function SWEP:GetTrace()
     tr.filter = ply
     local trace = util.TraceLine(tr)
     if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then end --trace.Invalid = true
-    if(trace.HitPos:Distance(org) > 128)then trace.Invalid = true end
+
+    if (trace.HitPos:Distance(org) > 128) then
+        trace.Invalid = true
+    end
+
     return trace
 end
 
@@ -148,38 +153,37 @@ SPRAYPAINT_DECALPREVIEW_CACHE = {}
 SPRAYPAINT_DECALCOLOR_CACHE = {}
 SPRAYPAINT_DECALSIZE_CACHE = {}
 
-function SWEP:GetDecalColor() --i think this will function serverside as long as the materials are installed there
+--i think this will function serverside as long as the materials are installed there
+function SWEP:GetDecalColor()
     local ply = self:GetOwner()
     if (not IsValid(ply)) then return Vector(1, 1, 1), 1 end
     local decal = ply:GetInfo(self.ConVar)
     if (SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
-    local mat = Material(util.DecalMaterial(decal) )
+    local mat = Material(util.DecalMaterial(decal))
 
     if (mat) then
         local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
         size = size or 1
         SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2")
         SPRAYPAINT_DECALSIZE_CACHE[decal] = size
+
         return mat:GetVector("$color2") or Vector(1, 1, 1), size
-    end 
+    end
 
     return Vector(1, 1, 1), 16
 end
-
 
 hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key) end)
 
 function SWEP:MakePaint(trace, delay)
     local ply = self:GetOwner()
-    local color,size = self:GetDecalColor()
-    local gap = size/5 or 2
-    if(self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < gap)then
-        return
-    end
+    local color, size = self:GetDecalColor()
+    local gap = size / 4 or 2
+    if (self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < gap) then return end
+
     if (CLIENT) then
         local color = self:GetDecalColor():ToColor()
         self:DoParticle(trace.HitPos, color)
-
         self:DoSound(delay)
 
         return
@@ -196,12 +200,9 @@ function SWEP:MakePaint(trace, delay)
     if (SERVER) then
         util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
     end
-    
 end
 
 function SWEP:DoSound(delay)
-
-
     if (not self.SpraySound) then
         sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
             if (IsValid(sound)) then
@@ -237,7 +238,6 @@ function SWEP:DoSound(delay)
     end
 end
 
-
 function SWEP:EquipAmmo(ply)
 end
 
@@ -245,12 +245,3 @@ function SWEP:GetPaintDistance()
     return 128
 end
 
-
-
-function SWEP:CancelAllAnimations()
-    self.CapOn = true
-    timer.Destroy("capshake_" .. self:EntIndex())
-    timer.Destroy("capshakesnd__" .. self:EntIndex())
-    timer.Destroy("uncap_" .. self:EntIndex())
-    timer.Destroy("capshake_" .. self:EntIndex())
-end

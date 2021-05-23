@@ -133,7 +133,6 @@ function SWEP:DoParticle(pos)
     end
 end
 
-
 SpraypaintMenu = nil
 
 function SWEP:GetPreviewMat()
@@ -211,9 +210,13 @@ function SWEP:DrawSpraypaintReticle()
     end
 end
 
-
 function SWEP:SpraypaintOpenPanel()
-    if IsValid(SpraypaintMenu) then return end
+    if IsValid(SpraypaintMenu) then
+        SpraypaintMenu:Remove()
+
+        return
+    end
+
     local Frame = vgui.Create("DFrame")
     Frame:SetSize((48 + 4) * self.MenuColumns + 4 + 2, 280) --good size for example
     Frame:SetTitle(self.WindowTitle)
@@ -277,7 +280,7 @@ function SWEP:SpraypaintOpenPanel()
                     self:SetMaterial("models/shiny")
 
                     return
-                end 
+                end
 
                 local strImage = Mat:GetName()
                 local t = Mat:GetString("$basetexture")
@@ -301,7 +304,7 @@ function SWEP:SpraypaintOpenPanel()
                     params["$vertexcolor"] = 1
                     params["$vertexalpha"] = 1
                     Mat = CreateMaterial(strImage .. "_DecalPreview3", shader, params)
-                end 
+                end
 
                 self:SetMaterial(Mat)
             end
@@ -337,5 +340,4 @@ function SWEP:SpraypaintOpenPanel()
     Frame:SizeToContents()
     Frame:SetTall((rows) * (48 + 4) + 30)
     Frame:Center()
-    
 end
