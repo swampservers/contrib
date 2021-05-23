@@ -88,6 +88,14 @@ timer.Simple(1, function()
     net.SendToServer()
 end)
 
+
+hook.Add( "RenderScreenspaceEffects", "FishEyeEffect", function()
+    if IsValid(LocalPlayer()) and LocalPlayer():WaterLevel()==3 then
+	DrawMaterialOverlay( "effects/water_warp01", -0.1 )
+    end
+end )
+
+
 hook.Add("DrawTranslucentAccessories", "DrawSpacehat", function(ply)
     if ply:GetNWBool("spacehat", false) and ply:Alive() then
         if not IsValid(SpaceHatCSModel) then
