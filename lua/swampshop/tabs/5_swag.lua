@@ -537,7 +537,7 @@ SS_Item({
 
 SS_Item({
     class = "woolcap",
-    price = 15000,
+    price = 50000,
     name = 'Wool Cap with Brim',
     description = "Perfect accessory for concealing a receding hairline.",
     model = 'models/pyroteknik/hats/woolbrim.mdl',
@@ -559,7 +559,7 @@ SS_Item({
 
 SS_Item({
     class = "gasmask",
-    price = 45000,
+    price = 600000,
     name = 'Gas Mask',
     description = "Protect yourself from the ambient stink of your average movie theater.",
     model = 'models/pyroteknik/hats/gasmask.mdl',
@@ -581,7 +581,7 @@ SS_Item({
 
 SS_Item({
     class = "ushanka",
-    price = 27500,
+    price = 275000,
     name = 'Ushanka',
     description = "Iconic hat from that video you saw of someone doing something dangerous in the arctic",
     model = 'models/pyroteknik/hats/ushanka.mdl',
@@ -625,7 +625,7 @@ SS_Item({
 
 SS_Item({
     class = "germanhelmet",
-    price = 19450,
+    price = 88000,
     name = 'WWII German Army Helmet',
     description = "Perfect for re-enacting horrifying war scenarios. Smells faintly of sausage",
     model = 'models/pyroteknik/hats/american.mdl',
