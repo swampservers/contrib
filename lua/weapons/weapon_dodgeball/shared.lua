@@ -20,10 +20,10 @@ function SWEP:ThrowBall(force)
         if self.THREW then return end
         self.THREW = true
 
-        timer.Simple(.1, function()
+        -- timer.Simple(.1, function()
             self.Owner:SetAnimation(PLAYER_ATTACK1)
 
-            timer.Simple(.2, function()
+            timer.Simple(.1, function()
                 if IsValid(self) and IsValid(self.Owner) then
                     local p1 = self.Owner:GetPos() + self.Owner:GetCurrentViewOffset()
                     local p2 = p1 + (self.Owner:GetAimVector() * outie)
@@ -50,7 +50,7 @@ function SWEP:ThrowBall(force)
                     makeDodgeball(p2, (self.Owner:GetAimVector() * force) + self.Owner:GetVelocity(), self.Owner)
                 end
             end)
-        end)
+        -- end)
     end
 end
 

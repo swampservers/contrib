@@ -1,5 +1,6 @@
 ﻿-- autoicons.lua: Automatically generates/renders weapon select icons and killicons
 -- for SWEPs not containing them. Made by swamponions (STEAM_0:0:38422842)
+local ReplaceAllConvar = CreateClientConVar("autoicons_replaceall", "0", true, false)
 local namejunk = "autoicon" .. tostring(os.time()) .. "_"
 
 local function UniqueName()
@@ -511,7 +512,7 @@ timer.Simple(0, function()
     BASEDRAWWEAPONSELECTION = BASEDRAWWEAPONSELECTION or weapons.GetStored("weapon_base").DrawWeaponSelection
 
     weapons.GetStored("weapon_base").DrawWeaponSelection = function(self, x, y, wide, tall, alpha)
-        if self.WorldModel == "" or self.WepSelectIcon ~= weapons.GetStored("weapon_base").WepSelectIcon then return BASEDRAWWEAPONSELECTION(self, x, y, wide, tall, alpha) end
+        if self.WorldModel == "" or (not ReplaceAllConvar:GetBool() and self.WepSelectIcon ~= weapons.GetStored("weapon_base").WepSelectIcon) then return BASEDRAWWEAPONSELECTION(self, x, y, wide, tall, alpha) end
         AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
     end
 end)

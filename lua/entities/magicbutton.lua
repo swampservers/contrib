@@ -29,12 +29,6 @@ if (SERVER) then
             if (IsValid(button)) then
                 button:Spawn()
                 button:Activate()
-
-                if (BotSayGlobal) then
-                    BotSayGlobal(";weewoo;[fbc]A new button has spawned!")
-                else
-                    PrintMessage(HUD_PRINTTALK, "A new button has spawned!")
-                end
             end
         end
     end)
