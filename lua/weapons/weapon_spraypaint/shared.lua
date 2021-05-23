@@ -34,7 +34,7 @@ SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
 SWEP.MaxMovementDistance = 128 -- Maxmimum distance the player can move while drawing before it's prevented
 
-local function CreateDecals()
+hook.Add("InitPostEntity", "SprayPaint_RegisterDecals", function()
     SPRAYPAINT_DECALS = {}
 
     for i = 1, 27 do
@@ -44,9 +44,8 @@ local function CreateDecals()
         game.AddDecal(dname, matname)
         list.Set("SprayPaintDecals", i, dname)
     end
-end
+end)
 
-hook.Add("InitPostEntity", "SprayPaint_RegisterDecals", CreateDecals())
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
 SWEP.ConVar = "spraypaint_decal"

@@ -15,7 +15,7 @@ if (CLIENT) then
     CreateClientConVar("spraypaint_stencil", "stencil_decal27", true, true, "decal to spray from the can")
 end
 
-local function CreateDecals()
+hook.Add("InitPostEntity", "StencilPaint_RegisterDecals", function()
     SPRAYPAINT_STENCILS = {}
 
     for i = 1, 40 do
@@ -35,9 +35,9 @@ local function CreateDecals()
     list.Set("SprayPaintStencils", 43, "Cross")
     list.Set("SprayPaintStencils", 44, "Eye")
     list.Set("SprayPaintStencils", 45, "Smile")
-end
+end)
 
-hook.Add("InitPostEntity", "StencilPaint_RegisterDecals", CreateDecals())
+
 SWEP.DecalSet = "SprayPaintStencils"
 SWEP.MenuColumns = 8
 SWEP.ConVar = "spraypaint_stencil"
