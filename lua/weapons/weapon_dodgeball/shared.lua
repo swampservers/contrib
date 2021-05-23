@@ -18,8 +18,8 @@ function SWEP:ThrowBall(force)
 
     if SERVER then
         if self.THREW then return end
-        self.THREW=true
-        
+        self.THREW = true
+
         timer.Simple(.1, function()
             self.Owner:SetAnimation(PLAYER_ATTACK1)
 

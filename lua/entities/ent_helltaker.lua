@@ -213,8 +213,5 @@ if SERVER then
 
     timer.Simple(0, SETUPHELLTAKER)
     util.AddNetworkString("HELLTAKER")
-
-    net.Receive("HELLTAKER", function(len, ply)
-        -- ply:UnLock()
-    end)
+    net.Receive("HELLTAKER", function(len, ply) end) -- ply:UnLock()
 end
