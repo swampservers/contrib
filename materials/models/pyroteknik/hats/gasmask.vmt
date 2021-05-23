@@ -1,0 +1,21 @@
+VertexLitGeneric
+{
+	$basetexture "models/pyroteknik/hats/gasmask_diffuse"
+	$bumpmap "models/pyroteknik/hats/gasmask_normal"
+	$phongexponenttexture "models/pyroteknik/hats/albedotint"
+	$phong 1
+	$phongexponent			32
+	$phongboost				32
+	$phongfresnelranges		"[0 0.5 1]"
+	$halflambert 1
+	$phongalbedotint 1
+	$blendtintbybasealpha 1
+	Proxies
+		{
+			Equals
+				{
+				srcVar1 $color
+				resultVar $phongtint
+				}
+		}
+}

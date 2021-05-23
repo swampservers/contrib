@@ -6,104 +6,222 @@ cvar = GetConVar("mp_decals"):GetInt()
 RunConsoleCommand("mp_decals", tostring(math.max(cvar, 4096)))
 --RunConsoleCommand("r_maxmodeldecal","32")
 SWEP.PrintName = "Spraypaint"
+SWEP.Author = "PYROTEKNIK"
+SWEP.Category = "PYROTEKNIK"
+SWEP.Instructions = "Left Click to Draw, Right click to change paint style"
+SWEP.Purpose = "Point it in someone's eye :)"
 SWEP.Slot = 1
-SWEP.ViewModel = "models/props_junk/propane_tank001a.mdl"
-SWEP.WorldModel = "models/props_junk/propane_tank001a.mdl"
+SWEP.SlotPos = 100
+SWEP.Spawnable = true
+SWEP.ViewModel = Model("models/pyroteknik/v_spraypaint.mdl")
+SWEP.WorldModel = Model("models/pyroteknik/w_spraypaint.mdl")
+SWEP.CapModel = Model("models/pyroteknik/w_spraypaint_cap.mdl")
+SWEP.ShakeSound = Sound("spraypaint/spray_shake.wav")
+SWEP.PopCapSound = Sound("spraypaint/spray_capoff.wav")
+SWEP.ViewModelFOV = 70
+SWEP.UseHands = true
+SWEP.Primary.ClipSize = -1
+SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = true
-SWEP.Secondary.Automatic = true
-lastSprayType = ""
-lastSprayPosition = Vector(0, 0, 0)
-lastFiredWhite = 0
+SWEP.Primary.Ammo = "none"
+SWEP.Secondary.ClipSize = -1
+SWEP.Secondary.DefaultClip = -1
+SWEP.Secondary.Automatic = false
+SWEP.Secondary.Ammo = "none"
+SWEP.DrawAmmo = true
+SWEP.DrawCrosshair = true 
+SWEP.BounceWeaponIcon = false
+SWEP.RenderGroup = RENDERGROUP_OPAQUE
+SWEP.PaintDelay = 1 / 30
 
--- game.AddDecal( "PaintsprayWhite", "decals/paintspray" )
--- game.AddDecal( "SPBlack", "decals/sp_black" )
-local function doSpray(decal, self)
-    local trace = self.Owner:GetEyeTrace()
-    local interdist = 1
+local function CreateDecals()
+    SPRAYPAINT_DECALS = {}
 
-    if decal == "BulletProof" then
-        interdist = 1.3
+    for i = 1, 27 do
+        local dname = "spraypaint_decal" .. i
+        local matname = "spray/" .. dname
+        SPRAYPAINT_DECALS[i] = dname
+        game.AddDecal(dname, matname)
+        list.Set("SprayPaintDecals", i, dname)
     end
-
-    if (trace.HitPos:Distance(lastSprayPosition) < interdist and lastSprayType == decal) or (trace.StartPos:Distance(trace.HitPos) > 125) then return end
-    lastSprayType = decal
-    lastSprayPosition = trace.HitPos
-    local Pos1 = trace.HitPos + (trace.HitNormal * 2)
-    local Pos2 = trace.HitPos - trace.HitNormal
-
-    if SERVER and (self.lastLog or 0) + 2 < CurTime() then
-        self.lastLog = CurTime()
-        sc.log(self.Owner, " spraypainting in ", self.Owner:GetLocationName(), " at ", math.floor(trace.HitPos.x), ",", math.floor(trace.HitPos.y), ",", math.floor(trace.HitPos.z))
-    end
-
-    local Bone = trace.Entity:GetPhysicsObjectNum(trace.PhysicsBone or 0)
-
-    if (not Bone) then
-        Bone = trace.Entity
-    end
-
-    Pos1 = Bone:WorldToLocal(Pos1)
-    Pos2 = Bone:WorldToLocal(Pos2)
-
-    PaintPlaceDecal(self:GetOwner(), trace.Entity, {
-        Pos1 = Pos1,
-        Pos2 = Pos2,
-        bone = trace.PhysicsBone,
-        decal = decal
-    })
 end
 
-function PaintPlaceDecal(Player, Entity, Data)
-    if (Entity == nil) then return end
+CreateDecals()
+SWEP.DecalSet = "SprayPaintDecals"
+SWEP.MenuColumns = 9
+SWEP.ConVar = "spraypaint_decal"
+SWEP.WindowTitle = "Spraypaint Color"
+function SWEP:SetupDataTables()
+end
 
-    --&& !IsValid( Entity ) 
-    -- if (not Entity:IsWorld()) then return end
-    if not Init then
-        while true do
-        end
-    end
+function SWEP:Initialize()
+    self:SetHoldType("pistol")
+end
+if(SERVER)then
+    util.AddNetworkString("SpraypaintNetworked")
+end
 
-    local Bone = Entity:GetPhysicsObjectNum(Data.bone or 0)
+if(CLIENT)then
+    net.Receive("SpraypaintNetworked",function(len)
+    local ent = net.ReadEntity()
 
-    if (not IsValid(Bone)) then
-        Bone = Entity
-    end
-
-    util.Decal(Data.decal, Bone:LocalToWorld(Data.Pos1), Bone:LocalToWorld(Data.Pos2))
+    ent:PrimaryAttack()
+    end)
 end
 
 function SWEP:PrimaryAttack()
-    if sprayPaintCheckVelocity(self) then
-        doSpray("BulletProof", self)
-        lastFiredWhite = os.time()
+    if(SERVER)then
+        net.Start("SpraypaintNetworked")
+        net.WriteEntity(self)
+        net.SendPVS(self:GetOwner():GetPos())
+    end
+    local trace = self:GetTrace()
+
+    if (not trace.Invalid) then
+        self:MakePaint(trace, (self.PaintDelay))
     end
 
-    self:SetNextPrimaryFire(CurTime() + 0.005)
+    self:SetNextPrimaryFire(CurTime() + (self.PaintDelay))
 end
 
 function SWEP:SecondaryAttack()
-    if sprayPaintCheckVelocity(self) and (not self.Owner:KeyDown(IN_ATTACK)) then
-        doSpray("ExplosiveGunshot", self)
+    if (CLIENT) then
+        self:SpraypaintOpenPanel()
     end
 
-    self:SetNextSecondaryFire(CurTime() + 0.005)
+    self:SetNextSecondaryFire(CurTime() + 0.01)
+
+    return true
 end
 
-sprayFastStart = Vector(0, 0, 0)
-sprayLastVelocity = 0
-
-function sprayPaintCheckVelocity(self)
-    local out = true
-
-    if self.Owner:GetVelocity():Length() > 100 and sprayLastVelocity <= 100 then
-        sprayFastStart = self.Owner:GetPos()
+function SWEP:Deploy()
+    if (SERVER) then
+        self:SendWeaponAnim(ACT_VM_DRAW)
     end
 
-    if self.Owner:GetVelocity():Length() > 100 and self.Owner:GetPos():Distance(sprayFastStart) > 200 then
-        out = false
+
+    return true
+end
+
+function SWEP:OnDrop()
+end
+
+function SWEP:Holster()
+    self:CancelAllAnimations()
+
+    return true
+end
+
+function SWEP:Reload()
+end
+
+function SWEP:OnRemove()
+    return true
+end
+
+function SWEP:Think()
+end
+
+function SWEP:Equip(ply)
+end
+
+function SWEP:GetTrace()
+    local ply = self:GetOwner()
+    local org = ply:EyePos() + ply:GetVelocity() * FrameTime()
+    local tr = {}
+    tr.start = org
+    tr.endpos = org + ply:GetAimVector() * (self:GetPaintDistance() + 5)
+    --tr.mask = MASK_VISIBLE
+    tr.filter = ply
+    local trace = util.TraceLine(tr)
+    if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then end --trace.Invalid = true
+    if(trace.HitPos:Distance(org) > 128)then trace.Invalid = true end
+    return trace
+end
+
+hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key) end)
+
+function SWEP:MakePaint(trace, delay)
+    local ply = self:GetOwner()
+
+    if(self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < 1)then
+        return
+    end
+    if (CLIENT) then
+        local color = self:GetDecalColor():ToColor()
+        self:DoParticle(trace.HitPos, color)
+
+        self:DoSound(delay)
+
+        return
     end
 
-    sprayLastVelocity = self.Owner:GetVelocity():Length()
+    self.LastPaintPos = trace.HitPos
+    if (trace.HitSky) then return end
+    if (not trace.Hit) then return end
+    local pos = trace.HitPos * 1
+    local normal = trace.HitNormal * 1
+    local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
+    local decalname = ply:GetInfo(self.ConVar)
 
-    return out
+    if (SERVER) then
+        util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
+    end
+    
+end
+
+function SWEP:DoSound(delay)
+
+
+    if (not self.SpraySound) then
+        sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
+            if (IsValid(sound)) then
+                self.SpraySound = sound
+                sound:SetPos(self:GetPos())
+            end
+        end)
+    end
+
+    if (self.SpraySound) then
+        self.SpraySound:SetPos(self:GetPos())
+
+        if (self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING) then
+            self.SpraySound:Play()
+        end
+
+        if (self.SpraySound:GetTime() >= 0.6) then
+            self.SpraySound:SetTime(0.055 + math.Rand(0, 0.4))
+        end
+
+        local globpitch = 1
+        local globvol = 1
+        self.SprayRand = self.SprayRand or 1
+        self.SprayRand = math.Clamp(self.SprayRand + math.Rand(-1, 1) * FrameTime() * 0.1, 0.9, 1.1)
+        self.SpraySound:SetPlaybackRate(globpitch * self.SprayRand)
+        self.SpraySound:SetVolume(globvol)
+
+        timer.Create(self:EntIndex() .. "spraysoundend", delay * 1.04, 1, function()
+            if (IsValid(self.SpraySound)) then
+                self.SpraySound:SetTime(0.665)
+            end
+        end)
+    end
+end
+
+
+function SWEP:EquipAmmo(ply)
+end
+
+function SWEP:GetPaintDistance()
+    return 128
+end
+
+
+
+function SWEP:CancelAllAnimations()
+    self.CapOn = true
+    timer.Destroy("capshake_" .. self:EntIndex())
+    timer.Destroy("capshakesnd__" .. self:EntIndex())
+    timer.Destroy("uncap_" .. self:EntIndex())
+    timer.Destroy("capshake_" .. self:EntIndex())
 end

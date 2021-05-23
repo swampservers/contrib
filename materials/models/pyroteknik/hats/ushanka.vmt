@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	$basetexture "models/pyroteknik/hats/ushanka_diffuse"
+	$bumpmap "models/pyroteknik/hats/ushanka_normal"
+
+}

@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	$basetexture "models/pyroteknik/hats/woolbrim_diffuse"
+	$bumpmap "models/pyroteknik/hats/woolbrim_normal"
+	$halflambert 1
+}
