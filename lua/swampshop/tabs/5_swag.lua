@@ -535,6 +535,139 @@ SS_Item({
     }
 })
 
+SS_Item({
+    class = "woolcap",
+    price = 15000,
+    name = 'Wool Cap with Brim',
+    description = "Perfect accessory for concealing a receding hairline.",
+    model = 'models/pyroteknik/hats/woolbrim.mdl',
+    color = Vector(1, 1, 1),
+    maxscale = 3.7,
+    wear = {
+        attach = "head",
+        scale = 1,
+        translate = Vector(0, 0, 0),
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "head",
+            scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+SS_Item({
+    class = "gasmask",
+    price = 45000,
+    name = 'Gas Mask',
+    description = "Protect yourself from the ambient stink of your average movie theater.",
+    model = 'models/pyroteknik/hats/gasmask.mdl',
+    color = Vector(1, 1, 1),
+    maxscale = 3.7,
+    wear = {
+        attach = "head",
+        scale = 1,
+        translate = Vector(0, 0, 0),
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "head",
+            scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+SS_Item({
+    class = "ushanka",
+    price = 27500,
+    name = 'Ushanka',
+    description = "Iconic hat from that video you saw of someone doing something dangerous in the arctic",
+    model = 'models/pyroteknik/hats/ushanka.mdl',
+    color = Vector(1, 1, 1),
+    maxscale = 3.7,
+    wear = {
+        attach = "head",
+        scale = 1,
+        translate = Vector(0, 0, 0),
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "head",
+            scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+SS_Item({
+    class = "americanhelmet",
+    price = 19450,
+    name = 'WWII American Army Helmet',
+    description = "Perfect for re-enacting horrifying war scenarios. Smells faintly of the beach.",
+    model = 'models/pyroteknik/hats/german.mdl',
+    color = Vector(1, 1, 1),
+    maxscale = 3.7,
+    wear = {
+        attach = "head",
+        scale = 1,
+        translate = Vector(0, 0, 0), 
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "head",
+            scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+SS_Item({
+    class = "germanhelmet",
+    price = 19450,
+    name = 'WWII German Army Helmet',
+    description = "Perfect for re-enacting horrifying war scenarios. Smells faintly of sausage",
+    model = 'models/pyroteknik/hats/american.mdl',
+    color = Vector(1, 1, 1),
+    maxscale = 3.7,
+    wear = {
+        attach = "head",
+        scale = 1,
+        translate = Vector(0, 0, 0),
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "head",
+            scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+SS_Item({
+    class = "bone",
+    price = 9000,
+    name = 'Bone',
+    description = "A staple of modern fashion. The perfect accessory.",
+    model = 'models/pyroteknik/hats/femur.mdl',
+    color = Vector(1, 1, 1),
+    maxscale = 2.7,
+    wear = {
+        attach = "head",
+        scale = 1,
+        translate = Vector(0, 0, 0),
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "head",
+            scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+
 SS_Heading("Primitives")
 
 local primitives = {
