@@ -39,10 +39,41 @@ AUTOICON_HL2KILLICON = 2
 
 AUTOICONS = {{}, {}}
 
+-- The game likes to black out our textures sometimes (eg. when changing screen res). Make a little 1x1 square that is white when the textures still exist, so if the game blacks it out we'll know, without having to capture an entire large texture.
+-- Still takes about 0.5ms to check it though.
+AUTOICON_INDICATOR_TEXTURE = GetRenderTargetEx(UniqueName(), 1, 1, 0, 2, 1, 0, IMAGE_FORMAT_RGB888)
+
+AUTOICON_INDICATOR_MATERIAL = CreateMaterial(UniqueName(), "VertexLitGeneric", {
+    ["$basetexture"] = "metal6",
+})
+
+local ValidCheckTime = 0
+
+local function CheckTexturesValid()
+    if SysTime() - ValidCheckTime < 5 then return end
+    ValidCheckTime = SysTime()
+    render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
+    render.CapturePixels()
+    local r, g, b = render.ReadPixel(0, 0)
+    render.PopRenderTarget()
+    local curtex = AUTOICON_INDICATOR_MATERIAL:GetTexture("$basetexture")
+
+    if r == 0 or not curtex or curtex:GetName() == "metal6" then
+        render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
+        render.Clear(255, 255, 255, 255)
+        render.PopRenderTarget()
+        AUTOICON_INDICATOR_MATERIAL:SetTexture("$basetexture", AUTOICON_INDICATOR_TEXTURE)
+
+        -- Clear the cache
+        AUTOICONS = {{}, {}}
+    end
+end
+
 -- Find the bounds of nonzero pixels
 local function GetBBox(xs, ys)
     local xs, ys = ScrW(), ScrH()
     local bitmask = {}
+    local bitcount = 0
 
     for x = 0, xs - 1 do
         bitmask[x] = {}
@@ -51,6 +82,7 @@ local function GetBBox(xs, ys)
             local r, g, b, a = render.ReadPixel(x, y)
 
             if math.max(r, g, b) > 0 then
+                bitcount = bitcount + 1
                 bitmask[x][y] = true
             end
         end
@@ -102,7 +134,7 @@ local function GetBBox(xs, ys)
 
     ::g4::
 
-    return px1, py1, px2, py2
+    return px1, py1, px2, py2, bitcount / (xs * ys)
 end
 
 function GetAutoIcon(mdl, mode)
@@ -110,14 +142,8 @@ function GetAutoIcon(mdl, mode)
         mdl = "models/error.mdl"
     end
 
-    if AUTOICONS[mode][mdl] then
-        -- TODO: Is this good enough to make sure the materials/textures get regenerated when gmod loses them?
-        if AUTOICONS[mode][mdl]:GetTexture("$basetexture"):IsErrorTexture() then
-            AUTOICONS[mode][mdl] = nil
-        else
-            return AUTOICONS[mode][mdl]
-        end
-    end
+    CheckTexturesValid()
+    if AUTOICONS[mode][mdl] then return AUTOICONS[mode][mdl] end
 
     if not IsValid(AUTOICON_ENT) then
         AUTOICON_ENT = ClientsideModel(mdl)
@@ -131,7 +157,7 @@ function GetAutoIcon(mdl, mode)
 
     local min, max = AUTOICON_ENT:GetRenderBounds()
     local center, rad = (min + max) / 2, min:Distance(max) / 2
-    AUTOICON_ENT:SetAngles(Angle(0, ((max.x - min.x > max.y - min.y) and 0 or 90) + (mode == AUTOICON_HL2KILLICON and 180 or 0), 0))
+    AUTOICON_ENT:SetAngles(Angle(0, ((max.x - min.x >= max.y - min.y) and 0 or 90) + (mode == AUTOICON_HL2KILLICON and 180 or 0), 0))
     local zpd = math.min(max.x - min.x, max.y - min.y)
     local viewdist = (5 * rad + 1)
     local znear = viewdist - zpd / 2
@@ -220,7 +246,7 @@ function GetAutoIcon(mdl, mode)
     cam.End3D()
     --ADJUST THE ORTHO BOUNDS TO ACTUALLY MATCH THE MODEL (GetRenderBounds ARE RARELY TIGHT)
     render.CapturePixels()
-    local px1, py1, px2, py2 = GetBBox()
+    local px1, py1, px2, py2, area = GetBBox()
     local pad = 0.01
     local icon_max_height = 0.5
 
@@ -242,6 +268,11 @@ function GetAutoIcon(mdl, mode)
         hh = hh * (realhh / hh) / icon_max_height
     end
 
+    local icon_max_area = (mode == AUTOICON_HL2WEAPONSELECT) and 0.15 or 0.5
+    area = area / (hw * hh * 4)
+    local scale = math.sqrt(math.max(area / icon_max_area, 1))
+    print(scale)
+    hw, hh = scale * hw, scale * hh
     -- code to supersample the mask, doesn't make much difference as image is already 4x
     -- local mask2 = MakeRT(ReusableName,rtx*2,rty*2,false,false)
     -- render.PushRenderTarget(mask2)
@@ -460,13 +491,16 @@ end
 local weaponselectcolor = Vector(1, 0.93, 0.05)
 
 function AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
-    y = y + 48
-    tall = tall - 48
-    cam.Start2D()
+    local shift = math.floor(tall / 4)
+    y = y + shift
+    tall = tall - shift
     local weaponselect = GetAutoIcon(self:GetModel(), AUTOICON_HL2WEAPONSELECT)
     render.SetMaterial(weaponselect)
     weaponselect:SetVector("$color2", weaponselectcolor * alpha / 255)
-    local sz = 256
+    -- Looks best at 256 (2:1 sampling) - at lower sizes (when below 1680x1050 game res) an interference pattern is visible on the lines
+    -- I could draw the icons themselves smaller, but they might have some kind of custom weapon selctor that changes the wide/tall dynamically which would make the icons redraw every frame
+    local sz = wide < 245 and wide or 256
+    cam.Start2D()
     render.OverrideBlend(true, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
     render.DrawScreenQuadEx(x + (wide - sz) * 0.5, y + (tall - sz) * 0.5, sz, sz)
     render.OverrideBlend(false)
