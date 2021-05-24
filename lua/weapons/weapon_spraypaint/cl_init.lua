@@ -134,26 +134,26 @@ end
 
 SpraypaintMenu = nil
 SPRAYPAINT_DECALPREVIEW_CACHE = {}
+
 function SWEP:GetPreviewMat(decal)
     local ply = self:GetOwner()
     decal = decal or self:GetCurrentDecal()
-
-
     local decalmat = util.DecalMaterial(decal)
-    if(!decalmat)then return Material("___error") end
+    if (not decalmat) then return Material("___error") end
     local mat = Material(decalmat) --let's create a new material
-    if(!mat or (mat and mat:IsError()))then return Material("___error") end
+    if (not mat or (mat and mat:IsError())) then return Material("___error") end
 
     if (SPRAYPAINT_DECALPREVIEW_CACHE[decal] == nil) then
-        
         local t = mat:GetString("$basetexture")
         local f = mat:GetFloat("$frame")
         local sc = mat:GetFloat("$decalscale")
         local c = mat:GetVector("$color2")
         local shader = mat:GetShader() or "VertexLitGeneric"
+
         if (shader == "Subrect") then
             shader = "UnlitGeneric"
         end
+
         if (shader == "VertexLitGeneric") then
             shader = "UnlitGeneric"
         end
@@ -161,6 +161,7 @@ function SWEP:GetPreviewMat(decal)
         if (shader == "LightmappedGeneric") then
             shader = "UnlitGeneric"
         end
+
         local params = {}
         params["$basetexture"] = t
         params["$frame"] = f
@@ -169,7 +170,6 @@ function SWEP:GetPreviewMat(decal)
         params["$vertexalpha"] = 1
         params["$decalscale"] = sc
         SPRAYPAINT_DECALPREVIEW_CACHE[decal] = CreateMaterial(decal .. "decalpreviewmat", shader, params)
-
     end
 
     return SPRAYPAINT_DECALPREVIEW_CACHE[decal]
@@ -185,7 +185,6 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
 end)
 
 function SWEP:DrawSpraypaintReticle()
-    --if(true)then return end
     if (CurTime() < self:GetNextPrimaryFire()) then return end
     local trace = self:GetTrace()
     if (not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance()) then return end
@@ -193,10 +192,9 @@ function SWEP:DrawSpraypaintReticle()
     local pos = trace.HitPos + trace.HitNormal * 0.1
     local ang = trace.HitNormal:Angle()
     local mat = self:GetPreviewMat()
-    local color,size = self:GetDecalColor()
-    
-    if (mat) then
+    local color, size = self:GetDecalColor()
 
+    if (mat) then
         ang:RotateAroundAxis(ang:Up(), 90)
         ang:RotateAroundAxis(ang:Forward(), 90)
 
@@ -268,14 +266,12 @@ function SWEP:SpraypaintOpenPanel()
 
         --we need to create the image and then destroy some of its functions so we can use custom handling
         local decalmat = self:GetPreviewMat(v)
-        local color,size = self:GetDecalColor(v)
-        if (decalmat and decalmat:GetName() != "___error") then
-            
+        local color, size = self:GetDecalColor(v)
+
+        if (decalmat and decalmat:GetName() ~= "___error") then
             DButton:SetMaterial(decalmat)
             DButton.m_Image:SetImageColor(color:ToColor())
             local mat = decalmat
-            
-
             --DButton:SetText(k)
             --DButton:SetMaterial()
             --DButton:SetTooltip(util.DecalMaterial(v))
@@ -301,7 +297,6 @@ function SWEP:SpraypaintOpenPanel()
         end
     end
 
-    
     Frame:SizeToContents()
     Frame:SetTall((rows) * (48 + 4) + 30)
     Frame:Center()
