@@ -166,6 +166,11 @@ function SWEP:GetCurrentDecal()
 
     if (SPRAYPAINT_DECALS_WHITELIST[decal]) then return decal end
 
+    -- if decal~="" and ply==LocalPlayer() then
+    --     net.Start("BanMe")
+    --     net.SendToServer()
+    -- end
+
     return "spraypaint_decal1"
 end
 

@@ -1,6 +1,6 @@
 ﻿-- autoicons.lua: Automatically generates/renders weapon select icons and killicons
 -- for SWEPs not containing them. Made by swamponions (STEAM_0:0:38422842)
-local ReplaceAllConvar = CreateClientConVar("autoicons_replaceall", "0", true, false)
+local ReplaceAllConvar = CreateClientConVar("autoicons_replaceall", "1", true, false)
 local namejunk = "autoicon" .. tostring(os.time()) .. "_"
 
 local function UniqueName()
@@ -140,6 +140,8 @@ end
 
 AUTOICONS_ANGLE_OVERRIDE = {
     ["models/weapons/w_toolgun.mdl"] = Angle(0, 0, 0),
+    ["models/maxofs2d/logo_gmod_b.mdl"] = Angle(0, 90, 0),
+    ["models/error.mdl"] = Angle(0, 90, 0),
 }
 
 function GetAutoIcon(mdl, mode)
@@ -510,16 +512,17 @@ end
 local weaponselectcolor = Vector(1, 0.93, 0.05)
 
 function AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
+    if not ReplaceAllConvar:GetBool() and (self.BasedDrawWeaponSelection or self.WepSelectIcon ~= AUTOICONS_BASEDWEPSELECTICON or self.WorldModel == "") then return (self.BasedDrawWeaponSelection or AUTOICONS_BASEDDRAWWEAPONSELECTION)(self, x, y, wide, tall, alpha) end
     local shift = math.floor(tall / 4)
-    y = y + shift
-    tall = tall - shift
+    local y2 = y + shift
+    local tall2 = tall - shift
     local mdl = self:GetModel()
 
     if self.AutoIconAngle then
         AUTOICONS_ANGLE_OVERRIDE[mdl] = self.AutoIconAngle
     end
 
-    local weaponselect = GetAutoIcon(mdl, AUTOICON_HL2WEAPONSELECT)
+    local weaponselect = GetAutoIcon(mdl == "" and "models/maxofs2d/logo_gmod_b.mdl" or mdl, AUTOICON_HL2WEAPONSELECT)
     render.SetMaterial(weaponselect)
     weaponselect:SetVector("$color2", weaponselectcolor * alpha / 255)
     -- Looks best at 256 (2:1 sampling) - at lower sizes (when below 1680x1050 game res) an interference pattern is visible on the lines
@@ -527,17 +530,24 @@ function AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
     local sz = wide < 245 and wide or 256
     cam.Start2D()
     render.OverrideBlend(true, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-    render.DrawScreenQuadEx(x + (wide - sz) * 0.5, y + (tall - sz) * 0.5, sz, sz)
+    render.DrawScreenQuadEx(x + (wide - sz) * 0.5, y2 + (tall2 - sz) * 0.5, sz, sz)
     render.OverrideBlend(false)
     cam.End2D()
+    -- Draw weapon info box
+    self:PrintWeaponInfo(x + wide + 20, y + tall * 0.95, alpha)
 end
 
-timer.Simple(0, function()
-    BASEDRAWWEAPONSELECTION = BASEDRAWWEAPONSELECTION or weapons.GetStored("weapon_base").DrawWeaponSelection
+hook.Add("PreRegisterSWEP", "AutoIconsOverrideDrawWeaponSelection", function(swep, cls)
+    if cls == "weapon_base" then
+        AUTOICONS_BASEDDRAWWEAPONSELECTION = swep.DrawWeaponSelection
+        AUTOICONS_BASEDWEPSELECTICON = swep.WepSelectIcon
+        swep.BasedDrawWeaponSelection = false
+    else
+        swep.BasedDrawWeaponSelection = swep.DrawWeaponSelection
+    end
 
-    weapons.GetStored("weapon_base").DrawWeaponSelection = function(self, x, y, wide, tall, alpha)
-        if self.WorldModel == "" or (not ReplaceAllConvar:GetBool() and self.WepSelectIcon ~= weapons.GetStored("weapon_base").WepSelectIcon) then return BASEDRAWWEAPONSELECTION(self, x, y, wide, tall, alpha) end
-        AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
+    swep.DrawWeaponSelection = function(a, b, c, d, e, f)
+        AUTOICON_DRAWWEAPONSELECTION(a, b, c, d, e, f)
     end
 end)
 
@@ -571,9 +581,7 @@ local function GetEntityModelName(name)
 end
 
 killicon.Exists = function(name)
-    if BASE_KILLICON_EXISTS(name) then return true end
-    if GetEntityModelName(name) then return true end
-
+    if BASE_KILLICON_EXISTS(name) or GetEntityModelName(name) then return true end
     return false
 end
 
@@ -581,14 +589,14 @@ local killiconsize = 96
 local killiconcolor = Vector(1, 80 / 255, 0)
 
 killicon.GetSize = function(name)
-    if BASE_KILLICON_EXISTS(name) then return BASE_KILLICON_GETSIZE(name) end
+    if not ReplaceAllConvar:GetBool() and BASE_KILLICON_EXISTS(name) then return BASE_KILLICON_GETSIZE(name) end
     if GetEntityModelName(name) then return killiconsize, killiconsize / 2 end
 
     return BASE_KILLICON_GETSIZE(name)
 end
 
 killicon.Draw = function(x, y, name, alpha)
-    if BASE_KILLICON_EXISTS(name) then return BASE_KILLICON_DRAW(x, y, name, alpha) end
+    if not ReplaceAllConvar:GetBool() and BASE_KILLICON_EXISTS(name) then return BASE_KILLICON_DRAW(x, y, name, alpha) end
     local mdl = GetEntityModelName(name)
 
     if mdl then
