@@ -37,7 +37,6 @@ hook.Add("InitPostEntity", "StencilPaint_RegisterDecals", function()
     list.Set("SprayPaintStencils", 45, "Smile")
 end)
 
-
 SWEP.DecalSet = "SprayPaintStencils"
 SWEP.MenuColumns = 8
 SWEP.ConVar = "spraypaint_stencil"

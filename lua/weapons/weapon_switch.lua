@@ -25,8 +25,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-
-SWEP.AutoIconAngle = Angle(90,0,0)
+SWEP.AutoIconAngle = Angle(90, 0, 0)
 
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()

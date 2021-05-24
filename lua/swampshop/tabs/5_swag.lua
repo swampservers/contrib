@@ -600,6 +600,7 @@ SS_Item({
         }
     }
 })
+
 SS_Item({
     class = "americanhelmet",
     price = 19450,
@@ -621,6 +622,7 @@ SS_Item({
         }
     }
 })
+
 SS_Item({
     class = "germanhelmet",
     price = 88000,
@@ -642,6 +644,7 @@ SS_Item({
         }
     }
 })
+
 SS_Item({
     class = "bone",
     price = 9000,
@@ -658,7 +661,7 @@ SS_Item({
         pony = {
             attach = "eyes",
             scale = 1.8,
-            translate = Vector(-9, 0,5),
+            translate = Vector(-9, 0, 5),
             rotate = Angle(0, 90, 90),
         }
     }
