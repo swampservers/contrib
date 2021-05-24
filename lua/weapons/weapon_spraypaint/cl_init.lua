@@ -191,7 +191,7 @@ function SWEP:DrawSpraypaintReticle()
         ang:RotateAroundAxis(ang:Up(), 90)
         ang:RotateAroundAxis(ang:Forward(), 90)
 
-        if (math.abs(trace.HitNormal.z) >= 1) then
+        if (math.abs(trace.HitNormal.z) >= 0.95) then
             ang:RotateAroundAxis(ang:Up(), -90 * trace.HitNormal.z)
         end
 
