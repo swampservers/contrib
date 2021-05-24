@@ -33,18 +33,18 @@ SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
 SWEP.MaxMovementDistance = 128 -- Maxmimum distance the player can move while drawing before it's prevented
+SPRAYPAINT_DECALS_WHITELIST = {}
+SPRAYPAINT_DECALS = {}
 
-hook.Add("InitPostEntity", "SprayPaint_RegisterDecals", function()
-    SPRAYPAINT_DECALS = {}
-
-    for i = 1, 27 do
-        local dname = "spraypaint_decal" .. i
-        local matname = "spray/" .. dname
-        SPRAYPAINT_DECALS[i] = dname
-        game.AddDecal(dname, matname)
-        list.Set("SprayPaintDecals", i, dname)
-    end
-end)
+for i = 1, 27 do
+    local dname = "spraypaint_decal" .. i
+    local matname = "spray/" .. dname
+    SPRAYPAINT_DECALS[i] = dname
+    SPRAYPAINT_DECALS_WHITELIST[dname] = true
+    game.AddDecal(dname, matname)
+    --Material(matname)
+    list.Set("SprayPaintDecals", i, dname)
+end
 
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
@@ -52,6 +52,7 @@ SWEP.ConVar = "spraypaint_decal"
 SWEP.WindowTitle = "Spraypaint Color"
 
 function SWEP:SetupDataTables()
+    self:NetworkVar("String", 0, "LastDecal")
 end
 
 function SWEP:Initialize()
@@ -84,10 +85,16 @@ function SWEP:PrimaryAttack()
         net.Send(filt)
     end
 
+    local color, size = self:GetDecalColor()
     local trace = self:GetTrace()
     local originref = ply:GetPos()
     self.SprayStartOrigin = self.SprayStartOrigin or originref
     local origin = self.SprayStartOrigin
+    local gap = size / 5
+
+    if (self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < gap) then
+        trace.Invalid = true
+    end
 
     if (origin:Distance(originref) > self.MaxMovementDistance or self.SprayMovementBad) then
         self.SprayMovementBad = true
@@ -96,12 +103,14 @@ function SWEP:PrimaryAttack()
 
     if (not trace.Invalid) then
         self:MakePaint(trace, (self.PaintDelay))
+        self.LastPaintPos = trace.HitPos
     end
 
-    timer.Create("paintorigin_reset", self.PaintDelay + FrameTime(), 1, function()
+    timer.Create("paintorigin_reset" .. self:EntIndex(), self.PaintDelay + FrameTime(), 1, function()
         if (IsValid(self)) then
             self.SprayMovementBad = nil
             self.SprayStartOrigin = nil
+            self.LastPaintPos = nil
         end
     end)
 
@@ -109,7 +118,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    if (CLIENT) then
+    if (CLIENT and IsFirstTimePredicted()) then
         self:SpraypaintOpenPanel()
     end
 
@@ -146,6 +155,20 @@ end
 function SWEP:Equip(ply)
 end
 
+function SWEP:GetCurrentDecal()
+    local ply = self:GetOwner()
+    local decal = ply:GetInfo(self.ConVar)
+
+    --I don't think GetInfo is properly networked
+    if (CLIENT and ply ~= LocalPlayer()) then
+        decal = self:GetLastDecal()
+    end
+
+    if (SPRAYPAINT_DECALS_WHITELIST[decal]) then return decal end
+
+    return "spraypaint_decal1"
+end
+
 function SWEP:GetTrace()
     local ply = self:GetOwner()
     local org = ply:EyePos() + ply:GetVelocity() * FrameTime()
@@ -169,15 +192,22 @@ SPRAYPAINT_DECALCOLOR_CACHE = {}
 SPRAYPAINT_DECALSIZE_CACHE = {}
 
 --i think this will function serverside as long as the materials are installed there
-function SWEP:GetDecalColor()
+function SWEP:GetDecalColor(decal)
     local ply = self:GetOwner()
     if (not IsValid(ply)) then return Vector(1, 1, 1), 1 end
-    local decal = ply:GetInfo(self.ConVar)
+    decal = decal or self:GetCurrentDecal()
     if (SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
     local mat = Material(util.DecalMaterial(decal))
+    local maintex
 
+    if (mat:GetTexture("$basetexture")) then
+        maintex = mat:GetTexture("$basetexture")
+    end
+
+    --shit seems to crash if you try to access width
     if (mat) then
-        local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
+        local texwidth = mat:Width()
+        local size = texwidth * tonumber(mat:GetFloat("$decalscale") or 1)
         size = size or 1
         SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2")
         SPRAYPAINT_DECALSIZE_CACHE[decal] = size
@@ -193,26 +223,24 @@ hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key) end)
 function SWEP:MakePaint(trace, delay)
     local ply = self:GetOwner()
     local color, size = self:GetDecalColor()
-    local gap = size / 4 or 2
-    if (self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < gap) then return end
 
     if (CLIENT) then
-        local color = self:GetDecalColor():ToColor()
         self:DoParticle(trace.HitPos, color)
         self:DoSound(delay)
 
         return
     end
 
-    self.LastPaintPos = trace.HitPos
     if (trace.HitSky) then return end
     if (not trace.Hit) then return end
     local pos = trace.HitPos * 1
     local normal = trace.HitNormal * 1
     local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
-    local decalname = ply:GetInfo(self.ConVar)
+    local decalname = self:GetCurrentDecal()
 
     if (SERVER) then
+        self:SetLastDecal(decalname)
+
         util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
     end
 end
