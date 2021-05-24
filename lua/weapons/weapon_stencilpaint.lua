@@ -50,6 +50,7 @@ SPRAYPAINT_STENCILS_WHITELIST["Nought"] = true
 SPRAYPAINT_STENCILS_WHITELIST["Cross"] = true
 SPRAYPAINT_STENCILS_WHITELIST["Eye"] = true
 SPRAYPAINT_STENCILS_WHITELIST["Smile"] = true
+
 SWEP.DecalSet = "SprayPaintStencils"
 SWEP.MenuColumns = 8
 SWEP.ConVar = "spraypaint_stencil"
