@@ -4,6 +4,11 @@ include("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
-function SWEP:Initialize()
-    self:SetHoldType("grenade")
+function makeDodgeball(pos, vel, player)
+    e = ents.Create("dodgeball")
+    e.thrower = player
+    e:SetPos(pos)
+    e:Spawn()
+    e:Activate()
+    e:GetPhysicsObject():AddVelocity(vel)
 end
