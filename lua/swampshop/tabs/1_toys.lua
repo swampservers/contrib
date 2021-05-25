@@ -136,7 +136,7 @@ SS_Heading("Expensive Toys")
 
 SS_WeaponProduct({
     class = "weapon_stencilpaint",
-    price = 2000,
+    price = 500,
     name = "Stencil Paint",
     description = "Like the spraypaint, but prints single shapes.",
     model = "models/pyroteknik/w_spraypaint.mdl"

@@ -138,6 +138,10 @@ local function GetBBox(xs, ys)
     return px1, py1, px2, py2, bitcount / (xs * ys)
 end
 
+AUTOICONS_ANGLE_OVERRIDE = {
+    ["models/weapons/w_toolgun.mdl"] = Angle(0, 0, 0),
+}
+
 function GetAutoIcon(mdl, mode)
     if not util.IsValidModel(mdl) then
         mdl = "models/error.mdl"
@@ -158,7 +162,22 @@ function GetAutoIcon(mdl, mode)
 
     local min, max = AUTOICON_ENT:GetRenderBounds()
     local center, rad = (min + max) / 2, min:Distance(max) / 2
-    AUTOICON_ENT:SetAngles(Angle(0, ((max.x - min.x >= max.y - min.y) and 0 or 90) + (mode == AUTOICON_HL2KILLICON and 180 or 0), 0))
+    local ang
+
+    if AUTOICONS_ANGLE_OVERRIDE[mdl] then
+        ang = Angle(AUTOICONS_ANGLE_OVERRIDE[mdl])
+    else
+        -- One of these is usually correct
+        ang = Angle(0, ((max.x - min.x >= max.y - min.y) and 0 or 90), 0)
+        ang:RotateAroundAxis(Vector(1, 0, 0), -11)
+    end
+
+    -- Flip weaponselect icons the other way
+    if mode == AUTOICON_HL2WEAPONSELECT then
+        ang:RotateAroundAxis(Vector(0, 0, 1), 180)
+    end
+
+    AUTOICON_ENT:SetAngles(ang)
     local zpd = math.min(max.x - min.x, max.y - min.y)
     local viewdist = (5 * rad + 1)
     local znear = viewdist - zpd / 2
@@ -180,8 +199,8 @@ function GetAutoIcon(mdl, mode)
             y = 0,
             w = ScrW(),
             h = ScrH(),
-            origin = AUTOICON_ENT:LocalToWorld(center) + (viewdist * Vector(0, 5, 1):GetNormalized()),
-            angles = Vector(0, -5, -1):Angle(),
+            origin = AUTOICON_ENT:LocalToWorld(center) + Vector(0, -viewdist, 0),
+            angles = Vector(0, 90, 0),
             aspect = 1,
             fov = 30,
             -- znear = znear, -- zfar = zfar, -- ortho = {left=unclampedlerp(cx-hw,-rad,rad),bottom=unclampedlerp(cy-hh,rad,-rad),right=unclampedlerp(cx+hw,-rad,rad),top=unclampedlerp(cy+hh,rad,-rad)},
@@ -272,7 +291,6 @@ function GetAutoIcon(mdl, mode)
     local icon_max_area = (mode == AUTOICON_HL2WEAPONSELECT) and 0.15 or 0.5
     area = area / (hw * hh * 4)
     local scale = math.sqrt(math.max(area / icon_max_area, 1))
-    print(scale)
     hw, hh = scale * hw, scale * hh
     -- code to supersample the mask, doesn't make much difference as image is already 4x
     -- local mask2 = MakeRT(ReusableName,rtx*2,rty*2,false,false)
@@ -495,7 +513,13 @@ function AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
     local shift = math.floor(tall / 4)
     y = y + shift
     tall = tall - shift
-    local weaponselect = GetAutoIcon(self:GetModel(), AUTOICON_HL2WEAPONSELECT)
+    local mdl = self:GetModel()
+
+    if self.AutoIconAngle then
+        AUTOICONS_ANGLE_OVERRIDE[mdl] = self.AutoIconAngle
+    end
+
+    local weaponselect = GetAutoIcon(mdl, AUTOICON_HL2WEAPONSELECT)
     render.SetMaterial(weaponselect)
     weaponselect:SetVector("$color2", weaponselectcolor * alpha / 255)
     -- Looks best at 256 (2:1 sampling) - at lower sizes (when below 1680x1050 game res) an interference pattern is visible on the lines
@@ -525,13 +549,25 @@ local function GetEntityModelName(name)
     -- It might be cool to override GM:PlayerDeath and have it actually send the inflictor's model instead of classname...
     if string.EndsWith(name, ".mdl") then return name end
     local ent = weapons.GetStored(name) or scripted_ents.GetStored(name)
+    local mdl = nil
 
     if ent then
-        if (ent.WorldModel or "") ~= "" then return ent.WorldModel end
+        if (ent.WorldModel or "") ~= "" then
+            mdl = ent.WorldModel
+        end
+
         -- "Model" isn't a standard part of the ENT structure but it gets used now and then.
         -- You could also ents.FindByClass()[1]:GetModel() and cache the result, but it would be unreliable especially due to PVS
-        if (ent.Model or "") ~= "" then return ent.Model end
+        if (ent.Model or "") ~= "" then
+            mdl = ent.Model
+        end
     end
+
+    if mdl and ent.AutoIconAngle then
+        AUTOICONS_ANGLE_OVERRIDE[mdl] = ent.AutoIconAngle
+    end
+
+    return mdl
 end
 
 killicon.Exists = function(name)

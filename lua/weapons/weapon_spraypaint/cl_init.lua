@@ -3,9 +3,6 @@
 include("shared.lua")
 CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
 
-
-local wepicon = Material("spraypaint/spraypaint_icon.png", "smooth")
-
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     self:SetBodygroup(2, 1)
     local cl = self:GetDecalColor()
@@ -118,53 +115,120 @@ function SWEP:DoParticle(pos)
         self.SprayEmitter:SetPos(pos)
         local particle = self.SprayEmitter:Add(string.format("particle/smokesprites_00%02d", math.random(7, 16)), pos)
         particle:SetColor(color.x * 255, color.y * 255, color.z * 255, 255)
-        particle:SetStartAlpha(32)
+        particle:SetStartAlpha(128)
         particle:SetVelocity(VectorRand() * 6)
         particle:SetGravity(Vector(0, 0, 0))
         particle:SetLifeTime(0)
         particle:SetLighting(false)
         particle:SetDieTime(math.Rand(0.1, 0.3))
         particle:SetStartSize(1)
-        particle:SetEndSize((size or 1) / 2)
+        particle:SetEndSize((size or 1) / 1.5)
         particle:SetEndAlpha(0)
         particle:SetCollide(true)
         particle:SetBounce(0)
         particle:SetRoll(math.Rand(0, 360))
         particle:SetRollDelta(0.01 * math.Rand(-40, 40))
-        particle:SetAirResistance(100)
+        particle:SetAirResistance(10)
     end
 end
 
-SPRAYPAINT_DECALCOLOR_CACHE = {}
-SPRAYPAINT_DECALSIZE_CACHE = {}
 SpraypaintMenu = nil
+SPRAYPAINT_DECALPREVIEW_CACHE = {}
 
-function SWEP:GetDecalColor()
+function SWEP:GetPreviewMat(decal)
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return Vector(1, 1, 1), 1 end
-    local decal = ply:GetInfo(self.ConVar)
-    if (SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
-    local mat = Material(util.DecalMaterial(decal))
+    decal = decal or self:GetCurrentDecal()
+    local decalmat = util.DecalMaterial(decal)
+    if (not decalmat) then return Material("___error") end
+    local mat = Material(decalmat) --let's create a new material
+    if (not mat or (mat and mat:IsError())) then return Material("___error") end
 
-    if (mat) then
-        local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
-        size = size or 1
-        SPRAYPAINT_DECALCOLOR_CACHE[decal] = mat:GetVector("$color2")
-        SPRAYPAINT_DECALSIZE_CACHE[decal] = size
+    if (SPRAYPAINT_DECALPREVIEW_CACHE[decal] == nil) then
+        local t = mat:GetString("$basetexture")
+        local f = mat:GetFloat("$frame")
+        local sc = mat:GetFloat("$decalscale")
+        local c = mat:GetVector("$color2")
+        local shader = mat:GetShader() or "VertexLitGeneric"
 
-        return mat:GetVector("$color2") or Vector(1, 1, 1), size
+        if (shader == "Subrect") then
+            shader = "UnlitGeneric"
+        end
+
+        if (shader == "VertexLitGeneric") then
+            shader = "UnlitGeneric"
+        end
+
+        if (shader == "LightmappedGeneric") then
+            shader = "UnlitGeneric"
+        end
+
+        local params = {}
+        params["$basetexture"] = t
+        params["$frame"] = f
+        params["$color2"] = c
+        params["$vertexcolor"] = 1
+        params["$vertexalpha"] = 1
+        params["$decalscale"] = sc
+        SPRAYPAINT_DECALPREVIEW_CACHE[decal] = CreateMaterial(decal .. "decalpreviewmat", shader, params)
     end
 
-    return Vector(1, 1, 1), 1
+    return SPRAYPAINT_DECALPREVIEW_CACHE[decal]
+end
+
+hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
+    local wep = LocalPlayer():GetActiveWeapon()
+
+    --baseclass friendly
+    if (IsValid(wep) and wep.DrawSpraypaintReticle) then
+        wep:DrawSpraypaintReticle()
+    end
+end)
+
+function SWEP:DrawSpraypaintReticle()
+    if (CurTime() < self:GetNextPrimaryFire()) then return end
+    local trace = self:GetTrace()
+    if (not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance()) then return end
+    if (trace.HitSky) then return end
+    local pos = trace.HitPos + trace.HitNormal * 0.1
+    local ang = trace.HitNormal:Angle()
+    local mat = self:GetPreviewMat()
+    local color, size = self:GetDecalColor()
+
+    if (mat) then
+        ang:RotateAroundAxis(ang:Up(), 90)
+        ang:RotateAroundAxis(ang:Forward(), 90)
+
+        if (math.abs(trace.HitNormal.z) >= 0.95) then
+            ang:RotateAroundAxis(ang:Up(), -90 * trace.HitNormal.z)
+        end
+
+        local cc = Vector(1, 1, 1)
+
+        if (mat and size) then
+            cam.Start3D2D(pos, ang, 1)
+            surface.SetDrawColor(color.x * 255, color.y * 255, color.z * 255, 128)
+            render.SetBlend(0.5)
+            surface.SetMaterial(mat)
+            surface.DrawTexturedRect(-size / 2, -size / 2, size, size)
+            render.SetBlend(1)
+            cam.End3D2D()
+        end
+    end
 end
 
 function SWEP:SpraypaintOpenPanel()
-    if IsValid(SpraypaintMenu) then return end
+    if IsValid(SpraypaintMenu) then
+        SpraypaintMenu:Remove()
+
+        return
+    end
+
     local Frame = vgui.Create("DFrame")
     Frame:SetSize((48 + 4) * self.MenuColumns + 4 + 2, 280) --good size for example
     Frame:SetTitle(self.WindowTitle)
     Frame:Center()
     Frame:MakePopup()
+    SpraypaintMenu = Frame
     Frame.KeyCodeBinding = {}
 
     --auto-pressed buttons if associated with a specific key
@@ -179,6 +243,7 @@ function SWEP:SpraypaintOpenPanel()
     List:Center()
     List:SetSpaceY(4) -- Sets the space in between the panels on the Y Axis by 5
     List:SetSpaceX(4) -- Sets the space in between the panels on the X Axis by 5
+    List:Dock(FILL)
     local columncounter = 1
     local rows = 1
 
@@ -187,67 +252,37 @@ function SWEP:SpraypaintOpenPanel()
         DButton:SetPos(128, 240)
         DButton:SetText("")
         DButton:SetSize(48, 48)
+        DButton.PerformLayout = function() end
         local keycode = list.Get(self.DecalSet .. "_keycodes")[k]
 
         if (keycode) then
             Frame.KeyCodeBinding[keycode] = DButton
         end
 
-        DButton.PerformLayout = function() end
-        local mat = Material(util.DecalMaterial(v))
-        local dispmat = mat:GetString("$modelmaterial")
-        local color = mat:GetVector("$color2"):ToColor() or Color(255, 255, 255)
-        local size = mat:Width() * tonumber(mat:GetFloat("$decalscale"))
-
         DButton.Paint = function(self)
             local w, h = self:GetSize()
             draw.RoundedBox(4, 0, 0, w, h, Color(114, 115, 128))
         end
 
-        DButton:SetMaterial("models/shiny")
-        DButton.FixVertexLitMaterial = function() end
+        --we need to create the image and then destroy some of its functions so we can use custom handling
+        local decalmat = self:GetPreviewMat(v)
+        local color, size = self:GetDecalColor(v)
 
-        function DButton.m_Image:FixImage()
-            --
-            -- If it's a vertexlitgeneric material we need to change it to be
-            -- UnlitGeneric so it doesn't go dark when we enter a dark room
-            -- and flicker all about
-            --
-            local Mat = self:GetMaterial()
-            local strImage = Mat:GetName()
-            local t = Mat:GetString("$basetexture")
-            local f = Mat:GetFloat("$frame")
-            local c = Mat:GetVector("$color2")
-            local shader = mat:GetShader()
-
-            if (shader == "VertexLitGeneric") then
-                shader = "UnlitGeneric"
-            end
-
-            if (shader == "LightmappedGeneric") then
-                shader = "UnlitGeneric"
-            end
-
-            if (t) then
-                local params = {}
-                params["$basetexture"] = t
-                params["$frame"] = f
-                params["$color2"] = c
-                params["$vertexcolor"] = 1
-                params["$vertexalpha"] = 1
-                Mat = CreateMaterial(strImage .. "_DecalPreview", shader, params)
-            end
-
-            self:SetMaterial(Mat)
+        if (decalmat and decalmat:GetName() ~= "___error") then
+            DButton:SetMaterial(decalmat)
+            DButton.m_Image:SetImageColor(color:ToColor())
+            local mat = decalmat
+            --DButton:SetText(k)
+            --DButton:SetMaterial()
+            --DButton:SetTooltip(util.DecalMaterial(v))
+            DButton.m_Image:Dock(NODOCK)
+            local isize = math.Clamp(size * 3, 0, 48)
+            DButton.m_Image:SetSize(isize, isize)
+            DButton.m_Image:Center()
+        else
+            DButton:SetMaterial("___error")
+            DButton.m_Image:Dock(FILL)
         end
-
-        DButton.m_Image:SetMaterial(dispmat)
-        DButton.m_Image:FixImage()
-        DButton.m_Image:SetImageColor(color)
-        DButton.m_Image:Dock(NODOCK)
-        local isize = math.Clamp(size * 3, 0, 48)
-        DButton.m_Image:SetSize(isize, isize)
-        DButton.m_Image:Center()
 
         DButton.DoClick = function()
             RunConsoleCommand(self.ConVar, v)
@@ -262,9 +297,7 @@ function SWEP:SpraypaintOpenPanel()
         end
     end
 
-    List:Dock(FILL)
     Frame:SizeToContents()
     Frame:SetTall((rows) * (48 + 4) + 30)
     Frame:Center()
-    SpraypaintMenu = Frame
 end
