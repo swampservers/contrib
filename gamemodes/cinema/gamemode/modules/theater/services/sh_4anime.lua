@@ -126,7 +126,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local url = "http://swampservers.net/cinema/file.html"
+        local url = "http://swamp.sv/s/cinema/file.html"
         panel:EnsureURL(url)
         local k = Video:Data()
         -- Let the webpage handle loading a video

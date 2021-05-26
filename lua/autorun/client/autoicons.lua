@@ -27,7 +27,7 @@ AUTOICON_DESATURATEMATERIAL = CreateMaterial(UniqueName(), "g_colourmodify", {
     ["$pp_colour_addr"] = 0,
     ["$pp_colour_addg"] = 0,
     ["$pp_colour_addb"] = 0,
-    ["$pp_colour_brightness"] = -0.2,
+    ["$pp_colour_brightness"] = -0.22,
     ["$pp_colour_contrast"] = 3,
     ["$pp_colour_colour"] = 0,
     ["$pp_colour_mulr"] = 0,
@@ -70,8 +70,8 @@ local function CheckTexturesValid()
     end
 end
 
--- Find the bounds of nonzero pixels
-local function GetBBox(xs, ys)
+local function GetBitmap()
+    render.CapturePixels()
     local xs, ys = ScrW(), ScrH()
     local bitmask = {}
     local bitcount = 0
@@ -82,13 +82,20 @@ local function GetBBox(xs, ys)
         for y = 0, ys - 1 do
             local r, g, b, a = render.ReadPixel(x, y)
 
-            if math.max(r, g, b) > 0 then
+            --math.max(r, g, b) > 0 then
+            if r > 0 then
                 bitcount = bitcount + 1
                 bitmask[x][y] = true
             end
         end
     end
 
+    return bitmask, bitcount
+end
+
+-- Find the bounds of nonzero pixels
+local function GetBBox(bitmask)
+    local xs, ys = ScrW(), ScrH()
     local px1, py1, px2, py2 = 0, 0, 1, 1
 
     for x = 0, xs - 1 do
@@ -135,7 +142,81 @@ local function GetBBox(xs, ys)
 
     ::g4::
 
-    return px1, py1, px2, py2, bitcount / (xs * ys)
+    return px1, py1, px2, py2
+end
+
+local function EstimateAngle(bitmask, x1, x2)
+    local px1, py1, px2, py2 = GetBBox(bitmask)
+    -- Taller than long, probably a knife
+    if py2 - py1 > px2 - px1 then return 0 end
+    local xs, ys = ScrW(), ScrH()
+    local linesused = {}
+    local slopeweight = {}
+
+    for x = 0, xs - 1 do
+        linesused[x] = {}
+    end
+
+    for x = math.floor(xs * Lerp(x1, px1, px2)), math.ceil(xs * Lerp(x2, px1, px2)) do
+        for y = math.floor(ys * py1), math.ceil(ys * py2) do
+            if bitmask[x][y] and not linesused[x][y] then
+                local passed = 0
+                local sx = x
+
+                while (bitmask[sx] or {})[y] do
+                    linesused[sx][y] = true
+                    passed = passed + 1
+                    sx = sx + 1
+                end
+
+                local slope = 0
+
+                if (bitmask[sx] or {})[y + 1] then
+                    slope = passed
+                elseif (bitmask[sx] or {})[y - 1] then
+                    slope = -passed
+                end
+
+                if math.abs(slope) > 40 then
+                    slope = 0
+                end
+
+                if slope == 0 and passed < 3 then
+                    passed = 0
+                end
+
+                slopeweight[slope] = (slopeweight[slope] or 0) + passed
+            end
+        end
+    end
+
+    local highestsl = 0
+    local highestslw = slopeweight[0] or 1
+    local highestsla = 0
+
+    for k, v in pairs(slopeweight) do
+        if math.abs(k) > 2 then
+            local uw = slopeweight[k - 1] or 0
+            local dw = slopeweight[k + 1] or 0
+            local slw = v + math.max(uw, dw)
+
+            if slw > highestslw then
+                highestsl = k
+                highestslw = slw
+                local isl
+
+                if uw > dw then
+                    isl = (v * k + uw * (k - 1)) / (v + uw)
+                else
+                    isl = (v * k + dw * (k + 1)) / (v + dw)
+                end
+
+                highestsla = math.deg(math.atan(1 / isl))
+            end
+        end
+    end
+
+    return highestsla
 end
 
 AUTOICONS_ANGLE_OVERRIDE = {
@@ -152,6 +233,7 @@ function GetAutoIcon(mdl, mode)
     CheckTexturesValid()
     if AUTOICONS[mode][mdl] then return AUTOICONS[mode][mdl] end
 
+    -- if IsValid(AUTOICON_ENT) then AUTOICON_ENT:Remove() AUTOICON_ENT=nil end
     if not IsValid(AUTOICON_ENT) then
         AUTOICON_ENT = ClientsideModel(mdl)
         if not IsValid(AUTOICON_ENT) then return AUTOICON_TEXTUREMATERIAL end
@@ -169,9 +251,21 @@ function GetAutoIcon(mdl, mode)
     if AUTOICONS_ANGLE_OVERRIDE[mdl] then
         ang = Angle(AUTOICONS_ANGLE_OVERRIDE[mdl])
     else
-        -- One of these is usually correct
-        ang = Angle(0, ((max.x - min.x >= max.y - min.y) and 0 or 90), 0)
-        ang:RotateAroundAxis(Vector(1, 0, 0), -11)
+        local muzzleatt = AUTOICON_ENT:LookupAttachment("muzzle")
+
+        if muzzleatt > 0 then
+            AUTOICON_ENT:SetAngles(Angle(0, 0, 0))
+            AUTOICON_ENT:SetupBones()
+            local v = AUTOICON_ENT:GetAttachment(muzzleatt).Ang:Forward()
+            -- Despite various attachments and bones existing, this is the best I could do.
+            -- Pretty pathetic huh? Half the SWEPs on workshop have totally wrong attachment/bone angles and anything more than this completely messes them up.
+            -- There is a second pass below where it tries to fix the angle by looking at the drawn mask itself
+            ang = Angle(0, -math.deg(math.atan2(v.y, v.x)), 0)
+        else
+            -- One of these is usually correct
+            ang = Angle(0, ((max.x - min.x >= max.y - min.y) and 0 or 90), 0)
+            ang:RotateAroundAxis(Vector(1, 0, 0), -11)
+        end
     end
 
     -- Flip weaponselect icons the other way
@@ -180,6 +274,7 @@ function GetAutoIcon(mdl, mode)
     end
 
     AUTOICON_ENT:SetAngles(ang)
+    AUTOICON_ENT:SetupBones()
     local zpd = math.min(max.x - min.x, max.y - min.y)
     local viewdist = (5 * rad + 1)
     local znear = viewdist - zpd / 2
@@ -190,6 +285,8 @@ function GetAutoIcon(mdl, mode)
     if mode == AUTOICON_HL2KILLICON then
         rtx, rty = 256, 256
     end
+
+    local crtx, crty = 512, 512
 
     local function StartOrthoCam()
         local function unclampedlerp(t, x, y)
@@ -235,8 +332,8 @@ function GetAutoIcon(mdl, mode)
         end
 
         AUTOICON_TEXTUREMATERIAL:SetMatrix("$basetexturetransform", Matrix({
-            {1, 0, 0, x / rtx},
-            {0, 1, 0, y / rty},
+            {1, 0, 0, x / tex:Width()},
+            {0, 1, 0, y / tex:Height()},
             {0, 0, 1, 0},
             {0, 0, 0, 1}
         }))
@@ -256,9 +353,23 @@ function GetAutoIcon(mdl, mode)
         return namejunk .. tostring(mode) .. "_" .. mdl:gsub("%W", "-") .. "_" .. tostring(lnameidx)
     end
 
+    local function bf_sub()
+        render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_REVERSE_SUBTRACT, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+    end
+
+    local function bf_add()
+        render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+    end
+
+    local function bf_mul()
+        render.OverrideBlend(true, BLEND_DST_COLOR, BLEND_ZERO, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+    end
+
     -- Figure out the model bounds then make a mask (white on black, no grays)
-    local maskrt = MakeRT(ReusableName, rtx, rty)
-    render.PushRenderTarget(maskrt)
+    local cmaskrt = MakeRT(ReusableName, crtx, crty)
+    local cbmaskrt = MakeRT(ReusableName, crtx, crty)
+    local canglert = MakeRT(ReusableName, crtx, crty)
+    render.PushRenderTarget(cmaskrt)
     -- DRAW THE MODEL (WHITE MASK)
     render.Clear(0, 0, 0, 0)
     StartOrthoCam()
@@ -266,9 +377,55 @@ function GetAutoIcon(mdl, mode)
     AUTOICON_ENT:DrawModel()
     render.MaterialOverride()
     cam.End3D()
-    --ADJUST THE ORTHO BOUNDS TO ACTUALLY MATCH THE MODEL (GetRenderBounds ARE RARELY TIGHT)
-    render.CapturePixels()
-    local px1, py1, px2, py2, area = GetBBox()
+
+    -- If it's bonemerged to the player, assume it's a gun, and try to fix the angle by looking at the mask
+    if AUTOICON_ENT:LookupBone("ValveBiped.Bip01_R_Hand") then
+        -- Make a version of the mask essentially blurred horizontally to remove noise from attachment rails
+        render.PushRenderTarget(cbmaskrt)
+        render.Clear(0, 0, 0, 0)
+        cam.Start2D()
+
+        for blur = -3, 3 do
+            drawtexture(cmaskrt, bf_add, blur, 0)
+        end
+
+        cam.End2D()
+        render.PopRenderTarget()
+        -- A mask of just the top edge of the gun
+        render.PushRenderTarget(canglert)
+        render.Clear(0, 0, 0, 0)
+        cam.Start2D()
+        drawtexture(cbmaskrt, bf_add)
+        drawtexture(cbmaskrt, bf_sub, 0, -1)
+        cam.End2D()
+        local bitmask, bitcount = GetBitmap()
+        local x0, x1 = 0.33, 1
+
+        if mode == AUTOICON_HL2WEAPONSELECT then
+            x0, x1 = 0, 0.67
+        end
+
+        local fixang = EstimateAngle(bitmask, x0, x1)
+        render.PopRenderTarget()
+
+        if fixang ~= 0 then
+            ang = AUTOICON_ENT:GetAngles()
+            ang:RotateAroundAxis(Vector(0, -1, 0), fixang)
+            AUTOICON_ENT:SetAngles(ang)
+            AUTOICON_ENT:SetupBones()
+            render.Clear(0, 0, 0, 0)
+            StartOrthoCam()
+            render.MaterialOverride(AUTOICON_MODELCOLORMATERIAL)
+            AUTOICON_ENT:DrawModel()
+            render.MaterialOverride()
+            cam.End3D()
+        end
+    end
+
+    bitmask, bitcount = GetBitmap()
+    local px1, py1, px2, py2 = GetBBox(bitmask)
+    -- Adjust the ortho bounds to match the model (GetRenderBounds ARE RARELY TIGHT)
+    local area = bitcount / (rtx * rty)
     local pad = 0.01
     local icon_max_height = 0.5
 
@@ -296,21 +453,16 @@ function GetAutoIcon(mdl, mode)
     hw, hh = scale * hw, scale * hh
     -- code to supersample the mask, doesn't make much difference as image is already 4x
     -- local mask2 = MakeRT(ReusableName,rtx*2,rty*2,false,false)
-    -- render.PushRenderTarget(mask2)
-    -- if true then
-    -- DRAW THE MODEL AGAIN (WHITE MASK)
+    render.PopRenderTarget()
+    -- Render the mask
+    local maskrt = MakeRT(ReusableName, rtx, rty)
+    render.PushRenderTarget(maskrt)
     render.Clear(0, 0, 0, 0)
     StartOrthoCam()
     render.MaterialOverride(AUTOICON_MODELCOLORMATERIAL)
     AUTOICON_ENT:DrawModel()
     render.MaterialOverride()
     cam.End3D()
-    -- end
-    -- render.PopRenderTarget()
-    -- render.Clear(0,0,0,0)
-    -- cam.Start2D()
-    -- drawtexture(mask2)
-    -- cam.End2D()
     render.PopRenderTarget()
     -- Render the model fullbright
     local colorrt = MakeRT(ReusableName, rtx, rty, true)
@@ -321,28 +473,6 @@ function GetAutoIcon(mdl, mode)
     cam.End3D()
     render.BlurRenderTarget(colorrt, 1 / rtx, 1 / rty, 1) --make it less noisy
     render.PopRenderTarget()
-
-    local function bf_sub()
-        render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_REVERSE_SUBTRACT, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-    end
-
-    -- local function bf_suba()
-    --     render.OverrideBlend(true, BLEND_DST_ALPHA, BLEND_ONE, BLENDFUNC_REVERSE_SUBTRACT, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-    -- end
-    local function bf_add()
-        render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-    end
-
-    -- local function bf_adda()
-    --     render.OverrideBlend(true, BLEND_DST_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-    -- end
-    local function bf_mul()
-        render.OverrideBlend(true, BLEND_DST_COLOR, BLEND_ZERO, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-    end
-
-    -- local function bf_xcfx()
-    --     render.OverrideBlend(true, BLEND_DST_COLOR, BLEND_ONE, BLENDFUNC_REVERSE_SUBTRACT, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-    -- end
     -- Do edge detection convolution
     local coloredgert = MakeRT(ReusableName, rtx, rty)
     render.PushRenderTarget(coloredgert)
@@ -355,51 +485,37 @@ function GetAutoIcon(mdl, mode)
         d = 3
     end
 
-    local mul = Vector(1, 1, 1) * 0.6
+    local mul = Vector(1, 1, 1) * 0.75
+
     -- g_sharpen seems to be a convolution of [[-a 0] [0 a+1]]
     -- sobel seems to run a proper sobel/laplacian but then thresholds the result and adds it back
     -- edge detection from color
     -- Note: We can't just increase mul 8* and add the unshifted image one time
     -- Nor can we use mul/8 for the shifted images and then mul the result
     -- (the bytes don't accumulate correctly)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, d, d)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, d, -d)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, -d, -d)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, -d, d)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, d, 0)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, -d, 0)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, 0, d)
-    drawtexture(colorrt, mul, bf_add)
-    drawtexture(colorrt, mul, bf_sub, 0, -d)
+    for x = -1, 1 do
+        for y = -1, 1 do
+            if x ~= 0 or y ~= 0 then
+                drawtexture(colorrt, mul, bf_add)
+                drawtexture(colorrt, mul, bf_sub, x * d, y * d)
+            end
+        end
+    end
 
     if mode == AUTOICON_HL2WEAPONSELECT then
         d = 3
         mul = Vector(1, 1, 1) * 0.5
+
         -- edge detection from mask
         -- maybe replace the mask with the depth buffer/fog version?
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, d, d)
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, d, -d)
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, -d, -d)
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, -d, d)
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, d, 0)
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, -d, 0)
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, 0, d)
-        drawtexture(maskrt, mul, bf_add)
-        drawtexture(maskrt, mul, bf_sub, 0, -d)
+        for x = -1, 1 do
+            for y = -1, 1 do
+                if x ~= 0 or y ~= 0 then
+                    drawtexture(maskrt, mul, bf_add)
+                    drawtexture(maskrt, mul, bf_sub, x * d, y * d)
+                end
+            end
+        end
     end
 
     cam.End2D()
@@ -464,9 +580,15 @@ function GetAutoIcon(mdl, mode)
         render.PopRenderTarget()
     else
         render.PushRenderTarget(finalrt)
-        render.Clear(50, 0, 0, 0)
+        render.Clear(0, 0, 0, 0)
         cam.Start2D()
-        drawtexture(maskrt, Vector(1, 1, 1) * 1)
+
+        for x = 0, 1 do
+            for y = 0, 1 do
+                drawtexture(maskrt, bf_add, x, y)
+            end
+        end
+
         -- Subtract edges * 10 to make the image more thresholded looking
         drawtexture(edgert, Vector(1, 1, 1) * 10, bf_sub)
         cam.End2D()
@@ -533,8 +655,11 @@ function AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
     render.DrawScreenQuadEx(x + (wide - sz) * 0.5, y2 + (tall2 - sz) * 0.5, sz, sz)
     render.OverrideBlend(false)
     cam.End2D()
+
     -- Draw weapon info box
-    self:PrintWeaponInfo(x + wide + 20, y + tall * 0.95, alpha)
+    if self.PrintWeaponInfo then
+        self:PrintWeaponInfo(x + wide + 20, y + tall * 0.95, alpha)
+    end
 end
 
 hook.Add("PreRegisterSWEP", "AutoIconsOverrideDrawWeaponSelection", function(swep, cls)
@@ -582,6 +707,7 @@ end
 
 killicon.Exists = function(name)
     if BASE_KILLICON_EXISTS(name) or GetEntityModelName(name) then return true end
+
     return false
 end
 

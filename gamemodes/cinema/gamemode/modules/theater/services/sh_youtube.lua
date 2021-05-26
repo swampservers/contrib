@@ -31,7 +31,7 @@ end
 
 if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("http://swampservers.net/cinema/" .. self:GetClass() .. ".html")
+        panel:EnsureURL("http://swamp.sv/s/cinema/" .. self:GetClass() .. ".html")
         -- Let the webpage handle loading a video
         local str = string.format("th_video('%s',%s);", string.JavascriptSafe(Video:Key()), Video:Duration() > 0 and "false" or "true")
         panel:QueueJavascript(str)
