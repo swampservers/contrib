@@ -59,7 +59,7 @@ local function SprayOptions(link)
     local menu = DermaMenu()
 
     menu:AddOption("Remove", function()
-        table.remove(SprayList, k)
+        table.RemoveByValue(SprayList, link)
         ReloadManager()
     end)
 
