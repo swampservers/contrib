@@ -30,58 +30,10 @@ end
 
 function ENT:Think()
 
-
-
-    if(self.Clientside and self.CSMatched and !IsValid(self.CSTarget) )then
-        self:Remove()
-        return
-    end
-    if(self.Clientside and self.CSMatched and IsValid(self.CSTarget) and (self.RenderLerp or 0) >= 0.999)then
-        self:Remove()
-        return
-    end
-
-    if(self.Clientside and self.CSMatched and IsValid(self.CSTarget))then
-        local target = self.CSTarget
-
-        local phys1 = self:GetPhysicsObject()
-
-        
-        phys1:SetVelocity(target:GetVelocity())
-        self:SetPos(LerpVector(FrameTime(),self:GetPos(),target:GetPos()))
-
-    end
-
-    if(self.Clientside and !IsValid(self.CSTarget))then
-        for k,v in pairs(ents.FindByClass("dodgeball"))do
-            if(!v.Clientside and !IsValid(v.CSMatch))then
-                self.CSTarget = v
-                v.CSMatch = self
-                self.CSMatched = true
-                break
-            end
-        end
-    end
-   
 end
 
 function ENT:Draw()
-    if(!self.Clientside and IsValid(self.CSMatch))then
-        --[[
-        render.SetBlend(0.5)
-        self:DrawModel()
-        render.SetBlend(1)
-        ]]
-        return
-    end
-    if(self.Clientside and self.CSMatched and IsValid(self.CSTarget))then
-        local target = self.CSTarget
-        self.RenderLerp = math.Clamp((self.RenderLerp or 0 ) + FrameTime()*3,0,1)
-        local lerpedvec = LerpVector(self.RenderLerp,self:GetPos(),target:GetPos())
-        self:SetRenderOrigin(lerpedvec)
-    end
     self:DrawModel()
-    self:SetRenderOrigin()
 end
 
 function ENT:Pickup(ply)
