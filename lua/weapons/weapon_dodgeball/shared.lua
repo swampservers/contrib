@@ -17,11 +17,10 @@ local innie = 28
 function SWEP:SetupDataTables()
     self:NetworkVar("Int",0,"ThrowState")
     self:NetworkVar("Int",1,"ThrowPower")
-    self:NetworkVar("Float",0,"ExpireTime")
+    self:NetworkVar("Bool",0,"Throwing")
+    self:NetworkVar("Float",0,"StateTime")
     self:NetworkVar("Entity",0,"ThrownBall")
-    if ( SERVER ) then
-		self:NetworkVarNotify( "ThrowState", self.OnChangeThrowState )
-	end
+	self:NetworkVarNotify( "ThrowState", self.OnChangeThrowState )
 end 
 
 function SWEP:Initialize()
@@ -32,46 +31,46 @@ end
 function SWEP:OnChangeThrowState( name, old, new )
     local holdtype = "melee"
     local power = self:GetThrowPower()
-    if(new > 0 and power < 600)then
+    if(new > 0 and power <= 600)then
         holdtype = "physgun"
     end
     if(new == 0)then 
         holdtype = "physgun"
     end
 
+    if(new == 1 and old == 0)then
+        local gest = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE
+        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, gest, true)
+    end
     if(self:GetHoldType() != holdtype)then 
         self:SetHoldType(holdtype) 
     end
 end
 
-
-function SWEP:PrimaryAttack(power)
-    if(self:GetNextPrimaryFire() > CurTime())then return true end
-    power = power or 1400
+function SWEP:BeginThrow(power)
+    if(self:GetThrowing() or self:GetStateTime() > CurTime())then return true end
     self:SetThrowPower(power)
+    self:SetThrowing(true)
     self:AdvanceState()
-    local state = self:GetThrowState()
-    
+end
+
+function SWEP:PrimaryAttack()
+    self:BeginThrow(1400)
     return true
 end
 
 function SWEP:SecondaryAttack()
-    self:PrimaryAttack(600)
+    self:BeginThrow(600)
     return true
 end
 
 function SWEP:Reload()
-    self:PrimaryAttack(200)
+    self:BeginThrow(200)
 end
 
 function SWEP:Think()
-    if(self:GetExpireTime() != 0 and CurTime() >= self:GetExpireTime())then
-        if(self.Thrown)then
-            if(SERVER)then self:Remove() end
-        else
-            self:SetExpireTime(0)
-        self:SetThrowState(0)
-        end
+    if(self:GetThrowing() and CurTime() >= self:GetStateTime())then
+        self:AdvanceState()
     end
 end
 
@@ -80,29 +79,29 @@ function SWEP:AdvanceState()
 
     if(curstate == 0)then --change to throw pose
         --self:EmitSound("Weapon_Pistol.Empty")
-        self:SetNextPrimaryFire(CurTime() + 0.15)
+        self:SetStateTime(CurTime() + 0.15)
         self:SetThrowState(1)
         return 
     end
     if(curstate == 1)then --play throw animation
         --self:EmitSound("Weapon_Pistol.Empty")
         self:ThrowBall(self:GetThrowPower())
-        self:SetNextPrimaryFire(CurTime() + 0.35)
+        self:SetStateTime(CurTime() + 0.3)
         self.Thrown = true
         self:SetThrowState(2)
         return 
     end
     if(curstate == 2)then --play throw animation
-        self:EmitSound("Weapon_Pistol.Empty")
-        self:SetNextPrimaryFire(CurTime() + 0.35)
-        self:Remove()
+        self:SetStateTime(CurTime() + 0.35)
+        self:SetThrowState(3)
+        if(SERVER)then self:Remove() end
         return 
     end  
 end
 
 function SWEP:ThrowBall(force)
     if SERVER then
-       self:GetOwner():SetAnimation(PLAYER_ATTACK1)
+       
         if self.THREW then return end
         self.THREW = true
         
