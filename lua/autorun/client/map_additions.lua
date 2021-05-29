@@ -65,11 +65,11 @@ hook.Add("PostDrawTranslucentRenderables", "lobbyclock", function(depth, sky)
     DrawClockLine(hours.x, hours.y, 1.2)
 end)
 
-local hevmaterial = Material("models/hevsuit/hevsuit_sheet")
+-- local hevmaterial = Material("models/hevsuit/hevsuit_sheet")
 
-timer.Simple(0, function()
-    hevmaterial:SetInt("$flags", 8192 + 65536)
-end)
+-- timer.Simple(0, function()
+--     hevmaterial:SetInt("$flags", 8192 + 65536)
+-- end)
 
 local resetmaterial = Material("swamponions/reset")
 

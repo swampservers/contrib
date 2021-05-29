@@ -17,18 +17,22 @@ function cvx_pre_draw_leaf(ent)
     local a, b, c, d, e, f = 0.4, 0.25, 0.5, 0.2, 0.7, 0.15
     local red, green, blue = 0.6, 0.2, 0.02 --0.9,0.35,0.05
     local howfarup = (EyePos().z - CVX_ORIGIN.z) / (CVX_WORLD_ZS * CVX_SCALE) --ent:GetPos().z
-    local p = 1 - math.min(howfarup * 4, 1)
-    --p = math.pow(p, 2)
-    local a, b, c, d, e, f = 0.3, 0.3, 0.4, 0.4, 0.1, 1
-    --frontback
-    render.SetModelLighting(0, red * p * a, green * p * a, blue * p * a)
-    render.SetModelLighting(1, red * p * b, green * p * b, blue * p * b)
-    --rightleft
-    render.SetModelLighting(2, red * p * c, green * p * c, blue * p * c)
-    render.SetModelLighting(3, red * p * d, green * p * d, blue * p * d)
-    --topbotton
-    render.SetModelLighting(4, red * p * e, green * p * e, blue * p * e)
-    render.SetModelLighting(5, red * p * f, green * p * f, blue * p * f)
+
+
+    -- local p = 1 - math.min(howfarup * 4, 1)
+    -- --p = math.pow(p, 2)
+    -- local a, b, c, d, e, f = 0.3, 0.3, 0.4, 0.4, 0.1, 1
+    -- --frontback
+    -- render.SetModelLighting(0, red * p * a, green * p * a, blue * p * a)
+    -- render.SetModelLighting(1, red * p * b, green * p * b, blue * p * b)
+    -- --rightleft
+    -- render.SetModelLighting(2, red * p * c, green * p * c, blue * p * c)
+    -- render.SetModelLighting(3, red * p * d, green * p * d, blue * p * d)
+    -- --topbotton
+    -- render.SetModelLighting(4, red * p * e, green * p * e, blue * p * e)
+    -- render.SetModelLighting(5, red * p * f, green * p * f, blue * p * f)
+    render.ResetModelLighting(0,0,0)
+
     -- for i=0,5 do 
     --     render.SetModelLighting(i,0,0,0)
     -- end
@@ -340,8 +344,21 @@ hook.Add("Think", "MinecraftOreUpdates", function()
 
             if dlight then
                 local x, y, z = cvx_from_world_index(k)
-                local center = cvx_to_game_coord_vec(Vector(x + 0.5, y + 0.5, z + 0.5))
+                
+                local cx,cy,cz = x,y,z
+
+                local of = 0.6
+                if cvx_in_world(x+1,y,z) and not cvx_get_vox_solid(x+1,y,z) then cx=cx+of end
+                if cvx_in_world(x-1,y,z) and not cvx_get_vox_solid(x-1,y,z) then cx=cx-of end
+                if cvx_in_world(x,y+1,z) and not cvx_get_vox_solid(x,y+1,z) then cy=cy+of end
+                if cvx_in_world(x,y-1,z) and not cvx_get_vox_solid(x,y-1,z) then cy=cy-of end
+                if cvx_in_world(x,y,z+1) and not cvx_get_vox_solid(x,y,z+1) then cz=cz+of end
+                if cvx_in_world(x,y,z-1) and not cvx_get_vox_solid(x,y,z-1) then cz=cz-of end
+                
+                local center = cvx_to_game_coord_vec(Vector(cx + 0.5, cy + 0.5, cz + 0.5))
                 dlight.pos = center
+
+
 
                 if v == 4 then
                     local s = idx * 0.771
@@ -363,7 +380,7 @@ hook.Add("Think", "MinecraftOreUpdates", function()
 
                 dlight.sortrgb = 255
                 dlight.brightness = 1
-                dlight.size = 600
+                dlight.size = 800 -- 600
                 dlight.decay = 1000
                 dlight.dietime = CurTime() + 0.1
             end

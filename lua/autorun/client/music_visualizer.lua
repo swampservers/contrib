@@ -3,7 +3,7 @@
 -- override this if you want to make new visualizations and look at them locally
 function UsingMusicVis(name)
     return GetG("musicvis") == name
-end
+end 
 
 MVIS_DATA = {} -- MVIS_DATA or {}
 MVIS_REQUESTS = {} -- MVIS_REQUESTS or {} 
@@ -385,7 +385,7 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
             if theminute > -1 and not MVIS_REQUESTS[thekey][theminute] then
                 MVIS_REQUESTS[thekey][theminute] = true
 
-                http.Fetch("http://swampservers.net/fft/data/" .. thekey .. "/" .. tostring(theminute) .. "?" .. tostring(os.time()), function(b, l, h, c)
+                http.Fetch("http://swamp.sv/fft/data/" .. thekey .. "/" .. tostring(theminute) .. "?" .. tostring(os.time()), function(b, l, h, c)
                     if c == 200 then
                         print("DATASIZE", b:len())
                         MVIS_DATA[thekey][theminute] = b
