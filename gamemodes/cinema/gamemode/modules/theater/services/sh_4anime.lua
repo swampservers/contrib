@@ -93,7 +93,7 @@ if CLIENT then
 
                         if (self.data ~= nil and self.title ~= nil) then
                             self.phase = 2
-                            self:OpenURL("http://swampservers.net/cinema/file.html")
+                            self:OpenURL("http://swamp.sv/s/cinema/file.html")
                         end
 
                         return

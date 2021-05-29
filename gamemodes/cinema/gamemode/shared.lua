@@ -3,7 +3,7 @@
 GM.Name = "Cinema"
 GM.Author = "Swamp(STEAM_0:0:38422842) and pixelTail Games"
 GM.Email = "swampservers@gmail.com"
-GM.Website = "swampservers.net"
+GM.Website = "swamp.sv"
 GM.Version = "swamp"
 GM.TeamBased = false
 include('sh_load.lua')

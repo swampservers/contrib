@@ -25,7 +25,7 @@ end
 CinemaHttpHeaders = {
     ["Cache-Control"] = "no-cache",
     ["Connection"] = "keep-alive",
-    ["Referer"] = "https://swampservers.net/"
+    ["Referer"] = "https://swamp.sv/"
 }
 
 -- Required for Google API requests; uses browser API key.

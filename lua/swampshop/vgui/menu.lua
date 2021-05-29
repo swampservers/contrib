@@ -243,7 +243,7 @@ function PANEL:Init()
 
     p.DoClick = function()
         SS_ToggleMenu()
-        ShowMotd("https://swampservers.net/points")
+        ShowMotd("https://swamp.sv/points")
     end
 
     -- toggle theme button
@@ -558,7 +558,7 @@ function PANEL:Init()
 
     p.DoClick = function()
         -- if IN_DISCORD~=1 then
-        gui.OpenURL('http://swampservers.net/discord')
+        gui.OpenURL('http://swamp.sv/discord')
     end
 
     -- gui.OpenURL('https://steamcommunity.com/groups/swampservers')
@@ -573,7 +573,7 @@ function PANEL:Init()
     p:SetText("")
 
     p.DoClick = function()
-        gui.OpenURL('https://swampservers.net/donate/')
+        gui.OpenURL('https://swamp.sv/donate/')
     end
 
     p.Paint = function(self, w, h)

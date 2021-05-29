@@ -71,7 +71,7 @@ function PANEL:Init()
     self.Browser = vgui.Create("TheaterHTML", self.BrowserContainer)
     Msg("AWESOMIUM: Initialized instance for video request window\n")
     self.Browser:SetAllowLua(true)
-    self.Browser:OpenURL("http://swampservers.net/video/search.html")
+    self.Browser:OpenURL("http://swamp.sv/video/search.html")
     self.Controls = vgui.Create("TheaterHTMLControls", self.BrowserContainer)
     self.Controls:SetHTML(self.Browser)
     self.Controls.BorderSize = 0
