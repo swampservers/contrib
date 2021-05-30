@@ -666,7 +666,7 @@ end
 
 -- returns the index of the players current location or 0 if unknown
 function Find(ply)
-    local pos = ply:GetPos()
+    local pos = type(ply) == "Vector" and ply or ply:GetPos()
     if (Map == nil) then return 0 end
 
     for k, v in next, Map do
