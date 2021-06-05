@@ -133,21 +133,22 @@ function SWEP:DoParticle(pos)
 end
 
 SpraypaintMenu = nil
+SPRAYPAINT_DECALPREVIEW_CACHE = nil
 SPRAYPAINT_DECALPREVIEW_CACHE = {}
 
 function SWEP:GetPreviewMat(decal)
     local ply = self:GetOwner()
     decal = decal or self:GetCurrentDecal()
     local decalmat = util.DecalMaterial(decal)
-    if (not decalmat) then return Material("___error") end
+    if (decalmat == nil) then print("invalid decalmaterial") return Material("___error") end
     local mat = Material(decalmat) --let's create a new material
     if (not mat or (mat and mat:IsError())) then return Material("___error") end
 
     if (SPRAYPAINT_DECALPREVIEW_CACHE[decal] == nil) then
-        local t = mat:GetString("$basetexture")
-        local f = mat:GetFloat("$frame")
-        local sc = mat:GetFloat("$decalscale")
-        local c = mat:GetVector("$color2")
+        local t = mat:GetString("$basetexture")..""
+        local f = mat:GetFloat("$frame")*1
+        local sc = mat:GetFloat("$decalscale")*1
+        local c = mat:GetVector("$color2")*1
         local shader = mat:GetShader() or "VertexLitGeneric"
 
         if (shader == "Subrect") then
@@ -169,9 +170,9 @@ function SWEP:GetPreviewMat(decal)
         params["$vertexcolor"] = 1
         params["$vertexalpha"] = 1
         params["$decalscale"] = sc
-        SPRAYPAINT_DECALPREVIEW_CACHE[decal] = CreateMaterial(decal .. "decalpreviewmat", shader, params)
+        SPRAYPAINT_DECALPREVIEW_CACHE[decal] = CreateMaterial(decal .. "decalpreviewmat1", shader, params)
     end
-
+    
     return SPRAYPAINT_DECALPREVIEW_CACHE[decal]
 end
 
