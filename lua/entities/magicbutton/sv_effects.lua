@@ -5,7 +5,7 @@ function ButtonMoneyPrize()
     local min, max = 1000, 300000
     local silly = math.random(1, 30) == 1
 
-    return silly and 1 or math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3)
+    return silly and math.random(1,1000) or math.Round(math.pow(math.Rand(0, 1), 4) * (max - min) + min, -3)
 end
 
 --Selects a player to override the default given using the given chance. basically if an outcome should have a chance of affecting a random player.
@@ -42,13 +42,22 @@ local function GetUnsafePlayers()
     return tbl
 end
 
+local function bademote()
+    return table.Random({";dog;", ";cuck;", ";baby;", ";kekw;", ";bad;", ";biggestloser;", ";hmm3;", ";hmmsad;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
+end
+
+local function goodemote()
+    return table.Random({";based;"})
+end
+
 local function MagicOutcomePrize(ply)
     ply:EmitSound("pt/casino/slots/winner.wav")
     local amount = ButtonMoneyPrize()
     ply:SS_GivePoints(amount)
     local str = string.Comma(amount) .. " point" .. (amount ~= 1 and "s" or "")
-
-    return "and won [white]" .. str .. "![fbc];coins;"
+    local emote = table.Random({";coins;",";swampcoin;"})
+    if(amount < 5000)then emote = ";annoyed;" end 
+    return "and won [white]" .. str .. "![fbc]"..emote
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
@@ -424,9 +433,7 @@ local function MagicOutcomeSoreNeck(ply, button)
 end
 
 local function MagicOutcomeNothing(ply, button)
-    local bademote = table.Random({";dog;", ";cuck;", ";baby;", ";kekw;", ";bad;", ";biggestloser;", ";hmm3;", ";hmmsad;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
-
-    return "but nothing happened!" .. bademote
+    return "but nothing happened!" .. bademote()
 end
 
 local function MagicOutcomeMysteryBox(ply, button)
