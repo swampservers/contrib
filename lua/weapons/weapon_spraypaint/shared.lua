@@ -109,6 +109,7 @@ function SWEP:PrimaryAttack()
 end
 
 if (CLIENT) then
+timer.Simple(0, function() -- fix error from swep not being registered yet
     net.Receive("SpraypaintNetworked", function(len)
         local ent = net.ReadEntity()
 
@@ -116,6 +117,7 @@ if (CLIENT) then
             ent:PrimaryAttack()
         end
     end)
+end)
 end
 
 function SWEP:SecondaryAttack()
