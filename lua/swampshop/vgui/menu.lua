@@ -41,7 +41,6 @@ surface.CreateFont('SS_JOINFONT', {
 --     size = 28,
 --     weight = 700
 -- })
-
 surface.CreateFont('SS_DESCTITLEFONT', {
     font = 'Righteous',
     size = 32
@@ -505,6 +504,7 @@ function PANEL:Init()
     end
 
     local xo = p:GetWide() + SS_BOTBARHEIGHT
+
     if (IN_STEAMGROUP or 0) <= 0 then
         p = vgui.Create("DButton", self)
         p:SetZPos(1000)
@@ -545,6 +545,7 @@ function PANEL:Init()
             surface.SetDrawColor(255, 255, 255, 255)
             surface.SetMaterial(STEAMMATERIAL) -- Use our cached material
             surface.DrawTexturedRect(4, 3, 64, 64)
+
             if self.clicked then
                 draw.DrawText("Nothing happen?\nClick again", 'SS_JOINFONT', 72, 4)
             else
@@ -559,30 +560,25 @@ function PANEL:Init()
         --         pnl:Remove()
         --     end
         -- end
-
         p.DoClick = function(pnl)
             -- if IN_DISCORD~=1 then
             -- gui.OpenURL('http://swamp.sv/discord')
             -- if pnl.clicked then 
-                gui.OpenURL('https://steamcommunity.com/groups/swampservers') 
-                -- return end
-
-            -- local frame = vgui.Create( "DFrame" )
-            -- frame:SetTitle("")
-            -- frame:SetSize( 100,100)
-            -- frame:SetAlpha(0)
-            -- frame:Center()
-            -- frame:MakePopup()
-
-            -- local html = vgui.Create("DHTML", frame)
-            -- html:Dock(FILL)
-            -- html:OpenURL("https://s.team/chat/LzFgkFD4")
-
-            -- timer.Simple(2, function() if IsValid(frame) then frame:Remove() pnl.clicked = true end end)
+            gui.OpenURL('https://steamcommunity.com/groups/swampservers')
         end
-
-    
+        -- return end
+        -- local frame = vgui.Create( "DFrame" )
+        -- frame:SetTitle("")
+        -- frame:SetSize( 100,100)
+        -- frame:SetAlpha(0)
+        -- frame:Center()
+        -- frame:MakePopup()
+        -- local html = vgui.Create("DHTML", frame)
+        -- html:Dock(FILL)
+        -- html:OpenURL("https://s.team/chat/LzFgkFD4")
+        -- timer.Simple(2, function() if IsValid(frame) then frame:Remove() pnl.clicked = true end end)
     end
+
     -- end
     PointshopDollarParticlePoints = -0.2
     PointshopDollarParticles = {}

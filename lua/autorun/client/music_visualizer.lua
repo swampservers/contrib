@@ -3,7 +3,7 @@
 -- override this if you want to make new visualizations and look at them locally
 function UsingMusicVis(name)
     return GetG("musicvis") == name
-end 
+end
 
 MVIS_DATA = {} -- MVIS_DATA or {}
 MVIS_REQUESTS = {} -- MVIS_REQUESTS or {} 

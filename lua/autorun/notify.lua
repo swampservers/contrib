@@ -17,7 +17,7 @@ if CLIENT then
     hook.Add("PostRenderVGUI", "HUDPaint_PSNotification", function()
         if ResetNotificationTime then
             LatestNotificationTime = CurTime()
-            ResetNotificationTime = false 
+            ResetNotificationTime = false
         end
 
         local dt = CurTime() - LatestNotificationTime

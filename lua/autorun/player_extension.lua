@@ -37,7 +37,6 @@ PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
 -- local stripme = {"- swamp.sv", "-swamp.sv", "swamp.sv"}
 function PLAYER:ComputeName()
     if self:IsBot() then return "Kleiner" end
-
     local tn = self:TrueName()
     -- local tnl = tn:lower()
     -- for i,s in ipairs(stripme) do
@@ -48,6 +47,7 @@ function PLAYER:ComputeName()
     -- end
     -- tn = tn:Trim()
     -- if tn:len() < 2 then tn="__"..tn end
+
     return tn
 end
 
@@ -56,6 +56,7 @@ function PLAYER:Name()
         self.NameCache = self:ComputeName()
         self.LastTrueName = self:TrueName()
     end
+
     return self.NameCache
 end
 
