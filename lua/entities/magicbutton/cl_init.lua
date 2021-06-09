@@ -2,6 +2,12 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 include("shared.lua")
+language.Add("magicbutton", "Comedy")
+
+hook.Add("GetTeamColor", "magicbutton_deathnotice", function(ent)
+    if (ent:GetClass() == "magicbutton") then return Color(248, 204, 58) end
+end)
+
 local glintmat
 
 if (CLIENT) then
@@ -24,7 +30,7 @@ if (CLIENT) then
         local spritenormal = EyePos() - spritepos
         local size = math.Clamp(spritenormal:Length() / 8, 16, 48)
         local drawsprite = true
-        local pulse = math.sin(math.rad((CurTime()+self.timeoffs) * 720)) > 0 and 1 or 0.3
+        local pulse = math.sin(math.rad((CurTime() + self.timeoffs) * 720)) > 0 and 1 or 0.3
 
         if (self.Pressed) then
             drawsprite = false
@@ -47,10 +53,11 @@ if (CLIENT) then
             render.SetModelLighting(i, lc.x, lc.y, lc.z)
         end
 
-        render.SetLocalModelLights({light1})
+        if (not self.Pressed) then
+            render.SetLocalModelLights({light1})
+        end
 
         render.SetAmbientLight(0.05, 0.05, 0.05)
-        --render.SuppressEngineLighting( true )
         self:DrawModel()
         render.SuppressEngineLighting(false)
 
@@ -62,47 +69,75 @@ if (CLIENT) then
 
     net.Receive("magicbutton_transmitclone", function(len)
         local id = net.ReadInt(17)
+        local decay = net.ReadInt(7)
         local pos = net.ReadVector()
         local ang = net.ReadAngle()
         local color = net.ReadColor()
         local state = net.ReadBool()
-        local decay = net.ReadInt(7)
+        local body = net.ReadInt(3)
 
         if (decay == 0) then
             decay = nil
         end
 
-        MAGICBUTTON_PLACECLIENT(id, pos, ang, color, state, decay)
+        local existing = BUTTONS_CLIENT[id]
+
+        if (decay == nil) then
+            BUTTONS_CLIENT[id] = nil
+
+            return
+        end
+
+        local lod = 0
+
+        if (pos:Distance(EyePos()) > 500) then
+            lod = 1
+        end
+
+        if (pos:Distance(EyePos()) > 1500) then
+            lod = 2
+        end
+
+        BUTTONS_CLIENT[id] = {
+            pos = pos,
+            ang = ang,
+            color = color,
+            state = state,
+            body = body,
+            lod = lod,
+            timeoffs = (existing and existing.timeoffs) or math.Rand(0, 1),
+            decay = CurTime() + decay
+        }
     end)
 
     BUTTONS_CLIENT = BUTTONS_CLIENT or {}
-    hook.Add("PostDrawOpaqueRenderables","DrawMagicButtons",function(depth,sky)
+
+    hook.Add("PostDrawOpaqueRenderables", "DrawMagicButtons", function(depth, sky)
         local drawn = 0
         MAGICBUTTON_RENDERER = MAGICBUTTON_RENDERER or ClientsideModel("models/pyroteknik/secretbutton.mdl")
         MAGICBUTTON_RENDERER:SetPos(Vector())
-        for k,v in pairs(BUTTONS_CLIENT)do
-            if(v.color.a == 0)then continue end
+
+        for k, v in pairs(BUTTONS_CLIENT) do
+            if (CurTime() > (v.decay or 0)) then
+                BUTTONS_CLIENT[k] = nil
+                continue
+            end
+
+            if (v.color.a == 0) then continue end
             MAGICBUTTON_RENDERER.Pressed = v.state
             MAGICBUTTON_RENDERER.timeoffs = v.timeoffs
-            
-            MAGICBUTTON_RENDERER:SetLOD(0)
             MAGICBUTTON_RENDERER:SetPos(v.pos)
             MAGICBUTTON_RENDERER:SetAngles(v.ang)
             MAGICBUTTON_RENDERER:SetColor(v.color)
-            MAGICBUTTON_RENDERER:ManipulateBonePosition(1,v.state and Vector(0,0,-0.5) or Vector())
+            MAGICBUTTON_RENDERER:SetBodygroup(1, v.body or 0)
+            MAGICBUTTON_RENDERER:SetLOD(v.lod or 2)
+            MAGICBUTTON_RENDERER:ManipulateBonePosition(1, v.state and Vector(0, 0, -0.5) or Vector())
             MAGICBUTTON_RENDERER:SetupBones()
             MAGICBUTTON_RENDERER:DrawModel()
             drawn = drawn + 1
             MAGICBUTTON_RENDER(MAGICBUTTON_RENDERER)
         end
+
         MAGICBUTTON_RENDERER:SetPos(Vector())
     end)
-
-    function MAGICBUTTON_PLACECLIENT(id, pos, ang, color, state, decay)
-        local existing = BUTTONS_CLIENT[id]
-        BUTTONS_CLIENT[id] = {pos=pos,ang=ang,color=color,state=state,timeoffs=(existing and existing.timeoffs) or math.Rand(0,1)}
-        timer.Create(id .. "buttonmodel_clear", decay or 2, 1, function()
-            BUTTONS_CLIENT[id] = nil
-        end)
-    end
 end

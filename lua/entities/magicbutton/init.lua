@@ -8,25 +8,20 @@ include("sv_effects.lua")
 include("sv_placement.lua")
 
 function ENT:Initialize()
-    self.Entity:SetModel("models/pyroteknik/secretbutton.mdl")
-    local bmins, bmaxs = Vector(-4.8, -3.1, 0), Vector(4.8, 3.1, 2)
+    self:SetModel("models/pyroteknik/secretbutton.mdl")
+
+    if (not self.HasSpot) then
+        self:Hide()
+    end
+    local bmins, bmaxs = Vector(3, 5, 0) * -1, Vector(3, 5, 2) * 1
     self:SetCollisionBounds(bmins, bmaxs)
-    self.Entity:PhysicsInitBox(bmins, bmaxs)
-    self.Entity:SetMoveType(MOVETYPE_NONE)
-    self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
+    self:SetMoveType(MOVETYPE_NONE)
+    self:SetSolid(SOLID_OBB)
+    self:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
     self:SetUseType(SIMPLE_USE)
     self:SetColor(HSVToColor(math.Rand(0, 360), 1, 1))
-    local phys = self:GetPhysicsObject()
 
-    if (IsValid(phys)) then
-        phys:EnableMotion(false)
-    end
-
-    --self:FindHidingSpot()
-    if (not self.HasSpot) then
-        local trace = self:FindHidingSpot()
-        self:MoveToTraceResult(trace)
-    end
+    
 
     timer.Simple(60 * 60, function()
         if (IsValid(self)) then
@@ -35,15 +30,39 @@ function ENT:Initialize()
     end)
 end
 
+function ENT:Hide()
+    local trace = self:FindHidingSpot()
+
+    if (trace) then
+        self:MoveToTraceResult(trace)
+        --.Weird is a flag assigned when the button is placed on something either not wide enough for the button model, or too uneven.
+        if (self.PlacementTrace and self.PlacementTrace.Weird) then
+            self:SetBodygroup(1, 1)
+
+            if (self.PlacementTrace.HitTexture == "**studio**") then
+                self:SetPos(self:GetPos() + self:GetUp() * 2)
+            end
+        end
+    else
+        print("hide fail")
+    end
+end
+
+function ENT:OnRemove()
+    self.Removing = true
+    self:Transmit()
+end
+
 function ENT:SpawnFunction(ply, tr, ClassName)
     local ent = ents.Create(ClassName)
-    ent:SetPos(tr.HitPos)
-    ent:SetAngles(VectorRand():AngleEx(tr.HitNormal))
-    local trace = ply:GetEyeTrace()
-    ent:MoveToTraceResult(trace)
+    local trace = ent:FindHidingSpot(tr.HitPos)
+
+    if (trace) then
+        ent:MoveToTraceResult(trace)
+    end
+
     ent.HasSpot = true
     ent:Spawn()
-    ent:Activate()
 
     return ent
 end
@@ -55,10 +74,16 @@ function ENT:Transmit()
     local c = self:GetColor()
     net.Start("magicbutton_transmitclone")
     net.WriteInt(self:EntIndex(), 17)
-    net.WriteVector(self:GetPos())
-    net.WriteAngle(self:GetAngles())
-    net.WriteColor(Color(c.r, c.g, c.b, c.a)) --for some reason GetColor is returning a table and it really doesn't like that
-    net.WriteBool(self.Pressed or false)
+    net.WriteInt(self.Removing and 0 or 4, 7)
+
+    if (not self.Removing) then
+        net.WriteVector(self:GetPos())
+        net.WriteAngle(self:GetAngles())
+        net.WriteColor(Color(c.r, c.g, c.b, c.a))
+        net.WriteBool(self.Pressed or false)
+        net.WriteInt(self:GetBodygroup(1) or 0, 3)
+    end
+
     net.Send(recip)
 end
 
@@ -117,7 +142,7 @@ function ENT:Use(activator)
     if (not self.Pressed) then
         self.Pressed = true
         self:Transmit()
-
+        activator:EmitSound("buttons/button9.wav")
         timer.Simple(8, function()
             if (IsValid(self)) then
                 self:Remove()
@@ -125,10 +150,14 @@ function ENT:Use(activator)
         end)
 
         MAGICBUTTON_STAT_TRACKING(activator)
+
         local message = self:Effect(activator)
-        assert(message ~= nil)
-        message = "[white]" .. activator:Nick() .. "[fbc] pressed a hidden button " .. message
-        BotSayGlobal(";clap;[fbc]" .. message)
-        activator:EmitSound("buttons/button9.wav")
+        assert(message ~= nil,"Secret button failed to give any outcome")
+        if (message ~= "") then
+            message = "[yellow]The Hilarious One [white]" .. message
+            BotSayGlobal(":banana:" .. message)
+        end
+
+        
     end
 end
