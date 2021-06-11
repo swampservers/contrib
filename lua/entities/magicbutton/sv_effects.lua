@@ -427,7 +427,7 @@ function ButtonHighValueTargetHook(victim, inflictor, attacker)
         end
     end
 
-    if (attacker.HVTBounty and attacker.HVTBounty > 0 and attacker != victim) then
+    if (attacker.HVTBounty and attacker.HVTBounty > 0 and attacker != victim and !victim:IsBot()) then
         local prize = math.Clamp(attacker.HVTBounty, 0, 5000)
         if(prize > 0)then attacker:SS_GivePoints(prize) end
         attacker.HVTBounty = math.max(attacker.HVTBounty - prize, 0)
@@ -436,6 +436,8 @@ function ButtonHighValueTargetHook(victim, inflictor, attacker)
 
         if (prize > 0) then
             attacker:Notify("+" .. string.Comma(prize) .. " Points! (" .. string.Comma(attacker.HVTBounty) .. " left!)")
+            attacker:GiveAmmo(1, "peaceshot")
+            attacker:GiveAmmo(5, "lmg")
         else
 
             local bonus = math.max(math.Round(attacker.HVTTotal / 4),0)
@@ -453,7 +455,6 @@ function ButtonHighValueTargetHook(victim, inflictor, attacker)
 end
 
 local function HVTLoadout(ply)
-
     ply:Give("weapon_peacekeeper")
     ply:GiveAmmo(20, "peaceshot")
     ply:Give("weapon_spades_lmg")
