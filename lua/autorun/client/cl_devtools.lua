@@ -1,133 +1,113 @@
-local ranOnce = !ranOnce
-if (!ranOnce) then return end -- just to prevent edge cases
-ranOnce = true
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 
-local isDev = isDev
-local refreshTime = 2
-local rootFolder = rootFolder or nil
-local fileTimes = fileTimes or {}
-local devReplStr = nil -- classname of all child files, taken from folder
-
-local function replaceFunction(base, regex, replacement)
-	local iStart, iEnd = string.find(base, regex, 1)
-
-	while iStart do
-		local xStart, _ = string.find(base, "(", iEnd, true) -- func name index
-		base = string.sub(base, 1, iStart-1) ..
-			replacement .. "." .. string.sub(base, iEnd + 1, xStart-1) ..
-			" = function" .. string.sub(base, xStart)
-		iStart, iEnd = string.find(base, regex, xStart)
+SWAMP_DEV = SWAMP_DEV or {}
+SWAMP_DEV.isDev = SWAMP_DEV.isDev
+SWAMP_DEV.refreshDelay = 2
+SWAMP_DEV.itemStruct = SWAMP_DEV.itemStruct
+SWAMP_DEV.fileTimes = SWAMP_DEV.fileTimes or {}
+SWAMP_DEV.structTypes = {
+	["weapons"] = function(curClass) SWEP = weapons.GetStored(curClass) end,
+	["entities"] = function(curClass) ENT = scripted_ents.GetStored(curClass) end,
+	["effects"] = function(curClass)
+		local fxTab = effects.GetList()
+		local fx = "effects/" .. curClass
+		for _, v in ipairs(fxTab) do
+			if (v.Folder == fx) then
+				EFFECT = v
+				return
+			end
+		end
 	end
-	return base
-end
+}
 
-local function refreshFile(path)
-	if (!file.Exists(path, "LUA")) then return print("File " .. path .. " doesn't exist") end
-	if (!isDev) then return end
-	local code = file.Read(path, "LUA")
-
+-- Returns a string to print
+local function refreshFile(path, filename)
+	local code = file.Read(path, "MOD")
 	-- current filename as class format
-	local curClass = devReplStr or string.TrimRight(string.gsub(path, "^.*/", ""), ".lua")
+	if SWAMP_DEV.itemStruct then
+		local parentFolder = string.gsub(string.sub(path, 1, -#filename - 2), ".*/", "")
+		-- if parent isn't a struct then use parent as class, else use filename
+		if (!SWAMP_DEV.structTypes[parentFolder]) then
+			SWAMP_DEV.structTypes[SWAMP_DEV.itemStruct](parentFolder)
+		else
+			SWAMP_DEV.structTypes[SWAMP_DEV.itemStruct](string.TrimRight(string.gsub(path, "^.*/", ""), ".lua"))
+		end
+	end
+	BaseGamemode = engine.ActiveGamemode()
+	GM = baseclass.Get(BaseGamemode)
 
-	-- simple replacement for compatibility, handling weapons and ents, no need for a lexer
-	-- performance impact should be minimal, it's ran once for testing, anyway
-	local storedStr = ".GetStored(\"" .. curClass .. "\")"
+	-- handle include
+	for s in string.gmatch(code, "include%s*%b()") do
+		local reqInclude = string.sub(string.gsub(s, "[%s%(%)\'\"]+", ""), 8)
+		local includePath = string.sub(path, 1, -#filename - 1) .. reqInclude
 
-	-- replace variables
-	code = string.gsub(string.gsub(code,
-		"%f[%a?]SWEP%.", "weapons" .. storedStr .. "."),
-		"%f[%a?]ENT%.", "scripted_ents" .. storedStr .. ".")
+		if (file.Exists(includePath, "MOD")) then -- First check the parent folder
+			print("INCLUDING: " .. refreshFile(includePath, string.gsub(reqInclude, ".*/", "")))
+			-- Then check the lua/ game folder
+		elseif (file.Exists("addons/contrib/lua/" .. reqInclude, "MOD")) then
+			print("INCLUDING: " .. refreshFile("addons/contrib/lua/" .. reqInclude, string.gsub(reqInclude, ".*/", "")))
+		else
+			print("Include handled by file")
+		end
+	end
 
-	-- set all function definitions to assign to table
-	code = replaceFunction(replaceFunction(code,
-		"function%s+%f[%a?]SWEP:", "weapons" .. storedStr),
-		"function%s+%f[%a?]ENT:", "scripted_ents" .. storedStr)
+	-- only replace includes that don't use variables
+	RunString(string.gsub(code, "include%s*%(%s*[\'\"].-[\'\"]%s*%)", ""), "swampDevTools")
 
-	RunString(code, "swampDevTools")
-	print("File refreshed: " .. path)
+	return filename
 end
 
-local function recurseRefresh(times, curPath)
-	local files, folders = file.Find(rootFolder .. curPath .. "*", "LUA")
-	for k, v in pairs(files) do
-		local newtime = file.Time(rootFolder .. curPath .. v, "LUA")
-		if (!times[k]) then -- new file created, or first run
-			times[k] = newtime
-		elseif (newtime != times[k]) then
-			times[k] = newtime
+local function recurseRefresh(root, times, curPath)
+	local files, folders = file.Find(root .. curPath .. "*", "MOD")
+	for k, v in ipairs(files) do
+		if (!string.EndsWith(v, ".lua") or string.StartWith(v, "sv_") or (v == "init.lua")) then continue end
+		local newtime = file.Time(root .. curPath .. v, "MOD")
+		if times[k] and (newtime ~= times[k]) then -- check if file has updated
+			print("File refreshed: " .. root .. curPath .. refreshFile(root .. curPath .. v, v))
+		end
+		times[k] = newtime
+	end
+	for _, v in ipairs(folders) do
+		if (v == "server") then continue end
 
-			refreshFile(rootFolder .. curPath .. v)
-		end
-	end
-	for _, v in pairs(folders) do
 		if (!times[v]) then times[v] = {} end
-		if ((rootFolder == "weapons/") or (rootFolder == "entities/")) then
-			devReplStr = v
-		end
-		times[v] = recurseRefresh(times[v], v .. "/")
+
+		if SWAMP_DEV.structTypes[v] then SWAMP_DEV.itemStruct = v end -- defining struct
+
+		times[v] = recurseRefresh(root, times[v], curPath .. v .. "/")
+		if (curPath == "") then SWAMP_DEV.itemStruct = nil end
 	end
-	devReplStr = nil
 	return times
 end
 
-local function timedRefresh()
-	local oldFolder = rootFolder
-	recurseRefresh(fileTimes, "")
-	timer.Simple(refreshTime, function()
-		if (!isDev or rootFolder != oldFolder) then
-			return print("Stopped automatic refresh for " .. oldFolder)
-		end
-		timedRefresh()
-	end)
-end
-
-
--- enable dev editing
+-- toggle dev editing. Root is addons/contrib
 concommand.Add("dev",
 	function()
 		if (LocalPlayer():GetRank() <= 0) then return end
-		isDev = true
-		print("Dev enabled")
-	end,
-	nil, "Register dev mode", FCVAR_UNREGISTERED)
-
--- set project root folder, so we arent checking unnecessary files
--- will refresh all files in root on first run
-concommand.Add("setroot",
-	function(_, _, args, argStr)
-		if (!isDev or !args[1]) then return end
-		argStr = string.TrimRight(argStr, "/")
-		-- check if argStr is correct
-		if (!file.Exists(argStr .. "/*", "LUA")) then
-			return print("Directory " .. argStr .. " doesn't exist!")
+		SWAMP_DEV.isDev = !SWAMP_DEV.isDev
+		SWAMP_DEV.fileTimes = { ["lua"] = {}, ["gamemodes"] = {} }
+		if (SWAMP_DEV.isDev) then
+			print("Dev mode enabled")
+			timer.Create("SWAMP_DEV.Refresh", SWAMP_DEV.refreshDelay, 0, function()
+				-- avoid checking unnecessary folders
+				recurseRefresh("addons/contrib/lua/", SWAMP_DEV.fileTimes["lua"], "")
+				recurseRefresh("addons/contrib/gamemodes/", SWAMP_DEV.fileTimes["gamemodes"], "")
+			end)
+		else
+			print("Dev mode disabled")
+			timer.Remove("SWAMP_DEV.Refresh")
 		end
-		rootFolder = argStr .. "/"
-		fileTimes = {}
-		devReplStr = nil
-		timedRefresh()
-		print("Root folder set to " .. argStr)
 	end,
-	nil, "Set project root folder, so we arent checking unnecessary files", FCVAR_UNREGISTERED)
-
-
--- stop checking files, exit dev mode
-concommand.Add("cleardev",
-	function()
-		isDev = false
-		fileTimes = {}
-		print("Dev cleared")
-	end,
-	nil, "Stop checking files, exit dev mode", FCVAR_UNREGISTERED)
-
+	nil, "Toggle dev mode, editing in addons/contrib", FCVAR_UNREGISTERED)
 
 -- force refresh file
-concommand.Add("frefresh", function(_, _, args)
-		if !isDev or !args[1] then return end
+concommand.Add("dev_refresh", function(_, _, args)
+		if !SWAMP_DEV.isDev or !args[1] then return end
 		print("Attempting to force refresh file " .. args[1])
-		if (args[2]) then
-			devReplStr = args[2]
+		for s in string.gmatch(args[1], "[^/\\]+") do
+			if SWAMP_DEV.structTypes[s] then SWAMP_DEV.itemStruct = s end
 		end
-		refreshFile(args[1])
-		devReplStr = nil
+		print("File " .. refreshFile(args[1], string.gsub(args[1], ".*/", "")) .. " force refreshed")
 	end,
 	nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
