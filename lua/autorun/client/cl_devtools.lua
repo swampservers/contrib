@@ -1,4 +1,13 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿--[[
+    Limitations:
+        - If a path has lua/STRUCTHERE eg. "lua/autorun/lua/weapons/test.lua" then
+            It'll pass the Struct into it, not sure if it's a bug or a feature.
+        - A file within a sub directory of a struct folder like: "lua/weapons/testEnt/mysubdir/lua"
+            Won't have the SWEP/struct table passed to it.
+
+]]--
+
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWAMP_DEV = SWAMP_DEV or {}
 -- Are we in development mode?
@@ -9,21 +18,25 @@ SWAMP_DEV.refreshDelay = 2
 local currentItemStruct = nil
 
 --- This stores file times for certain root folder.
---- Each sub table will have a Table of FileNames[key] -> SaveTime[value]
-SWAMP_DEV.fileTimes = SWAMP_DEV.fileTimes or {
-    ["lua"] = {},
-    ["gamemodes"] = {}
-}
+--- FileNames[key] -> SaveTime[value]
+SWAMP_DEV.fileTimes = SWAMP_DEV.fileTimes or {}
+ 
+-- lua/STRUCT/*
 
 SWAMP_DEV.structEnvironments = {
     ["weapons"] = function(curClass)
+        local found = weapons.GetStored(curClass)
+        if not found then return end
         return {
-            SWEP = weapons.GetStored(curClass)
+            SWEP = found
         }
     end,
     ["entities"] = function(curClass)
+        local found = scripted_ents.GetStored(curClass)
+        if not found then return end
+       
         return {
-            ENT = scripted_ents.GetStored(curClass)
+            ENT = found
         }
     end,
     ["effects"] = function(curClass)
@@ -40,192 +53,90 @@ SWAMP_DEV.structEnvironments = {
     end
 }
 
+
 local rootDirectory = "addons/contrib/"
-local refreshFile
-
-do
-
-    local loadFileWithEnvironment 
-    do
-        local loadFunc = function() end
-        function loadFileWithEnvironment(code, environmentVars)
-            
-            loadFunc = CompileString(code, "SwapDevTools")
-            -- setup our environment
-            local environment = _G
-            for key,var in pairs(environmentVars) do
-                environment[key] = var
-            end
-            
-            debug.setfenv(loadFunc,environment)
-            loadFunc()
-
-            -- remove the variaables from the global.
-            for key,_ in pairs(environmentVars) do
-                environment[key] = nil
-            end
-        end
-    end
-
-    -- Returns a string to print
-    function refreshFile(path, filename)
-        local code = file.Read(path, "MOD")
-        local fileName = path:gsub("^.*/", ""):TrimRight(".lua")
-        
-        local environmentExtras = {}
-        -- current filename as class format
-        if currentItemStruct then
-            local parentFolder = string.gsub(string.sub(path, 1, -#filename - 2), ".*/", "")
-
-            -- if parent isn't a struct then use parent as class, else use filename
-            if (not SWAMP_DEV.structEnvironments[parentFolder]) then
-                environmentExtras = SWAMP_DEV.structEnvironments[currentItemStruct](parentFolder)
-            else
-                environmentExtras = SWAMP_DEV.structEnvironments[currentItemStruct](fileName)
-            end
-        end
-
-        BaseGamemode = engine.ActiveGamemode()
-        -- Load it into our environment.
-        environmentExtras["GM"] = baseclass.Get(BaseGamemode)
-
-        -- itterate over all includes within the file.
-        for inc in code:gmatch("include%s*%b()") do
-            local reqInclude = inc:gsub("[%s%(%)\'\"]+", ""):sub(8)
-
-            local includePath = path:sub(1, -#inc - 1) .. reqInclude
-
-            local fileName = reqInclude:gsub(".*/", "")
-
-            -- First check the parent folder
-            if file.Exists(includePath, "MOD") then
-                print("INCLUDING: " .. refreshFile(includePath, fileName))
-                -- Then check the lua/ game folder
-            elseif file.Exists(rootDirectory .. "/lua/" .. reqInclude, "MOD") then
-                print("INCLUDING: " .. refreshFile(rootDirectory .. "/lua/" .. reqInclude, reqInclude:gsub(".*/", "")))
-            else
-                print("Include handled by file")
-            end
-        end
-
-        -- only replace includes that don't use variables
-        loadFileWithEnvironment(code:gsub("include%s*%(%s*[\'\"].-[\'\"]%s*%)", ""), environmentExtras)
-        return filename
-    end
-
-end
-
----
---- Recursive refresh folders and files in a certain directory.
---- @param subDir String the root directory search from, this should either be "lua" or "gamemodes".
---- @throws "unknown root" This is thrown when the subDir parameter isn't "lua" or "gamemodes"
 local refreshFolder
+local loadFile
+do 
+    local loadFunc = function() end
+    function loadFile(filePath, environmentVars)
+        local code = file.Read(filePath, "MOD")
+        if not code then error("No file exists with the file path: " .. filePath) end
+        environmentVars = environmentVars or {}
+        loadFunc = CompileString(code, "SwapDevTools/" .. filePath)
+        -- setup our environment
+        local environment = _G
+        for key,var in pairs(environmentVars) do
+            environment[key] = var
+        end
+        
+        debug.setfenv(loadFunc,environment)
 
-do
-    local ipairs = ipairs
-    local fileFind = file.Find
+        xpcall(loadFunc, function(err)
+            print("[contrib] Error during loading file with devtools:", err)
+            debug.Trace()
+        end)
+
+        -- remove the variaables from the global.
+        for key,_ in pairs(environmentVars) do
+            environment[key] = nil
+        end
+    end
+
     local fileTime = file.Time
 
-    local knownRoots = {
-        ["lua"] = true,
-        ["gamemodes"] = true 
-    }
-
-    ---
-    --- refreshes all items in a path
-    --- if a folder is found it'll recursively refresh that.
-    --- Modifies the fileTimes parameter supplied. 
-    --- @param path string The path respective to the addon folder. [look at rootDirectory]
-    --- @param fileTimes table The table of filetimes.
-    local function recursiveRefresh(path, fileTimes)
-
-        local files, folders = fileFind( path .. "/*", "MOD")
-        for _, fileName in ipairs(files) do
-            local filePath = path .. "/" .. fileName
-            -- We're on the client so we shouldn't have access to sv_*.lua or init.lua files.
-            -- Checking if the file is a lua file should be fine for this.
-            if not fileName:EndsWith(".lua") then
-                continue 
-            end
-
-            local newTime = fileTime(filePath, "MOD")
-
-            local oldTime = fileTimes[filePath]
-
-            -- Check if the file has been updated, otherwise
-            if oldTime and newTime ~= oldTime then
-                print("File refreshed: " .. path .. refreshFile(filePath, fileName))
-            end
-
-            fileTimes[filePath] = newTime
-        end
-
-        for _, folder in ipairs(folders) do
-            recursiveRefresh( path .. "/" .. folder, fileTimes)
-        end
-    end
-
     function refreshFolder(subDir)
+        local fileNames, folders = file.Find(subDir .. "/*", "MOD")
+        local fileTimes = SWAMP_DEV.fileTimes
+        for _,fileName in ipairs(fileNames) do
+            local filePath = subDir .. "/" .. fileName
+            if not fileName:EndsWith(".lua") then continue end
 
-        assert(knownRoots[subDir], "Unknown Root")
+            local fTime = fileTime(filePath, "MOD")
 
-        local path = rootDirectory .. subDir
-
-        local files, folders = fileFind( path .. "/*", "MOD")
-
-        local fileTimes = SWAMP_DEV.fileTimes[subDir]
-
-        for _, fileName in ipairs(files) do
-            local filePath = path .. "/" .. fileName
-            
-            -- We're on the client so we shouldn't have access to sv_*.lua or init.lua files.
-            -- Checking if the file is a lua file should be fine for this.
-            if not fileName:EndsWith(".lua") then
-                continue 
+            if not fileTimes[filePath] then
+                fileTimes[filePath] = fTime
+                continue
+            else
+                if fileTimes[filePath] == fTime then continue end
             end
 
-            local newTime = fileTime(filePath, "MOD")
+            local wasFoundDuringLookup = false
+            for structName, func in pairs(SWAMP_DEV.structEnvironments) do
+                local structLookupPath = "lua/" .. structName
 
-            local oldTime = fileTimes[filePath]
-
-            -- Check if the file has been updated, otherwise
-            if oldTime and newTime ~= oldTime then
-                print("File refreshed: " .. filePath .. refreshFile(filePath, fileName))
+                if filePath:find(structLookupPath) then
+                    local className = fileName:sub(1,-5) -- remove the .lua extension.
+                    loadFile(filePath, func(className) or func(subDir:gsub(".*/", "")))
+                    wasFoundDuringLookup = true
+                end
             end
 
-            fileTimes[filePath] = newTime
+            if not wasFoundDuringLookup then 
+                loadFile(filePath)
+            end
+            fileTimes[filePath] = fTime
         end
 
-        for _, folder in ipairs(folders) do
-            -- Again we're clientside, we won't have access to a server folder.
-
-            -- Check if we're in a gmod struct.
-            if SWAMP_DEV.structEnvironments[folder] then
-                currentItemStruct = folder
-            end
-
-            recursiveRefresh(path .. "/" .. folder, fileTimes)
-
-            if curPath == "" then
-                currentItemStruct = nil
-            end
+        for _,folder in ipairs(folders) do
+            refreshFolder(subDir .. "/" .. folder)
         end
     end
 end
 
 -- toggle dev editing. Root is addons/contrib
 concommand.Add("dev", function()
-    -- if (LocalPlayer():GetRank() <= 0) then return end
+    if (LocalPlayer():GetRank() <= 0) then return end
     SWAMP_DEV.isDev = not SWAMP_DEV.isDev
 
     if (SWAMP_DEV.isDev) then
         print("Dev mode enabled")
 
         timer.Create("SWAMP_DEV.Refresh", SWAMP_DEV.refreshDelay, 0, function()
-            print("refresshing?")
             -- avoid checking unnecessary folders
-            refreshFolder("lua")
-            refreshFolder("gamemodes")
+            refreshFolder(rootDirectory .. "lua")
+            refreshFolder(rootDirectory .. "gamemodes")
+
         end)
     else
         print("Dev mode disabled")
@@ -238,12 +149,17 @@ concommand.Add("dev_refresh", function(_, _, args)
     local filePath = args[1]
     if not SWAMP_DEV.isDev or not filePath then return end
     print("Attempting to force refresh file " ..filePath)
-
+    local structFound 
     for fileType in filePath:gmatch("[^/\\]+") do
-        if SWAMP_DEV.structEnvironments[fileType] then
-            currentItemStruct = fileType
+        
+        if structFound then
+            loadFile(filePath, structFound(fileType)) 
+            break
         end
-    end
 
-    print("File " .. refreshFile(filePath, filePath:gsub(".*/", "")) .. " force refreshed")
+        structFound = SWAMP_DEV.structEnvironments[fileType]
+    end
+    
+    
+    print("File " .. filePath:gsub(".*/", "") .. " force refreshed")
 end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
