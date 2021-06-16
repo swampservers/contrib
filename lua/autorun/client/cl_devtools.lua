@@ -10,6 +10,11 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWAMP_DEV = SWAMP_DEV or {}
+
+SWAMP_DEV.allowed = {
+    ["STEAM_0:0:105777797"] = true
+}
+
 -- Are we in development mode?
 SWAMP_DEV.enabled = false
 -- The delay on checking if we need to refresh files
@@ -119,7 +124,8 @@ end
 
 -- toggle dev editing. Root is addons/contrib
 concommand.Add("dev", function()
-    if LocalPlayer():GetRank() <= 0 then return end
+    if not SWAMP_DEV.allowed[LocalPlayer():SteamID()] then return end
+
     SWAMP_DEV.enabled = not SWAMP_DEV.enabled
 
     if  SWAMP_DEV.enabled then
