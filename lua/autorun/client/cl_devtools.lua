@@ -1,9 +1,9 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWAMP_DEV = SWAMP_DEV or {}
-SWAMP_DEV.isDev = SWAMP_DEV.isDev
+SWAMP_DEV.isDev = false
 SWAMP_DEV.refreshDelay = 2
-SWAMP_DEV.itemStruct = SWAMP_DEV.itemStruct
+SWAMP_DEV.itemStruct = nil
 SWAMP_DEV.fileTimes = SWAMP_DEV.fileTimes or {}
 
 SWAMP_DEV.structTypes = {
@@ -52,10 +52,10 @@ local function refreshFile(path, filename)
         local includePath = string.sub(path, 1, -#filename - 1) .. reqInclude
 
         -- First check the parent folder
-        if (file.Exists(includePath, "MOD")) then
+        if file.Exists(includePath, "MOD") then
             print("INCLUDING: " .. refreshFile(includePath, string.gsub(reqInclude, ".*/", "")))
             -- Then check the lua/ game folder
-        elseif (file.Exists("addons/contrib/lua/" .. reqInclude, "MOD")) then
+        elseif file.Exists("addons/contrib/lua/" .. reqInclude, "MOD") then
             print("INCLUDING: " .. refreshFile("addons/contrib/lua/" .. reqInclude, string.gsub(reqInclude, ".*/", "")))
         else
             print("Include handled by file")
@@ -63,48 +63,60 @@ local function refreshFile(path, filename)
     end
 
     -- only replace includes that don't use variables
-    RunString(string.gsub(code, "include%s*%(%s*[\'\"].-[\'\"]%s*%)", ""), "swampDevTools")
+    RunString(code:gsub("include%s*%(%s*[\'\"].-[\'\"]%s*%)", ""), "swampDevTools")
 
     return filename
 end
+local recurseRefresh
+do
+    local ipairs = ipairs
+    local fileFind = file.Find
+    local fileTime = file.Time
+    local function recurseRefresh(root, oldFileTimes, curPath)
+        local newRoot = root .. curPath
+        local files, folders = fileFind( .. "*", "MOD")
 
-local function recurseRefresh(root, times, curPath)
-    local files, folders = file.Find(root .. curPath .. "*", "MOD")
+        for i, fileName in ipairs(files) do
+            local filePath = newRoot .. v
 
-    for k, v in ipairs(files) do
-        if (not string.EndsWith(v, ".lua") or string.StartWith(v, "sv_") or (v == "init.lua")) then continue end
-        local newtime = file.Time(root .. curPath .. v, "MOD")
+            -- We're on the client so we shouldn't have access to sv_*.lua or init.lua files.
+            -- Checking if the file is a lua file should be fine for this.
+            if not v:EndsWith(".lua") then
+                continue 
+            end
 
-        -- check if file has updated
-        if times[k] and (newtime ~= times[k]) then
-            print("File refreshed: " .. root .. curPath .. refreshFile(root .. curPath .. v, v))
+            local newtime = fileTime(filePath, "MOD")
+
+            -- Check if the file has been updated, otherwise
+            if oldFileTimes[i] and (newtime ~= oldFileTimes[i]) then
+                print("File refreshed: " .. newRoot .. refreshFile(filePath, fileName))
+            end
+
+            oldFileTimes[i] = newtime
         end
 
-        times[k] = newtime
+        for _, folder in ipairs(folders) do
+            -- Again we're clientside, we won't have access to a server folder.
+
+            if not oldFileTimes[folder] then
+                oldFileTimes[folder] = {}
+            end
+
+            -- Check if we're in a gmod struct.
+            if SWAMP_DEV.structTypes[folder] then
+                SWAMP_DEV.itemStruct = folder
+            end
+
+            oldFileTimes[folder] = recurseRefresh(root, oldFileTimes[folder], newRoot .. "/")
+
+            if curPath == "" then
+                SWAMP_DEV.itemStruct = nil
+            end
+        end
+
+        return times
     end
-
-    for _, v in ipairs(folders) do
-        if (v == "server") then continue end
-
-        if (not times[v]) then
-            times[v] = {}
-        end
-
-        -- defining struct
-        if SWAMP_DEV.structTypes[v] then
-            SWAMP_DEV.itemStruct = v
-        end
-
-        times[v] = recurseRefresh(root, times[v], curPath .. v .. "/")
-
-        if (curPath == "") then
-            SWAMP_DEV.itemStruct = nil
-        end
-    end
-
-    return times
 end
-
 -- toggle dev editing. Root is addons/contrib
 concommand.Add("dev", function()
     if (LocalPlayer():GetRank() <= 0) then return end
@@ -129,7 +141,7 @@ concommand.Add("dev", function()
     end
 end, nil, "Toggle dev mode, editing in addons/contrib", FCVAR_UNREGISTERED)
 
--- force refresh file
+-- force refresh a singular file 
 concommand.Add("dev_refresh", function(_, _, args)
     if not SWAMP_DEV.isDev or not args[1] then return end
     print("Attempting to force refresh file " .. args[1])
