@@ -10,7 +10,8 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWAMP_DEV = SWAMP_DEV or {}
-
+-- Are we in development mode?
+SWAMP_DEV.enabled = false
 -- The delay on checking if we need to refresh files
 SWAMP_DEV.refreshDelay = 2
 
@@ -126,9 +127,9 @@ end
 -- toggle dev editing. Root is addons/contrib
 concommand.Add("dev", function()
     if LocalPlayer():GetRank() <= 0 then return end
-    SWAMP_DEV.isDev = not SWAMP_DEV.isDev
+    SWAMP_DEV.enabled = not SWAMP_DEV.enabled
 
-    if  SWAMP_DEV.isDev then
+    if  SWAMP_DEV.enabled then
         print("Dev mode enabled")
 
         timer.Create("SWAMP_DEV.Refresh", SWAMP_DEV.refreshDelay, 0, function()
@@ -146,7 +147,7 @@ end, nil, "Toggle dev mode, editing in addons/contrib", FCVAR_UNREGISTERED)
 -- force refresh a singular file 
 concommand.Add("dev_refresh", function(_, _, args)
     local filePath = args[1]
-    if not SWAMP_DEV.isDev or not filePath then return end
+    if not SWAMP_DEV.enabled or not filePath then return end
     print("Attempting to force refresh file " ..filePath)
     local structFound 
     for fileType in filePath:gmatch("[^/\\]+") do
