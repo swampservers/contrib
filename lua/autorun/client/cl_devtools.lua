@@ -26,18 +26,11 @@ SWAMP_DEV.fileTimes = SWAMP_DEV.fileTimes or {}
 SWAMP_DEV.structEnvironments = {
     ["weapons"] = function(curClass)
         local found = weapons.GetStored(curClass)
-        if not found then return end
-        return {
-            SWEP = found
-        }
+        return found and {SWEP=found} or nil
     end,
     ["entities"] = function(curClass)
         local found = scripted_ents.GetStored(curClass)
-        if not found then return end
-       
-        return {
-            ENT = found
-        }
+        return found and {ENT=found} or nil
     end,
     ["effects"] = function(curClass)
         local allEffects = effects.GetList()
