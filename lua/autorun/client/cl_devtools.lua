@@ -12,7 +12,7 @@
 SWAMP_DEV = SWAMP_DEV or {}
 
 SWAMP_DEV.allowed = {
-    ["STEAM_0:0:105777797"] = true
+    ["SteamID Here."] = true
 }
 
 -- Are we in development mode?
@@ -59,22 +59,23 @@ do
     local loadFunc = function() end
     function loadFile(filePath, environmentVars)
         local code = file.Read(filePath, "MOD")
-        if not code then error("No file exists with the file path: " .. filePath) end
+        if not code then 
+            error("No file exists with the file path: " .. filePath)
+        end
         environmentVars = environmentVars or {}
-        loadFunc = CompileString(code, "SwampDevTools/" .. filePath)
+       
         -- setup our environment
         local environment = _G
         for key,var in pairs(environmentVars) do
             environment[key] = var
         end
-        
-        debug.setfenv(loadFunc,environment)
-
-        xpcall(loadFunc, function(err)
+        xpcall(function()
+            RunString(code, "SwampDevTools/" .. filePath)
+            
+        end, function(err)
             print("[contrib] Error during loading file with devtools:", err)
             debug.Trace()
         end)
-
         -- remove the variaables from the global.
         for key,_ in pairs(environmentVars) do
             environment[key] = nil
@@ -128,7 +129,7 @@ concommand.Add("dev", function()
 
     SWAMP_DEV.enabled = not SWAMP_DEV.enabled
 
-    if  SWAMP_DEV.enabled then
+    if SWAMP_DEV.enabled then
         print("Dev mode enabled")
 
         timer.Create("SWAMP_DEV.Refresh", SWAMP_DEV.refreshDelay, 0, function()
@@ -148,17 +149,23 @@ concommand.Add("dev_refresh", function(_, _, args)
     local filePath = args[1]
     if not SWAMP_DEV.enabled or not filePath then return end
     print("Attempting to force refresh file " ..filePath)
+    
     local structFound 
+    local ran
     for fileType in filePath:gmatch("[^/\\]+") do
         
         if structFound then
             loadFile(filePath, structFound(fileType)) 
+            ran = true
             break
         end
 
         structFound = SWAMP_DEV.structEnvironments[fileType]
     end
-    
-    
+
+    if not ran then 
+        loadFile(filePath, {})
+    end
+
     print("File " .. filePath:gsub(".*/", "") .. " force refreshed")
 end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
