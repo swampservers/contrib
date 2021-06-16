@@ -10,8 +10,7 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWAMP_DEV = SWAMP_DEV or {}
--- Are we in development mode?
-SWAMP_DEV.isDev = false
+
 -- The delay on checking if we need to refresh files
 SWAMP_DEV.refreshDelay = 2
 
@@ -44,7 +43,7 @@ SWAMP_DEV.structEnvironments = {
         local targetEffect = "effects/" .. curClass
 
         for _, effect in ipairs(allEffects) do
-            if (effect.Folder == targetEffect) then
+            if effect.Folder == targetEffect then
                 return {
                     EFFECT = effect
                 }
@@ -54,7 +53,7 @@ SWAMP_DEV.structEnvironments = {
 }
 
 
-local rootDirectory = "addons/contrib/"
+local ROOT_DIRECTORY = "addons/contrib/"
 local refreshFolder
 local loadFile
 do 
@@ -63,7 +62,7 @@ do
         local code = file.Read(filePath, "MOD")
         if not code then error("No file exists with the file path: " .. filePath) end
         environmentVars = environmentVars or {}
-        loadFunc = CompileString(code, "SwapDevTools/" .. filePath)
+        loadFunc = CompileString(code, "SwampDevTools/" .. filePath)
         -- setup our environment
         local environment = _G
         for key,var in pairs(environmentVars) do
@@ -126,16 +125,16 @@ end
 
 -- toggle dev editing. Root is addons/contrib
 concommand.Add("dev", function()
-    if (LocalPlayer():GetRank() <= 0) then return end
+    if LocalPlayer():GetRank() <= 0 then return end
     SWAMP_DEV.isDev = not SWAMP_DEV.isDev
 
-    if (SWAMP_DEV.isDev) then
+    if  SWAMP_DEV.isDev then
         print("Dev mode enabled")
 
         timer.Create("SWAMP_DEV.Refresh", SWAMP_DEV.refreshDelay, 0, function()
             -- avoid checking unnecessary folders
-            refreshFolder(rootDirectory .. "lua")
-            refreshFolder(rootDirectory .. "gamemodes")
+            refreshFolder(ROOT_DIRECTORY .. "lua")
+            refreshFolder(ROOT_DIRECTORY .. "gamemodes")
 
         end)
     else
