@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/player/pyroteknik/garfield"
+	"$halflambert" "1"
+	"$surfaceprop" "Flesh"
+	"$color2" "[2 2 2]"
+}
