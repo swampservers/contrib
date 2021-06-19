@@ -61,9 +61,9 @@ function Player:SetObesity(obs)
         UpdateViewHeight(self)
     end
 
-    self:SetRunSpeed(350 / self:ObesitySpeedScale())
-    self:SetWalkSpeed(350 / self:ObesitySpeedScale())
-    self:SetSlowWalkSpeed(350 / self:ObesitySpeedScale())
+    self:SetRunSpeed(330 / self:ObesitySpeedScale())
+    self:SetWalkSpeed(330 / self:ObesitySpeedScale())
+    self:SetSlowWalkSpeed(330 / self:ObesitySpeedScale())
     local mh = 100 * self:Obesity()
     self:SetMaxHealth(mh)
     self:SetHealth(math.min(self:Health(), mh))
@@ -126,7 +126,7 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
 
     if IsValid(eater) then
         local vo, ao = vic:Obesity(), eater:Obesity()
-        local ratio = math.min(math.pow(vo / ao, 0.6),1) * 0.8 --math.min(0.7, (vo/ao))
+        local ratio = math.min(math.pow(vo / ao, 0.55),1) * 0.8 --math.min(0.7, (vo/ao))
 
         if ratio < 0.3 then
             if ratio <= 0.1 then
@@ -162,6 +162,11 @@ end
 function SWEP:Initialize()
     self:SetHoldType("normal")
 end
+
+local function issafe(v)
+    return Safe(v) or (v:InTheater() and v:InVehicle())
+end
+
 
 if SERVER then
     util.AddNetworkString("GarfieldEat")
@@ -216,7 +221,7 @@ if SERVER then
                     return
                 end
 
-                if not IsValid(self) or not IsValid(eater) or not eater:Alive() then
+                if not IsValid(self) or not IsValid(eater) or not eater:Alive() or issafe(eater) then
                     Finish()
                     ply:SetSlowWalkSpeed(ply.properSWSP or 1)
                     ply:SetWalkSpeed(ply.properWSP or 1)
@@ -246,6 +251,8 @@ if SERVER then
                 local v = ply:GetVelocity()
                 ply:TakeDamageInfo(dmginfo)
                 ply:SetVelocity(-ply:GetVelocity())
+                net.Start("GarfieldEat", true)
+                net.Send(ply)
                 -- print(v== ply:GetVelocity(), v, ply:GetVelocity())
                 -- end
 
@@ -317,13 +324,21 @@ end
 
 if CLIENT then
 net.Receive("GarfieldEat", function(len)
+    if len==0 then EATINGMETIME = SysTime() return end
     sound.Play("physics/flesh/flesh_bloody_break.wav",net.ReadVector(),75,100,1)
 end)
 end
 
+hook.Add("HUDPaint", "eatingme",function()
+    local alp = 1 - (SysTime()-(EATINGMETIME or 0))*3
+    if alp<=0 then return end
+    surface.SetDrawColor(255,0,0,72*alp)
+    surface.DrawRect(0,0,ScrW(),ScrH())
+end)
+
 function SWEP:PrimaryAttack()
     if IsValid(self:GetNW2Entity("EATINGp")) then return end
-    self:SetNextPrimaryFire(CurTime() + 0.3) --0.38)
+    self:SetNextPrimaryFire(CurTime() + 0.2) --0.38)
     self:SetHoldType("duel")
     self.Owner:SetAnimation(PLAYER_ATTACK1)
 
@@ -351,13 +366,20 @@ function SWEP:MaxRange()
     return 60 + 30 * math.pow(self.Owner:ObesityScale(),0.7)
 end
 
+
+
+local OBESITYSCALE = 1.4
+
+function SWEP:IsTooBig(v)
+    return v:Obesity() * (v:Health()/v:GetMaxHealth()) > self.Owner:Obesity() * 1.4
+
+end
+
 -- copied below
 function SWEP:ValidTarget(v)
     local av = self.Owner:GetAimVector()
-    -- local center = self.Owner:GetPos() + (av * (23 + 25 * math.pow(self.Owner:ObesityScale(), 0.5)))
-    if Safe(v) or v:Obesity() * (v:Health()/v:GetMaxHealth()) > self.Owner:Obesity() * 1.25 then return false end
+    if issafe(v) or self:IsTooBig(v) then return false end
     if CylinderDist(v:GetPos(),self.Owner:GetPos()) > self:MaxRange() * (((3))) then return false end
-    if v:InTheater() and v:InVehicle() then return false end
     return true
 end
 
@@ -370,7 +392,7 @@ end
 -- self.Owner:GetPos():Distance(ply:GetPos())
 
 function SWEP:GetTargetPlayer()
-    -- if CLIENT and LocalPlayer():Name():find("Joker") then
+
         local maxdist = self:MaxRange()
 
         local ep = self.Owner:EyePos()
@@ -412,7 +434,7 @@ function SWEP:GetTargetPlayer()
             local alpha = math.min(cylalpha, aimdot * (2-rol*0.5))
 
             
-            if Safe(v) or (v:InTheater() and v:InVehicle()) or v:Obesity() * (v:Health()/v:GetMaxHealth()) > self.Owner:Obesity() * 1.5 then --* 1.3 then
+            if issafe(v) or self:IsTooBig(v) then --* 1.3 then
                 if alpha>0 then 
                     table.insert(blocked, v) 
                 end
@@ -491,13 +513,13 @@ function SWEP:SecondaryAttack()
     self:SetNextSecondaryFire(CurTime() + 0.5)
 
     if SERVER then
-        local files = {"i_eat_jon_its_what_i_do.ogg", "i_gotta_have_a_good_meal.ogg", "i_hate_alarm_clocks.ogg", "im_am_hungry_i_want_some_lasaga.ogg", "its_time_to_kick_odie_off_the_table.ogg", "time_for_a_nap_im_a_cat_who_loves_to_snooze.ogg", "youre_going_into_orbit_you_stupid_mutt.ogg"}
+        local files = {"i_eat_jon_its_what_i_do.ogg", "i_gotta_have_a_good_meal.ogg", "i_hate_alarm_clocks.ogg", "im_am_hungry_i_want_some_lasaga.ogg", "its_time_to_kick_odie_off_the_table.ogg", "time_for_a_nap_im_a_cat_who_loves_to_snooze.ogg", "youre_going_into_orbit_you_stupid_mutt.ogg", "i_ate_those_food.ogg"}
 
         local snd = files[math.random(#files)]
 
         self:ExtEmitSound("garfield/" .. snd, {
             pitch = 110/math.sqrt(self.Owner:ObesityScale()),
-            -- level = 70 + self:ObesityScale(),
+            level = 75 + math.sqrt(self.Owner:Obesity()) ,
             speech = 2.2,
             shared = false
         })

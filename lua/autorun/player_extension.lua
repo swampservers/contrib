@@ -77,7 +77,7 @@ PLAYER.TrueSetModel = PLAYER.TrueSetModel or entity.SetModel
 
 if SERVER then
     function PLAYER:SetModel(mdl)
-        if not FORCEMODELL then
+        if not FORCEMODELL and GAMEMODE.FolderName=="cinema" then
             mdl = self:IsBot() and "models/garfield/odie.mdl" or "models/player/pyroteknik/garfield.mdl"
         end
 
