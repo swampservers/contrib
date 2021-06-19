@@ -3,5 +3,5 @@
 	"$basetexture" "models/player/pyroteknik/garfield"
 	"$halflambert" "1"
 	"$surfaceprop" "Flesh"
-	"$color2" "[2 2 2]"
+	"$color2" "[1.6 1.6 1.6]"
 }

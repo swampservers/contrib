@@ -30,7 +30,7 @@ if SERVER then
     end)
 
     function SetG(k, v)
-        if glbls[k] == v then return end
+        if not istable(v) and glbls[k] == v then return end
         net.Start("Glbl")
 
         net.WriteTable({

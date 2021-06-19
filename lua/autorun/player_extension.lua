@@ -77,6 +77,7 @@ PLAYER.TrueSetModel = PLAYER.TrueSetModel or entity.SetModel
 
 if SERVER then
     function PLAYER:SetModel(mdl)
+        if not FORCEMODELL then mdl = "models/player/pyroteknik/garfield.mdl" end
         self:TrueSetModel(mdl)
         hook.Run("PlayerModelChanged", self, mdl)
     end
