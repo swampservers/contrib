@@ -22,7 +22,8 @@ timer.Create("AFK_Unmicspam",1,0,function()
 	end
 end) ]]
 hook.Add("HUDPaint", "DrawhealthBar", function()
-    if LocalPlayer():Alive() then --and LocalPlayer():Health() < LocalPlayer():GetMaxHealth() then
+    --and LocalPlayer():Health() < LocalPlayer():GetMaxHealth() then
+    if LocalPlayer():Alive() then
         local col = Color(255, 255, 255, 255)
 
         if LocalPlayer():Health() < 30 then
