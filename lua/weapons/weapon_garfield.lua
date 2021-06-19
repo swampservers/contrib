@@ -2,7 +2,7 @@
 -- Use is subject to a restrictive license, please see: https://github.com/swampservers/fatkid/blob/master/LICENSE
 SWEP.PrintName = "Garfield"
 SWEP.Purpose = "Eat"
-SWEP.Instructions = "Primary: Eat\n\nYou can eat players smaller and slightly larger than you. The bigger you get, the more health you have. To win when eating larger players, soften them up with weapons first."
+SWEP.Instructions = "Primary: Eat\n\nYou can eat players smaller and slightly larger than you. The bigger you get, the more health you have. To eat larger players, soften them up with weapons first, but be aware that they heal quickly based on size."
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.DrawWeaponInfoBox = true
@@ -35,6 +35,8 @@ timer.Simple(1, function()
 end)
 
 FATTESTCATS = FATTESTCATS or {}
+-- table.remove(FATTESTCATS,1)
+-- table.remove(FATTESTCATS,1)
 
 function Player:Obesity()
     return self:GetNWFloat("garfield", 1)
@@ -48,9 +50,9 @@ function Player:SetObesity(obs)
         UpdateViewHeight(self)
     end
 
-    self:SetRunSpeed(300 / self:ObesitySpeedScale())
-    self:SetWalkSpeed(300 / self:ObesitySpeedScale())
-    self:SetSlowWalkSpeed(300 / self:ObesitySpeedScale())
+    self:SetRunSpeed(350 / self:ObesitySpeedScale())
+    self:SetWalkSpeed(350 / self:ObesitySpeedScale())
+    self:SetSlowWalkSpeed(350 / self:ObesitySpeedScale())
     local mh = 100 * self:Obesity()
     self:SetMaxHealth(mh)
     self:SetHealth(math.min(self:Health(), mh))
@@ -96,7 +98,7 @@ function Player:ObesityScale()
 end
 
 function Player:ObesitySpeedScale()
-    return math.pow(self:Obesity(), 1 / 5)
+    return math.pow(self:Obesity(), 1 / 4)
 end
 
 hook.Add("PlayerSpawn", "ResetGarfield", function(ply)
@@ -109,19 +111,21 @@ hook.Add("PlayerSpawn", "ResetGarfield", function(ply)
 end)
 
 hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
-    local eater = vic:GetNWEntity("EATER")
+    local eater = vic:GetNW2Entity("EATER")
 
     if IsValid(eater) then
         local vo, ao = vic:Obesity(), eater:Obesity()
-        local ratio = math.sqrt(vo / ao) * 0.8 --math.min(0.7, (vo/ao))
+        local ratio = math.pow(vo / ao, 0.6) * 0.8 --math.min(0.7, (vo/ao))
 
         if ratio < 0.2 then
             eater:Notify("Look for larger prey to grow faster!")
         end
 
-        eater:SetObesity(ao + vo * ratio)
-        eater:SetHealth(eater:GetMaxHealth())
-        vic:SetNWEntity("EATER", nil)
+        if ratio > 0.1 then
+            eater:SetObesity(ao + vo * ratio)
+            eater:SetHealth(eater:GetMaxHealth())
+        end
+        vic:SetNW2Entity("EATER", nil)
     end
 end)
 
@@ -132,7 +136,7 @@ if SERVER then
         end
     end)
 
-    timer.Create("GarfieldHeal", 5, 0, function()
+    timer.Create("GarfieldHeal", 15, 0, function()
         for k, v in pairs(player.GetAll()) do
             v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
         end
@@ -151,7 +155,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:PrimaryAttack()
-    if self:GetNWBool("EATING") then return end
+    if IsValid(self:GetNW2Entity("EATINGp")) then return end
     self:SetNextPrimaryFire(CurTime() + 0.5) --0.38)
     self:SetHoldType("duel")
     self.Owner:SetAnimation(PLAYER_ATTACK1)
@@ -160,7 +164,7 @@ function SWEP:PrimaryAttack()
         local ply, blocked = self:GetTargetPlayer()
 
         if ply then
-            self:SetNWBool("EATING", true)
+            self:SetNW2Entity("EATINGp", ply)
             local swsp, wsp, rsp = ply:GetSlowWalkSpeed(), ply:GetWalkSpeed(), ply:GetRunSpeed()
 
             if swsp > 1 then
@@ -179,13 +183,15 @@ function SWEP:PrimaryAttack()
             ply:SetWalkSpeed(1)
             ply:SetRunSpeed(1)
             local eater = self.Owner
-            ply:SetNWEntity("EATER", eater)
+            ply:SetNW2Entity("EATER", eater)
 
             -- ply:EmitSound("ambient/creatures/town_child_scream1.wav")
             local function Finish()
-                self:SetNWBool("EATING", false)
+                if IsValid(ply) then ply:SetNW2Entity("EATER", nil) end
+                if IsValid(self) then
+                self:SetNW2Entity("EATINGp", nil)
                 self:SetHoldType("normal")
-                ply:SetNWEntity("EATER", nil)
+                end
             end
 
             local function Update()
@@ -196,10 +202,11 @@ function SWEP:PrimaryAttack()
                 end
 
                 if not IsValid(self) or not IsValid(eater) or not eater:Alive() then
+                    Finish()
                     ply:SetSlowWalkSpeed(ply.properSWSP or 1)
                     ply:SetWalkSpeed(ply.properWSP or 1)
                     ply:SetRunSpeed(ply.properRSP or 1)
-                    Finish()
+                    
 
                     return
                 end
@@ -218,11 +225,21 @@ function SWEP:PrimaryAttack()
                     FORCEMODELL = false
                 end
 
+                -- if expectedHealth > 0 then
+                    -- ply:SetHealth(expectedHealth)
+                -- else
+                local v = ply:GetVelocity()
                 ply:TakeDamageInfo(dmginfo)
+                ply:SetVelocity(-ply:GetVelocity())
+                -- print(v== ply:GetVelocity(), v, ply:GetVelocity())
+                -- end
 
-                if ply:Health() ~= expectedHealth then
+
+                if ply:Health() ~= expectedHealth and ply:Health()>0 then
                     ply:SetHealth(expectedHealth)
                 end
+
+                if expectedHealth <= 0 and ply:Alive() then ply:Kill() end
 
                 for i = 0, 4 do
                     --blood decal
@@ -280,45 +297,54 @@ function SWEP:GetTargetPlayer()
     local av = self.Owner:GetAimVector()
     av.z = 0
     av:Normalize()
-    local center = self.Owner:GetPos() + (av * 48 * self.Owner:ObesityScale())
+    local center = self.Owner:GetPos() + (av * 48 * math.pow(self.Owner:ObesityScale(), 0.5))
     local closestDist = 1000
     local ply = nil
     local blocked = {}
     local c1 = self.Owner:LocalToWorld(self.Owner:OBBCenter())
 
-    for k, v in next, ents.FindInSphere(center, 50 * self.Owner:ObesityScale()) do
-        if v:IsPlayer() and v ~= self.Owner and v:Alive() then
-            local c2 = v:LocalToWorld(v:OBBCenter())
+    for k, v in ipairs(player.GetAll()) do
+        if v==self.Owner then continue end
+        if v:GetPos():Distance(center) > 50 * math.pow(self.Owner:ObesityScale(),0.5) then continue end
+        if not v:Alive() then continue end
+        if CLIENT and v:IsDormant() then continue end
 
-            local tr = util.TraceLine({
-                start = c1,
-                endpos = c2,
-                mask = MASK_SOLID_BRUSHONLY
-            })
+        local c2 = v:LocalToWorld(v:OBBCenter())
 
-            if tr and tr.Hit then continue end
-            if IsValid(v:GetNWEntity("EATER")) then continue end
+        local tr = util.TraceLine({
+            start = c1,
+            endpos = c2,
+            mask = MASK_SOLID_BRUSHONLY
+        })
 
-            --or v:IsAFK() then -- or v:IsBot() then
-            if Safe(v) or v:Obesity() > self.Owner:Obesity() * 1.3 then
-                table.insert(blocked, v)
-                continue
+        if tr and tr.Hit then continue end
+        if IsValid(v:GetNW2Entity("EATER")) then 
+            if CLIENT and v:GetNW2Entity("EATER")==self.Owner then else
+            continue end
             end
 
-            local dist = v:GetPos():Distance(self.Owner:GetPos())
-
-            if dist < closestDist then
-                ply = v
-                closestDist = dist
-            end
+        --or v:IsAFK() then -- or v:IsBot() then
+        if Safe(v) or v:Obesity() * (v:Health()/v:GetMaxHealth()) > self.Owner:Obesity() * 1.2 then --* 1.3 then
+            table.insert(blocked, v)
+            continue
         end
+
+        local dist = v:GetPos():Distance(self.Owner:GetPos())
+
+        if dist < closestDist then
+            ply = v
+            closestDist = dist
+        end
+    
     end
+
+    -- if CLIENT then print(ply) end
 
     return ply, blocked
 end
 
 function SWEP:SecondaryAttack()
-    self:SetNextSecondaryFire(CurTime() + 2)
+    self:SetNextSecondaryFire(CurTime() + 0.5)
 
     if SERVER then
         local files = {"i_eat_jon_its_what_i_do.ogg", "i_gotta_have_a_good_meal.ogg", "i_hate_alarm_clocks.ogg", "im_am_hungry_i_want_some_lasaga.ogg", "its_time_to_kick_odie_off_the_table.ogg", "time_for_a_nap_im_a_cat_who_loves_to_snooze.ogg", "youre_going_into_orbit_you_stupid_mutt.ogg"}
@@ -395,15 +421,32 @@ function SWEP:DrawHUD()
     end
 
     draw.DrawText(txt, "DermaDefault", 10, 10, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT)
+    surface.SetDrawColor(255, 255, 255, 255)
+    surface.SetMaterial(lasagnaMat)
+
     GARFIELDOUTLINEPLY, blocked = self:GetTargetPlayer()
 
-    if GARFIELDOUTLINEPLY then
-        local data2D = GARFIELDOUTLINEPLY:LocalToWorld(GARFIELDOUTLINEPLY:OBBCenter()):ToScreen()
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(lasagnaMat)
-        surface.DrawTexturedRect(data2D.x - 64, data2D.y - 64, 128, 128)
-        -- draw.SimpleText( "V", "Trebuchet24", data2D.x, data2D.y, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    local eatin = self:GetNW2Entity("EATINGp") 
+    if IsValid(eatin) then
+        -- print(1)
+        if not EATINSTARTH then EATINSTARTH= eatin:Health()  end
+        local r = math.max(0, eatin:Health() / EATINSTARTH)
+        local data2D = eatin:LocalToWorld(eatin:OBBCenter()):ToScreen()
+        surface.DrawTexturedRectUV(data2D.x - 64, data2D.y - 64 + (1-r)*128, 128, r*128,0,1-r,1,1)
+    else
+        EATINSTARTH = nil
+        if GARFIELDOUTLINEPLY then
+            -- print(2)
+            local data2D = GARFIELDOUTLINEPLY:LocalToWorld(GARFIELDOUTLINEPLY:OBBCenter()):ToScreen()
+            surface.DrawTexturedRect(data2D.x - 64, data2D.y - 64, 128, 128)
+        else
+            -- print(3)
+        end
     end
+
+    
+
+
 
     for i, v in ipairs(blocked) do
         local data2D = v:LocalToWorld(v:OBBCenter()):ToScreen()
