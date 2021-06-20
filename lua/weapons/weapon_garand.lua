@@ -49,6 +49,11 @@ local HitSound = Sound("weapons/kar98/kar_shoot.wav")
 local BoltBack = Sound("weapons/kar98/boltback.wav")
 local BoltForward = Sound("weapons/kar98/boltforward.wav")
 
+-- Override function for displaying ammo count
+function SWEP:AmmoDisplayValue()
+    if(InGarandZone(self.Owner))then return "∞" end
+end
+
 game.AddAmmoType({
     name = "garand",
     dmgtype = DMG_BULLET,
@@ -220,12 +225,14 @@ killicon.Add( "weapon_sniper", "HUD/killicons/kcon_kar98", Color ( 0, 255, 0, 25
 end
 ]]
 function InGarandZone(v)
-    if v:GetPos():WithinAABox(Vector(-959, -1732, 332), Vector(-276, -1048, 431)) then
-        if v:GetPos():DistToSqr(Vector(-618, -1390, 382)) < 168 * 168 then return true end
-    end
-
+    local origin = Vector(-578, -1375, 396)
+    local ang = Angle(0,26.75,0)
+    local size = Vector(275,350,128)
+    local pos,normal,frac = util.IntersectRayWithOBB( v:EyePos(), v:GetAimVector(), origin, ang, -size/2, size/2 )
+    if(frac == 0)then return true end
     return false
 end
+
 
 hook.Add("ScalePlayerDamage", "garandthing", function(ply, hg, dmg)
     if dmg:GetAmmoType() == game.GetAmmoID("garand") then
