@@ -16,7 +16,6 @@ local innie = 28
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "ThrowState")
     self:NetworkVar("Int", 1, "ThrowPower")
-    self:NetworkVar("Bool", 0, "Throwing")
     self:NetworkVar("Float", 0, "StateTime")
     self:NetworkVar("Entity", 0, "ThrownBall")
     self:NetworkVarNotify("ThrowState", self.OnChangeThrowState)
@@ -48,10 +47,13 @@ function SWEP:OnChangeThrowState(name, old, new)
     end
 end
 
+function SWEP:GetThrowing()
+    return self:GetThrowState() > 0
+end
+
 function SWEP:BeginThrow(power)
     if (self:GetThrowing() or self:GetStateTime() > CurTime()) then return true end
     self:SetThrowPower(power)
-    self:SetThrowing(true)
     self:AdvanceState()
 end
 
@@ -84,7 +86,6 @@ function SWEP:AdvanceState()
 
     --change to throw pose
     if (curstate == 0) then
-        --self:EmitSound("Weapon_Pistol.Empty")
         self:SetStateTime(CurTime() + 0.15 - (delaytweak))
         self:SetThrowState(1)
 
@@ -93,12 +94,9 @@ function SWEP:AdvanceState()
 
     --play throw animation
     if (curstate == 1) then
-        --self:EmitSound("Weapon_Pistol.Empty")
         self:ThrowBall(self:GetThrowPower())
         self:SetStateTime(CurTime() + 0.3)
-        self.Thrown = true
         self:SetThrowState(2)
-
         return
     end
 

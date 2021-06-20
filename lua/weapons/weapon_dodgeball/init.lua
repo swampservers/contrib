@@ -4,7 +4,7 @@ include("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
-function makeDodgeball(pos, vel, player)
+makeDodgeball = makeDodgeball or function(pos, vel, player)
     e = ents.Create("dodgeball")
     e.thrower = player
     e:SetPos(pos)
