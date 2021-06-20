@@ -32,16 +32,15 @@ surface.CreateFont('SS_INCOMEFONT', {
 
 surface.CreateFont('SS_JOINFONT', {
     font = 'Lato',
-    size = 18,
+    size = 28,
     weight = 700
 })
 
-surface.CreateFont('SS_JOINFONTBIG', {
-    font = 'Lato',
-    size = 22,
-    weight = 700
-})
-
+-- surface.CreateFont('SS_JOINFONTBIG', {
+--     font = 'Lato',
+--     size = 28,
+--     weight = 700
+-- })
 surface.CreateFont('SS_DESCTITLEFONT', {
     font = 'Righteous',
     size = 32
@@ -243,7 +242,7 @@ function PANEL:Init()
 
     p.DoClick = function()
         SS_ToggleMenu()
-        ShowMotd("https://swampservers.net/points")
+        ShowMotd("https://swamp.sv/points")
     end
 
     -- toggle theme button
@@ -505,64 +504,81 @@ function PANEL:Init()
     end
 
     local xo = p:GetWide() + SS_BOTBARHEIGHT
-    -- if IN_DISCORD~=1 then
-    p = vgui.Create("DButton", self)
-    p:SetZPos(1000)
-    p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
-    p:SetSize(230, 72 + 50)
-    p:SetWrap(true)
-    p:SetTextInset(16, 0)
-    -- p:SetFont("SS_JOINFONT")
-    -- p:SetText("Click here to join our Discord for double income!")
-    p:SetText("")
-    p:NoClipping(true)
-    local DISCORDMATERIAL = Material("vgui/discordlogo.png")
 
-    function p:Paint(w, h)
-        local l = (math.sin(SysTime() * 3) + 1) * 0.1
-        local c = Color(Lerp(l, 114 * 0.9, 255), Lerp(l, 137 * 0.9, 255), Lerp(l, 218 * 0.9, 255))
-        draw.RoundedBox(16, 0, 0, w, h - 50, c)
-        local x1, y1 = 100, 40
+    if (IN_STEAMGROUP or 0) <= 0 then
+        p = vgui.Create("DButton", self)
+        p:SetZPos(1000)
+        p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
+        p:SetSize(360, 72 + 50)
+        p:SetWrap(true)
+        p:SetTextInset(16, 0)
+        -- p:SetFont("SS_JOINFONT")
+        -- p:SetText("Click here to join our Discord for double income!")
+        p:SetText("")
+        p:NoClipping(true)
+        local STEAMMATERIAL = Material("vgui/steamlogo.png")
 
-        local triangle = {
-            {
-                x = x1,
-                y = y1
-            },
-            {
-                x = x1 + 100,
-                y = y1
-            },
-            {
-                x = x1 + 50,
-                y = y1 + 50
-            },
-        }
+        function p:Paint(w, h)
+            local l = (math.sin(SysTime() * 3) + 1) * 0.1
+            local c = Color(Lerp(l, 27, 255), Lerp(l, 40, 255), Lerp(l, 56, 255))
+            draw.RoundedBox(16, 0, 0, w, h - 50, c)
+            local x1, y1 = 100, 40
 
-        surface.SetDrawColor(c.r, c.g, c.b, 255)
-        draw.NoTexture()
-        surface.DrawPoly(triangle)
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(DISCORDMATERIAL) -- Use our cached material
-        surface.DrawTexturedRect(4, 6, 64, 64)
-        draw.DrawText("Join our Discord for", 'SS_JOINFONT', 70, 4)
-        draw.DrawText("Double income &\n20,000 points!", 'SS_JOINFONTBIG', 70, 22)
-    end
+            local triangle = {
+                {
+                    x = x1,
+                    y = y1
+                },
+                {
+                    x = x1 + 100,
+                    y = y1
+                },
+                {
+                    x = x1 + 50,
+                    y = y1 + 50
+                },
+            }
 
-    p.Think = function(pnl)
-        -- pnl:SetVisible(IN_DISCORD~=1)
-        if IN_DISCORD == 1 then
-            pnl:Remove()
+            surface.SetDrawColor(c.r, c.g, c.b, 255)
+            draw.NoTexture()
+            surface.DrawPoly(triangle)
+            surface.SetDrawColor(255, 255, 255, 255)
+            surface.SetMaterial(STEAMMATERIAL) -- Use our cached material
+            surface.DrawTexturedRect(4, 3, 64, 64)
+
+            if self.clicked then
+                draw.DrawText("Nothing happen?\nClick again", 'SS_JOINFONT', 72, 4)
+            else
+                draw.DrawText("Join our Steam chat for\n2x income & 20,000 points!", 'SS_JOINFONT', 72, 4)
+            end
+            -- draw.DrawText("2x income & 20,000 points!", 'SS_JOINFONTBIG', 70, 38)
         end
+
+        -- p.Think = function(pnl)
+        --     -- pnl:SetVisible(IN_DISCORD~=1)
+        --     if IN_STEAMGROUP > 0 then
+        --         pnl:Remove()
+        --     end
+        -- end
+        p.DoClick = function(pnl)
+            -- if IN_DISCORD~=1 then
+            -- gui.OpenURL('http://swamp.sv/discord')
+            -- if pnl.clicked then 
+            gui.OpenURL('https://steamcommunity.com/groups/swampservers')
+        end
+        -- return end
+        -- local frame = vgui.Create( "DFrame" )
+        -- frame:SetTitle("")
+        -- frame:SetSize( 100,100)
+        -- frame:SetAlpha(0)
+        -- frame:Center()
+        -- frame:MakePopup()
+        -- local html = vgui.Create("DHTML", frame)
+        -- html:Dock(FILL)
+        -- html:OpenURL("https://s.team/chat/LzFgkFD4")
+        -- timer.Simple(2, function() if IsValid(frame) then frame:Remove() pnl.clicked = true end end)
     end
 
-    p.DoClick = function()
-        -- if IN_DISCORD~=1 then
-        gui.OpenURL('http://swampservers.net/discord')
-    end
-
-    -- gui.OpenURL('https://steamcommunity.com/groups/swampservers')
-    -- end
     -- end
     PointshopDollarParticlePoints = -0.2
     PointshopDollarParticles = {}
@@ -573,7 +589,7 @@ function PANEL:Init()
     p:SetText("")
 
     p.DoClick = function()
-        gui.OpenURL('https://swampservers.net/donate/')
+        gui.OpenURL('https://swamp.sv/donate/')
     end
 
     p.Paint = function(self, w, h)

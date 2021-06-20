@@ -43,6 +43,11 @@ if CLIENT then
                         vpanel:RunJavascript("if(typeof jwplayer === 'function'){var jwp=jwplayer('my_video');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());}") --jwplayer
 
                         return
+                    elseif vpanel.phase == 2 then
+                        vpanel:RunJavascript(string.format("th_video('%s');", string.JavascriptSafe(vpanel.data)))
+                        vpanel:RunJavascript("to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration())},100);")
+
+                        return
                     end
                 end
             end)
@@ -81,25 +86,20 @@ if CLIENT then
                             })]]
                         end
 
-                        if string.StartWith(msg, "DURATION:") and not self.duration then
-                            self.duration = msg:sub(10, -1)
-
-                            if self.duration == "0" or tonumber(self.duration) == nil then
-                                self.duration = nil
-                            end
-
-                            if self.duration then
-                                print("DURATION: " .. self.duration)
-                            end
-                        end
-
                         if string.StartWith(msg, "TITLE:") and not self.title then
                             self.title = msg:sub(7, -1)
                             print("TITLE: " .. self.title)
                         end
 
-                        if (self.data ~= nil and type(tonumber(self.duration)) == "number" and self.title ~= nil) then
-                            self.duration = math.floor(tonumber(self.duration))
+                        if (self.data ~= nil and self.title ~= nil) then
+                            self.phase = 2
+                            self:OpenURL("http://swamp.sv/s/cinema/file.html")
+                        end
+
+                        return
+                    elseif self.phase == 2 then
+                        if (msg:StartWith("DURATION:") and msg ~= "DURATION:NaN") then
+                            self.duration = math.ceil(tonumber(string.sub(msg, 10)))
                             print("Duration: " .. self.duration)
 
                             callback({
@@ -126,7 +126,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local url = "http://swampservers.net/cinema/file.html"
+        local url = "http://swamp.sv/s/cinema/file.html"
         panel:EnsureURL(url)
         local k = Video:Data()
         -- Let the webpage handle loading a video

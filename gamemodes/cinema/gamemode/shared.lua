@@ -3,7 +3,7 @@
 GM.Name = "Cinema"
 GM.Author = "Swamp(STEAM_0:0:38422842) and pixelTail Games"
 GM.Email = "swampservers@gmail.com"
-GM.Website = "swampservers.net"
+GM.Website = "swamp.sv"
 GM.Version = "swamp"
 GM.TeamBased = false
 include('sh_load.lua')
@@ -59,7 +59,7 @@ function GM:EntityTakeDamage(target, dmginfo)
     att = dmginfo:GetAttacker()
 
     if (dmginfo:GetInflictor() and dmginfo:GetInflictor():IsValid() and dmginfo:GetInflictor():GetClass() == "npc_grenade_frag") then
-        dmginfo:ScaleDamage(100)
+        dmginfo:ScaleDamage(2) --100)
     end
 
     if (dmginfo:GetAttacker() and dmginfo:GetAttacker():IsValid() and dmginfo:GetAttacker():GetClass() == "player" and dmginfo:GetAttacker():GetActiveWeapon() and dmginfo:GetAttacker():GetActiveWeapon():IsValid() and dmginfo:GetAttacker():GetActiveWeapon():GetClass() == "weapon_shotgun") then
@@ -99,6 +99,8 @@ end
 function GM:PhysgunPickup(ply, ent)
     if (ent:GetClass():lower() == "player") then
         if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) and not ent:IsFrozen() then
+            if ent.Obesity and ent:Obesity()>40 then return end
+
             ply.physgunHeld = ent
 
             return true

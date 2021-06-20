@@ -7,16 +7,16 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
     local datalink = nil
 
     local onReceive = function(info)
-        http.Post("https://swampservers.net/fedorabot/gis.php", {
+        http.Post("https://swamp.sv/fedorabot/gis.php", {
             q = info.title
         }, function(body)
-            info.thumb = "http://swampservers.net/cinema/contain.php?i=" .. body
+            info.thumb = "http://swamp.sv/s/cinema/contain.php?i=" .. body
             onSuccess(info)
         end, onFailure)
     end
 
     local onFetchReceive = function(body, length, headers, code)
-        if (headers["Access-Control-Allow-Origin"] and headers["Access-Control-Allow-Origin"] ~= "*" and headers["Access-Control-Allow-Origin"] ~= "https://swampservers.net/") then
+        if (headers["Access-Control-Allow-Origin"] and headers["Access-Control-Allow-Origin"] ~= "*" and headers["Access-Control-Allow-Origin"] ~= "https://swamp.sv/") then
             datalink = "https://cors.oak.re/" .. (datalink or key)
         end
 

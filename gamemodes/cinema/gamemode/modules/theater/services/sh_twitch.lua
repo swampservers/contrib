@@ -20,7 +20,7 @@ end
 if CLIENT then
     -- HTTPS NOT HTTP
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("https://swampservers.net/cinema/twitch.html")
+        panel:EnsureURL("https://swamp.sv/s/cinema/twitch.html")
         -- Let the webpage handle loading a video
         local str = string.format("th_video('%s');", string.JavascriptSafe(Video:Key()))
         panel:QueueJavascript(str)

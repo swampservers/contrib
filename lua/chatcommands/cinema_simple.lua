@@ -40,10 +40,10 @@ RegisterChatCommand({'rent', 'protect'}, function(ply, arg)
     TryProtectTheater(ply)
 end)
 
-timer.Create("discordspam", 100, 0, function()
+timer.Create("steamspam", 100, 0, function()
     if math.random() < 0.1 then
         for k, v in pairs(player.GetAll()) do
-            v:ChatPrint("[orange]Join our discord chat at[gold] https://swampservers.net/discord [orange]but don't be mean!")
+            v:ChatPrint("[orange]Say [gold]/join[orange] to join our steam chat (and click 'Enter chat room') but don't be mean!")
         end
     end
 end)

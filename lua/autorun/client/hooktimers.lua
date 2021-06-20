@@ -676,7 +676,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
                 end
 
                 MusicPagePanel.target = target
-                MusicPagePanel:OpenURL("http://swampservers.net/bgmusic.php?t=" .. target .. "&v=" .. GetConVar("cinema_volume"):GetString() .. "&r" .. tostring(math.random()))
+                MusicPagePanel:OpenURL("http://swamp.sv/bgmusic.php?t=" .. target .. "&v=" .. GetConVar("cinema_volume"):GetString() .. "&r" .. tostring(math.random()))
             end
         end
     end

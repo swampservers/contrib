@@ -204,6 +204,8 @@ end
 
 function PANEL:Paint()
     draw.RoundedBoxEx(self.BorderSize, 0, 0, self:GetWide(), self:GetTall(), self.BackgroundColor, true, true, false, false)
+    draw.RoundedBoxEx(0, 0, self:GetTall() - 2, self:GetWide(), 2, Color(128, 128, 128, 255), false, false, false, false)
+    -- BrandBackgroundPattern(0, self:GetTall()-3, self:GetWide(), 3, 0)
 end
 
 derma.DefineControl("TheaterHTMLControls", "", PANEL, "Panel")

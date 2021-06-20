@@ -62,6 +62,7 @@ function SWEP:GetCurrentDecal()
     --     net.Start("BanMe")
     --     net.SendToServer()
     -- end
+
     return "stencil_decal27"
 end
 

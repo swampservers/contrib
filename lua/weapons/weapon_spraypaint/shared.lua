@@ -63,16 +63,6 @@ if (SERVER) then
     util.AddNetworkString("SpraypaintNetworked")
 end
 
-if (CLIENT) then
-    net.Receive("SpraypaintNetworked", function(len)
-        local ent = net.ReadEntity()
-
-        if (ent:IsValid()) then
-            ent:PrimaryAttack()
-        end
-    end)
-end
-
 function SWEP:PrimaryAttack()
     local ply = self:GetOwner()
 
@@ -115,6 +105,16 @@ function SWEP:PrimaryAttack()
     end)
 
     self:SetNextPrimaryFire(CurTime() + (self.PaintDelay))
+end
+
+if (CLIENT) then
+    net.Receive("SpraypaintNetworked", function(len)
+        local ent = net.ReadEntity()
+
+        if IsValid(ent) and ent.PrimaryAttack then
+            ent:PrimaryAttack()
+        end
+    end)
 end
 
 function SWEP:SecondaryAttack()
@@ -165,7 +165,6 @@ function SWEP:GetCurrentDecal()
     end
 
     if (SPRAYPAINT_DECALS_WHITELIST[decal]) then return decal end
-
     -- if decal~="" and ply==LocalPlayer() then
     --     net.Start("BanMe")
     --     net.SendToServer()

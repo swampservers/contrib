@@ -25,7 +25,7 @@ end
 CinemaHttpHeaders = {
     ["Cache-Control"] = "no-cache",
     ["Connection"] = "keep-alive",
-    ["Referer"] = "https://swampservers.net/"
+    ["Referer"] = "https://swamp.sv/"
 }
 
 -- Required for Google API requests; uses browser API key.
@@ -77,7 +77,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("http://swampservers.net/cinema/" .. self:GetClass() .. ".html")
+        panel:EnsureURL("http://swamp.sv/s/cinema/" .. self:GetClass() .. ".html")
         -- Let the webpage handle loading a video
         local str = string.format("th_video('%s');", string.JavascriptSafe(Video:Key()))
         panel:QueueJavascript(str)

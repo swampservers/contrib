@@ -12,7 +12,7 @@ end
 
 if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
-        local url = "http://swampservers.net/cinema/hls.html"
+        local url = "http://swamp.sv/s/cinema/hls.html"
         panel:EnsureURL(url)
 
         --using a 2 second delay is the fastest way to load the video, sending th_video any quicker is much much slower for whatever reason
