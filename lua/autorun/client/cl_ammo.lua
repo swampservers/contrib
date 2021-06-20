@@ -21,7 +21,7 @@ hook.Add("HUDPaint","SwampHealthAmmo",function()
 
     if(GetConVar("cinema_hideinterface") and GetConVar("cinema_hideinterface"):GetBool() == true)then return end
     local ply=  LocalPlayer()
-    local drawhealth = true or ply:Alive() and ply:Health() < ply:GetMaxHealth()
+    local drawhealth = ply:Alive() and ply:Health() < ply:GetMaxHealth()
     HEALTH_ALPHA = math.Approach(HEALTH_ALPHA or 0,drawhealth and 1 or 0,FrameTime()*4)
     local alpha = HEALTH_ALPHA
     local col = Color(255, 255, 255, alpha*255)
