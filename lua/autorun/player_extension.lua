@@ -260,7 +260,6 @@ function PLAYER:Unstick()
         self:DropToFloor()
         return true
     else
-        self:ChatPrint("Couldn't find anywhere safe to put you")
         return false
     end
 end
