@@ -83,6 +83,10 @@ function SS_WeaponProduct(product)
         self:SS_WeaponProduct_OnBuy(ply)
     end
 
+    function product:CannotBuy(ply)
+        return ply:HasWeapon(self.Class) and "You're already carrying this."
+    end
+
     SS_DeathKeepnotice(product)
     SS_Product(product)
 end
@@ -90,21 +94,41 @@ end
 function SS_WeaponAndAmmoProduct(product)
     function product:OnBuy(ply)
         if not ply:HasWeapon(self.class) then
-            ply:Give(self.class)
+            local wep = ply:Give(self.class)
+            
+            if(self.amount)then --ensure the player has at least this many ammo when giving a new one to them. Otherwise, give them whatever is standard.
+                local ammotype = self.ammotype or game.GetAmmoName(wep:GetPrimaryAmmoType())
+                local curammo = ply:GetAmmoCount(self.ammotype)
+                ply:SetAmmo(math.max(curammo,self.amount),ammotype)
+            end
+        else
             local wep = ply:GetWeapon(self.class)
+            local ammotype = self.ammotype or game.GetAmmoName(wep:GetPrimaryAmmoType())
+            local ammogive = self.amount or (wep.Primary and wep.Primary.DefaultClip) or wep:GetMaxClip1() or -1
 
-            if wep:Clip1() > 0 then
-                wep:SetClip1(0)
+            if (ammogive == -1) then
+                ammogive = nil
             end
 
-            ply:SetAmmo(self.amount, self.ammotype)
-        else
-            ply:GiveAmmo(self.amount, self.ammotype)
+            if (ammotype and ammogive) then
+                ply:GiveAmmo(ammogive, ammotype)
+            end
         end
-
         ply:SelectWeapon(self.class)
     end
-
+    function product:CannotBuy(ply)
+        if (ply:HasWeapon(self.class)) then
+            local wep = ply:GetWeapon(self.class)
+            local ammotype = self.ammotype or (game.GetAmmoName(wep:GetPrimaryAmmoType()))
+            local ammogive = self.amount or (wep.Primary and wep.Primary.DefaultClip) or wep:GetMaxClip1() or -1
+            if (ammogive == -1) then
+                ammogive = nil
+            end
+            if (ammotype == nil or ammogive == nil) then return "This weapon cannot be refilled" end
+            local limit = self.maxammo or game.GetAmmoMax(game.GetAmmoID(ammotype)) or 0
+            if (limit != 0 and ply:GetAmmoCount(ammotype) >= limit) then return "You can't carry any more of this ammo" end
+        end
+    end
     SS_DeathKeepnotice(product)
     SS_Product(product)
 end
