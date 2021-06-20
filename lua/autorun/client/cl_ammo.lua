@@ -78,7 +78,6 @@ hook.Add("HUDPaint","SwampHealthAmmo",function()
     end
 
     AMMO_ALPHA = math.Approach(AMMO_ALPHA or 0,drawammo and 1 or 0,FrameTime()*4)
-    print(wep:GetModel())
     if(drawammo and wep:GetModel())then
         LASTAMMOICON = GetAutoIcon(wep:GetModel(), AUTOICON_HL2WEAPONSELECT)  
     end
