@@ -10,10 +10,12 @@ SS_WeaponProduct({
     class = 'weapon_crossbow'
 })
 
-SS_WeaponProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Big Frickin\' Gun',
     description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
     price = 20000,
+    ammotype = "doom3_bfg",
+    amount = 1,
     model = "models/weapons/doom3/w_bfg.mdl",
     class = 'weapon_doom3_bfg'
 })
