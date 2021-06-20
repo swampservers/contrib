@@ -210,6 +210,8 @@ if CLIENT then
 
     TRUSTED_HOST = {
         ["www.swamp.sv"] = true,
+        ["www.redpilled.eu"] = true,
+        ["redpilled.eu"] = true,
         ["www.dropbox.com"] = true,
         ["www.puu.sh"] = true,
         ["cdn.discordapp.com"] = true,
@@ -232,6 +234,8 @@ if CLIENT then
 
                     if v and not v:ShouldTrust() then
                         local host = v:Service():GetHost(v)
+
+                        -- print(host)
 
                         if host ~= nil then
                             TRUSTED_HOST[host] = true
