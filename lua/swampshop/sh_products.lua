@@ -104,9 +104,9 @@ function SS_WeaponAndAmmoProduct(product)
         else
             local wep = ply:GetWeapon(self.class)
             local ammotype = self.ammotype or game.GetAmmoName(wep:GetPrimaryAmmoType())
-            local ammogive = self.amount or (wep.Primary and wep.Primary.DefaultClip) or wep:GetMaxClip1() or -1
+            local ammogive = self.amount or (wep.Primary and wep.Primary.DefaultClip) or wep:GetMaxClip1() or 0
 
-            if (ammogive == -1) then
+            if (ammogive <= 0) then
                 ammogive = nil
             end
 
@@ -120,11 +120,11 @@ function SS_WeaponAndAmmoProduct(product)
         if (ply:HasWeapon(self.class)) then
             local wep = ply:GetWeapon(self.class)
             local ammotype = self.ammotype or (game.GetAmmoName(wep:GetPrimaryAmmoType()))
-            local ammogive = self.amount or (wep.Primary and wep.Primary.DefaultClip) or wep:GetMaxClip1() or -1
-            if (ammogive == -1) then
+            local ammogive = self.amount or (wep.Primary and wep.Primary.DefaultClip) or wep:GetMaxClip1() or 0
+            if (ammogive <= 0) then
                 ammogive = nil
             end
-            if (ammotype == nil or ammogive == nil) then return "This weapon cannot be refilled" end
+            if (ammotype == nil or ammogive == nil) then return "Cannot Refill Ammo. Please report this as a bug." end
             local limit = self.maxammo or game.GetAmmoMax(game.GetAmmoID(ammotype)) or 0
             if (limit != 0 and ply:GetAmmoCount(ammotype) >= limit) then return "You can't carry any more of this ammo" end
         end
