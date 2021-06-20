@@ -11,7 +11,7 @@ function SWEP:ThrownBallExists()
     if(IsValid(self.fakethrownball))then return true end
     
     local lookent = ply:GetEyeTrace().Entity
-    if(IsValid(lookent) and lookent:GetClass() == "dodgeball")then
+    if(IsValid(lookent) and lookent:GetClass() == "dodgeball" and lookent:GetPos():Distance(ply:EyePos()) < 128)then
         self.fakethrownball = lookent
         return true
     end
