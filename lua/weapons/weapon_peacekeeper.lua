@@ -28,6 +28,8 @@ game.AddAmmoType({
 SWEP.Primary.Damage = 15
 SWEP.Primary.ClipSize = 2
 SWEP.Primary.Ammo = "peaceshot"
+SWEP.Primary.ClipSize = 2
+SWEP.Primary.DefaultClip = 2
 SWEP.Primary.Automatic = false
 SWEP.Primary.TakeAmmo = 1
 SWEP.Primary.Force = 2000
@@ -35,9 +37,9 @@ SWEP.Primary.Spread = 0
 SWEP.Primary.Recoil = 2
 SWEP.Primary.Delay = 0.25
 SWEP.Primary.NumberofShots = 18
-SWEP.Secondary.ClipSize = 1
+SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.Ammo = "none"
-SWEP.Secondary.DefaultClip = 1
+SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Delay = 0
 SWEP.Secondary.Damage = 0
@@ -156,7 +158,7 @@ function SWEP:PrimaryAttack()
     --self.Owner:MuzzleFlash() -- Crappy muzzle light
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
-
+    if(!self.Owner:OnGround())then self.Owner:SetVelocity(self.Owner:GetAimVector()*-400) end
     if self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1 then
         bullet.Damage = bullet.Damage
         bullet.Num = bullet.Num * 2 --math.floor(bullet.Num * 1.5)
