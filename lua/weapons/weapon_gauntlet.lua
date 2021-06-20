@@ -11,8 +11,8 @@ SWEP.WorldModel = "models/swamp/v_infinitygauntlet.mdl"
 SWEP.ViewModelFlip = false
 --SWEP.ViewModelFOV           = 60
 SWEP.Spawnable = true
-SWEP.Primary.ClipSize = -1
-SWEP.Primary.DefaultClip = -1
+SWEP.Primary.ClipSize = 0
+SWEP.Primary.DefaultClip = 1
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "infinitygauntlet"
 SWEP.Secondary.ClipSize = -1
@@ -61,15 +61,10 @@ function meta:Fizzle(attacker, inflictor, damage)
 end
 
 function SWEP:Equip(ply)
-    if(SERVER)then
-        ply:GiveAmmo(1,"infinitygauntlet")
-    end
+
 end
 
 function SWEP:EquipAmmo(ply)
-    if(SERVER)then
-        ply:GiveAmmo(1,"infinitygauntlet")
-    end
 end
 
 function SWEP:Snap()
@@ -85,7 +80,7 @@ function SWEP:Snap()
 
         
             self:TimerSimple(0.5, function()
-                if (SERVER and self:GetOwner():GetAmmoCount("infinitygauntlet") <= 0) then
+                if (SERVER and self:Ammo1() <= 0) then
                 if IsValid(self) then
                     self:Remove()
                 end
