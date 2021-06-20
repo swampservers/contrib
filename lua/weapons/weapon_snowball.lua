@@ -38,7 +38,6 @@ hook.Add("PlayerSpawn","PlayerACSnowball",function(ply)
         if(ply.FrozenBalls or 0 > 2 )then util.ScreenShake(ply:GetPos(), 1, 0.07, 6, 32 ) end
         if(ply:OnGround())then
             local trace = util.TraceLine(util.GetPlayerTrace( ply, Vector(0,0,-1) ))
-            print("pee",ply.FrozenBalls,trace.HitTexture)
             if(trace.HitTexture == "PROPS/METALFAN001A")then
                 ply.FrozenBalls = math.min((ply.FrozenBalls or 0) + 2,8)
                 if(ply.FrozenBalls >= 5)then
