@@ -35,7 +35,7 @@ if ti == "December" then
 end
 hook.Add("PlayerSpawn","PlayerACSnowball",function(ply)
     ply:TimerCreate("ACSnowball",4,0,function()
-        if(ply.FrozenBalls or 0 > 2 )then util.ScreenShake(ply:GetPos(), 1, 0.07, 6, 32 ) end
+        if((ply.FrozenBalls or 0) > 2 )then util.ScreenShake(ply:GetPos(), 1, 0.07, 6, 32 ) end
         if(ply:OnGround())then
             local trace = util.TraceLine(util.GetPlayerTrace( ply, Vector(0,0,-1) ))
             if(trace.HitTexture == "PROPS/METALFAN001A")then
