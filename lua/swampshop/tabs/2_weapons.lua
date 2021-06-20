@@ -74,11 +74,13 @@ SS_WeaponProduct({
     class = 'weapon_bigbomb'
 })
 
-SS_WeaponProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Infinity Gauntlet',
     description = '*snap*',
     price = 13000,
     model = 'models/swamp/v_infinitygauntlet.mdl',
+    ammotype = "infinitygauntlet",
+    amount = 1,
     class = 'weapon_gauntlet'
 })
 
