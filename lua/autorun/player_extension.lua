@@ -201,14 +201,6 @@ function PLAYER:IsStuck()
     return false
 end
 
-if (SERVER) then
-    concommand.Add("stuck", function(ply, cmd, args)
-        local worked = ply:Unstick()
-        local msg = (worked == true and "Unstuck!") or (worked == false and "Couldn't Unstick! Try to /tp to another player!") or (worked == nil and "You don't appear to be stuck.")
-        ply:ChatPrint(msg)
-    end)
-end
-
 function PLAYER:Unstick()
     if (not self:IsStuck()) then
         return 
