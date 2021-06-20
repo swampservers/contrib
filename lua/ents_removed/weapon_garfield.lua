@@ -3,7 +3,7 @@
 
 SWEP.PrintName = "Garfield"
 SWEP.Purpose = "Eat"
-SWEP.Instructions = "Primary: Eat\n\nYou can eat players smaller and slightly larger than you. The bigger you get, the more health you have. To eat larger players, soften them up with weapons first, but be aware that they heal quickly based on size."
+SWEP.Instructions = "Primary: Eat\n\nYou can eat players smaller and slightly larger than you. The bigger you get, the more health you have. To eat larger players, soften them up with weapons first, but be aware that they heal quickly based on size.\n\nR: Leap (costs weight!!)"
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.DrawWeaponInfoBox = true
@@ -61,9 +61,9 @@ function Player:SetObesity(obs)
         UpdateViewHeight(self)
     end
 
-    self:SetRunSpeed(330 / self:ObesitySpeedScale())
-    self:SetWalkSpeed(330 / self:ObesitySpeedScale())
-    self:SetSlowWalkSpeed(330 / self:ObesitySpeedScale())
+    self:SetRunSpeed(350 / self:ObesitySpeedScale())
+    self:SetWalkSpeed(350 / self:ObesitySpeedScale())
+    self:SetSlowWalkSpeed(350 / self:ObesitySpeedScale())
     local mh = 100 * self:Obesity()
     self:SetMaxHealth(mh)
     self:SetHealth(math.min(self:Health(), mh))
@@ -94,8 +94,9 @@ function Player:SetObesity(obs)
             table.remove(FATTESTCATS)
         end
 
-        --if util.TableToJSON(FATTESTCATS) ~= old then 
-        SetG("FATTESTCATS", FATTESTCATS) --end
+        if util.TableToJSON(FATTESTCATS) ~= old then 
+            SetG("FATTESTCATS", FATTESTCATS)
+        end
 
         if not IsValid(CURFATTESTCAT) or CURFATTESTCAT:Obesity() < obs then
             CURFATTESTCAT = self
@@ -109,7 +110,7 @@ function Player:ObesityScale()
 end
 
 function Player:ObesitySpeedScale()
-    return math.pow(self:Obesity(), 1 / 4)
+    return math.pow(self:Obesity(), 1 / 8) --4)
 end
 
 hook.Add("PlayerSpawn", "ResetGarfield", function(ply)
@@ -126,7 +127,7 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
 
     if IsValid(eater) then
         local vo, ao = vic:Obesity(), eater:Obesity()
-        local ratio = math.min(math.pow(vo / ao, 0.55),1) * 0.8 --math.min(0.7, (vo/ao))
+        local ratio = 1 --math.min(math.pow(vo / ao, 0.3),1) * 0.9 --math.min(0.7, (vo/ao))
 
         if ratio < 0.3 then
             if ratio <= 0.1 then
@@ -139,7 +140,7 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
         if ratio > 0.1 then
             eater:SetObesity(ao + vo * ratio)    
         end
-        eater:SetHealth(eater:Health() + (eater:GetMaxHealth()-eater:Health())*ratio)
+        eater:SetHealth(eater:Health() + (eater:GetMaxHealth()-eater:Health())*(ratio)) --/0.9))
         vic:SetNW2Entity("EATER", nil)
     end
 end)
@@ -147,11 +148,11 @@ end)
 if SERVER then
     timer.Create("GarfieldDecay", 30, 0, function()
         for k, v in pairs(player.GetAll()) do
-            v:SetObesity(math.max(1, v:Obesity() * 0.98))
+            -- v:SetObesity(math.max(1, v:Obesity() * 0.99))
         end
     end)
 
-    timer.Create("GarfieldHeal", 10, 0, function()
+    timer.Create("GarfieldHeal", 10, 0, function() --10
         for k, v in pairs(player.GetAll()) do
             v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
         end
@@ -176,14 +177,10 @@ if SERVER then
         local self = owner:GetActiveWeapon()
         if not (IsValid(self) and self:GetClass()=="weapon_garfield") then return end
 
-        
-
         local ply = len>0 and net.ReadEntity() or nil
 
-        -- print("E", owner, ply)
-        print("P", ply)
         if IsValid(ply) and self:ValidTarget(ply) then
-            print("OK")
+
             self:SetNW2Entity("EATINGp", ply)
             local swsp, wsp, rsp = ply:GetSlowWalkSpeed(), ply:GetWalkSpeed(), ply:GetRunSpeed()
 
@@ -221,7 +218,7 @@ if SERVER then
                     return
                 end
 
-                if not IsValid(self) or not IsValid(eater) or not eater:Alive() or issafe(eater) then
+                if not IsValid(self) or not IsValid(eater) or not eater:Alive() or issafe(eater) or not self:ValidTarget(ply) then
                     Finish()
                     ply:SetSlowWalkSpeed(ply.properSWSP or 1)
                     ply:SetWalkSpeed(ply.properWSP or 1)
@@ -231,7 +228,7 @@ if SERVER then
                     return
                 end
 
-                local loss = math.floor(7 + ply:GetMaxHealth() / 150)
+                local loss = math.floor(9 + ply:GetMaxHealth() / 80)
                 local expectedHealth = ply:Health() - loss
                 local dmginfo = DamageInfo()
                 dmginfo:SetAttacker(self.Owner)
@@ -298,7 +295,7 @@ if SERVER then
                 util.Effect("BloodImpact", effectdata, true, true)
                 util.Effect("bloodspray", effectdata, true, true)
                 eater:SetAnimation(PLAYER_ATTACK1)
-                timer.Simple(0.02, Update)
+                timer.Simple(0.1, Update)
             end
 
             timer.Simple(0, function()
@@ -351,6 +348,7 @@ function SWEP:PrimaryAttack()
         if ply and alpha>=1 then
             surface.PlaySound("physics/flesh/flesh_bloody_break.wav")
             net.WriteEntity(ply)
+            -- self:SetNW2Entity("EATINGp", ply) 
             -- print("E")
         end
         net.SendToServer()
@@ -363,7 +361,7 @@ function CylinderDist(v1,v2)
 end
 
 function SWEP:MaxRange()
-    return 60 + 30 * math.pow(self.Owner:ObesityScale(),0.7)
+    return 65 + 25 * self.Owner:ObesityScale()
 end
 
 
@@ -377,9 +375,9 @@ end
 
 -- copied below
 function SWEP:ValidTarget(v)
-    local av = self.Owner:GetAimVector()
+    if self.Owner:GetNW2Entity("EATER")==v and not self:IsTooBig(v) then return true end
     if issafe(v) or self:IsTooBig(v) then return false end
-    if CylinderDist(v:GetPos(),self.Owner:GetPos()) > self:MaxRange() * (((3))) then return false end
+    if CylinderDist(v:GetPos(),self.Owner:GetPos()) > (self:MaxRange() * 1.5 + 60) then return false end
     return true
 end
 
@@ -392,6 +390,7 @@ end
 -- self.Owner:GetPos():Distance(ply:GetPos())
 
 function SWEP:GetTargetPlayer()
+    if Safe(self.Owner) then return nil, 0, {} end
 
         local maxdist = self:MaxRange()
 
@@ -452,6 +451,11 @@ function SWEP:GetTargetPlayer()
                 best = v
                 bestalpha = alpha
             end
+        end
+
+        if IsValid(self.Owner:GetNW2Entity("EATER")) and not self:IsTooBig(self.Owner:GetNW2Entity("EATER")) then
+            best = self.Owner:GetNW2Entity("EATER")
+            bestalpha = 1
         end
 
         return best, math.Clamp(bestalpha,0,1), blocked
@@ -525,6 +529,35 @@ function SWEP:SecondaryAttack()
         })
     end
 end
+
+function SWEP:Reload()
+    if SERVER then
+
+    end
+end
+
+hook.Add("KeyPress","GarfieldJump",function(ply,key)
+    if CLIENT then return end
+    if key~=IN_JUMP then return end
+    local self = ply:GetWeapon("weapon_garfield")
+    if not IsValid(self) then return end
+
+    if not self.Owner:Crouching()  then self.Owner:Notify("Crouch and jump to leap forward (costs weight)") return end
+    if not self.Owner:IsOnGround() then return end
+    if CurTime()-(self.lastreload or 0) < 5 then return end
+    self.lastreload = CurTime()
+
+    self.Owner:SetPos(self.Owner:GetPos()+Vector(0,0,1))
+    local av = self.Owner:GetAimVector()
+
+    av.z=math.max(av.z, 0.5)
+    av:Normalize()
+
+    self.Owner:SetVelocity(av*450 - self.Owner:GetVelocity())
+
+    self.Owner:SetObesity(math.max(1, self.Owner:Obesity() * 0.95))
+end)
+
 
 function SWEP:Deploy()
     self.Owner:DrawViewModel(false)
@@ -623,11 +656,12 @@ function SWEP:DrawHUD()
     
 
 
-
+    if not Safe(self.Owner) then
     for i, v in ipairs(blocked) do
         local data2D = v:LocalToWorld(v:OBBCenter()):ToScreen()
         -- draw.SimpleText("X", "DermaLarge", data2D.x, data2D.y, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         surface.SetDrawColor(255,0,0, 255)
         surface.DrawTexturedRect(data2D.x - 64, data2D.y - 64, 128,128) 
     end
+end
 end
