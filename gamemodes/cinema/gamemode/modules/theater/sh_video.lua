@@ -236,7 +236,6 @@ if CLIENT then
                         local host = v:Service():GetHost(v)
 
                         -- print(host)
-
                         if host ~= nil then
                             TRUSTED_HOST[host] = true
                         end

@@ -52,15 +52,14 @@ function ReleaseMonster(ply)
     end
 
     if ply.cantStartmonster then
-        if not ply.HVP_EVOLVED then --and not (ply.Obesity and ply:Obesity()>40) then
+        --and not (ply.Obesity and ply:Obesity()>40) then
+        if not ply.HVP_EVOLVED then
             ply.realFov = ply:GetFOV()
             ply.realWalkSpeed = ply:GetWalkSpeed()
             ply.realRunSpeed = ply:GetRunSpeed()
-
-            local ratio = ply.realRunSpeed/300
-
-            ply:SetWalkSpeed(280*ratio)
-            ply:SetRunSpeed(420*ratio)
+            local ratio = ply.realRunSpeed / 300
+            ply:SetWalkSpeed(280 * ratio)
+            ply:SetRunSpeed(420 * ratio)
             ply:SetFOV(ply.realFov + 10, 1)
         end
 

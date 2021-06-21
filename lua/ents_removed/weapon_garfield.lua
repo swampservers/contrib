@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 SWEP.PrintName = "Garfield"
 SWEP.Purpose = "Eat"
 SWEP.Instructions = "Primary: Eat\n\nYou can eat players smaller and slightly larger than you. The bigger you get, the more health you have. To eat larger players, soften them up with weapons first, but be aware that they heal quickly based on size.\n\nR: Leap (costs weight!!)"
@@ -31,11 +30,12 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 local Player = FindMetaTable("Player")
 
-hook.Add("PlayerModelChanged","GarfHead" ,function(ply, mdl)
+hook.Add("PlayerModelChanged", "GarfHead", function(ply, mdl)
     if mdl:find("garfield.mdl") then
         local bn = ply:LookupBone("ValveBiped.Bip01_Head1")
+
         if bn then
-            ply:ManipulateBoneScale(bn, Vector(1,1,1)*0.9)
+            ply:ManipulateBoneScale(bn, Vector(1, 1, 1) * 0.9)
         end
     end
 end)
@@ -45,17 +45,22 @@ timer.Simple(1, function()
 end)
 
 FATTESTCATS = FATTESTCATS or {}
--- table.remove(FATTESTCATS,1)
--- table.remove(FATTESTCATS,1)
--- table.remove(FATTESTCATS,1)
 
+-- table.remove(FATTESTCATS,1)
+-- table.remove(FATTESTCATS,1)
+-- table.remove(FATTESTCATS,1)
 function Player:Obesity()
     return self:GetNWFloat("garfield", 1)
 end
 
 function Player:SetObesity(obs)
     self:SetNWFloat("garfield", obs)
-    if not self:IsBot() then self:SetModelScale(self:ObesityScale() * 0.55) else self:SetModelScale(0.75) end
+
+    if not self:IsBot() then
+        self:SetModelScale(self:ObesityScale() * 0.55)
+    else
+        self:SetModelScale(0.75)
+    end
 
     if SERVER then
         UpdateViewHeight(self)
@@ -94,7 +99,7 @@ function Player:SetObesity(obs)
             table.remove(FATTESTCATS)
         end
 
-        if util.TableToJSON(FATTESTCATS) ~= old then 
+        if util.TableToJSON(FATTESTCATS) ~= old then
             SetG("FATTESTCATS", FATTESTCATS)
         end
 
@@ -110,7 +115,8 @@ function Player:ObesityScale()
 end
 
 function Player:ObesitySpeedScale()
-    return math.pow(self:Obesity(), 1 / 8) --4)
+    --4)
+    return math.pow(self:Obesity(), 1 / 8)
 end
 
 hook.Add("PlayerSpawn", "ResetGarfield", function(ply)
@@ -138,9 +144,10 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
         end
 
         if ratio > 0.1 then
-            eater:SetObesity(ao + vo * ratio)    
+            eater:SetObesity(ao + vo * ratio)
         end
-        eater:SetHealth(eater:Health() + (eater:GetMaxHealth()-eater:Health())*(ratio)) --/0.9))
+
+        eater:SetHealth(eater:Health() + (eater:GetMaxHealth() - eater:Health()) * (ratio)) --/0.9))
         vic:SetNW2Entity("EATER", nil)
     end
 end)
@@ -152,13 +159,13 @@ if SERVER then
         end
     end)
 
-    timer.Create("GarfieldHeal", 10, 0, function() --10
+    --10
+    timer.Create("GarfieldHeal", 10, 0, function()
         for k, v in pairs(player.GetAll()) do
             v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
         end
     end)
 end
-
 
 function SWEP:Initialize()
     self:SetHoldType("normal")
@@ -168,19 +175,15 @@ local function issafe(v)
     return Safe(v) or (v:InTheater() and v:InVehicle())
 end
 
-
 if SERVER then
     util.AddNetworkString("GarfieldEat")
 
-
-    net.Receive("GarfieldEat", function(len,owner)
+    net.Receive("GarfieldEat", function(len, owner)
         local self = owner:GetActiveWeapon()
-        if not (IsValid(self) and self:GetClass()=="weapon_garfield") then return end
-
-        local ply = len>0 and net.ReadEntity() or nil
+        if not (IsValid(self) and self:GetClass() == "weapon_garfield") then return end
+        local ply = len > 0 and net.ReadEntity() or nil
 
         if IsValid(ply) and self:ValidTarget(ply) then
-
             self:SetNW2Entity("EATINGp", ply)
             local swsp, wsp, rsp = ply:GetSlowWalkSpeed(), ply:GetWalkSpeed(), ply:GetRunSpeed()
 
@@ -204,10 +207,13 @@ if SERVER then
 
             -- ply:EmitSound("ambient/creatures/town_child_scream1.wav")
             local function Finish()
-                if IsValid(ply) then ply:SetNW2Entity("EATER", nil) end
+                if IsValid(ply) then
+                    ply:SetNW2Entity("EATER", nil)
+                end
+
                 if IsValid(self) then
-                self:SetNW2Entity("EATINGp", nil)
-                self:SetHoldType("normal")
+                    self:SetNW2Entity("EATINGp", nil)
+                    self:SetHoldType("normal")
                 end
             end
 
@@ -223,7 +229,6 @@ if SERVER then
                     ply:SetSlowWalkSpeed(ply.properSWSP or 1)
                     ply:SetWalkSpeed(ply.properWSP or 1)
                     ply:SetRunSpeed(ply.properRSP or 1)
-                    
 
                     return
                 end
@@ -243,22 +248,23 @@ if SERVER then
                 end
 
                 -- if expectedHealth > 0 then
-                    -- ply:SetHealth(expectedHealth)
+                -- ply:SetHealth(expectedHealth)
                 -- else
                 local v = ply:GetVelocity()
                 ply:TakeDamageInfo(dmginfo)
                 ply:SetVelocity(-ply:GetVelocity())
                 net.Start("GarfieldEat", true)
                 net.Send(ply)
+
                 -- print(v== ply:GetVelocity(), v, ply:GetVelocity())
                 -- end
-
-
-                if ply:Health() ~= expectedHealth and ply:Health()>0 then
+                if ply:Health() ~= expectedHealth and ply:Health() > 0 then
                     ply:SetHealth(expectedHealth)
                 end
 
-                if expectedHealth <= 0 and ply:Alive() then ply:Kill() end
+                if expectedHealth <= 0 and ply:Alive() then
+                    ply:Kill()
+                end
 
                 for i = 0, 4 do
                     --blood decal
@@ -318,19 +324,23 @@ if SERVER then
     end)
 end
 
-
 if CLIENT then
-net.Receive("GarfieldEat", function(len)
-    if len==0 then EATINGMETIME = SysTime() return end
-    sound.Play("physics/flesh/flesh_bloody_break.wav",net.ReadVector(),75,100,1)
-end)
+    net.Receive("GarfieldEat", function(len)
+        if len == 0 then
+            EATINGMETIME = SysTime()
+
+            return
+        end
+
+        sound.Play("physics/flesh/flesh_bloody_break.wav", net.ReadVector(), 75, 100, 1)
+    end)
 end
 
-hook.Add("HUDPaint", "eatingme",function()
-    local alp = 1 - (SysTime()-(EATINGMETIME or 0))*3
-    if alp<=0 then return end
-    surface.SetDrawColor(255,0,0,72*alp)
-    surface.DrawRect(0,0,ScrW(),ScrH())
+hook.Add("HUDPaint", "eatingme", function()
+    local alp = 1 - (SysTime() - (EATINGMETIME or 0)) * 3
+    if alp <= 0 then return end
+    surface.SetDrawColor(255, 0, 0, 72 * alp)
+    surface.DrawRect(0, 0, ScrW(), ScrH())
 end)
 
 function SWEP:PrimaryAttack()
@@ -339,45 +349,42 @@ function SWEP:PrimaryAttack()
     self:SetHoldType("duel")
     self.Owner:SetAnimation(PLAYER_ATTACK1)
 
-    
     if CLIENT and IsFirstTimePredicted() then
-
         local ply, alpha, blocked = self:GetTargetPlayer()
         -- print("!")
         net.Start("GarfieldEat")
-        if ply and alpha>=1 then
+
+        if ply and alpha >= 1 then
             surface.PlaySound("physics/flesh/flesh_bloody_break.wav")
             net.WriteEntity(ply)
             -- self:SetNW2Entity("EATINGp", ply) 
             -- print("E")
         end
+
         net.SendToServer()
     end
-    
 end
 
-function CylinderDist(v1,v2)
-    return math.max(math.sqrt((v1.x-v2.x)^2 + (v1.y-v2.y)^2), math.abs(v1.z-v2.z))
+function CylinderDist(v1, v2)
+    return math.max(math.sqrt((v1.x - v2.x) ^ 2 + (v1.y - v2.y) ^ 2), math.abs(v1.z - v2.z))
 end
 
 function SWEP:MaxRange()
     return 65 + 25 * self.Owner:ObesityScale()
 end
 
-
-
 local OBESITYSCALE = 1.4
 
 function SWEP:IsTooBig(v)
-    return v:Obesity() * (v:Health()/v:GetMaxHealth()) > self.Owner:Obesity() * 1.4
-
+    return v:Obesity() * (v:Health() / v:GetMaxHealth()) > self.Owner:Obesity() * 1.4
 end
 
 -- copied below
 function SWEP:ValidTarget(v)
-    if self.Owner:GetNW2Entity("EATER")==v and not self:IsTooBig(v) then return true end
+    if self.Owner:GetNW2Entity("EATER") == v and not self:IsTooBig(v) then return true end
     if issafe(v) or self:IsTooBig(v) then return false end
-    if CylinderDist(v:GetPos(),self.Owner:GetPos()) > (self:MaxRange() * 1.5 + 60) then return false end
+    if CylinderDist(v:GetPos(), self.Owner:GetPos()) > (self:MaxRange() * 1.5 + 60) then return false end
+
     return true
 end
 
@@ -388,81 +395,62 @@ end
 -- local eyer = self.Owner:EyeAngles():Right()
 -- Vector(eyer.y, -eyer.x, 0):GetNormalized()
 -- self.Owner:GetPos():Distance(ply:GetPos())
-
 function SWEP:GetTargetPlayer()
     if Safe(self.Owner) then return nil, 0, {} end
+    local maxdist = self:MaxRange()
+    local ep = self.Owner:EyePos()
+    local av = self.Owner:EyeAngles():Forward()
+    local ap = ep - av * (maxdist / 10)
+    -- av = Vector(av.y, -av.x, 0)
+    local op = self.Owner:GetPos()
+    local best = nil
+    local bestalpha = 0
+    local blocked = {}
 
-        local maxdist = self:MaxRange()
+    for k, v in ipairs(player.GetAll()) do
+        if v == self.Owner then continue end
+        if not v:Alive() then continue end
+        if CLIENT and v:IsDormant() then continue end
+        local pp = v:GetPos()
+        local pcp = v:LocalToWorld(v:OBBCenter())
+        local cyldist = CylinderDist(op, pp)
+        local cylalpha = math.Clamp(2 - (cyldist / maxdist), 0, 1)
+        local offset = pcp - ap
+        local offsetlength = offset:Length()
+        local aimdot = math.max(0, (offset / offsetlength):Dot(av))
+        local rol = offsetlength / maxdist
+        local alpha = math.min(cylalpha, aimdot * (2 - rol * 0.5))
 
-        local ep = self.Owner:EyePos()
-
-        local av = self.Owner:EyeAngles():Forward()
-        local ap = ep - av*(maxdist/10)
-
-        -- av = Vector(av.y, -av.x, 0)
-
-        local op = self.Owner:GetPos()
-
-        local best = nil
-        local bestalpha = 0
-
-        local blocked = {}
-
-        for k, v in ipairs(player.GetAll()) do
-            if v==self.Owner then continue end
-            if not v:Alive() then continue end
-            if CLIENT and v:IsDormant() then continue end
-            
-            
-
-            local pp = v:GetPos()
-            local pcp = v:LocalToWorld(v:OBBCenter())
-
-
-
-
-            local cyldist = CylinderDist(op,pp)
-            local cylalpha = math.Clamp(2-(cyldist/maxdist),0, 1)
-
-            local offset = pcp-ap
-            local offsetlength = offset:Length()
-            local aimdot = math.max(0, (offset/offsetlength):Dot(av))
-            local rol = offsetlength/maxdist
-
-        
-            local alpha = math.min(cylalpha, aimdot * (2-rol*0.5))
-
-            
-            if issafe(v) or self:IsTooBig(v) then --* 1.3 then
-                if alpha>0 then 
-                    table.insert(blocked, v) 
-                end
-                continue
+        --* 1.3 then
+        if issafe(v) or self:IsTooBig(v) then
+            if alpha > 0 then
+                table.insert(blocked, v)
             end
 
-            if IsValid(v:GetNW2Entity("EATER")) and (SERVER or v:GetNW2Entity("EATER")~=self.Owner) then continue end
-            if (util.TraceLine({
-                start = ep,
-                endpos = pcp,
-                mask = MASK_SOLID_BRUSHONLY
-            }) or {}).Hit then continue end
-
-            if alpha > bestalpha then
-                best = v
-                bestalpha = alpha
-            end
+            continue
         end
 
-        if IsValid(self.Owner:GetNW2Entity("EATER")) and not self:IsTooBig(self.Owner:GetNW2Entity("EATER")) then
-            best = self.Owner:GetNW2Entity("EATER")
-            bestalpha = 1
+        if IsValid(v:GetNW2Entity("EATER")) and (SERVER or v:GetNW2Entity("EATER") ~= self.Owner) then continue end
+
+        if (util.TraceLine({
+            start = ep,
+            endpos = pcp,
+            mask = MASK_SOLID_BRUSHONLY
+        }) or {}).Hit then
+            continue
         end
 
-        return best, math.Clamp(bestalpha,0,1), blocked
+        if alpha > bestalpha then
+            best = v
+            bestalpha = alpha
+        end
+    end
+
+    if IsValid(self.Owner:GetNW2Entity("EATER")) and not self:IsTooBig(self.Owner:GetNW2Entity("EATER")) then
+        best = self.Owner:GetNW2Entity("EATER")
+        bestalpha = 1
+    end
     -- end
-
-
-
     -- local av = self.Owner:GetAimVector()
     -- av.z = 0
     -- av:Normalize()
@@ -471,46 +459,38 @@ function SWEP:GetTargetPlayer()
     -- local ply = nil
     -- local blocked = {}
     -- local c1 = self.Owner:LocalToWorld(self.Owner:OBBCenter())
-
     -- for k, v in ipairs(player.GetAll()) do
     --     if v==self.Owner then continue end
     --     if v:GetPos():Distance(center) > (25+25 * math.pow(self.Owner:ObesityScale(),0.5)) then continue end
     --     if not v:Alive() then continue end
     --     if CLIENT and v:IsDormant() then continue end
-
     --     local c2 = v:LocalToWorld(v:OBBCenter())
-
     --     local tr = util.TraceLine({
     --         start = c1,
     --         endpos = c2,
     --         mask = MASK_SOLID_BRUSHONLY
     --     })
-
     --     if tr and tr.Hit then continue end
     --     if IsValid(v:GetNW2Entity("EATER")) then 
     --         if CLIENT and v:GetNW2Entity("EATER")==self.Owner then else
     --         continue end
     --         end
-
     --     --or v:IsAFK() then -- or v:IsBot() then
     --     if Safe(v) or v:Obesity() * (v:Health()/v:GetMaxHealth()) > self.Owner:Obesity() * 1.5 then --* 1.3 then
     --         table.insert(blocked, v)
     --         continue
     --     end
-
     --     local dist = v:GetPos():Distance(self.Owner:GetPos())
-
     --     if dist < closestDist then
     --         ply = v
     --         closestDist = dist
     --     end
-    
     -- end
-
     -- -- if CLIENT then print(ply) end
     -- local alpha = 1
-
     -- return ply, alpha, blocked
+
+    return best, math.Clamp(bestalpha, 0, 1), blocked
 end
 
 function SWEP:SecondaryAttack()
@@ -522,8 +502,8 @@ function SWEP:SecondaryAttack()
         local snd = files[math.random(#files)]
 
         self:ExtEmitSound("garfield/" .. snd, {
-            pitch = 110/math.sqrt(self.Owner:ObesityScale()),
-            level = 75 + math.sqrt(self.Owner:Obesity()) ,
+            pitch = 110 / math.sqrt(self.Owner:ObesityScale()),
+            level = 75 + math.sqrt(self.Owner:Obesity()),
             speech = 2.2,
             shared = false
         })
@@ -531,33 +511,31 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-    if SERVER then
-
-    end
+    if SERVER then end
 end
 
-hook.Add("KeyPress","GarfieldJump",function(ply,key)
+hook.Add("KeyPress", "GarfieldJump", function(ply, key)
     if CLIENT then return end
-    if key~=IN_JUMP then return end
+    if key ~= IN_JUMP then return end
     local self = ply:GetWeapon("weapon_garfield")
     if not IsValid(self) then return end
 
-    if not self.Owner:Crouching()  then self.Owner:Notify("Crouch and jump to leap forward (costs weight)") return end
+    if not self.Owner:Crouching() then
+        self.Owner:Notify("Crouch and jump to leap forward (costs weight)")
+
+        return
+    end
+
     if not self.Owner:IsOnGround() then return end
-    if CurTime()-(self.lastreload or 0) < 5 then return end
+    if CurTime() - (self.lastreload or 0) < 5 then return end
     self.lastreload = CurTime()
-
-    self.Owner:SetPos(self.Owner:GetPos()+Vector(0,0,1))
+    self.Owner:SetPos(self.Owner:GetPos() + Vector(0, 0, 1))
     local av = self.Owner:GetAimVector()
-
-    av.z=math.max(av.z, 0.5)
+    av.z = math.max(av.z, 0.5)
     av:Normalize()
-
-    self.Owner:SetVelocity(av*450 - self.Owner:GetVelocity())
-
+    self.Owner:SetVelocity(av * 450 - self.Owner:GetVelocity())
     self.Owner:SetObesity(math.max(1, self.Owner:Obesity() * 0.95))
 end)
-
 
 function SWEP:Deploy()
     self.Owner:DrawViewModel(false)
@@ -624,44 +602,46 @@ function SWEP:DrawHUD()
     draw.DrawText(txt, "DermaDefault", 10, 10, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT)
     surface.SetDrawColor(255, 255, 255, 255)
     surface.SetMaterial(lasagnaMat)
-
     GARFIELDOUTLINEPLY, alpha, blocked = self:GetTargetPlayer()
+    local eatin = self:GetNW2Entity("EATINGp")
 
-    local eatin = self:GetNW2Entity("EATINGp") 
     if IsValid(eatin) then
         -- print(1)
-        if not EATINSTARTH then EATINSTARTH= eatin:Health()  end
+        if not EATINSTARTH then
+            EATINSTARTH = eatin:Health()
+        end
+
         local r = math.max(0, eatin:Health() / EATINSTARTH)
         local data2D = eatin:LocalToWorld(eatin:OBBCenter()):ToScreen()
-        surface.DrawTexturedRectUV(data2D.x - 64, data2D.y - 64 + (1-r)*128, 128, r*128,0,1-r,1,1)
+        surface.DrawTexturedRectUV(data2D.x - 64, data2D.y - 64 + (1 - r) * 128, 128, r * 128, 0, 1 - r, 1, 1)
     else
         EATINSTARTH = nil
+
         if GARFIELDOUTLINEPLY then
             -- print(2)
             local data2D = GARFIELDOUTLINEPLY:LocalToWorld(GARFIELDOUTLINEPLY:OBBCenter()):ToScreen()
-            if alpha>=1 then
-            local glo = (math.sin(CurTime()*10)+1)*4-1
-            surface.SetDrawColor(0,255,0, 255)
-            surface.DrawTexturedRect(data2D.x - 80 - (glo), data2D.y - 80 - (glo), 160 + glo*2, 160 + glo*2)
-            surface.SetDrawColor(0,0,0, 255)
-            surface.DrawTexturedRect(data2D.x - 72, data2D.y - 72, 144, 144) 
+
+            if alpha >= 1 then
+                local glo = (math.sin(CurTime() * 10) + 1) * 4 - 1
+                surface.SetDrawColor(0, 255, 0, 255)
+                surface.DrawTexturedRect(data2D.x - 80 - (glo), data2D.y - 80 - (glo), 160 + glo * 2, 160 + glo * 2)
+                surface.SetDrawColor(0, 0, 0, 255)
+                surface.DrawTexturedRect(data2D.x - 72, data2D.y - 72, 144, 144)
             end
-            surface.SetDrawColor(255, 255, 255, 255*alpha)
+
+            surface.SetDrawColor(255, 255, 255, 255 * alpha)
             surface.DrawTexturedRect(data2D.x - 64, data2D.y - 64, 128, 128)
         else
             -- print(3)
         end
     end
 
-    
-
-
     if not Safe(self.Owner) then
-    for i, v in ipairs(blocked) do
-        local data2D = v:LocalToWorld(v:OBBCenter()):ToScreen()
-        -- draw.SimpleText("X", "DermaLarge", data2D.x, data2D.y, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        surface.SetDrawColor(255,0,0, 255)
-        surface.DrawTexturedRect(data2D.x - 64, data2D.y - 64, 128,128) 
+        for i, v in ipairs(blocked) do
+            local data2D = v:LocalToWorld(v:OBBCenter()):ToScreen()
+            -- draw.SimpleText("X", "DermaLarge", data2D.x, data2D.y, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            surface.SetDrawColor(255, 0, 0, 255)
+            surface.DrawTexturedRect(data2D.x - 64, data2D.y - 64, 128, 128)
+        end
     end
-end
 end
