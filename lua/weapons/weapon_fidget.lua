@@ -33,6 +33,14 @@ function SWEP:AmmoDisplayValue()
     return tostring(d) .. " RPM"
 end
 
+function SWEP:DrawHUD()
+    local d = self.RPMdisplay or 0
+
+    if d > 0 then
+        draw.WordBox(8, ScrW() * 0.3, ScrH() - 50, tostring(d) .. " RPM", "Trebuchet24", Color(0, 0, 0, 128), Color(255, 255, 255, 255))
+    end
+end
+
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
