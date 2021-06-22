@@ -135,6 +135,12 @@ function SWEP:PrimaryAttack()
     if (timer.Exists(timerName)) then return end
 
     if self:Clip1() == 0 then
+        if(self:Ammo1() == 0)then
+            self:EmitSound("Weapon_Shotgun.Empty")
+            self:SendWeaponAnim(ACT_VM_FIDGET) 
+            self:SetNextPrimaryFire(CurTime() + 0.5)
+            return
+        end
         self:Reload()
 
         return
