@@ -134,19 +134,16 @@ function SWEP:PrimaryAttack()
     local timerName = "ShotgunReload_" .. self.Owner:UniqueID()
     if (timer.Exists(timerName)) then return end
 
-    if self:Clip1() == 0 then
-        if(self:Ammo1() == 0)then
-            self:EmitSound("Weapon_Shotgun.Empty")
-            self:SendWeaponAnim(ACT_VM_FIDGET) 
-            self:SetNextPrimaryFire(CurTime() + 0.5)
-            return
-        end
+    if self:Clip1() == 0 and self:Ammo1() > 0 then
         self:Reload()
-
         return
     end
 
-    if (not self:CanPrimaryAttack()) then return end
+    if (not self:CanPrimaryAttack()) then 
+        self:EmitSound("Weapon_Shotgun.Empty")
+        self:SendWeaponAnim(ACT_VM_DRYFIRE) 
+        self:SetNextPrimaryFire(CurTime() + 0.5)
+    return end
     local bullet = {}
     bullet.Num = self.Primary.NumberofShots
     bullet.Src = self.Owner:GetShootPos()
