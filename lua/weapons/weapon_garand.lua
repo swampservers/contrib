@@ -146,13 +146,19 @@ local BOLTACTIONSPEED = 1
 function SWEP:PrimaryAttack()
     self.Owner:SetAmmo(80, "garand")
 
-    if self:Clip1() == 0 then
+    if self:Clip1() == 0 and InGarandZone(self.Owner) then
         self:Reload()
 
         return
     end
 
-    if (not self:CanPrimaryAttack()) then return end
+    if (not self:CanPrimaryAttack()) then 
+        self:EmitSound("Weapon_SMG1.Empty")
+        self:SendWeaponAnim(ACT_VM_DRYFIRE) 
+        self:SetNextPrimaryFire(CurTime() + 0.5)
+    return end
+
+
     if self:IsSprinting() then return end
     local bullet = {}
     bullet.Num = self.Primary.NumberofShots
