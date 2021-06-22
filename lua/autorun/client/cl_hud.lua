@@ -37,7 +37,7 @@ local function MakeFonts()
         symbol = false,
         rotary = false,
         shadow = false,
-        additive = false,
+        additive = true,
         outline = false,
     })
 
@@ -55,7 +55,7 @@ local function MakeFonts()
         symbol = false,
         rotary = false,
         shadow = false,
-        additive = false,
+        additive = true,
         outline = false,
     })
 end
@@ -76,7 +76,9 @@ local function align_box(w, h, alignh, alignv)
     return w / 2 * hor, h / 2 * ver
 end
 
-function DrawHL2Bubble(label, text, x, y, alignh, alignv, alpha)
+
+
+function DrawHL2Bubble(label, text, x, y, alignh, alignv, alpha,red)
     local minwidth = math.Round(ScreenScale(64))
     local margin = ScreenScale(2)
     local gap = 0
@@ -100,7 +102,7 @@ function DrawHL2Bubble(label, text, x, y, alignh, alignv, alpha)
     local content_x, content_y = box_x + box_width - margin, box_y + box_height
 
     
-    draw.SimpleText(text, bigfont, content_x, content_y, text == 0 and fgcolred or fgcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+    draw.SimpleText(text, bigfont, content_x, content_y, (text == 0 or red) and fgcolred or fgcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
   
 
     return box_width, box_height
@@ -117,7 +119,7 @@ function DrawHL2Label(label, x, y, alignh, alignv, alpha)
 
     surface.SetFont(littlefont)
     local labelwidth, labelheight = surface.GetTextSize(label)
-    local box_width, box_height = math.max(labelwidth or 0, textwidth or 0, minwidth) + margin * 2, labelheight + margin * 2
+    local box_width, box_height = math.max(labelwidth or 0, textwidth or 0, minwidth), labelheight + margin * 2
     local ofsx, ofsy = align_box(box_width, box_height, alignh, alignv)
     x = x + ofsx
     y = y + ofsy
@@ -275,6 +277,6 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
     HEALTH_ALPHA = math.Approach(HEALTH_ALPHA or 0, drawhealth and 1 or 0, FrameTime() * 4)
 
     if (HEALTH_ALPHA > 0) then
-        DrawHL2Bubble("HEALTH", math.max(0, LocalPlayer():Health()), ScrW() - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, HEALTH_ALPHA)
+        DrawHL2Bubble("HEALTH", math.max(0, LocalPlayer():Health()), ScrW() - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, HEALTH_ALPHA, ply:Health() <= 20)
     end
 end)
