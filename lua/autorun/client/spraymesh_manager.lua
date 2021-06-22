@@ -110,8 +110,8 @@ function SprayMeshManagerThumbnails()
             surface.SetDrawColor( 255, 255, 255, 255 ) 
             surface.SetMaterial( m )
             surface.DrawTexturedRect( 0, 0, 128, 128 )
-			if selected == panel then
-			    surface.DisableClipping(true)
+            if selected == panel then
+                surface.DisableClipping(true)
                 surface.SetDrawColor(Color(255, 255, 255))
                 surface.DrawOutlinedRect(-5, -5, 138, 138)
             end
@@ -151,7 +151,7 @@ function SprayMeshManagerThumbnails()
 
 
         if GetConVar("SprayMesh_URL"):GetString() == v[1] then
-			selected = panel
+            selected = panel
         end
     end
 end
