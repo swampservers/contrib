@@ -208,10 +208,6 @@ function SWEP:Deploy()
     self:SetHoldType("fist")
 end
 
-function SWEP:DrawHUD()
-    surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
-    surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
-end
 
 function SWEP:CreateWorldModel()
     if not IsValid(self.WModel) then
