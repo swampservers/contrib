@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 local SprayThumbnails = {}
-local SprayList, SprayMeshManagerBase, selected, selectedbutton, page, pagecount
+local SprayList, SprayMeshManagerBase, selected, page, pagecount
 
 local function SanitizeList()
 
@@ -60,30 +60,6 @@ local function SprayOptions(link)
     menu:Open()
 end
 
-local function OutlineCurrentSpray(width, height)
-    selected = vgui.Create("DPanel", SprayMeshManagerBase)
-    selected:SetPos(width - 15, height - 15)
-    selected:SetSize(150, 150)
-
-    function selected:Paint(w, h)
-        surface.SetDrawColor(Color(255, 255, 255))
-        surface.DrawOutlinedRect(10, 10, 138, 138)
-    end
-
-    selectedbutton = vgui.Create("DButton", SprayMeshManagerBase)
-    selectedbutton:SetSize(150, 150)
-    selectedbutton:SetPos(width - 15, height - 15)
-    selectedbutton:SetText("")
-
-    function selectedbutton:Paint(w, h)
-        draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
-    end
-
-    function selectedbutton:DoRightClick()
-        SprayOptions(GetConVar("spraymesh_url"):GetString())
-    end
-end
-
 function UpdateSprayList()
     for k, v in pairs(SprayThumbnails) do
         SprayThumbnails[k]:Remove()
@@ -95,11 +71,6 @@ end
 function SprayMeshManagerThumbnails()
     SanitizeList()
 
-
-    if IsValid(selected) then
-        selected:Remove()
-        selectedbutton:Remove()
-    end
 
     pagecount = math.ceil(#SprayList / 12)
     local outlinecheck = false
@@ -139,6 +110,11 @@ function SprayMeshManagerThumbnails()
             surface.SetDrawColor( 255, 255, 255, 255 ) 
             surface.SetMaterial( m )
             surface.DrawTexturedRect( 0, 0, 128, 128 )
+			if selected == panel then
+			    surface.DisableClipping(true)
+                surface.SetDrawColor(Color(255, 255, 255))
+                surface.DrawOutlinedRect(-5, -5, 138, 138)
+            end
         end
 
         panel.DoClick = function()
@@ -159,12 +135,7 @@ function SprayMeshManagerThumbnails()
                 RunConsoleCommand("swampspraymesh_nsfw", v[2])
             end
 
-            if not IsValid(selected) or not selected:IsVisible() then
-                OutlineCurrentSpray(width, height)
-            else
-                selected:SetPos(width - 15, height - 15)
-                selectedbutton:SetPos(width - 15, height - 15)
-            end
+            selected = panel
         end
 
         panel.DoRightClick = function()
@@ -180,11 +151,7 @@ function SprayMeshManagerThumbnails()
 
 
         if GetConVar("SprayMesh_URL"):GetString() == v[1] then
-            OutlineCurrentSpray(width, height)
-            selected:Show()
-            outlinecheck = true
-        elseif (key == 11 or k == #SprayList) and selected ~= nil and selected:IsVisible() and not outlinecheck then
-            selected:Hide()
+			selected = panel
         end
     end
 end
