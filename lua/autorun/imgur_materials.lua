@@ -13,6 +13,29 @@ function SanitizeImgurId(id)
     return id
 end
 
+function SanitizeImgurIdAsync(id, callback)
+	nid = SanitizeImgurId(id)
+	if nid == nil then
+		if not isstring(id) or id:len() < 5 or id:len() > 100 then callback() return end
+		nid = table.remove(string.Explode("/", id, false))
+		
+		HTTP({
+			method = "GET",
+			url = "https://imgur.com/" .. nid,
+			success = function(code, body, headers)
+				if (code == 200) then
+					callback(SanitizeImgurId(string.match(body,"og:image:height.+content=\"(.+)%?fb")))
+				end
+			end,
+			failed = function(err)
+				print("ERROR: " .. err)
+			end
+		})
+	else
+		timer.Simple(0, function() callback(nid) end)
+	end
+end
+
 function Entity:GetImgur()
     local url = self:GetNWString("imgur_url")
     if url ~= "" then return url, self:GetNWString("imgur_own") end
