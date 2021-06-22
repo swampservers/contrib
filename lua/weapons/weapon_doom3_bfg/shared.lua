@@ -345,15 +345,14 @@ SWEP.Primary.Sound = Sound("weapons/doom3/bfg/bfg_fire.wav")
 SWEP.Primary.Special1 = Sound("weapons/doom3/bfg/bfg_firebegin.wav")
 SWEP.Primary.Damage = 200
 SWEP.Primary.Radius = 200 
-SWEP.Primary.ClipSize = 0
 SWEP.Primary.Delay = .95
 SWEP.Primary.DefaultClip = 1
+SWEP.Primary.ClipSize = 0
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "doom3_bfg"
 game.AddAmmoType( {
 	name = "doom3_bfg",
-    maxcarry = 5
-} )
+} ) 
 SWEP.DeploySound = Sound("weapons/doom3/bfg/bfg_raise.wav")
 SWEP.ReloadSound = Sound("weapons/doom3/bfg/bfg_reload.wav")
 SWEP.IdleAmmoCheck = true
