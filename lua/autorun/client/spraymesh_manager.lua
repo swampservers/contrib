@@ -84,7 +84,10 @@ local function OutlineCurrentSpray(width, height)
     end
 end
 
-function UpdateSprayList()    
+function UpdateSprayList()
+    for k, v in pairs(SprayThumbnails) do
+        SprayThumbnails[k]:Remove()
+    end
     SprayMeshManagerThumbnails()
     file.Write("swamp_sprays.txt", util.TableToJSON(SprayList))
 end
@@ -97,15 +100,14 @@ function SprayMeshManagerThumbnails()
         selected:Remove()
         selectedbutton:Remove()
     end
-    
+
     pagecount = math.ceil(#SprayList / 12)
     local outlinecheck = false
 
-    for k, v in pairs(SprayList) do
+    for k, v in pairs(table.Reverse(SprayList)) do
         if k > page * 12 then
             if (SprayThumbnails[v[1]] ~= nil) then
-                SprayThumbnails[v[1]].html:Remove()
-                SprayThumbnails[v[1]].button:Remove()
+                SprayThumbnails[v[1]]:Remove()
             end
 
             continue
@@ -113,8 +115,7 @@ function SprayMeshManagerThumbnails()
 
         if k <= (page - 1) * 12 then
             if (SprayThumbnails[v[1]] ~= nil) then
-                SprayThumbnails[v[1]].html:Remove()
-                SprayThumbnails[v[1]].button:Remove()
+                SprayThumbnails[v[1]]:Remove()
             end
 
             continue
@@ -124,25 +125,26 @@ function SprayMeshManagerThumbnails()
         local height = math.floor(key / 3) * 138 + 30
         local width = (key % 3) * 138 + 12
 
-        SprayThumbnails[v[1]] = {
-            ["html"] = vgui.Create("DHTML", SprayMeshManagerBase),
-            ["button"] = vgui.Create("DButton", SprayMeshManagerBase)
-        }
+        SprayThumbnails[v[1]] = vgui.Create("DButton", SprayMeshManagerBase)
 
         local panel = SprayThumbnails[v[1]]
-        panel["button"]:SetSize(128, 128)
-        panel["button"]:SetPos(width, height)
-        panel["button"]:SetText("")
-        local pb = panel["button"]
-
-        function pb:Paint(w, h)
+        panel:SetSize(128, 128)
+        panel:SetPos(width, height)
+        panel:SetText("")
+		
+        function panel:Paint(w, h)
             draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
+            local m = ImgurMaterial({id=v[1], shader = "UnlitGeneric"})
+
+            surface.SetDrawColor( 255, 255, 255, 255 ) 
+            surface.SetMaterial( m )
+            surface.DrawTexturedRect( 0, 0, 128, 128 )
         end
 
-        panel["button"].DoClick = function()
+        panel.DoClick = function()
             RunConsoleCommand("spraymesh_url", v[1])
             
-            if tonumber(v[2]) == nil then
+            if v[2] == -1 then
                 Derma_Query("Is this spray pornographic?\nClick porn if unsure. Lying=ban", "NSFW Spray?", "It's clean", function()
                     RunConsoleCommand("swampspraymesh_nsfw", "0")
                     SprayList[k][2] = 0
@@ -157,9 +159,7 @@ function SprayMeshManagerThumbnails()
                 RunConsoleCommand("swampspraymesh_nsfw", v[2])
             end
 
-            if not IsValid(selected) then
-                OutlineCurrentSpray(width, height)
-            elseif not selected:IsVisible() then
+            if not IsValid(selected) or not selected:IsVisible() then
                 OutlineCurrentSpray(width, height)
             else
                 selected:SetPos(width - 15, height - 15)
@@ -167,45 +167,17 @@ function SprayMeshManagerThumbnails()
             end
         end
 
-        panel["button"].DoRightClick = function()
+        panel.DoRightClick = function()
             SprayOptions(v[1])
         end
 
-        local link = "<img id='media' onload='FixSize()' src='" .. "http://i.imgur.com/" .. v[1] .. "'></img>"
+        if v[2] == 1 then
+            local FlagIcon = vgui.Create("DImage", panel)
+            FlagIcon:SetSize(16, 16)
+            FlagIcon:SetPos(0, 0)
+            FlagIcon:SetImage("icon16/flag_red.png")
+        end
 
-        panel["html"]:SetSize(128, 128)
-        panel["html"]:SetPos(width, height)
-        panel["html"]:SetHTML([[
-			<!DOCTYPE html>
-			<html>
-				<head>
-					<meta charset="UTF-8">
-					<title></title>
-					<style type = "text/css">
-						html,body {
-							margin:0;
-							overflow:hidden;
-							text-align:center;
-						}
-					</style>
-				</head>
-				<body scroll="no">
-					]] .. link .. [[
-					<script>
-						function FixSize(){
-							var image = document.getElementById("media");
-							if (image.height > image.width) {
-								image.style.height = "]] .. panel["html"]:GetTall() .. [[px";
-								image.style.width = "auto";
-							}
-							else{
-								image.style.height = "auto";
-								image.style.width = "]] .. panel["html"]:GetWide() .. [[px";
-							}
-						}
-					</script>
-				</body>
-			</html>]])
 
         if GetConVar("SprayMesh_URL"):GetString() == v[1] then
             OutlineCurrentSpray(width, height)
