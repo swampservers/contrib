@@ -97,6 +97,7 @@ function SWEP:AdvanceState()
         self:ThrowBall(self:GetThrowPower())
         self:SetStateTime(CurTime() + 0.3)
         self:SetThrowState(2)
+
         return
     end
 

@@ -9,7 +9,11 @@ function ENT:Initialize()
     if CLIENT then return end
     self:SetModel("models/pyroteknik/dodgeball.mdl")
     self:SetColor(Color(255, 0, 0, 255))
-    if(self.Clientside)then self:SetColor(Color(0,0,255)) end
+
+    if (self.Clientside) then
+        self:SetColor(Color(0, 0, 255))
+    end
+
     -- self:PhysicsInitSphere(8, "rubber")
     self:PhysicsInit(SOLID_VPHYSICS)
     self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -29,7 +33,6 @@ function ENT:Use(activator, caller)
 end
 
 function ENT:Think()
-
 end
 
 function ENT:Draw()

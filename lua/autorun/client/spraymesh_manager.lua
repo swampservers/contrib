@@ -59,12 +59,13 @@ local function SprayOptions(link)
     local menu = DermaMenu()
 
     menu:AddOption("Remove", function()
-		for k, v in pairs(SprayList) do
-			if v[1] == link then
-				SprayList[k] = nil
-				break
-			end
-		end
+        for k, v in pairs(SprayList) do
+            if v[1] == link then
+                SprayList[k] = nil
+                break
+            end
+        end
+
         ReloadManager()
     end)
 
@@ -145,27 +146,20 @@ function SprayMeshManagerThumbnails()
         panel["button"].DoClick = function()
             RunConsoleCommand("spraymesh_url", v[1])
             RunConsoleCommand("swampspraymesh_nsfw_url", v[1])
-			if tonumber(v[2]) == nil then
-				Derma_Query(
-					"Is this spray pornographic?\nClick porn if unsure. Lying=ban",
-					"NSFW Spray?",
-					"It's clean",
-					function()
-						RunConsoleCommand("swampspraymesh_nsfw", "0")
-						SprayList[k][2] = 0
-						ReloadManager()
-					end,
-					"It's porn",
-					function()
-						RunConsoleCommand("swampspraymesh_nsfw", "1")
-						SprayList[k][2] = 1
-						ReloadManager()
-					end
-				)
-			else
-				RunConsoleCommand("swampspraymesh_nsfw_url", v[2])
-			end
-			
+
+            if tonumber(v[2]) == nil then
+                Derma_Query("Is this spray pornographic?\nClick porn if unsure. Lying=ban", "NSFW Spray?", "It's clean", function()
+                    RunConsoleCommand("swampspraymesh_nsfw", "0")
+                    SprayList[k][2] = 0
+                    ReloadManager()
+                end, "It's porn", function()
+                    RunConsoleCommand("swampspraymesh_nsfw", "1")
+                    SprayList[k][2] = 1
+                    ReloadManager()
+                end)
+            else
+                RunConsoleCommand("swampspraymesh_nsfw_url", v[2])
+            end
 
             if not IsValid(selected) then
                 OutlineCurrentSpray(width, height)
@@ -252,14 +246,19 @@ function SprayMeshManager()
     elseif file.Size("sprays/savedsprays.txt", "DATA") > 0 then
         Derma_Message("An error occurred while loading your saved sprays.", "Error", "Ok")
     end
-	
-	if SavedSprays[1] ~= nil and type(SavedSprays[1]) ~= "table" then
-		local t = {}
-		for k, v in pairs(SprayList) do
-			t[k] = {[1] = v,[2] = ""}
-		end
-		SprayList = t
-	end
+
+    if SavedSprays[1] ~= nil and type(SavedSprays[1]) ~= "table" then
+        local t = {}
+
+        for k, v in pairs(SprayList) do
+            t[k] = {
+                [1] = v,
+                [2] = ""
+            }
+        end
+
+        SprayList = t
+    end
 
     page = 1
     SprayMeshManagerBase = vgui.Create("DFrame")
@@ -290,7 +289,6 @@ function SprayMeshManager()
             ReloadManager()
         end)
     end]]
-
     SprayMeshManagerPageLeft = vgui.Create("DImageButton", SprayMeshManagerBase)
     SprayMeshManagerPageLeft:SetSize(16, 16)
     SprayMeshManagerPageLeft:SetPos(15, 595)
@@ -314,33 +312,37 @@ function SprayMeshManager()
             SprayMeshManagerThumbnails()
         end
     end
-	
+
     SprayMeshManagerInput = vgui.Create("DTextEntry", SprayMeshManagerBase)
     SprayMeshManagerInput:SetSize(245, 16)
     SprayMeshManagerInput:SetPos(15, 665)
-	
     SprayMeshManagerCheckbox = vgui.Create("DCheckBoxLabel", SprayMeshManagerBase)
     SprayMeshManagerCheckbox:SetSize(16, 16)
     SprayMeshManagerCheckbox:SetPos(430 * .3 - 90, 690)
     SprayMeshManagerCheckbox:SetText("Is this spray pornograhic?")
-	
     SprayMeshManagerInputButton = vgui.Create("DButton", SprayMeshManagerBase)
     SprayMeshManagerInputButton:SetSize(40, 20)
     SprayMeshManagerInputButton:SetPos(430 * .3 + 70, 688)
     SprayMeshManagerInputButton:SetText("OK")
-	
+
     function SprayMeshManagerInputButton:DoClick()
-		SprayList[#SprayList+1] = {[1] = SprayMeshManagerInput:GetValue(),[2] = (SprayMeshManagerCheckbox:GetChecked() and 1) or 0} --why the hell is unchecked equal to nil?
-		ReloadManager()
+        --why the hell is unchecked equal to nil?
+        SprayList[#SprayList + 1] = {
+            [1] = SprayMeshManagerInput:GetValue(),
+            [2] = (SprayMeshManagerCheckbox:GetChecked() and 1) or 0
+        }
+
+        ReloadManager()
     end
-	
-	SprayMeshManagerPreview = vgui.Create("DHTML", SprayMeshManagerBase)
+
+    SprayMeshManagerPreview = vgui.Create("DHTML", SprayMeshManagerBase)
     SprayMeshManagerPreview:SetSize(100, 100)
     SprayMeshManagerPreview:SetPos(290, 615)
-	SprayMeshManagerInput.OnChange = function(self)
-		SanitizeImgurIdAsync(self:GetValue(),function(id)
-			if id then
-				SprayMeshManagerPreview:SetHTML([[
+
+    SprayMeshManagerInput.OnChange = function(self)
+        SanitizeImgurIdAsync(self:GetValue(), function(id)
+            if id then
+                SprayMeshManagerPreview:SetHTML([[
 					<!DOCTYPE html>
 					<html>
 						<head>
@@ -371,9 +373,9 @@ function SprayMeshManager()
 							</script>
 						</body>
 					</html>]])
-			end
-		end)
-	end
+            end
+        end)
+    end
 
     SprayMeshManagerThumbnails()
 end
