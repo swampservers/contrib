@@ -257,7 +257,7 @@ function PLAYER:UpdatePlayer()
         end
     end
 
-    self.Name:SetText(self.Player:Name())
+    self.Name:SetText(self.Player.TrueName and self.Player:TrueName() or self.Player:Name())
     self.Location:SetText(string.upper(self.Player:GetLocationName() or "Unknown"))
     self.Ping:Update()
 end

@@ -34,20 +34,33 @@ end
 
 PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
 
+local specials = "[]{}()<>-|= "
+local specials2 = "["
+for i=1,#specials do
+    specials2 = specials2.."%"..specials[i]
+end
+specials2 = specials2.."]+"
+
+function StripNameAdvert(name, advert)
+    local pat = {specials2}
+    for i=1,#advert do
+        local ch = advert[i]
+        if ch=="." then table.insert(pat,"%.") else
+            table.insert(pat,"["..ch:upper()..ch.."]")
+        end
+    end
+    table.insert(pat,specials2)
+    local n2 = (" "..name.." "):gsub(table.concat(pat, ""), ""):Trim()
+    if #n2 < 2 then return name end
+    return n2
+end
+
 -- local stripme = {"- swamp.sv", "-swamp.sv", "swamp.sv"}
 function PLAYER:ComputeName()
     if self:IsBot() then return "Kleiner" end
     local tn = self:TrueName()
-    -- local tnl = tn:lower()
-    -- for i,s in ipairs(stripme) do
-    --     if tnl:EndsWith(s) then
-    --         tn = tn:sub(1,-1-string.len(s))
-    --         break
-    --     end
-    -- end
-    -- tn = tn:Trim()
-    -- if tn:len() < 2 then tn="__"..tn end
-
+    tn = StripNameAdvert(tn, "swamp.sv")
+    tn = StripNameAdvert(tn, "sups.gg")
     return tn
 end
 

@@ -42,14 +42,32 @@ function PANEL:Open(item)
     inner:SetBackgroundColor(SS_TileBGColor)
     inner:DockMargin(8, 8, 8, 8)
     inner:Dock(FILL)
-    local p = vgui.Create("DLabel", inner)
+
+    local top = vgui.Create("DPanel", inner)
+    top.Paint = function() end
+    top:SetTall(64)
+    top:Dock(TOP)
+
+
+    local p = vgui.Create("DLabel", top)
     p:SetFont("SS_LargeTitle")
     p:SetText("βUSTOMIZER")
     p:SetColor(SS_SwitchableColor)
     p:SetContentAlignment(5)
     p:SizeToContents()
-    p:DockMargin(14, 6, 14, 10)
-    p:Dock(TOP)
+    p:DockMargin(80, 8, 0, 10)
+    p:Dock(LEFT)
+
+    local p = vgui.Create("DLabel", top)
+    p:SetFont("SS_DESCINSTFONT")
+    p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
+    p:SetColor(SS_SwitchableColor)
+    p:SetContentAlignment(5)
+    p:SizeToContents()
+    p:DockMargin(0, 0, 32, 0)
+    p:Dock(RIGHT)
+
+
     local bot = vgui.Create("DPanel", inner)
     bot.Paint = function() end
     bot:SetTall(64)

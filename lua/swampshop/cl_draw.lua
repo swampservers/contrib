@@ -15,6 +15,7 @@ function SS_PreRender(item)
         local imat = ImgurMaterial({
             id = item.cfg.imgur.url,
             owner = item.owner,
+            worksafe = true,
             pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
             stretch = true,
             shader = "VertexLitGeneric",
@@ -175,6 +176,7 @@ function SS_ApplyMaterialMods(ent, mods)
             local mat = ImgurMaterial({
                 id = (item.cfg.imgur or {}).url or "EG84dgp.png",
                 owner = ent,
+                worksafe = true,
                 pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = true,
                 shader = "VertexLitGeneric",

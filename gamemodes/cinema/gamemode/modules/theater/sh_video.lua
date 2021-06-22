@@ -210,7 +210,7 @@ if CLIENT then
 
     TRUSTED_HOST = {
         ["www.swamp.sv"] = true,
-        ["www.redpilled.eu"] = true,
+        ["streamwat.ch"] = true,
         ["redpilled.eu"] = true,
         ["www.dropbox.com"] = true,
         ["www.puu.sh"] = true,
