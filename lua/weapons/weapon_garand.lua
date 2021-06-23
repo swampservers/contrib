@@ -51,7 +51,7 @@ local BoltForward = Sound("weapons/kar98/boltforward.wav")
 
 -- Override function for displaying ammo count
 function SWEP:CustomAmmoDisplay()
-    if(InGarandZone(self.Owner))then return {PrimaryAmmo=self.Primary.ClipSize*8} end
+    if(InGarandZone(self.Owner))then return {PrimaryAmmo=self.Primary.ClipSize*999} end
     return {PrimaryAmmo=0}
 end
 
