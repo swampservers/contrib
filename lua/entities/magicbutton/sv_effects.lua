@@ -664,14 +664,3 @@ MagicButtonOutcomes = {
     }
 }
 
---super cool code that displays the chances
-
-local total = 0
-for k,v in pairs(MagicButtonOutcomes)do
-    total = total + v.weight
-end
-
-for k,v in pairs(MagicButtonOutcomes)do
-    print(v.name," "," - ","("..math.Round((v.weight/total)*100,2).."%)")
-end
-print(total)
