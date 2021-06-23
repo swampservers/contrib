@@ -14,13 +14,12 @@ local LASTAMMOTEXT
 local LASTAMMOICON
 local grey = 25
 local grey_ab = 200
-local overall_scale = 1.3
+local overall_scale = 1.1
 local color_bg = NamedColor("BgColor")
 local color_fg = NamedColor("FgColor")
 local color_fgred = NamedColor("DamagedFg")
 local fontsize = math.Round(ScreenScale(96*overall_scale))
 
-local wave = Material("vgui/wave.png" )
 
 local function MakeFonts()
     local size_label = math.Round(ScreenScale(6*overall_scale))
@@ -75,7 +74,7 @@ local pngmatcache = {}
 function GetAmmoIconMat(png)
     local pngmat = Material(png,"noclamp smooth mips")
     if(pngmatcache[png])then return pngmatcache[png] end
-    pngmatcache[png] = pngmatcache[png] or CreateMaterial( "ammoiconmat2"..png, "UnlitGeneric", {
+    pngmatcache[png] = pngmatcache[png] or CreateMaterial( "ammoiconmat"..png, "UnlitGeneric", {
         ["$basetexture"] = pngmat:GetTexture("$basetexture"):GetName(),
         ["$additive"] = 1,
         ["$vertexcolor"] = 1,
@@ -123,9 +122,7 @@ function DrawHL2Bubble(label, text, x, y, alignh, alignv, alpha,red)
     draw.SimpleText(label, littlefont, label_x, label_y, fgcol, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
     local content_x, content_y = box_x + box_width - margin, box_y + box_height
 
-    
     draw.SimpleText(text, bigfont, content_x, content_y, (text == 0 or red) and fgcolred or fgcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-  
 
     return box_width, box_height
 end
@@ -186,7 +183,6 @@ function DrawAmmoGuage(count, icon, x, y, alignh, alignv, alpha)
     surface.SetDrawColor(fgcol)
     
     local mat = GetAmmoIconMat(icon)
-    --local mat = HL2AmmoIcon("W")
 
     surface.SetMaterial(mat)
 
