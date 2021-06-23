@@ -152,12 +152,16 @@ end
 function Player:SS_BaseIncomeMultiplier()
     local cash = self:SS_GetDonation()
     local incomelevel = math.min(math.floor(math.min(cash, 2000) / 1000) + math.floor(cash / 10000) + 1, 42)
-    local mult = (((SERVER and self.IN_DISCORD or IN_DISCORD) == 1 and 3 or 1) + incomelevel) * 0.25
+    local mult = (3 + incomelevel) * 0.25
 
     if self:IsAFK() then
         mult = mult / 2
     else
         mult = mult * 2
+    end
+
+    if ((SERVER and self.IN_STEAMGROUP or IN_STEAMGROUP) or 0) <= 0 then
+        mult = mult / 2
     end
 
     return mult

@@ -98,50 +98,44 @@ hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
 
         cam.End3D2D()
     end
-
-    if MVISTAB_NEXT.harmonics and cam.StartCulled3D2D(Vector(2304, 541.2, 54), Angle(-90, 0, -90), 0.011) then
-        local t = MVISTAB_NEXT
-        if not t then return end
-        local base = -(#t.harmonics + 1) * 50
-        draw.NoTexture()
-        surface.SetDrawColor(255, 255, 255, 255)
-        local px, py = base, 0
-        table.insert(t.harmonics, 0)
-
-        for i, v in ipairs(t.harmonics) do
-            local x, y = i * 100 + base, v * 2000 + 20
-
-            if i == #t.harmonics then
-                y = 0
-            end
-
-            surface.DrawPoly({
-                {
-                    x = px,
-                    y = py
-                },
-                {
-                    x = px,
-                    y = -py
-                },
-                {
-                    x = x,
-                    y = -y
-                },
-                {
-                    x = x,
-                    y = y
-                }
-            })
-
-            px, py = x, y
-        end
-
-        table.remove(t.harmonics) --remove final 0 so we arent corrupting it
-        cam.End3D2D()
-    end
 end)
 
+-- if MVISTAB_NEXT.harmonics and cam.StartCulled3D2D(Vector(2304, 541.2, 54), Angle(-90, 0, -90), 0.011) then
+--     local t = MVISTAB_NEXT
+--     if not t then return end
+--     local base = -(#t.harmonics + 1) * 50
+--     draw.NoTexture()
+--     surface.SetDrawColor(255, 255, 255, 255)
+--     local px, py = base, 0
+--     table.insert(t.harmonics, 0)
+--     for i, v in ipairs(t.harmonics) do
+--         local x, y = i * 100 + base, v * 2000 + 20
+--         if i == #t.harmonics then
+--             y = 0
+--         end
+--         surface.DrawPoly({
+--             {
+--                 x = px,
+--                 y = py
+--             },
+--             {
+--                 x = px,
+--                 y = -py
+--             },
+--             {
+--                 x = x,
+--                 y = -y
+--             },
+--             {
+--                 x = x,
+--                 y = y
+--             }
+--         })
+--         px, py = x, y
+--     end
+--     table.remove(t.harmonics) --remove final 0 so we arent corrupting it
+--     cam.End3D2D()
+-- end
 hook.Add("KeyPress", "MusicVisClick", function(ply, key)
     if (key == IN_USE or key == IN_ATTACK) and VISUALIZER_TYPE_TARGET and IsFirstTimePredicted() then
         RunConsoleCommand("musicvis", VISUALIZER_TYPE_TARGET)

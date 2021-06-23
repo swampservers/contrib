@@ -33,9 +33,52 @@ function PLAYER:SetLocation(locationId)
 end
 
 PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
+local specials = "[]{}()<>-|= "
+local specials2 = "["
+
+for i = 1, #specials do
+    specials2 = specials2 .. "%" .. specials[i]
+end
+
+specials2 = specials2 .. "]+"
+
+function StripNameAdvert(name, advert)
+    local pat = {specials2}
+
+    for i = 1, #advert do
+        local ch = advert[i]
+
+        if ch == "." then
+            table.insert(pat, "%.")
+        else
+            table.insert(pat, "[" .. ch:upper() .. ch .. "]")
+        end
+    end
+
+    table.insert(pat, specials2)
+    local n2 = (" " .. name .. " "):gsub(table.concat(pat, ""), ""):Trim()
+    if #n2 < 2 then return name end
+
+    return n2
+end
+
+-- local stripme = {"- swamp.sv", "-swamp.sv", "swamp.sv"}
+function PLAYER:ComputeName()
+    if self:IsBot() then return "Kleiner" end
+    local tn = self:TrueName()
+    tn = StripNameAdvert(tn, "swamp.sv")
+    tn = StripNameAdvert(tn, "sups.gg")
+
+    return tn
+end
 
 function PLAYER:Name()
-    return self:IsBot() and "Kleiner" or self:TrueName()
+    if self:TrueName() ~= self.LastTrueName then
+        self.NameCache = self:ComputeName()
+        self.LastTrueName = self:TrueName()
+    end
+
+    return self.NameCache
 end
 
 PLAYER.Nick = PLAYER.Name

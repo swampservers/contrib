@@ -1,5 +1,5 @@
 VertexLitGeneric
 {
-	$basetexture "effects/white"
+	$basetexture "models/pyroteknik/hats/white"
 	$halflambert 1
 }

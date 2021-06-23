@@ -1,118 +1,92 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 local SprayThumbnails = {}
-local SprayList, SprayMeshManagerBase, selected, selectedbutton, page, pagecount
+local SprayList, SprayMeshManagerBase, selected, page, pagecount
 
-local function FormatTable(tab)
-    for k, v in pairs(tab) do
-        local s = string.find(tab[k], "%w+%.gfycat%.com/%a+%.webm$", 0, false)
+local function SanitizeList()
 
-        if s and tab[k]:len() < 100 then
-            tab[k] = tab[k]:sub(s, -1)
+    for i,v in ipairs(SprayList) do
+        if not istable(v) then
+            SprayList[i] = {
+                v, -1
+            }
+        end
+    end
+
+    local i = 1
+    while i <= #SprayList do
+        local id = SanitizeImgurId(SprayList[i][1])
+
+        if id then
+            SprayList[i][1] = id
+            i=i+1
         else
-            local id = SanitizeImgurId(tab[k])
-
-            if id then
-                tab[k] = "i.imgur.com/" .. id
-            else
-                table.remove(tab, k)
-            end
+            table.remove(SprayList, i)
         end
     end
 
-    for k, v in pairs(tab) do
-        local c = {}
-
-        for k2, v2 in pairs(tab) do
-            if v == v2 and k ~= k2 then
-                table.insert(c, k2)
-            end
+    local found = {}
+    i = 1
+    while i <= #SprayList do
+        local v = SprayList[i][1]
+        if found[v] then
+            table.remove(SprayList, i)
+        else
+            found[v]= true
+            i=i+1
         end
 
-        if #c > 0 then
-            for k3, v3 in pairs(c) do
-                table.remove(tab, v3)
-            end
-        end
     end
-
-    return tab
-end
-
-function ReloadManager()
-    for k, v in pairs(SprayThumbnails) do
-        SprayThumbnails[k].html:Remove()
-        SprayThumbnails[k].button:Remove()
-    end
-
-    if IsValid(selected) then
-        selected:Remove()
-        selectedbutton:Remove()
-    end
-
-    SprayList = FormatTable(SprayList)
-    SprayMeshManagerThumbnails()
-    file.Write("sprays/savedsprays.txt", util.TableToJSON(SprayList))
 end
 
 local function SprayOptions(link)
     local menu = DermaMenu()
 
     menu:AddOption("Remove", function()
-        table.RemoveByValue(SprayList, link)
-        ReloadManager()
+        for k, v in pairs(SprayList) do
+            if v[1] == link then
+                table.remove(SprayList, k)
+                break
+            end
+        end
+
+        UpdateSprayList()
     end)
 
     menu:AddOption("Copy link to clipboard", function()
-        SetClipboardText("https://" .. link)
+        SetClipboardText("https://i.imgur.com/" .. link)
     end)
 
     menu:Open()
 end
 
-local function OutlineCurrentSpray(width, height)
-    selected = vgui.Create("DPanel", SprayMeshManagerBase)
-    selected:SetPos(width - 15, height - 15)
-    selected:SetSize(150, 150)
-
-    function selected:Paint(w, h)
-        surface.SetDrawColor(Color(255, 255, 255))
-        surface.DrawOutlinedRect(10, 10, 138, 138)
+function UpdateSprayList()
+    for k, v in pairs(SprayThumbnails) do
+        SprayThumbnails[k]:Remove()
     end
-
-    selectedbutton = vgui.Create("DButton", SprayMeshManagerBase)
-    selectedbutton:SetSize(150, 150)
-    selectedbutton:SetPos(width - 15, height - 15)
-    selectedbutton:SetText("")
-
-    function selectedbutton:Paint(w, h)
-        draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
-    end
-
-    function selectedbutton:DoRightClick()
-        SprayOptions(GetConVar("SprayMesh_URL"):GetString())
-    end
+    SprayMeshManagerThumbnails()
+    file.Write("swamp_sprays.txt", util.TableToJSON(SprayList))
 end
 
 function SprayMeshManagerThumbnails()
-    SprayList = FormatTable(SprayList)
+    SanitizeList()
+
+
     pagecount = math.ceil(#SprayList / 12)
     local outlinecheck = false
 
-    for k, v in pairs(SprayList) do
+    for k, v in pairs(table.Reverse(SprayList)) do
         if k > page * 12 then
-            if (SprayThumbnails[v] ~= nil) then
-                SprayThumbnails[v].html:Remove()
-                SprayThumbnails[v].button:Remove()
+            if (SprayThumbnails[v[1]] ~= nil) then
+                SprayThumbnails[v[1]]:Remove()
             end
 
             continue
         end
 
         if k <= (page - 1) * 12 then
-            if (SprayThumbnails[v] ~= nil) then
-                SprayThumbnails[v].html:Remove()
-                SprayThumbnails[v].button:Remove()
+            if (SprayThumbnails[v[1]] ~= nil) then
+                SprayThumbnails[v[1]]:Remove()
             end
 
             continue
@@ -122,86 +96,62 @@ function SprayMeshManagerThumbnails()
         local height = math.floor(key / 3) * 138 + 30
         local width = (key % 3) * 138 + 12
 
-        SprayThumbnails[v] = {
-            ["html"] = vgui.Create("DHTML", SprayMeshManagerBase),
-            ["button"] = vgui.Create("DButton", SprayMeshManagerBase)
-        }
+        SprayThumbnails[v[1]] = vgui.Create("DButton", SprayMeshManagerBase)
 
-        local panel = SprayThumbnails[v]
-        panel["button"]:SetSize(128, 128)
-        panel["button"]:SetPos(width, height)
-        panel["button"]:SetText("")
-        local pb = panel["button"]
-
-        function pb:Paint(w, h)
+        local panel = SprayThumbnails[v[1]]
+        panel:SetSize(128, 128)
+        panel:SetPos(width, height)
+        panel:SetText("")
+		
+        function panel:Paint(w, h)
             draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
-        end
+            local m = ImgurMaterial({id=v[1], shader = "UnlitGeneric"})
 
-        panel["button"].DoClick = function()
-            RunConsoleCommand("SprayMesh_URL", v)
-
-            if not IsValid(selected) then
-                OutlineCurrentSpray(width, height)
-            elseif not selected:IsVisible() then
-                OutlineCurrentSpray(width, height)
-            else
-                selected:SetPos(width - 15, height - 15)
-                selectedbutton:SetPos(width - 15, height - 15)
+            surface.SetDrawColor( 255, 255, 255, 255 ) 
+            surface.SetMaterial( m )
+            surface.DrawTexturedRect( 0, 0, 128, 128 )
+            if selected == panel then
+                surface.DisableClipping(true)
+                surface.SetDrawColor(Color(255, 255, 255))
+                surface.DrawOutlinedRect(-5, -5, 138, 138)
             end
         end
 
-        panel["button"].DoRightClick = function()
-            SprayOptions(v)
+        panel.DoClick = function()
+            RunConsoleCommand("spraymesh_url", v[1])
+            
+            if v[2] == -1 then
+                Derma_Query("Is this spray pornographic?\nClick porn if unsure. Lying=ban", "NSFW Spray?", "It's clean", function()
+                    RunConsoleCommand("swampspraymesh_nsfw", "0")
+                    SprayList[k][2] = 0
+                    UpdateSprayList()
+                end, "It's porn", function()
+                    RunConsoleCommand("swampspraymesh_nsfw", "1")
+                    SprayList[k][2] = 1
+                    UpdateSprayList()
+                end)
+            else
+                RunConsoleCommand("swampspraymesh_nsfw_url", v[1])
+                RunConsoleCommand("swampspraymesh_nsfw", v[2])
+            end
+
+            selected = panel
         end
 
-        local link = ""
-
-        if string.find(v, "%w+%.gfycat%.com/%a+%.webm$", 0, false) then
-            link = "<video id='media' onload='FixSize()' src='" .. "https://" .. v .. "' style='width:100%;height:auto' autoplay loop muted/>"
-        else
-            link = "<img id='media' onload='FixSize()' src='" .. "http://" .. v .. "'></img>"
+        panel.DoRightClick = function()
+            SprayOptions(v[1])
         end
 
-        panel["html"]:SetSize(128, 128)
-        panel["html"]:SetPos(width, height)
-        panel["html"]:SetHTML([[
-			<!DOCTYPE html>
-			<html>
-				<head>
-					<meta charset="UTF-8">
-					<title></title>
-					<style type = "text/css">
-						html,body {
-							margin:0;
-							overflow:hidden;
-							text-align:center;
-						}
-					</style>
-				</head>
-				<body scroll="no">
-					]] .. link .. [[
-					<script>
-						function FixSize(){
-							var image = document.getElementById("media");
-							if (image.height > image.width) {
-								image.style.height = "]] .. panel["html"]:GetTall() .. [[px";
-								image.style.width = "auto";
-							}
-							else{
-								image.style.height = "auto";
-								image.style.width = "]] .. panel["html"]:GetWide() .. [[px";
-							}
-						}
-					</script>
-				</body>
-			</html>]])
+        if v[2] == 1 then
+            local FlagIcon = vgui.Create("DImage", panel)
+            FlagIcon:SetSize(16, 16)
+            FlagIcon:SetPos(0, 0)
+            FlagIcon:SetImage("icon16/flag_red.png")
+        end
 
-        if GetConVar("SprayMesh_URL"):GetString() == v then
-            OutlineCurrentSpray(width, height)
-            selected:Show()
-            outlinecheck = true
-        elseif (key == 11 or k == #SprayList) and selected ~= nil and selected:IsVisible() and not outlinecheck then
-            selected:Hide()
+
+        if GetConVar("SprayMesh_URL"):GetString() == v[1] then
+            selected = panel
         end
     end
 end
@@ -209,29 +159,37 @@ end
 function SprayMeshManager()
     if IsValid(SprayMeshManagerBase) then return end
 
-    if not file.Exists("sprays", "DATA") then
-        file.CreateDir("sprays")
+    if not file.Exists("swamp_sprays.txt", "DATA") and file.Exists("sprays/savedsprays.txt", "DATA") then
+        file.Rename( "sprays/savedsprays.txt","swamp_sprays.txt")
     end
 
-    if not file.Exists("sprays/savedsprays.txt", "DATA") then
-        file.Write("sprays/savedsprays.txt", "")
-    end
+    SprayList = util.JSONToTable(file.Read("swamp_sprays.txt", "DATA") or "") or {}
 
-    local SavedSprays = util.JSONToTable(file.Read("sprays/savedsprays.txt"))
-    SprayList = {}
+    SanitizeList()
 
-    if SavedSprays then
-        SprayList = SavedSprays
-    elseif file.Size("sprays/savedsprays.txt", "DATA") > 0 then
-        Derma_Message("An error occurred while loading your saved sprays.", "Error", "Ok")
-    end
+
 
     page = 1
     SprayMeshManagerBase = vgui.Create("DFrame")
-    SprayMeshManagerBase:SetSize(430, 620)
+    SprayMeshManagerBase:SetSize(430, 720)
     SprayMeshManagerBase:SetPos(10, ScrH() * 0.1)
     SprayMeshManagerBase:SetTitle("")
     SprayMeshManagerBase:MakePopup()
+    SprayMeshManagerBase:Center()
+
+    if gui.IsGameUIVisible() then
+        gui.HideGameUI()
+    end
+    hook.Add("Think", "SMMCloser", function()
+        if IsValid(SprayMeshManagerBase) then
+            if gui.IsGameUIVisible() then
+                gui.HideGameUI()
+                SprayMeshManagerBase:Close()
+            end
+        else
+            hook.Remove("Think", "SMMCloser")
+        end
+    end)
 
     function SprayMeshManagerBase:OnRemove()
         SprayMeshManagerBase = nil
@@ -239,20 +197,20 @@ function SprayMeshManager()
 
     function SprayMeshManagerBase:Paint(w, h)
         draw.RoundedBox(8, 0, 0, w, h, Color(0, 0, 0))
-        draw.DrawText(page, "Trebuchet18", w * .5, h - 25, Color(255, 255, 255), TEXT_ALIGN_CENTER)
+        draw.DrawText(page, "Trebuchet18", 430 * .5, 595, Color(255, 255, 255), TEXT_ALIGN_CENTER)
+        draw.DrawText("Upload your spray to imgur.com, copy", "Trebuchet18", 20, 625, Color(255, 255, 255), TEXT_ALIGN_LEFT)
+        draw.DrawText("the url, and paste it below.", "Trebuchet18", 20, 640, Color(255, 255, 255), TEXT_ALIGN_LEFT)
+
+        local id = SprayMeshManagerInput.SanitizedInput 
+        if id then
+            local m = ImgurMaterial({id=id, shader = "UnlitGeneric"})
+
+            surface.SetDrawColor( 255, 255, 255, 255 ) 
+            surface.SetMaterial( m )
+            surface.DrawTexturedRect( 290, 615,100,100 ) 
+        end
     end
 
-    SprayMeshManagerAddSpray = vgui.Create("DImageButton", SprayMeshManagerBase)
-    SprayMeshManagerAddSpray:SetSize(16, 16)
-    SprayMeshManagerAddSpray:SetPos(10, 5)
-    SprayMeshManagerAddSpray:SetImage("icon16/add.png")
-
-    function SprayMeshManagerAddSpray:DoClick()
-        Derma_StringRequest("Add New Spray", "Input an imgur with correct formating   Example: i.imgur.com/nbn0zwo.jpg", "", function(link)
-            table.insert(SprayList, link)
-            ReloadManager()
-        end)
-    end
 
     SprayMeshManagerPageLeft = vgui.Create("DImageButton", SprayMeshManagerBase)
     SprayMeshManagerPageLeft:SetSize(16, 16)
@@ -278,7 +236,38 @@ function SprayMeshManager()
         end
     end
 
+    SprayMeshManagerInput = vgui.Create("DTextEntry", SprayMeshManagerBase)
+    SprayMeshManagerInput:SetSize(245, 16)
+    SprayMeshManagerInput:SetPos(15, 665)
+    SprayMeshManagerCheckbox = vgui.Create("DCheckBoxLabel", SprayMeshManagerBase)
+    SprayMeshManagerCheckbox:SetSize(16, 16)
+    SprayMeshManagerCheckbox:SetPos(430 * .3 - 90, 690)
+    SprayMeshManagerCheckbox:SetText("Is this spray pornograhic?")
+    SprayMeshManagerInputButton = vgui.Create("DButton", SprayMeshManagerBase)
+    SprayMeshManagerInputButton:SetSize(40, 20)
+    SprayMeshManagerInputButton:SetPos(430 * .3 + 70, 688)
+    SprayMeshManagerInputButton:SetText("OK")
+
+    function SprayMeshManagerInputButton:DoClick()
+        if SprayMeshManagerInput.SanitizedInput then
+            table.insert(SprayList, {
+                [1] = SprayMeshManagerInput.SanitizedInput,
+                [2] = SprayMeshManagerCheckbox:GetChecked() and 1 or 0
+            })
+
+            UpdateSprayList()
+        end
+    end
+
+
+    SprayMeshManagerInput.OnChange = function(self)
+        SingleAsyncSanitizeImgurId(self:GetValue(), function(id)
+            SprayMeshManagerInput.SanitizedInput = id
+        end)
+    end
+
     SprayMeshManagerThumbnails()
 end
 
-concommand.Add("SprayMesh_Manager", SprayMeshManager)
+concommand.Add("spraymesh_manager", SprayMeshManager)
+concommand.Add("spraymesh", SprayMeshManager)

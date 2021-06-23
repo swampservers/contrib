@@ -65,37 +65,31 @@ function ENT:Think()
                     v:SetPos(v:GetPos() + Vector(0, 0, 1))
                     v:SetVelocity(Vector(0, -500, 500))
                     v:TakeDamage(35, self, self)
-                    local pos = v:GetPos()
-
-                    for i = 1, 5 do
-                        local add = Vector(math.random(-100, 100), math.random(-100, 100), math.random(-100, 10))
-
-                        --if add:Dot(trace.HitNormal)<0 then add = add*-1 end
-                        local tr = util.TraceLine({
-                            start = pos,
-                            endpos = pos + add
-                        })
-
-                        if tr.Hit then
-                            local Pos1 = tr.HitPos + (tr.HitNormal * 2)
-                            local Pos2 = tr.HitPos - tr.HitNormal
-                            local Bone = tr.Entity:GetPhysicsObjectNum(tr.PhysicsBone or 0)
-
-                            if (not Bone) then
-                                Bone = tr.Entity
-                            end
-
-                            Pos1 = Bone:WorldToLocal(Pos1)
-                            Pos2 = Bone:WorldToLocal(Pos2)
-
-                            PaintPlaceDecal(ply, tr.Entity, {
-                                Pos1 = Pos1,
-                                Pos2 = Pos2,
-                                bone = tr.PhysicsBone,
-                                decal = "Blood"
-                            })
-                        end
-                    end
+                    -- local pos = v:GetPos()
+                    -- for i = 1, 5 do
+                    --     local add = Vector(math.random(-100, 100), math.random(-100, 100), math.random(-100, 10))
+                    --     --if add:Dot(trace.HitNormal)<0 then add = add*-1 end
+                    --     local tr = util.TraceLine({
+                    --         start = pos,
+                    --         endpos = pos + add
+                    --     })
+                    --     if tr.Hit then
+                    --         local Pos1 = tr.HitPos + (tr.HitNormal * 2)
+                    --         local Pos2 = tr.HitPos - tr.HitNormal
+                    --         local Bone = tr.Entity:GetPhysicsObjectNum(tr.PhysicsBone or 0)
+                    --         if (not Bone) then
+                    --             Bone = tr.Entity
+                    --         end
+                    --         Pos1 = Bone:WorldToLocal(Pos1)
+                    --         Pos2 = Bone:WorldToLocal(Pos2)
+                    --         -- PaintPlaceDecal(ply, tr.Entity, {
+                    --         --     Pos1 = Pos1,
+                    --         --     Pos2 = Pos2,
+                    --         --     bone = tr.PhysicsBone,
+                    --         --     decal = "Blood"
+                    --         -- })
+                    --     end
+                    -- end
                 end
             end
         end

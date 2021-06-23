@@ -21,6 +21,15 @@ function ExtSoundEmitSound(ply, sound, pitch, options)
     net.WriteFloat(pitch)
     net.WriteTable(options)
     net.Send(whoHearsCache(ply))
+
+    if not options.shared then
+        net.Start("ExtSound")
+        net.WriteEntity(ply)
+        net.WriteString(sound)
+        net.WriteFloat(pitch)
+        net.WriteTable(options)
+        net.Send(ply)
+    end
 end
 
 function whoHearsCache(ply)

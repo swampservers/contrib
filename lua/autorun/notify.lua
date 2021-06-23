@@ -2,6 +2,7 @@
 if CLIENT then
     LatestNotification = ""
     LatestNotificationTime = -10
+    ResetNotificationTime = false
 
     net.Receive('Notify', function(length)
         LocalPlayerNotify(net.ReadString())
@@ -10,10 +11,15 @@ if CLIENT then
     function LocalPlayerNotify(str)
         print(str)
         LatestNotification = str
-        LatestNotificationTime = CurTime()
+        ResetNotificationTime = true
     end
 
     hook.Add("PostRenderVGUI", "HUDPaint_PSNotification", function()
+        if ResetNotificationTime then
+            LatestNotificationTime = CurTime()
+            ResetNotificationTime = false
+        end
+
         local dt = CurTime() - LatestNotificationTime
         local a = math.Clamp(math.min(dt * 4, 5 - dt), 0, 1)
 

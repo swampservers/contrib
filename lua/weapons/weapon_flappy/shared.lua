@@ -28,6 +28,7 @@ local CMoveDataKeyPressed = FindMetaTable("CMoveData").KeyPressed
 
 hook.Add("SetupMove", "flappy_SetupMove", function(ply, mv, cmd)
     if CMoveDataKeyPressed(mv, IN_JUMP) and ply:UsingWeapon("weapon_flappy") and not ply:InVehicle() then
+        if ply.Obesity and ply:Obesity() > 40 then return end
         local self = ply:GetActiveWeapon()
         local power = 200
 

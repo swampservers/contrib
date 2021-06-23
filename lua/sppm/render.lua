@@ -20,7 +20,6 @@ function PPM_PrePonyDraw(ent)
 
     if not ply.UpdatedPony then
         net.Start("PonyRequest")
-        print("REQ", ply)
         net.WriteEntity(ply)
         net.SendToServer()
         ply.UpdatedPony = true
@@ -34,6 +33,7 @@ function PPM_PrePonyDraw(ent)
             v = ImgurMaterial({
                 id = ply.ponydata.imgurcmark,
                 owner = ent,
+                worksafe = true,
                 pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = false,
                 shader = "VertexLitGeneric",
