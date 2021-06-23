@@ -26,7 +26,7 @@ function GauntletFizzlePlayer(self, target, attacker)
         end
 
         local dmginfo = DamageInfo()
-        dmginfo:SetDamage(target:Health()) --is this okay?
+        dmginfo:SetDamage(100)
         dmginfo:SetDamageType(DMG_DISSOLVE)
         dmginfo:SetAttacker(attacker)
         dmginfo:SetDamageForce(Vector(0, 0, 1))
