@@ -45,6 +45,9 @@ timer.Simple(0, function()
                 v = {v}
                 SprayList[i] = v
             end
+            if v[2]==1 then
+                v[2]=true
+            end
             if v[2]==0 then
                 v[2]=false
             end
@@ -101,7 +104,7 @@ timer.Simple(0, function()
 
                 local s = 139
                 p:SetSize(s,s)
-                p:SetPos(x, y)
+                -- p:SetPos(x, y)
                 p:SetText("")
                 
                 function p:Paint(w, h)
@@ -132,6 +135,7 @@ timer.Simple(0, function()
                     if self.nsfw ~= nil then
                         nsfwconvar:SetString(self.id..(self.nsfw and "=1" or "=0"))
                     end
+                    basedpanel.inputholder:ApplyText()
                 end
 
                 function p:DoRightClick()
@@ -224,11 +228,18 @@ timer.Simple(0, function()
                 p:Dock(TOP)
                 p:DockMargin(0,16+8,0,8+8)
 
+                function p:ApplyText()
+                    p.Text="Spray applied! Press ESC to close."
+                    p.TextColor = succgreen
+                end
+
                 function p:ResetText()
                     p.Text = "To set your spray, upload it to imgur.com, then\npaste the URL here ➔"
                     p.TextColor = almostwhite
                 end
                 p:ResetText()
+
+
 
                 function p:Paint(w,h)
                     -- draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 200))
@@ -247,8 +258,7 @@ timer.Simple(0, function()
                             -- self.SanitizedInput = id
                             if id then
                                 urlconvar:SetString("i.imgur.com/"..id)
-                                basedpanel.inputholder.Text="Spray applied! Press ESC to close."
-                                basedpanel.inputholder.TextColor = succgreen
+                                basedpanel.inputholder:ApplyText()
                             else
                                 if val ~= "" then
                                     basedpanel.inputholder.Text="Invalid imgur URL. GIFs aren't supported!"
