@@ -178,13 +178,11 @@ local function MagicOutcomeExplode(ply, button)
     local explosion = ents.Create("env_explosion") -- The explosion entity
     local targetply, noun = ButtonTarget(ply, 8)
     local pos = targetply:GetPos() + Vector(0, 0, 40)
-    explosion:SetPos(pos) -- Put the position of the explosion at the position of the entity
-    explosion:Spawn() -- Spawn the explosion
-    explosion:SetKeyValue("iMagnitude", "150") -- the magnitude of the explosion
+    explosion:SetPos(pos)
+    explosion:Spawn()
+    explosion:SetKeyValue("iMagnitude", "150") 
     explosion:SetOwner(button)
-    explosion:Fire("Explode", 0, 0) -- explode
-    --return "made [white]" .. noun .. " spontaneously combust!"
-
+    explosion:Fire("Explode", 0, 0) 
     return ""
 end
 
@@ -398,90 +396,7 @@ local function MagicOutcomeOverlay(ply, button)
     return ""
 end
 
---please tell me if this is too much
---small minigame sorta deal where you get a bounty that you can work off by defending yourself.
-function ButtonHighValueTargetHook(victim, inflictor, attacker)
-    if (victim.HVTBounty and victim.HVTBounty > 0) then
-        if (attacker:IsPlayer() and attacker ~= victim) then
-            victim.HVTBounty = nil
-            victim.HVTTotal = nil
-            victim:Notify("You couldn't defend yourself and your bounty was claimed!")
-            BotSayGlobal(victim:Nick().."'s rampage has been ended by "..attacker:Nick().."!" )
-            hook.Remove("PlayerDeath", "HighValueTarget")
-        else
-            local penalty = math.Clamp(victim.HVTBounty, 0, 10000)
-            victim.HVTBounty = math.max(victim.HVTBounty - penalty, 0)
-            victim.HVTTotal = math.max(victim.HVTTotal - penalty, 0)
-            if (victim.HVTBounty > 0) then
-                victim:Notify("You lost " .. string.Comma(penalty) .. " of your earnable bounty from dying. You can still earn " .. string.Comma(victim.HVTBounty) .. ".")
-                BotSayGlobal(victim:Nick().." Was killed, but their rampage continues." )
-            else
-                victim:Notify("You lost the last of your earnable bounty from dying. Whatever was left of it is still claimable by players.")
-                local bounty = GetPlayerBounty(victim)
-                local but = bty > 0 and ", but they still have a bounty of "..string.Comma(bounty).."." or "."
-                BotSayGlobal(victim:Nick().."'s rampage has ended"..but )
-                victim.HVTBounty = nil
-                victim.HVTTotal = nil
-                hook.Remove("PlayerDeath", "HighValueTarget")
-            end
-        end
-    end
 
-    if (attacker.HVTBounty and attacker.HVTBounty > 0 and attacker != victim and !victim:IsBot()) then
-        local prize = math.Clamp(attacker.HVTBounty, 0, 5000)
-        if(prize > 0)then attacker:SS_GivePoints(prize) end
-        attacker.HVTBounty = math.max(attacker.HVTBounty - prize, 0)
-        local bty = math.max(GetPlayerBounty(attacker) - prize,0)
-        SetPlayerBounty(attacker, bty)
-
-        if (prize > 0) then
-            attacker:Notify("+" .. string.Comma(prize) .. " Points! (" .. string.Comma(attacker.HVTBounty) .. " left!)")
-            attacker:GiveAmmo(1, "peaceshot")
-            attacker:GiveAmmo(5, "lmg")
-        else
-
-            local bonus = math.max(math.Round(attacker.HVTTotal / 4),0)
-            if(bonus > 0)then
-                attacker:SS_GivePoints(bonus)
-                attacker:Notify("Nice! You managed to survive! Have a bonus of " .. string.Comma(bonus) .. " points!")
-            else
-                attacker:Notify("Nice! You managed to survive!")
-            end
-            victim.HVTBounty = nil
-            victim.HVTTotal = nil
-            hook.Remove("PlayerDeath", "HighValueTarget")
-        end
-    end
-end
-
-local function HVTLoadout(ply)
-    ply:Give("weapon_peacekeeper")
-    ply:GiveAmmo(20, "peaceshot")
-    ply:Give("weapon_spades_lmg")
-    ply:GiveAmmo(400, "lmg")
-end
-
-hook.Add("PlayerSpawn", "HVTWeapons", function(ply)
-    if (ply.HVTBounty and ply.HVTBounty > 0) then
-        HVTLoadout(ply)
-    end
-end)
-
-local function MagicOutcomeHealth(ply)
-    local healthamount = 1000
-    local targetply, targetname = ButtonTarget(ply, 15)
-    targetply:SetHealth(healthamount)
-    targetply:EmitSound("items/medshot4.wav")
-    local prize = 100000
-    local bty = GetPlayerBounty(targetply) + prize
-    SetPlayerBounty(targetply, bty)
-    HVTLoadout(targetply)
-    targetply.HVTBounty = (targetply.HVTBounty or 0) + prize
-    targetply.HVTTotal = (targetply.HVTTotal or 0) + prize
-    hook.Add("PlayerDeath", "HighValueTarget", ButtonHighValueTargetHook)
-
-    return "gave " .. targetname .. " a [yellow]" .. string.Comma(prize) .. " point [white] bounty! But they're armed, and a piece of this bounty is removed and rewarded to them every time they kill ;doomguy;"
-end
 
 local function MagicOutcomeShoot(ply, button)
     local blame = ents.Create("weapon_peacekeeper")
@@ -509,6 +424,7 @@ end
 
 local function MagicOutcomeSnap(ply, button)
     if (GauntletFizzlePlayer) then
+        button:EmitSound("gauntlet/snap.wav", 100)
         local gaunt = ents.Create("weapon_gauntlet")
         gaunt:SetPos(Vector(0, 0, 32000))
         gaunt:Spawn()
@@ -516,9 +432,10 @@ local function MagicOutcomeSnap(ply, button)
         gaunt:SetSolid(SOLID_NONE)
         gaunt:SetNoDraw(true)
         SafeRemoveEntityDelayed(gaunt, 2)
-        --yea i know its pretty autistic to spawn a swep just so that we can blame kills but having the kill feed be as informative as possible stops us from needing autistic chat messages
+        --yea i know its pretty autistic to spawn a swep just so that we can blame kills, but its better than some autistic chat message imo.
         local victim, noun = ButtonTarget(ply, 2)
-        GauntletFizzlePlayer(gaunt, victim, ply ~= victim and ply or button)
+        --this function is used by the updated gauntlet
+        ply:Fizzle(ply ~= victim and ply or button, gaunt )
 
         return ""
     end
@@ -638,7 +555,7 @@ MagicButtonOutcomes = {
         name = "MagicOutcomePrize",
         func = MagicOutcomePrize,
         cool = true,
-        weight = 5
+        weight = 6
     },
     {
         name = "MagicOutcomeBounty",
@@ -669,7 +586,7 @@ MagicButtonOutcomes = {
     {
         name = "MagicOutcomeOverlay",
         func = MagicOutcomeOverlay,
-        weight = 17,
+        weight = 7,
     },
     {
         name = "MagicOutcomeSpawnObject",
@@ -719,12 +636,6 @@ MagicButtonOutcomes = {
         weight = 1,
     },
     {
-        name = "MagicOutcomeHealth",
-        func = MagicOutcomeHealth,
-        cool = true,
-        weight = 3,
-    },
-    {
         name = "MagicOutcomeDecals",
         func = MagicOutcomeDecals,
         weight = 12,
@@ -749,7 +660,7 @@ MagicButtonOutcomes = {
     {
         name = "MagicOutcomeMysteryBoxSpawn",
         func = MagicOutcomeMysteryBoxSpawn,
-        weight = 5,
+        weight = 3,
     }
 }
 
