@@ -26,7 +26,7 @@ function MAGICBUTTON_MODIFY(ply)
     return false
 end 
 
---if the player presses a button less than 7 minutes apart, start sending them fakes.
+--Reset counter
 function MAGICBUTTON_STAT_TRACKING(ply)
     ply.MagicButtonsTooFastCounter = (ply.MagicButtonsTooFastCounter or 0) + (ply:IsAdmin() and 0 or 1)
     local expiry = 60 * 5
