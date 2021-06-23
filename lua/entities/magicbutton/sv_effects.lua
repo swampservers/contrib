@@ -423,7 +423,7 @@ local function MagicOutcomeShoot(ply, button)
 end
 
 local function MagicOutcomeSnap(ply, button)
-    if (GauntletFizzlePlayer) then
+    if (ply.Fizzle) then
         button:EmitSound("gauntlet/snap.wav", 100)
         local gaunt = ents.Create("weapon_gauntlet")
         gaunt:SetPos(Vector(0, 0, 32000))
