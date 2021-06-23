@@ -39,33 +39,35 @@ function AsyncSanitizeImgurId(id, callback)
         timer.Simple(0, function()
             callback(nid)
         end)
-    else
-        if not isstring(id) or id:len() < 5 or id:len() > 100 then
-            timer.Simple(0, function()
-                callback(nil)
-            end)
+        return
+    end
 
-            return
-        end
+    -- expect at least 1 slash: we need gallery/id or a/id
+    if not isstring(id) or id:len() < 5 or id:len() > 100 or not string.find(id, "/") then
+        timer.Simple(0, function()
+            callback(nil)
+        end)
 
-        nid = table.remove(string.Explode("/", id, false))
+        return
+    end
 
-        HTTP({
-            method = "GET",
-            url = "https://imgur.com/" .. nid,
-            success = function(code, body, headers)
-                if (code == 200) then
-                    callback(SanitizeImgurId(string.match(body, "og:image:height.+content=\"(.+)%?fb")))
-                else
-                    callback(nil)
-                end
-            end,
-            failed = function(err)
-                print("ERROR: " .. err)
+    local split = string.Explode("/", id, false)
+
+    HTTP({
+        method = "GET",
+        url = "https://imgur.com/" .. split[#split-1].."/"..split[#split],
+        success = function(code, body, headers)
+            if (code == 200) then
+                callback(SanitizeImgurId(string.match(body, "og:image:height.+content=\"(.+)%?fb")))
+            else
                 callback(nil)
             end
-        })
-    end
+        end,
+        failed = function(err)
+            callback(nil)
+        end
+    })
+
 end
 
 
@@ -73,17 +75,23 @@ local inflight, q, qcb
 
 local function donext()
     if inflight then return end
-    local ncb = qcb
+    local nq,nqcb = q,qcb
+    q,qcb = nil,nil
     inflight = true
+    local already = false
     local callback = function(id)
-        ncb(id)
+        if already then return end
+        already = true
+        nqcb(id)
         inflight = false
         if q then
             donext()
         end
     end
-    AsyncSanitizeImgurId(q, callback)   
-    q,qcb = nil,nil
+    timer.Simple(30, function()
+        if not already then callback(nil) error("Imgur timeout") end
+    end)
+    AsyncSanitizeImgurId(nq, callback)   
 end
 
 function SingleAsyncSanitizeImgurId(url, callback)
