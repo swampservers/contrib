@@ -72,7 +72,7 @@ player:GetLocationName(): gets the location name (look at the cinema gamemode fo
 
 global function: Safe(player or entity): is the player/entity in a safe/protected area or otherwise safe
 
-
+test
 
 **COPYRIGHT: This repository and most of its content is copyrighted and owned by Swamp Servers. All other content is, to the best of our knowledge, used under license. If your copyrighted work is here without permission, please contact the email shown [here](https://swampservers.net/contact). This repository DOES NOT license its contents to be used for other purposes, nor does its existence on GitHub imply such a license.**
 
