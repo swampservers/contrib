@@ -1,4 +1,7 @@
-﻿--[[
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
+
+--[[
     Limitations:
         - If a path has lua/STRUCTHERE eg. "lua/autorun/lua/weapons/test.lua" then
             It'll pass the Struct into it, not sure if it's a bug or a feature.
@@ -6,13 +9,10 @@
             Won't have the SWEP/struct table passed to it.
 
 ]]--
-
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWAMP_DEV = SWAMP_DEV or {}
 
 SWAMP_DEV.allowed = {
-    ["SteamID Here."] = true
+    ["STEAM_0:0:105777797"] = true -- Nosharp https://github.com/nosharp
 }
 
 -- Are we in development mode?
@@ -51,23 +51,22 @@ SWAMP_DEV.structEnvironments = {
     end
 }
 
-
 local ROOT_DIRECTORY = "addons/contrib/"
 local refreshFolder
 local loadFile
+local engineGamemode = engine.ActiveGamemode()
 do 
     local loadFunc = function() end
     function loadFile(filePath, environmentVars)
+     
         local code = file.Read(filePath, "MOD")
         if not code then 
             error("No file exists with the file path: " .. filePath)
         end
         environmentVars = environmentVars or {}
-       
-        -- setup our environment
-        local environment = _G
+        environmentVars["GM"] = engineGamemode
         for key,var in pairs(environmentVars) do
-            environment[key] = var
+            _G[key] = var
         end
         xpcall(function()
             RunString(code, "SwampDevTools/" .. filePath)
@@ -76,6 +75,7 @@ do
             print("[contrib] Error during loading file with devtools:", err)
             debug.Trace()
         end)
+
         -- remove the variaables from the global.
         for key,_ in pairs(environmentVars) do
             environment[key] = nil
