@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local Entity = FindMetaTable("Entity")
 
+
 --[[
 To use web materials, just call in your draw hook:
 
@@ -18,6 +19,7 @@ args is a table with the following potential keys:
     pointsample: bool = false
     worksafe: bool = false
 ]]
+
 --returns nil if invalid
 function SanitizeImgurId(id)
     if not isstring(id) or id:len() < 5 or id:len() > 100 then return end
@@ -37,7 +39,6 @@ function AsyncSanitizeImgurId(id, callback)
         timer.Simple(0, function()
             callback(nid)
         end)
-
         return
     end
 
@@ -54,7 +55,7 @@ function AsyncSanitizeImgurId(id, callback)
 
     HTTP({
         method = "GET",
-        url = "https://imgur.com/" .. split[#split - 1] .. "/" .. split[#split],
+        url = "https://imgur.com/" .. split[#split-1].."/"..split[#split],
         success = function(code, body, headers)
             if (code == 200) then
                 callback(SanitizeImgurId(string.match(body, "og:image:height.+content=\"(.+)%?fb")))
@@ -66,46 +67,39 @@ function AsyncSanitizeImgurId(id, callback)
             callback(nil)
         end
     })
+
 end
+
 
 local inflight, q, qcb
 
 local function donext()
     if inflight then return end
-    local nq, nqcb = q, qcb
-    q, qcb = nil, nil
+    local nq,nqcb = q,qcb
+    q,qcb = nil,nil
     inflight = true
     local already = false
-
     local callback = function(id)
         if already then return end
         already = true
         nqcb(id)
         inflight = false
-
         if q then
             donext()
         end
     end
-
     timer.Simple(30, function()
-        if not already then
-            callback(nil)
-            error("Imgur timeout")
-        end
+        if not already then callback(nil) error("Imgur timeout") end
     end)
-
-    AsyncSanitizeImgurId(nq, callback)
+    AsyncSanitizeImgurId(nq, callback)   
 end
 
 function SingleAsyncSanitizeImgurId(url, callback)
-    if qcb then
-        qcb(nil)
-    end
-
+    if qcb then qcb(nil) end
     q, qcb = url, callback
     donext()
 end
+
 
 function Entity:GetImgur()
     local url = self:GetNWString("imgur_url")

@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 BrandColorGrayDarker = Color(32, 32, 32) --(26, 30, 38)
 BrandColorGrayDark = Color(48, 48, 48) --(38, 41, 49)
 BrandColorGray = Color(69, 69, 69)
@@ -23,6 +24,7 @@ BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104
 @brand-danger:          #E74C3C;
 ]]
 --10c090
+
 function BrandBackgroundPattern(x, y, w, h, px, special)
     surface.SetDrawColor(BrandColorPrimary)
     surface.DrawRect(x, y, w, h)
