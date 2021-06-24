@@ -78,7 +78,7 @@ do
 
         -- remove the variaables from the global.
         for key,_ in pairs(environmentVars) do
-            environment[key] = nil
+            _G[key] = nil
         end
     end
 
