@@ -1,9 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 if SERVER then
-
-	
-hook.Add("OnPlayerAFK", "afkwepstrip", function(v)
+    hook.Add("OnPlayerAFK", "afkwepstrip", function(v)
         --Strip freebie weapons to improve performance
         v:StripWeapon("weapon_spraypaint")
         v:StripWeapon("weapon_beans")
