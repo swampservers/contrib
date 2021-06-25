@@ -9,30 +9,22 @@
 
 ]]
 --
-
 local allowed = {
     ["STEAM_0:0:38422842"] = true, -- swamponions
-    ["STEAM_0:0:26424112"]=true, -- pyroteknik
-    ["STEAM_0:1:43528204"]=true, -- noz
-    ["STEAM_0:0:29598280"]=true, -- ech0
-    ["STEAM_0:0:44814758"]=true, -- brian
+    ["STEAM_0:0:26424112"] = true, -- pyroteknik
+    ["STEAM_0:1:43528204"] = true, -- noz
+    ["STEAM_0:0:29598280"] = true, -- ech0
+    ["STEAM_0:0:44814758"] = true, -- brian
     ["STEAM_0:0:105777797"] = true, -- nosharp
+    
 }
-
 
 concommand.Add("lua", function(ply, cmd, args, args2)
     if not allowed[LocalPlayer():SteamID()] then return end
-
-        RunString(args2)
-
+    RunString(args2)
 end)
 
-
-
-
-
 SWAMP_DEV = SWAMP_DEV or {}
-
 -- Are we in development mode?
 SWAMP_DEV.enabled = false
 -- The delay on checking if we need to refresh files
@@ -194,11 +186,9 @@ concommand.Add("dev_refresh", function(_, _, args)
     print("File " .. filePath:gsub(".*/", "") .. " force refreshed")
 end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
 
-
 concommand.Add("trace", function(ply)
     print(LocalPlayer():GetEyeTrace().HitPos)
 end)
-
 
 concommand.Add("origin", function(ply)
     local v = LocalPlayer():GetPos()
@@ -207,5 +197,3 @@ concommand.Add("origin", function(ply)
     print(txt)
     SetClipboardText(txt)
 end)
-
-
