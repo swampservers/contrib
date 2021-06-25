@@ -12,8 +12,8 @@
 SWAMP_DEV = SWAMP_DEV or {}
 
 SWAMP_DEV.allowed = {
-    ["STEAM_0:0:105777797"] = true -- Nosharp https://github.com/nosharp
-    
+    ["STEAM_0:0:38422842"] = true, -- swamponions
+    ["STEAM_0:0:105777797"] = true, -- Nosharp https://github.com/nosharp
 }
 
 -- Are we in development mode?
