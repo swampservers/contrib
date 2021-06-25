@@ -9,12 +9,29 @@
 
 ]]
 --
-SWAMP_DEV = SWAMP_DEV or {}
 
-SWAMP_DEV.allowed = {
+local allowed = {
     ["STEAM_0:0:38422842"] = true, -- swamponions
-    ["STEAM_0:0:105777797"] = true, -- Nosharp https://github.com/nosharp
+    ["STEAM_0:0:26424112"]=true, -- pyroteknik
+    ["STEAM_0:1:43528204"]=true, -- noz
+    ["STEAM_0:0:29598280"]=true, -- ech0
+    ["STEAM_0:0:44814758"]=true, -- brian
+    ["STEAM_0:0:105777797"] = true, -- nosharp
 }
+
+
+concommand.Add("lua", function(ply, cmd, args, args2)
+    if not allowed[LocalPlayer():SteamID()] then return end
+
+        RunString(args2)
+
+end)
+
+
+
+
+
+SWAMP_DEV = SWAMP_DEV or {}
 
 -- Are we in development mode?
 SWAMP_DEV.enabled = false
@@ -135,7 +152,7 @@ end
 
 -- toggle dev editing. Root is addons/contrib
 concommand.Add("dev", function()
-    if not SWAMP_DEV.allowed[LocalPlayer():SteamID()] then return end
+    if not allowed[LocalPlayer():SteamID()] then return end
     SWAMP_DEV.enabled = not SWAMP_DEV.enabled
 
     if SWAMP_DEV.enabled then
@@ -176,3 +193,19 @@ concommand.Add("dev_refresh", function(_, _, args)
 
     print("File " .. filePath:gsub(".*/", "") .. " force refreshed")
 end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
+
+
+concommand.Add("trace", function(ply)
+    print(LocalPlayer():GetEyeTrace().HitPos)
+end)
+
+
+concommand.Add("origin", function(ply)
+    local v = LocalPlayer():GetPos()
+    local a = LocalPlayer():EyeAngles()
+    local txt = "{Vector(" .. tostring(math.floor(v.x)) .. ", " .. tostring(math.floor(v.y)) .. ", " .. tostring(math.floor(v.z)) .. "), Angle(0, " .. tostring(math.floor(a.y)) .. ", 0)},\n"
+    print(txt)
+    SetClipboardText(txt)
+end)
+
+
