@@ -298,6 +298,12 @@ timer.Simple(0, function()
             -- end)
             -- p:InvalidateLayout( true )
             -- p:SizeToChildren( false, true )
+            basedpanel.scrollzone = vgui("DLabel", function(p)
+                p:Dock(BOTTOM)
+                p:SetText("To open this panel quickly, run in console: bind <key> spray")
+                p:SetContentAlignment(5)
+            end)
+
             basedpanel.scrollzone = vgui("DScrollPanel", function(p)
                 p:Dock(FILL)
 
