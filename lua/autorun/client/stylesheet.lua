@@ -61,23 +61,7 @@ function BrandBackgroundPattern(x, y, w, h, px, special)
 end
 
 function BrandDropDownGradient(x, y, w)
-    local m = 0.65
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 8.0 / 8.0))
-    surface.DrawRect(x, y + 0, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 7.0 / 8.0))
-    surface.DrawRect(x, y + 1, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 6.0 / 8.0))
-    surface.DrawRect(x, y + 2, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 5.0 / 8.0))
-    surface.DrawRect(x, y + 3, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 4.0 / 8.0))
-    surface.DrawRect(x, y + 4, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 3.0 / 8.0))
-    surface.DrawRect(x, y + 5, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 2.0 / 8.0))
-    surface.DrawRect(x, y + 6, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 1.0 / 8.0))
-    surface.DrawRect(x, y + 7, w, 1)
+    draw.GradientShadowDown(x, y, w, 8, 0.65)
 end
 
 BrandTitleBarHeight = 64
@@ -93,3 +77,36 @@ surface.CreateFont("SmallFont", {
     size = 16,
     weight = 200
 })
+
+local cornerMat = Material("vgui/box_corner_shadow")
+
+local function predrawshadow(alpha)
+    cornerMat:SetFloat("$alpha", alpha)
+    surface.SetDrawColor(Color(255, 255, 255))
+    surface.SetMaterial(cornerMat)
+end
+
+function draw.BoxShadow(x, y, w, h, blur, alpha)
+    local hblur = blur / 2
+    x = x - hblur
+    y = y - hblur
+    w = (w / 2) + hblur
+    h = (h / 2) + hblur
+    local cx, cy = x + w / 2, y + h / 2
+    local wb, hb = w / blur, h / blur
+    predrawshadow(alpha)
+    surface.DrawTexturedRectUV(x, y, w, h, 0, 0, wb, hb)
+    surface.DrawTexturedRectUV(x, y + h, w, h, 0, hb, wb, 0)
+    surface.DrawTexturedRectUV(x + w, y, w, h, wb, 0, 0, hb)
+    surface.DrawTexturedRectUV(x + w, y + h, w, h, wb, hb, 0, 0)
+end
+
+function draw.GradientShadowDown(x, y, w, h, alpha)
+    predrawshadow(alpha)
+    surface.DrawTexturedRectUV(x, y, w, h, 1, 1, 1, 0)
+end
+
+function draw.GradientShadowUp(x, y, w, h, alpha)
+    predrawshadow(alpha)
+    surface.DrawTexturedRectUV(x, y, w, h, 1, 0, 1, 1)
+end
