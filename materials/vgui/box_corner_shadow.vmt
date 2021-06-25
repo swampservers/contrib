@@ -1,5 +1,1 @@
-"UnlitGeneric"
-{
-	"$basetexture" "vgui/box_corner_shadow"
-	"$translucent" 1
-}
+﻿return "UnlitGeneric", {"$basetexture"}
