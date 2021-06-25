@@ -1,14 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
---[[
-    Limitations:
-        - If a path has lua/STRUCTHERE eg. "lua/autorun/lua/weapons/test.lua" then
-            It'll pass the Struct into it, not sure if it's a bug or a feature.
-        - A file within a sub directory of a struct folder like: "lua/weapons/testEnt/mysubdir/lua"
-            Won't have the SWEP/struct table passed to it.
-
-]]
---
+-- DEVTOOLS:
+-- This lets you conveniently edit clientside code and see your changes in real-time on the live server!
+-- To use it, first clone this repository into your garrysmod/addons folder so you have garrysmod/addons/contrib/lua
+-- Then, make a pull request to add your Steam ID to the "allowed" table below.
+-- Once this is done, you can simply type "dev" in console, and when dev mode is enabled, any changes to files in your
+-- local contrib repository will automatically be run while you're on the live server! You also get a "lua" console
+-- command which essentially does the same thing as lua_run_cl.
+-- Rules: This should only be used for development. Do not use this for anything that could be construed as malicious.
 local allowed = {
     ["STEAM_0:0:38422842"] = true, -- swamponions
     ["STEAM_0:0:26424112"] = true, -- pyroteknik
@@ -20,22 +18,24 @@ local allowed = {
 }
 
 concommand.Add("lua", function(ply, cmd, args, args2)
-    if not allowed[LocalPlayer():SteamID()] then return end
+    if not allowed[LocalPlayer():SteamID()] then
+        print("Not allowed!")
+
+        return
+    end
+
     RunString(args2)
 end)
 
-SWAMP_DEV = SWAMP_DEV or {}
--- Are we in development mode?
-SWAMP_DEV.enabled = false
--- The delay on checking if we need to refresh files
-SWAMP_DEV.refreshDelay = 2
-local currentItemStruct = nil
---- This stores file times for certain root folder.
---- FileNames[key] -> SaveTime[value]
-SWAMP_DEV.fileTimes = SWAMP_DEV.fileTimes or {}
+-- Stores previous value of file.Time
+local fileTimes = {}
 
--- lua/STRUCT/*
-SWAMP_DEV.structEnvironments = {
+-- Limitations:
+--     - If a path has lua/STRUCTHERE eg. "lua/autorun/lua/weapons/test.lua" then
+--         It'll pass the Struct into it, not sure if it's a bug or a feature.
+--     - A file within a sub directory of a struct folder like: "lua/weapons/testEnt/mysubdir/lua"
+--         Won't have the SWEP/struct table passed to it.
+local structEnvironments = {
     ["weapons"] = function(curClass)
         local found = weapons.GetStored(curClass)
 
@@ -64,107 +64,98 @@ SWAMP_DEV.structEnvironments = {
     end
 }
 
-local ROOT_DIRECTORY = "addons/contrib/"
-local refreshFolder
-local loadFile
-local engineGamemode = engine.ActiveGamemode()
+local function loadFile(filePath, environmentVars)
+    local code = file.Read(filePath, "MOD")
 
-do
-    local loadFunc = function() end
-
-    function loadFile(filePath, environmentVars)
-        local code = file.Read(filePath, "MOD")
-
-        if not code then
-            error("No file exists with the file path: " .. filePath)
-        end
-
-        environmentVars = environmentVars or {}
-        environmentVars["GM"] = engineGamemode
-
-        for key, var in pairs(environmentVars) do
-            _G[key] = var
-        end
-
-        xpcall(function()
-            RunString(code, "SwampDevTools/" .. filePath)
-        end, function(err)
-            print("[contrib] Error during loading file with devtools:", err)
-            debug.Trace()
-        end)
-
-        -- remove the variaables from the global.
-        for key, _ in pairs(environmentVars) do
-            _G[key] = nil
-        end
+    if not code then
+        error("No file exists with the file path: " .. filePath)
     end
 
-    local fileTime = file.Time
+    environmentVars = environmentVars or {}
+    environmentVars["GM"] = engine.ActiveGamemode()
 
-    function refreshFolder(subDir)
-        local fileNames, folders = file.Find(subDir .. "/*", "MOD")
-        local fileTimes = SWAMP_DEV.fileTimes
+    for key, var in pairs(environmentVars) do
+        _G[key] = var
+    end
 
-        for _, fileName in ipairs(fileNames) do
-            local filePath = subDir .. "/" .. fileName
-            if not fileName:EndsWith(".lua") then continue end
-            local fTime = fileTime(filePath, "MOD")
+    xpcall(function()
+        RunString(code, "SwampDevTools/" .. filePath)
+    end, function(err)
+        print("[contrib] Error during loading file with devtools:", err)
+        debug.Trace()
+    end)
 
-            if not fileTimes[filePath] then
-                fileTimes[filePath] = fTime
-                continue
-            else
-                if fileTimes[filePath] == fTime then continue end
-            end
-
-            local wasFoundDuringLookup = false
-
-            for structName, func in pairs(SWAMP_DEV.structEnvironments) do
-                local structLookupPath = "lua/" .. structName
-
-                if filePath:find(structLookupPath) then
-                    local className = fileName:sub(1, -5) -- remove the .lua extension.
-                    loadFile(filePath, func(className) or func(subDir:gsub(".*/", "")))
-                    wasFoundDuringLookup = true
-                end
-            end
-
-            if not wasFoundDuringLookup then
-                loadFile(filePath)
-            end
-
-            fileTimes[filePath] = fTime
-        end
-
-        for _, folder in ipairs(folders) do
-            refreshFolder(subDir .. "/" .. folder)
-        end
+    -- remove the variaables from the global.
+    for key, _ in pairs(environmentVars) do
+        _G[key] = nil
     end
 end
 
--- toggle dev editing. Root is addons/contrib
-concommand.Add("dev", function()
-    if not allowed[LocalPlayer():SteamID()] then return end
-    SWAMP_DEV.enabled = not SWAMP_DEV.enabled
+local function refreshFolder(subDir)
+    local fileNames, folders = file.Find(subDir .. "/*", "MOD")
 
-    if SWAMP_DEV.enabled then
+    for _, fileName in ipairs(fileNames) do
+        local filePath = subDir .. "/" .. fileName
+        if not fileName:EndsWith(".lua") then continue end
+        local fTime = file.Time(filePath, "MOD")
+
+        if (fileTimes[filePath] or fTime) == fTime then
+            fileTimes[filePath] = fTime
+            continue
+        end
+
+        local wasFoundDuringLookup = false
+
+        for structName, func in pairs(structEnvironments) do
+            local structLookupPath = "lua/" .. structName
+
+            if filePath:find(structLookupPath) then
+                local className = fileName:sub(1, -5) -- remove the .lua extension.
+                loadFile(filePath, func(className) or func(subDir:gsub(".*/", "")))
+                wasFoundDuringLookup = true
+            end
+        end
+
+        if not wasFoundDuringLookup then
+            loadFile(filePath)
+        end
+
+        fileTimes[filePath] = fTime
+    end
+
+    for _, folder in ipairs(folders) do
+        refreshFolder(subDir .. "/" .. folder)
+    end
+end
+
+concommand.Add("dev", function()
+    if not allowed[LocalPlayer():SteamID()] then
+        print("Not allowed!")
+
+        return
+    end
+
+    DEVTOOLS_ENABLED = not DEVTOOLS_ENABLED
+
+    if DEVTOOLS_ENABLED then
         print("Dev mode enabled")
 
-        timer.Create("SWAMP_DEV.Refresh", SWAMP_DEV.refreshDelay, 0, function()
-            -- avoid checking unnecessary folders
-            refreshFolder(ROOT_DIRECTORY .. "lua")
-            refreshFolder(ROOT_DIRECTORY .. "gamemodes")
+        timer.Create("DEVTOOLS_Refresh", 2, 0, function()
+            refreshFolder("addons/contrib/lua")
+            refreshFolder("addons/contrib/gamemodes")
+            refreshFolder("data/restricted/lua")
+            refreshFolder("data/restricted/gamemodes")
         end)
     else
         print("Dev mode disabled")
-        timer.Remove("SWAMP_DEV.Refresh")
+        timer.Remove("DEVTOOLS_Refresh")
     end
 end, nil, "Toggle dev mode, editing in addons/contrib", FCVAR_UNREGISTERED)
 
 -- force refresh a singular file 
 concommand.Add("dev_refresh", function(_, _, args)
     local filePath = args[1]
-    if not SWAMP_DEV.enabled or not filePath then return end
+    if not DEVTOOLS_ENABLED or not filePath then return end
     print("Attempting to force refresh file " .. filePath)
     local structFound
     local ran
@@ -176,7 +167,7 @@ concommand.Add("dev_refresh", function(_, _, args)
             break
         end
 
-        structFound = SWAMP_DEV.structEnvironments[fileType]
+        structFound = structEnvironments[fileType]
     end
 
     if not ran then
