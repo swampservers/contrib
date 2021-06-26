@@ -21,17 +21,17 @@ if CLIENT then
         local originvec, originang = ply:GetBonePosition(1)
 
         if ply:IsPony() then
-            ply:ManipulateBonePosition(0, Vector(0, 0, -13))
+            ply:ManipulateBonePosition(0, Vector(0, 0, -13), "taser")
         else
-            ply:ManipulateBonePosition(0, Vector(0, 0, -35))
+            ply:ManipulateBonePosition(0, Vector(0, 0, -35), "taser")
         end
 
-        ply:ManipulateBoneAngles(0, Angle(0, 0, -90))
+        ply:ManipulateBoneAngles(0, Angle(0, 0, -90), "taser")
 
         for i = 1, ply:GetBoneCount() do
             if i > 22 then continue end
-            ply:ManipulateBonePosition(i, VectorRand(-1, 1))
-            ply:ManipulateBoneAngles(i, AngleRand(-10, 10))
+            ply:ManipulateBonePosition(i, VectorRand(-1, 1), "taser")
+            ply:ManipulateBoneAngles(i, AngleRand(-10, 10), "taser")
         end
 
         if math.random(0, 100) < 1 then
@@ -157,8 +157,8 @@ function SWEP:UnTasePlayer()
     ply.IsTaseredBy = nil
 
     for i = 0, ply:GetBoneCount() do
-        ply:ManipulateBonePosition(i, vector_origin)
-        ply:ManipulateBoneAngles(i, angle_zero)
+        ply:ManipulateBonePosition(i, vector_origin, "taser")
+        ply:ManipulateBoneAngles(i, angle_zero, "taser")
     end
 
     if SERVER then

@@ -87,6 +87,7 @@ local function predrawshadow(alpha)
 end
 
 function draw.BoxShadow(x, y, w, h, blur, alpha)
+    if cornerMat:IsError() then return end
     local hblur = blur / 2
     x = x - hblur
     y = y - hblur
@@ -102,11 +103,13 @@ function draw.BoxShadow(x, y, w, h, blur, alpha)
 end
 
 function draw.GradientShadowDown(x, y, w, h, alpha)
+    if cornerMat:IsError() then return end
     predrawshadow(alpha)
     surface.DrawTexturedRectUV(x, y, w, h, 1, 1, 1, 0)
 end
 
 function draw.GradientShadowUp(x, y, w, h, alpha)
+    if cornerMat:IsError() then return end
     predrawshadow(alpha)
     surface.DrawTexturedRectUV(x, y, w, h, 1, 0, 1, 1)
 end

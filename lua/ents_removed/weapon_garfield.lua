@@ -40,10 +40,6 @@ hook.Add("PlayerModelChanged", "GarfHead", function(ply, mdl)
     end
 end)
 
-timer.Simple(1, function()
-    hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return false end)
-end)
-
 FATTESTCATS = FATTESTCATS or {}
 
 -- table.remove(FATTESTCATS,1)
