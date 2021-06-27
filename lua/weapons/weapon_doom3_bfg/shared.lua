@@ -120,7 +120,6 @@ local DOOM3_STATE_RELOAD = 2
 local DOOM3_STATE_IDLE = 3
 local DOOM3_STATE_ATTACK = 4
 
-
 function SWEP:CanPrimaryAttack()
     if not IsValid(self.Owner) then return false end
 
@@ -266,15 +265,14 @@ function SWEP:BfgFire(charge)
     self:SetCannotHolster(CurTime() + .7)
     self:SetAttack(false)
     self:SetChargeTime(0)
+
     if SERVER then
         --strip after firing
-        
         self:TimerSimple(0.5, function()
-                
             if (SERVER and self:Ammo1() <= 0) then
-            if IsValid(self) then
-                self:Remove()
-            end
+                if IsValid(self) then
+                    self:Remove()
+                end
             end
         end)
 
@@ -344,15 +342,17 @@ SWEP.WorldModel = "models/weapons/doom3/w_bfg.mdl"
 SWEP.Primary.Sound = Sound("weapons/doom3/bfg/bfg_fire.wav")
 SWEP.Primary.Special1 = Sound("weapons/doom3/bfg/bfg_firebegin.wav")
 SWEP.Primary.Damage = 200
-SWEP.Primary.Radius = 200 
+SWEP.Primary.Radius = 200
 SWEP.Primary.Delay = .95
 SWEP.Primary.DefaultClip = 1
 SWEP.Primary.ClipSize = 0
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "doom3_bfg"
-game.AddAmmoType( {
-	name = "doom3_bfg",
-} ) 
+
+game.AddAmmoType({
+    name = "doom3_bfg",
+})
+
 SWEP.DeploySound = Sound("weapons/doom3/bfg/bfg_raise.wav")
 SWEP.ReloadSound = Sound("weapons/doom3/bfg/bfg_reload.wav")
 SWEP.IdleAmmoCheck = true

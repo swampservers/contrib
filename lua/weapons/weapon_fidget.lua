@@ -26,15 +26,14 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
-
-
 function SWEP:CustomAmmoDisplay()
-    return {Label= (self.RPMdisplay or 0) .. " RPM", DrawLabel = true}
+    return {
+        Label = (self.RPMdisplay or 0) .. " RPM",
+        DrawLabel = true
+    }
 end
 
-
 function SWEP:DrawHUD()
-
 end
 
 function SWEP:DrawWorldModel()

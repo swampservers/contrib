@@ -136,14 +136,18 @@ function SWEP:PrimaryAttack()
 
     if self:Clip1() == 0 and self:Ammo1() > 0 then
         self:Reload()
+
         return
     end
 
-    if (not self:CanPrimaryAttack()) then 
+    if (not self:CanPrimaryAttack()) then
         self:EmitSound("Weapon_Shotgun.Empty")
-        self:SendWeaponAnim(ACT_VM_DRYFIRE) 
+        self:SendWeaponAnim(ACT_VM_DRYFIRE)
         self:SetNextPrimaryFire(CurTime() + 0.5)
-    return end
+
+        return
+    end
+
     local bullet = {}
     bullet.Num = self.Primary.NumberofShots
     bullet.Src = self.Owner:GetShootPos()
@@ -161,7 +165,11 @@ function SWEP:PrimaryAttack()
     --self.Owner:MuzzleFlash() -- Crappy muzzle light
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
-    if(!self.Owner:OnGround())then self.Owner:SetVelocity(self.Owner:GetAimVector()*-400) end
+
+    if (not self.Owner:OnGround()) then
+        self.Owner:SetVelocity(self.Owner:GetAimVector() * -400)
+    end
+
     if self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1 then
         bullet.Damage = bullet.Damage
         bullet.Num = bullet.Num * 2 --math.floor(bullet.Num * 1.5)

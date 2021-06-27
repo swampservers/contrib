@@ -21,9 +21,6 @@ timer.Create("AFK_Unmicspam",1,0,function()
 		end
 	end
 end) ]]
-
-
-
 hook.Add("HUDShouldDraw", "HideHUsddfD", function(name)
     if GetConVarNumber("cinema_hideinterface") <= 0 then return end
     if name == "CHudDeathNotice" then return false end

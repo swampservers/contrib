@@ -22,6 +22,7 @@ function ENT:Initialize()
         phys:EnableGravity(true)
         phys:SetBuoyancyRatio(0) --make the snowball pass straight through water
     end
+
     self:SetColor(plycol)
     self.Trail = util.SpriteTrail(self.Entity, 0, plycol, false, 4, 0, 0.8, 1 / (15 + 0) * 0.5, "trails/smoke.vmt") --color trail
     SafeRemoveEntityDelayed(self, 10) --remove the entity automatically in a case where it gets stuck
@@ -43,15 +44,16 @@ function ENT:PhysicsCollide(data)
     if data.HitEntity:IsPlayer() then
         data.HitEntity:SetVelocity(Vector(fwd * 100))
         local ply = data.HitEntity
-        if(self.Hardness and self.Hardness > 0)then
-            self:EmitSound("physics/flesh/flesh_impact_bullet"..math.random(1,4)..".wav")
+
+        if (self.Hardness and self.Hardness > 0) then
+            self:EmitSound("physics/flesh/flesh_impact_bullet" .. math.random(1, 4) .. ".wav")
             local d = DamageInfo()
-	        d:SetDamage( self.Hardness*10 )
-	        d:SetAttacker( self:GetOwner() )
+            d:SetDamage(self.Hardness * 10)
+            d:SetAttacker(self:GetOwner())
             d:SetInflictor(self)
             d:SetDamageForce(self:GetVelocity())
-	        d:SetDamageType( DMG_CLUB ) 
-	        ply:TakeDamageInfo( d )
+            d:SetDamageType(DMG_CLUB)
+            ply:TakeDamageInfo(d)
         end
     end
 
@@ -60,7 +62,7 @@ function ENT:PhysicsCollide(data)
     util.Decal("Splash.Large", p1, p2)
     effectdata:SetOrigin(pos)
     effectdata:SetScale(1.5)
-    self:EmitSound(self.Hardness > 5 and "physics/glass/glass_impact_bullet"..math.random(1,4)..".wav" or hitsnd)
+    self:EmitSound(self.Hardness > 5 and "physics/glass/glass_impact_bullet" .. math.random(1, 4) .. ".wav" or hitsnd)
     util.Effect("WheelDust", effectdata)
     util.Effect("GlassImpact", effectdata)
     SafeRemoveEntityDelayed(self, 0.05)

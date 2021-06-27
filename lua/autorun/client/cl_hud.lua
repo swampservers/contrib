@@ -18,12 +18,11 @@ local overall_scale = 1.1
 local color_bg = NamedColor("BgColor")
 local color_fg = NamedColor("FgColor")
 local color_fgred = NamedColor("DamagedFg")
-local fontsize = math.Round(ScreenScale(96*overall_scale))
-
+local fontsize = math.Round(ScreenScale(96 * overall_scale))
 
 local function MakeFonts()
-    local size_label = math.Round(ScreenScale(6*overall_scale))
-    local size_content = math.Round(ScreenScale(14*overall_scale))
+    local size_label = math.Round(ScreenScale(6 * overall_scale))
+    local size_content = math.Round(ScreenScale(14 * overall_scale))
 
     surface.CreateFont("smallhud_label", {
         font = "Verdana", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
@@ -60,7 +59,6 @@ local function MakeFonts()
         additive = true,
         outline = false,
     })
-
 end
 
 MakeFonts()
@@ -72,20 +70,19 @@ end)
 local pngmatcache = {}
 
 function GetAmmoIconMat(png)
-    local pngmat = Material(png,"noclamp smooth mips")
-    if(pngmatcache[png])then return pngmatcache[png] end
-    pngmatcache[png] = pngmatcache[png] or CreateMaterial( "ammoiconmat"..png, "UnlitGeneric", {
+    local pngmat = Material(png, "noclamp smooth mips")
+    if (pngmatcache[png]) then return pngmatcache[png] end
+
+    pngmatcache[png] = pngmatcache[png] or CreateMaterial("ammoiconmat" .. png, "UnlitGeneric", {
         ["$basetexture"] = pngmat:GetTexture("$basetexture"):GetName(),
         ["$additive"] = 1,
         ["$vertexcolor"] = 1,
         ["$vertexalpha"] = 1,
         ["$translucent"] = 1,
-      } )
+    })
+
     return pngmatcache[png]
 end
-
-
-
 
 local littlefont = "smallhud_label"
 local bigfont = "smallhud_content"
@@ -97,22 +94,19 @@ local function align_box(w, h, alignh, alignv)
     return w / 2 * hor, h / 2 * ver
 end
 
-
-
-function DrawHL2Bubble(label, text, x, y, alignh, alignv, alpha,red)
-    local minwidth = math.Round(ScreenScale(64*overall_scale))
-    local margin =math.Round(ScreenScale(2*overall_scale))
+function DrawHL2Bubble(label, text, x, y, alignh, alignv, alpha, red)
+    local minwidth = math.Round(ScreenScale(64 * overall_scale))
+    local margin = math.Round(ScreenScale(2 * overall_scale))
     local gap = 0
     alpha = alpha or 1
     local bgcol = ColorAlpha(color_bg, color_bg.a * alpha)
     local fgcol = ColorAlpha(color_fg, color_fg.a * alpha)
     local fgcolred = ColorAlpha(color_fgred, color_fgred.a * alpha)
-
     surface.SetFont(littlefont)
     local labelwidth, labelheight = surface.GetTextSize(label)
     surface.SetFont(bigfont)
     local textwidth, textheight = surface.GetTextSize(text)
-    local box_width, box_height = math.max(labelwidth or 0, textwidth or 0, minwidth), math.max(labelheight , textheight) 
+    local box_width, box_height = math.max(labelwidth or 0, textwidth or 0, minwidth), math.max(labelheight, textheight)
     local ofsx, ofsy = align_box(box_width, box_height, alignh, alignv)
     x = x + ofsx
     y = y + ofsy
@@ -121,21 +115,19 @@ function DrawHL2Bubble(label, text, x, y, alignh, alignv, alpha,red)
     draw.RoundedBox(8, box_x, box_y, box_width, box_height, bgcol)
     draw.SimpleText(label, littlefont, label_x, label_y, fgcol, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
     local content_x, content_y = box_x + box_width - margin, box_y + box_height
-
     draw.SimpleText(text, bigfont, content_x, content_y, (text == 0 or red) and fgcolred or fgcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 
     return box_width, box_height
 end
 
 function DrawHL2Label(label, x, y, alignh, alignv, alpha)
-    local minwidth = math.Round(ScreenScale(64*overall_scale))
-    local margin = math.Round(ScreenScale(2*overall_scale))
+    local minwidth = math.Round(ScreenScale(64 * overall_scale))
+    local margin = math.Round(ScreenScale(2 * overall_scale))
     local gap = 0
     alpha = alpha or 1
     local bgcol = ColorAlpha(color_bg, color_bg.a * alpha)
     local fgcol = ColorAlpha(color_fg, color_fg.a * alpha)
     local fgcolred = ColorAlpha(color_fgred, color_fgred.a * alpha)
-
     surface.SetFont(littlefont)
     local labelwidth, labelheight = surface.GetTextSize(label)
     local box_width, box_height = math.max(labelwidth or 0, textwidth or 0, minwidth), labelheight + margin * 2
@@ -146,10 +138,9 @@ function DrawHL2Label(label, x, y, alignh, alignv, alpha)
     local label_x, label_y = x, box_y + margin + labelheight / 2
     draw.RoundedBox(8, box_x, box_y, box_width, box_height, bgcol)
     draw.SimpleText(label, littlefont, label_x, label_y, fgcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
     return box_width, box_height
 end
-
-
 
 
 
@@ -159,17 +150,18 @@ function DrawAmmoGauge(count, icon, x, y, alignh, alignv, alpha)
     local margin = math.Round(ScreenScale(2*overall_scale))
     local gap = 0
     local collimit = 8
+
     alpha = alpha or 1
     local bgcol = ColorAlpha(color_bg, color_bg.a * alpha)
     local fgcol = ColorAlpha(color_fg, color_fg.a * alpha)
     local fgcolred = ColorAlpha(color_fgred, color_fgred.a * alpha)
-
 
     local icongap = math.Round(ScreenScale(1*overall_scale))
     local iconmax = math.Round(ScreenScale(6*overall_scale))
     local iconsize = iconmax
     
     local box_width, box_height = minwidth, ((iconsize + icongap) - icongap + margin*2 ) 
+
     local ofsx, ofsy = align_box(box_width, box_height, alignh, alignv)
     x = x + ofsx
     y = y + ofsy
@@ -177,14 +169,12 @@ function DrawAmmoGauge(count, icon, x, y, alignh, alignv, alpha)
     draw.RoundedBox(8, box_x, box_y, box_width, box_height, bgcol)
     surface.SetDrawColor(fgcol)
 
-
     local mat = GetAmmoIconMat(icon)
-
     surface.SetMaterial(mat)
-
-    render.PushFilterMag( TEXFILTER.LINEAR )
-    render.PushFilterMin( TEXFILTER.LINEAR )
+    render.PushFilterMag(TEXFILTER.LINEAR)
+    render.PushFilterMin(TEXFILTER.LINEAR)
     local remcount = count
+
 
             local recenter = -96 --((iconsh * (iconsize + icongap)) - icongap) / 2
 
@@ -212,8 +202,10 @@ function DrawAmmoGauge(count, icon, x, y, alignh, alignv, alpha)
             end
 
 
+
     render.PopFilterMag()
     render.PopFilterMin()
+
     return box_width, box_height
 end
 
@@ -221,12 +213,11 @@ local AMMOLABEL_MAGCOUNTER = 1
 local AMMOLABEL_LABEL = 2
 
 local wicons = {
-weapon_frag = "hud/ammo_grenade.png",
-weapon_rpg = "hud/ammo_rocket.png",
-weapon_crossbow = "hud/ammo_projectile.png",
-weapon_357 = "hud/ammo_misc.png",
-weapon_peacekeeper = "hud/ammo_misc.png",
-
+    weapon_frag = "hud/ammo_grenade.png",
+    weapon_rpg = "hud/ammo_rocket.png",
+    weapon_crossbow = "hud/ammo_projectile.png",
+    weapon_357 = "hud/ammo_misc.png",
+    weapon_peacekeeper = "hud/ammo_misc.png",
 }
 
 hook.Add("HUDPaint", "SwampHealthAmmo", function()
@@ -239,6 +230,7 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
     if(IsValid(wep) and wep:GetClass() == "weapon_shotgun")then drawammo = false end
     
     
+
     if (drawammo) then
         -- local clip = wep:Clip1()
         local clipsize = (wep.Primary and wep.Primary.ClipSize) or wep:GetMaxClip1()
@@ -254,41 +246,47 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         local icon = clipsize < 1 and "hud/ammo_misc.png" or clipsize == 1 and "hud/ammo_projectile.png" or "hud/ammo_mag.png"
         local customammo = wep.CustomAmmoDisplay and wep:CustomAmmoDisplay() or {}
         local drawtype = AMMOLABEL_MAGCOUNTER
+
         if(customammo.PrimaryAmmo)then ammo = customammo.PrimaryAmmo end
         -- if(customammo.PrimaryClip)then clip = customammo.PrimaryClip end
         if(wicons[wep:GetClass()])then
             icon = wicons[wep:GetClass()] 
+
         end
-        if(wep.MagIcon)then icon = wep.MagIcon end
-        
+
+        if (wep.MagIcon) then
+            icon = wep.MagIcon
+        end
+
         if (ammotype == nil or ammotype == -1) then
             ammo = nil
         end
+
         if (clipsize <= 1) then
             clipsize = nil
         end
 
-        
 
         if (ammo and ammo>0) then
+
             local clipcount = (ammo / (clipsize or 1))
-            LASTAMMOTEXT = {drawtype,clipcount,icon}
+
+            LASTAMMOTEXT = {drawtype, clipcount, icon}
         else
             drawammo = false
         end
-        
-        if(customammo.DrawLabel)then 
-            drawtype = AMMOLABEL_LABEL 
-            if(customammo.Label)then
-                LASTAMMOTEXT = {drawtype,customammo.Label}
+
+        if (customammo.DrawLabel) then
+            drawtype = AMMOLABEL_LABEL
+
+            if (customammo.Label) then
+                LASTAMMOTEXT = {drawtype, customammo.Label}
+
                 drawammo = true
             else
                 drawammo = false
             end
-
         end
-
-
     end
 
     AMMO_ALPHA = math.Approach(AMMO_ALPHA or 0, drawammo and 1 or 0, FrameTime() * 4)
@@ -298,18 +296,19 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         local showtype = LASTAMMOTEXT[1]
         local value = LASTAMMOTEXT[2]
         local icon = LASTAMMOTEXT[3] or "hud/ammo_mag.png"
+
         local w, h = 0,0
         if(showtype == AMMOLABEL_MAGCOUNTER)then
         w,h = DrawAmmoGauge(value, icon, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
+
         end
-        if(showtype == AMMOLABEL_LABEL)then
-            w,h = DrawHL2Label(value, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
-            
+
+        if (showtype == AMMOLABEL_LABEL) then
+            w, h = DrawHL2Label(value, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
         end
+
         h = h * AMMO_ALPHA
         stack_height = stack_height + h + 4
-
-
     end
 
     local drawhealth = ply:Alive() and ply:Health() < ply:GetMaxHealth()

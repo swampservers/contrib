@@ -33,25 +33,31 @@ if ti == "December" then
         end
     end)
 end
-hook.Add("PlayerSpawn","PlayerACSnowball",function(ply)
-    ply:TimerCreate("ACSnowball",4,0,function()
-        if((ply.FrozenBalls or 0) > 2 )then util.ScreenShake(ply:GetPos(), 1, 0.07, 6, 32 ) end
-        if(ply:OnGround())then
-            local trace = util.TraceLine(util.GetPlayerTrace( ply, Vector(0,0,-1) ))
-            if(trace.HitTexture == "PROPS/METALFAN001A")then
-                ply.FrozenBalls = math.min((ply.FrozenBalls or 0) + 2,8)
-                if(ply.FrozenBalls >= 5)then
+
+hook.Add("PlayerSpawn", "PlayerACSnowball", function(ply)
+    ply:TimerCreate("ACSnowball", 4, 0, function()
+        if ((ply.FrozenBalls or 0) > 2) then
+            util.ScreenShake(ply:GetPos(), 1, 0.07, 6, 32)
+        end
+
+        if (ply:OnGround()) then
+            local trace = util.TraceLine(util.GetPlayerTrace(ply, Vector(0, 0, -1)))
+
+            if (trace.HitTexture == "PROPS/METALFAN001A") then
+                ply.FrozenBalls = math.min((ply.FrozenBalls or 0) + 2, 8)
+
+                if (ply.FrozenBalls >= 5) then
                     ply:Give("weapon_snowball")
                 end
             end
         end
-        ply.FrozenBalls = math.max((ply.FrozenBalls or 0) - 1,0)
+
+        ply.FrozenBalls = math.max((ply.FrozenBalls or 0) - 1, 0)
     end)
 end)
 
-
-function SWEP:AmmoDisplayValue() 
-    return (self:GetHardness() * 10) .."%"
+function SWEP:AmmoDisplayValue()
+    return (self:GetHardness() * 10) .. "%"
 end
 
 --network the player's new color
@@ -61,14 +67,15 @@ if SERVER then
     net.Receive("CLtoSVSnowballColor", function(len, ply)
         local col = net.ReadTable()
         ply:SetNWVector("SnowballColor", Color(col.r, col.g, col.b):ToVector())
-        if(IsValid(ply:GetWeapon("weapon_snowball")))then
+
+        if (IsValid(ply:GetWeapon("weapon_snowball"))) then
             ply:GetWeapon("weapon_snowball"):SetColor(col)
-        end    
+        end
     end)
 end
 
 function SWEP:SetupDataTables()
-    self:NetworkVar("Int",0,"Hardness")
+    self:NetworkVar("Int", 0, "Hardness")
 end
 
 function SWEP:Initialize()
@@ -96,7 +103,7 @@ function SWEP:PrimaryAttack()
             ball:SetPos(self.Owner:GetShootPos() + front * 10 + self.Owner:EyeAngles():Up() * -5)
             ball:Spawn()
             ball:Activate()
-            ball.Hardness = self:GetHardness()*1
+            ball.Hardness = self:GetHardness() * 1
             self:SetHardness(0)
             local phys = ball:GetPhysicsObject()
 
@@ -153,19 +160,17 @@ function SWEP:OnRemove()
 end
 
 function SWEP:Reload()
-    if(self:GetNextPrimaryFire() > CurTime())then
-        return
-    end
+    if (self:GetNextPrimaryFire() > CurTime()) then return end
     local delay = 1 + self:GetHardness() / 5
-
     local vm = self:GetOwner():GetViewModel()
-   
+
     self:TimerSimple(delay / 5, function()
         if not IsValid(self) then return end
         self:SetHardness(self:GetHardness() + 1)
         self.Weapon:EmitSound(self.ReloadSound, 75, 100, 0.4, CHAN_WEAPON)
     end)
+
     self.Weapon:SetNextPrimaryFire(CurTime() + delay)
     self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
-    vm:SetPlaybackRate(1/delay)
+    vm:SetPlaybackRate(1 / delay)
 end

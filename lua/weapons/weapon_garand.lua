@@ -51,8 +51,15 @@ local BoltForward = Sound("weapons/kar98/boltforward.wav")
 
 -- Override function for displaying ammo count
 function SWEP:CustomAmmoDisplay()
-    if(InGarandZone(self.Owner))then return {PrimaryAmmo=self.Primary.ClipSize*999} end
-    return {PrimaryAmmo=0}
+    if (InGarandZone(self.Owner)) then
+        return {
+            PrimaryAmmo = self.Primary.ClipSize * 999
+        }
+    end
+
+    return {
+        PrimaryAmmo = 0
+    }
 end
 
 game.AddAmmoType({
@@ -152,12 +159,13 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    if (not self:CanPrimaryAttack()) then 
+    if (not self:CanPrimaryAttack()) then
         self:EmitSound("Weapon_SMG1.Empty")
-        self:SendWeaponAnim(ACT_VM_DRYFIRE) 
+        self:SendWeaponAnim(ACT_VM_DRYFIRE)
         self:SetNextPrimaryFire(CurTime() + 0.5)
-    return end
 
+        return
+    end
 
     if self:IsSprinting() then return end
     local bullet = {}
@@ -233,13 +241,13 @@ end
 ]]
 function InGarandZone(v)
     local origin = Vector(-578, -1375, 396)
-    local ang = Angle(0,26.75,0)
-    local size = Vector(275,350,128)
-    local pos,normal,frac = util.IntersectRayWithOBB( v:EyePos(), v:GetAimVector(), origin, ang, -size/2, size/2 )
-    if(frac == 0)then return true end
+    local ang = Angle(0, 26.75, 0)
+    local size = Vector(275, 350, 128)
+    local pos, normal, frac = util.IntersectRayWithOBB(v:EyePos(), v:GetAimVector(), origin, ang, -size / 2, size / 2)
+    if (frac == 0) then return true end
+
     return false
 end
-
 
 hook.Add("ScalePlayerDamage", "garandthing", function(ply, hg, dmg)
     if dmg:GetAmmoType() == game.GetAmmoID("garand") then
