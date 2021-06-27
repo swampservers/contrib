@@ -10,7 +10,7 @@
 
 	"$phongfresnelranges"	"[0 0.5 1]"
 
-	$envmaptintbase "[ 0.7 0.7 0.7 ]"
+	$phongtintbase "[ 0.7 0.7 0.7 ]"
 
 	Proxies
 	{
@@ -21,8 +21,8 @@
 		Multiply
 		{
 			srcVar1 $color2
-			srcVar2 $envmaptintbase
-			resultVar	$envmaptint
+			srcVar2 $phongtintbase
+			resultVar	$phongtint
 		}
 	}
 }
