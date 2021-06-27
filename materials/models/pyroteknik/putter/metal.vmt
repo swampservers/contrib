@@ -1,9 +1,9 @@
 "VertexLitGeneric"
 {
-	"$baseTexture" "models/pyroteknik/putter/handle"
-	$color2 "[0.7 0.7 0.7]"
-	"$envmap" "shadertest/cubemap"
-	"$envmapsaturation" 0.1
-	"$model" 1
-	"$halflambert" 1
+	$basetexture "models/pyroteknik/putter/handle"
+	$bumpmap "effects/flat_normal"
+	$phong 1
+	$phongexponent			10
+	$phongboost				64
+	$phongfresnelranges		"[0 0.5 1]"
 }

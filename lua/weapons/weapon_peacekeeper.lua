@@ -28,6 +28,8 @@ game.AddAmmoType({
 SWEP.Primary.Damage = 15
 SWEP.Primary.ClipSize = 2
 SWEP.Primary.Ammo = "peaceshot"
+SWEP.Primary.ClipSize = 2
+SWEP.Primary.DefaultClip = 2
 SWEP.Primary.Automatic = false
 SWEP.Primary.TakeAmmo = 1
 SWEP.Primary.Force = 2000
@@ -35,9 +37,9 @@ SWEP.Primary.Spread = 0
 SWEP.Primary.Recoil = 2
 SWEP.Primary.Delay = 0.25
 SWEP.Primary.NumberofShots = 18
-SWEP.Secondary.ClipSize = 1
+SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.Ammo = "none"
-SWEP.Secondary.DefaultClip = 1
+SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Delay = 0
 SWEP.Secondary.Damage = 0
@@ -132,13 +134,20 @@ function SWEP:PrimaryAttack()
     local timerName = "ShotgunReload_" .. self.Owner:UniqueID()
     if (timer.Exists(timerName)) then return end
 
-    if self:Clip1() == 0 then
+    if self:Clip1() == 0 and self:Ammo1() > 0 then
         self:Reload()
 
         return
     end
 
-    if (not self:CanPrimaryAttack()) then return end
+    if (not self:CanPrimaryAttack()) then
+        self:EmitSound("Weapon_Shotgun.Empty")
+        self:SendWeaponAnim(ACT_VM_DRYFIRE)
+        self:SetNextPrimaryFire(CurTime() + 0.5)
+
+        return
+    end
+
     local bullet = {}
     bullet.Num = self.Primary.NumberofShots
     bullet.Src = self.Owner:GetShootPos()
@@ -156,6 +165,10 @@ function SWEP:PrimaryAttack()
     --self.Owner:MuzzleFlash() -- Crappy muzzle light
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
+
+    if (not self.Owner:OnGround()) then
+        self.Owner:SetVelocity(self.Owner:GetAimVector() * -400)
+    end
 
     if self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1 then
         bullet.Damage = bullet.Damage
