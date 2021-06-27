@@ -52,11 +52,9 @@ SS_WeaponProduct({
     class = 'weapon_357'
 })
 
-SS_WeaponAndAmmoProduct({
+SS_WeaponProduct({
     name = 'Light Machine Gun',
     description = "Crouch for better control",
-    ammotype = "lmg",
-    amount = 60,
     price = 10000,
     model = 'models/weapons/w_mg42bu.mdl',
     class = 'weapon_spades_lmg'
