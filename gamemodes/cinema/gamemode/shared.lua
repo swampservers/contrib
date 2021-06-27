@@ -99,8 +99,7 @@ end
 function GM:PhysgunPickup(ply, ent)
     if (ent:GetClass():lower() == "player") then
         if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) and not ent:IsFrozen() then
-            if ent.Obesity and ent:Obesity()>40 then return end
-
+            if ent.Obesity and ent:Obesity() > 40 then return end
             ply.physgunHeld = ent
 
             return true

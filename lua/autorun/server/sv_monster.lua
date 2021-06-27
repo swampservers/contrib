@@ -52,26 +52,21 @@ function ReleaseMonster(ply)
     end
 
     if ply.cantStartmonster then
-        if not ply.HVP_EVOLVED then --and not (ply.Obesity and ply:Obesity()>40) then
+        if not ply.HVP_EVOLVED then
             ply.realFov = ply:GetFOV()
-            ply.realWalkSpeed = ply:GetWalkSpeed()
-            ply.realRunSpeed = ply:GetRunSpeed()
-
-            local ratio = ply.realRunSpeed/300
-
-            ply:SetWalkSpeed(280*ratio)
-            ply:SetRunSpeed(420*ratio)
+            ply:SetWalkSpeed(1.5, "monster")
+            ply:SetRunSpeed(1.5, "monster")
             ply:SetFOV(ply.realFov + 10, 1)
-        end
 
-        timer.Simple(10, function()
-            if IsValid(ply) then
-                ply.cantStartmonster = false
-                ply:SetWalkSpeed(ply.realWalkSpeed)
-                ply:SetRunSpeed(ply.realRunSpeed)
-                ply:SetFOV(ply.realFov, 1)
-            end
-        end)
+            timer.Simple(10, function()
+                if IsValid(ply) then
+                    ply.cantStartmonster = false
+                    ply:SetWalkSpeed(1, "monster")
+                    ply:SetRunSpeed(1, "monster")
+                    ply:SetFOV(ply.realFov, 1)
+                end
+            end)
+        end
     end
 
     ply.monsterCount = 0

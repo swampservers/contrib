@@ -1,13 +1,14 @@
 "VertexLitGeneric"
 {
 	"$baseTexture" "models/swamponions/vape/metal"
+	"$bumpmap" "effects/flat_normal"
 	"$surfaceprop" "metal"
-	"$envmap" "env_cubemap"
-	"$envmapmask" "models/swamponions/vape/metalmask"
-	"$envmapcontrast" 0
-	"$envmapsaturation" 0.7
-	"$selfillum" 0
-	"$model" 1
+	"$basemapluminancephongmask" "1"
+	"$phong" "1"
+	"$phongboost" "512"
+	"$phongexponent" "24"
+
+	"$phongfresnelranges"	"[0 0.5 1]"
 
 	$envmaptintbase "[ 0.7 0.7 0.7 ]"
 

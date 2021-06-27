@@ -1,11 +1,14 @@
 VertexLitGeneric
 {
 	$basetexture "models/pyroteknik/spraypaint_diffuse"
-	$envmap "env_cubemap"
 	$bumpmap "models/pyroteknik/spraypaint_normal"
-	$normalmapalphaenvmapmask 1
 	$halflambert 1
-	$envmaptint "[500 500 500]"
-	$envmapcontrast "1"
-	$blendtintbybasealpha 1
+	"$phongexponenttexture" "models/pyroteknik/green"
+	"$phongalbedotint" "1"
+	"$basemapluminancephongmask" "1"
+	"$phong" "1"
+	"$phongboost" "512"
+	"$phongexponent" "32"
+	"$phongfresnelranges"	"[0 0.5 1]"
+ "$blendtintbybasealpha" "1"
 }

@@ -8,6 +8,7 @@ Contribute to Swamp Cinema here! How to:
 
 - 'Fork' this repo. This creates a copy of it you have edit permissions of.
 - Clone your forked repo into garrysmod/addons (so it creates garrysmod/addons/contrib), edit it, and push it back. You'll need the GitHub desktop or commandline client. Look up GitHub tutorials for that.
+- For clientside work, check out the [devtools](https://github.com/swampservers/contrib/blob/master/lua/autorun/client/cl_devtools.lua) which allow you to work on the actual server environment.
 - Make a pull request on this repo. Use the 'compare across forks' link to request to merge your changes on your forked repo to this repo. We'll review the changes and, if accepted, will be live the next day.
 - Minor, single-file changes can just be done in the web browser by clicking the pencil icon.
 

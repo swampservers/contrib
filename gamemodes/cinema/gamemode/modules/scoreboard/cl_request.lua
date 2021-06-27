@@ -80,6 +80,7 @@ function PANEL:Init()
 
     self.Browser.OnDocumentReady = function(panel, url)
         self.Controls.AddressBar:SetText(url)
+        self.Controls.RefreshButton:SetDisabled(false)
 
         if theater.ExtractURLInfo(url) then
             self.Controls.RequestButton:SetDisabled(false)

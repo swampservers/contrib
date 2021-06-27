@@ -42,14 +42,26 @@ function PANEL:Open(item)
     inner:SetBackgroundColor(SS_TileBGColor)
     inner:DockMargin(8, 8, 8, 8)
     inner:Dock(FILL)
-    local p = vgui.Create("DLabel", inner)
+    local top = vgui.Create("DPanel", inner)
+    top.Paint = function() end
+    top:SetTall(64)
+    top:Dock(TOP)
+    local p = vgui.Create("DLabel", top)
     p:SetFont("SS_LargeTitle")
     p:SetText("βUSTOMIZER")
     p:SetColor(SS_SwitchableColor)
     p:SetContentAlignment(5)
     p:SizeToContents()
-    p:DockMargin(14, 6, 14, 10)
-    p:Dock(TOP)
+    p:DockMargin(80, 8, 0, 10)
+    p:Dock(LEFT)
+    local p = vgui.Create("DLabel", top)
+    p:SetFont("SS_DESCINSTFONT")
+    p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
+    p:SetColor(SS_SwitchableColor)
+    p:SetContentAlignment(5)
+    p:SizeToContents()
+    p:DockMargin(0, 0, 32, 0)
+    p:Dock(RIGHT)
     local bot = vgui.Create("DPanel", inner)
     bot.Paint = function() end
     bot:SetTall(64)
@@ -591,7 +603,7 @@ function PANEL:SetupControls()
         end
 
         local urlzone = vgui.Create("Panel", colorzone)
-        urlzone:DockMargin(0, 8, 32, 0)
+        urlzone:DockMargin(0, 8, 16, 0)
         urlzone:Dock(TOP)
         urlzone:SetTall(40)
 
@@ -600,26 +612,29 @@ function PANEL:SetupControls()
         end
 
         IMGURENTRY = vgui.Create("DTextEntry", urlzone)
-        IMGURENTRY:DockMargin(32, 8, 32, 0)
+        IMGURENTRY:DockMargin(16, 8, 16, 0)
         IMGURENTRY:Dock(FILL)
         IMGURENTRY:SetPaintBackground(true)
 
         IMGURENTRY.OnValueChange = function(textself, new)
-            local id = SanitizeImgurId(new)
-            -- IMGURREMOVEBUTTON:SetVisible(id ~= nil)
-            IMGURREMOVEBUTTON:SetRemoveMode(id ~= nil)
+            SingleAsyncSanitizeImgurId(new, function(id)
+                if not IsValid(self) then return end
+                -- IMGURREMOVEBUTTON:SetVisible(id ~= nil)
+                IMGURREMOVEBUTTON:SetRemoveMode(id ~= nil)
 
-            self.item.cfg.imgur = id and {
-                url = id
-            } or nil
+                self.item.cfg.imgur = id and {
+                    url = id
+                } or nil
 
-            self:UpdateCfg()
+                self:UpdateCfg()
+            end)
         end
 
         IMGURENTRY:SetUpdateOnType(true)
         IMGURENTRY:SetValue((self.item.cfg.imgur or {}).url or "")
         local imgurinfo = vgui.Create("DLabel", urlzone)
-        imgurinfo:SetText("Use an imgur direct URL such as:\nhttp://i.imgur.com/PxOc7TC.png\n(Right click -> Copy image address)")
+        -- imgurinfo:SetText("Use an imgur direct URL such as:\nhttp://i.imgur.com/PxOc7TC.png\n(Right click -> Copy image address)")
+        imgurinfo:SetText("Upload an image to imgur.com and enter the link.\nFor example: https://imgur.com/a/3AOvcC1\nNo videos or GIFs!")
         imgurinfo:SetColor(SS_SwitchableColor)
         imgurinfo:Dock(RIGHT)
         imgurinfo:SetWide(100)
