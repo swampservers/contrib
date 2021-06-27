@@ -103,7 +103,7 @@ SS_WeaponAndAmmoProduct({
     class = 'weapon_slam',
     ammotype = "slam",
     amount = 3,
-    clip2=true
+    clip2 = true
 })
 
 SS_WeaponAndAmmoProduct({

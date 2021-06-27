@@ -78,27 +78,33 @@ function SS_WeaponProduct(product)
     product.SS_WeaponProduct_OnBuy = product.OnBuy or function() end
 
     function product:OnBuy(ply)
-        if !ply:HasWeapon(self.class) then
+        if not ply:HasWeapon(self.class) then
             ply:Give(self.class)
         end
+
         ply:SelectWeapon(self.class)
-            self:SS_WeaponProduct_OnBuy(ply)
+        self:SS_WeaponProduct_OnBuy(ply)
     end
+
     function product:CannotBuy(ply)
-        return !ply:Alive() and "You're dead!"
+        return not ply:Alive() and "You're dead!"
     end
+
     SS_DeathKeepnotice(product)
     SS_Product(product)
 end
 
 function SS_WeaponAndAmmoProduct(product)
     function product:AmmoTypeAndAmount(wep)
-        local ammotype,ammogive = (self.ammotype or game.GetAmmoName(self.clip2 and wep:GetSecondaryAmmoType() or wep:GetPrimaryAmmoType())), (self.amount or math.max(1, (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) or 0))
-        assert(ammotype != nil and ammogive > 0, self.class.." ".. ammogive .." "..(ammotype or "nil"))
-        return  ammotype,ammogive
+        local ammotype, ammogive = (self.ammotype or game.GetAmmoName(self.clip2 and wep:GetSecondaryAmmoType() or wep:GetPrimaryAmmoType())), (self.amount or math.max(1, (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) or 0))
+        assert(ammotype ~= nil and ammogive > 0, self.class .. " " .. ammogive .. " " .. (ammotype or "nil"))
+
+        return ammotype, ammogive
     end
+
     function product:OnBuy(ply)
-        local wep,new = nil, false
+        local wep, new = nil, false
+
         if ply:HasWeapon(self.class) then
             wep = ply:GetWeapon(self.class)
         else
@@ -106,14 +112,14 @@ function SS_WeaponAndAmmoProduct(product)
             new = true
         end
 
-        local ammotype,ammogive = self:AmmoTypeAndAmount(wep)
-    
+        local ammotype, ammogive = self:AmmoTypeAndAmount(wep)
+
         if new then
-            if (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1())==-1 then
-                ply:SetAmmo(ammogive, ammotype)    
+            if (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) == -1 then
+                ply:SetAmmo(ammogive, ammotype)
             else
                 wep:SetClip1(wep:GetMaxClip1())
-                ply:SetAmmo(ammogive- wep:Clip1(), ammotype)
+                ply:SetAmmo(ammogive - wep:Clip1(), ammotype)
             end
         else
             ply:GiveAmmo(ammogive, ammotype)
@@ -122,16 +128,17 @@ function SS_WeaponAndAmmoProduct(product)
         ply:SelectWeapon(self.class)
         -- if wep:GetMaxClip1()>0 and wep:Clip1()==0 then wep:Reload() end
     end
-    function product:CannotBuy(ply)
-        return !ply:Alive() and "You're dead!"
-    end
-        -- if ply:HasWeapon(self.class) then
-        --     local wep = ply:GetWeapon(self.class)
-        --     local ammotype,ammogive = self:AmmoTypeAndAmount(wep)
-        --     local limit = self.maxammo or game.GetAmmoMax(game.GetAmmoID(ammotype)) or 0
-        --     if (limit != 0 and ply:GetAmmoCount(ammotype) >= limit) then return "You can't carry any more of this ammo" end
-        -- end
 
+    function product:CannotBuy(ply)
+        return not ply:Alive() and "You're dead!"
+    end
+
+    -- if ply:HasWeapon(self.class) then
+    --     local wep = ply:GetWeapon(self.class)
+    --     local ammotype,ammogive = self:AmmoTypeAndAmount(wep)
+    --     local limit = self.maxammo or game.GetAmmoMax(game.GetAmmoID(ammotype)) or 0
+    --     if (limit != 0 and ply:GetAmmoCount(ammotype) >= limit) then return "You can't carry any more of this ammo" end
+    -- end
     SS_DeathKeepnotice(product)
     SS_Product(product)
 end
@@ -140,7 +147,7 @@ function SS_AmmoProduct(product)
     product.class = "ammo_" .. product.ammotype .. "_" .. tostring(product.amount)
 
     function product:CannotBuy(ply)
-        return !ply:Alive() and "You're dead!"
+        return not ply:Alive() and "You're dead!"
     end
 
     function product:OnBuy(ply)
