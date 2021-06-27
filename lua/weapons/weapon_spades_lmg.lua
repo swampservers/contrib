@@ -154,7 +154,13 @@ end
 
 function SWEP:PrimaryAttack()
     if self:IsReloading() then return end
-    if (not self:CanPrimaryAttack()) then return end
+    --all weapons should click on empty
+    if (not self:CanPrimaryAttack()) then 
+        self:EmitSound("Weapon_SMG1.Empty")
+        self:SendWeaponAnim(ACT_VM_DRYFIRE) 
+        self:SetNextPrimaryFire(CurTime() + 0.5)
+    return end
+
     local vm = self.Owner:GetViewModel()
 
     if CLIENT and IsFirstTimePredicted() then
@@ -217,6 +223,7 @@ function SWEP:PrimaryAttack()
     self:EmitSound("DOD_MG42.Fire")
     self:TakePrimaryAmmo(1)
 
+  
     if self:Clip1() == 0 then
         self:Reload()
     end
