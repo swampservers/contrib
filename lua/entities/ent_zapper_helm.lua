@@ -87,17 +87,20 @@ end
 function ENT:Think()
     if CLIENT then
         if IsValid(self:GetSubject()) then
-            att = self:GetSubject():GetAttachment(self:GetSubject():LookupAttachment("eyes"))
-            local p = att.Pos
-            local a = att.Ang
-            a:RotateAroundAxis(a:Up(), -90)
-            self:SetPos(p + a:Up() * 7 + a:Right() * 3)
+            local att = self:GetSubject():GetAttachment(self:GetSubject():LookupAttachment("eyes"))
 
-            if self:GetSubject():IsPony() then
-                self:SetPos(p + a:Up() * 15 + a:Right() * 10)
+            if att then
+                local p = att.Pos
+                local a = att.Ang
+                a:RotateAroundAxis(a:Up(), -90)
+                self:SetPos(p + a:Up() * 7 + a:Right() * 3)
+
+                if self:GetSubject():IsPony() then
+                    self:SetPos(p + a:Up() * 15 + a:Right() * 10)
+                end
+
+                self:SetAngles(a)
             end
-
-            self:SetAngles(a)
         else
             self:SetPos(self:GetTruePos())
             self:SetAngles(self:GetTrueAng())

@@ -128,7 +128,9 @@ function SetVapeHelium(ply, helium)
     if ply.vapeHelium ~= helium then
         local grav = Lerp(helium / 100, 1, -0.15)
 
-        if ply.Obesity and ply:Obesity()>40 then grav=1 end
+        if ply.Obesity and ply:Obesity() > 40 then
+            grav = 1
+        end
 
         if grav < 0 and ply:OnGround() then
             ply:SetPos(ply:GetPos() + Vector(0, 0, 1))

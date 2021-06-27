@@ -24,6 +24,9 @@ SWEP.UnClickSound = Sound("Weapon_AR2.Empty")
 SWEP.DrawCrosshair = false
 SWEP.BounceWeaponIcon = false
 SWEP.LaserMask = nil --MASK_SHOT
+SWEP.DrawAmmo = false
+
+
 
 -- PlayerCanHaveLaserBeams is a hook used for this. the argument is just ply
 -- return false on this one and players won't be able to make their laser beam fully visible and lethal using right mouse

@@ -1,14 +1,16 @@
 "VertexLitGeneric"
 {
 	"$basetexture" "models/swamponions/vape/glass"
+	"$bumpmap" "effects/flat_normal"
 	"$translucent" 1
 	"$surfaceprop" "glass"
 	"$nocull" 1
-	
-	"$envmap" "env_cubemap"
-	"$envmapcontrast" 0
-	"$envmapsaturation" 1
-	"$selfillum" 0
+
+	"$phong" "1"
+	"$phongboost" "512"
+	"$phongexponent" "64"
+	"$phongfresnelranges"	"[0 0.5 1]"
+
 	"$model" 1
 
 	$envmaptintbase "[ 1 1 1 ]"

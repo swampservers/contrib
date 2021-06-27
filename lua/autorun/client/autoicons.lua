@@ -812,7 +812,8 @@ function GetAutoIcon(p, mode)
     end
 end
 
-local weaponselectcolor = Vector(1, 0.93, 0.05)
+local refc = NamedColor("FgColor") --there are so many functions that just don't initialize colors with the proper meta table
+local weaponselectcolor = Color(refc.r,refc.g,refc.b,255):ToVector()
 
 function AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
     if not ReplaceAllConvar:GetBool() and (self.BasedDrawWeaponSelection or self.WepSelectIcon ~= AUTOICONS_BASEDWEPSELECTICON or self.WorldModel == "") then return (self.BasedDrawWeaponSelection or AUTOICONS_BASEDDRAWWEAPONSELECTION)(self, x, y, wide, tall, alpha) end

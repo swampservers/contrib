@@ -15,6 +15,7 @@ function SS_PreRender(item)
         local imat = ImgurMaterial({
             id = item.cfg.imgur.url,
             owner = item.owner,
+            worksafe = true,
             pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
             stretch = true,
             shader = "VertexLitGeneric",
@@ -46,9 +47,6 @@ end
 
 hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     -- will be "false" if the model is not mounted yet
-
-    if true then return end
-
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
     if not ply:Alive() then return true end
 
@@ -178,6 +176,7 @@ function SS_ApplyMaterialMods(ent, mods)
             local mat = ImgurMaterial({
                 id = (item.cfg.imgur or {}).url or "EG84dgp.png",
                 owner = ent,
+                worksafe = true,
                 pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = true,
                 shader = "VertexLitGeneric",

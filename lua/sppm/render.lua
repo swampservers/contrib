@@ -33,6 +33,7 @@ function PPM_PrePonyDraw(ent)
             v = ImgurMaterial({
                 id = ply.ponydata.imgurcmark,
                 owner = ent,
+                worksafe = true,
                 pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = false,
                 shader = "VertexLitGeneric",

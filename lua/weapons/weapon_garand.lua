@@ -49,6 +49,12 @@ local HitSound = Sound("weapons/kar98/kar_shoot.wav")
 local BoltBack = Sound("weapons/kar98/boltback.wav")
 local BoltForward = Sound("weapons/kar98/boltforward.wav")
 
+-- Override function for displaying ammo count
+function SWEP:CustomAmmoDisplay()
+    if(InGarandZone(self.Owner))then return {PrimaryAmmo=self.Primary.ClipSize*999} end
+    return {PrimaryAmmo=0}
+end
+
 game.AddAmmoType({
     name = "garand",
     dmgtype = DMG_BULLET,
@@ -140,13 +146,19 @@ local BOLTACTIONSPEED = 1
 function SWEP:PrimaryAttack()
     self.Owner:SetAmmo(80, "garand")
 
-    if self:Clip1() == 0 then
+    if self:Clip1() == 0 and InGarandZone(self.Owner) then
         self:Reload()
 
         return
     end
 
-    if (not self:CanPrimaryAttack()) then return end
+    if (not self:CanPrimaryAttack()) then 
+        self:EmitSound("Weapon_SMG1.Empty")
+        self:SendWeaponAnim(ACT_VM_DRYFIRE) 
+        self:SetNextPrimaryFire(CurTime() + 0.5)
+    return end
+
+
     if self:IsSprinting() then return end
     local bullet = {}
     bullet.Num = self.Primary.NumberofShots
@@ -220,12 +232,14 @@ killicon.Add( "weapon_sniper", "HUD/killicons/kcon_kar98", Color ( 0, 255, 0, 25
 end
 ]]
 function InGarandZone(v)
-    if v:GetPos():WithinAABox(Vector(-959, -1732, 332), Vector(-276, -1048, 431)) then
-        if v:GetPos():DistToSqr(Vector(-618, -1390, 382)) < 168 * 168 then return true end
-    end
-
+    local origin = Vector(-578, -1375, 396)
+    local ang = Angle(0,26.75,0)
+    local size = Vector(275,350,128)
+    local pos,normal,frac = util.IntersectRayWithOBB( v:EyePos(), v:GetAimVector(), origin, ang, -size/2, size/2 )
+    if(frac == 0)then return true end
     return false
 end
+
 
 hook.Add("ScalePlayerDamage", "garandthing", function(ply, hg, dmg)
     if dmg:GetAmmoType() == game.GetAmmoID("garand") then
