@@ -1,11 +1,13 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
-local ALL_ITEMS = 1
-local OWNED_ITEMS = 2
-local UNOWNED_ITEMS = 3 
-   
+include("sh_init.lua")
+include("cl_draw.lua")
+include("vgui/menu.lua")
+include("vgui/panels.lua")
+include("vgui/item.lua")
+include("vgui/preview.lua")
+include("vgui/customizer.lua")
+include("vgui/givepoints.lua")
 local wasf3down = false
 local wascontextdown = false
 OLDBINDSCONVAR = CreateClientConVar("swamp_old_binds", "0", true, false)
@@ -14,16 +16,16 @@ concommand.Add("menu_context", function()
     if not OLDBINDSCONVAR:GetBool() then
         SS_ToggleMenu()
     end
-end) 
+end)
 
 concommand.Add("+menu_context", function()
     if not OLDBINDSCONVAR:GetBool() then
         SS_ToggleMenu()
     end
 end)
- 
+
 concommand.Add("swamp_shop", function()
-    SS_ToggleMenu() 
+    SS_ToggleMenu()
 end)
 
 hook.Add("Think", "PSToggler", function()
@@ -44,8 +46,46 @@ concommand.Add("ps_togglemenu", function(ply, cmd, args)
     SS_ToggleMenu()
 end)
 
+CreateClientConVar("ps_darkmode", "0", true)
 
- 
+function SetPointshopTheme(dark)
+    SS_DarkMode = dark
+
+    if SS_DarkMode then
+        SS_TileBGColor = Color(37, 37, 37)
+        SS_GridBGColor = Color(33, 33, 33)
+        SS_BotBGColor = Color(33, 33, 33)
+        SS_SwitchableColor = Color(200, 200, 200)
+    else
+        SS_TileBGColor = Color(234, 234, 234)
+        SS_GridBGColor = Color(200, 200, 200)
+        SS_BotBGColor = Color(64, 64, 64)
+        SS_SwitchableColor = Color(0, 0, 0)
+    end
+
+    if IsValid(SS_CustomizerPanel) then
+        SS_CustomizerPanel:Remove()
+    end
+
+    if IsValid(SS_ShopMenu) then
+        if SS_ShopMenu:IsVisible() then
+            SS_ShopMenu:Remove()
+            SS_ShopMenu = vgui.Create('DPointShopMenu')
+            SS_ShopMenu:Show()
+        else
+            SS_ShopMenu:Remove()
+            SS_ShopMenu = vgui.Create('DPointShopMenu')
+            SS_ShopMenu:SetVisible(false)
+        end
+    end
+end
+
+SetPointshopTheme(GetConVar("ps_darkmode"):GetBool())
+
+cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
+    SetPointshopTheme(tobool(new))
+end)
+
 concommand.Add("ps_destroymenu", function(ply, cmd, args)
     if IsValid(SS_CustomizerPanel) then
         SS_CustomizerPanel:Close()
@@ -56,27 +96,19 @@ concommand.Add("ps_destroymenu", function(ply, cmd, args)
     end
 end)
 
-if IsValid(SS_CustomizerPanel) then
-    SS_CustomizerPanel:Close()
-end
-
-if IsValid(SS_ShopMenu) then
-    SS_ShopMenu:Remove()
-end
-
 function SS_ToggleMenu()
     if not IsValid(SS_ShopMenu) then
         SS_ShopMenu = vgui.Create('DPointShopMenu')
         SS_ShopMenu:SetVisible(false)
     end
- 
+
     if SS_ShopMenu:IsVisible() then
         if IsValid(SS_CustomizerPanel) then
             SS_CustomizerPanel:Close()
         end
 
-    SS_ShopMenu:Hide() 
-        gui.EnableScreenClicker(false) 
+        SS_ShopMenu:Hide()
+        gui.EnableScreenClicker(false)
     else
         SS_ShopMenu:Show()
         gui.EnableScreenClicker(true)
@@ -203,7 +235,7 @@ function SS_SellItem(item_id)
     net.WriteUInt(item_id, 32)
     net.SendToServer()
 end
- 
+
 function SS_EquipItem(item_id, state)
     if not LocalPlayer():SS_FindItem(item_id) then return end
     net.Start('SS_EquipItem')

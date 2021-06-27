@@ -3,25 +3,9 @@
 SS_Item({
     class = "outfitter",
     value = 1000000,
-    name = 'SELL-ONLY', 
+    name = 'SELL-ONLY',
     description = "asdfdf",
     model = 'models/player/pyroteknik/banana.mdl',
-    invcategory = "Playermodels",
-    never_equip = true
-}) 
- 
-SS_Item({
-    class = "defaultplayermodel",
-    value = 0,
-    name = 'Default Playermodels',
-    description = "Customization for the poor.",
-    model = 'models/player/kleiner.mdl',
-    model_display = function() return player_manager.TranslatePlayerModel(GetConVar("cl_playermodel"):GetString() or "kleiner") or "models/player/kleiner.mdl" end,
-    always_have = true,
-    configurable_label = "Choose Playermodel",
-    configurable_menu = function() 
-        SS_ToggleMenu()
-        RunConsoleCommand("customize") end,
     invcategory = "Playermodels",
     never_equip = true
 })

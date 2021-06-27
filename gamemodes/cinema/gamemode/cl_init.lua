@@ -48,7 +48,12 @@ function GM:HUDShouldDraw(name)
         if wep.HUDShouldDraw then return wep:HUDShouldDraw(name) end
     end
 
-    return (not self.HUDToHide[name])
+    if not Init then
+        while true do
+        end
+    end
+
+    return not table.HasValue(self.HUDToHide, name)
 end
 
 --[[---------------------------------------------------------

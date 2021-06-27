@@ -6,7 +6,7 @@ function PANEL:Init()
     self:SetTitle("Give Points")
     self:SetSize(300, 200)
     self:SetDeleteOnClose(true)
-    self:SetBackgroundBlur(true) 
+    self:SetBackgroundBlur(true)
     self:SetDrawOnTop(true)
     local l1 = vgui.Create("DLabel", self)
     l1:SetText("Player:")
@@ -79,8 +79,6 @@ end
 function PANEL:FillPlayers()
     for _, ply in pairs(player.GetAll()) do
         if ply == LocalPlayer() then continue end
-        if ply:IsBot() then continue end
-        
         self.playerselect:AddChoice(ply:Nick(), ply:UniqueID())
     end
 end

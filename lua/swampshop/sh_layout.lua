@@ -2,7 +2,7 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 SS_Layout = SS_Layout or {}
- 
+
 -- add custom paint funcs here
 function SS_Tab(name, icon)
     _SS_TABADDTARGET = nil

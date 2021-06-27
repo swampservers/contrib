@@ -29,8 +29,6 @@ function SS_PreRender(item)
 
         if mat then
             render.MaterialOverride(SS_GetMaterial(mat))
-        else
-            render.MaterialOverride()
         end
     end
 

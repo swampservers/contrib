@@ -6,7 +6,6 @@ function PANEL:Close()
     if IsValid(SS_PopupPanel) then
         SS_ShopMenu:SetParent()
         SS_PopupPanel:Remove()
-        SS_ShopMenu:SetKeyboardInputEnabled( false )
     end
 
     self:SetVisible(false)
@@ -24,124 +23,110 @@ function PANEL:Open(item)
 
     if IsValid(SS_PopupPanel) then
         SS_ShopMenu:SetParent()
-        
         SS_PopupPanel:Remove()
     end
-    SS_ShopMenu:MakePopup()
 
-    --SS_PaintTileBG
-    self.Paint = SS_PaintBG
-
-    --.Paint = SS_PaintGridBG
-    --.Paint = SS_PaintTileBG
-    SS_PopupPanel = vgui("DFrame", function(p)
-        p:SetPos(0, 0)
-        p:SetSize(ScrW(), ScrH())
-        p:SetDraggable(false)
-        p:ShowCloseButton(true)
-        p:SetTitle("")
-        p:RequestFocus()
-        p.Paint = function() end
-        p:SetParent(SS_PopupPanel)
-    end)
-
-    
+    SS_PopupPanel = vgui.Create("DFrame")
+    SS_PopupPanel:SetPos(0, 0)
+    SS_PopupPanel:SetSize(ScrW(), ScrH())
+    SS_PopupPanel:SetDraggable(false)
+    SS_PopupPanel:ShowCloseButton(false)
+    SS_PopupPanel:SetTitle("")
+    SS_PopupPanel.Paint = function() end
+    SS_PopupPanel:MakePopup()
+    SS_ShopMenu:SetParent(SS_PopupPanel)
     self:SetVisible(true)
     SS_InventoryPanel:SetVisible(false)
+    self:SetBackgroundColor(SS_GridBGColor)
+    local inner = vgui.Create("DPanel", self)
+    inner:SetBackgroundColor(SS_TileBGColor)
+    inner:DockMargin(8, 8, 8, 8)
+    inner:Dock(FILL)
+    local top = vgui.Create("DPanel", inner)
+    top.Paint = function() end
+    top:SetTall(64)
+    top:Dock(TOP)
+    local p = vgui.Create("DLabel", top)
+    p:SetFont("SS_LargeTitle")
+    p:SetText("βUSTOMIZER")
+    p:SetColor(SS_SwitchableColor)
+    p:SetContentAlignment(5)
+    p:SizeToContents()
+    p:DockMargin(80, 8, 0, 10)
+    p:Dock(LEFT)
+    local p = vgui.Create("DLabel", top)
+    p:SetFont("SS_DESCINSTFONT")
+    p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
+    p:SetColor(SS_SwitchableColor)
+    p:SetContentAlignment(5)
+    p:SizeToContents()
+    p:DockMargin(0, 0, 32, 0)
+    p:Dock(RIGHT)
+    local bot = vgui.Create("DPanel", inner)
+    bot.Paint = function() end
+    bot:SetTall(64)
+    bot:Dock(BOTTOM)
+    p = vgui.Create('DButton', bot)
+    p:SetText("Reset")
+    p:SetFont("SS_DESCTITLEFONT")
+    p:SetWide(200)
 
-    --main panel
-    vgui("DPanel", self, function(p)
-        p.Paint = noop
-        p:Dock(FILL)
-        p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+    p.Paint = function(self, w, h)
+        if self:IsHovered() then
+            surface.SetDrawColor(0, 0, 0, 100)
+            surface.DrawRect(0, 0, w, h)
+        end
+    end
 
-        self.controlzone = vgui("DPanel", function(p)
-            p:Dock(FILL)
-            p:DockMargin(0, 0, 0, 0)
-            p.Paint = SS_PaintBG
-        end)
-
+    p.DoClick = function(butn)
+        self.item.cfg = {}
+        self:UpdateCfg()
         self:SetupControls()
+    end
 
-        vgui("DPanel", function(p)
-            p.Paint = SS_PaintFG
-            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-            p:SetTall(SS_CUSTOMIZER_HEADINGSIZE)
-            p:Dock(TOP)
+    p:Dock(LEFT)
+    p = vgui.Create('DButton', bot)
+    p:SetText("Cancel")
+    p:SetFont("SS_DESCTITLEFONT")
+    p:SetWide(200)
 
-            vgui("DLabel", function(p)
-                p:SetFont("SS_LargeTitle")
-                p:SetText("βUSTOMIZER")
-                p:SetColor(SS_SwitchableColor)
-                p:SetContentAlignment(5)
-                p:SizeToContents()
-                p:DockMargin(80, 8, 0, 10)
-                p:Dock(LEFT)
-            end)
+    p.Paint = function(self, w, h)
+        if self:IsHovered() then
+            surface.SetDrawColor(0, 0, 0, 100)
+            surface.DrawRect(0, 0, w, h)
+        end
+    end
 
-            vgui("DLabel", function(p)
-                p:SetFont("SS_DESCINSTFONT")
-                p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
-                p:SetColor(SS_SwitchableColor)
-                p:SetContentAlignment(5)
-                p:SizeToContents()
-                p:DockMargin(0, 0, 32, 0)
-                p:Dock(RIGHT)
-            end)
-        end)
+    p.DoClick = function(butn)
+        self.item.cfg = self.item.applied_cfg
+        self:Close()
+    end
 
-        --bottom panel
-        vgui("DPanel", function(p)
-            p.Paint = function() end
-            p:SetTall(SS_CUSTOMIZER_HEADINGSIZE)
-            p:Dock(BOTTOM)
+    p:Dock(LEFT)
+    p = vgui.Create('DButton', bot)
+    p:SetText("Done")
+    p:SetFont("SS_DESCTITLEFONT")
 
-            vgui("DButton", function(p)
-                p:SetText("Reset")
-                p:SetFont("SS_DESCTITLEFONT")
-                p:SetWide(SS_GetMainGridDivision(4))
-                p:DockMargin(0, SS_COMMONMARGIN, SS_COMMONMARGIN, 0)
-                p:Dock(LEFT)
-                p.Paint = SS_PaintButtonBrandHL
+    p.Paint = function(self, w, h)
+        if self:IsHovered() then
+            surface.SetDrawColor(0, 0, 0, 100)
+            surface.DrawRect(0, 0, w, h)
+        end
+    end
 
-                p.DoClick = function(butn)
-                    self.item.cfg = {}
-                    self:UpdateCfg()
-                    self:SetupControls()
-                end
-            end)
+    p.DoClick = function(butn)
+        net.Start('SS_ConfigureItem')
+        net.WriteUInt(self.item.id, 32)
+        net.WriteTableHD(self.item.cfg)
+        net.SendToServer()
+        self:Close()
+    end
 
-            vgui("DButton", function(p)
-                p:SetText("Cancel")
-                p:SetFont("SS_DESCTITLEFONT")
-                p:SetWide(SS_GetMainGridDivision(4))
-                p:DockMargin(0, SS_COMMONMARGIN, 0, 0)
-                p:Dock(LEFT)
-                p.Paint = SS_PaintButtonBrandHL
-
-                p.DoClick = function(butn)
-                    self.item.cfg = self.item.applied_cfg
-                    self:Close()
-                end
-            end)
-
-            vgui("DButton", function(p)
-                p:SetText("Done")
-                p:SetFont("SS_DESCTITLEFONT")
-                p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, 0)
-                p:Dock(FILL)
-                p.Paint = SS_PaintButtonBrandHL
-
-                p.DoClick = function(butn)
-                    net.Start('SS_ConfigureItem')
-                    net.WriteUInt(self.item.id, 32)
-                    net.WriteTableHD(self.item.cfg)
-                    net.SendToServer()
-                    self:Close()
-                end
-            end)
-        end)
-    end)
+    p:Dock(FILL)
+    self.controlzone = vgui.Create("DPanel", inner)
+    self.controlzone:Dock(FILL)
+    self.controlzone:SetBackgroundColor(SS_TileBGColor)
+    self:SetupControls()
 end
 
 function PANEL:SetupControls()
@@ -150,15 +135,11 @@ function PANEL:SetupControls()
     end
 
     local wearzone = vgui.Create("DPanel", self.controlzone)
-    wearzone:SetWide((SS_GetMainGridSpace() - SS_COMMONMARGIN) / 2)
-    wearzone.Paint = SS_PaintFG
+    wearzone:SetWide(400)
     wearzone:Dock(LEFT)
-    wearzone:DockMargin(0, 0, SS_COMMONMARGIN, 0)
+    wearzone:SetBackgroundColor(SS_TileBGColor)
     wearzone = vgui.Create("DScrollPanel", wearzone)
     wearzone:Dock(FILL)
-    wearzone.VBar:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-    wearzone.VBar:SetWide(SS_SCROLL_WIDTH)
-    SS_SetupVBar(wearzone.VBar)
 
     local function LabelMaker(parent, text, top)
         local p2 = nil
@@ -527,22 +508,13 @@ function PANEL:SetupControls()
         ATTACHSELECT:Dock(RIGHT)
     end
 
-    local appearance_container = vgui.Create("DScrollPanel", self.controlzone)
-    appearance_container:Dock(FILL)
-    appearance_container.VBar:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
-    SS_SetupVBar(appearance_container.VBar)
-
-    appearance_container.VBar:SetWide(SS_SCROLL_WIDTH)
-    local colorzone = vgui.Create("DPanel", appearance_container)
-    colorzone.Paint = SS_PaintFG
-    colorzone:Dock(TOP)
-    colorzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-
-    --colorzone:SetTall( SS_GetCustomizerHeight())
-    colorzone.PerformLayout = function(pnl)
-        pnl:SizeToChildren(false, true)
-        pnl:DockMargin(0, 0, appearance_container.VBar:IsVisible() and SS_COMMONMARGIN or 0, 0)
-    end
+    local colorzone = vgui.Create("DPanel", self.controlzone)
+    --colorzone.Paint = function() end
+    colorzone:Dock(FILL)
+    colorzone:SetBackgroundColor(SS_TileBGColor)
+    colorzone = vgui.Create("DScrollPanel", colorzone)
+    colorzone:Dock(FILL)
+    PrintTable(self.item)
 
     if (self.item.configurable or {}).color then
         LabelMaker(colorzone, "Appearance", true)
@@ -568,105 +540,136 @@ function PANEL:SetupControls()
 
         PSCMixer.ValueChanged = colorchanged
         PSBS.OnValueChanged = colorchanged
+        local matlabel = LabelMaker(colorzone, "Custom Material")
+        IMGURREMOVEBUTTON = vgui.Create("DButton", matlabel)
+        IMGURREMOVEBUTTON:SetWide(160)
+        IMGURREMOVEBUTTON:Dock(RIGHT)
 
-        local imgurzone = vgui.Create("DCollapsibleCategory", colorzone)
-        imgurzone:Dock(TOP)
-        imgurzone:SetTall(128)
-        imgurzone:DockMargin(0, SS_COMMONMARGIN, 0, 0)
-        imgurzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-        imgurzone:SetLabel("Textures")
-        imgurzone.Header:SetFont("SS_DESCINSTFONT")
-    
-        imgurzone.Header.UpdateColours = function(pnl)
-            pnl:SetTextColor(MenuTheme_TX)
+        IMGURREMOVEBUTTON.SetRemoveMode = function(btn, remove)
+            self.removemove = remove
+
+            if remove then
+                btn:SetText("Remove Custom Material")
+
+                btn.DoClick = function(btn)
+                    IMGURENTRY:SetValue("")
+                end
+            else
+                btn:SetText("Show Reference Material")
+
+                btn.DoClick = function(btn)
+                    local mat
+
+                    if IsValid(SS_HoverCSModel) then
+                        mat = SS_HoverCSModel:GetMaterials()[1]
+                    else
+                        mat = LocalPlayer():GetMaterials()[(self.item.cfg.submaterial or 0) + 1]
+                    end
+
+                    print("MAT PATH:", mat)
+                    local sz = math.min(1024, ScrH() - 30)
+
+                    if mat then
+                        local Frame = vgui.Create("DFrame")
+                        Frame:SetSize(sz + 10, sz + 30)
+                        Frame:Center()
+                        Frame:SetTitle("Take a screenshot; it'll last longer. Displayed at " .. tostring(sz) .. "x" .. tostring(sz))
+                        Frame:MakePopup()
+                        Frame.BasedPaint = Frame.Paint
+
+                        function Frame:Paint(w, h)
+                            cam.IgnoreZ(true)
+                            draw.RoundedBox(8, 0, 0, w, h, Color(255, 0, 128))
+                            cam.IgnoreZ(false)
+                        end
+
+                        local img = vgui.Create("DImage", Frame)
+                        img:SetPos(5, 25)
+                        img:SetSize(sz, sz)
+                        img:SetImage(mat)
+                        img:GetMaterial():SetInt("$flags", 0)
+                        img.BasedPaint = img.Paint
+
+                        function img:Paint(w, h)
+                            cam.IgnoreZ(true)
+                            self:BasedPaint(w, h)
+                            cam.IgnoreZ(false)
+                        end
+                    else
+                        LocalPlayerNotify("Couldn't find the material, sorry.")
+                    end
+                end
+            end
         end
-    
-        imgurzone.Header:SetContentAlignment(8)
-        imgurzone.Header:SetTall(24)
-        imgurzone.Paint = SS_PaintMD
-        imgurzone:SetExpanded(true)
-        imgurzone:SetKeyboardInputEnabled(true)
-        local textures = vgui.Create("DImgurManager", imgurzone)
-        textures:SetMultiline(true)
-        --RAWENTRY:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-        textures:SetTall(256)
-        textures:Dock(TOP)
-        textures:SetKeyboardInputEnabled(true)
-        textures:SetColumns(4)
-        textures:Load() 
-    
-        textures.OnChoose = function(pnl, img, nsfw)
-            SingleAsyncSanitizeImgurId(img, function(id)
-                if not IsValid(pnl) then return end
+
+        local urlzone = vgui.Create("Panel", colorzone)
+        urlzone:DockMargin(0, 8, 16, 0)
+        urlzone:Dock(TOP)
+        urlzone:SetTall(40)
+
+        if colorzone.AddItem then
+            colorzone:AddItem(urlzone)
+        end
+
+        IMGURENTRY = vgui.Create("DTextEntry", urlzone)
+        IMGURENTRY:DockMargin(16, 8, 16, 0)
+        IMGURENTRY:Dock(FILL)
+        IMGURENTRY:SetPaintBackground(true)
+
+        IMGURENTRY.OnValueChange = function(textself, new)
+            SingleAsyncSanitizeImgurId(new, function(id)
+                if not IsValid(self) then return end
+                -- IMGURREMOVEBUTTON:SetVisible(id ~= nil)
+                IMGURREMOVEBUTTON:SetRemoveMode(id ~= nil)
+
                 self.item.cfg.imgur = id and {
-                    url = id,
-                    nsfw = nsfw
+                    url = id
                 } or nil
+
                 self:UpdateCfg()
             end)
         end
-    
+
+        IMGURENTRY:SetUpdateOnType(true)
+        IMGURENTRY:SetValue((self.item.cfg.imgur or {}).url or "")
+        local imgurinfo = vgui.Create("DLabel", urlzone)
+        -- imgurinfo:SetText("Use an imgur direct URL such as:\nhttp://i.imgur.com/PxOc7TC.png\n(Right click -> Copy image address)")
+        imgurinfo:SetText("Upload an image to imgur.com and enter the link.\nFor example: https://imgur.com/a/3AOvcC1\nNo videos or GIFs!")
+        imgurinfo:SetColor(SS_SwitchableColor)
+        imgurinfo:Dock(RIGHT)
+        imgurinfo:SetWide(100)
+        imgurinfo:SizeToContents()
     end
 
+    local rawzone = vgui.Create("Panel", colorzone)
+    rawzone:DockMargin(0, 8, 32, 0)
+    rawzone:Dock(TOP)
+    rawzone:SetTall(36)
 
-    local rawzone = vgui.Create("DCollapsibleCategory", self.controlzone)
-    rawzone:Dock(BOTTOM)
-    rawzone:SetTall(128)
-    rawzone:DockMargin(0, SS_COMMONMARGIN, 0, 0)
-    rawzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-    rawzone:SetLabel("Raw Data")
-    rawzone.Header:SetFont("SS_DESCINSTFONT")
-
-    rawzone.Header.UpdateColours = function(pnl)
-        pnl:SetTextColor(MenuTheme_TX)
+    if colorzone.AddItem then
+        colorzone:AddItem(rawzone)
     end
 
-    rawzone.Header:SetContentAlignment(8)
-    rawzone.Header:SetTall(24)
-    rawzone.Paint = SS_PaintMD
-    rawzone:SetExpanded(false)
-    rawzone:SetKeyboardInputEnabled(true)
+    local rawbutton = vgui.Create("DButton", rawzone)
+    rawbutton:SetText("Raw Data")
+    rawbutton:SetWide(160)
+    rawbutton:DockMargin(0, 16, 0, 0)
+    rawbutton:Dock(RIGHT)
+    rawbutton:CenterHorizontal()
 
-    RAWENTRY_c = vgui.Create("DPanel", rawzone)
-    RAWENTRY_c:Dock(FILL)
-    RAWENTRY_c.Paint = SS_PaintBG
-    RAWENTRY_c.PerformLayout = function(pnl)
-       
-    pnl:SizeToChildren(false,true)
-    pnl:InvalidateParent(true)
-    end
-    local testbutton = vgui.Create("DButton", RAWENTRY_c)
-    testbutton:AlignBottom(SS_COMMONMARGIN)
-    testbutton:AlignRight(SS_COMMONMARGIN)
-    testbutton:SetText("Get Texture Template")
-    testbutton:Dock(BOTTOM)
-    testbutton:SetTextColor(MenuTheme_TX)
-    testbutton:SetZPos(255)
-    testbutton:DockMargin(SS_COMMONMARGIN,SS_COMMONMARGIN,SS_COMMONMARGIN,SS_COMMONMARGIN)
-    testbutton.Paint = SS_PaintFG
-
-    testbutton.DoClick = function()
-        ImageGetterPanel()
+    rawbutton.DoClick = function(btn)
+        RAWENTRY:SetVisible(true)
+        rawzone:SetTall(160)
+        btn:Remove()
     end
 
-    RAWENTRY = vgui.Create("DTextEntry", RAWENTRY_c)
+    RAWENTRY = vgui.Create("DTextEntry", rawzone)
     RAWENTRY:SetMultiline(true)
-    RAWENTRY:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-    RAWENTRY:SetTall(256)
+    RAWENTRY:DockMargin(32, 8, 0, 0)
     RAWENTRY:Dock(FILL)
-
-    RAWENTRY:SetPaintBackground(false)
-    RAWENTRY:SetTextColor(MenuTheme_TX)
-    RAWENTRY:SetEditable(true)
-    RAWENTRY:SetKeyboardInputEnabled(true)
-    RAWENTRY.PerformLayout = function(pnl)
-        
-        pnl:SizeToContentsY()
-        pnl:InvalidateParent(true)
-    end
+    RAWENTRY:SetPaintBackground(true)
 
     RAWENTRY.OnValueChange = function(textself, new)
-        textself:InvalidateLayout(true)
         if not textself.RECIEVE then
             self.item.cfg = util.JSONToTable(new) or {}
             self:UpdateCfg(true) -- TODO: sanitize input like on the server
@@ -675,138 +678,10 @@ function PANEL:SetupControls()
 
     RAWENTRY:SetUpdateOnType(true)
     --RAWENTRY:SetValue("unset") --(self.item.cfg.imgur or {}).url or "")
-    
-
+    RAWENTRY:SetVisible(false)
     self:UpdateCfg()
 end
 
-local function TexDownloadHook()
-    print(SS_REQUESTED_TEX)
-    if (SS_REQUESTED_TEX and not SS_REQUESTED_TEX:IsError()) then
-        local mat = SS_REQUESTED_TEX
-        local matcopy = CreateMaterial(mat:GetName().."copy","UnlitGeneric",{
-            ["$basetexture"] = mat:GetString("$basetexture")
-        })
-
-        local RT = GetRenderTarget(mat:GetName() .. "download", mat:Width(), mat:Height())
-        render.PushRenderTarget(RT)
-        cam.Start2D()
-        render.Clear(0,0,0,0,true,true)
-        render.SetMaterial(matcopy)
-        render.DrawScreenQuad()
-        cam.End2D()
-        
-        render.SetWriteDepthToDestAlpha(false)
-        local data = render.Capture({
-            format = "png",
-            x = 0,
-            y = 0,
-            alpha=false,
-            w = ScrW(),
-            h = ScrH()
-        })
-        render.SetWriteDepthToDestAlpha(true)
-        render.PopRenderTarget()
-        local parts = string.Explode( "/", mat:GetName() or "" )
-        local imagename = parts[#parts] or "temp_image"
-
-        file.CreateDir("swampshop_temp")
-        local fname = "swampshop_temp/" .. imagename .. ".png"
-        file.Write(fname, data)
- 
-        if (SS_REQUESTED_TEX_CALLBACK) then
-            SS_REQUESTED_TEX_CALLBACK(fname,data)
-        end
-    else
-        if (SS_REQUESTED_TEX_CALLBACK) then
-            SS_REQUESTED_TEX_CALLBACK()
-        end
-    end
-
-    SS_REQUESTED_TEX = nil
-    SS_REQUESTED_TEX_CALLBACK = nil
-    hook.Remove("PostRender", "SS_TexDownload")
-end
-
-hook.Remove("PostRender", "SS_TexDownload")
-SS_REQUESTED_TEX = nil
-    SS_REQUESTED_TEX_CALLBACK = nil
-
-
-local function DownloadTexture(mat, callback)
-    SS_REQUESTED_TEX = mat
-    SS_REQUESTED_TEX_CALLBACK = callback
-
-    hook.Add("PostRender", "SS_TexDownload", function()
-        TexDownloadHook()
-    end)
-end
-
-function ImageGetterPanel()
-    local mat
-
-    if IsValid(SS_HoverCSModel) then
-        mat = SS_HoverCSModel:GetMaterials()[1]
-    else
-        mat = LocalPlayer():GetMaterials()[(self.item.cfg.submaterial or 0) + 1]
-    end
-
-    print("MAT PATH:", mat)
-    local sz = 512
-
-    if mat then
-        local Frame = vgui.Create("DFrame")
-        Frame:SetSize(sz + 10, sz + 30 + 24)
-        Frame:DockPadding(SS_COMMONMARGIN,SS_COMMONMARGIN + 24,SS_COMMONMARGIN,SS_COMMONMARGIN)
-        Frame:Center()
-        Frame:SetTitle(mat)
-        Frame:MakePopup()
-        Frame.btnMaxim:SetVisible(false)
-        Frame.btnMinim:SetVisible(false)
-        
-        
-        local DLButton = vgui.Create("DButton",Frame)
-        DLButton:SetPos(128,0)
-        DLButton:Dock(BOTTOM)
-        DLButton:DockMargin(0,SS_COMMONMARGIN,0,0)
-        DLButton:SetText("Download Image")
-        DLButton.Paint = SS_PaintFG
-        DLButton:SetTextColor(MenuTheme_TX)
-        DLButton.DoClick = function()
-            Frame:SetTitle("Downloading...")
-
-            DownloadTexture(Material(mat), function(fname,data)
-                if (fname) then
-                    Frame:SetTitle("Downloaded! Look for file: garrysmod/data/" .. fname)
-                else
-                    Frame:SetTitle("Couldn't Download!")
-                end
-            end)
-        end
-
-        Frame.BasedPaint = Frame.Paint
-
-        Frame.Paint = function(pnl, w, h)
-            SS_PaintBG(pnl,w,h)
-            BrandBackgroundPattern(0, 0, w, 24, 0)
-        end
-
-        local img = vgui.Create("DImage", Frame)
-        img:Dock(FILL)
-        img:SetImage(mat)
-        img:GetMaterial():SetInt("$flags", 0)
-        img.BasedPaint = img.Paint
-
-        function img:Paint(w, h)
-            cam.IgnoreZ(true)
-            self:BasedPaint(w, h)
-            cam.IgnoreZ(false)
-        end
-    else
-        LocalPlayerNotify("Couldn't find the material, sorry.")
-    end
-end
-print(vgui.GetKeyboardFocus())
 function PANEL:UpdateCfg(skiptext)
     self.item:Sanitize()
 

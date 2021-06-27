@@ -195,7 +195,6 @@ if CLIENT then
         mdl.backgroundmodel.GetPlayerColor = function(ent) return Vector(0.2, 0.2, 0.2) end
         local scl = 1.2
         mdl.backgroundmodel:SetModelScale(5 * scl, 0)
-        mdl.backgroundmodel:SetSequence(mdl.backgroundmodel:LookupSequence("idle_all_01"))
         mdl.backgroundmodel:SetAngles(Angle(0, -105, 0))
         local scl2 = 1.2
         mdl.backgroundmodel:SetPos(scl * Vector(32 * scl2, 100 * scl2, -300)) --Vector(-200,50,-600))
