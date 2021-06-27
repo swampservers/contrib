@@ -47,6 +47,7 @@ function Player:Obesity()
 end
 
 function Player:SetObesity(obs)
+    if obs == 1 and self:Obesity() == 1 then return end
     self:SetNWFloat("garfield", obs)
     local sc = self:HasWeapon("weapon_garfield") and 0.55 or 1
     -- if not self:IsBot() then
@@ -59,9 +60,9 @@ function Player:SetObesity(obs)
         UpdateViewHeight(self)
     end
 
-    self:SetRunSpeed(350 / self:ObesitySpeedScale())
-    self:SetWalkSpeed(350 / self:ObesitySpeedScale())
-    self:SetSlowWalkSpeed(350 / self:ObesitySpeedScale())
+    self:SetRunSpeed(1 / self:ObesitySpeedScale(), "garf")
+    self:SetWalkSpeed(1 / self:ObesitySpeedScale(), "garf")
+    self:SetSlowWalkSpeed(1 / self:ObesitySpeedScale(), "garf")
     local mh = 100 * self:Obesity()
     self:SetMaxHealth(mh)
     self:SetHealth(math.min(self:Health(), mh))
@@ -133,7 +134,7 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
             eater:SetObesity(ao + vo * ratio)
         end
 
-        eater:SetHealth(eater:Health() + (eater:GetMaxHealth() - eater:Health()) * (ratio)) --/0.9))
+        eater:SetHealth(math.min(eater:GetMaxHealth(), eater:Health() + 300)) --   eater:Health() + (eater:GetMaxHealth() - eater:Health()) * (ratio)) --/0.9))
         vic:SetNW2Entity("EATER", nil)
     end
 end)
@@ -633,3 +634,7 @@ function SWEP:DrawHUD()
         end
     end
 end
+
+hook.Add("CanOutfit", "garffafasd", function(ply, mdl, wsid)
+    if ply:HasWeapon('weapon_garfield') then return false end
+end)
