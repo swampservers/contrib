@@ -195,7 +195,6 @@ end
 @brand-danger:          #E74C3C;
 ]]
 --10c090
-
 function BrandBackgroundPattern(x, y, w, h, px, special)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(x, y, w, h)
@@ -234,23 +233,7 @@ function BrandBackgroundPattern(x, y, w, h, px, special)
 end
 
 function BrandDropDownGradient(x, y, w)
-    local m = 0.65
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 8.0 / 8.0))
-    surface.DrawRect(x, y + 0, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 7.0 / 8.0))
-    surface.DrawRect(x, y + 1, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 6.0 / 8.0))
-    surface.DrawRect(x, y + 2, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 5.0 / 8.0))
-    surface.DrawRect(x, y + 3, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 4.0 / 8.0))
-    surface.DrawRect(x, y + 4, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 3.0 / 8.0))
-    surface.DrawRect(x, y + 5, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 2.0 / 8.0))
-    surface.DrawRect(x, y + 6, w, 1)
-    surface.SetDrawColor(Color(0, 0, 0, 255.0 * m * 1.0 / 8.0))
-    surface.DrawRect(x, y + 7, w, 1)
+    draw.GradientShadowDown(x, y, w, 8, 0.65)
 end
 
 BrandTitleBarHeight = 64

@@ -296,11 +296,11 @@ function SWEP:SlapChest()
 
             if (CLIENT) then
                 if (ply:LookupBone("ValveBiped.Bip01_L_Forearm")) then
-                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), ang1)
+                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), ang1, "monke")
                 end
 
                 if (ply:LookupBone("ValveBiped.Bip01_R_Forearm")) then
-                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), ang2)
+                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), ang2, "monke")
                 end
             end
 
@@ -325,11 +325,11 @@ function SWEP:ResetChest()
 
     if (IsValid(ply)) then
         if (ply:LookupBone("ValveBiped.Bip01_L_Forearm")) then
-            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), Angle())
+            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), Angle(), "monke")
         end
 
         if (ply:LookupBone("ValveBiped.Bip01_R_Forearm")) then
-            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), Angle())
+            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), Angle(), "monke")
         end
     end
 end

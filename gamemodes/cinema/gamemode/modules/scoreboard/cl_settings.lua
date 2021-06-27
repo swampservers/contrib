@@ -155,8 +155,10 @@ function SETTINGS:Create()
     end
 
     addSlider("Video & music volume", "cinema_volume", "cinema videos and background music")
+    addSlider("Sound effects volume", "cinema_game_volume", "Gunshots, footsteps etc.\nIf this doesn't work well, try the settings in the escape menu.")
+    addSlider("Voice volume", "cinema_voice_volume", "voice chat")
     addCheckbox('Mute video while alt-tabbed', "cinema_mute_nofocus", 'No background noise')
-    addSlider("Game sounds volume", "cinema_game_volume", "Gunshots, footsteps etc.\nIf this doesn't work well, try the settings in the escape menu.")
+    addCheckbox('Mute game while alt-tabbed', "snd_mute_losefocus", 'No background noise')
     addCheckbox('Mute game sound in theater', "cinema_mutegame", 'Mute game sound in theater.')
 
     addDropdown("Voice chat", "cinema_mute_voice", "When should voice chat be heard?", {"Everywhere", "Mute in theaters", "Mute AFK players", "Mute AFK and in theaters", "Mute everyone"}, 80, 120)
