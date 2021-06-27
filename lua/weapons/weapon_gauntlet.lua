@@ -132,7 +132,7 @@ function SWEP:CanTarget(v)
     if(!v:Alive())then return false end
     if(v == self:GetOwner())then return false end
     if (theater and ply:GetTheater() and ply:GetTheater():IsPrivate() and ply:GetTheater():GetOwner() ~= ply and ply:GetLocationName() == v:GetLocationName()) then return false end
-    
+    if(!self:GetTargetNearness(v))then return false end
     return true
 end
 
