@@ -154,7 +154,7 @@ end
 
 
 
-function DrawAmmoGuage(count, icon, x, y, alignh, alignv, alpha)
+function DrawAmmoGauge(count, icon, x, y, alignh, alignv, alpha)
     local minwidth = math.Round(ScreenScale(64*overall_scale))
     local margin = math.Round(ScreenScale(2*overall_scale))
     local gap = 0
@@ -300,7 +300,7 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         local icon = LASTAMMOTEXT[3] or "hud/ammo_mag.png"
         local w, h = 0,0
         if(showtype == AMMOLABEL_MAGCOUNTER)then
-        w,h = DrawAmmoGuage(value, icon, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
+        w,h = DrawAmmoGauge(value, icon, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
         end
         if(showtype == AMMOLABEL_LABEL)then
             w,h = DrawHL2Label(value, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
