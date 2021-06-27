@@ -16,22 +16,21 @@ GM.HUDToHide = {
     CHUDQuickInfo = true
 }
 
-GM.CrosshairWeapons = {
-    weapon_crossbow = true,
-    weapon_physcannon = true,
-    weapon_physgun = true,
-    weapon_pistol = true,
-    weapon_357 = true,
-    weapon_ar2 = true,
-    weapon_bugbait = true,
-    weapon_crowbar = true,
-    weapon_frag = true,
-    weapon_rpg = true,
-    weapon_smg1 = true,
-    weapon_stunstick = true,
-    weapon_shotgun = true
-}
-
+-- GM.CrosshairWeapons = {
+--     weapon_crossbow = true,
+--     weapon_physcannon = true,
+--     weapon_physgun = true,
+--     weapon_pistol = true,
+--     weapon_357 = true,
+--     weapon_ar2 = true,
+--     weapon_bugbait = true,
+--     weapon_crowbar = true,
+--     weapon_frag = true,
+--     weapon_rpg = true,
+--     weapon_smg1 = true,
+--     weapon_stunstick = true,
+--     weapon_shotgun = true
+-- }
 -- GM.AmmoWeapons = {"weapon_boltaction", "cvx_blocks",}
 --[[---------------------------------------------------------
    Name: gamemode:HUDShouldDraw( name )
@@ -42,10 +41,12 @@ function GM:HUDShouldDraw(name)
     local wep = IsValid(ply) and ply:GetActiveWeapon()
 
     if (IsValid(wep)) then
-        local cl = wep:GetClass()
-        if name == "CHudCrosshair" and (wep.Base == "weapon_csbasegun" or self.CrosshairWeapons[cl]) then return true end
+        -- local cl = wep:GetClass()
+        -- if name == "CHudCrosshair" and (wep.Base == "weapon_csbasegun" or self.CrosshairWeapons[cl]) then return true end
         -- if name == "CHudAmmo" and table.HasValue(self.AmmoWeapons, wep:GetClass()) then return true end
         if wep.HUDShouldDraw then return wep:HUDShouldDraw(name) end
+    else
+        if name == "CHudCrosshair" then return false end
     end
 
     if not Init then

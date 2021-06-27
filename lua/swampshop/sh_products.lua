@@ -87,6 +87,12 @@ function SS_WeaponProduct(product)
     end
 
     function product:CannotBuy(ply)
+        if ply:HasWeapon(self.class) then
+            ply:SelectWeapon(self.class)
+
+            return "You already have this weapon!"
+        end
+
         return not ply:Alive() and "You're dead!"
     end
 
