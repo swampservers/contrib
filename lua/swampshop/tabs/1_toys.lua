@@ -122,7 +122,7 @@ SS_WeaponProduct({
     price = 0,
     name = "Defense Shotgun",
     description = "Use this free, unlimited ammo shotgun to defend your private theater.",
-    model = 'models/weapons/w_shotgun.mdl',
+    model = 'models/weapons/w_shotgun.mdl', 
     CannotBuy = function(self, v)
         if not (v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner() == v and v:GetTheater()._PermanentOwnerID == nil) then return "You must own a private theater to use this." end
     end,
@@ -247,7 +247,7 @@ SS_Product({
 })
 
 local function CannotBuyTrash(self, ply)
-    if SERVER then return CannotMakeTrash(ply) end
+    if SERVER and CannotMakeTrash then return CannotMakeTrash(ply) end
 end
 
 SS_Product({

@@ -15,7 +15,7 @@ end
 function PANEL:DragMousePress(btn)
     self.PressButton = btn
     self.PressX, self.PressY = gui.MousePos()
-    self.Pressed = true
+    self.Pressed = true 
 end
 
 function PANEL:DragMouseRelease()
@@ -74,6 +74,28 @@ function PANEL:LayoutEntity(thisEntity)
                     end
                 end
             end
+        end
+
+        if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(XSL) and IsValid(SS_HoverCSModel) then
+            local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
+            local attach = (SS_CustomizerPanel.item.cfg[SS_CustomizerPanel.wear] or {} ).attach or (pone and (SS_CustomizerPanel.item.wear.pony or {}).attach) or SS_CustomizerPanel.item.wear.attach
+            local angpos = self.Entity:GetAttachment( self.Entity:LookupAttachment(attach)) 
+ 
+
+
+            local apos,aang =  LocalToWorld(ofs,Angle(),angpos.Pos,angpos.Ang)
+            
+            local camang = (self:GetLookAt() - self:GetCamPos()):Angle()
+            apos = apos + camang:Right() * (mx + (self.PressX or mx)) * 0.3
+            apos = apos + camang:Up() * (my + (self.PressY or my)) * 0.3
+            
+            apos,aang = WorldtoLocal(apos,aang,angpos.Pos,angpos.Ang)
+
+
+            
+            XSL:SetValue(apos.x)
+            YSL:SetValue(apos.y)
+            ZSL:SetValue(apos.z)
         end
 
         self.PressX, self.PressY = gui.MousePos()
@@ -151,6 +173,14 @@ function PANEL:Paint()
 
     if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
         mdl = SS_HoverIOP.model
+
+        if (SS_HoverIOP.model_display) then
+            if (isfunction(SS_HoverIOP.model_display)) then
+                mdl = SS_HoverIOP.model_display()
+            else
+                mdl = SS_HoverIOP.model_display
+            end
+        end
     end
 
     require_workshop_model(mdl)

@@ -30,10 +30,6 @@ function GM:HUDShouldDraw(name)
         if (wep and wep:IsValid() and wep.HUDShouldDraw ~= nil) then return wep.HUDShouldDraw(wep, name) end
     end
 
-    if not Init then
-        while true do
-        end
-    end
 
     return not table.HasValue(self.HUDToHide, name)
 end

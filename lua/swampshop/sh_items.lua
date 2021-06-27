@@ -5,14 +5,14 @@ local Player = FindMetaTable('Player')
 SS_Items = SS_Items or {}
 -- this is not used as a table, it is just a unique value
 SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
-
+ 
 -- SS_ITEM_META = {
 --     __index = function(t, k) return t[k] or t.cfg[k]  or t.class[k] end, --or t.spec[k]
 --     __newindex = function(t, k, v) end
 -- }
 -- convert sql loaded data, or network data, to item
 -- still needs to be sanitized on server, left out of here to deal with prop slots
-function SS_MakeItem(ply, itemdata)
+function SS_MakeItem(ply, itemdata) 
     local class = SS_Items[itemdata.class]
 
     if not class then
@@ -121,12 +121,12 @@ function SS_Item(item)
         if self.accessory_slot then
             local c = self.eq and 0 or 1 / (self.perslot or 1)
 
-            for k, v in pairs(self.owner.SS_Items) do
+            for k, v in pairs(self.owner.SS_Items or {}) do
                 if v.eq and (SS_Items[v.class] or {}).accessory_slot then
                     c = c + (1 / (SS_Items[v.class].perslot or 1))
                 end
             end
-
+ 
             if c > self.owner:SS_AccessorySlots() then return "Buy more accessory slots (in Upgrades) to wear more items." end
         end
 
@@ -135,7 +135,7 @@ function SS_Item(item)
                 [self.cfg.imgur.url] = true
             }
 
-            for k, v in pairs(self.owner.SS_Items) do
+            for k, v in pairs(self.owner.SS_Items or {}) do
                 if v.eq and v.cfg.imgur then
                     urls[v.cfg.imgur.url] = true
                 end
@@ -207,7 +207,7 @@ function _SS_SanitizeConfig(item)
         end
     end
 
-    if itmc.scale then
+    if itmc.scale then 
         cfg.scale_h = sanitize_vector(dirty_cfg.scale_h, itmc.scale.min, itmc.scale.max)
         cfg.scale_p = sanitize_vector(dirty_cfg.scale_p, itmc.scale.min, itmc.scale.max)
     end
