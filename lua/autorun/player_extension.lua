@@ -272,3 +272,4 @@ CreateLayeredProperty("GetManipulateBonePosition", "ManipulateBonePosition", tru
 CreateLayeredProperty("GetManipulateBoneAngles", "ManipulateBoneAngles", true, true, Angle(0, 0, 0))
 CreateLayeredProperty("GetManipulateBoneScale", "ManipulateBoneScale", true, false, Vector(1, 1, 1))
 -- PLAYER.TrueSetModel = PLAYER.TrueSetModel or ENTITY.SetModel
+
