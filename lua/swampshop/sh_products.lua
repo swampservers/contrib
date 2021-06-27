@@ -119,10 +119,7 @@ function SS_WeaponAndAmmoProduct(product)
             local wep = ply:GetWeapon(self.class)
             local ammotype = self.ammotype or (game.GetAmmoName(wep:GetPrimaryAmmoType()))
             local ammogive = self.amount or (wep.Primary and wep.Primary.DefaultClip) or wep:GetMaxClip1() or 0
-            local fail = assert(ammotype != nil and ammogive > 0,"shop purchase could not refill" .. ply:Nick() .. "'s "..self.class.." with ".. ammogive .." of "..(ammotype or "<nil ammotype>") ,true)
-            if(fail)then return "Error!" end 
-            
-            --i am not sure if i am using this correctly
+            assert(ammotype != nil and ammogive > 0, self.class.." ".. ammogive .." "..(ammotype or "nil"))
             local limit = self.maxammo or game.GetAmmoMax(game.GetAmmoID(ammotype)) or 0
             if (limit != 0 and ply:GetAmmoCount(ammotype) >= limit) then return "You can't carry any more of this ammo" end
         end
