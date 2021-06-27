@@ -22,6 +22,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
+SWEP.RenderGroup = RENDERGROUP_BOTH
 
 function SWEP:Initialize()
     self:SetHoldType("slam")
@@ -38,22 +39,46 @@ if SERVER then
 end
 
 function SWEP:PrimaryAttack()
-    self:SetNextPrimaryFire(CurTime() + 1)
-    self.Owner:SetAnimation(PLAYER_ATTACK1)
+    local ply = self:GetOwner()
 
-    if SERVER then
+    --if(SERVER)then self:CallOnClient("PrimaryAttack") end
+    if (SERVER) then
+        SuppressHostEvents(ply)
+    end
+
+    self:SetNextPrimaryFire(CurTime() + 1)
+    ply:SetAnimation(PLAYER_ATTACK1)
+    self:EmitSound("Weapon_StunStick.Swing", nil, 60, 0.2)
+
+    ply:TimerSimple(0.15, function()
+        local dir = ply:GetAimVector()
+        local org = ply:GetShootPos() + dir * 20 + Vector(0, 0, -10)
+        local effectdata = EffectData()
+        effectdata:SetOrigin(org)
+        effectdata:SetNormal(dir)
+        effectdata:SetRadius(1)
+        effectdata:SetMagnitude(1)
+        effectdata:SetScale(0.1)
+        util.Effect("ElectricSpark", effectdata)
+
         --[[ local hit = self.Owner:GetEyeTrace()
-		if (hit.HitPos or Vector(0,0,0)):Distance(self.Owner:EyePos()) > 80 then return end
-		hit = hit.Entity
-		if IsValid(hit) and hit:GetClass()=="keem" then hit:FireAttack() self:Remove() end ]]
+            if (hit.HitPos or Vector(0,0,0)):Distance(self.Owner:EyePos()) > 80 then return end
+            hit = hit.Entity
+            if IsValid(hit) and hit:GetClass()=="keem" then hit:FireAttack() self:Remove() end ]]
         --
-        for k, v in pairs(ents.FindByClass("keem")) do
-            if v:GetPos():Distance(self.Owner:GetPos()) < 80 then
-                v:FireAttack()
-                self:Remove()
+        if SERVER then
+            for k, v in pairs(ents.FindByClass("keem")) do
+                if v:GetPos():Distance(self.Owner:GetPos()) < 80 then
+                    v:FireAttack()
+                    SafeRemoveEntityDelayed(self, 0.2)
+                end
             end
         end
-    end
+
+        if (SERVER) then
+            SuppressHostEvents()
+        end
+    end)
 end
 
 function SWEP:SecondaryAttack()
@@ -116,9 +141,22 @@ flarefxpos = Vector()
 flaresprite = Material("sprites/glow04_noz")
 
 function SWEP:GetViewModelPosition(pos, ang)
+    local pos2 = pos * 1 --copy vector
+    local ang2 = ang * 1
     pos = pos + ang:Right() * 19
     pos = pos + ang:Up() * -15
     pos = pos + ang:Forward() * 25
+    pos2 = pos2 + ang:Forward() * 44
+    pos2 = pos2 + ang:Up() * -15
+    ang2:RotateAroundAxis(ang2:Right(), -90)
+    local thrustv = (self:GetNextPrimaryFire() - 0.3) > CurTime() and 1 or 0
+    local spd = thrustv == 1 and 1.5 or 1
+    self.ThrustLerp = math.Approach(self.ThrustLerp or 0, thrustv, FrameTime() * spd)
+    self.ThrustLerp2 = math.Approach(self.ThrustLerp2 or 0, thrustv, FrameTime() * spd * 0.5)
+    local ez = 1
+    local ez2 = 1
+    pos = LerpVector(math.EaseInOut(self.ThrustLerp2, ez, ez2), pos, pos2)
+    ang = LerpAngle(math.EaseInOut(self.ThrustLerp, ez, ez2), ang, ang2)
     flarefxpos:Set(pos)
     flarefxpos = flarefxpos + ang:Up() * 7 + ang:Forward() * -1 + ang:Right() * -1
 

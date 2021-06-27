@@ -10,10 +10,12 @@ SS_WeaponProduct({
     class = 'weapon_crossbow'
 })
 
-SS_WeaponProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Big Frickin\' Gun',
     description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
     price = 20000,
+    ammotype = "doom3_bfg",
+    amount = 1,
     model = "models/weapons/doom3/w_bfg.mdl",
     class = 'weapon_doom3_bfg'
 })
@@ -50,9 +52,11 @@ SS_WeaponProduct({
     class = 'weapon_357'
 })
 
-SS_WeaponProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Light Machine Gun',
     description = "Crouch for better control",
+    ammotype = "lmg",
+    amount = 60,
     price = 10000,
     model = 'models/weapons/w_mg42bu.mdl',
     class = 'weapon_spades_lmg'
@@ -74,11 +78,13 @@ SS_WeaponProduct({
     class = 'weapon_bigbomb'
 })
 
-SS_WeaponProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Infinity Gauntlet',
     description = '*snap*',
     price = 13000,
     model = 'models/swamp/v_infinitygauntlet.mdl',
+    ammotype = "infinitygauntlet",
+    amount = 1,
     class = 'weapon_gauntlet'
 })
 
