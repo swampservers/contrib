@@ -1,27 +1,28 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 local PLAYER = FindMetaTable("Player")
 
 local function AppropriateNavArea(ply, area)
-    if(!IsValid(area))then return false end
+    if (not IsValid(area)) then return false end
     local mins, maxs = ply:GetCollisionBounds()
     if (area:GetSizeX() < maxs.x * 2 or area:GetSizeY() < maxs.z * 2) then return false end
-
-    local mins,maxs = ply:GetCollisionBounds()
+    local mins, maxs = ply:GetCollisionBounds()
     local tr = {}
-    tr.start = area:GetCenter() + Vector(0,0,1)
-    tr.endpos =area:GetCenter()
+    tr.start = area:GetCenter() + Vector(0, 0, 1)
+    tr.endpos = area:GetCenter()
+
     tr.filter = function(ent)
-        if(ent == ply)then return false end
-        local should = hook.Call("ShouldCollide",nil,ply,ent) or true
+        if (ent == ply) then return false end
+        local should = hook.Call("ShouldCollide", nil, ply, ent) or true
+
         return should
     end
+
     tr.mins = mins
     tr.maxs = maxs
     local trace = util.TraceHull(tr)
-    if(trace.StartSolid)then return false end
-    
+    if (trace.StartSolid) then return false end
+
     return true
 end
 
@@ -31,44 +32,47 @@ local function biasdist(pos1, pos2, biasvec)
 end
 
 function PLAYER:IsStuck()
-    if(self:InVehicle())then return false end
-    local mins,maxs = self:GetCollisionBounds()
+    if (self:InVehicle()) then return false end
+    local mins, maxs = self:GetCollisionBounds()
     local tr = {}
     tr.start = self:GetPos()
-    tr.endpos = tr.start + self:GetVelocity()*FrameTime()
+    tr.endpos = tr.start + self:GetVelocity() * FrameTime()
+
     tr.filter = function(ent)
-        if(ent == self)then return false end
-        local should = hook.Call("ShouldCollide",nil,self,ent) or true
+        if (ent == self) then return false end
+        local should = hook.Call("ShouldCollide", nil, self, ent) or true
+
         return should
     end
+
     tr.mins = mins
     tr.maxs = maxs
     local trace = util.TraceHull(tr)
-    if(trace.StartSolid)then return true end
+    if (trace.StartSolid) then return true end
+
     return false
 end
 
 function PLAYER:UnStick()
     --reuse the last spot they were placed if this happens frequently
-    if(self.LastUnstickSpot and self:GetPos():Distance(self.LastUnstickSpot) < 200)then
+    if (self.LastUnstickSpot and self:GetPos():Distance(self.LastUnstickSpot) < 200) then
         self:SetPos(self.LastUnstickSpot)
         self.LastUnstickSpot = nil
+
         return true
     end
 
-
-    if (not self:IsStuck()) then
-        return 
-    end
-
+    if (not self:IsStuck()) then return end
     local areas
     local testedareas = 0
     local bestarea
     local bestareapos = Vector(0, 0, 160000)
     --least aggressive
     bestarea = navmesh.GetNearestNavArea(self:GetPos(), false, 1000, true, true)
-    if(IsValid(bestarea) and !AppropriateNavArea(self, bestarea))then bestarea = nil end
 
+    if (IsValid(bestarea) and not AppropriateNavArea(self, bestarea)) then
+        bestarea = nil
+    end
 
     --more aggressive
     if (not IsValid(bestarea)) then
@@ -106,14 +110,14 @@ function PLAYER:UnStick()
         self:SetPos(bestarea:GetCenter() + Vector(0, 0, 16))
         self.LastUnstickSpot = bestarea:GetCenter() + Vector(0, 0, 16)
         self:DropToFloor()
+
         return true
     else
         return false
     end
 end
 
-
-RegisterChatCommand({'stuck','unstuck','unstick'}, function(ply, arg)
+RegisterChatCommand({'stuck', 'unstuck', 'unstick'}, function(ply, arg)
     if IsValid(ply) and not ply:InVehicle() and ply:Alive() then
         local worked = ply:UnStick()
         local msg = (worked == true and "Unstuck!") or (worked == false and "Couldn't Unstick! Try to /tp to another player!") or (worked == nil and "You don't appear to be stuck.")
