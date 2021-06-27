@@ -142,57 +142,66 @@ function DrawHL2Label(label, x, y, alignh, alignv, alpha)
     return box_width, box_height
 end
 
-function DrawAmmoGuage(count, icon, x, y, alignh, alignv, alpha)
-    local minwidth = math.Round(ScreenScale(64 * overall_scale))
-    local margin = math.Round(ScreenScale(2 * overall_scale))
+
+
+
+function DrawAmmoGauge(count, icon, x, y, alignh, alignv, alpha)
+    local minwidth = math.Round(ScreenScale(64*overall_scale))
+    local margin = math.Round(ScreenScale(2*overall_scale))
     local gap = 0
     local collimit = 8
-    local drawcount = count == 0 and 1 or math.min(count, collimit)
+
     alpha = alpha or 1
     local bgcol = ColorAlpha(color_bg, color_bg.a * alpha)
     local fgcol = ColorAlpha(color_fg, color_fg.a * alpha)
     local fgcolred = ColorAlpha(color_fgred, color_fgred.a * alpha)
-    local icongap = math.Round(ScreenScale(1 * overall_scale))
-    local iconmax = math.Round(ScreenScale(6 * overall_scale))
-    local iconsh = math.min(math.ceil(drawcount), collimit)
+
+    local icongap = math.Round(ScreenScale(1*overall_scale))
+    local iconmax = math.Round(ScreenScale(6*overall_scale))
     local iconsize = iconmax
-    local box_width, box_height = minwidth, ((iconsize + icongap) - icongap + margin * 2)
+    
+    local box_width, box_height = minwidth, ((iconsize + icongap) - icongap + margin*2 ) 
+
     local ofsx, ofsy = align_box(box_width, box_height, alignh, alignv)
     x = x + ofsx
     y = y + ofsy
     local box_x, box_y = x - box_width / 2, y - box_height / 2
     draw.RoundedBox(8, box_x, box_y, box_width, box_height, bgcol)
     surface.SetDrawColor(fgcol)
+
     local mat = GetAmmoIconMat(icon)
     surface.SetMaterial(mat)
     render.PushFilterMag(TEXFILTER.LINEAR)
     render.PushFilterMin(TEXFILTER.LINEAR)
     local remcount = count
 
-    if (count > collimit) then
-        draw.SimpleText(math.ceil(count) .. "", littlefont, x - margin, y, fgcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-        local icx, icy = x, y - iconsize / 2
-        surface.DrawTexturedRect(icx, icy, iconsize, iconsize)
-    else
-        local recenter = ((iconsh * (iconsize + icongap)) - icongap) / 2
 
-        for i = 1, math.ceil(drawcount) do
-            local fill = math.Clamp(remcount, 0, 1)
-            fill = math.Round(fill * iconsize) / iconsize
-            local emptycol = fgcolred
-            local icx, icy = x - recenter + ((i - 1) * (iconsize + icongap)), box_y + margin
+            local recenter = -96 --((iconsh * (iconsize + icongap)) - icongap) / 2
 
-            if (fill == 1) then
-                surface.DrawTexturedRect(icx, icy, iconsize, iconsize)
-            else
-                surface.DrawTexturedRectUV(icx, icy + iconsize * (1 - fill), iconsize, iconsize * fill, 0, (1 - fill), 1, 1)
-                surface.SetDrawColor(ColorAlpha(emptycol, emptycol.a * 2))
-                surface.DrawTexturedRectUV(icx, icy, iconsize, iconsize * (1 - fill), 0, 0, 1, (1 - fill))
+            for i = 1, math.ceil(count) do
+
+
+                local fill = math.Clamp(remcount, 0, 1)
+                fill = math.Round(fill * iconsize) / iconsize
+                local emptycol = fgcolred
+                local icx, icy = box_x + box_width - ((i) * (iconsize + icongap)), box_y + margin
+
+                if i > collimit then
+                    draw.SimpleText(math.ceil(count).."", littlefont, icx +iconsize, y, fgcol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                    break
+                end
+
+                if (fill == 1) then
+                    surface.DrawTexturedRect(icx, icy, iconsize, iconsize)
+                else
+                    surface.DrawTexturedRectUV(icx, icy + iconsize * (1 - fill), iconsize, iconsize * fill, 0, (1 - fill), 1, 1)
+                    surface.SetDrawColor(ColorAlpha(emptycol,emptycol.a*2))
+                    surface.DrawTexturedRectUV(icx, icy, iconsize, iconsize * (1 - fill), 0, 0, 1, (1 - fill))
+                end
+                remcount = remcount - 1
             end
 
-            remcount = remcount - 1
-        end
-    end
+
 
     render.PopFilterMag()
     render.PopFilterMin()
@@ -218,30 +227,31 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
     local alpha = AMMO_ALPHA
     local drawammo = ply:Alive() and IsValid(wep) and ((wep.DrawAmmo ~= nil and wep.DrawAmmo) or (wep.DrawAmmo == nil and true))
 
-    if (IsValid(wep) and wep:GetClass() == "weapon_shotgun") then
-        drawammo = false
-    end
+    if(IsValid(wep) and wep:GetClass() == "weapon_shotgun")then drawammo = false end
+    
+    
 
     if (drawammo) then
-        local clip = wep:Clip1()
+        -- local clip = wep:Clip1()
         local clipsize = (wep.Primary and wep.Primary.ClipSize) or wep:GetMaxClip1()
         local ammotype = wep:GetPrimaryAmmoType()
-        local ammo = ply:GetAmmoCount(wep:GetPrimaryAmmoType())
-        local ammosize = game.GetAmmoMax(wep:GetPrimaryAmmoType())
+
+        if wep:GetClass()=="weapon_slam" then
+            clipsize = -1
+            ammotype = wep:GetSecondaryAmmoType()
+        end
+
+        local ammo = ply:GetAmmoCount(ammotype)
+
         local icon = clipsize < 1 and "hud/ammo_misc.png" or clipsize == 1 and "hud/ammo_projectile.png" or "hud/ammo_mag.png"
         local customammo = wep.CustomAmmoDisplay and wep:CustomAmmoDisplay() or {}
         local drawtype = AMMOLABEL_MAGCOUNTER
 
-        if (customammo.PrimaryAmmo) then
-            ammo = customammo.PrimaryAmmo
-        end
+        if(customammo.PrimaryAmmo)then ammo = customammo.PrimaryAmmo end
+        -- if(customammo.PrimaryClip)then clip = customammo.PrimaryClip end
+        if(wicons[wep:GetClass()])then
+            icon = wicons[wep:GetClass()] 
 
-        if (customammo.PrimaryClip) then
-            clip = customammo.PrimaryClip
-        end
-
-        if (wicons[wep:GetClass()]) then
-            icon = wicons[wep:GetClass()]
         end
 
         if (wep.MagIcon) then
@@ -256,7 +266,9 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
             clipsize = nil
         end
 
-        if (ammo) then
+
+        if (ammo and ammo>0) then
+
             local clipcount = (ammo / (clipsize or 1))
 
             LASTAMMOTEXT = {drawtype, clipcount, icon}
@@ -284,10 +296,11 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         local showtype = LASTAMMOTEXT[1]
         local value = LASTAMMOTEXT[2]
         local icon = LASTAMMOTEXT[3] or "hud/ammo_mag.png"
-        local w, h = 0, 0
 
-        if (showtype == AMMOLABEL_MAGCOUNTER) then
-            w, h = DrawAmmoGuage(value, icon, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
+        local w, h = 0,0
+        if(showtype == AMMOLABEL_MAGCOUNTER)then
+        w,h = DrawAmmoGauge(value, icon, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
+
         end
 
         if (showtype == AMMOLABEL_LABEL) then

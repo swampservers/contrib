@@ -102,7 +102,8 @@ SS_WeaponAndAmmoProduct({
     model = 'models/weapons/w_slam.mdl',
     class = 'weapon_slam',
     ammotype = "slam",
-    amount = 3
+    amount = 3,
+    clip2=true
 })
 
 SS_WeaponAndAmmoProduct({
