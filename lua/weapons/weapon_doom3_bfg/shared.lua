@@ -28,7 +28,7 @@ SWEP.VElements = {
         type = "Quad",
         bone = "bone001",
         rel = "",
-        pos = Vector(3.85, -5.725, -.4),
+        pos = Vector(3.85, -5.725, 0),
         angle = Angle(90, 0, -10),
         size = .038,
         draw_func = nil
@@ -49,20 +49,16 @@ function SWEP:AmmoDisplay()
         local chargeadd = surface.GetTextureID("vgui/ammogui/chargeadd")
         local warnadd = surface.GetTextureID("vgui/ammogui/warnadd")
 
-        self.VElements["d3ammo"].draw_func = function(weapon)
-            draw.DrawText(math.min(weapon:Ammo1(), 99), "doom3ammodisp", 0, 0, Color(100, 240, 250, 100), 1)
-        end
-
         self.VElements["d3ammoclip"].draw_func = function(weapon)
-            local clip = weapon:Clip1()
+            local clip = weapon:Ammo1()
             local col = Color(100, 255, 255, 140)
 
             if clip <= 0 then
                 col = Color(255, 130, 0, 140)
             end
 
-            draw.DrawText(clip, "doom3ammodisp", 0, 0, col, TEXT_ALIGHT_LEFT)
-            draw.DrawText("8", "doom3ammodisp", 0, 0, Color(150, 200, 255, 10), TEXT_ALIGHT_LEFT)
+            draw.DrawText(clip, "doom3ammodisp", 0, 0, col, TEXT_ALIGN_CENTER)
+            draw.DrawText("8", "doom3ammodisp", 0, 0, Color(150, 200, 255, 10), TEXT_ALIGN_CENTER)
         end
 
         self.VElements["bfgcharge"].draw_func = function(weapon)
@@ -116,6 +112,29 @@ function SWEP:OnRemove()
             self.bfgsound:Stop()
         end
     end
+end
+
+local DOOM3_STATE_DEPLOY = 0
+local DOOM3_STATE_HOLSTER = 1
+local DOOM3_STATE_RELOAD = 2
+local DOOM3_STATE_IDLE = 3
+local DOOM3_STATE_ATTACK = 4
+
+
+function SWEP:CanPrimaryAttack()
+    if not IsValid(self.Owner) then return false end
+
+    if (self:Ammo1() <= 0) then
+        self:DryFire()
+        self:SetNextPrimaryFire(CurTime() + 0.3)
+        --self:Reload()
+
+        return false
+    end
+
+    self:SetState(4)
+
+    return true
 end
 
 function SWEP:PrimaryAttack()
@@ -245,12 +264,17 @@ function SWEP:BfgFire(charge)
 
     self:Idle(.8)
     self:SetCannotHolster(CurTime() + .7)
-
+    self:SetAttack(false)
+    self:SetChargeTime(0)
     if SERVER then
         --strip after firing
-        timer.Simple(0.5, function()
+        
+        self:TimerSimple(0.5, function()
+                
+            if (SERVER and self:Ammo1() <= 0) then
             if IsValid(self) then
                 self:Remove()
+            end
             end
         end)
 
@@ -320,12 +344,15 @@ SWEP.WorldModel = "models/weapons/doom3/w_bfg.mdl"
 SWEP.Primary.Sound = Sound("weapons/doom3/bfg/bfg_fire.wav")
 SWEP.Primary.Special1 = Sound("weapons/doom3/bfg/bfg_firebegin.wav")
 SWEP.Primary.Damage = 200
-SWEP.Primary.Radius = 200
-SWEP.Primary.ClipSize = 1
+SWEP.Primary.Radius = 200 
 SWEP.Primary.Delay = .95
 SWEP.Primary.DefaultClip = 1
+SWEP.Primary.ClipSize = 0
 SWEP.Primary.Automatic = true
-SWEP.Primary.Ammo = "CombineCannon"
+SWEP.Primary.Ammo = "doom3_bfg"
+game.AddAmmoType( {
+	name = "doom3_bfg",
+} ) 
 SWEP.DeploySound = Sound("weapons/doom3/bfg/bfg_raise.wav")
 SWEP.ReloadSound = Sound("weapons/doom3/bfg/bfg_reload.wav")
 SWEP.IdleAmmoCheck = true
