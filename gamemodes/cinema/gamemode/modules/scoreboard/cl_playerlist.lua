@@ -74,43 +74,54 @@ function PLAYERLIST:Init()
     self.Title:SetColor(Color(255, 255, 255))
     self.ServerName = vgui.Create("ScoreboardServerName", self)
     self.PlayerList = vgui.Create("TheaterList", self)
-    
+
     self.PlayerList.VBar.btnGrip.OnMousePressed = function(pnl, code)
         if (code == MOUSE_RIGHT) then
             local menu = DermaMenu()
             local lettertab = {}
+
             --lettertab["!"] = false
-            for i=0,127 do
+            for i = 0, 127 do
                 lettertab[string.char(i)] = false
             end
+
             --lettertab["Bottom"] = false
             for ply, listitem in pairs(self.Players) do
-                local start = tostring(string.upper(string.sub(ply:Nick(),1,1)))
-                if(string.byte(start) < 65)then start = "?" end
-                if(string.byte(start) > 90)then start = string.char(126) end
-                if (lettertab[start] == nil or lettertab[start] == false or  ply:Nick() < (lettertab[start].Player and IsValid(lettertab[start].Player) and lettertab[start].Player:Nick() or ""))then
-                lettertab[start] = listitem 
-                end
-            end 
-            
+                local start = tostring(string.upper(string.sub(ply:Nick(), 1, 1)))
 
-                for letter,first in SortedPairs(lettertab)do
-                    if (first != false or (string.byte(letter) >= 65 and string.byte(letter) <=  90)) then
-                    
-                    if(letter == "?")then letter = "Top" end 
-                    if(letter == "~")then letter = "Bottom" end
-                    local opt = menu:AddOption("Jump To: "..letter, function()
-                    
-                    if (first != false) then
-                        self.PlayerList:ScrollToChild(first)
-                    end
-                end)
-                if(first == false)then 
-                   opt:SetEnabled(false)
+                if (string.byte(start) < 65) then
+                    start = "?"
+                end
+
+                if (string.byte(start) > 90) then
+                    start = string.char(126)
+                end
+
+                if (lettertab[start] == nil or lettertab[start] == false or ply:Nick() < (lettertab[start].Player and IsValid(lettertab[start].Player) and lettertab[start].Player:Nick() or "")) then
+                    lettertab[start] = listitem
                 end
             end
 
+            for letter, first in SortedPairs(lettertab) do
+                if (first ~= false or (string.byte(letter) >= 65 and string.byte(letter) <= 90)) then
+                    if (letter == "?") then
+                        letter = "Top"
+                    end
 
+                    if (letter == "~") then
+                        letter = "Bottom"
+                    end
+
+                    local opt = menu:AddOption("Jump To: " .. letter, function()
+                        if (first ~= false) then
+                            self.PlayerList:ScrollToChild(first)
+                        end
+                    end)
+
+                    if (first == false) then
+                        opt:SetEnabled(false)
+                    end
+                end
             end
 
             menu:Open()
@@ -308,6 +319,7 @@ local function GetCountryData()
         for k, v in pairs(tab) do
             newtab[string.lower(v["alpha-2"])] = v
         end
+
         CountryData = newtab
     end)
 end
@@ -391,13 +403,14 @@ end
 
 function PLAYER:SetPlayer(ply)
     self.Player = ply
-   
+
     self.AvatarButton.DoClick = function()
         local menu = DermaMenu()
 
         local prof = menu:AddOption("View Profile", function()
             self.Player:ShowProfile()
         end)
+
         prof:SetIcon("icon16/user.png")
 
         local points = menu:AddOption("Give Points", function()
@@ -416,7 +429,10 @@ function PLAYER:SetPlayer(ply)
         tp:SetIcon("icon16/world.png")
 
         if (LocalPlayer():IsStaff()) then
-            local staffsubmenu, staffmenu = menu:AddSubMenu("Copy SteamID",function() SetClipboardText(self.Player:SteamID()) end )
+            local staffsubmenu, staffmenu = menu:AddSubMenu("Copy SteamID", function()
+                SetClipboardText(self.Player:SteamID())
+            end)
+
             staffmenu:SetIcon("icon16/user_red.png")
 
             staffsubmenu:AddOption("SteamID", function()
@@ -430,8 +446,8 @@ function PLAYER:SetPlayer(ply)
 
         menu:Open()
     end
-    self.AvatarButton.DoRightClick = self.AvatarButton.DoClick
 
+    self.AvatarButton.DoRightClick = self.AvatarButton.DoClick
     self.Avatar:SetPlayer(ply, 64)
     self.Avatar:SetVisible(true)
 
@@ -505,8 +521,6 @@ function PLAYERPING:Init()
     self.PingAmounts = {300, 200, 100}
 
     self.BaseSpacing = 5
-    
-     
     self.Bars = vgui.Create("DPanel", self)
 
     self.Bars.Paint = function(pnl, w, h)

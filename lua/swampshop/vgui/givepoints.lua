@@ -80,7 +80,6 @@ function PANEL:FillPlayers()
     for _, ply in pairs(player.GetAll()) do
         if ply == LocalPlayer() then continue end
         if ply:IsBot() then continue end
-        
         self.playerselect:AddChoice(ply:Nick(), ply:UniqueID())
     end
 end

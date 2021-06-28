@@ -11,13 +11,13 @@ SS_Item({
     model = 'models/maxofs2d/gm_painting.mdl',
     invcategory = "Mods",
     maxowned = 5,
-    playermodelmod = true, 
+    playermodelmod = true,
     materialmod = true,
     configurable = {
         color = {
             max = 5
         },
-        imgur = true, 
+        imgur = true,
         submaterial = true,
     }
 })
@@ -73,13 +73,13 @@ SS_Item({
     model = 'models/maxofs2d/logo_gmod_b.mdl',
     configurable_label = "Change Model",
     configurable_menu = function()
-    RunConsoleCommand("outfitter")
-    SS_ToggleMenu()
-    end, 
+        RunConsoleCommand("outfitter")
+        SS_ToggleMenu()
+    end,
     invcategory = "Playermodels",
     never_equip = true
-}) 
- 
+})
+
 if SERVER then
     timer.Create("syncoutfitter", 1, 0, function()
         for k, v in pairs(player.GetAll()) do
@@ -131,8 +131,6 @@ SS_PlayermodelItem({
         mdermacredits:SetContentAlignment(2)
         mderma:SetSize(srdx, srdy + 15)
         mderma:SetIcon("icon16/user.png")
-
-
     end,
     model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
     PlayerSetModel = function(self, ply) end
@@ -167,12 +165,15 @@ SS_PlayermodelItem({
     description = "*boop*",
     model = 'models/ppm/player_default_base.mdl',
     configurable_label = "Customize Pony",
-    configurable_menu = function() RunConsoleCommand("ppm_chared3") end,
+    configurable_menu = function()
+        RunConsoleCommand("ppm_chared3")
+    end,
     PlayerSetModel = function(self, ply)
         ply:Give("weapon_squee")
         ply:SelectWeapon("weapon_squee")
-    end 
+    end
 })
+
 SS_Heading("One-Life, Unique")
 
 SS_UniqueModelProduct({

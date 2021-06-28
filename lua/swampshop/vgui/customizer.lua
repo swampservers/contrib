@@ -6,7 +6,7 @@ function PANEL:Close()
     if IsValid(SS_PopupPanel) then
         SS_ShopMenu:SetParent()
         SS_PopupPanel:Remove()
-        SS_ShopMenu:SetKeyboardInputEnabled( false )
+        SS_ShopMenu:SetKeyboardInputEnabled(false)
     end
 
     self:SetVisible(false)
@@ -24,11 +24,10 @@ function PANEL:Open(item)
 
     if IsValid(SS_PopupPanel) then
         SS_ShopMenu:SetParent()
-        
         SS_PopupPanel:Remove()
     end
-    SS_ShopMenu:MakePopup()
 
+    SS_ShopMenu:MakePopup()
     --SS_PaintTileBG
     self.Paint = SS_PaintBG
 
@@ -45,7 +44,6 @@ function PANEL:Open(item)
         p:SetParent(SS_PopupPanel)
     end)
 
-    
     self:SetVisible(true)
     SS_InventoryPanel:SetVisible(false)
 
@@ -531,7 +529,6 @@ function PANEL:SetupControls()
     appearance_container:Dock(FILL)
     appearance_container.VBar:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
     SS_SetupVBar(appearance_container.VBar)
-
     appearance_container.VBar:SetWide(SS_SCROLL_WIDTH)
     local colorzone = vgui.Create("DPanel", appearance_container)
     colorzone.Paint = SS_PaintFG
@@ -568,7 +565,6 @@ function PANEL:SetupControls()
 
         PSCMixer.ValueChanged = colorchanged
         PSBS.OnValueChanged = colorchanged
-
         local imgurzone = vgui.Create("DCollapsibleCategory", colorzone)
         imgurzone:Dock(TOP)
         imgurzone:SetTall(128)
@@ -576,11 +572,11 @@ function PANEL:SetupControls()
         imgurzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
         imgurzone:SetLabel("Textures")
         imgurzone.Header:SetFont("SS_DESCINSTFONT")
-    
+
         imgurzone.Header.UpdateColours = function(pnl)
             pnl:SetTextColor(MenuTheme_TX)
         end
-    
+
         imgurzone.Header:SetContentAlignment(8)
         imgurzone.Header:SetTall(24)
         imgurzone.Paint = SS_PaintMD
@@ -593,21 +589,21 @@ function PANEL:SetupControls()
         textures:Dock(TOP)
         textures:SetKeyboardInputEnabled(true)
         textures:SetColumns(4)
-        textures:Load() 
-    
+        textures:Load()
+
         textures.OnChoose = function(pnl, img, nsfw)
             SingleAsyncSanitizeImgurId(img, function(id)
                 if not IsValid(pnl) then return end
+
                 self.item.cfg.imgur = id and {
                     url = id,
                     nsfw = nsfw
                 } or nil
+
                 self:UpdateCfg()
             end)
         end
-    
     end
-
 
     local rawzone = vgui.Create("DCollapsibleCategory", self.controlzone)
     rawzone:Dock(BOTTOM)
@@ -626,15 +622,15 @@ function PANEL:SetupControls()
     rawzone.Paint = SS_PaintMD
     rawzone:SetExpanded(false)
     rawzone:SetKeyboardInputEnabled(true)
-
     RAWENTRY_c = vgui.Create("DPanel", rawzone)
     RAWENTRY_c:Dock(FILL)
     RAWENTRY_c.Paint = SS_PaintBG
+
     RAWENTRY_c.PerformLayout = function(pnl)
-       
-    pnl:SizeToChildren(false,true)
-    pnl:InvalidateParent(true)
+        pnl:SizeToChildren(false, true)
+        pnl:InvalidateParent(true)
     end
+
     local testbutton = vgui.Create("DButton", RAWENTRY_c)
     testbutton:AlignBottom(SS_COMMONMARGIN)
     testbutton:AlignRight(SS_COMMONMARGIN)
@@ -642,7 +638,7 @@ function PANEL:SetupControls()
     testbutton:Dock(BOTTOM)
     testbutton:SetTextColor(MenuTheme_TX)
     testbutton:SetZPos(255)
-    testbutton:DockMargin(SS_COMMONMARGIN,SS_COMMONMARGIN,SS_COMMONMARGIN,SS_COMMONMARGIN)
+    testbutton:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
     testbutton.Paint = SS_PaintFG
 
     testbutton.DoClick = function()
@@ -654,19 +650,19 @@ function PANEL:SetupControls()
     RAWENTRY:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
     RAWENTRY:SetTall(256)
     RAWENTRY:Dock(FILL)
-
     RAWENTRY:SetPaintBackground(false)
     RAWENTRY:SetTextColor(MenuTheme_TX)
     RAWENTRY:SetEditable(true)
     RAWENTRY:SetKeyboardInputEnabled(true)
+
     RAWENTRY.PerformLayout = function(pnl)
-        
         pnl:SizeToContentsY()
         pnl:InvalidateParent(true)
     end
 
     RAWENTRY.OnValueChange = function(textself, new)
         textself:InvalidateLayout(true)
+
         if not textself.RECIEVE then
             self.item.cfg = util.JSONToTable(new) or {}
             self:UpdateCfg(true) -- TODO: sanitize input like on the server
@@ -675,47 +671,47 @@ function PANEL:SetupControls()
 
     RAWENTRY:SetUpdateOnType(true)
     --RAWENTRY:SetValue("unset") --(self.item.cfg.imgur or {}).url or "")
-    
-
     self:UpdateCfg()
 end
 
 local function TexDownloadHook()
     print(SS_REQUESTED_TEX)
+
     if (SS_REQUESTED_TEX and not SS_REQUESTED_TEX:IsError()) then
         local mat = SS_REQUESTED_TEX
-        local matcopy = CreateMaterial(mat:GetName().."copy","UnlitGeneric",{
+
+        local matcopy = CreateMaterial(mat:GetName() .. "copy", "UnlitGeneric", {
             ["$basetexture"] = mat:GetString("$basetexture")
         })
 
         local RT = GetRenderTarget(mat:GetName() .. "download", mat:Width(), mat:Height())
         render.PushRenderTarget(RT)
         cam.Start2D()
-        render.Clear(0,0,0,0,true,true)
+        render.Clear(0, 0, 0, 0, true, true)
         render.SetMaterial(matcopy)
         render.DrawScreenQuad()
         cam.End2D()
-        
         render.SetWriteDepthToDestAlpha(false)
+
         local data = render.Capture({
             format = "png",
             x = 0,
             y = 0,
-            alpha=false,
+            alpha = false,
             w = ScrW(),
             h = ScrH()
         })
+
         render.SetWriteDepthToDestAlpha(true)
         render.PopRenderTarget()
-        local parts = string.Explode( "/", mat:GetName() or "" )
+        local parts = string.Explode("/", mat:GetName() or "")
         local imagename = parts[#parts] or "temp_image"
-
         file.CreateDir("swampshop_temp")
         local fname = "swampshop_temp/" .. imagename .. ".png"
         file.Write(fname, data)
- 
+
         if (SS_REQUESTED_TEX_CALLBACK) then
-            SS_REQUESTED_TEX_CALLBACK(fname,data)
+            SS_REQUESTED_TEX_CALLBACK(fname, data)
         end
     else
         if (SS_REQUESTED_TEX_CALLBACK) then
@@ -730,8 +726,7 @@ end
 
 hook.Remove("PostRender", "SS_TexDownload")
 SS_REQUESTED_TEX = nil
-    SS_REQUESTED_TEX_CALLBACK = nil
-
+SS_REQUESTED_TEX_CALLBACK = nil
 
 local function DownloadTexture(mat, callback)
     SS_REQUESTED_TEX = mat
@@ -757,25 +752,24 @@ function ImageGetterPanel()
     if mat then
         local Frame = vgui.Create("DFrame")
         Frame:SetSize(sz + 10, sz + 30 + 24)
-        Frame:DockPadding(SS_COMMONMARGIN,SS_COMMONMARGIN + 24,SS_COMMONMARGIN,SS_COMMONMARGIN)
+        Frame:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN + 24, SS_COMMONMARGIN, SS_COMMONMARGIN)
         Frame:Center()
         Frame:SetTitle(mat)
         Frame:MakePopup()
         Frame.btnMaxim:SetVisible(false)
         Frame.btnMinim:SetVisible(false)
-        
-        
-        local DLButton = vgui.Create("DButton",Frame)
-        DLButton:SetPos(128,0)
+        local DLButton = vgui.Create("DButton", Frame)
+        DLButton:SetPos(128, 0)
         DLButton:Dock(BOTTOM)
-        DLButton:DockMargin(0,SS_COMMONMARGIN,0,0)
+        DLButton:DockMargin(0, SS_COMMONMARGIN, 0, 0)
         DLButton:SetText("Download Image")
         DLButton.Paint = SS_PaintFG
         DLButton:SetTextColor(MenuTheme_TX)
+
         DLButton.DoClick = function()
             Frame:SetTitle("Downloading...")
 
-            DownloadTexture(Material(mat), function(fname,data)
+            DownloadTexture(Material(mat), function(fname, data)
                 if (fname) then
                     Frame:SetTitle("Downloaded! Look for file: garrysmod/data/" .. fname)
                 else
@@ -787,7 +781,7 @@ function ImageGetterPanel()
         Frame.BasedPaint = Frame.Paint
 
         Frame.Paint = function(pnl, w, h)
-            SS_PaintBG(pnl,w,h)
+            SS_PaintBG(pnl, w, h)
             BrandBackgroundPattern(0, 0, w, 24, 0)
         end
 
@@ -806,7 +800,9 @@ function ImageGetterPanel()
         LocalPlayerNotify("Couldn't find the material, sorry.")
     end
 end
+
 print(vgui.GetKeyboardFocus())
+
 function PANEL:UpdateCfg(skiptext)
     self.item:Sanitize()
 

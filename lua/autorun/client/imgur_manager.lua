@@ -15,7 +15,6 @@ function THUMB:Init()
         pnl:SetImage(self:GetNSFW() and "icon16/error.png" or "icon16/flag_green.png")
         pnl:SetToolTip("Marked as " .. (self:GetNSFW() and "NSFW" or "SFW"))
     end
-
 end
 
 function THUMB:SetImgur(id, nsfw)
@@ -140,7 +139,6 @@ function CONTENTPICKER:Init()
     end
 
     self:SetColumns(self.m_iColumns or 5)
-
 end
 
 function CONTENTPICKER:PerformLayout(w, h)
@@ -179,12 +177,13 @@ function CONTENTPICKER:Paint(w, h)
 end
 
 function CONTENTPICKER:Reload()
-    
-    for k,v in pairs(self.Tiles:GetChildren())do
+    for k, v in pairs(self.Tiles:GetChildren()) do
         v:Remove()
     end
+
     self:Add("", false)
-    for k,v in pairs(self.Images)do
+
+    for k, v in pairs(self.Images) do
         self:Add(v.url, v.nsfw)
     end
 end
@@ -192,27 +191,30 @@ end
 function CONTENTPICKER:Load(slist)
     slist = slist or "default"
     self.SaveList = slist
-    local tbl = util.JSONToTable(file.Read("swampshop_textures/"..slist..".txt") or "") or {}
+    local tbl = util.JSONToTable(file.Read("swampshop_textures/" .. slist .. ".txt") or "") or {}
     PrintTable(tbl)
     self.Images = {}
 
-    for k,v in pairs(tbl)do
-        table.insert(self.Images, {url=tostring(v.url),nsfw=tobool(v.nsfw)})
+    for k, v in pairs(tbl) do
+        table.insert(self.Images, {
+            url = tostring(v.url),
+            nsfw = tobool(v.nsfw)
+        })
     end
-self:Reload()
+
+    self:Reload()
 end
 
 function CONTENTPICKER:Save()
     local slist = self.SaveList or "default"
-
     local tbl = self.Images
     file.CreateDir("swampshop_textures")
-    file.Write("swampshop_textures/"..slist..".txt",util.TableToJSON(tbl))
+    file.Write("swampshop_textures/" .. slist .. ".txt", util.TableToJSON(tbl))
 end
 
-
-function CONTENTPICKER:Add(url,nsfw)
+function CONTENTPICKER:Add(url, nsfw)
     local dont
+
     for k, v in pairs(self.Tiles:GetChildren()) do
         if (v:GetImgur() == url) then
             dont = true
@@ -228,24 +230,33 @@ function CONTENTPICKER:Add(url,nsfw)
     tile.DoClick = function(pnl)
         self:OnChoose(tile:GetImgur(), tile:GetNSFW())
     end
-
 end
 
 function CONTENTPICKER:AddPermanent(url, nsfw)
     local dont
-    for k , v in pairs(self.Images)do
-        if(v.url == url)then
-            self.Images[k] = {url=url,nsfw=nsfw}
+
+    for k, v in pairs(self.Images) do
+        if (v.url == url) then
+            self.Images[k] = {
+                url = url,
+                nsfw = nsfw
+            }
         end
     end
-    
-    if(dont)then self:Save() return end 
-    table.insert(self.Images,{url=url,nsfw=nsfw})
 
+    if (dont) then
+        self:Save()
 
+        return
+    end
+
+    table.insert(self.Images, {
+        url = url,
+        nsfw = nsfw
+    })
 
     self:Save()
-    self:Add(url,nsfw)
+    self:Add(url, nsfw)
 end
 
 function CONTENTPICKER:OnChoose(url, nsfw)

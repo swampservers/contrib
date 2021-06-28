@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 include("sh_init.lua")
 include("cl_draw.lua")
 include("vgui/menu.lua")
@@ -9,11 +8,9 @@ include("vgui/item.lua")
 include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
-
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
-local UNOWNED_ITEMS = 3 
-   
+local UNOWNED_ITEMS = 3
 local wasf3down = false
 local wascontextdown = false
 OLDBINDSCONVAR = CreateClientConVar("swamp_old_binds", "0", true, false)
@@ -31,7 +28,7 @@ concommand.Add("+menu_context", function()
 end)
 
 concommand.Add("swamp_shop", function()
-    SS_ToggleMenu() 
+    SS_ToggleMenu()
 end)
 
 hook.Add("Think", "PSToggler", function()
@@ -51,7 +48,6 @@ end)
 concommand.Add("ps_togglemenu", function(ply, cmd, args)
     SS_ToggleMenu()
 end)
-
 
 function SS_ReloadMenu()
     if IsValid(SS_CustomizerPanel) then
@@ -80,14 +76,14 @@ function SS_ToggleMenu()
         SS_ShopMenu = vgui.Create('DPointShopMenu')
         SS_ShopMenu:SetVisible(false)
     end
- 
+
     if SS_ShopMenu:IsVisible() then
         if IsValid(SS_CustomizerPanel) then
             SS_CustomizerPanel:Close()
         end
 
-    SS_ShopMenu:Hide() 
-        gui.EnableScreenClicker(false) 
+        SS_ShopMenu:Hide()
+        gui.EnableScreenClicker(false)
     else
         SS_ShopMenu:Show()
         gui.EnableScreenClicker(true)
@@ -214,7 +210,7 @@ function SS_SellItem(item_id)
     net.WriteUInt(item_id, 32)
     net.SendToServer()
 end
- 
+
 function SS_EquipItem(item_id, state)
     if not LocalPlayer():SS_FindItem(item_id) then return end
     net.Start('SS_EquipItem')

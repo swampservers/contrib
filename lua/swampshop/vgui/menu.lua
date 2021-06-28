@@ -19,17 +19,16 @@ function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
     self.testval = true
+
     --nav bar
     self.PaintOver = function(pnl, w, h)
         local navbottom = self.navbar:GetTall()
         cam.IgnoreZ(true)
-        DisableClipping( true )
+        DisableClipping(true)
         BrandDropDownGradient(0, navbottom, w)
-        DisableClipping( false )
+        DisableClipping(false)
         cam.IgnoreZ(false)
-        
-        end
-
+    end
 
     self.navbar = vgui("DPanel", self, function(navbar)
         navbar:SetTall(SS_NAVBARHEIGHT)
@@ -37,9 +36,8 @@ function PANEL:Init()
 
         navbar.Paint = function(pnl, w, h)
             BrandBackgroundPattern(0, 0, w, h, 0)
-            
         end
-        
+
         --title text 
         vgui("DLabel", function(p)
             p:SetText("TOY SHOβ")
@@ -264,7 +262,7 @@ function PANEL:Init()
         p.Paint = SS_PaintFG
         SS_PreviewPane = p
 
-        vgui("DPointShopPreview", function (p)
+        vgui("DPointShopPreview", function(p)
             p:Dock(FILL)
 
             SS_DescriptionPanel = vgui("DPanel", function(p)
@@ -323,8 +321,6 @@ function PANEL:Init()
                 self.btnGrip:SetEnabled(_canvassize_ > _barsize_)
                 self:InvalidateLayout()
             end
-
-            
         end)
 
         local btn = vgui.Create("DButton", self.navbar)
@@ -457,8 +453,8 @@ function PANEL:Init()
     for _, CATEGORY in ipairs(SS_Layout) do
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
         local first = true
-        for _, LAYOUT in ipairs(CATEGORY.layout) do
 
+        for _, LAYOUT in ipairs(CATEGORY.layout) do
             if (#LAYOUT.products > 0) then
                 --we cap off previous ones here
                 if (first) then
@@ -569,7 +565,7 @@ function PANEL:Init()
 
     SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent():GetParent())
     SS_CustomizerPanel:Dock(FILL)
-    SS_CustomizerPanel:Close() 
+    SS_CustomizerPanel:Close()
 
     if (IN_STEAMGROUP or 0) <= 0 then
         p = vgui.Create("DButton", self)
@@ -654,7 +650,6 @@ end
 
 SS_INVENTORY_POINT_OUT = -100
 
-
 function PANEL:PaintOver(w, h)
     local a = math.min(5.0 - ((RealTime() - SS_INVENTORY_POINT_OUT) * 1.0), 1.0, (RealTime() - SS_INVENTORY_POINT_OUT) * 4.0)
 
@@ -670,4 +665,4 @@ function PANEL:OnRemove()
     SS_ValidInventory = false
 end
 
-vgui.Register('DPointShopMenu', PANEL,"EditablePanel")
+vgui.Register('DPointShopMenu', PANEL, "EditablePanel")

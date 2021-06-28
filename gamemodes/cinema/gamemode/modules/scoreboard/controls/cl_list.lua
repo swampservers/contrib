@@ -37,7 +37,7 @@ function PANEL:Init()
             draw.RoundedBox(4, 2, 1, w, h, self.Scrollbar.DisabledColor)
 
             return
-        end 
+        end
 
         if (panel.Depressed) then
             draw.RoundedBox(4, 2, 1, w, h, MenuTheme_Brand)

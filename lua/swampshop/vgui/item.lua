@@ -6,7 +6,7 @@ function SS_PreviewShopModel(self)
     local center, radius = (min + max) / 2, min:Distance(max) / 2
     self:SetCamPos(self.Entity:LocalToWorld(center) + ((radius + 1) * Vector(1, 1, 1)))
     self:SetLookAt(self.Entity:LocalToWorld(center))
-end  
+end
 
 function SS_MouseInsidePanel(panel)
     local x, y = panel:LocalCursorPos()
@@ -84,6 +84,7 @@ function PANEL:Select()
     end
 
     SS_SelectedPanel = self
+
     -- SS_HoverData = self.data
     -- SS_HoverCfg = (self.item or {}).cfg
     -- SS_HoverItemID = (self.item or {}).id
@@ -127,6 +128,7 @@ function PANEL:Select()
 
     if self.product then
         local ln = 4
+
         local function addline(txt)
             p = vgui.Create("DLabel", SS_DescriptionPanel)
             p:SetFont("SS_DESCFONT")
@@ -134,20 +136,21 @@ function PANEL:Select()
             p:SetContentAlignment(8)
             p:SetColor(SS_SwitchableColor)
             p:DockMargin(14, 6, 14, 6)
-            p:Dock(TOP) 
-        end 
+            p:Dock(TOP)
+        end
 
         local cannot = self.product:CannotBuy(LocalPlayer())
 
         if cannot then
             addline(cannot)
         else
-            addline("Double-click to " .. (self.product.price == 0 and "get for free" or "buy for ".. self.product.price .. " points"))
+            addline("Double-click to " .. (self.product.price == 0 and "get for free" or "buy for " .. self.product.price .. " points"))
         end
 
         if cannot ~= SS_CANNOTBUY_OWNED then
             if self.product.sample_item then
                 local count = LocalPlayer():SS_CountItem(self.product.sample_item.class)
+
                 if count > 0 then
                     addline("You own " .. tostring(count) .. " of these")
                 end
@@ -162,39 +165,39 @@ function PANEL:Select()
             p:SetText(self.product.keepnotice)
             local long = string.len(self.product.keepnotice) > 25
             p:SetContentAlignment(long and 7 or 8)
-        
             p:SetWrap(long)
             p:SetAutoStretchVertical(long and true or false)
             p:SetColor(SS_SwitchableColor)
             p:SizeToContentsY()
             p:DockMargin(14, 6, 14, 6)
             p:Dock(TOP)
-
         end
- 
-        
     else
         assert(self.item)
 
         SS_ItemInteractionPanel = vgui("DPanel", SS_PREVPANE, function(p)
             p:Dock(BOTTOM)
             p:SetTall(64)
-            p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN , SS_COMMONMARGIN, SS_COMMONMARGIN )
+            p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
             p:DockPadding(SS_SMALLMARGIN, SS_SMALLMARGIN, SS_SMALLMARGIN, SS_SMALLMARGIN)
             p.Paint = SS_PaintBG
+
             if self.item.configurable or (self.item.configurable_menu and (self.item.eq or self.item.never_equip)) then
                 vgui("DButton", function(p)
                     p:SetText(self.item.configurable_label or "Customize")
+
                     p.UpdateColours = function(pnl)
                         pnl:SetTextColor(MenuTheme_TX)
                     end
+
                     p:Dock(TOP)
                     p:SetTall(24)
                     p:DockMargin(0, 0, 0, SS_SMALLMARGIN)
 
                     p.DoClick = function(butn)
-                        if(isfunction(self.item.configurable_menu))then
+                        if (isfunction(self.item.configurable_menu)) then
                             self.item.configurable_menu()
+
                             return
                         end
 
@@ -204,42 +207,41 @@ function PANEL:Select()
                             SS_CustomizerPanel:Open(self.item)
                         end
                     end
+
                     --p:InvalidateLayout(true)
                     p.Paint = SS_PaintButtonBrandHL
                 end)
+            end
 
-                
-            end 
+            if (not self.item.always_have) then
+                vgui("DButton", function(p)
+                    p:SetText(self.item:SellValue() > 0 and "Sell for " .. tostring(self.item:SellValue()) .. " points" or "Discard")
 
-            if(!self.item.always_have)then
-            vgui("DButton", function(p)
-                p:SetText(self.item:SellValue() > 0 and "Sell for " .. tostring(self.item:SellValue()) .. " points" or "Discard")
-                p.UpdateColours = function(pnl)
-                    pnl:SetTextColor(MenuTheme_TX)
-                end
-                p:Dock(TOP)
-                p:SetTall(24)
-                p:DockMargin(0, 0, 0, SS_SMALLMARGIN)
-
-                p.DoClick = function(butn)
-                    if butn:GetText() == "CONFIRM?" then
-                        SS_SellItem(self.item.id)
-                    else
-                        butn:SetText("CONFIRM?")
+                    p.UpdateColours = function(pnl)
+                        pnl:SetTextColor(MenuTheme_TX)
                     end
-                end
-                --p:InvalidateLayout(true)
-                p.Paint = SS_PaintButtonBrandHL
-            end)
-        end
-           
 
+                    p:Dock(TOP)
+                    p:SetTall(24)
+                    p:DockMargin(0, 0, 0, SS_SMALLMARGIN)
+
+                    p.DoClick = function(butn)
+                        if butn:GetText() == "CONFIRM?" then
+                            SS_SellItem(self.item.id)
+                        else
+                            butn:SetText("CONFIRM?")
+                        end
+                    end
+
+                    --p:InvalidateLayout(true)
+                    p.Paint = SS_PaintButtonBrandHL
+                end)
+            end
         end)
-        SS_ItemInteractionPanel:InvalidateLayout(true)
-        SS_ItemInteractionPanel:SizeToChildren(false,true)
-       
-    end
 
+        SS_ItemInteractionPanel:InvalidateLayout(true)
+        SS_ItemInteractionPanel:SizeToChildren(false, true)
+    end
 end
 
 function PANEL:Deselect()
@@ -261,8 +263,8 @@ function PANEL:Deselect()
         for k, v in pairs(SS_DescriptionPanel:GetChildren()) do
             v:Remove()
         end
-        SS_DescriptionPanel:SetTall(0)
 
+        SS_DescriptionPanel:SetTall(0)
     end
 end
 
@@ -289,8 +291,8 @@ function PANEL:Setup()
     --DModelPanel:SetModel(self.data.model)
     DModelPanel.model2set = self.iop.model
 
-    if(self.iop.model_display)then
-        if(isfunction(self.iop.model_display))then
+    if (self.iop.model_display) then
+        if (isfunction(self.iop.model_display)) then
             DModelPanel.model2set = self.iop.model_display()
         else
             DModelPanel.model2set = self.iop.model_display
@@ -403,9 +405,9 @@ function PANEL:Think()
     self.BGColor = SS_TileBGColor
 
     if self.product then
-        self.barheight =  self.barheight or 0
+        self.barheight = self.barheight or 0
         local cannot = ProtectedCall(self.product:CannotBuy(LocalPlayer())) or ""
- 
+
         if cannot then
             self.fademodel = true
 
@@ -477,7 +479,8 @@ function PANEL:Think()
 
         if self:IsSelected() then
             self.BGColor = SS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
-            local labelview = self.hovered and !self.item.never_equip
+            local labelview = self.hovered and not self.item.never_equip
+
             if labelview then
                 self.barheight = 30
                 self.textfont = "SS_Price"
@@ -489,14 +492,13 @@ function PANEL:Think()
     end
 end
 
-function PANEL:Paint(w,h)
-SS_PaintFG(self,w,h)
+function PANEL:Paint(w, h)
+    SS_PaintFG(self, w, h)
 end
 
 function PANEL:PaintOver(w, h)
     if self.fademodel then
-        SS_PaintFGAlpha(w,h,144)
-
+        SS_PaintFGAlpha(w, h, 144)
     end
 
     if self.icon then

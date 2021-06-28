@@ -35,7 +35,6 @@ end
 function THEATERLIST:Paint(w, h)
     surface.SetDrawColor(MenuTheme_BrandDark)
     surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-
     local xp, _ = self:GetPos()
     BrandBackgroundPattern(0, 0, self:GetWide(), self.TitleHeight, xp)
     BrandDropDownGradient(0, self.TitleHeight, self:GetWide())
@@ -68,7 +67,7 @@ function THEATERLIST:RemoveTheater( th )
 		self.Theaters[ th.loc ] = nil
 	end
  
-end ]] 
+end ]]
 function THEATERLIST:Update()
     -- Prevent spamming requests
     if (LocalPlayer().LastTheaterListRequest or 0) + 0.4 > CurTime() then return end
@@ -136,7 +135,7 @@ function THEATERLIST:PerformLayout()
         end
 
         return an < bn
-    end 
+    end
 
     table.sort(self.TheaterList.Items, playerSort)
     --self:Dock( FILL )

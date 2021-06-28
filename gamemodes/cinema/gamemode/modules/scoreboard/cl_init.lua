@@ -37,18 +37,18 @@ vgui.Register("Scoreboard", SCOREBOARD)
 if ValidPanel(Gui) then
     Gui:Remove()
     Gui = nil
-end  
+end
 
-concommand.Add("test_killscoreboard",function()
+concommand.Add("test_killscoreboard", function()
     if ValidPanel(Gui) then
-        Gui:Remove()  
+        Gui:Remove()
         Gui = nil
-    end 
-    if ValidPanel(LASTSCOREBOARD) then
-        LASTSCOREBOARD:Remove()  
-        LASTSCOREBOARD = nil
-    end 
+    end
 
+    if ValidPanel(LASTSCOREBOARD) then
+        LASTSCOREBOARD:Remove()
+        LASTSCOREBOARD = nil
+    end
 end)
 
 if ValidPanel(GuiQueue) then
@@ -65,7 +65,7 @@ function GM:ScoreboardShow()
     if not ValidPanel(Gui) then
         Gui = vgui.Create("Scoreboard")
     end
- 
+
     Gui:InvalidateLayout()
     Gui:SetVisible(true)
 end
@@ -98,8 +98,8 @@ hook.Add("OnVideoVote", "SortQueueList", function()
     -- Resort the video queue after voting
     if IsValid(GuiQueue) and GuiQueue:IsVisible() then
         GuiQueue:SortList()
-    end 
-end) 
+    end
+end)
 
 function GM:MenuShow()
     if not IsValid(LocalPlayer()) or not LocalPlayer().GetTheater then return end
