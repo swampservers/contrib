@@ -45,34 +45,10 @@ function Player:SS_HasItem(item_class)
     return self:SS_CountItem(item_class) > 0
 end
 
-for k, v in pairs(player.GetAll()) do
-    v.SS_Items = nil
-end
+
 
 function Player:SS_GetInventory()
-    if (self.SS_Items) then
-        PrintTable(self.SS_Items)
-
-        return self.SS_Items
-    end
-
-    self.SS_Items = {}
-    local items = {}
-    print("funny cungus")
-    local id = 1
-
-    for k, product in pairs(SS_Items) do
-        if (not product.GenerateItem) then continue end
-        local item = product:GenerateItem(self)
-        item.id = id
-        item.eq = false
-        id = id + 1
-        table.insert(items, item)
-    end
-
-    self.SS_Items = items
-
-    return items
+    return self.SS_Items or {} end
 end
 
 function Player:SS_CountItem(item_class)
