@@ -6,14 +6,6 @@ net.Receive("SS_PointOutInventory", function()
     SS_INVENTORY_POINT_OUT = RealTime()
 end)
 
---vgui(classname, (parent,)? constructor)
-concommand.Add("cleanup", function()
-    for k, v in pairs(vgui.GetWorldPanel():GetChildren()) do
-        if (v.testval) then
-            v:Remove()
-        end
-    end
-end)
 
 function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
