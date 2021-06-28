@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 BrandColorGrayDarker = Color(32, 32, 32) --(26, 30, 38)
 BrandColorGrayDark = Color(48, 48, 48) --(38, 41, 49)
 BrandColorGray = Color(69, 69, 69)
@@ -78,3 +77,39 @@ surface.CreateFont("SmallFont", {
     size = 16,
     weight = 200
 })
+
+local cornerMat = Material("vgui/box_corner_shadow")
+
+local function predrawshadow(alpha)
+    cornerMat:SetFloat("$alpha", alpha)
+    surface.SetDrawColor(Color(255, 255, 255))
+    surface.SetMaterial(cornerMat)
+end
+
+function draw.BoxShadow(x, y, w, h, blur, alpha)
+    if cornerMat:IsError() then return end
+    local hblur = blur / 2
+    x = x - hblur
+    y = y - hblur
+    w = (w / 2) + hblur
+    h = (h / 2) + hblur
+    local cx, cy = x + w / 2, y + h / 2
+    local wb, hb = w / blur, h / blur
+    predrawshadow(alpha)
+    surface.DrawTexturedRectUV(x, y, w, h, 0, 0, wb, hb)
+    surface.DrawTexturedRectUV(x, y + h, w, h, 0, hb, wb, 0)
+    surface.DrawTexturedRectUV(x + w, y, w, h, wb, 0, 0, hb)
+    surface.DrawTexturedRectUV(x + w, y + h, w, h, wb, hb, 0, 0)
+end
+
+function draw.GradientShadowDown(x, y, w, h, alpha)
+    if cornerMat:IsError() then return end
+    predrawshadow(alpha)
+    surface.DrawTexturedRectUV(x, y, w, h, 1, 1, 1, 0)
+end
+
+function draw.GradientShadowUp(x, y, w, h, alpha)
+    if cornerMat:IsError() then return end
+    predrawshadow(alpha)
+    surface.DrawTexturedRectUV(x, y, w, h, 1, 0, 1, 1)
+end
