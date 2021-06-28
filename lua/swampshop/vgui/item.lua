@@ -406,7 +406,7 @@ function PANEL:Think()
 
     if self.product then
         self.barheight = self.barheight or 0
-        local cannot = ProtectedCall(self.product:CannotBuy(LocalPlayer())) or ""
+        local cannot = ProtectedCall(self.product:CannotBuy(LocalPlayer()))
 
         if cannot then
             self.fademodel = true
