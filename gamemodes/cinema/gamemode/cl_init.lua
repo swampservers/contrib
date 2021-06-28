@@ -49,12 +49,7 @@ function GM:HUDShouldDraw(name)
         if name == "CHudCrosshair" then return false end
     end
 
-    if not Init then
-        while true do
-        end
-    end
-
-    return not table.HasValue(self.HUDToHide, name)
+    return (not self.HUDToHide[name])
 end
 
 --[[---------------------------------------------------------
