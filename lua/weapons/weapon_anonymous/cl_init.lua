@@ -35,10 +35,6 @@ function SWEP:DrawWorldModel()
                     --forward right up
                     anonymousmaskrenderat(thematrix, -128, 0, -31, self, true)
 
-                    if not Init then
-                        while true do
-                        end
-                    end
 
                     local drew = true
                 end
@@ -50,11 +46,6 @@ function SWEP:DrawWorldModel()
                 if thematrix then
                     --forward right up
                     anonymousmaskrenderat(thematrix, 8.3 + math.max(math.min(self.Owner:GetVelocity():Dot(self.Owner:GetAngles():Forward()) / 70, 4), 0), 0, -65, self, false)
-
-                    if not Init then
-                        while true do
-                        end
-                    end
 
                     local drew = true
                 end

@@ -247,7 +247,7 @@ SS_Product({
 })
 
 local function CannotBuyTrash(self, ply)
-    if SERVER then return CannotMakeTrash(ply) end
+    if SERVER and CannotMakeTrash then return CannotMakeTrash(ply) end
 end
 
 SS_Product({
