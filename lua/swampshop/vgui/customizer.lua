@@ -52,7 +52,6 @@ function PANEL:Open(item)
         p.Paint = noop
         p:Dock(FILL)
         p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
-
         self.controlzone = vgui("DPanel", function(p)
             p:Dock(FILL)
             p:DockMargin(0, 0, 0, 0)
@@ -66,10 +65,12 @@ function PANEL:Open(item)
             p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
             p:SetTall(SS_CUSTOMIZER_HEADINGSIZE)
             p:Dock(TOP)
-
             vgui("DLabel", function(p)
                 p:SetFont("SS_LargeTitle")
                 p:SetText("βUSTOMIZER")
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextColor(MenuTheme_TX)
+                end
                 p:SetColor(SS_SwitchableColor)
                 p:SetContentAlignment(5)
                 p:SizeToContents()
@@ -80,6 +81,9 @@ function PANEL:Open(item)
             vgui("DLabel", function(p)
                 p:SetFont("SS_DESCINSTFONT")
                 p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextColor(MenuTheme_TX)
+                end
                 p:SetColor(SS_SwitchableColor)
                 p:SetContentAlignment(5)
                 p:SizeToContents()
@@ -101,7 +105,9 @@ function PANEL:Open(item)
                 p:DockMargin(0, SS_COMMONMARGIN, SS_COMMONMARGIN, 0)
                 p:Dock(LEFT)
                 p.Paint = SS_PaintButtonBrandHL
-
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                end
                 p.DoClick = function(butn)
                     self.item.cfg = {}
                     self:UpdateCfg()
@@ -116,7 +122,9 @@ function PANEL:Open(item)
                 p:DockMargin(0, SS_COMMONMARGIN, 0, 0)
                 p:Dock(LEFT)
                 p.Paint = SS_PaintButtonBrandHL
-
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                end
                 p.DoClick = function(butn)
                     self.item.cfg = self.item.applied_cfg
                     self:Close()
@@ -128,8 +136,11 @@ function PANEL:Open(item)
                 p:SetFont("SS_DESCTITLEFONT")
                 p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, 0)
                 p:Dock(FILL)
-                p.Paint = SS_PaintButtonBrandHL
 
+                p.Paint = SS_PaintButtonBrandHL
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                end
                 p.DoClick = function(butn)
                     net.Start('SS_ConfigureItem')
                     net.WriteUInt(self.item.id, 32)
@@ -675,7 +686,6 @@ function PANEL:SetupControls()
 end
 
 local function TexDownloadHook()
-    print(SS_REQUESTED_TEX)
 
     if (SS_REQUESTED_TEX and not SS_REQUESTED_TEX:IsError()) then
         local mat = SS_REQUESTED_TEX
@@ -746,7 +756,7 @@ function ImageGetterPanel()
         mat = LocalPlayer():GetMaterials()[(self.item.cfg.submaterial or 0) + 1]
     end
 
-    print("MAT PATH:", mat)
+
     local sz = 512
 
     if mat then
@@ -800,8 +810,6 @@ function ImageGetterPanel()
         LocalPlayerNotify("Couldn't find the material, sorry.")
     end
 end
-
-print(vgui.GetKeyboardFocus())
 
 function PANEL:UpdateCfg(skiptext)
     self.item:Sanitize()
