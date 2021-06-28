@@ -1,53 +1,27 @@
 ﻿local THUMB = {}
 AccessorFunc(THUMB, "m_sImgur", "Imgur", FORCE_STRING)
-AccessorFunc(THUMB, "m_bNSFW", "NSFW", FORCE_BOOL)
 
 function THUMB:Init()
     self.BaseClass.Init(self)
     self:SetText("")
     self:SetSize(64, 64)
-    self.Flag = vgui.Create("DImage", self)
-    self.Flag:SetSize(16, 16)
-    self.Flag:AlignBottom(4)
-    self.Flag:AlignRight(4)
 
-    self.Flag.Update = function(pnl)
-        pnl:SetImage(self:GetNSFW() and "icon16/error.png" or "icon16/flag_green.png")
-        pnl:SetToolTip("Marked as " .. (self:GetNSFW() and "NSFW" or "SFW"))
-    end
 end
 
-function THUMB:SetImgur(id, nsfw)
+function THUMB:SetImgur(id)
     assert(isstring(id), "Expected string, got" .. type(id))
     self.m_sImgur = id
     self:SetText(id ~= "" and "" or "None")
-
-    if (nsfw) then
-        self.m_bNSFW = nsfw
-    end
-
-    self.Flag:Update()
 end
 
-function THUMB:PerformLayout()
-    if (IsValid(self.Flag)) then
-        self.Flag:AlignBottom(4)
-        self.Flag:AlignRight(4)
-    end
-end
 
-function THUMB:SetNSFW(nsfw)
-    assert(isbool(nsfw), "Expected boolean, got" .. type(nsfw))
-    self.m_bNSFW = nsfw or false
-    self.Flag:Update()
-end
 
 function THUMB:Paint(w, h)
     if (self:GetImgur() ~= "") then
         local m = ImgurMaterial({
             id = self:GetImgur(),
             shader = "UnlitGeneric",
-            worksafe = (not self:GetNSFW())
+            worksafe = true
         })
 
         surface.SetDrawColor(255, 255, 255, 255)
@@ -62,8 +36,6 @@ vgui.Register('DImgurThumbnail', THUMB, 'DButton')
 function DImgurThumbnail(url, nsfw, size)
     local panel = vgui.Create("DImgurThumbnail")
     panel:SetImgur(url)
-    panel:SetNSFW(nsfw)
-
     return panel
 end
 
@@ -75,23 +47,28 @@ function CONTENTPICKER:Init()
     self.Scroll:Dock(FILL)
     self.Scroll.Paint = noop()
     self.Bottom = vgui.Create("DPanel", self)
-    self.Bottom:Dock(BOTTOM)
-    self.Bottom:DockMargin(0, SS_COMMONMARGIN, 0, 0)
-    self.Bottom.Paint = SS_PaintFG
+    self.Bottom:Dock(TOP)
+    self.Bottom:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+    self.Bottom.Paint = SS_PaintBG
     self.AddField = vgui.Create("DTextEntry", self.Bottom)
     self.AddField:Dock(FILL)
     self.AddField:SetPaintBackground(false)
     self.AddField:SetUpdateOnType(true)
     self.AddField:SetPlaceholderText("http://i.imgur.com/XXXXXXX.png")
-    self.AddField:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 32))
+    self.AddField:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 200))
     self.AddField:SetTextColor(MenuTheme_TX)
+    self.AddField.UpdateColours = function(pnl)
+        pnl:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 200))
+        pnl:SetTextColor(MenuTheme_TX)
+    end
     self.AddField.OnValueChange = function(textself, new) end
 
-    self.AddButton = vgui.Create("DImageButton", self.Bottom)
-    self.AddButton:SetImage("icon16/add.png")
-    self.AddButton:SetSize(16, 16)
+    self.AddButton = vgui.Create("DButton", self.Bottom)
+    self.AddButton:SetSize(32, 16)
+    self.AddButton:SetText("Add")
     self.AddButton:DockMargin(4, 4, 4, 4)
     self.AddButton:Dock(RIGHT)
+    self.AddButton.Paint = SS_PaintButtonBrandHL
     local textentry = self.AddField
 
     self.AddButton.DoClick = function(btn)
@@ -181,7 +158,7 @@ function CONTENTPICKER:Reload()
     self:Add("", false)
 
     for k, v in pairs(self.Images) do
-        self:Add(v.url, v.nsfw)
+        self:Add(v.url)
     end
 end
 
@@ -189,13 +166,11 @@ function CONTENTPICKER:Load(slist)
     slist = slist or "default"
     self.SaveList = slist
     local tbl = util.JSONToTable(file.Read("swampshop_textures/" .. slist .. ".txt") or "") or {}
-    PrintTable(tbl)
     self.Images = {}
 
     for k, v in pairs(tbl) do
         table.insert(self.Images, {
             url = tostring(v.url),
-            nsfw = tobool(v.nsfw)
         })
     end
 
@@ -215,28 +190,26 @@ function CONTENTPICKER:Add(url, nsfw)
     for k, v in pairs(self.Tiles:GetChildren()) do
         if (v:GetImgur() == url) then
             dont = true
-            v:SetNSFW(nsfw)
         end
     end
 
     if (dont) then return end
-    local tile = self.Tiles:Add(DImgurThumbnail(url, nsfw))
+    local tile = self.Tiles:Add(DImgurThumbnail(url))
     self:InvalidateLayout(true)
     self:InvalidateParent(true)
 
     tile.DoClick = function(pnl)
-        self:OnChoose(tile:GetImgur(), tile:GetNSFW())
+        self:OnChoose(tile:GetImgur())
     end
 end
 
-function CONTENTPICKER:AddPermanent(url, nsfw)
+function CONTENTPICKER:AddPermanent(url)
     local dont
 
     for k, v in pairs(self.Images) do
         if (v.url == url) then
             self.Images[k] = {
-                url = url,
-                nsfw = nsfw
+                url = url
             }
         end
     end
@@ -248,15 +221,14 @@ function CONTENTPICKER:AddPermanent(url, nsfw)
     end
 
     table.insert(self.Images, {
-        url = url,
-        nsfw = nsfw
+        url = url
     })
 
     self:Save()
-    self:Add(url, nsfw)
+    self:Add(url)
 end
 
-function CONTENTPICKER:OnChoose(url, nsfw)
+function CONTENTPICKER:OnChoose(url)
 end
 
 vgui.Register('DImgurManager', CONTENTPICKER, 'DPanel')
