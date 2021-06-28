@@ -48,7 +48,7 @@ end
 
 
 function Player:SS_GetInventory()
-    return self.SS_Items or {} end
+    return self.SS_Items or {}
 end
 
 function Player:SS_CountItem(item_class)
