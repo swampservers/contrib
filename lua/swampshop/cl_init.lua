@@ -53,8 +53,7 @@ concommand.Add("ps_togglemenu", function(ply, cmd, args)
 end)
 
 
- 
-concommand.Add("ps_destroymenu", function(ply, cmd, args)
+function SS_ReloadMenu()
     if IsValid(SS_CustomizerPanel) then
         SS_CustomizerPanel:Close()
     end
@@ -62,6 +61,10 @@ concommand.Add("ps_destroymenu", function(ply, cmd, args)
     if IsValid(SS_ShopMenu) then
         SS_ShopMenu:Remove()
     end
+end
+
+concommand.Add("ps_destroymenu", function(ply, cmd, args)
+    SS_ReloadMenu()
 end)
 
 if IsValid(SS_CustomizerPanel) then

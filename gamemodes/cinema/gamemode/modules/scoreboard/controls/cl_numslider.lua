@@ -11,7 +11,7 @@ function PANEL:Init()
     self.Slider.TranslateValues = function(slider, x, y) return self:TranslateSliderValues(x, y) end
     self.Slider:SetTrapInside(true)
     self.Slider:SetImage("vgui/slider")
-    self:SetTall(35) --does nothing?
+    -- self:SetTall(300) --does nothing?
 end
 
 --[[---------------------------------------------------------
@@ -128,8 +128,8 @@ end
    Name: 
 ---------------------------------------------------------]]
 function PANEL:PerformLayout()
-    self.Slider:SetPos(0, (self:GetTall() / 2) + 2)
-    self.Slider:SetSize(self:GetWide(), 13)
+    self.Slider:SetPos(50, 0) --0, (self:GetTall() / 2) + 2)
+    self.Slider:SetSize(self:GetWide() - 50, self:GetTall())
     self.Slider:SetSlideX(self:GetFraction())
 end
 
@@ -150,19 +150,23 @@ function PANEL:Paint(w, h)
         val = self.Descriptions[val + 1]
     end
 
-    surface.SetFont("LabelFont")
-    local w, h = surface.GetTextSize(val)
-    surface.SetTextColor(255, 255, 255, 255)
-    -- Value
-    surface.SetTextPos(self:GetWide() - w - 5, 0)
-    surface.DrawText(val)
-    -- Title
-    surface.SetTextPos(5, 0)
-    surface.DrawText(title)
+    draw.SimpleText(title, "LabelFont", 0, h / 2, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    -- surface.SetFont("LabelFont")
+    -- local w, h = surface.GetTextSize(val)
+    -- surface.SetTextColor(255, 255, 255, 255)
+    -- -- Value
+    -- -- surface.SetTextPos(self:GetWide() - w - 5, 0)
+    -- -- surface.DrawText(val)
+    -- -- Title
+    -- surface.SetTextPos(0, 0)
+    -- surface.DrawText(title)
     -- Line
     --surface.SetDrawColor( 85, 167, 221, 150 )
     surface.SetDrawColor(Color(0, 0, 0, 100))
-    surface.DrawRect(3, (self:GetTall() / 2) + 8, self:GetWide() - 6, 3)
+    -- surface.DrawRect(3, (self:GetTall() / 2) + 8, self:GetWide() - 6, 3)
+    x, y = self.Slider:GetPos()
+    w2, h2 = self.Slider:GetSize()
+    surface.DrawRect(x, y + h2 / 2 - 1, w2, 3)
 end
 
 function PANEL:SetText(text)
