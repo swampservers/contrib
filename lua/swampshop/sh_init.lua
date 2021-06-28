@@ -1,5 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA 
+-- INSTALL: CINEMA
+AddCSLuaFile()
+include("net_hd.lua")
+include("config.lua")
+include("sh_layout.lua")
+include("sh_products.lua")
+include("sh_items.lua")
 local Player = FindMetaTable('Player')
 
 function SS_Initialize()
@@ -44,8 +50,6 @@ function Player:SS_HasItem(item_class)
 
     return self:SS_CountItem(item_class) > 0
 end
-
-
 
 function Player:SS_GetInventory()
     return self.SS_Items or {}

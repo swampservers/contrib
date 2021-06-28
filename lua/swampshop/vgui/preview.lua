@@ -76,6 +76,7 @@ function PANEL:LayoutEntity(thisEntity)
             end
         end
 
+        --[[ this shit isnt ready yet
         if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(XSL) and IsValid(SS_HoverCSModel) then
             local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
             local attach = (SS_CustomizerPanel.item.cfg[SS_CustomizerPanel.wear] or {}).attach or (pone and (SS_CustomizerPanel.item.wear.pony or {}).attach) or SS_CustomizerPanel.item.wear.attach
@@ -84,12 +85,12 @@ function PANEL:LayoutEntity(thisEntity)
             local camang = (self:GetLookAt() - self:GetCamPos()):Angle()
             apos = apos + camang:Right() * (mx + (self.PressX or mx)) * 0.3
             apos = apos + camang:Up() * (my + (self.PressY or my)) * 0.3
-            apos, aang = WorldtoLocal(apos, aang, angpos.Pos, angpos.Ang)
+            apos, aang = WorldToLocal(apos, aang, angpos.Pos, angpos.Ang)
             XSL:SetValue(apos.x)
             YSL:SetValue(apos.y)
             ZSL:SetValue(apos.z)
         end
-
+        ]]
         self.PressX, self.PressY = gui.MousePos()
     end
 
