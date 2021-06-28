@@ -86,10 +86,7 @@ function CONTENTPICKER:Init()
     self.AddField:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 32))
     self.AddField:SetTextColor(MenuTheme_TX)
     self.AddField.OnValueChange = function(textself, new) end
-    self.NSFWCheck = vgui.Create("DCheckBox", self.Bottom) -- Create the checkbox
-    self.NSFWCheck:Dock(LEFT)
-    self.NSFWCheck:SetValue(true)
-    self.NSFWCheck:DockMargin(4, 4, 4, 4)
+
     self.AddButton = vgui.Create("DImageButton", self.Bottom)
     self.AddButton:SetImage("icon16/add.png")
     self.AddButton:SetSize(16, 16)
