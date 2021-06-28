@@ -80,7 +80,7 @@ function SWEP:PrimaryAttack()
     local originref = ply:GetPos()
     self.SprayStartOrigin = self.SprayStartOrigin or originref
     local origin = self.SprayStartOrigin
-    local gap = size / 5
+    local gap = math.max(size / 5, 1)
 
     if (self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < gap) then
         trace.Invalid = true
@@ -96,7 +96,7 @@ function SWEP:PrimaryAttack()
         self.LastPaintPos = trace.HitPos
     end
 
-    timer.Create("paintorigin_reset" .. self:EntIndex(), self.PaintDelay + FrameTime(), 1, function()
+    timer.Create("paintorigin_reset" .. self:EntIndex(), self.PaintDelay * 2, 1, function()
         if (IsValid(self)) then
             self.SprayMovementBad = nil
             self.SprayStartOrigin = nil
