@@ -505,8 +505,6 @@ function PANEL:Init()
                 return string.len(a.name) > string.len(b.name)
             end)
 
-            PrintTable(itemstemp)
-
             for k, v in pairs(SS_Items) do
                 if (v.always_have) then
                     local copy = table.Copy(v)
