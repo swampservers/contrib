@@ -171,7 +171,7 @@ function DrawAmmoGauge(count, icon, x, y, alignh, alignv, alpha)
     for i = 1, math.ceil(count) do
         local fill = math.Clamp(remcount, 0, 1)
         fill = math.Round(fill * iconsize) / iconsize
-        local emptycol = fgcolred
+        local emptycol = Color(100, 100, 100, 255)
         local icx, icy = box_x + box_width - ((i) * (iconsize + icongap)), box_y + margin
 
         if i > collimit then

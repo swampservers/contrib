@@ -41,6 +41,10 @@ function SS_Product(product)
     local tab = _SS_TABADDTARGET.layout
     table.insert(tab[#tab].products, product)
     SS_Products[product.class] = product
+
+    if SS_ReloadMenu then
+        SS_ReloadMenu()
+    end
 end
 
 function SS_ItemProduct(item)
@@ -88,7 +92,9 @@ function SS_WeaponProduct(product)
 
     function product:CannotBuy(ply)
         if ply:HasWeapon(self.class) then
-            ply:SelectWeapon(self.class)
+            if SERVER then
+                ply:SelectWeapon(self.class)
+            end
 
             return "You already have this weapon!"
         end
