@@ -35,6 +35,36 @@ SS_Product({
     end
 })
 
+if SERVER then
+    util.AddNetworkString("LootBoxAnimation")
+end
+
+SS_Product({
+    class = 'sandbox',
+    price = 100,
+    name = 'Sand Box',
+    description = "Spawn a random piece of junk for building stuff with",
+    model = 'models/maxofs2d/logo_gmod_b.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local chosen = GetSandboxProp()
+        local others = {}
+
+        for i = 1, 10 do
+            table.insert(others, GetSandboxProp())
+        end
+
+        net.Start("LootBoxAnimation")
+        net.WriteString(chosen)
+        net.WriteTable(others)
+        net.Send(ply)
+
+        timer.Simple(3, function()
+            makeTrash(ply, chosen)
+        end)
+    end
+})
+
 SS_Heading("Props")
 
 SS_Product({

@@ -285,3 +285,157 @@ function SendPointsCmd(cmd)
         chat.AddText("[orange]Usage: !givepoints player amount")
     end
 end
+
+--NOMINIFY
+net.Receive("LootBoxAnimation", function(len)
+    local mdl = net.ReadString()
+    local others = net.ReadTable()
+    print(mdl)
+    PrintTable(others)
+    LootBoxAnimation(mdl, mdl, others)
+end)
+
+function LootBoxAnimation(mdl, name, othermdls, boxcolor)
+    if IsValid(LOOTBOXPANEL) then
+        LOOTBOXPANEL:Remove()
+    end
+
+    surface.PlaySound("lootbox.ogg")
+    local delay = 4
+    local size = 600
+
+    LOOTBOXPANEL = vgui("DFrame", function(p)
+        p:SetSize(size, size)
+        p:Center()
+        p:MakePopup()
+        p:SetZPos(10000)
+        -- p:SetBackgroundBlur(true)
+        p:SetTitle("")
+        p:ShowCloseButton(false)
+
+        function p:Paint(w, h)
+            render.ClearDepth()
+            DisableClipping(true)
+            draw.BoxShadow(-3000, -3000, 8000, 8000, 1, 0.5)
+            DisableClipping(false)
+            draw.BoxShadow(150, 150, w - 300, h - 300, 300, 1)
+        end
+
+        vgui("Panel", function(p)
+            p:Dock(FILL)
+
+            local infopanel = vgui("Panel", function(p)
+                vgui("DButton", function(p)
+                    p:SetText("Close")
+
+                    function p:DoClick()
+                        LOOTBOXPANEL:Remove()
+                    end
+
+                    p:DockMargin(200, 10, 200, 10)
+                    p:Dock(BOTTOM)
+                end)
+
+                vgui("DLabel", function(p)
+                    p:SetText(name)
+                    p:SetContentAlignment(5)
+                    p:Dock(BOTTOM)
+                end)
+
+                p:SetTall(100)
+                p:Dock(BOTTOM)
+            end)
+
+            infopanel:SetVisible(false)
+
+            vgui("DModelPanel", function(p)
+                -- p:SetPos(0,0)
+                -- p:SetSize(size,size)
+                p:Dock(FILL)
+                local otheri = 1
+                p:SetModel(othermdls[otheri])
+                local boxmodel = ClientsideModel("models/Items/ammocrate_smg1.mdl")
+                boxmodel:SetNoDraw(true)
+
+                timer.Simple(0.2, function()
+                    if not IsValid(boxmodel) then return end
+                    local id, dur = boxmodel:LookupSequence("Close") --Open doesn't work???
+                    boxmodel:ResetSequence(id)
+                    boxmodel:SetPlaybackRate(0.1) -- doesn't work???
+                end)
+
+                function p:OnRemove()
+                    if IsValid(boxmodel) then
+                        boxmodel:Remove()
+                    end
+                end
+
+                local t1 = CurTime()
+
+                function p:PreDrawModel(ent)
+                    boxmodel:SetPos(Vector(0, 0, ((CurTime() - t1) ^ 2) * -40))
+                    boxmodel:SetAngles(Angle(0, 90, 0))
+                    -- render.ModelM
+                    boxmodel:DrawModel()
+                end
+
+                local t1 = CurTime()
+
+                function p:LayoutEntity(ent)
+                    local min, max = self.Entity:GetRenderBounds()
+                    local center, radius = (min + max) / 2, min:Distance(max) / 2
+
+                    if self.Entity.ScaledToModel ~= self.Entity:GetModel() then
+                        self.Entity.ScaledToModel = self.Entity:GetModel()
+                        self.Entity:SetModelScale(20 / radius)
+                        -- self.Entity:InvalidateBoneCache()
+                        -- self.Entity:SetupBones()
+                        min, max = self.Entity:GetRenderBounds()
+                        center, radius = (min + max) / 2, min:Distance(max) / 2
+                    end
+
+                    self.Entity:SetPos(self.Entity:GetPos() - self.Entity:LocalToWorld(center))
+                    -- self.Entity:SetModelScale(0.5)
+                    -- print(radius)
+                    -- (radius + 1)
+                    self:SetCamPos((60 * Vector(math.cos((CurTime() - t1) * 1.5) * 0.2, 1, 0.2))) --(radius + 1) *
+                    self:SetLookAt(Vector(0, 0, 0))
+                end
+
+                local rollspeed = 0.3
+                local lastarg
+
+                for i = rollspeed, delay, rollspeed do
+                    local arg = {}
+                    lastarg = arg
+
+                    timer.Simple(i, function()
+                        if not IsValid(p) then return end
+
+                        if arg[1] then
+                            p:SetModel(mdl)
+                            infopanel:SetVisible(true)
+                        else
+                            otheri = (otheri % (#othermdls)) + 1
+                            p:SetModel(othermdls[otheri])
+                        end
+                    end)
+                end
+
+                lastarg[1] = true
+            end)
+        end)
+    end)
+end
+
+function CSSWEAPONMODELS()
+    local t = {}
+
+    for k, v in pairs(weapons.GetList()) do
+        if v.Base == "weapon_csbasegun" then
+            table.insert(t, v.WorldModel)
+        end
+    end
+
+    return t
+end
