@@ -27,7 +27,9 @@ function ReloadStyle(darkmode, color)
     darkmode = darkmode or GetConVar("ps_darkmode"):GetBool()
     color = color or GetConVar("ps_themecolor"):GetInt()
     MenuTheme_Brand = BrandColors[color] or BrandColors[2]
-    MenuTheme_BrandDark = Color(MenuTheme_Brand.r * 0.5, MenuTheme_Brand.g * 0.5, MenuTheme_Brand.b * 0.5, MenuTheme_Brand.a)
+
+    local h,s,v = ColorToHSV(MenuTheme_Brand)
+    MenuTheme_BrandDark = HSVToColor(h,s*1.04,v*0.9)
 
     if darkmode then
         MenuTheme_BG = BrandColorGrayDarker
@@ -201,8 +203,8 @@ end
 function BrandBackgroundPattern(x, y, w, h, px, special)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(x, y, w, h)
-    surface.SetDrawColor(0, 0, 0, 40)
-    draw.NoTexture()
+    surface.SetDrawColor(MenuTheme_BrandDark)
+    draw.NoTexture() 
     local stripewidth = 20
     local stripepos = -(px % (2 * stripewidth))
 
