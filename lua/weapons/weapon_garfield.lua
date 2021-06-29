@@ -29,21 +29,14 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 local Player = FindMetaTable("Player")
-
-hook.Add("PlayerModelChanged", "GarfHead", function(ply, mdl)
-    if mdl:find("garfield.mdl") then
-        local bn = ply:LookupBone("ValveBiped.Bip01_Head1")
-
-        if bn then
-            ply:ManipulateBoneScale(bn, Vector(1, 1, 1) * 0.9)
-        end
-    end
-end)
-
-timer.Simple(1, function()
-    hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return false end)
-end)
-
+-- hook.Add("PlayerModelChanged", "GarfHead", function(ply, mdl)
+--     if mdl:find("garfield.mdl") then
+--         local bn = ply:LookupBone("ValveBiped.Bip01_Head1")
+--         if bn then
+--             ply:ManipulateBoneScale(bn, Vector(1, 1, 1) * 0.9)
+--         end
+--     end
+-- end)
 FATTESTCATS = FATTESTCATS or {}
 
 -- table.remove(FATTESTCATS,1)
@@ -54,60 +47,54 @@ function Player:Obesity()
 end
 
 function Player:SetObesity(obs)
+    if obs == 1 and self:Obesity() == 1 then return end
     self:SetNWFloat("garfield", obs)
+    local sc = self:HasWeapon("weapon_garfield") and 0.55 or 1
+    -- if not self:IsBot() then
+    self:SetModelScale(self:ObesityScale() * sc)
 
-    if not self:IsBot() then
-        self:SetModelScale(self:ObesityScale() * 0.55)
-    else
-        self:SetModelScale(0.75)
-    end
-
+    -- else
+    --     self:SetModelScale(0.75)
+    -- end
     if SERVER then
         UpdateViewHeight(self)
     end
 
-    self:SetRunSpeed(350 / self:ObesitySpeedScale())
-    self:SetWalkSpeed(350 / self:ObesitySpeedScale())
-    self:SetSlowWalkSpeed(350 / self:ObesitySpeedScale())
+    self:SetRunSpeed(1 / self:ObesitySpeedScale(), "garf")
+    self:SetWalkSpeed(1 / self:ObesitySpeedScale(), "garf")
+    self:SetSlowWalkSpeed(1 / self:ObesitySpeedScale(), "garf")
     local mh = 100 * self:Obesity()
     self:SetMaxHealth(mh)
     self:SetHealth(math.min(self:Health(), mh))
-
-    if SERVER then
-        -- if #FATTESTCATS==0 or FATTESTCATS[1][3]<obs then
-        --     FATTESTCATS = {{self:Name(), self:SteamID(), obs}}
-        --     SetG("FATTESTCATS", FATTESTCATS)
-        -- end
-        local add = true
-        local old = util.TableToJSON(FATTESTCATS)
-
-        for k, v in pairs(FATTESTCATS) do
-            if v[2] == self:SteamID() then
-                v[1] = self:Name()
-                v[3] = math.max(v[3], obs)
-                add = false
-            end
-        end
-
-        if add then
-            table.insert(FATTESTCATS, {self:Name(), self:SteamID(), obs})
-        end
-
-        table.SortByMember(FATTESTCATS, 3)
-
-        while #FATTESTCATS > 5 do
-            table.remove(FATTESTCATS)
-        end
-
-        if util.TableToJSON(FATTESTCATS) ~= old then
-            SetG("FATTESTCATS", FATTESTCATS)
-        end
-
-        if not IsValid(CURFATTESTCAT) or CURFATTESTCAT:Obesity() < obs then
-            CURFATTESTCAT = self
-            SetG("CURFATTESTCAT", CURFATTESTCAT)
-        end
-    end
+    -- if SERVER then
+    --     -- if #FATTESTCATS==0 or FATTESTCATS[1][3]<obs then
+    --     --     FATTESTCATS = {{self:Name(), self:SteamID(), obs}}
+    --     --     SetG("FATTESTCATS", FATTESTCATS)
+    --     -- end
+    --     local add = true
+    --     local old = util.TableToJSON(FATTESTCATS)
+    --     for k, v in pairs(FATTESTCATS) do
+    --         if v[2] == self:SteamID() then
+    --             v[1] = self:Name()
+    --             v[3] = math.max(v[3], obs)
+    --             add = false
+    --         end
+    --     end
+    --     if add then
+    --         table.insert(FATTESTCATS, {self:Name(), self:SteamID(), obs})
+    --     end
+    --     table.SortByMember(FATTESTCATS, 3)
+    --     while #FATTESTCATS > 5 do
+    --         table.remove(FATTESTCATS)
+    --     end
+    --     if util.TableToJSON(FATTESTCATS) ~= old then
+    --         SetG("FATTESTCATS", FATTESTCATS)
+    --     end
+    --     if not IsValid(CURFATTESTCAT) or CURFATTESTCAT:Obesity() < obs then
+    --         CURFATTESTCAT = self
+    --         SetG("CURFATTESTCAT", CURFATTESTCAT)
+    --     end
+    -- end
 end
 
 function Player:ObesityScale()
@@ -123,11 +110,11 @@ hook.Add("PlayerSpawn", "ResetGarfield", function(ply)
     timer.Simple(0, function()
         timer.Simple(0, function()
             ply:SetObesity(1)
-            ply:Give("weapon_garfield")
         end)
     end)
 end)
 
+-- ply:Give("weapon_garfield")
 hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
     local eater = vic:GetNW2Entity("EATER")
 
@@ -147,24 +134,26 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
             eater:SetObesity(ao + vo * ratio)
         end
 
-        eater:SetHealth(eater:Health() + (eater:GetMaxHealth() - eater:Health()) * (ratio)) --/0.9))
+        eater:SetHealth(math.min(eater:GetMaxHealth(), eater:Health() + 300)) --   eater:Health() + (eater:GetMaxHealth() - eater:Health()) * (ratio)) --/0.9))
         vic:SetNW2Entity("EATER", nil)
     end
 end)
 
-if SERVER then
-    timer.Create("GarfieldDecay", 30, 0, function()
-        for k, v in pairs(player.GetAll()) do
-            -- v:SetObesity(math.max(1, v:Obesity() * 0.99))
-        end
-    end)
-
-    --10
-    timer.Create("GarfieldHeal", 10, 0, function()
-        for k, v in pairs(player.GetAll()) do
-            v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
-        end
-    end)
+-- if SERVER then
+--     timer.Create("GarfieldDecay", 30, 0, function()
+--         for k, v in pairs(player.GetAll()) do
+--             -- v:SetObesity(math.max(1, v:Obesity() * 0.99))
+--         end
+--     end)
+--     --10
+--     timer.Create("GarfieldHeal", 10, 0, function()
+--         for k, v in pairs(player.GetAll()) do
+--             v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
+--         end
+--     end)
+-- end
+function SWEP:Deploy()
+    self.Owner:SetModel("models/player/pyroteknik/garfield.mdl")
 end
 
 function SWEP:Initialize()
@@ -645,3 +634,7 @@ function SWEP:DrawHUD()
         end
     end
 end
+
+hook.Add("CanOutfit", "garffafasd", function(ply, mdl, wsid)
+    if ply:HasWeapon('weapon_garfield') then return false end
+end)

@@ -127,7 +127,7 @@ end
 
 function PANEL:EnsureURL(url)
     if self:GetURL() ~= url then
-        self:OpenURL(url, true)
+        self:OpenURL(url)
     end
 end
 
@@ -135,17 +135,7 @@ function PANEL:FetchPageURL()
     self:RunJavascript('if (document.readyState === "complete") { console.log("HREF:"+window.location.href); }')
 end
 
-function PANEL:OpenURL(url, ignoreHistory)
-    if not ignoreHistory then
-        -- Pop URLs from the stack
-        while #self.History ~= self.CurrentPage do
-            table.remove(self.History)
-        end
-
-        table.insert(self.History, url)
-        self.CurrentPage = self.CurrentPage + 1
-    end
-
+function PANEL:OpenURL(url)
     self:SetURL(url)
     BaseClass.OpenURL(self, url)
     self.urlLoading = true
@@ -348,18 +338,6 @@ function PANEL:AddFunction(obj, funcname, func)
     -- Store the function so OnCallback can find it and call it
     --
     self.Callbacks[obj][funcname] = func
-end
-
-function PANEL:HTMLBack()
-    if self.CurrentPage <= 1 then return end
-    self.CurrentPage = self.CurrentPage - 1
-    self:OpenURL(self.History[self.CurrentPage], true)
-end
-
-function PANEL:HTMLForward()
-    if self.CurrentPage == #self.History then return end
-    self.CurrentPage = self.CurrentPage + 1
-    self:OpenURL(self.History[self.CurrentPage], true)
 end
 
 function PANEL:OpeningURL(url)

@@ -10,6 +10,7 @@ SWEP.HoldType = "slam"
 SWEP.Material = Material("models/swamponions/kekfrog_gold")
 SWEP.IdolPrize = 100000 --prize the player gets in points for reaching the surface in time
 SWEP.IdolTimer = 100 --seconds the player should have to reach the surface
+SWEP.DrawAmmo = false
 
 function SWEP:Think()
 end
