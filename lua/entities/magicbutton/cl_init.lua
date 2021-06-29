@@ -8,7 +8,7 @@ hook.Add("GetTeamColor", "magicbutton_deathnotice", function(ent)
     if (ent:GetClass() == "magicbutton") then return Color(248, 204, 58) end
 end)
 
-local glintmat
+local glintmat 
 
 if (CLIENT) then
     glintmat = CreateMaterial("magicbutton_glint", "UnlitGeneric", {
@@ -48,14 +48,29 @@ if (CLIENT) then
         light1.fiftyPercentDistance = 2.35
         light1.zeroPercentDistance = 4
         render.SuppressEngineLighting(true)
+        local normals = {
+            Vector(1,0,0),
+            Vector(-1,0,0),
+            Vector(0,-1,0),
+            Vector(0,1,0),
+            Vector(0,0,1),
+            Vector(0,0,-1),
+        }
 
         for i = 0, 5 do
-            render.SetModelLighting(i, lc.x, lc.y, lc.z)
+            local nrm = normals[i + 1]
+            local light = render.ComputeLighting( self:GetPos() + nrm * -1, nrm)
+            --debugoverlay.Line( self:GetPos() + nrm * 1, self:GetPos() + nrm * 4, 0.1, HSVToColor(i*45,1,1), true )
+            
+            render.SetModelLighting(i, light.x, light.y, light.z)
+
         end
 
         if (not self.Pressed) then
             render.SetLocalModelLights({light1})
         end
+
+
 
         render.SetAmbientLight(0.05, 0.05, 0.05)
         self:DrawModel()
@@ -74,7 +89,6 @@ if (CLIENT) then
         local ang = net.ReadAngle()
         local color = net.ReadColor()
         local state = net.ReadBool()
-        local body = net.ReadInt(3)
 
         if (decay == 0) then
             decay = nil
@@ -103,7 +117,6 @@ if (CLIENT) then
             ang = ang,
             color = color,
             state = state,
-            body = body,
             lod = lod,
             timeoffs = (existing and existing.timeoffs) or math.Rand(0, 1),
             decay = CurTime() + decay
@@ -129,7 +142,6 @@ if (CLIENT) then
             MAGICBUTTON_RENDERER:SetPos(v.pos)
             MAGICBUTTON_RENDERER:SetAngles(v.ang)
             MAGICBUTTON_RENDERER:SetColor(v.color)
-            MAGICBUTTON_RENDERER:SetBodygroup(1, v.body or 0)
             MAGICBUTTON_RENDERER:SetLOD(v.lod or 2)
             MAGICBUTTON_RENDERER:ManipulateBonePosition(1, v.state and Vector(0, 0, -0.5) or Vector())
             MAGICBUTTON_RENDERER:SetupBones()

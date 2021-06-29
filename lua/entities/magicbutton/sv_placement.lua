@@ -314,6 +314,9 @@ function ENT:FindCastFinal(trace, index)
     trace3.OldHitPos = trace3.HitPos
     --get a point on the bounding box
     local lintrace = util.TraceLine(tr3)
+    local hitnormal = lintrace.HitNormal
+
+
     local valid, err = self:IsTraceValid(trace3, true)
     if (valid) then return trace3 end
     self:TraceFail(trace3, "Invalid Surface - " .. (err or "Unknown"))
@@ -386,7 +389,8 @@ function ENT:AdjustTrace(trace, ang)
     if (mtrace1.Hit) then
         trace.HitPos = mtrace1.HitPos
     end
-
+    local hitnormal = trace.HitNormal
+    
     local offsets = {Vector(4, 4, 0), Vector(-4, 0, 0), Vector(4, 5, 0), Vector(-4, 5, 0), Vector(0, 5, 0), Vector(0, -5, 0), Vector(4, -5, 0), Vector(-4, -5, 0)}
 
     local height = 100
@@ -425,9 +429,6 @@ function ENT:AdjustTrace(trace, ang)
                             ang:RotateAroundAxis(ang:Up(), math.random(1, 2) == 1 and 90 or -90)
                             turned = true
 
-                            if (dist < 8) then
-                                trace.Weird = true
-                            end
                         end
                     end
                 end
@@ -447,18 +448,21 @@ function ENT:AdjustTrace(trace, ang)
         trace.HitPos = trace.HitPos + movement
     end
 
-    return trace
+    return trace 
 end
 
 function ENT:MoveToTraceResult(trace)
     local ang = (trace.HitNormal):Angle()
     ang:RotateAroundAxis(ang:Right(), -90)
-    ang:RotateAroundAxis(ang:Up(), -90)
+    ang:RotateAroundAxis(ang:Up(), 180)
     self:SetAngles(ang)
     trace = self:AdjustTrace(trace, ang)
     self:SetAngles(ang)
     local mins, maxs = trace.traceinfo.mins, trace.traceinfo.maxs
     self:SetPos(trace.HitPos)
+    if(trace.HitTexture == "**studio**")then
+        self:SetPos(self:GetPos() + self:GetUp() * 0.5)
+    end
     self.PlacementTrace = trace
     self.HasSpot = true
 end

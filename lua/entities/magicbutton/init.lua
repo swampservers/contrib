@@ -37,7 +37,6 @@ function ENT:Hide()
         self:MoveToTraceResult(trace)
         --.Weird is a flag assigned when the button is placed on something either not wide enough for the button model, or too uneven.
         if (self.PlacementTrace and self.PlacementTrace.Weird) then
-            self:SetBodygroup(1, 1)
 
             if (self.PlacementTrace.HitTexture == "**studio**") then
                 self:SetPos(self:GetPos() + self:GetUp() * 2)
@@ -81,7 +80,6 @@ function ENT:Transmit()
         net.WriteAngle(self:GetAngles())
         net.WriteColor(Color(c.r, c.g, c.b, c.a))
         net.WriteBool(self.Pressed or false)
-        net.WriteInt(self:GetBodygroup(1) or 0, 3)
     end
 
     net.Send(recip)
@@ -153,11 +151,11 @@ function ENT:Use(activator)
 
         local message = self:Effect(activator)
         assert(message ~= nil,"Secret button failed to give any outcome")
-        if (message ~= "") then
+        if (message ~= "") then 
             message = "[yellow]The Hilarious One [white]" .. message
             BotSayGlobal(":banana:" .. message)
         end
 
-        
+         
     end
 end
