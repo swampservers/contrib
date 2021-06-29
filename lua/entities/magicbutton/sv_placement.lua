@@ -391,7 +391,7 @@ function ENT:AdjustTrace(trace, ang)
     end
     local hitnormal = trace.HitNormal
     
-    local offsets = {Vector(4, 4, 0), Vector(-4, 0, 0), Vector(4, 5, 0), Vector(-4, 5, 0), Vector(0, 5, 0), Vector(0, -5, 0), Vector(4, -5, 0), Vector(-4, -5, 0)}
+    local offsets = {Vector(5,0,0),Vector(-5,0,0),Vector(0,4,0),Vector(0,-4,0),Vector(-5,-4,0),Vector(5,-4,0),Vector(-5,4,0),Vector(5,-4,0)}
 
     local height = 100
     local precision = 1
@@ -418,11 +418,11 @@ function ENT:AdjustTrace(trace, ang)
                 debugoverlay.Line(ttrace.HitPos, tr.endpos, 10, Color(255, 0, 0), true)
 
                 if (not turned) then
-                    if (k == 5 and not awkward) then
+                    if (k == 1 and not awkward) then
                         awkward = ttrace.HitPos
                     end
 
-                    if (k == 6 and awkward ~= nil) then
+                    if (k == 2 and awkward ~= nil) then
                         local dist = awkward:Distance(ttrace.HitPos)
 
                         if (dist < 10) then
@@ -458,8 +458,10 @@ function ENT:MoveToTraceResult(trace)
     self:SetAngles(ang)
     trace = self:AdjustTrace(trace, ang)
     self:SetAngles(ang)
+
     local mins, maxs = trace.traceinfo.mins, trace.traceinfo.maxs
     self:SetPos(trace.HitPos)
+
     if(trace.HitTexture == "**studio**")then
         self:SetPos(self:GetPos() + self:GetUp() * 0.5)
     end

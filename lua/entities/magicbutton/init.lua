@@ -55,7 +55,19 @@ end
 function ENT:SpawnFunction(ply, tr, ClassName)
     local ent = ents.Create(ClassName)
     local trace = ent:FindHidingSpot(tr.HitPos)
+    --[[testing placement
+    local newt = {}
+    newt.start = ply:GetShootPos()
+    newt.endpos = newt.start + ply:GetAimVector()*32768
+    newt.filter = ply
+    newt.mins = Vector(1,1,1)*-8
+    newt.maxs = Vector(1,1,1)*8
+    
+    local nt = util.TraceHull(newt)
+    nt.traceinfo = newt
 
+    trace = nt
+    ]]
     if (trace) then
         ent:MoveToTraceResult(trace)
     end
