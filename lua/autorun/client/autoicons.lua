@@ -1,5 +1,6 @@
 ﻿-- autoicons.lua: Automatically generates/renders weapon select icons and killicons
 -- for SWEPs not containing them. Made by swamponions (STEAM_0:0:38422842)
+-- https://steamcommunity.com/sharedfiles/filedetails/?id=2495300496
 local ReplaceAllConvar = CreateClientConVar("autoicons_replaceall", "1", true, false)
 local namejunk = "autoicon" .. tostring(os.time()) .. "_"
 
@@ -229,6 +230,16 @@ AUTOICONS_ANGLE_OVERRIDE = {
     [error_model] = Angle(0, 90, 0),
 }
 
+AUTOICONS_PRESUMED_ENTITY_MODEL = {}
+
+-- Note: This won't work for entities outside of PVS, but it's the best we can do without server code that might break other things
+-- This won't override models for non-SENTs (prop_physics etc)
+hook.Add("NetworkEntityCreated", "AutoIconsNetworkEntityCreated", function(ent)
+    if (ent:GetModel() or "") ~= "" then
+        AUTOICONS_PRESUMED_ENTITY_MODEL[ent:GetClass()] = ent:GetModel()
+    end
+end)
+
 local function TranslateClassName(classname)
     if string.EndsWith(classname, ".mdl") then return classname end
 
@@ -242,7 +253,7 @@ function AutoIconParams(data)
 
     local function datamainmodel()
         -- IronSightStruct indicates ARCCW. data.Model is an attempt to get something from an ENT table
-        return (data.IronSightStruct and data.ViewModel or data.WorldModel) or data.Model
+        return (data.IronSightStruct and data.ViewModel or data.WorldModel) or data.Model or AUTOICONS_PRESUMED_ENTITY_MODEL[data.ClassName]
     end
 
     local p = {}
@@ -337,6 +348,7 @@ function GetAutoIcon(p, mode)
         for i = 1, 10 do
             if (parent.rel or "") == "" then break end
             parent = p.welements[parent.rel]
+            if not parent then break end
             lpos, lang = SCKLocalToWorld(lpos, lang, parent.pos or Vector(0, 0, 0), parent.angle or Angle(0, 0, 0))
             bn = parent.bone
         end
@@ -687,19 +699,19 @@ function GetAutoIcon(p, mode)
             end
         end
 
-        mul = Vector(1, 1, 1) * 0.7
+        if mode == AUTOICON_HL2WEAPONSELECT then
+            mul = Vector(1, 1, 1) * 0.7
 
-        -- edge detection from color
-        for x = -1, 1 do
-            for y = -1, 1 do
-                if x ~= 0 or y ~= 0 then
-                    drawtexture(colorrt, mul, bf_add)
-                    drawtexture(colorrt, mul, bf_sub, x * d, y * d)
+            -- edge detection from color
+            for x = -1, 1 do
+                for y = -1, 1 do
+                    if x ~= 0 or y ~= 0 then
+                        drawtexture(colorrt, mul, bf_add)
+                        drawtexture(colorrt, mul, bf_sub, x * d, y * d)
+                    end
                 end
             end
-        end
 
-        if mode == AUTOICON_HL2WEAPONSELECT then
             d = 3
             mul = Vector(1, 1, 1) * 0.5
 
@@ -812,7 +824,8 @@ function GetAutoIcon(p, mode)
     end
 end
 
-local weaponselectcolor = Vector(1, 0.93, 0.05)
+local weaponselectcolor = NamedColor("FgColor")
+weaponselectcolor = Vector(weaponselectcolor.r / 255, weaponselectcolor.g / 255, weaponselectcolor.b / 255)
 
 function AUTOICON_DRAWWEAPONSELECTION(self, x, y, wide, tall, alpha)
     if not ReplaceAllConvar:GetBool() and (self.BasedDrawWeaponSelection or self.WepSelectIcon ~= AUTOICONS_BASEDWEPSELECTICON or self.WorldModel == "") then return (self.BasedDrawWeaponSelection or AUTOICONS_BASEDDRAWWEAPONSELECTION)(self, x, y, wide, tall, alpha) end

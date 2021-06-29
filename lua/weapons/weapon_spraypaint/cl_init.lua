@@ -177,7 +177,7 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
 end)
 
 function SWEP:DrawSpraypaintReticle()
-    if (CurTime() < self:GetNextPrimaryFire()) then return end
+    if (CurTime() < self:GetNextPrimaryFire() - FrameTime()) then return end
     local trace = self:GetTrace()
     if (not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance()) then return end
     if (trace.HitSky) then return end

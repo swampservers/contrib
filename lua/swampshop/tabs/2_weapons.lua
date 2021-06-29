@@ -10,10 +10,12 @@ SS_WeaponProduct({
     class = 'weapon_crossbow'
 })
 
-SS_WeaponProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Big Frickin\' Gun',
     description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
     price = 20000,
+    ammotype = "doom3_bfg",
+    amount = 1,
     model = "models/weapons/doom3/w_bfg.mdl",
     class = 'weapon_doom3_bfg'
 })
@@ -53,7 +55,7 @@ SS_WeaponProduct({
 SS_WeaponProduct({
     name = 'Light Machine Gun',
     description = "Crouch for better control",
-    price = 10000,
+    price = 12000,
     model = 'models/weapons/w_mg42bu.mdl',
     class = 'weapon_spades_lmg'
 })
@@ -61,7 +63,7 @@ SS_WeaponProduct({
 SS_WeaponProduct({
     name = 'Suicide Bombing',
     description = "A powerful suicide bomb attack capable of killing seated players.",
-    price = 15000,
+    price = 16000,
     model = 'models/dav0r/tnt/tnt.mdl',
     class = 'weapon_jihad'
 })
@@ -74,11 +76,13 @@ SS_WeaponProduct({
     class = 'weapon_bigbomb'
 })
 
-SS_WeaponProduct({
+SS_WeaponAndAmmoProduct({
     name = 'Infinity Gauntlet',
     description = '*snap*',
     price = 13000,
     model = 'models/swamp/v_infinitygauntlet.mdl',
+    ammotype = "infinitygauntlet",
+    amount = 1,
     class = 'weapon_gauntlet'
 })
 
@@ -98,7 +102,8 @@ SS_WeaponAndAmmoProduct({
     model = 'models/weapons/w_slam.mdl',
     class = 'weapon_slam',
     ammotype = "slam",
-    amount = 3
+    amount = 3,
+    clip2 = true
 })
 
 SS_WeaponAndAmmoProduct({
@@ -121,7 +126,75 @@ SS_WeaponAndAmmoProduct({
     amount = 2
 })
 
+-- SS_WeaponAndAmmoProduct({
+--     name = 'M4A1 (beta)',
+--     description = "lol",
+--     price = 9000,
+--     model = 'models/weapons/w_rif_m4a1.mdl',
+--     class = 'weapon_m4a1',
+--     ammotype = "BULLET_PLAYER_556MM",
+--     amount = 30
+-- })
+for i, tm in ipairs({"CT", "TERRORIST"}) do
+    SS_Product({
+        class = 'csslootbox' .. tm:lower(),
+        price = 8000, --5000,3000
+        name = tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
+        description = "Random CS:S gun (might be an error lol).",
+        model = 'models/Items/ammocrate_smg1.mdl',
+        OnBuy = function(self, ply)
+            local w = {}
+
+            for k, v in ipairs(weapons.GetList()) do
+                if v.Base == "weapon_csbasegun" then
+                    if v._WeaponInfo.Team == tm or v._WeaponInfo.Team == "ANY" then
+                        table.insert(w, v)
+                    end
+                end
+            end
+
+            w = w[math.random(#w)]
+            print(w._WeaponInfo.Team)
+            w = w.ClassName
+
+            if ply:HasWeapon(w) then
+                ply:StripWeapon(w)
+            end
+
+            ply:Give(w)
+            ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
+            ply:SelectWeapon(w)
+
+            timer.Simple(0, function()
+                ply:Notify("You got the " .. w .. "!")
+            end)
+        end
+    })
+end
+
+-- hook.Add("Initialize","ss css setup", function()
+--     for k, wep in ipairs(weapons.GetList()) do
+--         if wep.Base == "weapon_csbasegun" then
+--         end
+--     end
+-- end)
 SS_Heading("Ammo")
+
+SS_Product({
+    class = 'cssammo',
+    price = 2000, --5000,3000
+    name = 'CS:S gun magazine',
+    description = "1 mag for CSS gun from mystery box (Free ammo in the shooting range!!)",
+    model = 'models/Items/sniper_round_box.mdl',
+    OnBuy = function(self, ply)
+        local w = ply:GetActiveWeapon()
+        ply:GiveAmmo(w:GetMaxClip1(), w:GetPrimaryAmmoType())
+    end,
+    CanBuyStatus = function(self, ply)
+        local w = ply:GetActiveWeapon()
+        if not IsValid(w) or w.Base ~= "weapon_csbasegun" then return "Equip a CS:S gun (from the lootbox)" end
+    end
+})
 
 SS_AmmoProduct({
     name = 'Crossbow bolt x5',

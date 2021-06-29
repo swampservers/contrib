@@ -119,18 +119,16 @@ timer.Create("musicvis_resetter", 0.5, 0, function()
             e.IsOpen = function(ent) return math.abs(ent:GetAngles():Forward().y) > 0.9 end
         end
     end
-
-    for _, v in ipairs(LOUNGE_DOORS) do
-        if (v.UseTime or 0) < CurTime() - 4 then
-            local op = v:IsOpen()
-
-            if th:IsPlaying() == op then
-                v:Fire(op and "Close" or "Open")
-            end
-        end
-    end
 end)
 
+-- for _, v in ipairs(LOUNGE_DOORS) do
+--     if (v.UseTime or 0) < CurTime() - 4 then
+--         local op = v:IsOpen()
+--         if th:IsPlaying() == op then
+--             v:Fire(op and "Close" or "Open")
+--         end
+--     end
+-- end
 hook.Add("PlayerUse", "LoungeDoorOpener", function(ply, ent)
     if ent.LOUNGEDOOR then
         local tofire = ent:IsOpen() and "Close" or "Open"

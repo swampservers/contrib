@@ -1,5 +1,66 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+-- damage indicator shit
+if SERVER then
+    util.AddNetworkString("HitMarker")
+    HITMARKERCACHE = {}
+
+    hook.Add("PostEntityTakeDamage", "DamageMarker", function(ent, dmg, took)
+        local att = dmg:GetAttacker()
+
+        if ent:IsPlayer() and ent:IsBot() then
+            if IsValid(att) and att:IsPlayer() then
+                HITMARKERCACHE[att] = (HITMARKERCACHE[att] or 0) + dmg:GetDamage()
+            end
+        end
+    end)
+
+    hook.Add("Tick", "FlushHitMarkers", function()
+        for k, v in pairs(HITMARKERCACHE) do
+            if IsValid(k) then
+                net.Start("HitMarker")
+                net.WriteUInt(v, 8)
+                net.Send(k)
+            end
+        end
+
+        HITMARKERCACHE = {}
+    end)
+else
+    local hitmarkers = {}
+
+    net.Receive("HitMarker", function(len)
+        local dmg = net.ReadUInt(8)
+
+        table.insert(hitmarkers, {
+            dmg = dmg,
+            t = SysTime(),
+            x = 0.1, --math.Rand(-0.5,0.5),
+            
+        })
+    end)
+
+    hook.Add("PostDrawHUD", "DrawHitMarkers", function()
+        local duration = 1
+        local t = SysTime()
+        local i = 1
+
+        while i <= #hitmarkers do
+            local marker = hitmarkers[i]
+
+            if marker.t + duration < t then
+                table.remove(hitmarkers, i)
+            else
+                i = i + 1
+                local drift = (t - marker.t) / duration
+                local alpha = 1 - drift
+                drift = drift + 0.1
+                draw.SimpleText(tostring(marker.dmg), "Trebuchet24", ScrW() / 2 + drift * 100 * marker.x + 20, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
+        end
+    end)
+end
+
 function Safe(ent)
     local loc = 0
     local name = "Unknown"

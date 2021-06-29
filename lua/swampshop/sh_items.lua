@@ -81,6 +81,30 @@ function SS_PlayermodelItem(item)
     SS_Item(item)
 end
 
+function SS_WeaponBlueprintItem(item)
+    item.CraftingPrice = function(self) return 5000 end
+
+    item.actions = {
+        {
+            name = "craft",
+            text = function(self) return "Craft - " .. tostring(self:CraftingPrice()) .. " points" end,
+            server = function(self)
+                if self.owner:HasWeapon(self.class) then
+                    self.owner:SelectWeapon(self.class)
+                else
+                    self.owner:TryTakePoints(self:CraftingPrice(), function()
+                        self.owner:Give(self.class)
+                        self.owner:SelectWeapon(self.class)
+                    end)
+                end
+            end
+        }
+    }
+
+    item.invcategory = "Blueprints"
+    SS_Item(item)
+end
+
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
     if item.wear then

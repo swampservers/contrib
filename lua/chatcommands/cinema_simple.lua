@@ -52,12 +52,24 @@ concommand.Add("drop", function(ply, cmd, args)
     ply.LastWepDropTime = ply.LastWepDropTime or 0
     if (CurTime() - ply.LastWepDropTime) < 2 then return end
     ply.LastWepDropTime = CurTime()
+    local w = ply:GetActiveWeapon()
 
-    if IsValid(ply:GetActiveWeapon()) then
-        local cl = ply:GetActiveWeapon():GetClass()
+    if IsValid(w) then
+        local cl = w:GetClass()
         if cl == "weapon_ebola" then return end
         if cl == "weapon_tag" then return end
-        ply:StripWeapon(cl)
+
+        if w.DropOnGround then
+            ply:DropWeapon(wep)
+
+            timer.Simple(5, function()
+                if IsValid(wep) and not IsValid(wep.Owner) then
+                    wep:Remove()
+                end
+            end)
+        else
+            ply:StripWeapon(cl)
+        end
     end
 end)
 
