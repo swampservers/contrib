@@ -63,7 +63,7 @@ SS_WeaponProduct({
 SS_WeaponProduct({
     name = 'Suicide Bombing',
     description = "A powerful suicide bomb attack capable of killing seated players.",
-    price = 15000,
+    price = 16000,
     model = 'models/dav0r/tnt/tnt.mdl',
     class = 'weapon_jihad'
 })
