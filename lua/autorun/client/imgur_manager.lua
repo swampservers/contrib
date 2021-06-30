@@ -6,7 +6,7 @@ function THUMB:Init()
     self:SetText("")
     self:SetSize(64, 64)
 
-end
+end 
 
 function THUMB:SetImgur(id)
     assert(isstring(id), "Expected string, got" .. type(id))
@@ -49,24 +49,23 @@ function CONTENTPICKER:Init()
 
     self.Bottom = vgui.Create("DPanel", self)
     self.Bottom:Dock(TOP)
-    self.Bottom:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+    self.Bottom:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
     self.Bottom.Paint = SS_PaintBG
     self.AddField = vgui.Create("DTextEntry", self.Bottom)
     self.AddField:Dock(FILL)
     self.AddField:SetPaintBackground(false)
     self.AddField:SetUpdateOnType(true)
-    self.AddField:SetPlaceholderText("http://i.imgur.com/XXXXXXX.png")
-    self.AddField:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 200))
+
     self.AddField:SetTextColor(MenuTheme_TX)
     self.AddField.UpdateColours = function(pnl)
-        pnl:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 200))
         pnl:SetTextColor(MenuTheme_TX)
+        pnl:SetCursorColor(MenuTheme_TX)
     end
     self.AddField.OnValueChange = function(textself, new) end
 
     self.AddButton = vgui.Create("DButton", self.Bottom)
-    self.AddButton:SetSize(32, 16)
-    self.AddButton:SetText("Add")
+    self.AddButton:SetSize(64, 16)
+    self.AddButton:SetText("Save To List")
     self.AddButton:DockMargin(4, 4, 4, 4)
     self.AddButton:Dock(RIGHT)
     self.AddButton.Paint = SS_PaintButtonBrandHL
@@ -103,9 +102,9 @@ function CONTENTPICKER:Init()
 
     SS_SetupVBar(self.Scroll.VBar)
     self.Tiles = vgui.Create("DIconLayout", self.Scroll)
-    self.Tiles:Dock(TOP)
+    self.Tiles:Dock(FILL)
     self.Tiles:DockMargin(0, 0, SS_COMMONMARGIN, 0)
-    self.Tiles.Paint = SS_PaintBG
+    self.Tiles.Paint = noop
     local oll = self.Tiles.PerformLayout
 
     self.Tiles.PerformLayout = function(pnl)
@@ -154,6 +153,7 @@ end
 
 --SS_PaintBG(self,w,h) 
 function CONTENTPICKER:Paint(w, h)
+    SS_PaintFG(self,w,h)
 end
 
 function CONTENTPICKER:Reload()
