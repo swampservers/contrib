@@ -85,12 +85,16 @@ function PANEL:Init()
                 p:SetStretchToFit(false)
                 p.Paint = SS_PaintDarkenOnHover
                 p:SetSize(SS_NAVBARHEIGHT / 2, SS_NAVBARHEIGHT)
-                p:SetTooltip("Toggle dark mode/light mode")
+                p:SetTooltip("Toggle dark mode/light mode\nRight click to toggle tinting")
                 p:Dock(RIGHT)
 
                 p.DoClick = function()
-                    GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool()) --activates the callback function
+                    GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
                 end
+                p.DoRightClick = function()
+                    GetConVar("ps_themebleed"):SetBool(not GetConVar("ps_themebleed"):GetBool()) 
+                end
+
             end)
 
             vgui("DImageButton", function(p)
