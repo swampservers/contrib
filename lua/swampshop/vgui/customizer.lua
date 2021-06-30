@@ -51,7 +51,7 @@ function PANEL:Open(item)
     vgui("DPanel", self, function(p)
         p.Paint = noop
         p:Dock(FILL)
-        p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+        p:DockMargin(0, 0, 0, 0)
         self.controlzone = vgui("DPanel", function(p)
             p:Dock(FILL)
             p:DockMargin(0, 0, 0, 0)
@@ -158,25 +158,34 @@ function PANEL:SetupControls()
         v:Remove()
     end
 
-    local wearzone = vgui.Create("DPanel", self.controlzone)
-    wearzone:SetWide((SS_GetMainGridSpace() - SS_COMMONMARGIN) / 2)
-    wearzone.Paint = SS_PaintFG
-    wearzone:Dock(LEFT)
-    wearzone:DockMargin(0, 0, SS_COMMONMARGIN, 0)
-    wearzone = vgui.Create("DScrollPanel", wearzone)
-    wearzone:Dock(FILL)
-    wearzone.VBar:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-    wearzone.VBar:SetWide(SS_SCROLL_WIDTH)
-    SS_SetupVBar(wearzone.VBar)
+    local wear_container = vgui.Create("DScrollPanel", self.controlzone)
+    wear_container:Dock(LEFT)
+    wear_container:SetWide((SS_GetMainGridSpace() - SS_COMMONMARGIN) / 2)
+    wear_container.VBar:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+    SS_SetupVBar(wear_container.VBar)
+    wear_container.VBar:SetWide(SS_SCROLL_WIDTH)
+    
 
+    local wearzone = vgui.Create("DPanel", wear_container)
+   
+    wearzone.Paint = SS_PaintFG
+    wearzone:Dock(FILL)
+    wearzone:DockMargin(0, 0, SS_COMMONMARGIN, 0)
+    wearzone:DockPadding(SS_COMMONMARGIN,SS_COMMONMARGIN,SS_COMMONMARGIN,SS_COMMONMARGIN)
+    local function GapMaker(parent)
+        local GAP = vgui.Create("DPanel",parent)
+        GAP:Dock(TOP)
+        GAP:SetTall(SS_COMMONMARGIN)
+        GAP.Paint = function() end
+    end
     local function LabelMaker(parent, text, top)
         local p2 = nil
 
-        if not top then
+        if not top or true then
             p2 = vgui.Create("Panel", parent)
-            p2:DockMargin(16, 16, 16, 0)
+            p2:DockMargin(0, 0, 0, SS_COMMONMARGIN)
             p2:Dock(TOP)
-
+            p2.Paint = noop --SS_PaintBG
             if parent.AddItem then
                 parent:AddItem(p2)
             end
@@ -187,11 +196,13 @@ function PANEL:SetupControls()
         p:SetText(text)
         p:SetTextColor(SS_SwitchableColor)
         p:SizeToContents()
-
+        p.UpdateColours = function(pnl)
+            pnl:SetTextColor(MenuTheme_TX)
+        end
         if top then
             p:SetContentAlignment(5)
-            p:DockMargin(16, 16, 16, 16)
-            p:Dock(TOP)
+            p:DockMargin(0,0,0,0)
+            p:Dock(FILL)
 
             if parent.AddItem then
                 parent:AddItem(p)
@@ -208,12 +219,14 @@ function PANEL:SetupControls()
         local p = vgui.Create("DNumSlider", parent)
         p:SetText(text)
         p:SetDecimals(2)
-        p:DockMargin(32, 8, 32, 0)
+        p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
         p:Dock(TOP)
         p:SetDark(not SS_DarkMode)
         p.TextArea:SetPaintBackground(true)
         p:SetTall(24)
-
+        p.Label.UpdateColours = function(pnl)
+            pnl:SetTextColor(MenuTheme_TX)
+        end
         if parent.AddItem then
             parent:AddItem(p)
         end
@@ -252,7 +265,7 @@ function PANEL:SetupControls()
     if (self.item.configurable or {}).wear then
         LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
         local p = vgui.Create("Panel", wearzone)
-        p:DockMargin(32, 8, 32, 0)
+        p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, SS_COMMONMARGIN)
         p:Dock(TOP)
         ATTACHSELECT = vgui.Create("DComboBox", p)
         ATTACHSELECT:SetValue((self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
@@ -535,20 +548,29 @@ function PANEL:SetupControls()
         ATTACHSELECT:SetWide(200)
         ATTACHSELECT:Dock(RIGHT)
     end
+    wearzone:InvalidateLayout(true)
+    wearzone:SizeToChildren(false,true)
+
+
 
     local appearance_container = vgui.Create("DScrollPanel", self.controlzone)
     appearance_container:Dock(FILL)
+    appearance_container:SetPadding(0)
     appearance_container.VBar:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
     SS_SetupVBar(appearance_container.VBar)
     appearance_container.VBar:SetWide(SS_SCROLL_WIDTH)
+
+
     local colorzone = vgui.Create("DPanel", appearance_container)
     colorzone.Paint = SS_PaintFG
     colorzone:Dock(TOP)
     colorzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-
+    colorzone:DockMargin(0,0,0,SS_COMMONMARGIN)
     --colorzone:SetTall( SS_GetCustomizerHeight())
     colorzone.PerformLayout = function(pnl)
+        
         pnl:SizeToChildren(false, true)
+        pnl:InvalidateParent(true)
         pnl:DockMargin(0, 0, appearance_container.VBar:IsVisible() and SS_COMMONMARGIN or 0, 0)
     end
 
@@ -563,12 +585,13 @@ function PANEL:SetupControls()
         PSCMixer:SetWangs(true)
         PSCMixer:SetVector(cv / cvm)
         PSCMixer:SetTall(250)
-        PSCMixer:DockMargin(32, 8, 32, 16)
+        PSCMixer:DockMargin(0, 0, 0, 0)
         PSCMixer:Dock(TOP)
+
         PSBS = SliderMaker(colorzone, "Boost")
         PSBS:SetMinMax(1, self.item.configurable.color.max)
         PSBS:SetValue(cvm)
-
+        PSBS:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
         local function colorchanged()
             self.item.cfg.color = PSCMixer:GetVector() * PSBS:GetValue()
             self:UpdateCfg()
@@ -576,12 +599,107 @@ function PANEL:SetupControls()
 
         PSCMixer.ValueChanged = colorchanged
         PSBS.OnValueChanged = colorchanged
-        local imgurzone = vgui.Create("DCollapsibleCategory", colorzone)
+
+
+        local texturezone = vgui.Create("DPanel", appearance_container)
+        texturezone.Paint = SS_PaintFG
+
+        texturezone:Dock(TOP)
+        texturezone:DockMargin(0,SS_COMMONMARGIN*2,0,0)
+        texturezone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+        texturezone.PerformLayout = function(pnl)
+            pnl:SizeToChildren(false, true)
+            pnl:InvalidateParent(true)
+            pnl:DockMargin(0, SS_COMMONMARGIN, appearance_container.VBar:IsVisible() and SS_COMMONMARGIN or 0, 0)
+        end
+        LabelMaker(texturezone, "Texture", true)
+
+
+        local texturebarhelp = vgui.Create("DLabel", texturezone)
+        texturebarhelp:Dock(TOP)
+        texturebarhelp:DockMargin(0,0,0,SS_COMMONMARGIN)
+        texturebarhelp:SetText("Upload an image to imgur.com and enter the link into the field below.\nFor example: https://imgur.com/a/3AOvcC1\nNo videos or GIFs!")
+        texturebarhelp:SetWrap(true)
+        texturebarhelp:SetTall(128)
+        texturebarhelp:SetAutoStretchVertical(true)
+        texturebarhelp.UpdateColours = function(pnl)
+            pnl:SetTextColor(MenuTheme_TX)
+        end
+
+        local texturebarc = vgui.Create("DPanel", texturezone)
+        texturebarc:Dock(TOP)
+        texturebarc.Paint = SS_PaintBG
+
+        local texturebar = vgui.Create("DTextEntry", texturebarc)
+        texturebar:Dock(FILL)
+        texturebar:SetPaintBackground(false)
+        texturebar:SetUpdateOnType(true)
+        texturebar:SetPlaceholderText("http://i.imgur.com/XXXXXXX.png")
+        texturebar:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 100))
+        texturebar:SetTextColor(MenuTheme_TX)
+        texturebar:SetText(self.item and self.item.cfg and self.item.cfg.imgur and self.item.cfg.imgur.url or "")
+        texturebar.UpdateColours = function(pnl)
+            pnl:SetPlaceholderColor(ColorAlpha(MenuTheme_TX, 200))
+            pnl:SetTextColor(MenuTheme_TX)
+        end
+        texturebar.OnValueChange = function(textself, new)
+            
+            self.item.cfg.imgur = new and {
+                url = new,
+                nsfw = nsfw
+            } or nil
+            self:UpdateCfg()
+
+        end
+
+
+        local savebutton = vgui.Create("DImageButton", texturebarc)
+        savebutton:SetSize(16, 16)
+        savebutton:SetImage("icon16/disk.png")
+        savebutton:DockMargin(4, 4, 4, 4)
+        savebutton:Dock(RIGHT)
+        savebutton.DoClick = function(pnl)
+
+            if (texturebar:GetText() == "") then return end
+            local img = texturebar:GetText()
+
+        AsyncSanitizeImgurId(img, function(id)
+            if (id == nil) then
+                savebutton:SetImage("icon16/cross.png")
+                timer.Simple(0.5,function()
+                    savebutton:SetImage("icon16/disk.png")
+                end)
+                return
+            end
+            self.TexturePicker:AddPermanent(id, false)
+        end)
+
+
+        end
+
+
+        local texturedl = vgui.Create("DButton", texturezone)
+        texturedl:AlignBottom(SS_COMMONMARGIN)
+        texturedl:AlignRight(SS_COMMONMARGIN)
+        texturedl:SetText("Get Texture Template")
+        texturedl:Dock(TOP)
+        texturedl:SetTextColor(MenuTheme_TX)
+        texturedl:DockMargin(0, SS_COMMONMARGIN, 0, 0)
+        texturedl.Paint = SS_PaintButtonBrandHL
+        texturedl.UpdateColours = function(pnl)
+            pnl:SetTextStyleColor(MenuTheme_TX)
+        end
+        texturedl.DoClick = function()
+            ImageGetterPanel()
+        end
+
+        local imgurzone = vgui.Create("DCollapsibleCategory", texturezone)
         imgurzone:Dock(TOP)
         imgurzone:SetTall(128)
         imgurzone:DockMargin(0, SS_COMMONMARGIN, 0, 0)
         imgurzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-        imgurzone:SetLabel("Textures")
+        imgurzone:SetLabel("Saved Textures")
+        imgurzone:DoExpansion(false)
         imgurzone.Header:SetFont("SS_DESCINSTFONT")
 
         imgurzone.Header.UpdateColours = function(pnl)
@@ -589,31 +707,43 @@ function PANEL:SetupControls()
         end
 
         imgurzone.Header:SetContentAlignment(8)
-        imgurzone.Header:SetTall(24)
-        imgurzone.Paint = SS_PaintMD
-        imgurzone:SetExpanded(true)
+        imgurzone.Header:SetTall(26)
+        imgurzone.Paint = SS_PaintFG
         imgurzone:SetKeyboardInputEnabled(true)
+
+        
+
         local textures = vgui.Create("DImgurManager", imgurzone)
+        self.TexturePicker = textures
         textures:SetMultiline(true)
         --RAWENTRY:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
         textures:SetTall(256)
         textures:Dock(TOP)
+        textures.Bottom:Remove()
+        
         textures:SetKeyboardInputEnabled(true)
         textures:SetColumns(4)
         textures:Load()
 
-        textures.OnChoose = function(pnl, img, nsfw)
+        textures.OnChoose = function(pnl, img)
             SingleAsyncSanitizeImgurId(img, function(id)
                 if not IsValid(pnl) then return end
-
+                
                 self.item.cfg.imgur = id and {
                     url = id,
-                    nsfw = nsfw
+                    nsfw = false
                 } or nil
-
+                if(id)then
+                texturebar:SetText(id)
+                end
                 self:UpdateCfg()
             end)
         end
+
+
+        
+
+
     end
 
     local rawzone = vgui.Create("DCollapsibleCategory", self.controlzone)
@@ -629,8 +759,8 @@ function PANEL:SetupControls()
     end
 
     rawzone.Header:SetContentAlignment(8)
-    rawzone.Header:SetTall(24)
-    rawzone.Paint = SS_PaintMD
+    rawzone.Header:SetTall(26)
+    rawzone.Paint = SS_PaintFG
     rawzone:SetExpanded(false)
     rawzone:SetKeyboardInputEnabled(true)
     RAWENTRY_c = vgui.Create("DPanel", rawzone)
@@ -642,19 +772,7 @@ function PANEL:SetupControls()
         pnl:InvalidateParent(true)
     end
 
-    local testbutton = vgui.Create("DButton", RAWENTRY_c)
-    testbutton:AlignBottom(SS_COMMONMARGIN)
-    testbutton:AlignRight(SS_COMMONMARGIN)
-    testbutton:SetText("Get Texture Template")
-    testbutton:Dock(BOTTOM)
-    testbutton:SetTextColor(MenuTheme_TX)
-    testbutton:SetZPos(255)
-    testbutton:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-    testbutton.Paint = SS_PaintFG
-
-    testbutton.DoClick = function()
-        ImageGetterPanel()
-    end
+    
 
     RAWENTRY = vgui.Create("DTextEntry", RAWENTRY_c)
     RAWENTRY:SetMultiline(true)
@@ -766,6 +884,7 @@ function ImageGetterPanel()
         Frame:Center()
         Frame:SetTitle(mat)
         Frame:MakePopup()
+        
         Frame.btnMaxim:SetVisible(false)
         Frame.btnMinim:SetVisible(false)
         local DLButton = vgui.Create("DButton", Frame)
@@ -791,6 +910,11 @@ function ImageGetterPanel()
         Frame.BasedPaint = Frame.Paint
 
         Frame.Paint = function(pnl, w, h)
+            DisableClipping(true)
+            local border = 8
+            draw.BoxShadow(-2, -2, w + 4, h + 4, border, 1)
+            DisableClipping(false)
+
             SS_PaintBG(pnl, w, h)
             BrandBackgroundPattern(0, 0, w, 24, 0)
         end
