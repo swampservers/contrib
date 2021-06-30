@@ -550,3 +550,27 @@ surface.CreateFont("SS_Category", {
     weight = 200,
     antialias = true,
 })
+--REMOVE THIS when gmod is updatd
+draw.WordBox = function(bordersize, x, y, text, font, color, fontcolor, xalign, yalign)
+    surface.SetFont(font)
+    local w, h = surface.GetTextSize(text)
+
+    if (xalign == TEXT_ALIGN_CENTER) then
+        x = x - (bordersize + w / 2)
+    elseif (xalign == TEXT_ALIGN_RIGHT) then
+        x = x - (bordersize * 2 + w)
+    end
+
+    if (yalign == TEXT_ALIGN_CENTER) then
+        y = y - (bordersize + h / 2)
+    elseif (yalign == TEXT_ALIGN_BOTTOM) then
+        y = y - (bordersize * 2 + h)
+    end
+
+    draw.RoundedBox(bordersize, x, y, w + bordersize * 2, h + bordersize * 2, color)
+    surface.SetTextColor(fontcolor.r, fontcolor.g, fontcolor.b, fontcolor.a)
+    surface.SetTextPos(x + bordersize, y + bordersize)
+    surface.DrawText(text)
+
+    return w + bordersize * 2, h + bordersize * 2
+end

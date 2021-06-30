@@ -43,20 +43,11 @@ function PANEL:OnMousePressed(b)
             end
 
             self.prebuyclick = nil
-            surface.PlaySound("UI/buttonclick.wav")
-            SS_BuyProduct(self.product.class)
+            self.product:HoverClick(true)
         end
     else
         if self:IsSelected() then
-            local status = (not self.item.eq) and self.item:CannotEquip() or nil
-
-            if status then
-                surface.PlaySound("common/wpn_denyselect.wav")
-                LocalPlayerNotify(status)
-            else
-                surface.PlaySound("weapons/smg1/switch_single.wav")
-                SS_EquipItem(self.item.id, not self.item.eq)
-            end
+            self.item:HoverClick(true)
         else
             self:Select()
         end
@@ -104,7 +95,7 @@ function PANEL:Select()
     SS_HoverIOP = SS_HoverItem or SS_HoverProduct
     local p = vgui.Create("DLabel", SS_DescriptionPanel)
     p:SetFont("SS_DESCTITLEFONT")
-    p:SetText(self.iop.name)
+    p:SetText(self.iop:GetName())
     p:SetColor(MenuTheme_TX)
     p:SetContentAlignment(8)
     p.UpdateColours = function(pnl)
@@ -113,6 +104,7 @@ function PANEL:Select()
     p:SetAutoStretchVertical(true)
     p:Think()
     p:DockMargin(0, 4, 0, 4)
+
     p:Dock(TOP)
 
     if self.iop.description then
@@ -302,8 +294,7 @@ end
 function PANEL:Setup()
     local DModelPanel = vgui.Create('DModelPanel', self)
     --DModelPanel:SetModel(self.data.model)
-    DModelPanel.model2set = self.iop.model
-
+    DModelPanel.model2set = self.iop:GetModel()
     if (self.iop.model_display) then
         if (isfunction(self.iop.model_display)) then
             DModelPanel.model2set = self.iop.model_display()
@@ -446,16 +437,11 @@ function PANEL:Think()
         if self.hovered then
             self.barheight = 30
             self.textfont = "SS_Price"
-
-            if self.prebuyclick then
-                self.text = self.product.price == 0 and ">  GET  <" or ">  BUY  <"
-            else
-                self.text = self.product.price == 0 and "FREE" or "-" .. tostring(self.product.price)
-            end
+            self.text = self.product:HoverText(self.prebuyclick)
         else
             self.barheight = 20
             self.textfont = "SS_ProductName"
-            self.text = self.product.name
+            self.text = self.product:GetName()
         end
 
         self.textcolor = MenuTheme_TX
@@ -470,7 +456,7 @@ function PANEL:Think()
 
         self.barheight = 20
         self.textfont = "SS_ProductName"
-        self.text = self.item.name
+        self.text = self.item:GetName()
         local leqc = 0
         local totalc = 0
 
@@ -497,7 +483,7 @@ function PANEL:Think()
             if labelview then
                 self.barheight = 30
                 self.textfont = "SS_Price"
-                self.text = self.item.eq and "HOLSTER" or "EQUIP"
+                self.text = self.item:HoverText(true)
             end
         elseif labelview then
             self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
@@ -512,6 +498,16 @@ end
 function PANEL:PaintOver(w, h)
     if self.fademodel then
         SS_PaintFGAlpha(w, h, 144)
+    end
+
+    if self.iop.OutlineColor then
+        local c = self.iop:OutlineColor()
+
+        if c then
+            surface.SetDrawColor(c)
+            -- surface.DrawOutlinedRect(0, 0, w, h + 7, 8)
+            surface.DrawRect(0, 0, w, 16)
+        end
     end
 
     if self.icon then

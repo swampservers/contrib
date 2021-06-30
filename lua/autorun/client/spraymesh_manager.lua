@@ -187,21 +187,7 @@ timer.Simple(0, function()
             p:SetTitle("")
             p:Center()
             p:MakePopup()
-
-            if gui.IsGameUIVisible() then
-                gui.HideGameUI()
-            end
-
-            hook.Add("Think", "SMMCloser", function()
-                if IsValid(p) then
-                    if gui.IsGameUIVisible() then
-                        gui.HideGameUI()
-                        p:Close()
-                    end
-                else
-                    hook.Remove("Think", "SMMCloser")
-                end
-            end)
+            p:CloseOnEscape()
 
             function p:Paint(w, h)
                 draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 192))

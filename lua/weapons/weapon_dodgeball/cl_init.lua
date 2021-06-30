@@ -5,6 +5,7 @@ SWEP.Instructions = "Primary: Throw hard\nSecondary: Throw soft\nReload: Pass"
 SWEP.DrawAmmo = false
 SWEP.ViewModelFOV = 85
 
+--NOMINIFY
 function SWEP:ThrownBallExists()
     local ply = self:GetOwner()
     if (self:GetThrowState() < 2) then return false end
@@ -51,7 +52,7 @@ function SWEP:DrawWorldModel()
         end
 
         self:SetupBones()
-        self:SetModelScale(0.8, 0)
+        -- self:SetModelScale(0.5, 0)
         local mrt = self:GetBoneMatrix(0)
 
         if (mrt) then
@@ -63,7 +64,7 @@ function SWEP:DrawWorldModel()
     end
 
     render.SetColorModulation(1, 0, 0)
-    self:SetColor(255, 0, 0, 255)
+    -- self:SetColor(Color(255, 0, 0))
     self:DrawModel()
     render.SetColorModulation(1, 1, 1)
 end

@@ -35,6 +35,82 @@ SS_Product({
     end
 })
 
+if SERVER then
+    util.AddNetworkString("LootBoxAnimation")
+end
+
+SS_Item({
+    class = "prop",
+    value = 1000,
+    name = "Prop",
+    description = "Haha, where did you find this one?",
+    model = 'models/maxofs2d/logo_gmod_b.mdl',
+    GetName = function(self) return table.remove(string.Explode("/", self.specs.model)) end,
+    GetModel = function(self) return self.specs.model end,
+    OutlineColor = function(self) return SS_GetRating(self.specs.rating)[3] end,
+    SanitizeSpecs = function(self)
+        local specs, ch = self.specs, false
+
+        if not specs.model then
+            specs.model = GetSandboxProp(75 * (1 + (math.random() ^ 3)))
+            ch = true
+        end
+
+        if not specs.rating then
+            specs.rating = math.random()
+            ch = true
+        end
+
+        return ch
+    end,
+    HoverText = function(self, second) return second and "MAKE (-" .. tostring(self:SpawnPrice()) .. ")" or nil end,
+    HoverClick = function(self, second)
+        if second then
+            SS_ActivateItem(self.id)
+        end
+    end,
+    SpawnPrice = function(self) return 100 end,
+    invcategory = "Props",
+    never_equip = true
+})
+
+SS_Product({
+    class = 'sandbox2',
+    price = 25000,
+    name = 'Sandbox Lootbox',
+    description = "A random prop that you can spawn from your inventory as much as you want (trading coming soon)",
+    model = 'models/Items/ammocrate_smg1.mdl',
+    -- CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        -- if ply.CANTSANDBOX then return end
+        local item = SS_GenerateItem(ply, "prop")
+        ply:SS_GiveNewItem(item, 4)
+        local chosen = item.specs.model
+        local rating = item.specs.rating
+        assert(chosen)
+        local others = {}
+
+        for i = 1, 15 do
+            table.insert(others, GetSandboxProp())
+        end
+
+        net.Start("LootBoxAnimation")
+        net.WriteString(chosen)
+        net.WriteTable(others)
+
+        net.WriteTable({table.remove(string.Explode("/", chosen))})
+
+        net.WriteFloat(rating)
+        net.Send(ply)
+
+        -- ply.CANTSANDBOX = true
+        timer.Simple(4, function()
+            -- ply.CANTSANDBOX = false
+            makeTrash(ply, chosen)
+        end)
+    end
+})
+
 SS_Heading("Props")
 
 SS_Product({
