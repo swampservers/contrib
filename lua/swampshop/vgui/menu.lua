@@ -185,12 +185,12 @@ function PANEL:Init()
                 p.Paint = function(pnl, w, h)
                     --SS_PaintDirty(pnl,w,h)
                     draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, 16, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-                    draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, h-2, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+                    draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, 32, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
                 end
 
                 vgui('DImageButton', function(p)
                     p:SetSize(16, 16)
-                    p:SetPos(p:GetParent():GetWide() - 16,32)
+                    p:SetPos(p:GetParent():GetWide() - 16,16)
                     p:SetTooltip("Give Points")
                     p:Dock(RIGHT)
                     local topm = SS_BOTBARHEIGHT - SS_COMMONMARGIN*3 - 16
