@@ -4,6 +4,7 @@
 function SS_PreviewShopModel(self)
     local min, max = self.Entity:GetRenderBounds()
     local center, radius = (min + max) / 2, min:Distance(max) / 2
+
     self:SetCamPos(self.Entity:LocalToWorld(center) + ((radius + 1) * Vector(1, 1, 1)))
     self:SetLookAt(self.Entity:LocalToWorld(center))
 end
@@ -106,6 +107,9 @@ function PANEL:Select()
     p:SetText(self.iop.name)
     p:SetColor(MenuTheme_TX)
     p:SetContentAlignment(8)
+    p.UpdateColours = function(pnl)
+        pnl:SetTextColor(MenuTheme_TX)
+    end
     p:SetAutoStretchVertical(true)
     p:Think()
     p:DockMargin(0, 4, 0, 4)
@@ -120,6 +124,9 @@ function PANEL:Select()
         p:SetContentAlignment(long and 7 or 8)
         p:SetWrap(long)
         p:SetAutoStretchVertical(long and true or false)
+        p.UpdateColours = function(pnl)
+            pnl:SetTextColor(MenuTheme_TX)
+        end
         p:SizeToContentsY()
         p:Think()
         p:DockMargin(4, 4, 4, 4)
@@ -133,6 +140,9 @@ function PANEL:Select()
             p = vgui.Create("DLabel", SS_DescriptionPanel)
             p:SetFont("SS_DESCFONT")
             p:SetText(txt)
+            p.UpdateColours = function(pnl)
+                pnl:SetTextColor(MenuTheme_TX)
+            end
             p:SetContentAlignment(8)
             p:SetColor(SS_SwitchableColor)
             p:DockMargin(14, 6, 14, 6)
@@ -166,6 +176,9 @@ function PANEL:Select()
             local long = string.len(self.product.keepnotice) > 25
             p:SetContentAlignment(long and 7 or 8)
             p:SetWrap(long)
+            p.UpdateColours = function(pnl)
+                pnl:SetTextColor(MenuTheme_TX)
+            end
             p:SetAutoStretchVertical(long and true or false)
             p:SetColor(SS_SwitchableColor)
             p:SizeToContentsY()
@@ -178,21 +191,21 @@ function PANEL:Select()
         SS_ItemInteractionPanel = vgui("DPanel", SS_PREVPANE, function(p)
             p:Dock(BOTTOM)
             p:SetTall(64)
-            p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-            p:DockPadding(SS_SMALLMARGIN, SS_SMALLMARGIN, SS_SMALLMARGIN, SS_SMALLMARGIN)
-            p.Paint = SS_PaintBG
+            p:DockMargin(0, 0, 0, 0)
+            p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+            p.Paint = noop
 
             if self.item.configurable or (self.item.configurable_menu and (self.item.eq or self.item.never_equip)) then
                 vgui("DButton", function(p)
                     p:SetText(self.item.configurable_label or "Customize")
 
                     p.UpdateColours = function(pnl)
-                        pnl:SetTextColor(MenuTheme_TX)
+                        pnl:SetTextStyleColor(MenuTheme_TX)
                     end
 
                     p:Dock(TOP)
                     p:SetTall(24)
-                    p:DockMargin(0, 0, 0, SS_SMALLMARGIN)
+                    p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
 
                     p.DoClick = function(butn)
                         if (isfunction(self.item.configurable_menu)) then
@@ -218,7 +231,7 @@ function PANEL:Select()
                     p:SetText(self.item:SellValue() > 0 and "Sell for " .. tostring(self.item:SellValue()) .. " points" or "Discard")
 
                     p.UpdateColours = function(pnl)
-                        pnl:SetTextColor(MenuTheme_TX)
+                        pnl:SetTextStyleColor(MenuTheme_TX)
                     end
 
                     p:Dock(TOP)
