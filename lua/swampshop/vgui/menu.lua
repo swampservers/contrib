@@ -91,9 +91,6 @@ function PANEL:Init()
                 p.DoClick = function()
                     GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
                 end
-                p.DoRightClick = function()
-                    GetConVar("ps_themebleed"):SetBool(not GetConVar("ps_themebleed"):GetBool()) 
-                end
 
             end)
 
