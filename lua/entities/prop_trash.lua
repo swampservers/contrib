@@ -70,6 +70,11 @@ ENT.CanChangeTrashOwner = true
 function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "OwnerID")
     self:NetworkVar("Bool", 0, "Taped")
+    self:NetworkVar("Int", 0, "ItemID")
+end
+
+function ENT:GetRating()
+    return self:GetNW2Int("Rating", 4)
 end
 
 PropTrashExplosiveModels = {
@@ -98,6 +103,9 @@ function ENT:Initialize()
                 util.BlastDamage(self, self, self:GetPos(), 256, 120)
             end
         end
+
+        local phy = self:GetPhysicsObject()
+        phy:SetMass(math.Clamp(phy:GetMass(), 5, 100))
     end
 end
 

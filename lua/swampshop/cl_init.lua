@@ -387,9 +387,9 @@ function LootBoxAnimation(mdl, othermdls, namedata, rating)
                                 surface.SetDrawColor(0, 0, 0, 255 * alpha)
                                 surface.DrawRect(w / 2 - bw, h, bw * 2, 16)
                                 local r = SS_GetRating(rating)
-                                surface.SetDrawColor(r[3].r, r[3].g, r[3].b, 255 * alpha)
+                                surface.SetDrawColor(r.color.r, r.color.g, r.color.b, 255 * alpha)
                                 surface.DrawRect(w / 2 - bw + 1, h + 1, (bw * 2 - 2) * rating, 14)
-                                draw.SimpleText("Rating: " .. r[2], "DermaDefault", w / 2, h + 8, Color(255, 255, 255, 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                                draw.SimpleText("Rating: " .. r.name, "DermaDefault", w / 2, h + 8, Color(255, 255, 255, 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                                 font = "Trebuchet24"
                             end
 

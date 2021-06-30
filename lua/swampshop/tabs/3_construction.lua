@@ -41,18 +41,18 @@ end
 
 SS_Item({
     class = "prop",
-    value = 1000,
+    value = 5000,
     name = "Prop",
     description = "Haha, where did you find this one?",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
-    GetName = function(self) return table.remove(string.Explode("/", self.specs.model)) end,
+    GetName = function(self) return string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
     GetModel = function(self) return self.specs.model end,
-    OutlineColor = function(self) return SS_GetRating(self.specs.rating)[3] end,
+    OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
         if not specs.model then
-            specs.model = GetSandboxProp(75 * (1 + (math.random() ^ 3)))
+            specs.model = GetSandboxProp()
             ch = true
         end
 
@@ -69,24 +69,27 @@ SS_Item({
             SS_ActivateItem(self.id)
         end
     end,
+    CanCfgColor = function(self) return (SS_GetRating(self.specs.rating).id >= 5) and 5.0 or false end,
+    CanCfgImgur = function(self) return SS_GetRating(self.specs.rating).id >= 7 end,
     SpawnPrice = function(self) return 100 end,
     invcategory = "Props",
     never_equip = true
 })
 
 SS_Product({
-    class = 'sandbox2',
-    price = 25000,
+    class = 'sandbox',
+    price = 30000,
     name = 'Sandbox Lootbox',
     description = "A random prop that you can spawn from your inventory as much as you want (trading coming soon)",
     model = 'models/Items/ammocrate_smg1.mdl',
-    -- CannotBuy = CannotBuyTrash,
+    CannotBuy = function(self, ply)
+        if ply:SS_CountItem("prop") >= 100 then return "Max 100 props, please sell some!" end
+    end,
     OnBuy = function(self, ply)
         -- if ply.CANTSANDBOX then return end
         local item = SS_GenerateItem(ply, "prop")
         ply:SS_GiveNewItem(item, 4)
         local chosen = item.specs.model
-        local rating = item.specs.rating
         assert(chosen)
         local others = {}
 
@@ -98,9 +101,9 @@ SS_Product({
         net.WriteString(chosen)
         net.WriteTable(others)
 
-        net.WriteTable({table.remove(string.Explode("/", chosen))})
+        net.WriteTable({item:GetName(), "Features (UNFINISHED): " .. SS_GetRating(item.specs.rating).propnotes})
 
-        net.WriteFloat(rating)
+        net.WriteFloat(item.specs.rating)
         net.Send(ply)
 
         -- ply.CANTSANDBOX = true
