@@ -245,69 +245,56 @@ function PLAYER:Init()
     --holder for all these little buttons so we can dock them away from the edge
     vgui("DPanel", self, function(p)
         p.Paint = noop
-        p:SetWide(20)
+        p:SetWide(256)
+        p:SetTall(24)
         p:Dock(RIGHT)
-        p:DockMargin(2, 2, 2, 2)
+        local dockv = (p:GetParent():GetTall() - 24) / 2
+        p:DockMargin(0, dockv, SS_COMMONMARGIN, dockv)
 
+        --p.PerformLayout = function(pnl,w,h)
+        --p:SizeToChildren(true,false)
+        --end
         self.Mute = vgui("DImageButton", function(p)
-            p:SetSize(20, 20)
-            p:Dock(BOTTOM)
+            p:SetSize(22, 22)
+            p:DockMargin(1, 1, 1, 1)
+            p:Dock(RIGHT)
+            p:SetStretchToFit(true)
             p:SetImage("icon32/unmuted.png")
             p:SetToolTip("Toggle Voice Mute")
         end)
 
         self.ChatMute = vgui("DImageButton", function(p)
-            p:SetSize(20, 20)
-            p:Dock(TOP)
+            p:SetSize(22, 22)
+            p:DockMargin(1, 1, 1, 1)
+            p:Dock(RIGHT)
+            p:SetStretchToFit(true)
             p:SetImage("theater/chatunmuted.png")
             p:SetToolTip("Toggle Chat Mute")
         end)
-    end)
-
-    vgui("DPanel", self, function(p)
-        p.Paint = noop
-        p:Dock(RIGHT)
-        p:DockMargin(2, 2, 2, 2)
-        p:DockPadding(2, 2, 2, 2)
-        p:InvalidateParent(true)
 
         self.Ping = vgui("ScoreboardPlayerPing", function(p)
-            p:Dock(TOP)
+            p:Dock(RIGHT)
+            p:DockMargin(2, 0, 2, 0)
+            p:SetSize(28, 16)
         end)
 
         self.Country = vgui("DImageButton", function(p)
-            p:SetSize(16, 11)
-            p:SetText("")
-            p:CenterHorizontal()
-            p:AlignBottom(4)
-            p:AlignRight(4)
+            p:SetSize(16, 12)
+            p:DockMargin(2, 6, 2, 7)
+            p:Dock(RIGHT)
             p:SetImage("countries/us.png")
         end)
-
-        p:InvalidateLayout()
-        p:SizeToChildren(true, true)
-    end)
-
-    vgui("DPanel", self, function(p)
-        p.Paint = noop
-        p:SetTall(20)
-        p:Dock(RIGHT)
-        local cgap = (self:GetTall() - p:GetTall()) / 2
-        p:DockMargin(0, cgap, SS_COMMONMARGIN, cgap)
 
         if (showAFKs or LocalPlayer():IsStaff()) then
             self.AFK = vgui("DImage", function(p)
                 p:SetSize(16, 16)
-                p:DockMargin(2, 2, 2, 2)
+                p:DockMargin(2, 4, 2, 4)
                 p:Dock(RIGHT)
                 p:SetImage("icon16/time.png")
+                p:SetTooltip("AFK")
                 p:CenterVertical()
             end)
         end
-
-        p:InvalidateLayout()
-        p:SizeToChildren(true, true)
-        p:SetWide(256)
     end)
 end
 
@@ -485,7 +472,7 @@ function PLAYER:Paint(w, h)
     surface.SetDrawColor(BrandColorGrayDark)
     surface.DrawRect(0, 0, self:GetSize())
     surface.SetDrawColor(255, 255, 255, 255)
-    local xp = 370
+    local xp = 364
 
     if (IsValid(self.Player) and IsValid(self.AFK)) then
         self.AFK:SetVisible(self.Player:GetNWBool("afk"))
@@ -509,49 +496,17 @@ end
 
 vgui.Register("ScoreboardPlayer", PLAYER)
 local PLAYERPING = {}
-PLAYERPING.Padding = 8
 
 function PLAYERPING:Init()
-    self.Ping = Label("99", self)
-    self.Ping:SetFont("ScoreboardPing")
-    self.Ping:SetColor(Color(255, 255, 255))
-
     self.Heights = {4, 8, 12}
 
     self.PingAmounts = {300, 200, 100}
 
     self.BaseSpacing = 5
-    self.Bars = vgui.Create("DPanel", self)
-
-    self.Bars.Paint = function(pnl, w, h)
-        local x = 0
-        local height = self.Bars:GetTall()
-        surface.SetDrawColor(255, 255, 255, 10)
-
-        for _, h in pairs(self.Heights) do
-            surface.DrawRect(x, (height) - h, 4, h)
-            x = x + 6
-        end
-
-        -- Lit/Main
-        x = 0
-        surface.SetDrawColor(255, 255, 255, 255)
-
-        for i = 1, #self.Heights do
-            local h = self.Heights[i]
-
-            if self.PingVal < self.PingAmounts[i] then
-                surface.DrawRect(x, (height) - h, 4, h)
-            end
-
-            x = x + 6
-        end
-    end
 end
 
 function PLAYERPING:Update()
     local ping = self.Player:Ping()
-    self.Ping:SetText(ping)
     self.PingVal = ping
 end
 
@@ -560,36 +515,51 @@ function PLAYERPING:SetPlayer(ply)
     self:Update()
 end
 
-function PLAYERPING:PerformLayout()
-    self.Ping:SizeToContents()
-    self.Ping:SetWide(self.Ping:GetWide() + 2)
-    self.Ping:AlignRight(4)
-    self.Ping:CenterVertical()
-    self.Bars:SetSize(16, 16)
-    self.Bars:AlignLeft(4)
-    self.Bars:CenterVertical()
-end
-
 function PLAYERPING:Paint(w, h)
-    surface.SetTextColor(255, 255, 255, 10)
-    surface.SetFont("ScoreboardPing")
-    local zeros = "000"
+    if (not self:IsHovered()) then
+        local maxh = self.Heights[#self.Heights]
+        local bar = 7
+        local total = #self.Heights * bar
+        local x = w / 2 - (total / 2)
 
-    if self.PingVal >= 1 then
-        zeros = "00"
+        for i, height in pairs(self.Heights) do
+            if self.PingVal < self.PingAmounts[i] then
+                surface.SetDrawColor(255, 255, 255, 255)
+            else
+                surface.SetDrawColor(255, 255, 255, 10)
+            end
+
+            surface.DrawRect(x, (h / 2) - (maxh / 2) + (maxh - height), bar - 2, height)
+            x = x + bar
+        end
+
+        -- Lit/Main
+        x = 0
+        surface.SetDrawColor(255, 255, 255, 255)
+    else
+        surface.SetTextColor(255, 255, 255, 10)
+        surface.SetFont("ScoreboardPing")
+        local zeros = "000"
+
+        if self.PingVal >= 1 then
+            zeros = "00"
+        end
+
+        if self.PingVal >= 10 then
+            zeros = "0"
+        end
+
+        if self.PingVal >= 100 then
+            zeros = ""
+        end
+
+        local tw, th = surface.GetTextSize(zeros)
+        surface.SetTextPos(0, h / 2 - th / 2)
+        surface.DrawText(zeros)
+        surface.SetTextColor(255, 255, 255, 255)
+        surface.SetTextPos(tw, h / 2 - th / 2)
+        surface.DrawText(self.PingVal)
     end
-
-    if self.PingVal >= 10 then
-        zeros = "0"
-    end
-
-    if self.PingVal >= 100 then
-        zeros = ""
-    end
-
-    local w, h = surface.GetTextSize(zeros)
-    surface.SetTextPos(self.Ping.x - w - 1, self.Ping.y)
-    surface.DrawText(zeros)
 end
 
 vgui.Register("ScoreboardPlayerPing", PLAYERPING)
