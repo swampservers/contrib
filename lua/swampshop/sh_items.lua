@@ -105,6 +105,12 @@ function SS_WeaponBlueprintItem(item)
     SS_Item(item)
 end
 
+--todo move this
+function SS_ItemOrProduct(iop)
+    iop.GetName = iop.GetName or function(self) return self.name end
+    iop.GetModel = iop.GetModel or function(self) return self.model end
+end
+
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
     if item.wear then
@@ -137,6 +143,8 @@ function SS_Item(item)
         if self.owner ~= SS_SAMPLE_ITEM_OWNER and self:CannotEquip() then
             self.eq = false
         end
+
+        if self.SanitizeSpecs and self:SanitizeSpecs() then return true end
     end
 
     function item:CannotEquip()
@@ -177,11 +185,28 @@ function SS_Item(item)
         return math.floor(self.value * 0.8)
     end
 
+    item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
+
+    item.HoverClick = item.HoverClick or function(self, second)
+        if second then
+            local status = (not self.eq) and self:CannotEquip() or nil
+
+            if status then
+                surface.PlaySound("common/wpn_denyselect.wav")
+                LocalPlayerNotify(status)
+            else
+                surface.PlaySound("weapons/smg1/switch_single.wav")
+                SS_EquipItem(self.id, not self.eq)
+            end
+        end
+    end
+
+    SS_ItemOrProduct(item)
     item.__index = item
     SS_Items[item.class] = item
 
     if item.price then
-        item.value = item.price
+        item.value = item.value or item.price
         SS_ItemProduct(item)
     end
 

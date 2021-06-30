@@ -42,20 +42,11 @@ function PANEL:OnMousePressed(b)
             end
 
             self.prebuyclick = nil
-            surface.PlaySound("UI/buttonclick.wav")
-            SS_BuyProduct(self.product.class)
+            self.product:HoverClick(true)
         end
     else
         if self:IsSelected() then
-            local status = (not self.item.eq) and self.item:CannotEquip() or nil
-
-            if status then
-                surface.PlaySound("common/wpn_denyselect.wav")
-                LocalPlayerNotify(status)
-            else
-                surface.PlaySound("weapons/smg1/switch_single.wav")
-                SS_EquipItem(self.item.id, not self.item.eq)
-            end
+            self.item:HoverClick(true)
         else
             self:Select()
         end
@@ -103,7 +94,7 @@ function PANEL:Select()
     SS_HoverIOP = SS_HoverItem or SS_HoverProduct
     local p = vgui.Create("DLabel", SS_DescriptionPanel)
     p:SetFont("SS_DESCTITLEFONT")
-    p:SetText(self.iop.name)
+    p:SetText(self.iop:GetName())
     p:SetColor(SS_SwitchableColor)
     p:SetContentAlignment(5)
     p:SizeToContents()
@@ -268,7 +259,7 @@ end
 function PANEL:Setup()
     local DModelPanel = vgui.Create('DModelPanel', self)
     --DModelPanel:SetModel(self.data.model)
-    DModelPanel.model2set = self.iop.model
+    DModelPanel.model2set = self.iop:GetModel()
     DModelPanel:Dock(FILL)
 
     function DModelPanel:LayoutEntity(ent)
@@ -402,16 +393,11 @@ function PANEL:Think()
         if self.hovered then
             self.barheight = 30
             self.textfont = "SS_Price"
-
-            if self.prebuyclick then
-                self.text = self.product.price == 0 and ">  GET  <" or ">  BUY  <"
-            else
-                self.text = self.product.price == 0 and "FREE" or "-" .. tostring(self.product.price)
-            end
+            self.text = self.product:HoverText(self.prebuyclick)
         else
             self.barheight = 20
             self.textfont = "SS_ProductName"
-            self.text = self.product.name
+            self.text = self.product:GetName()
         end
 
         self.textcolor = SS_ColorWhite
@@ -426,7 +412,7 @@ function PANEL:Think()
 
         self.barheight = 20
         self.textfont = "SS_ProductName"
-        self.text = self.item.name
+        self.text = self.item:GetName()
         local leqc = 0
         local totalc = 0
 
@@ -452,7 +438,7 @@ function PANEL:Think()
             if self.hovered then
                 self.barheight = 30
                 self.textfont = "SS_Price"
-                self.text = self.item.eq and "HOLSTER" or "EQUIP"
+                self.text = self.item:HoverText(true)
             end
         elseif self.hovered then
             self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
@@ -470,6 +456,16 @@ function PANEL:PaintOver(w, h)
         local c = self.BGColor
         surface.SetDrawColor(Color(c.r, c.g, c.b, 144))
         surface.DrawRect(0, 0, w, h)
+    end
+
+    if self.iop.OutlineColor then
+        local c = self.iop:OutlineColor()
+
+        if c then
+            surface.SetDrawColor(c)
+            -- surface.DrawOutlinedRect(0, 0, w, h + 7, 8)
+            surface.DrawRect(0, 0, w, 16)
+        end
     end
 
     if self.icon then

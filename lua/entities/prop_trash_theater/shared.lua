@@ -207,19 +207,6 @@ end
 
 function ENT:OnShoot(att)
     if Safe(self) then return end
-    self.Shots = self.Shots - 1
 
-    timer.Simple(10, function()
-        if IsValid(self) then
-            self.Shots = self.Shots + 1
-        end
-    end)
-
-    if self.Shots < 1 then
-        self:UnTape()
-    else
-        if IsValid(att) then
-            att:Notify(tostring(self.Shots))
-        end
-    end
+    return BaseClass.OnShoot(self, att)
 end

@@ -150,7 +150,7 @@ function PANEL:Paint()
     local mdl = ply:GetModel()
 
     if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        mdl = SS_HoverIOP.model
+        mdl = SS_HoverIOP:GetModel()
     end
 
     require_workshop_model(mdl)

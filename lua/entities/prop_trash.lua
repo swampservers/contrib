@@ -351,6 +351,28 @@ function ENT:CanTape(userid)
     return ((self:GetOwnerID() == userid) and (lown == nil) and (self:GetLocationClass() == TRASHLOC_BUILD)) or (lown == userid)
 end
 
-function ENT:OnShoot()
-    self:UnTape()
+function ENT:OnShoot(att)
+    if self.LowQuality then
+        self:Remove()
+    end
+
+    if not self.Shots then
+        self:UnTape()
+    end
+
+    self.Shots = self.Shots - 1
+
+    timer.Simple(10, function()
+        if IsValid(self) then
+            self.Shots = self.Shots + 1
+        end
+    end)
+
+    if self.Shots < 1 then
+        self:UnTape()
+    else
+        if IsValid(att) then
+            att:Notify(tostring(self.Shots))
+        end
+    end
 end

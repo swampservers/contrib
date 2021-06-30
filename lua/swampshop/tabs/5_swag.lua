@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
+-- INSTALL: CINEMA 
 SS_Tab("Swag", "color_swatch")
 SS_Heading("Accessories")
 

@@ -116,7 +116,7 @@ Tail01
 Tail02
 Tail03
 ]]
-SS_InvCategories = {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"}
+SS_InvCategories = {"Blueprints", "Props", "Playermodels", "Accessories", "Mods", "Upgrades", "Other"}
 
 SS_Attachments = {
     eyes = "I'm special",
@@ -172,3 +172,23 @@ SS_AUCTION_BID_MULTIPLIER = 1.1
 SS_AUCTION_PAY_FRACTION = 0.9
 SS_AUCTION_DURATION = 3 * 24 * 3600
 SS_AUCTION_BID_DURATION = 300
+
+SS_ItemRatings = {
+    {0.1, "doo doo", Color(100, 50, 0)},
+    {0.25, "Worn out", Color(80, 80, 80)},
+    {0.4, "Knockoff", Color(160, 160, 160)},
+    {0.7, "Standard Issue", Color(210, 210, 210)},
+    {0.85, "Upgraded", Color(80, 220, 0)},
+    {0.95, "Rare", Color(0, 128, 255)},
+    {0.995, "Epic", Color(128, 0, 255)},
+    {1.0, "LEGENDARY", Color(255, 128, 0)},
+    {1337, "BASED", Color(255, 0, 0)},
+}
+
+function SS_GetRating(r)
+    for i, v in ipairs(SS_ItemRatings) do
+        if v[1] >= r then return v end
+    end
+
+    return SS_ItemRatings[#SS_ItemRatings]
+end

@@ -536,31 +536,6 @@ function SWEP:DrawWorldModel()
     end
 end
 
-if CLIENT then
-    -- function draw.CenteredWordBox(bordersize,  x,  y, text, font, boxcolor, textcolor)
-    --     surface.SetFont(font)
-    --     w,h = surface.GetTextSize(text)
-    --     draw.WordBox(bordersize,  x - (bordersize + w/2),  y - (bordersize + h/2), text, font, boxcolor, textcolor)
-    -- end
-    function draw.WordBox(bordersize, x, y, text, font, color, fontcolor, xalign)
-        surface.SetFont(font)
-        local w, h = surface.GetTextSize(text)
-
-        if (xalign == TEXT_ALIGN_CENTER) then
-            x = x - (bordersize + w / 2)
-        elseif (xalign == TEXT_ALIGN_RIGHT) then
-            x = x - (bordersize * 2 + w)
-        end
-
-        draw.RoundedBox(bordersize, x, y, w + bordersize * 2, h + bordersize * 2, color)
-        surface.SetTextColor(fontcolor.r, fontcolor.g, fontcolor.b, fontcolor.a)
-        surface.SetTextPos(x + bordersize, y + bordersize)
-        surface.DrawText(text)
-
-        return w + bordersize * 2, h + bordersize * 2
-    end
-end
-
 local garfMat = Material("vgui/garfield.png", "smooth")
 local lasagnaMat = Material("vgui/lasagna.png", "smooth")
 

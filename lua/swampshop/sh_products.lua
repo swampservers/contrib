@@ -38,6 +38,16 @@ function SS_Product(product)
         end
     end
 
+    product.HoverText = product.HoverText or function(self, second) return second and (self.price == 0 and ">  GET  <" or ">  BUY  <") or (self.price == 0 and "FREE" or "-" .. tostring(self.price)) end
+
+    product.HoverClick = product.HoverClick or function(self, second)
+        if second then
+            surface.PlaySound("UI/buttonclick.wav")
+            SS_BuyProduct(self.class)
+        end
+    end
+
+    SS_ItemOrProduct(product)
     local tab = _SS_TABADDTARGET.layout
     table.insert(tab[#tab].products, product)
     SS_Products[product.class] = product
@@ -47,24 +57,25 @@ function SS_Product(product)
     end
 end
 
+function SS_GenerateItem(ply, class)
+    local item = SS_MakeItem(ply, {
+        class = class,
+        id = -1,
+        specs = {},
+        cfg = {},
+        eq = true,
+    })
+
+    item:Sanitize()
+
+    return item
+end
+
+--NOMINIFY
 function SS_ItemProduct(item)
     local product = item --TODO maybe only copy needed keys
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((product.price or 0) == 0 and "return" or "sell") .. " it."
-
-    function product:GenerateItem(ply)
-        local item = SS_MakeItem(ply, {
-            class = self.class,
-            id = -1,
-            cfg = {},
-            eq = true,
-        })
-
-        item:Sanitize()
-
-        return item
-    end
-
-    product.sample_item = product:GenerateItem(SS_SAMPLE_ITEM_OWNER)
+    product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.class)
 
     function product:CannotBuy(ply)
         local maxcount = (self.accessory_slot and ply:SS_AccessorySlots() * (self.perslot or 1)) or self.maxowned or 1
@@ -72,7 +83,7 @@ function SS_ItemProduct(item)
     end
 
     function product:OnBuy(ply)
-        ply:SS_GiveItem(self:GenerateItem(ply))
+        ply:SS_GiveNewItem(SS_GenerateItem(ply, self.class))
     end
 
     SS_Product(product)
@@ -107,6 +118,7 @@ function SS_WeaponProduct(product)
 end
 
 function SS_WeaponAndAmmoProduct(product)
+    -- used by buyammo system
     function product:AmmoTypeAndAmount(wep)
         local ammotype, ammogive = (self.ammotype or game.GetAmmoName(self.clip2 and wep:GetSecondaryAmmoType() or wep:GetPrimaryAmmoType())), (self.amount or math.max(1, (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) or 0))
         assert(ammotype ~= nil and ammogive > 0, self.class .. " " .. ammogive .. " " .. (ammotype or "nil"))
