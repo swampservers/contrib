@@ -46,6 +46,7 @@ function CONTENTPICKER:Init()
     self.Scroll = vgui.Create("DScrollPanel", self)
     self.Scroll:Dock(FILL)
     self.Scroll.Paint = noop()
+
     self.Bottom = vgui.Create("DPanel", self)
     self.Bottom:Dock(TOP)
     self.Bottom:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
@@ -70,6 +71,7 @@ function CONTENTPICKER:Init()
     self.AddButton:Dock(RIGHT)
     self.AddButton.Paint = SS_PaintButtonBrandHL
     local textentry = self.AddField
+
 
     self.AddButton.DoClick = function(btn)
         if (self.AddField:GetText() == "") then return end
@@ -119,8 +121,11 @@ function CONTENTPICKER:PerformLayout(w, h)
     local height = 0
     local l, u, r, d = self.Tiles:GetDockMargin()
     height = height + self.Tiles:GetTall() + u + d
+
+    if(IsValid(self.Bottom))then
     local l, u, r, d = self.Bottom:GetDockMargin()
     height = height + self.Bottom:GetTall() + u + d
+    end
     self:SetTall(height)
     --self.Tiles:InvalidateLayout(true)
     --self.Scroll:InvalidateLayout(true)
@@ -141,9 +146,10 @@ function CONTENTPICKER:PerformLayout(w, h)
     for k, v in pairs(self.Tiles:GetChildren()) do
         v:SetSize(divsize, divsize)
     end
-
-    self.AddButton:AlignRight(4)
-    self.AddButton:CenterVertical()
+    if(IsValid(self.Bottom))then
+    self.Bottom:AlignRight(4)
+    self.Bottom:CenterVertical()
+    end
 end
 
 --SS_PaintBG(self,w,h) 
@@ -201,6 +207,14 @@ function CONTENTPICKER:Add(url, nsfw)
     tile.DoClick = function(pnl)
         self:OnChoose(tile:GetImgur())
     end
+    tile.DoRightClick = function(pnl)
+        local menu = DermaMenu()
+        menu:AddOption("Delete",function()
+        
+        end)
+        menu:Open()
+    end
+    
 end
 
 function CONTENTPICKER:AddPermanent(url)
