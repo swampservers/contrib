@@ -152,7 +152,21 @@ function PANEL:Init()
         p:Dock(BOTTOM)
         p.Paint =  SS_PaintMD
         
+        vgui("DImageButton", function(p)
+            p:SetImage("icon16/bug.png")
+            p:SetStretchToFit(false)
+            p:AlignRight()
+            p:AlignTop()  
+            p.Paint = SS_PaintDarkenOnHover
+            p:SetSize(24, 24)
+            p:SetTooltip("This menu has been changed a lot recently!\nClick here to report any problems you encounter.\nYou will be redirected to the steam group.")
+            p:Dock(RIGHT)
+            p:DockMargin(SS_COMMONMARGIN,SS_COMMONMARGIN,SS_COMMONMARGIN,SS_BOTBARHEIGHT - 24 - SS_COMMONMARGIN)
+            p.DoClick = function()
+                gui.OpenURL('https://steamcommunity.com/groups/swampservers')
+            end
 
+        end)
         vgui("DPanel", function(p)
             p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
             p:Dock(LEFT)
