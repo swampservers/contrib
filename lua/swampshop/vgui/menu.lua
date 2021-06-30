@@ -6,29 +6,34 @@ net.Receive("SS_PointOutInventory", function()
     SS_INVENTORY_POINT_OUT = RealTime()
 end)
 
-
 function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
     self.testval = true
 
     --nav bar
+    
     self.PaintOver = function(pnl, w, h)
         local navbottom = self.navbar:GetTall()
-        cam.IgnoreZ(true)
-        DisableClipping(true)
-        BrandDropDownGradient(0, navbottom, w)
-        DisableClipping(false)
-        cam.IgnoreZ(false)
+
+            local frogsize = 208
+            local edge = 308
+            ofs = (edge / 512) * frogsize
+            surface.SetDrawColor(Color(255, 255, 255, 255))
+            surface.SetMaterial(Material("vgui/frog.png"))
+            DisableClipping(true)
+            render.ClearDepth()
+            cam.IgnoreZ(true)
+            surface.DrawTexturedRect(w - frogsize, h - ofs, frogsize, frogsize)
+            cam.IgnoreZ(false)
+            DisableClipping(false)
+
     end
 
     self.navbar = vgui("DPanel", self, function(navbar)
         navbar:SetTall(SS_NAVBARHEIGHT)
         navbar:Dock(TOP)
-
-        navbar.Paint = function(pnl, w, h)
-            BrandBackgroundPattern(0, 0, w, h, 0)
-        end
+        navbar.Paint = SS_PaintBrandStripes
 
         --title text 
         vgui("DLabel", function(p)
@@ -141,23 +146,53 @@ function PANEL:Init()
         local xo = p:GetWide() + SS_BOTBARHEIGHT
         p:SetTall(SS_BOTBARHEIGHT)
         p:Dock(BOTTOM)
-        p.Paint = SS_PaintMD
-
-        vgui("AvatarImage", function(p)
-            p:SetPlayer(LocalPlayer(), 184)
-            p:SetSize(SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2), SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2))
-            p:SetPos(SS_COMMONMARGIN, SS_COMMONMARGIN)
-        end)
+        p.Paint =  SS_PaintMD
+        
 
         vgui("DPanel", function(p)
-            p:SetWide(300)
-            p:DockMargin(SS_BOTBARHEIGHT, 0, 0, 0)
+            p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
             p:Dock(LEFT)
+            p:SetWide(420)
+            p.Paint = noop
+            local av = vgui("AvatarImage", function(p)
+                p:Dock(LEFT)
+                p:SetPlayer(LocalPlayer(), 184)
+                p:SetSize(SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2), SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2))
+                p:SetPos(SS_COMMONMARGIN, SS_COMMONMARGIN)
+            end)
 
-            p.Paint = function(pnl, w, h)
-                draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, (h / 2) - 13, MenuTheme_TX, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-                draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, MenuTheme_TX, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            end
+            vgui("DPanel", function(p)
+                p:SetWide(384 - av:GetWide() - SS_COMMONMARGIN*2)
+                p:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
+                p:Dock(FILL)
+                p:InvalidateLayout(true)
+                p.Paint = function(pnl, w, h)
+                    --SS_PaintDirty(pnl,w,h)
+                    draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, 16, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, h-2, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+                end
+
+                vgui('DImageButton', function(p)
+                    p:SetSize(16, 16)
+                    p:SetPos(p:GetParent():GetWide() - 16,32)
+                    p:SetTooltip("Give Points")
+                    p:Dock(RIGHT)
+                    local topm = SS_BOTBARHEIGHT - SS_COMMONMARGIN*3 - 16
+                    p:DockMargin(SS_COMMONMARGIN,topm,SS_COMMONMARGIN + 56,SS_COMMONMARGIN)
+                    p:SetTextColor(MenuTheme_TX)
+                    p:SetImage("icon16/coins_add.png")
+                    --p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+                    p:AlignLeft(SS_COMMONMARGIN)
+
+                    p.DoClick = function()
+                        vgui.Create('DPointShopGivePoints')
+                    end
+                end)
+            end)
+
+            
+                
+            
         end)
 
         PointshopDollarParticlePoints = -0.2
@@ -215,7 +250,7 @@ function PANEL:Init()
                     end
                 end
 
-                local tc = MenuTheme_TX
+                local tc = MenuTheme_TXAlt
                 --[[if self:IsHovered() then
                 tc = Color(175,230,69)
             end]]
@@ -231,53 +266,47 @@ function PANEL:Init()
             p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
             --p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
             p.Paint = function() end
-
-            vgui('DButton', function(p)
-                p:SetText("Give Points")
-                p:SetTextColor(MenuTheme_TX)
-                --p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-                p:Dock(BOTTOM)
-                p.Paint = SS_PaintButtonBrandHL
-
-                p.DoClick = function()
-                    vgui.Create('DPointShopGivePoints')
-                end
-            end)
         end)
     end)
 
-    --preview pane
-    SS_PREVPANE = vgui("DPanel", self, function(p)
-        p:SetWide(SS_RPANEWIDTH)
-        p:Dock(RIGHT)
-        p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-        p.Paint = SS_PaintFG
-        SS_PreviewPane = p
-
-        vgui("DPointShopPreview", function(p)
-            p:Dock(FILL)
-
-            SS_DescriptionPanel = vgui("DPanel", function(p)
-                p:Dock(BOTTOM)
-                p:SetTall(1)
-                p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-
-                p.Think = function()
-                    SS_DescriptionPanel:InvalidateParent()
-                    SS_DescriptionPanel:InvalidateLayout()
-                    SS_DescriptionPanel:SizeToChildren(false, true)
-                    SS_DescriptionPanel:PerformLayout()
-                end
-
-                p.Paint = noop
-            end)
-        end)
-    end)
-
-    --lpane
-    self.lpane = vgui("DPanel", self, function(p)
+    --whole page contents
+    vgui("DPanel", self, function(p)
+        p.BigClip = true
+        p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
         p:Dock(FILL)
         p.Paint = noop
+
+        --preview pane
+        SS_PREVPANE = vgui("DPanel", function(p)
+            p:SetWide(SS_RPANEWIDTH)
+            p:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
+            p:Dock(RIGHT)
+            p.Paint = SS_PaintFG
+            SS_PreviewPane = p
+
+            SS_PREVIEW = vgui("DPointShopPreview", function(p)
+                p:Dock(FILL)
+
+                SS_DescriptionPanel = vgui("DPanel", function(p)
+                    p:Dock(BOTTOM)
+                    p:SetTall(1)
+                    p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+
+                    p.PerformLayout = function()
+                        SS_DescriptionPanel:InvalidateParent()
+                        SS_DescriptionPanel:SizeToChildren(false, true)
+                    end
+
+                    p.Paint = noop
+                end)
+            end)
+        end)
+
+        --lpane
+        self.lpane = vgui("DPanel", function(p)
+            p:Dock(FILL)
+            p.Paint = noop
+        end)
     end)
 
     local btns = {}
@@ -286,7 +315,7 @@ function PANEL:Init()
     local function NewCategory(catname, icon, align)
         local panel = vgui.Create('DPanel', self.lpane)
         panel:Dock(FILL)
-        panel:DockMargin(SS_COMMONMARGIN, 0, 0, SS_COMMONMARGIN)
+        panel:DockMargin(0, 0, 0, 0)
         panel.Paint = function() end
 
         if firstCat then
@@ -300,8 +329,10 @@ function PANEL:Init()
         --add item list
         local DScrollPanel = vgui('DScrollPanel', panel, function(p)
             p:Dock(FILL)
-            p:DockMargin(0, SS_COMMONMARGIN, 0, 0)
-            p.VBar:DockMargin(0, 0, 0, 0)
+            p:DockMargin(0, 0, 0, 0)
+            p:DockPadding(0, 0, 0, 0)
+            --p.Paint = SS_PaintDirty
+            --p.VBar:DockMargin(0, 0, 0, 0)
             p.VBar:SetWide(SS_SCROLL_WIDTH)
             SS_SetupVBar(p.VBar)
 
@@ -557,6 +588,11 @@ function PANEL:Init()
     SS_CustomizerPanel:Dock(FILL)
     SS_CustomizerPanel:Close()
 
+    --quick hack to get this shit outta my face
+    if (LocalPlayer():IsSuperAdmin()) then
+        IN_STEAMGROUP = 1
+    end
+
     if (IN_STEAMGROUP or 0) <= 0 then
         p = vgui.Create("DButton", self)
         p:SetZPos(1000)
@@ -634,7 +670,11 @@ function PANEL:Init()
 end
 
 function PANEL:Paint(w, h)
-    Derma_DrawBackgroundBlur(self)
+    --Derma_DrawBackgroundBlur(self)
+    DisableClipping(true)
+    local border = 8
+    draw.BoxShadow(-2, -2, w + 4, h + 4, border, 1)
+    DisableClipping(false)
     SS_PaintBG(self, w, h)
 end
 
