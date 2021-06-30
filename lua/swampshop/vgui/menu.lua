@@ -148,7 +148,7 @@ function PANEL:Init()
         p:SetTall(SS_BOTBARHEIGHT)
         p:Dock(BOTTOM)
         p.Paint =  SS_PaintMD
-        
+        --[[
         vgui("DImageButton", function(p)
             p:SetImage("icon16/bug.png")
             p:SetStretchToFit(false)
@@ -164,6 +164,7 @@ function PANEL:Init()
             end
 
         end)
+        ]]
         vgui("DPanel", function(p)
             p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
             p:Dock(LEFT)
