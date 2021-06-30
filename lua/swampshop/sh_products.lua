@@ -71,9 +71,10 @@ function SS_GenerateItem(ply, class)
     return item
 end
 
---NOMINIFY
 function SS_ItemProduct(item)
-    local product = item --TODO maybe only copy needed keys
+    local product = table.Copy(item) --TODO maybe only copy needed keys
+    product.HoverClick = nil
+    product.HoverText = nil
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((product.price or 0) == 0 and "return" or "sell") .. " it."
     product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.class)
 

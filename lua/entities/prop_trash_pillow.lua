@@ -4,6 +4,7 @@ AddCSLuaFile()
 DEFINE_BASECLASS("prop_trash")
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.CanChangeTrashOwner = false
+AddTrashClass("prop_trash_pillow", "models/swamponions/bodypillow.mdl")
 
 function ENT:OnTakeDamage(dmg)
     if dmg:GetDamageType() == DMG_ACID then

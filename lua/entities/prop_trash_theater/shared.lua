@@ -5,57 +5,6 @@ DEFINE_BASECLASS("prop_trash")
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.CanChangeTrashOwner = false
 
-function ENT:SetupDataTables()
-    BaseClass.SetupDataTables(self, true)
-    self:NetworkVar("String", 1, "TheaterName")
-    self:NetworkVar("Int", 0, "MobileLocationIndex")
-end
-
-function ENT:Initialize()
-    BaseClass.Initialize(self, true)
-
-    if SERVER then
-        self:SetMobileLocationIndex(0)
-        self:SetTheaterName("MOBILETHEATER " .. self:GetOwnerID())
-        self.Shots = 6
-        self:FindTheaterName()
-    end
-end
-
-function ENT:Draw()
-    local realmodel = self:GetModel()
-
-    if realmodel == "models/hunter/plates/plate1x2.mdl" then
-        self:SetModel("models/props_phx/rt_screen.mdl")
-        local oldpos = self:GetPos()
-        local oldang = self:GetAngles()
-        local wpos, wang = LocalToWorld(Vector(26, 0, -3), Angle(-90, 0, 0), oldpos, oldang)
-        self:SetPos(wpos)
-        self:SetAngles(wang)
-        self:SetModelScale(1.36)
-        self:SetupBones()
-        BaseClass.Draw(self, true)
-        self:SetModelScale(1)
-        self:SetPos(oldpos)
-        self:SetAngles(oldang)
-        self:SetModel(realmodel)
-    else
-        BaseClass.Draw(self, true)
-    end
-
-    TrashDrawProtectionOutlines(self)
-end
-
-function ENT:DrawTranslucent()
-    if PropTrashLookedAt == self then
-        render.CullMode(MATERIAL_CULLMODE_CW)
-        render.SetColorMaterial()
-        local col = self:GetTaped() and Color(128, 255, 255, 60) or Color(255, 255, 255, 20)
-        render.DrawBox(Vector(0, 0, 0), Angle(0, 0, 0), self:GetAreaMin(), self:GetAreaMax(), col, false)
-        render.CullMode(MATERIAL_CULLMODE_CCW)
-    end
-end
-
 TrashMobileTheaterData = {
     ["models/props_c17/tv_monitor01.mdl"] = {
         center = Vector(50, 0, 0),
@@ -94,6 +43,48 @@ TrashMobileTheaterData = {
         }
     }
 }
+
+AddTrashClass("prop_trash_theater", "TrashMobileTheaterData")
+
+function ENT:SetupDataTables()
+    BaseClass.SetupDataTables(self, true)
+    self:NetworkVar("String", 1, "TheaterName")
+    self:NetworkVar("Int", 0, "MobileLocationIndex")
+end
+
+function ENT:Draw()
+    local realmodel = self:GetModel()
+
+    if realmodel == "models/hunter/plates/plate1x2.mdl" then
+        self:SetModel("models/props_phx/rt_screen.mdl")
+        local oldpos = self:GetPos()
+        local oldang = self:GetAngles()
+        local wpos, wang = LocalToWorld(Vector(26, 0, -3), Angle(-90, 0, 0), oldpos, oldang)
+        self:SetPos(wpos)
+        self:SetAngles(wang)
+        self:SetModelScale(1.36)
+        self:SetupBones()
+        BaseClass.Draw(self, true)
+        self:SetModelScale(1)
+        self:SetPos(oldpos)
+        self:SetAngles(oldang)
+        self:SetModel(realmodel)
+    else
+        BaseClass.Draw(self, true)
+    end
+
+    TrashDrawProtectionOutlines(self)
+end
+
+function ENT:DrawTranslucent()
+    if PropTrashLookedAt == self then
+        render.CullMode(MATERIAL_CULLMODE_CW)
+        render.SetColorMaterial()
+        local col = self:GetTaped() and Color(128, 255, 255, 60) or Color(255, 255, 255, 20)
+        render.DrawBox(Vector(0, 0, 0), Angle(0, 0, 0), self:GetAreaMin(), self:GetAreaMax(), col, false)
+        render.CullMode(MATERIAL_CULLMODE_CCW)
+    end
+end
 
 function ENT:GetAreaMin()
     local tmtd = TrashMobileTheaterData[self:GetModel()]
@@ -202,10 +193,4 @@ end
 
 function ENT:Protects(other)
     return self:GetTaped() and self:ProtectsIfTaped(other)
-end
-
-function ENT:OnShoot(att)
-    if Safe(self) then return end
-
-    return BaseClass.OnShoot(self, att)
 end

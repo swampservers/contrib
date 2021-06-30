@@ -458,6 +458,19 @@ function PANEL:PaintOver(w, h)
         surface.DrawRect(0, 0, w, h)
     end
 
+    if self.iop.class == "sandbox" then
+        local m = ImgurMaterial({
+            id = "nrLaHIZ.png",
+            shader = "UnlitGeneric",
+            params = [[{["$translucent"]=1}]],
+            worksafe = true
+        })
+
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.SetMaterial(m)
+        surface.DrawTexturedRect(0, 0, w, h)
+    end
+
     if self.iop.OutlineColor then
         local c = self.iop:OutlineColor()
 

@@ -1,8 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SS_Tab("Construction", "bricks")
-SS_Heading("Tools")
 
+-- SS_Heading("Tools")
 local function CannotBuyTrash(self, ply)
     if SERVER then return CannotMakeTrash(ply) end
 end
@@ -26,7 +26,7 @@ SS_WeaponProduct({
 SS_Product({
     class = 'trash',
     price = 0,
-    name = 'Trash',
+    name = 'Random Trash',
     description = "Spawn a random piece of junk for building stuff with",
     model = 'models/props_junk/cardboard_box001b.mdl',
     CannotBuy = CannotBuyTrash,
@@ -114,7 +114,7 @@ SS_Product({
     end
 })
 
-SS_Heading("Props")
+SS_Heading("More Props")
 
 SS_Product({
     class = 'plate1',
