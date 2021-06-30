@@ -8,6 +8,8 @@ include("vgui/item.lua")
 include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
+include("vgui/imgur_manager.lua")
+
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3

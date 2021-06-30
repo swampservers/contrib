@@ -6,6 +6,9 @@ include("config.lua")
 include("sh_layout.lua")
 include("sh_products.lua")
 include("sh_items.lua")
+AddCSLuaFile("vgui/imgur_manager.lua")
+
+
 local Player = FindMetaTable('Player')
 
 function SS_Initialize()
