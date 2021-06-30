@@ -134,7 +134,7 @@ SS_Item({
     model = 'models/maxofs2d/logo_gmod_b.mdl',
     GetName = function(self) return (weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown" end,
     GetModel = function(self) return (weapons.GetStored(self.specs.class or "") or {}).WorldModel or self.model end,
-    OutlineColor = function(self) return SS_GetRating(self.specs.rating)[3] end,
+    OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
@@ -227,7 +227,7 @@ end
 --         end
 --     end
 -- end)
-SS_Heading("To buy ammo, press your Undo keybind")
+SS_Heading("To buy ammo, press Undo (default Z)")
 -- SS_Product({
 --     class = 'cssammo',
 --     price = 2000, --5000,3000

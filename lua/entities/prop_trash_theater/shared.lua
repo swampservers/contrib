@@ -48,7 +48,6 @@ end
 
 function ENT:DrawTranslucent()
     if PropTrashLookedAt == self then
-        print("DRAW", self:GetAreaMin(), self:GetAreaMax())
         render.CullMode(MATERIAL_CULLMODE_CW)
         render.SetColorMaterial()
         local col = self:GetTaped() and Color(128, 255, 255, 60) or Color(255, 255, 255, 20)

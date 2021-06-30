@@ -174,20 +174,74 @@ SS_AUCTION_DURATION = 3 * 24 * 3600
 SS_AUCTION_BID_DURATION = 300
 
 SS_ItemRatings = {
-    {0.1, "doo doo", Color(100, 50, 0)},
-    {0.25, "Worn out", Color(80, 80, 80)},
-    {0.4, "Knockoff", Color(160, 160, 160)},
-    {0.7, "Standard Issue", Color(210, 210, 210)},
-    {0.85, "Upgraded", Color(80, 220, 0)},
-    {0.95, "Rare", Color(0, 128, 255)},
-    {0.995, "Epic", Color(128, 0, 255)},
-    {1.0, "LEGENDARY", Color(255, 128, 0)},
-    {1337, "BASED", Color(255, 0, 0)},
+    {
+        id = 1,
+        max = 0.1,
+        name = "doo doo",
+        color = Color(100, 50, 0),
+        propnotes = "Can't be frozen, destroyed by light damage"
+    },
+    {
+        id = 2,
+        max = 0.25,
+        name = "Worn out",
+        color = Color(80, 80, 80),
+        propnotes = "Destroyed by light damage"
+    },
+    {
+        id = 3,
+        max = 0.4,
+        name = "Knockoff",
+        color = Color(160, 160, 160),
+        propnotes = "Unfrozen by light damage"
+    },
+    {
+        id = 4,
+        max = 0.7,
+        name = "Standard Issue",
+        color = Color(210, 210, 210),
+        propnotes = "Takes 1 heavy shot to unfreeze"
+    },
+    {
+        id = 5,
+        max = 0.85,
+        name = "Upgraded",
+        color = Color(80, 220, 0),
+        propnotes = "Colorable in inventory, takes 1 heavy shot to unfreeze"
+    },
+    {
+        id = 6,
+        max = 0.95,
+        name = "Rare",
+        color = Color(0, 128, 255),
+        propnotes = "Colorable in inventory, takes 2 heavy shots to unfreeze"
+    },
+    {
+        id = 7,
+        max = 0.995,
+        name = "Epic",
+        color = Color(128, 0, 255),
+        propnotes = "Texturable in inventory, takes 2 heavy shots to unfreeze"
+    },
+    {
+        id = 8,
+        max = 1.0,
+        name = "LEGENDARY",
+        color = Color(255, 128, 0),
+        propnotes = "Texturable in inventory, takes 3 heavy shots to unfreeze"
+    },
+    {
+        id = 9,
+        max = 1337,
+        name = "BASED",
+        color = Color(255, 0, 0),
+        propnotes = "Texturable in inventory, takes 100 shots to unfreeze"
+    },
 }
 
 function SS_GetRating(r)
     for i, v in ipairs(SS_ItemRatings) do
-        if v[1] >= r then return v end
+        if v.max >= r then return v end
     end
 
     return SS_ItemRatings[#SS_ItemRatings]
