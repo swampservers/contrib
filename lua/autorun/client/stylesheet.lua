@@ -9,11 +9,21 @@ BrandColorWhite = Color(255, 255, 255)
 BrandColorPrimary = Color(104, 28, 25)
 BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104)
 
-BrandColors = {Color(104, 28, 25), Color(40, 96, 104), Color(91, 40, 104), Color(27, 100, 43), Color(192, 90, 23), Color(187, 162, 78),Color(36, 36, 41),}
+BrandColors = {
+    Color(104, 28, 25),
+    Color(40, 96, 104),
+    Color(91, 40, 104),
+    Color(27, 100, 43),
+    Color(192, 90, 23),
+    Color(187, 162, 78),
+    Color(36, 36, 41),
+    Color(197, 58, 77),
+    }
 
 CreateClientConVar("ps_darkmode", "0", true)
 CreateClientConVar("ps_themecolor", "1", true)
-CreateClientConVar("ps_themebleed", "0", true)
+
+
 local function SearchUpdateColors(pnl)
     if (pnl.UpdateColours) then
         pnl:UpdateColours(pnl:GetSkin())
@@ -24,40 +34,27 @@ local function SearchUpdateColors(pnl)
     end
 end
 
-function ReloadStyle(darkmode, color,bleed)
+function ReloadStyle(darkmode, color)
     darkmode = darkmode or GetConVar("ps_darkmode"):GetBool()
     color = color or GetConVar("ps_themecolor"):GetInt()
-    bleed = bleed or GetConVar("ps_themebleed"):GetBool()
-    
+
     MenuTheme_Brand = BrandColors[color] or BrandColors[2]
 
     local h,s,v = ColorToHSV(MenuTheme_Brand)
-    MenuTheme_BrandDark = HSVToColor(h,s*1.04,v*0.9)
-
+    MenuTheme_BrandDark = HSVToColor(h,math.min(s*1.04,1),v*0.9)
+    SS_DarkMode = darkmode
     if darkmode then
         MenuTheme_BG = BrandColorGrayDarker
         MenuTheme_FG = BrandColorGrayDark
         MenuTheme_MD = BrandColorGray
         MenuTheme_TX = Color(200, 200, 200)
         MenuTheme_TXAlt = Color(200, 200, 200)
-        if(bleed)then
-            MenuTheme_BG = HSVToColor(h,math.min(s*0.1,1),0.125)
-            MenuTheme_FG = HSVToColor(h,math.min(s*0.2,1),0.2)
-            MenuTheme_TX =  Color(200, 200, 200)
-            MenuTheme_TXAlt = Color(200, 200, 200)
-        end
     else
         MenuTheme_BG = BrandColorGrayLighter
         MenuTheme_FG = BrandColorGrayLighterer
         MenuTheme_MD = BrandColorGray
         MenuTheme_TX = Color(0, 0, 0)
         MenuTheme_TXAlt = Color(200, 200, 200)
-        if(bleed)then
-            MenuTheme_BG = HSVToColor(h,math.min(s*0.08,1),0.8)
-            MenuTheme_FG = HSVToColor(h,math.min(s*0.03,1),0.9)
-            MenuTheme_TX = Color(0, 0, 0)
-            MenuTheme_TXAlt = Color(200, 200, 200)
-        end
     end
 
     if IsValid(SS_ShopMenu) then
@@ -77,9 +74,6 @@ cvars.AddChangeCallback("ps_themecolor", function(cvar, old, new)
     ReloadStyle(nil, tonumber(new))
 end)
 
-cvars.AddChangeCallback("ps_themebleed", function(cvar, old, new)
-    ReloadStyle(nil,nil,tobool(new))
-end)
 
 SS_ColorWhite = Color(255, 255, 255)
 SS_ColorBlack = Color(0, 0, 0)
@@ -367,7 +361,7 @@ local function predrawshadow(alpha)
     surface.SetDrawColor(Color(255, 255, 255))
     surface.SetMaterial(cornerMat)
 end
-
+ 
 function draw.BoxShadow(x, y, w, h, blur, alpha)
     if cornerMat:IsError() then return end
     local hblur = blur / 2
