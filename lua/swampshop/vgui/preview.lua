@@ -6,6 +6,7 @@ function PANEL:Init()
     self:SetModel(LocalPlayer():GetModel())
     self.Angles = Angle(0, 0, 0)
     self.ZoomOffset = 0
+    self:SetFOV(30)
 end
 
 function PANEL:OnMouseWheeled(amt)
@@ -192,8 +193,10 @@ function PANEL:Paint()
         end
 
         SS_PreviewShopModel(self, SS_HoverIOP)
+        self:SetCamPos(self:GetCamPos() * 2)
+        
         self.Entity:DrawModel()
-
+        
         if SS_HoverItem then
             SS_PreRender(SS_HoverItem)
         end
@@ -207,6 +210,7 @@ function PANEL:Paint()
 
         local center = (PrevMaxs + PrevMins) / 2
         local diam = PrevMins:Distance(PrevMaxs)
+        
         self:SetCamPos(center + (diam * Vector(0.4, 0.4, 0.1)))
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
@@ -229,6 +233,7 @@ function PANEL:Paint()
 
         SS_ApplyBoneMods(self.Entity, mods)
         SS_ApplyMaterialMods(self.Entity, mods)
+        self.Entity:SetEyeTarget(self:GetCamPos())
         self.Entity:DrawModel()
     end
 
@@ -256,7 +261,7 @@ function PANEL:Paint()
     if SS_CustomizerPanel:IsVisible() then
         if ValidPanel(XRSL) then
             if IsValid(SS_HoverCSModel) then
-                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, SS_SwitchableColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
     end
