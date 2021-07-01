@@ -18,6 +18,11 @@ function PANEL:Init()
 
         BrandDropDownGradient(0, navbottom, w)
 
+        local bottom = self.botbar:GetTall()
+
+        BrandUpGradient(0, h-bottom, w)
+
+
             local frogsize = 208
             local edge = 308
             ofs = (edge / 512) * frogsize
@@ -146,7 +151,7 @@ function PANEL:Init()
     end)
 
     --bottompane
-    vgui("DPanel", self, function(p)
+    self.botbar = vgui("DPanel", self, function(p)
         local xo = p:GetWide() + SS_BOTBARHEIGHT
         p:SetTall(SS_BOTBARHEIGHT)
         p:SetZPos(32767)

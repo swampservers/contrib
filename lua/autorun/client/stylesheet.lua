@@ -107,10 +107,7 @@ function SS_DrawPanelShadow(pnl, w, h)
     if (not sx) then return end
     local par = pnl:GetParent()
     local betterpar
-    DisableClipping(true)
-    surface.SetDrawColor(Color(255, 0, 255, 64))
-    --surface.DrawOutlinedRect(sx3, sy3, sx2-sx, sy2-sy, 2 )
-    DisableClipping(false)
+
     DisableClipping(true)
     local frame = SS_GetFrame(pnl)
 
@@ -314,6 +311,10 @@ end
 
 function BrandDropDownGradient(x, y, w)
     draw.GradientShadowDown(x, y, w, 8, 0.65)
+end
+
+function BrandUpGradient(x, y, w)
+    draw.GradientShadowUp(x, y-8, w, 8, 0.65)
 end
 
 BrandTitleBarHeight = 64
