@@ -53,7 +53,7 @@ function PANEL:OnMousePressed(b)
                 surface.PlaySound("UI/buttonclick.wav")
                 self.item.primaryaction.OnClient(self.item)
             else
-                error("fix "..self.item.class)
+                print("FIX "..self.item.class)
             end
         else
             self:Select()

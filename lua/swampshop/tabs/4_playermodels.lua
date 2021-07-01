@@ -146,7 +146,7 @@ SS_PlayermodelItem({
     model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
     PlayerSetModel = function(self, ply) end
 })
-
+ 
 SS_PlayermodelItem({
     class = 'neckbeardmodel',
     price = 240000,
@@ -159,7 +159,7 @@ SS_PlayermodelItem({
     end
 }) 
 
-SS_PlayermodelItem({
+SS_PlayermodelItem({ 
     class = 'ogremodel',
     price = 100000,
     name = 'Ogre',

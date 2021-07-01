@@ -29,13 +29,15 @@ function PANEL:Init()
             local edge = 308
             ofs = (edge / 512) * frogsize
             surface.SetDrawColor(Color(255, 255, 255, 255))
-            surface.SetMaterial(froggy)
-            DisableClipping(true)
-            render.ClearDepth()
-            cam.IgnoreZ(true)
-            surface.DrawTexturedRect(w - frogsize, h - ofs, frogsize, frogsize)
-            cam.IgnoreZ(false)
-            DisableClipping(false)
+            if not froggy:IsError() then
+                surface.SetMaterial(froggy)
+                DisableClipping(true)
+                render.ClearDepth()
+                cam.IgnoreZ(true)
+                surface.DrawTexturedRect(w - frogsize, h - ofs, frogsize, frogsize)
+                cam.IgnoreZ(false)
+                DisableClipping(false)
+            end
 
     end
 

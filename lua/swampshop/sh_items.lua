@@ -70,8 +70,8 @@ function SS_PlayermodelItem(item)
         if eq then
             for k, v in ipairs(ply.SS_ShownItems) do
                 -- todo: change this to sanitizing all items, local item last?
-                if SS_Items[v.class] and SS_Items[v.class].PlayerSetModel then
-                    ply:SS_EquipItem(v, false)
+                if v.PlayerSetModel and v.eq then
+                    v.actions.equip.OnServer(ply, v)
                 end
             end
         end

@@ -27,10 +27,12 @@ end
 function ReloadStyle(darkmode, color)
     darkmode = darkmode or GetConVar("ps_darkmode"):GetBool()
     color = color or GetConVar("ps_themecolor"):GetInt()
-    MenuTheme_Brand = BrandColors[color] or BrandColors[2]
-    local h, s, v = ColorToHSV(MenuTheme_Brand)
-    MenuTheme_BrandDark = HSVToColor(h, math.min(s * 1.04, 1), v * 0.96)
-    MenuTheme_BrandDarker = HSVToColor(h, math.min(s * 1.04, 1), v * 0.8)
+    MenuTheme_Brand = BrandColors[color] or BrandColors[1]
+    -- local h, s, v = ColorToHSV(MenuTheme_Brand)
+    -- MenuTheme_BrandDark = HSVToColor(h, math.min(s * 1.04, 1), v * 0.96)
+    -- MenuTheme_BrandDarker = HSVToColor(h, math.min(s * 1.04, 1), v * 0.8)
+
+    MenuTheme_BrandDarker = Color(MenuTheme_Brand.r*0.7,MenuTheme_Brand.g*0.7,MenuTheme_Brand.b*0.7)
     
     SS_DarkMode = darkmode
 
@@ -145,9 +147,9 @@ SS_PaintBrand = function(pnl, w, h)
     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_Brand)
 end
 
-SS_PaintBrandDark = function(pnl, w, h)
-    SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_BrandDark)
-end
+-- SS_PaintBrandDark = function(pnl, w, h)
+--     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_BrandDark)
+-- end
 
 SS_PaintButtonBrandHL = function(pnl, w, h)
     SS_DrawPanelShadow(pnl, w, h)
@@ -282,6 +284,7 @@ function BrandBackgroundPattern(x, y, w, h, px, special)
     surface.DrawRect(x, y, w, h)
 
     -- surface.SetDrawColor(MenuTheme_BrandDark)
+    if patternMat:IsError() then return end
     surface.SetDrawColor(Color(255,255,255,64))
     surface.SetMaterial(patternMat)
     surface.DrawTexturedRectUV(x, y, w, h,px/1024,0,(w+px)/1024,h/64)
@@ -484,7 +487,7 @@ surface.CreateFont("SS_SubCategory", {
 surface.CreateFont('SS_ProductName', {
     font = 'Lato',
     size = 17,
-    weight = 1000,
+    -- weight = 1000,
 })
 
 surface.CreateFont("SS_Price", {
