@@ -70,8 +70,8 @@ function SS_PlayermodelItem(item)
         if eq then
             for k, v in ipairs(ply.SS_ShownItems) do
                 -- todo: change this to sanitizing all items, local item last?
-                if SS_Items[v.class] and SS_Items[v.class].PlayerSetModel then
-                    ply:SS_EquipItem(v, false)
+                if v.PlayerSetModel and v.eq then
+                    v.actions.equip.OnServer(ply, v)
                 end
             end
         end
@@ -110,6 +110,13 @@ function SS_ItemOrProduct(iop)
     iop.GetName = iop.GetName or function(self) return self.name end
     iop.GetModel = iop.GetModel or function(self) return self.model end
 end
+
+function SS_ClientsideFakeItem(item)
+    if SERVER then return end
+    item.clientside_fake = true
+    SS_Item(item)
+end
+
 
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
@@ -182,21 +189,82 @@ function SS_Item(item)
     end
 
     item.SellValue = item.SellValue or function(self) return math.floor(self.value * 0.8) end
-    item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
 
-    item.HoverClick = item.HoverClick or function(self, second)
-        if second then
-            local status = (not self.eq) and self:CannotEquip() or nil
 
-            if status then
-                surface.PlaySound("common/wpn_denyselect.wav")
-                LocalPlayerNotify(status)
-            else
-                surface.PlaySound("weapons/smg1/switch_single.wav")
-                SS_EquipItem(self.id, not self.eq)
+    -- item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
+
+    -- item.HoverClick = item.HoverClick or function(self, second)
+    --     if second then
+    --         local status = (not self.eq) and self:CannotEquip() or nil
+
+    --         if status then
+    --             surface.PlaySound("common/wpn_denyselect.wav")
+    --             LocalPlayerNotify(status)
+    --         else
+    --             surface.PlaySound("weapons/smg1/switch_single.wav")
+    --             SS_EquipItem(self.id, not self.eq)
+    --         end
+    --     end
+    -- end
+
+
+    -- setup actions
+
+    item.actions = item.actions or {}
+
+
+    -- Default actions
+    if not item.never_equip then
+        item.actions.equip = {
+            primary = true,
+            Text = function(item) return item.eq and "Dequip" or "Equip" end,
+            Cannot = item.CannotEquip
+        }
+    end
+
+    if item.configurable then
+        item.actions.configure = {
+            sort = -1,
+            Text = function() return "Customize" end,
+            OnClient = function(item)
+                if SS_CustomizerPanel:IsVisible() then
+                    SS_CustomizerPanel:Close()
+                else
+                    SS_CustomizerPanel:Open(item)
+                end
             end
+        }
+    end
+
+    if not item.clientside_fake then
+        item.actions.sell = {
+            sort = -2,
+            Text = function(item, args) return SS_SELLCONFIRMID==item.id and "CONFIRM?" or "Sell for "..tostring(item:SellValue()).." points" end,
+            OnClient = function(item) 
+                if SS_SELLCONFIRMID==item.id then
+                    SS_ItemServerAction(item.id, "sell") 
+                else
+                    SS_SELLCONFIRMID=item.id
+                end
+            end
+        }
+    end
+    
+
+    -- Default action functions
+    for id,v in pairs(item.actions) do
+        if not v.OnClient then 
+            local act = id
+            v.OnClient = function(item) SS_ItemServerAction(item.id, act) end
+        end
+        if SERVER then v.OnServer = v.OnServer or SS_ServerActions[id] end
+        v.Cannot = v.Cannot or function() end
+
+        if v.primary then 
+            item.primaryaction = v
         end
     end
+
 
     SS_ItemOrProduct(item)
     item.__index = item

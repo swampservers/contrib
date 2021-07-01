@@ -64,12 +64,14 @@ SS_Item({
 
         return ch
     end,
-    HoverText = function(self, second) return second and "MAKE (-" .. tostring(self:SpawnPrice()) .. ")" or nil end,
-    HoverClick = function(self, second)
-        if second then
-            SS_ActivateItem(self.id)
-        end
-    end,
+
+    actions = {
+        spawnprop = {
+            primary = true,
+            Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end, 
+        }
+    },
+
     CanCfgColor = function(self) return (SS_GetRating(self.specs.rating).id >= 5) and 5.0 or false end,
     CanCfgImgur = function(self) return SS_GetRating(self.specs.rating).id >= 7 end,
     SpawnPrice = function(self) return 100 end,

@@ -39,6 +39,18 @@ if ValidPanel(Gui) then
     Gui = nil
 end
 
+concommand.Add("test_killscoreboard", function()
+    if ValidPanel(Gui) then
+        Gui:Remove()
+        Gui = nil
+    end
+
+    if ValidPanel(LASTSCOREBOARD) then
+        LASTSCOREBOARD:Remove()
+        LASTSCOREBOARD = nil
+    end
+end)
+
 if ValidPanel(GuiQueue) then
     GuiQueue:Remove()
     GuiQueue = nil

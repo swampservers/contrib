@@ -71,6 +71,17 @@ SS_Item({
     name = 'Outfitter',
     description = "Allows wearing any model from workshop - type !outfitter",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
+
+    actions = {
+        customize = {
+            Text = function() return "Change Model" end,
+            OnClient = function()
+                RunConsoleCommand("outfitter")
+                SS_ToggleMenu()
+            end
+        }
+    },
+
     invcategory = "Playermodels",
     never_equip = true
 })
@@ -114,10 +125,28 @@ SS_PlayermodelItem({
     price = 400064,
     name = 'Block Man',
     description = "A Minecraft player model capable of applying custom skins.",
+    actions = {
+        customize = {
+            Text = function() return "Change Skin" end,
+            OnClient = function()
+                local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Minecraft skin.", "", function(text)
+                    RunConsoleCommand("say", "!minecraftskin " .. text)
+                end, function() end, "Change Skin", "Cancel")
+        
+                local srdx, srdy = mderma:GetSize()
+                local mdermacredits = Label("Minecraft Skins by Chev for Swamp Servers", mderma)
+                mdermacredits:Dock(BOTTOM)
+                mdermacredits:SetContentAlignment(2)
+                mderma:SetSize(srdx, srdy + 15)
+                mderma:SetIcon("icon16/user.png")
+            end
+        }
+    },
+
     model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
     PlayerSetModel = function(self, ply) end
 })
-
+ 
 SS_PlayermodelItem({
     class = 'neckbeardmodel',
     price = 240000,
@@ -128,9 +157,9 @@ SS_PlayermodelItem({
         ply:Give("weapon_clopper")
         ply:SelectWeapon("weapon_clopper")
     end
-})
+}) 
 
-SS_PlayermodelItem({
+SS_PlayermodelItem({ 
     class = 'ogremodel',
     price = 100000,
     name = 'Ogre',
@@ -146,6 +175,14 @@ SS_PlayermodelItem({
     name = 'Pony',
     description = "*boop*",
     model = 'models/ppm/player_default_base.mdl',
+    actions = {
+        customize = {
+            Text = function() return "Customize Pony" end,
+            OnClient = function()
+                RunConsoleCommand("ppm_chared3")
+            end
+        }
+    },
     PlayerSetModel = function(self, ply)
         ply:Give("weapon_squee")
         ply:SelectWeapon("weapon_squee")

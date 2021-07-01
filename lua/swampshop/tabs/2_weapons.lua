@@ -145,12 +145,13 @@ SS_Item({
 
         return ch
     end,
-    HoverText = function(self, second) return second and "MAKE (-" .. tostring(self:SpawnPrice()) .. ")" or nil end,
-    HoverClick = function(self, second)
-        if second then
-            SS_ActivateItem(self.id)
-        end
-    end,
+
+    actions = {
+        spawnweapon = {
+            Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
+        }
+    },
+
     SpawnPrice = function(self) return 5000 end,
     invcategory = "Blueprints",
     never_equip = true

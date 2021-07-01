@@ -6,6 +6,7 @@ include("config.lua")
 include("sh_layout.lua")
 include("sh_products.lua")
 include("sh_items.lua")
+
 local Player = FindMetaTable('Player')
 
 function SS_Initialize()
@@ -17,8 +18,6 @@ function SS_Initialize()
         include('swampshop/tabs/' .. name)
     end
 end
-
-SS_Initialize()
 
 function Player:SS_GetDonation()
     return self.SS_Donation or 0
