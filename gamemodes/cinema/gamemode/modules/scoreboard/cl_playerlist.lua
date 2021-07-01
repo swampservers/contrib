@@ -496,6 +496,8 @@ end
 
 vgui.Register("ScoreboardPlayer", PLAYER)
 local PLAYERPING = {}
+PLAYERPING.Padding = 0
+
 
 function PLAYERPING:Init()
     self.Heights = {4, 8, 12}
