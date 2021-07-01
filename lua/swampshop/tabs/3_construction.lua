@@ -45,6 +45,7 @@ SS_Item({
     name = "Prop",
     description = "Haha, where did you find this one?",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
+    SellValue = function(self) return 250 * 2 ^ SS_GetRating(self.specs.rating).id end,
     GetName = function(self) return string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
     GetModel = function(self) return self.specs.model end,
     OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,

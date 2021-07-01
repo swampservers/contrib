@@ -181,10 +181,7 @@ function SS_Item(item)
         return self.eq
     end
 
-    function item:SellValue()
-        return math.floor(self.value * 0.8)
-    end
-
+    item.SellValue = item.SellValue or function(self) return math.floor(self.value * 0.8) end
     item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
 
     item.HoverClick = item.HoverClick or function(self, second)
