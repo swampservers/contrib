@@ -298,21 +298,6 @@ function PLAYER:Init()
     end)
 end
 
-local function GetCountryData()
-    http.Fetch("https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.json", function(str)
-        local tab = util.JSONToTable(str)
-        local newtab = {}
-
-        for k, v in pairs(tab) do
-            newtab[string.lower(v["alpha-2"])] = v
-        end
-
-        CountryData = newtab
-    end)
-end
-
-GetCountryData()
-
 function PLAYER:UpdatePlayer()
     if not IsValid(self.Player) then
         local parent = self:GetParent()
@@ -372,14 +357,11 @@ function PLAYER:UpdatePlayer()
     else
         if self.Country ~= nil and self.Country.SetImage ~= nil then
             self.Country:SetImage("countries/" .. string.lower(code) .. ".png")
-            local country = CountryData[string.lower(code)]
-            self.Country:SetToolTip(country.name .. (country.region and (", " .. country.region) or "") .. "\nClick here to view this country's wikipedia page")
+            self.Country:SetToolTip("Click to learn about: "..string.upper(code))
             self.Country.isocode = code
-
             self.Country.DoClick = function(pnl)
                 ShowMotd("https://en.wikipedia.org/wiki/ISO_3166-1:" .. string.upper(pnl.isocode))
             end
-            --gui.OpenURL("https://en.wikipedia.org/wiki/ISO_3166-1:"..string.upper(pnl.isocode))
         end
     end
 
@@ -400,35 +382,25 @@ function PLAYER:SetPlayer(ply)
 
         prof:SetIcon("icon16/user.png")
 
-        local points = menu:AddOption("Give Points", function()
+        menu:AddOption("Give Points", function()
             local gp = vgui.Create('DPointShopGivePoints')
             gp.playerselect:ChooseOption(self.Player:Nick(), self.Player:UniqueID())
             gp.selected_uid = self.Player:UniqueID()
             gp:Update()
-        end)
+        end):SetIcon("icon16/coins.png")
 
-        points:SetIcon("icon16/coins.png")
-
-        local tp = menu:AddOption("Request Teleport To", function()
+        menu:AddOption("Request Teleport To", function()
             RunConsoleCommand("say_team", "/tp " .. self.Player:Nick())
-        end)
-
-        tp:SetIcon("icon16/world.png")
+        end):SetIcon("icon16/world.png")
 
         if (LocalPlayer():IsStaff()) then
-            local staffsubmenu, staffmenu = menu:AddSubMenu("Copy SteamID", function()
+            menu:AddOption("Copy SteamID", function()
                 SetClipboardText(self.Player:SteamID())
-            end)
+            end):SetIcon("icon16/user_red.png")
 
-            staffmenu:SetIcon("icon16/user_red.png")
-
-            staffsubmenu:AddOption("SteamID", function()
-                SetClipboardText(self.Player:SteamID())
-            end)
-
-            staffsubmenu:AddOption("SteamID64", function()
+            menu:AddOption("Copy SteamID64", function()
                 SetClipboardText(self.Player:SteamID64())
-            end)
+            end):SetIcon("icon16/user_red.png")
         end
 
         menu:Open()
@@ -498,11 +470,8 @@ vgui.Register("ScoreboardPlayer", PLAYER)
 local PLAYERPING = {}
 
 function PLAYERPING:Init()
-    self.Heights = {4, 8, 12}
-
-    self.PingAmounts = {300, 200, 100}
-
-    self.BaseSpacing = 5
+    self.Heights = {3, 6, 9, 12}
+    self.PingAmounts = {300, 225, 150, 75}
 end
 
 function PLAYERPING:Update()
@@ -518,7 +487,7 @@ end
 function PLAYERPING:Paint(w, h)
     if (not self:IsHovered()) then
         local maxh = self.Heights[#self.Heights]
-        local bar = 7
+        local bar = 5
         local total = #self.Heights * bar
         local x = w / 2 - (total / 2)
 
