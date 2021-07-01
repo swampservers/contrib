@@ -444,7 +444,7 @@ function PANEL:Think()
             self.text = self.product:GetName()
         end
 
-        self.textcolor = MenuTheme_TX
+        self.textcolor = MenuTheme_TXAlt
     else
         if self.item.eq then
             self.icon = visiblemark
