@@ -465,6 +465,7 @@ local function MagicOutcomeBigSnap(ply, button)
             timer.Simple(math.Rand(0, 10), function()
                 if (IsValid(victim)) then
                     GauntletFizzlePlayer(gaunt, victim, gaunt)
+                    ply:Fizzle(ply , gaunt )
                 end
             end)
         end
