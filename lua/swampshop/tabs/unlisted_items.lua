@@ -10,22 +10,32 @@ SS_Item({
     never_equip = true
 })
 
-SS_Item({
-    class = "defaultplayermodel",
-    value = 0,
-    name = 'Default Playermodels',
-    description = "Customization for the poor.",
-    model = 'models/player/kleiner.mdl',
-    model_display = function() return player_manager.TranslatePlayerModel(GetConVar("cl_playermodel"):GetString() or "kleiner") or "models/player/kleiner.mdl" end,
-    always_have = true,
-    configurable_label = "Choose Playermodel",
-    configurable_menu = function()
-        SS_ToggleMenu()
-        RunConsoleCommand("customize")
-    end,
-    invcategory = "Playermodels",
-    never_equip = true
-})
+-- SS_ClientsideFakeItem({
+--     class = "defaultplayermodel",
+--     value = 0,
+--     name = 'Default Playermodels',
+--     description = "Customization for the poor.",
+--     GetModel = function(self) return player_manager.TranslatePlayerModel(GetConVar("cl_playermodel"):GetString() or "kleiner") or "models/player/kleiner.mdl" end,
+--     actions = {
+--         customize = {
+--             Text = function() return "Choose Playermodel" end,
+--             OnClient = function()
+--                 SS_ToggleMenu()
+--                 RunConsoleCommand("customize")
+--             end
+--         },
+--         equip = {
+--             primary = true,
+--             Text = function() return "Equip" end,
+--             OnClient = function()
+--                 --TODO: remove other playermodels
+--             end
+
+--         }
+--     },
+--     invcategory = "Playermodels",
+--     never_equip = true
+-- })
 
 SS_Item({
     class = "whiteeyestest",

@@ -6,6 +6,8 @@ net.Receive("SS_PointOutInventory", function()
     SS_INVENTORY_POINT_OUT = RealTime()
 end)
 
+local froggy = Material("vgui/frog.png")
+
 function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
@@ -27,7 +29,7 @@ function PANEL:Init()
             local edge = 308
             ofs = (edge / 512) * frogsize
             surface.SetDrawColor(Color(255, 255, 255, 255))
-            surface.SetMaterial(Material("vgui/frog.png"))
+            surface.SetMaterial(froggy)
             DisableClipping(true)
             render.ClearDepth()
             cam.IgnoreZ(true)
@@ -205,7 +207,7 @@ function PANEL:Init()
                     local topm = SS_BOTBARHEIGHT - SS_COMMONMARGIN*3 - 16
                     p:DockMargin(SS_COMMONMARGIN,topm,SS_COMMONMARGIN + 56,SS_COMMONMARGIN)
                     p:SetTextColor(MenuTheme_TX)
-                    p:SetImage("icon16/coins_add.png")
+                    p:SetImage("icon16/group_go.png")
                     --p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
                     p:AlignLeft(SS_COMMONMARGIN)
 
@@ -546,7 +548,7 @@ function PANEL:Init()
             -- return
             -- end
             -- print("Items reloading")
-            local itemstemp = table.Copy(LocalPlayer():SS_GetInventory())
+            local itemstemp = table.Copy(LocalPlayer().SS_Items or {}) --GetInventory())
 
             table.sort(itemstemp, function(a, b)
                 local i = 0
@@ -565,10 +567,8 @@ function PANEL:Init()
             end)
 
             for k, v in pairs(SS_Items) do
-                if (v.always_have) then
-                    local copy = table.Copy(v)
-                    copy.cfg = {}
-                    table.insert(itemstemp, copy)
+                if v.clientside_fake then
+                    table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
                 end
             end
 
@@ -615,11 +615,6 @@ function PANEL:Init()
     SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent():GetParent())
     SS_CustomizerPanel:Dock(FILL)
     SS_CustomizerPanel:Close()
-
-    --quick hack to get this shit outta my face
-    if (LocalPlayer():IsSuperAdmin()) then
-        IN_STEAMGROUP = 1
-    end
 
     if (IN_STEAMGROUP or 0) <= 0 then
         p = vgui.Create("DButton", self)

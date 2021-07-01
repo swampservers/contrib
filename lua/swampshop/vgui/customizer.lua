@@ -153,10 +153,7 @@ function PANEL:Open(item)
                 end
 
                 p.DoClick = function(butn)
-                    net.Start('SS_ConfigureItem')
-                    net.WriteUInt(self.item.id, 32)
-                    net.WriteTableHD(self.item.cfg)
-                    net.SendToServer()
+                    SS_ItemServerAction(self.item.id, "configure", self.item.cfg)
                     self:Close()
                 end
             end)
@@ -870,8 +867,8 @@ local function TexDownloadHook()
         render.PopRenderTarget()
         local parts = string.Explode("/", mat:GetName() or "")
         local imagename = parts[#parts] or "temp_image"
-        file.CreateDir("swampshop_temp")
-        local fname = "swampshop_temp/" .. imagename .. ".png"
+        
+        local fname =  imagename .. ".png"
         file.Write(fname, data)
 
         if (SS_REQUESTED_TEX_CALLBACK) then

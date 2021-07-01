@@ -6,8 +6,6 @@ include("config.lua")
 include("sh_layout.lua")
 include("sh_products.lua")
 include("sh_items.lua")
-AddCSLuaFile("vgui/imgur_manager.lua")
-
 
 local Player = FindMetaTable('Player')
 
@@ -20,8 +18,6 @@ function SS_Initialize()
         include('swampshop/tabs/' .. name)
     end
 end
-
-SS_Initialize()
 
 function Player:SS_GetDonation()
     return self.SS_Donation or 0
@@ -48,13 +44,7 @@ function Player:SS_FindItem(item_id)
 end
 
 function Player:SS_HasItem(item_class)
-    if (SS_Items[item_class].always_have) then return true end
-
     return self:SS_CountItem(item_class) > 0
-end
-
-function Player:SS_GetInventory()
-    return self.SS_Items or {}
 end
 
 function Player:SS_CountItem(item_class)

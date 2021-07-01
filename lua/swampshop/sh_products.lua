@@ -38,14 +38,16 @@ function SS_Product(product)
         end
     end
 
-    product.HoverText = product.HoverText or function(self, second) return second and (self.price == 0 and ">  GET  <" or ">  BUY  <") or (self.price == 0 and "FREE" or "-" .. tostring(self.price)) end
+    -- product.primaryaction = {
+    --     Text = function(self, second) return second and (self.price == 0 and ">  GET  <" or ">  BUY  <") or (self.price == 0 and "FREE" or "-" .. tostring(self.price)) end
+    -- }
 
-    product.HoverClick = product.HoverClick or function(self, second)
-        if second then
-            surface.PlaySound("UI/buttonclick.wav")
-            SS_BuyProduct(self.class)
-        end
-    end
+    -- OnClient= function(self, second)
+    --     if second then
+    --         surface.PlaySound("UI/buttonclick.wav")
+    --         SS_BuyProduct(self.class)
+    --     end
+    -- end
 
     SS_ItemOrProduct(product)
     local tab = _SS_TABADDTARGET.layout
@@ -73,8 +75,7 @@ end
 
 function SS_ItemProduct(item)
     local product = table.Copy(item) --TODO maybe only copy needed keys
-    product.HoverClick = nil
-    product.HoverText = nil
+
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((product.price or 0) == 0 and "return" or "sell") .. " it."
     product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.class)
 

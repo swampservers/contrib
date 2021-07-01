@@ -207,27 +207,36 @@ concommand.Add("ps_buy", function(ply, cmd, args)
     SS_BuyProduct(args[1])
 end)
 
-function SS_SellItem(item_id)
-    if not LocalPlayer():SS_FindItem(item_id) then return end
-    net.Start('SS_SellItem')
-    net.WriteUInt(item_id, 32)
-    net.SendToServer()
-end
+-- function SS_SellItem(item_id)
+--     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     net.Start('SS_SellItem')
+--     net.WriteUInt(item_id, 32)
+--     net.SendToServer()
+-- end
 
--- REMOVE THIS
-function SS_EquipItem(item_id, state)
-    if not LocalPlayer():SS_FindItem(item_id) then return end
-    net.Start('SS_EquipItem')
-    net.WriteUInt(item_id, 32)
-    net.WriteBool(state)
-    net.SendToServer()
-end
+-- -- REMOVE THIS
+-- function SS_EquipItem(item_id, state)
+--     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     net.Start('SS_EquipItem')
+--     net.WriteUInt(item_id, 32)
+--     net.WriteBool(state)
+--     net.SendToServer()
+-- end
 
-function SS_ActivateItem(item_id, args)
+-- function SS_ActivateItem(item_id, args)
+--     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     net.Start('SS_ActivateItem')
+--     net.WriteUInt(item_id, 32)
+--     net.WriteTable(args or {})
+--     net.SendToServer()
+-- end
+
+function SS_ItemServerAction(item_id, action_id, args)
     if not LocalPlayer():SS_FindItem(item_id) then return end
-    net.Start('SS_ActivateItem')
+    net.Start('SS_ItemAction')
     net.WriteUInt(item_id, 32)
-    net.WriteTable(args or {})
+    net.WriteString(action_id)
+    net.WriteTableHD(args or {})
     net.SendToServer()
 end
 

@@ -43,11 +43,18 @@ function PANEL:OnMousePressed(b)
             end
 
             self.prebuyclick = nil
-            self.product:HoverClick(true)
+
+            surface.PlaySound("UI/buttonclick.wav")
+            SS_BuyProduct(self.product.class)
         end
     else
         if self:IsSelected() then
-            self.item:HoverClick(true)
+            if self.item.primaryaction then
+                surface.PlaySound("UI/buttonclick.wav")
+                self.item.primaryaction.OnClient(self.item)
+            else
+                error("fix "..self.item.class)
+            end
         else
             self:Select()
         end
@@ -187,9 +194,28 @@ function PANEL:Select()
             p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
             p.Paint = noop
 
-            if self.item.configurable or (self.item.configurable_menu and (self.item.eq or self.item.never_equip)) then
+            local orderedactions = {}
+
+            for id,act in pairs(self.item.actions) do
+                if not act.primary then table.insert(orderedactions, act) end
+            end
+
+            table.sort(orderedactions, function(a,b) return (a.sort or 0) > (b.sort or 0) end)
+
+            -- TODO sort by act.sort
+            for i,act in ipairs(orderedactions) do
+
+                if act.primary then continue end
                 vgui("DButton", function(p)
-                    p:SetText(self.item.configurable_label or "Customize")
+
+                    local pat,pi = act.Text, self.item
+
+                    -- sell button changes to confirm so do this
+                    p.Think = function(self)
+                        self:SetText(pat(pi))
+                    end
+                    p:Think()
+                        
 
                     p.UpdateColours = function(pnl)
                         pnl:SetTextStyleColor(MenuTheme_TX)
@@ -200,48 +226,72 @@ function PANEL:Select()
                     p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
 
                     p.DoClick = function(butn)
-                        if (isfunction(self.item.configurable_menu)) then
-                            self.item.configurable_menu()
-
-                            return
-                        end
-
-                        if SS_CustomizerPanel:IsVisible() then
-                            SS_CustomizerPanel:Close()
-                        else
-                            SS_CustomizerPanel:Open(self.item)
-                        end
+                        surface.PlaySound("UI/buttonclick.wav")
+                        act.OnClient(self.item)
                     end
+
+                    -- todo add Cannot
 
                     --p:InvalidateLayout(true)
                     p.Paint = SS_PaintButtonBrandHL
                 end)
             end
 
-            if (not self.item.always_have) then
-                vgui("DButton", function(p)
-                    p:SetText(self.item:SellValue() > 0 and "Sell for " .. tostring(self.item:SellValue()) .. " points" or "Discard")
+            -- if self.item.configurable or (self.item.configurable_menu and (self.item.eq or self.item.never_equip)) then
+            --     vgui("DButton", function(p)
+            --         p:SetText(self.item.configurable_label or "Customize")
 
-                    p.UpdateColours = function(pnl)
-                        pnl:SetTextStyleColor(MenuTheme_TX)
-                    end
+            --         p.UpdateColours = function(pnl)
+            --             pnl:SetTextStyleColor(MenuTheme_TX)
+            --         end
 
-                    p:Dock(TOP)
-                    p:SetTall(24)
-                    p:DockMargin(0, 0, 0, SS_SMALLMARGIN)
+            --         p:Dock(TOP)
+            --         p:SetTall(24)
+            --         p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
 
-                    p.DoClick = function(butn)
-                        if butn:GetText() == "CONFIRM?" then
-                            SS_SellItem(self.item.id)
-                        else
-                            butn:SetText("CONFIRM?")
-                        end
-                    end
+            --         p.DoClick = function(butn)
+            --             if (isfunction(self.item.configurable_menu)) then
+            --                 self.item.configurable_menu()
 
-                    --p:InvalidateLayout(true)
-                    p.Paint = SS_PaintButtonBrandHL
-                end)
-            end
+            --                 return
+            --             end
+
+            --             if SS_CustomizerPanel:IsVisible() then
+            --                 SS_CustomizerPanel:Close()
+            --             else
+            --                 SS_CustomizerPanel:Open(self.item)
+            --             end
+            --         end
+
+            --         --p:InvalidateLayout(true)
+            --         p.Paint = SS_PaintButtonBrandHL
+            --     end)
+            -- end
+
+            -- if (not self.item.always_have) then
+            --     vgui("DButton", function(p)
+            --         p:SetText(self.item:SellValue() > 0 and "Sell for " .. tostring(self.item:SellValue()) .. " points" or "Discard")
+
+            --         p.UpdateColours = function(pnl)
+            --             pnl:SetTextStyleColor(MenuTheme_TX)
+            --         end
+
+            --         p:Dock(TOP)
+            --         p:SetTall(24)
+            --         p:DockMargin(0, 0, 0, SS_SMALLMARGIN)
+
+            --         p.DoClick = function(butn)
+            --             if butn:GetText() == "CONFIRM?" then
+            --                 SS_SellItem(self.item.id)
+            --             else
+            --                 butn:SetText("CONFIRM?")
+            --             end
+            --         end
+
+            --         --p:InvalidateLayout(true)
+            --         p.Paint = SS_PaintButtonBrandHL
+            --     end)
+            -- end
         end)
 
         SS_ItemInteractionPanel:InvalidateLayout(true)
@@ -293,15 +343,7 @@ end
 
 function PANEL:Setup()
     local DModelPanel = vgui.Create('DModelPanel', self)
-    --DModelPanel:SetModel(self.data.model)
     DModelPanel.model2set = self.iop:GetModel()
-    if (self.iop.model_display) then
-        if (isfunction(self.iop.model_display)) then
-            DModelPanel.model2set = self.iop.model_display()
-        else
-            DModelPanel.model2set = self.iop.model_display
-        end
-    end
 
     DModelPanel:Dock(FILL)
 
@@ -437,7 +479,7 @@ function PANEL:Think()
         if self.hovered then
             self.barheight = 30
             self.textfont = "SS_Price"
-            self.text = self.product:HoverText(self.prebuyclick)
+            self.text = self.prebuyclick and (self.product.price == 0 and ">  GET  <" or ">  BUY  <") or (self.product.price == 0 and "FREE" or "-" .. tostring(self.product.price))
         else
             self.barheight = 20
             self.textfont = "SS_ProductName"
@@ -483,7 +525,7 @@ function PANEL:Think()
             if labelview then
                 self.barheight = 30
                 self.textfont = "SS_Price"
-                self.text = self.item:HoverText(true)
+                self.text = self.item.primaryaction and self.item.primaryaction.Text(self.item) or "FIXME"
             end
         elseif labelview then
             self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)

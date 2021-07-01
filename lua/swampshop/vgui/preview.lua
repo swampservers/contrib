@@ -167,13 +167,6 @@ function PANEL:Paint()
 
     if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
         mdl = SS_HoverIOP:GetModel()
-        if (SS_HoverIOP.model_display) then
-            if (isfunction(SS_HoverIOP.model_display)) then
-                mdl = SS_HoverIOP.model_display()
-            else
-                mdl = SS_HoverIOP.model_display
-            end
-        end
     end
 
     require_workshop_model(mdl)

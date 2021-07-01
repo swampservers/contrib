@@ -111,6 +111,13 @@ function SS_ItemOrProduct(iop)
     iop.GetModel = iop.GetModel or function(self) return self.model end
 end
 
+function SS_ClientsideFakeItem(item)
+    if SERVER then return end
+    item.clientside_fake = true
+    SS_Item(item)
+end
+
+
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
     if item.wear then
@@ -153,7 +160,7 @@ function SS_Item(item)
         if self.accessory_slot then
             local c = self.eq and 0 or 1 / (self.perslot or 1)
 
-            for k, v in pairs(self.owner.SS_Items or {}) do
+            for k, v in pairs(self.owner.SS_Items) do
                 if v.eq and (SS_Items[v.class] or {}).accessory_slot then
                     c = c + (1 / (SS_Items[v.class].perslot or 1))
                 end
@@ -167,7 +174,7 @@ function SS_Item(item)
                 [self.cfg.imgur.url] = true
             }
 
-            for k, v in pairs(self.owner.SS_Items or {}) do
+            for k, v in pairs(self.owner.SS_Items) do
                 if v.eq and v.cfg.imgur then
                     urls[v.cfg.imgur.url] = true
                 end
@@ -182,21 +189,82 @@ function SS_Item(item)
     end
 
     item.SellValue = item.SellValue or function(self) return math.floor(self.value * 0.8) end
-    item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
 
-    item.HoverClick = item.HoverClick or function(self, second)
-        if second then
-            local status = (not self.eq) and self:CannotEquip() or nil
 
-            if status then
-                surface.PlaySound("common/wpn_denyselect.wav")
-                LocalPlayerNotify(status)
-            else
-                surface.PlaySound("weapons/smg1/switch_single.wav")
-                SS_EquipItem(self.id, not self.eq)
+    -- item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
+
+    -- item.HoverClick = item.HoverClick or function(self, second)
+    --     if second then
+    --         local status = (not self.eq) and self:CannotEquip() or nil
+
+    --         if status then
+    --             surface.PlaySound("common/wpn_denyselect.wav")
+    --             LocalPlayerNotify(status)
+    --         else
+    --             surface.PlaySound("weapons/smg1/switch_single.wav")
+    --             SS_EquipItem(self.id, not self.eq)
+    --         end
+    --     end
+    -- end
+
+
+    -- setup actions
+
+    item.actions = item.actions or {}
+
+
+    -- Default actions
+    if not item.never_equip then
+        item.actions.equip = {
+            primary = true,
+            Text = function(item) return item.eq and "Dequip" or "Equip" end,
+            Cannot = item.CannotEquip
+        }
+    end
+
+    if item.configurable then
+        item.actions.configure = {
+            sort = -1,
+            Text = function() return "Customize" end,
+            OnClient = function(item)
+                if SS_CustomizerPanel:IsVisible() then
+                    SS_CustomizerPanel:Close()
+                else
+                    SS_CustomizerPanel:Open(item)
+                end
             end
+        }
+    end
+
+    if not item.clientside_fake then
+        item.actions.sell = {
+            sort = -2,
+            Text = function(item, args) return SS_SELLCONFIRMID==item.id and "CONFIRM?" or "Sell for "..tostring(item:SellValue()).." points" end,
+            OnClient = function(item) 
+                if SS_SELLCONFIRMID==item.id then
+                    SS_ItemServerAction(item.id, "sell") 
+                else
+                    SS_SELLCONFIRMID=item.id
+                end
+            end
+        }
+    end
+    
+
+    -- Default action functions
+    for id,v in pairs(item.actions) do
+        if not v.OnClient then 
+            local act = id
+            v.OnClient = function(item) SS_ItemServerAction(item.id, act) end
+        end
+        if SERVER then v.OnServer = v.OnServer or SS_ServerActions[id] end
+        v.Cannot = v.Cannot or function() end
+
+        if v.primary then 
+            item.primaryaction = v
         end
     end
+
 
     SS_ItemOrProduct(item)
     item.__index = item

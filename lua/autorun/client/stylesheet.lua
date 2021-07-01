@@ -121,7 +121,7 @@ function SS_DrawPanelShadow(pnl, w, h)
 
     if (sx) then
         local border = 0
-        draw.BoxShadow(sx - border / 2, sy - border / 2, sw + (border), sh + (border), 8, 1)
+        draw.BoxShadow(sx - border / 2, sy - border / 2, sw + (border), sh + (border), 12, 0.7)
     end
 
     render.SetScissorRect(0, 0, 0, 0, false)
@@ -220,7 +220,7 @@ SS_SetupVBar = function(vbar)
     end
 end
 
-SS_COMMONMARGIN = 6
+SS_COMMONMARGIN = 8
 SS_SMALLMARGIN = 2
 SS_TILESIZE = 156
 SS_RPANEWIDTH = 344
@@ -274,41 +274,17 @@ end
 @brand-danger:          #E74C3C;
 ]]
 --10c090
+
+local patternMat = Material("vgui/swamptitlebar.png", "noclamp")
+
 function BrandBackgroundPattern(x, y, w, h, px, special)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(x, y, w, h)
-    surface.SetDrawColor(MenuTheme_BrandDark)
-    draw.NoTexture()
-    local stripewidth = 20
-    local stripepos = -(px % (2 * stripewidth))
 
-    if special then
-        stripepos = stripepos - stripewidth
-    end
-
-    while stripepos < w + h do
-        local triangle = {
-            {
-                x = x + stripepos,
-                y = y
-            },
-            {
-                x = x + stripepos + stripewidth,
-                y = y
-            },
-            {
-                x = x + stripepos + stripewidth - h,
-                y = y + h
-            },
-            {
-                x = x + stripepos - h,
-                y = y + h
-            }
-        }
-
-        surface.DrawPoly(triangle)
-        stripepos = stripepos + (2 * stripewidth)
-    end
+    -- surface.SetDrawColor(MenuTheme_BrandDark)
+    surface.SetDrawColor(Color(255,255,255,64))
+    surface.SetMaterial(patternMat)
+    surface.DrawTexturedRectUV(x, y, w, h,px/1024,0,(w+px)/1024,h/64)
 end
 
 function BrandDropDownGradient(x, y, w)
