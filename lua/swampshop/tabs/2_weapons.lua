@@ -148,10 +148,11 @@ SS_Item({
     actions = {
         spawnweapon = {
             Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
+            primary = true,
         }
     },
     SpawnPrice = function(self) return 5000 end,
-    invcategory = "Blueprints",
+    invcategory = "Weapons",
     never_equip = true
 })
 

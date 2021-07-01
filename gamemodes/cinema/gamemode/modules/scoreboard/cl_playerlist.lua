@@ -449,8 +449,8 @@ function PLAYER:Paint(w, h)
 
     if (IsValid(self.Player) and IsValid(self.AFK)) then
         self.AFK:SetVisible(self.Player:GetNWBool("afk"))
-    else
-        self:SetVisible(false)
+        -- else
+        --     self:SetVisible(false)
     end
 
     if self.Player:IsStaff() then

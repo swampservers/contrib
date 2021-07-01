@@ -116,8 +116,6 @@ Tail01
 Tail02
 Tail03
 ]]
-SS_InvCategories = {"Blueprints", "Props", "Playermodels", "Accessories", "Mods", "Upgrades", "Other"}
-
 SS_Attachments = {
     eyes = "I'm special",
     head = {"ValveBiped.Bip01_Head1", "LrigScull"},

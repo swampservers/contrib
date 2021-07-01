@@ -8,6 +8,18 @@ end)
 
 local froggy = Material("vgui/frog.png")
 
+surface.CreateFont("SwampShop1", {
+    font = "averiaserif-bold",
+    weight = 1000,
+    size = 40
+})
+
+surface.CreateFont("SwampShop2", {
+    font = "averiaserif-bold",
+    weight = 1000,
+    size = 36
+})
+
 function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
@@ -29,12 +41,15 @@ function PANEL:Init()
             DisableClipping(true)
             render.ClearDepth()
             cam.IgnoreZ(true)
-            surface.DrawTexturedRect(w - frogsize, h - ofs, frogsize, frogsize)
+            local frac = 0.8
+            surface.DrawTexturedRectUV(w - (frogsize * frac), h - ofs, (frogsize * frac), frogsize, 0, 0, frac, 1)
             cam.IgnoreZ(false)
             DisableClipping(false)
         end
     end
 
+    -- draw.SimpleText("SWAMP", "SwampShop1", w - 300, h - 82)
+    -- draw.SimpleText("SHOP", "SwampShop2", w - 270, h - 48)
     self.navbar = vgui("DPanel", self, function(navbar)
         navbar:SetTall(SS_NAVBARHEIGHT)
         navbar:Dock(TOP)
@@ -43,10 +58,11 @@ function PANEL:Init()
 
         --title text 
         vgui("DLabel", function(p)
-            p:SetText("TOY SHOβ")
-            p:SetFont('SS_LargeTitle')
+            p:SetText("SWAMP SHOP") --SHOβ") ⮩ \n  
+            p:SetFont('SwampShop2') --SS_LargeTitle') --ScoreboardTitleSmall
             p:SizeToContentsX()
-            p:DockMargin(16, 0, 16, 0)
+            p:DockMargin(16, 0, 8, 0)
+            -- p:DockMargin(16, 0, 0, 0)
             p:SetColor(SS_ColorWhite)
             --p:SetPaintBackground(false)
             p:Dock(LEFT)
@@ -87,23 +103,10 @@ function PANEL:Init()
             p:Dock(RIGHT)
 
             vgui("DImageButton", function(p)
-                p:SetImage("icon16/lightbulb.png")
-                p:SetStretchToFit(false)
-                p.Paint = SS_PaintDarkenOnHover
-                p:SetSize(SS_NAVBARHEIGHT / 2, SS_NAVBARHEIGHT)
-                p:SetTooltip("Toggle dark mode/light mode\nRight click to toggle tinting")
-                p:Dock(RIGHT)
-
-                p.DoClick = function()
-                    GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
-                end
-            end)
-
-            vgui("DImageButton", function(p)
                 p:SetImage("icon16/rainbow.png")
                 p:SetStretchToFit(false)
                 p.Paint = SS_PaintDarkenOnHover
-                p:SetSize(SS_NAVBARHEIGHT / 2, SS_NAVBARHEIGHT)
+                p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
                 p:SetTooltip("Change UI Color")
                 p:Dock(RIGHT)
 
@@ -118,6 +121,20 @@ function PANEL:Init()
                     p.menu = menu
                     menu:SetMinimumWidth(24)
                     menu.Paint = SS_PaintShaded
+                    local p2 = vgui.Create("DImageButton", menu)
+                    p2:SetImage("icon16/lightbulb.png")
+                    p2:SetStretchToFit(false)
+                    p2.Paint = SS_PaintDarkenOnHover
+                    -- p:SetSize(SS_NAVBARHEIGHT / 2, SS_NAVBARHEIGHT)
+                    p2:SetTooltip("Toggle dark mode/light mode")
+
+                    -- p:Dock(RIGHT)
+                    p2.DoClick = function()
+                        GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
+                    end
+
+                    menu:AddPanel(p2)
+                    p2:SetSize(24, 24)
 
                     for k, v in pairs(BrandColors) do
                         local ColorChoice = vgui.Create("DButton", menu)
@@ -527,85 +544,101 @@ function PANEL:Init()
         Pad(cat)
     end
 
-    SS_InventoryPanel = NewCategory("Inventory", 'icon16/basket.png', RIGHT)
-    SS_ValidInventory = false
+    local function inventorythink(pnl, categories)
+        pnl.Think = function(self)
+            if self.validtick ~= SS_ValidInventoryTick then
+                -- if #self:GetCanvas():GetChildren() > 0 then
+                local scroll2 = self:GetVBar():GetScroll()
 
-    function SS_InventoryPanel:Think()
-        if not SS_ValidInventory then
-            -- if #self:GetCanvas():GetChildren() > 0 then
-            local scroll2 = self:GetVBar():GetScroll()
-
-            for k, v in pairs(self:GetCanvas():GetChildren()) do
-                v:Remove()
-            end
-
-            -- return
-            -- end
-            -- print("Items reloading")
-            local itemstemp = table.Copy(LocalPlayer().SS_Items or {}) --GetInventory())
-
-            table.sort(itemstemp, function(a, b)
-                local i = 0
-                local ml = math.min(string.len(a.name), string.len(b.name))
-
-                while i < ml do
-                    i = i + 1
-                    local a1 = string.byte(a.name, i)
-                    local b1 = string.byte(b.name, i)
-                    if a1 ~= b1 then return a1 < b1 end
+                for k, v in pairs(self:GetCanvas():GetChildren()) do
+                    v:Remove()
                 end
 
-                if string.len(a.name) == string.len(b.name) then return a.id < b.id end
+                Pad(self)
+                -- return
+                -- end
+                -- print("Items reloading")
+                local itemstemp = table.Copy(LocalPlayer().SS_Items or {}) --GetInventory())
 
-                return string.len(a.name) > string.len(b.name)
-            end)
+                table.sort(itemstemp, function(a, b)
+                    local i = 0
+                    local ml = math.min(string.len(a.name), string.len(b.name))
 
-            for k, v in pairs(SS_Items) do
-                if v.clientside_fake then
-                    table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
+                    while i < ml do
+                        i = i + 1
+                        local a1 = string.byte(a.name, i)
+                        local b1 = string.byte(b.name, i)
+                        if a1 ~= b1 then return a1 < b1 end
+                    end
+
+                    if string.len(a.name) == string.len(b.name) then return a.id < b.id end
+
+                    return string.len(a.name) > string.len(b.name)
+                end)
+
+                for k, v in pairs(SS_Items) do
+                    if v.clientside_fake then
+                        table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
+                    end
                 end
-            end
 
-            local categorizeditems = {}
+                local categorizeditems = {}
 
-            for _, item in pairs(itemstemp) do
-                local invcategory = item.invcategory or "Other"
-                categorizeditems[invcategory] = categorizeditems[invcategory] or {}
-                table.insert(categorizeditems[invcategory], item)
-            end
+                for _, item in pairs(itemstemp) do
+                    local invcategory = item.invcategory or "Other"
+                    categorizeditems[invcategory] = categorizeditems[invcategory] or {}
+                    table.insert(categorizeditems[invcategory], item)
+                end
 
-            local first = true
+                local first = true
 
-            for _, cat in ipairs(SS_InvCategories) do
-                if categorizeditems[cat] and table.Count(categorizeditems[cat]) > 0 then
-                    if (first) then
-                        first = false
-                    else
+                for _, cat in ipairs(categories) do
+                    if categorizeditems[cat] and table.Count(categorizeditems[cat]) > 0 then
+                        if (first) then
+                            first = false
+                        else
+                            Pad(self)
+                        end
+
+                        NewSubCategoryTitle(self, cat)
                         Pad(self)
-                    end
+                        local sc = NewSubCategory(self)
 
-                    NewSubCategoryTitle(self, cat)
-                    Pad(self)
-                    local sc = NewSubCategory(self)
-
-                    for _, item in pairs(categorizeditems[cat]) do
-                        local model = vgui.Create('DPointShopItem')
-                        model:SetItem(item)
-                        model:SetSize(SS_TILESIZE, SS_TILESIZE)
-                        sc:Add(model)
+                        for _, item in pairs(categorizeditems[cat]) do
+                            local model = vgui.Create('DPointShopItem')
+                            model:SetItem(item)
+                            model:SetSize(SS_TILESIZE, SS_TILESIZE)
+                            sc:Add(model)
+                        end
                     end
                 end
+
+                self:InvalidateLayout()
+                self.validtick = SS_ValidInventoryTick
+
+                timer.Simple(0, function()
+                    self:GetVBar():SetScroll(scroll2)
+                end)
             end
-
-            self:InvalidateLayout()
-            SS_ValidInventory = true
-
-            timer.Simple(0, function()
-                self:GetVBar():SetScroll(scroll2)
-            end)
         end
     end
 
+    SS_InventoryPanel = NewCategory("Inventory", 'icon16/basket.png', RIGHT)
+
+    inventorythink(SS_InventoryPanel, {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"})
+
+    inventorythink(NewCategory("Blueprints", 'icon16/book.png', RIGHT), {"Weapons", "Props"})
+
+    -- --title text 
+    -- vgui("DLabel", self.navbar, function(p)
+    --     p:SetText(" ← Store       Inventory →")
+    --     p:SetFont('SS_Category') --ScoreboardTitleSmall
+    --     p:SizeToContentsX()
+    --     p:DockMargin(16, 0, 16, 0)
+    --     p:SetColor(SS_ColorWhite)
+    --     p:Dock(RIGHT)
+    -- end)
+    SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
     SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent():GetParent())
     SS_CustomizerPanel:Dock(FILL)
     SS_CustomizerPanel:Close()
@@ -709,7 +742,7 @@ function PANEL:PaintOver(w, h)
 end
 
 function PANEL:OnRemove()
-    SS_ValidInventory = false
+    SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
 end
 
 vgui.Register('DPointShopMenu', PANEL, "EditablePanel")

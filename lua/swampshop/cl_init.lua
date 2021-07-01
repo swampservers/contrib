@@ -152,7 +152,7 @@ net.Receive('SS_Items', function(length)
 
     SetLoadingPlayerProperty(-1, "SS_Items", items, function(ply)
         ply.SS_Items = SS_MakeItems(ply, ply.SS_Items)
-        SS_ValidInventory = false
+        SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
     end)
 end)
 

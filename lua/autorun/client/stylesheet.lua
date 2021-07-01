@@ -491,6 +491,13 @@ surface.CreateFont("SS_Price", {
     antialias = true,
 })
 
+surface.CreateFont("SS_CategoryGroup", {
+    font = "Lato",
+    size = 24,
+    weight = 200,
+    antialias = true,
+})
+
 surface.CreateFont("SS_Category", {
     font = "Lato",
     size = 18,
