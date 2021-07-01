@@ -18,7 +18,6 @@ function SS_Initialize()
     for _, name in pairs(files) do
         AddCSLuaFile('swampshop/tabs/' .. name)
         include('swampshop/tabs/' .. name)
-        print(name)
     end
 end
 
