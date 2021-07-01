@@ -161,8 +161,6 @@ function CONTENTPICKER:Reload()
         v:Remove()
     end
 
-    self:Add("", false)
-
     for k, v in pairs(self.Images) do
         self:Add(v.url)
     end
