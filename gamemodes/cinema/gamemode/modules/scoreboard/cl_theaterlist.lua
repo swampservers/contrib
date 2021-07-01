@@ -33,7 +33,7 @@ function THEATERLIST:Init()
 end
 
 function THEATERLIST:Paint(w, h)
-    surface.SetDrawColor(MenuTheme_BrandDark)
+    surface.SetDrawColor(MenuTheme_BrandDarker)
     surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
     local xp, _ = self:GetPos()
     BrandBackgroundPattern(0, 0, self:GetWide(), self.TitleHeight, xp)
