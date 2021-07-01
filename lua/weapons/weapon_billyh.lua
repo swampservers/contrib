@@ -16,7 +16,6 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
-
 function SWEP:Initialize()
     self:SetHoldType("normal")
 end
