@@ -186,9 +186,8 @@ function PANEL:Paint()
 
         SS_PreviewShopModel(self, SS_HoverIOP)
         self:SetCamPos(self:GetCamPos() * 2)
-        
         self.Entity:DrawModel()
-        
+
         if SS_HoverItem then
             SS_PreRender(SS_HoverItem)
         end
@@ -202,7 +201,6 @@ function PANEL:Paint()
 
         local center = (PrevMaxs + PrevMins) / 2
         local diam = PrevMins:Distance(PrevMaxs)
-        
         self:SetCamPos(center + (diam * Vector(0.4, 0.4, 0.1)))
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end

@@ -10,7 +10,6 @@ include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
 include("vgui/imgur_manager.lua")
-
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3
@@ -213,7 +212,6 @@ end)
 --     net.WriteUInt(item_id, 32)
 --     net.SendToServer()
 -- end
-
 -- -- REMOVE THIS
 -- function SS_EquipItem(item_id, state)
 --     if not LocalPlayer():SS_FindItem(item_id) then return end
@@ -222,7 +220,6 @@ end)
 --     net.WriteBool(state)
 --     net.SendToServer()
 -- end
-
 -- function SS_ActivateItem(item_id, args)
 --     if not LocalPlayer():SS_FindItem(item_id) then return end
 --     net.Start('SS_ActivateItem')
@@ -230,7 +227,6 @@ end)
 --     net.WriteTable(args or {})
 --     net.SendToServer()
 -- end
-
 function SS_ItemServerAction(item_id, action_id, args)
     if not LocalPlayer():SS_FindItem(item_id) then return end
     net.Start('SS_ItemAction')

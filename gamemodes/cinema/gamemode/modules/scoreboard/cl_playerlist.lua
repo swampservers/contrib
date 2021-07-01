@@ -357,8 +357,9 @@ function PLAYER:UpdatePlayer()
     else
         if self.Country ~= nil and self.Country.SetImage ~= nil then
             self.Country:SetImage("countries/" .. string.lower(code) .. ".png")
-            self.Country:SetToolTip("Click to learn about: "..string.upper(code))
+            self.Country:SetToolTip("Click to learn about: " .. string.upper(code))
             self.Country.isocode = code
+
             self.Country.DoClick = function(pnl)
                 ShowMotd("https://en.wikipedia.org/wiki/ISO_3166-1:" .. string.upper(pnl.isocode))
             end
@@ -470,9 +471,9 @@ vgui.Register("ScoreboardPlayer", PLAYER)
 local PLAYERPING = {}
 PLAYERPING.Padding = 0
 
-
 function PLAYERPING:Init()
     self.Heights = {3, 6, 9, 12}
+
     self.PingAmounts = {300, 225, 150, 75}
 end
 

@@ -5,16 +5,13 @@ function THUMB:Init()
     self.BaseClass.Init(self)
     self:SetText("")
     self:SetSize(64, 64)
-
-end 
+end
 
 function THUMB:SetImgur(id)
     assert(isstring(id), "Expected string, got" .. type(id))
     self.m_sImgur = id
     self:SetText(id ~= "" and "" or "None")
 end
-
-
 
 function THUMB:Paint(w, h)
     if (self:GetImgur() ~= "") then
@@ -36,6 +33,7 @@ vgui.Register('DImgurThumbnail', THUMB, 'DButton')
 function DImgurThumbnail(url, nsfw, size)
     local panel = vgui.Create("DImgurThumbnail")
     panel:SetImgur(url)
+
     return panel
 end
 
@@ -46,7 +44,6 @@ function CONTENTPICKER:Init()
     self.Scroll = vgui.Create("DScrollPanel", self)
     self.Scroll:Dock(FILL)
     self.Scroll.Paint = noop()
-
     self.Bottom = vgui.Create("DPanel", self)
     self.Bottom:Dock(TOP)
     self.Bottom:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
@@ -55,14 +52,14 @@ function CONTENTPICKER:Init()
     self.AddField:Dock(FILL)
     self.AddField:SetPaintBackground(false)
     self.AddField:SetUpdateOnType(true)
-
     self.AddField:SetTextColor(MenuTheme_TX)
+
     self.AddField.UpdateColours = function(pnl)
         pnl:SetTextColor(MenuTheme_TX)
         pnl:SetCursorColor(MenuTheme_TX)
     end
-    self.AddField.OnValueChange = function(textself, new) end
 
+    self.AddField.OnValueChange = function(textself, new) end
     self.AddButton = vgui.Create("DButton", self.Bottom)
     self.AddButton:SetSize(64, 16)
     self.AddButton:SetText("Save To List")
@@ -70,7 +67,6 @@ function CONTENTPICKER:Init()
     self.AddButton:Dock(RIGHT)
     self.AddButton.Paint = SS_PaintButtonBrandHL
     local textentry = self.AddField
-
 
     self.AddButton.DoClick = function(btn)
         if (self.AddField:GetText() == "") then return end
@@ -121,10 +117,11 @@ function CONTENTPICKER:PerformLayout(w, h)
     local l, u, r, d = self.Tiles:GetDockMargin()
     height = height + self.Tiles:GetTall() + u + d
 
-    if(IsValid(self.Bottom))then
-    local l, u, r, d = self.Bottom:GetDockMargin()
-    height = height + self.Bottom:GetTall() + u + d
+    if (IsValid(self.Bottom)) then
+        local l, u, r, d = self.Bottom:GetDockMargin()
+        height = height + self.Bottom:GetTall() + u + d
     end
+
     self:SetTall(height)
     --self.Tiles:InvalidateLayout(true)
     --self.Scroll:InvalidateLayout(true)
@@ -145,15 +142,16 @@ function CONTENTPICKER:PerformLayout(w, h)
     for k, v in pairs(self.Tiles:GetChildren()) do
         v:SetSize(divsize, divsize)
     end
-    if(IsValid(self.Bottom))then
-    self.Bottom:AlignRight(4)
-    self.Bottom:CenterVertical()
+
+    if (IsValid(self.Bottom)) then
+        self.Bottom:AlignRight(4)
+        self.Bottom:CenterVertical()
     end
 end
 
 --SS_PaintBG(self,w,h) 
 function CONTENTPICKER:Paint(w, h)
-    SS_PaintFG(self,w,h)
+    SS_PaintFG(self, w, h)
 end
 
 function CONTENTPICKER:Reload()
@@ -205,9 +203,8 @@ function CONTENTPICKER:Add(url, nsfw)
     tile.DoClick = function(pnl)
         self:OnChoose(tile:GetImgur())
     end
-    tile.DoRightClick = function(pnl)
-    end
-    
+
+    tile.DoRightClick = function(pnl) end
 end
 
 function CONTENTPICKER:AddPermanent(url)

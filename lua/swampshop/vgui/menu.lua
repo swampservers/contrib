@@ -14,31 +14,25 @@ function PANEL:Init()
     self.testval = true
 
     --nav bar
-    
     self.PaintOver = function(pnl, w, h)
         local navbottom = self.navbar:GetTall()
-
         BrandDropDownGradient(0, navbottom, w)
-
         local bottom = self.botbar:GetTall()
+        BrandUpGradient(0, h - bottom, w)
+        local frogsize = 208
+        local edge = 308
+        ofs = (edge / 512) * frogsize
+        surface.SetDrawColor(Color(255, 255, 255, 255))
 
-        BrandUpGradient(0, h-bottom, w)
-
-
-            local frogsize = 208
-            local edge = 308
-            ofs = (edge / 512) * frogsize
-            surface.SetDrawColor(Color(255, 255, 255, 255))
-            if not froggy:IsError() then
-                surface.SetMaterial(froggy)
-                DisableClipping(true)
-                render.ClearDepth()
-                cam.IgnoreZ(true)
-                surface.DrawTexturedRect(w - frogsize, h - ofs, frogsize, frogsize)
-                cam.IgnoreZ(false)
-                DisableClipping(false)
-            end
-
+        if not froggy:IsError() then
+            surface.SetMaterial(froggy)
+            DisableClipping(true)
+            render.ClearDepth()
+            cam.IgnoreZ(true)
+            surface.DrawTexturedRect(w - frogsize, h - ofs, frogsize, frogsize)
+            cam.IgnoreZ(false)
+            DisableClipping(false)
+        end
     end
 
     self.navbar = vgui("DPanel", self, function(navbar)
@@ -103,7 +97,6 @@ function PANEL:Init()
                 p.DoClick = function()
                     GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
                 end
-
             end)
 
             vgui("DImageButton", function(p)
@@ -160,7 +153,8 @@ function PANEL:Init()
         p:SetTall(SS_BOTBARHEIGHT)
         p:SetZPos(32767)
         p:Dock(BOTTOM)
-        p.Paint =  SS_PaintMD
+        p.Paint = SS_PaintMD
+
         --[[
         vgui("DImageButton", function(p)
             p:SetImage("icon16/bug.png")
@@ -183,6 +177,7 @@ function PANEL:Init()
             p:Dock(LEFT)
             p:SetWide(420)
             p.Paint = noop
+
             local av = vgui("AvatarImage", function(p)
                 p:Dock(LEFT)
                 p:SetPlayer(LocalPlayer(), 184)
@@ -191,10 +186,11 @@ function PANEL:Init()
             end)
 
             vgui("DPanel", function(p)
-                p:SetWide(384 - av:GetWide() - SS_COMMONMARGIN*2)
+                p:SetWide(384 - av:GetWide() - SS_COMMONMARGIN * 2)
                 p:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
                 p:Dock(FILL)
                 p:InvalidateLayout(true)
+
                 p.Paint = function(pnl, w, h)
                     --SS_PaintDirty(pnl,w,h)
                     draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, (h / 2) - 13, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
@@ -203,11 +199,11 @@ function PANEL:Init()
 
                 vgui('DImageButton', function(p)
                     p:SetSize(16, 16)
-                    p:SetPos(p:GetParent():GetWide() - 16,16)
+                    p:SetPos(p:GetParent():GetWide() - 16, 16)
                     p:SetTooltip("Give Points")
                     p:Dock(RIGHT)
-                    local topm = SS_BOTBARHEIGHT - SS_COMMONMARGIN*3 - 16
-                    p:DockMargin(SS_COMMONMARGIN,topm,SS_COMMONMARGIN + 56,SS_COMMONMARGIN)
+                    local topm = SS_BOTBARHEIGHT - SS_COMMONMARGIN * 3 - 16
+                    p:DockMargin(SS_COMMONMARGIN, topm, SS_COMMONMARGIN + 56, SS_COMMONMARGIN)
                     p:SetTextColor(MenuTheme_TX)
                     p:SetImage("icon16/group_go.png")
                     --p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
@@ -218,10 +214,6 @@ function PANEL:Init()
                     end
                 end)
             end)
-
-            
-                
-            
         end)
 
         PointshopDollarParticlePoints = -0.2
@@ -363,9 +355,9 @@ function PANEL:Init()
             --p.Paint = SS_PaintDirty
             --p.VBar:DockMargin(0, 0, 0, 0)
             p.VBar:SetWide(SS_SCROLL_WIDTH)
-
             SS_SetupVBar(p.VBar)
             p.VBar:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+
             --the pretty layout kinda just breaks when you take away the scroll bar so let's just leave it there
             function p.VBar:SetUp(_barsize_, _canvassize_)
                 self.BarSize = _barsize_
@@ -506,34 +498,34 @@ function PANEL:Init()
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
         local first = true
         Pad(cat)
+
         for _, LAYOUT in ipairs(CATEGORY.layout) do
-                --we cap off previous ones here
-                if (first) then
-                    if (#LAYOUT.products > 0) then
-                        first = false
-                    end
-                else
-                    Pad(cat)
+            --we cap off previous ones here
+            if (first) then
+                if (#LAYOUT.products > 0) then
+                    first = false
                 end
+            else
+                Pad(cat)
+            end
 
-                if LAYOUT.title then
-                    NewSubCategoryTitle(cat, LAYOUT.title)
-                    Pad(cat)
-                end
+            if LAYOUT.title then
+                NewSubCategoryTitle(cat, LAYOUT.title)
+                Pad(cat)
+            end
 
-                local scat = NewSubCategory(cat)
+            local scat = NewSubCategory(cat)
 
-                for _, product in ipairs(LAYOUT.products) do
-                    local model = vgui.Create('DPointShopItem')
-                    model:SetProduct(product)
-                    model:SetSize(SS_TILESIZE, SS_TILESIZE)
-                    scat:Add(model)
-                end
+            for _, product in ipairs(LAYOUT.products) do
+                local model = vgui.Create('DPointShopItem')
+                model:SetProduct(product)
+                model:SetSize(SS_TILESIZE, SS_TILESIZE)
+                scat:Add(model)
+            end
         end
+
         Pad(cat)
     end
-
-    
 
     SS_InventoryPanel = NewCategory("Inventory", 'icon16/basket.png', RIGHT)
     SS_ValidInventory = false

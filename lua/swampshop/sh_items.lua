@@ -117,7 +117,6 @@ function SS_ClientsideFakeItem(item)
     SS_Item(item)
 end
 
-
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
     if item.wear then
@@ -189,14 +188,10 @@ function SS_Item(item)
     end
 
     item.SellValue = item.SellValue or function(self) return math.floor(self.value * 0.8) end
-
-
     -- item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
-
     -- item.HoverClick = item.HoverClick or function(self, second)
     --     if second then
     --         local status = (not self.eq) and self:CannotEquip() or nil
-
     --         if status then
     --             surface.PlaySound("common/wpn_denyselect.wav")
     --             LocalPlayerNotify(status)
@@ -206,12 +201,8 @@ function SS_Item(item)
     --         end
     --     end
     -- end
-
-
     -- setup actions
-
     item.actions = item.actions or {}
-
 
     -- Default actions
     if not item.never_equip then
@@ -239,32 +230,37 @@ function SS_Item(item)
     if not item.clientside_fake then
         item.actions.sell = {
             sort = -2,
-            Text = function(item, args) return SS_SELLCONFIRMID==item.id and "CONFIRM?" or "Sell for "..tostring(item:SellValue()).." points" end,
-            OnClient = function(item) 
-                if SS_SELLCONFIRMID==item.id then
-                    SS_ItemServerAction(item.id, "sell") 
+            Text = function(item, args) return SS_SELLCONFIRMID == item.id and "CONFIRM?" or "Sell for " .. tostring(item:SellValue()) .. " points" end,
+            OnClient = function(item)
+                if SS_SELLCONFIRMID == item.id then
+                    SS_ItemServerAction(item.id, "sell")
                 else
-                    SS_SELLCONFIRMID=item.id
+                    SS_SELLCONFIRMID = item.id
                 end
             end
         }
     end
-    
 
     -- Default action functions
-    for id,v in pairs(item.actions) do
-        if not v.OnClient then 
+    for id, v in pairs(item.actions) do
+        if not v.OnClient then
             local act = id
-            v.OnClient = function(item) SS_ItemServerAction(item.id, act) end
+
+            v.OnClient = function(item)
+                SS_ItemServerAction(item.id, act)
+            end
         end
-        if SERVER then v.OnServer = v.OnServer or SS_ServerActions[id] end
+
+        if SERVER then
+            v.OnServer = v.OnServer or SS_ServerActions[id]
+        end
+
         v.Cannot = v.Cannot or function() end
 
-        if v.primary then 
+        if v.primary then
             item.primaryaction = v
         end
     end
-
 
     SS_ItemOrProduct(item)
     item.__index = item

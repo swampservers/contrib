@@ -867,8 +867,7 @@ local function TexDownloadHook()
         render.PopRenderTarget()
         local parts = string.Explode("/", mat:GetName() or "")
         local imagename = parts[#parts] or "temp_image"
-        
-        local fname =  imagename .. ".png"
+        local fname = imagename .. ".png"
         file.Write(fname, data)
 
         if (SS_REQUESTED_TEX_CALLBACK) then
@@ -941,7 +940,6 @@ function ImageHistoryPanel(button)
     textures.AddField:SetText(img)
 
     textures.OnChoose = function(pnl, img)
-
         SingleAsyncSanitizeImgurId(img, function(id)
             if not IsValid(pnl) then return end
 

@@ -71,7 +71,6 @@ SS_Item({
     name = 'Outfitter',
     description = "Allows wearing any model from workshop - type !outfitter",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
-
     actions = {
         customize = {
             Text = function() return "Change Model" end,
@@ -81,7 +80,6 @@ SS_Item({
             end
         }
     },
-
     invcategory = "Playermodels",
     never_equip = true
 })
@@ -132,7 +130,7 @@ SS_PlayermodelItem({
                 local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Minecraft skin.", "", function(text)
                     RunConsoleCommand("say", "!minecraftskin " .. text)
                 end, function() end, "Change Skin", "Cancel")
-        
+
                 local srdx, srdy = mderma:GetSize()
                 local mdermacredits = Label("Minecraft Skins by Chev for Swamp Servers", mderma)
                 mdermacredits:Dock(BOTTOM)
@@ -142,11 +140,10 @@ SS_PlayermodelItem({
             end
         }
     },
-
     model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
     PlayerSetModel = function(self, ply) end
 })
- 
+
 SS_PlayermodelItem({
     class = 'neckbeardmodel',
     price = 240000,
@@ -157,9 +154,9 @@ SS_PlayermodelItem({
         ply:Give("weapon_clopper")
         ply:SelectWeapon("weapon_clopper")
     end
-}) 
+})
 
-SS_PlayermodelItem({ 
+SS_PlayermodelItem({
     class = 'ogremodel',
     price = 100000,
     name = 'Ogre',

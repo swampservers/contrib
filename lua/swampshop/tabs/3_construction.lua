@@ -64,14 +64,12 @@ SS_Item({
 
         return ch
     end,
-
     actions = {
         spawnprop = {
             primary = true,
-            Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end, 
+            Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
         }
     },
-
     CanCfgColor = function(self) return (SS_GetRating(self.specs.rating).id >= 5) and 5.0 or false end,
     CanCfgImgur = function(self) return SS_GetRating(self.specs.rating).id >= 7 end,
     SpawnPrice = function(self) return 100 end,

@@ -31,9 +31,7 @@ function ReloadStyle(darkmode, color)
     -- local h, s, v = ColorToHSV(MenuTheme_Brand)
     -- MenuTheme_BrandDark = HSVToColor(h, math.min(s * 1.04, 1), v * 0.96)
     -- MenuTheme_BrandDarker = HSVToColor(h, math.min(s * 1.04, 1), v * 0.8)
-
-    MenuTheme_BrandDarker = Color(MenuTheme_Brand.r*0.7,MenuTheme_Brand.g*0.7,MenuTheme_Brand.b*0.7)
-    
+    MenuTheme_BrandDarker = Color(MenuTheme_Brand.r * 0.7, MenuTheme_Brand.g * 0.7, MenuTheme_Brand.b * 0.7)
     SS_DarkMode = darkmode
 
     if darkmode then
@@ -111,7 +109,6 @@ function SS_DrawPanelShadow(pnl, w, h)
     if (not sx) then return end
     local par = pnl:GetParent()
     local betterpar
-
     DisableClipping(true)
     local frame = SS_GetFrame(pnl)
 
@@ -150,7 +147,6 @@ end
 -- SS_PaintBrandDark = function(pnl, w, h)
 --     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_BrandDark)
 -- end
-
 SS_PaintButtonBrandHL = function(pnl, w, h)
     SS_DrawPanelShadow(pnl, w, h)
 
@@ -276,18 +272,16 @@ end
 @brand-danger:          #E74C3C;
 ]]
 --10c090
-
 local patternMat = Material("vgui/swamptitlebar.png", "noclamp")
 
 function BrandBackgroundPattern(x, y, w, h, px, special)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(x, y, w, h)
-
     -- surface.SetDrawColor(MenuTheme_BrandDark)
     if patternMat:IsError() then return end
-    surface.SetDrawColor(Color(255,255,255,64))
+    surface.SetDrawColor(Color(255, 255, 255, 64))
     surface.SetMaterial(patternMat)
-    surface.DrawTexturedRectUV(x, y, w, h,px/1024,0,(w+px)/1024,h/64)
+    surface.DrawTexturedRectUV(x, y, w, h, px / 1024, 0, (w + px) / 1024, h / 64)
 end
 
 function BrandDropDownGradient(x, y, w)
@@ -295,7 +289,7 @@ function BrandDropDownGradient(x, y, w)
 end
 
 function BrandUpGradient(x, y, w)
-    draw.GradientShadowUp(x, y-8, w, 8, 0.65)
+    draw.GradientShadowUp(x, y - 8, w, 8, 0.65)
 end
 
 BrandTitleBarHeight = 64
@@ -487,9 +481,9 @@ surface.CreateFont("SS_SubCategory", {
 surface.CreateFont('SS_ProductName', {
     font = 'Lato',
     size = 17,
-    -- weight = 1000,
 })
 
+-- weight = 1000,
 surface.CreateFont("SS_Price", {
     font = "Righteous",
     size = 31,
