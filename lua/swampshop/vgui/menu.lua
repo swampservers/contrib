@@ -505,10 +505,11 @@ function PANEL:Init()
         local first = true
         Pad(cat)
         for _, LAYOUT in ipairs(CATEGORY.layout) do
-            if (#LAYOUT.products > 0) then
                 --we cap off previous ones here
                 if (first) then
-                    first = false
+                    if (#LAYOUT.products > 0) then
+                        first = false
+                    end
                 else
                     Pad(cat)
                 end
@@ -526,7 +527,6 @@ function PANEL:Init()
                     model:SetSize(SS_TILESIZE, SS_TILESIZE)
                     scat:Add(model)
                 end
-            end
         end
         Pad(cat)
     end
