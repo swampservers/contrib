@@ -29,7 +29,9 @@ function ReloadStyle(darkmode, color)
     color = color or GetConVar("ps_themecolor"):GetInt()
     MenuTheme_Brand = BrandColors[color] or BrandColors[2]
     local h, s, v = ColorToHSV(MenuTheme_Brand)
-    MenuTheme_BrandDark = HSVToColor(h, math.min(s * 1.04, 1), v * 0.9)
+    MenuTheme_BrandDark = HSVToColor(h, math.min(s * 1.04, 1), v * 0.96)
+    MenuTheme_BrandDarker = HSVToColor(h, math.min(s * 1.04, 1), v * 0.8)
+    
     SS_DarkMode = darkmode
 
     if darkmode then
