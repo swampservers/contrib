@@ -208,11 +208,6 @@ function CONTENTPICKER:Add(url, nsfw)
         self:OnChoose(tile:GetImgur())
     end
     tile.DoRightClick = function(pnl)
-        local menu = DermaMenu()
-        menu:AddOption("Delete",function()
-        
-        end)
-        menu:Open()
     end
     
 end

@@ -944,11 +944,13 @@ function ImageHistoryPanel(button)
     textures.AddField:SetText(img)
 
     textures.OnChoose = function(pnl, img)
+
         SingleAsyncSanitizeImgurId(img, function(id)
             if not IsValid(pnl) then return end
 
             if (id) then
                 SS_CustomizerPanel.TextureBar:SetText(id)
+                textures.AddField:SetText(id)
             end
 
             SS_CustomizerPanel.item.cfg.imgur = id and {
