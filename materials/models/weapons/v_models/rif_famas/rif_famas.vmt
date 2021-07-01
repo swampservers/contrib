@@ -1,0 +1,7 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\weapons\v_models\rif_famas\rif_famas"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\weapons\v_models\rif_famas\rif_famas_ref"
+
+}

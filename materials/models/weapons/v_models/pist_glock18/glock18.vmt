@@ -1,0 +1,7 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\weapons\v_models\pist_glock18\glock18"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\weapons\v_models\pist_glock18\glock18_ref"
+
+}
