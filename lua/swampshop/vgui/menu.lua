@@ -16,6 +16,8 @@ function PANEL:Init()
     self.PaintOver = function(pnl, w, h)
         local navbottom = self.navbar:GetTall()
 
+        BrandDropDownGradient(0, navbottom, w)
+
             local frogsize = 208
             local edge = 308
             ofs = (edge / 512) * frogsize
@@ -33,6 +35,7 @@ function PANEL:Init()
     self.navbar = vgui("DPanel", self, function(navbar)
         navbar:SetTall(SS_NAVBARHEIGHT)
         navbar:Dock(TOP)
+        navbar:SetZPos(32767)
         navbar.Paint = SS_PaintBrandStripes
 
         --title text 
@@ -146,6 +149,7 @@ function PANEL:Init()
     vgui("DPanel", self, function(p)
         local xo = p:GetWide() + SS_BOTBARHEIGHT
         p:SetTall(SS_BOTBARHEIGHT)
+        p:SetZPos(32767)
         p:Dock(BOTTOM)
         p.Paint =  SS_PaintMD
         --[[
@@ -184,8 +188,8 @@ function PANEL:Init()
                 p:InvalidateLayout(true)
                 p.Paint = function(pnl, w, h)
                     --SS_PaintDirty(pnl,w,h)
-                    draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, 16, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-                    draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, 32, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+                    draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, (h / 2) - 13, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
                 end
 
                 vgui('DImageButton', function(p)
@@ -288,14 +292,14 @@ function PANEL:Init()
     --whole page contents
     vgui("DPanel", self, function(p)
         p.BigClip = true
-        p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+        p:DockPadding(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
         p:Dock(FILL)
         p.Paint = noop
 
         --preview pane
         SS_PREVPANE = vgui("DPanel", function(p)
             p:SetWide(SS_RPANEWIDTH)
-            p:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
+            p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
             p:Dock(RIGHT)
             p.Paint = SS_PaintFG
             SS_PreviewPane = p
@@ -350,8 +354,9 @@ function PANEL:Init()
             --p.Paint = SS_PaintDirty
             --p.VBar:DockMargin(0, 0, 0, 0)
             p.VBar:SetWide(SS_SCROLL_WIDTH)
-            SS_SetupVBar(p.VBar)
 
+            SS_SetupVBar(p.VBar)
+            p.VBar:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
             --the pretty layout kinda just breaks when you take away the scroll bar so let's just leave it there
             function p.VBar:SetUp(_barsize_, _canvassize_)
                 self.BarSize = _barsize_
@@ -443,7 +448,6 @@ function PANEL:Init()
         local pad = vgui.Create('DPanel', DScrollPanel)
         pad.Paint = noop
         pad:SetTall(SS_COMMONMARGIN)
-        padcnt = padcnt + 30
         pad:Dock(TOP)
         DScrollPanel:AddItem(pad)
     end
@@ -492,7 +496,7 @@ function PANEL:Init()
     for _, CATEGORY in ipairs(SS_Layout) do
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
         local first = true
-
+        Pad(cat)
         for _, LAYOUT in ipairs(CATEGORY.layout) do
             if (#LAYOUT.products > 0) then
                 --we cap off previous ones here
@@ -517,7 +521,10 @@ function PANEL:Init()
                 end
             end
         end
+        Pad(cat)
     end
+
+    
 
     SS_InventoryPanel = NewCategory("Inventory", 'icon16/basket.png', RIGHT)
     SS_ValidInventory = false

@@ -51,7 +51,7 @@ function PANEL:Open(item)
     vgui("DPanel", self, function(p)
         p.Paint = noop
         p:Dock(FILL)
-        p:DockMargin(0, 0, 0, 0)
+        p:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
 
         self.controlzone = vgui("DPanel", function(p)
             p:Dock(FILL)
