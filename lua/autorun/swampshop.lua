@@ -2,8 +2,6 @@
 -- INSTALL: CINEMA
 if SERVER then
     if not file.Exists("swampshop/sv_init.lua", "LUA") then return end
-    AddCSLuaFile("swampshop/cl_init.lua")
-    AddCSLuaFile("swampshop/cl_draw.lua")
     include("swampshop/sv_init.lua")
 end
 

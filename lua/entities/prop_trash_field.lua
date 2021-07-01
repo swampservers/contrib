@@ -5,6 +5,13 @@ DEFINE_BASECLASS("prop_trash")
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.CanChangeTrashOwner = false
 
+TrashFieldModelToRadius = {
+    ["models/maxofs2d/hover_classic.mdl"] = 200,
+    ["models/dav0r/hoverball.mdl"] = 300
+}
+
+AddTrashClass("prop_trash_field", TrashFieldModelToRadius)
+
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables(self, true)
 end
@@ -17,11 +24,6 @@ function ENT:Draw()
     BaseClass.Draw(self) --, true)
     TrashDrawProtectionOutlines(self)
 end
-
-TrashFieldModelToRadius = {
-    ["models/maxofs2d/hover_classic.mdl"] = 200,
-    ["models/dav0r/hoverball.mdl"] = 300
-}
 
 --also used by theater
 function TrashDrawProtectionOutlines(self)
