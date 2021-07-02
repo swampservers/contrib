@@ -8,7 +8,7 @@ if SERVER then
     hook.Add("PostEntityTakeDamage", "DamageMarker", function(ent, dmg, took)
         local att = dmg:GetAttacker()
 
-        if ent:IsPlayer() and ent:IsBot() then
+        if ent:IsPlayer() and (ent:IsBot() or HumanTeamName) then
             if IsValid(att) and att:IsPlayer() then
                 HITMARKERCACHE[att] = (HITMARKERCACHE[att] or 0) + dmg:GetDamage()
             end
@@ -19,7 +19,7 @@ if SERVER then
         for k, v in pairs(HITMARKERCACHE) do
             if IsValid(k) then
                 net.Start("HitMarker")
-                net.WriteUInt(v, 8)
+                net.WriteUInt(v, 16)
                 net.Send(k)
             end
         end
@@ -30,7 +30,7 @@ else
     local hitmarkers = {}
 
     net.Receive("HitMarker", function(len)
-        local dmg = net.ReadUInt(8)
+        local dmg = net.ReadUInt(16)
 
         table.insert(hitmarkers, {
             dmg = dmg,

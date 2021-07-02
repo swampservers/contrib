@@ -296,7 +296,7 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         stack_height = stack_height + h + 4
     end
 
-    local drawhealth = ply:Alive() and ply:Health() < ply:GetMaxHealth()
+    local drawhealth = ply:Alive() and (ply:Health() < ply:GetMaxHealth() or HumanTeamName)
     HEALTH_ALPHA = math.Approach(HEALTH_ALPHA or 0, drawhealth and 1 or 0, FrameTime() * 4)
 
     if (HEALTH_ALPHA > 0) then
