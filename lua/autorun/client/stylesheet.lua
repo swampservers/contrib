@@ -1,15 +1,15 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 BrandColorGrayDarker = Color(32, 32, 32) --(26, 30, 38)
 BrandColorGrayDark = Color(48, 48, 48) --(38, 41, 49)
-BrandColorGray = Color(69, 69, 69)
-BrandColorGrayLight = Color(144, 144, 144)
-BrandColorGrayLighter = Color(180, 180, 180)
-BrandColorGrayLighterer = Color(224, 224, 224)
+BrandColorGray = Color(60, 60, 60)
+BrandColorGrayLight = Color(128, 128, 128)
+BrandColorGrayLighter = Color(172, 172, 172)
+BrandColorGrayLighterer = Color(216, 216, 216)
 BrandColorWhite = Color(255, 255, 255)
 BrandColorPrimary = Color(104, 28, 25)
 BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104)
 
-BrandColors = {Color(104, 28, 25), Color(40, 96, 104), Color(91, 40, 104), Color(27, 100, 43), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
+BrandColors = {Color(104, 28, 25), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
 
 CreateClientConVar("ps_darkmode", "0", true)
 CreateClientConVar("ps_themecolor", "1", true)
@@ -226,6 +226,7 @@ SS_SCROLL_WIDTH = 16
 SS_SUBCATEGORY_HEIGHT = 36
 SS_NAVBARHEIGHT = 56
 SS_BOTBARHEIGHT = 88
+SS_BOTBARSUBHEIGHT = 38
 SS_ROOM_TILES_W = 5
 SS_ROOM_TILES_H = 4
 SS_ROOM_SUBCAT = 1
@@ -274,14 +275,17 @@ end
 --10c090
 local patternMat = Material("vgui/swamptitlebar.png", "noclamp")
 
-function BrandBackgroundPattern(x, y, w, h, px, special)
-    surface.SetDrawColor(MenuTheme_Brand)
-    surface.DrawRect(x, y, w, h)
-    -- surface.SetDrawColor(MenuTheme_BrandDark)
+function BrandBackgroundPatternOverlay(x, y, w, h, px)
     if patternMat:IsError() then return end
     surface.SetDrawColor(Color(255, 255, 255, 64))
     surface.SetMaterial(patternMat)
-    surface.DrawTexturedRectUV(x, y, w, h, px / 1024, 0, (w + px) / 1024, h / 64)
+    surface.DrawTexturedRectUV(x, y, w, h, (px or 0) / 1024, 0, (w + (px or 0)) / 1024, h / 64)
+end
+
+function BrandBackgroundPattern(x, y, w, h, px)
+    surface.SetDrawColor(MenuTheme_Brand)
+    surface.DrawRect(x, y, w, h)
+    BrandBackgroundPatternOverlay(x, y, w, h, px)
 end
 
 function BrandDropDownGradient(x, y, w)
@@ -341,6 +345,48 @@ function draw.GradientShadowUp(x, y, w, h, alpha)
     if cornerMat:IsError() then return end
     predrawshadow(alpha)
     surface.DrawTexturedRectUV(x, y, w, h, 1, 0, 1, 1)
+end
+
+function draw.WrappedText(text, font, x, y, w, col, xalign, yalign)
+    surface.SetFont(font)
+    surface.SetTextColor(col)
+    local buffer = {}
+    local lines = {}
+    local tw, th = 0, 0
+
+    for spaces, word in string.gmatch(text, "(%s*)(%S+)") do
+        for s in string.gmatch(spaces, "\n") do
+            table.insert(lines, table.concat(buffer, " "))
+            buffer = {}
+        end
+
+        tw, th = surface.GetTextSize(table.concat(buffer, " ") .. " " .. word)
+
+        if tw > w then
+            table.insert(lines, table.concat(buffer, " "))
+            buffer = {}
+        end
+
+        table.insert(buffer, word)
+    end
+
+    if #buffer > 0 then
+        table.insert(lines, table.concat(buffer, " "))
+    end
+
+    if yalign == TEXT_ALIGN_BOTTOM then
+        y = y - (th * (#lines - 1))
+    end
+
+    if yalign == TEXT_ALIGN_CENTER then
+        y = y - (th * (#lines - 1) * 0.5)
+    end
+
+    for i, line in ipairs(lines) do
+        draw.SimpleText(line, font, x, y + (i - 1) * th, col, xalign, yalign)
+    end
+
+    return w, (th * (#lines))
 end
 
 surface.CreateFont('SS_Heading', {
@@ -412,14 +458,14 @@ surface.CreateFont("SS_Default", {
 
 surface.CreateFont("SS_Donate1", {
     font = "Roboto",
-    size = 36,
+    size = 32,
     weight = 800,
     antialias = true,
 })
 
 surface.CreateFont("SS_Donate2", {
     font = "Roboto",
-    size = 28,
+    size = 26,
     weight = 800,
     antialias = true,
 })

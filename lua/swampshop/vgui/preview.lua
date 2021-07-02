@@ -2,6 +2,7 @@
 -- INSTALL: CINEMA
 local PANEL = {}
 
+--NOMINIFY
 function PANEL:Init()
     self:SetModel(LocalPlayer():GetModel())
     self.Angles = Angle(0, 0, 0)
@@ -68,7 +69,6 @@ function PANEL:LayoutEntity(thisEntity)
                         crangm:Invert()
                         nlangm = crangm * ngangm
                         nlang = nlangm:GetAngles()
-                        print(nlang)
                         XRSL:SetValue(nlang.x)
                         YRSL:SetValue(nlang.y)
                         ZRSL:SetValue(nlang.z)
@@ -254,6 +254,19 @@ function PANEL:Paint()
                 draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
+    end
+end
+
+function PANEL:PaintOver(w, h)
+    if IsValid(SS_DescriptionPanel) then
+        _, h = SS_DescriptionPanel:GetPos()
+    end
+
+    -- print(w,h)
+    -- surface.SetDrawColor(255,0,0,255)
+    -- surface.DrawRect(0,h-10,w,10)
+    if SS_HoverIOP then
+        SS_DrawIOPInfo(SS_HoverIOP, 0, h, w, MenuTheme_TX, 1)
     end
 end
 

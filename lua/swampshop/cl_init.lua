@@ -65,6 +65,8 @@ concommand.Add("ps_destroymenu", function(ply, cmd, args)
     SS_ReloadMenu()
 end)
 
+SS_ReloadMenu()
+
 if IsValid(SS_CustomizerPanel) then
     SS_CustomizerPanel:Close()
 end

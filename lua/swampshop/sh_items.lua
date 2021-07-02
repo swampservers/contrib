@@ -105,6 +105,7 @@ function SS_WeaponBlueprintItem(item)
     SS_Item(item)
 end
 
+--NOMINIFY
 --todo move this
 function SS_ItemOrProduct(iop)
     iop.GetName = iop.GetName or function(self) return self.name end
@@ -142,6 +143,10 @@ function SS_Item(item)
         item.accessory_slot = true
         item.invcategory = "Accessories"
     end
+
+    -- change this to just one function that returns the tab above
+    item.CanCfgColor = item.CanCfgColor or function(i) return (i.configurable or {}).color end
+    item.CanCfgImgur = item.CanCfgImgur or function(i) return (i.configurable or {}).imgur end
 
     function item:Sanitize()
         _SS_SanitizeConfig(self)
@@ -228,9 +233,18 @@ function SS_Item(item)
     end
 
     if not item.clientside_fake then
-        item.actions.sell = {
+        item.actions.auction = {
             sort = -2,
-            Text = function(item, args) return SS_SELLCONFIRMID == item.id and "CONFIRM?" or "Sell for " .. tostring(item:SellValue()) .. " points" end,
+            Text = function(item, args) return "Auction" end,
+            OnClient = function(item)
+                -- if LocalPlayer():SteamID() ~= "STEAM_0:0:38422842" then return end
+                SS_OpenAuctionWindow(item)
+            end
+        }
+
+        item.actions.sell = {
+            sort = -3,
+            Text = function(item, args) return SS_SELLCONFIRMID == item.id and "CONFIRM?" or "Recycle for " .. tostring(item:SellValue()) .. " points" end,
             OnClient = function(item)
                 if SS_SELLCONFIRMID == item.id then
                     SS_ItemServerAction(item.id, "sell")
@@ -290,11 +304,15 @@ function _SS_SanitizeConfig(item)
         return isvector(val) and val:Clamp(min, max) or nil
     end
 
-    if itmc.color then
-        cfg.color = sanitize_vector(dirty_cfg.color, Vector(0, 0, 0), Vector(itmc.color.max, itmc.color.max, itmc.color.max))
+    local limits = item:CanCfgColor()
+
+    if limits then
+        cfg.color = sanitize_vector(dirty_cfg.color, Vector(0, 0, 0), Vector(limits.max, limits.max, limits.max))
     end
 
-    if itmc.imgur then
+    limits = item:CanCfgImgur()
+
+    if limits then
         local url = istable(dirty_cfg.imgur) and SanitizeImgurId(dirty_cfg.imgur.url)
 
         cfg.imgur = url and {

@@ -98,41 +98,36 @@ function PANEL:Select()
     end
 
     SS_HoverIOP = SS_HoverItem or SS_HoverProduct
-    local p = vgui.Create("DLabel", SS_DescriptionPanel)
-    p:SetFont("SS_DESCTITLEFONT")
-    p:SetText(self.iop:GetName())
-    p:SetColor(MenuTheme_TX)
-    p:SetContentAlignment(8)
 
-    p.UpdateColours = function(pnl)
-        pnl:SetTextColor(MenuTheme_TX)
-    end
-
-    p:SetAutoStretchVertical(true)
-    p:Think()
-    p:DockMargin(0, 4, 0, 4)
-    p:Dock(TOP)
-
-    if self.iop.description then
-        p = vgui.Create("DLabel", SS_DescriptionPanel)
-        p:SetFont("SS_DESCFONT")
-        p:SetText(self.iop.description)
-        local long = string.len(self.iop.description) > 50
-        p:SetColor(MenuTheme_TX)
-        p:SetContentAlignment(long and 7 or 8)
-        p:SetWrap(long)
-        p:SetAutoStretchVertical(long and true or false)
-
-        p.UpdateColours = function(pnl)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
-
-        p:SizeToContentsY()
-        p:Think()
-        p:DockMargin(4, 4, 4, 4)
-        p:Dock(TOP)
-    end
-
+    -- local p = vgui.Create("DLabel", SS_DescriptionPanel)
+    -- p:SetFont("SS_DESCTITLEFONT")
+    -- p:SetText(self.iop:GetName())
+    -- p:SetColor(MenuTheme_TX)
+    -- p:SetContentAlignment(8)
+    -- p.UpdateColours = function(pnl)
+    --     pnl:SetTextColor(MenuTheme_TX)
+    -- end
+    -- p:SetAutoStretchVertical(true)
+    -- p:Think()
+    -- p:DockMargin(0, 4, 0, 4)
+    -- p:Dock(TOP)
+    -- if self.iop.description then
+    --     p = vgui.Create("DLabel", SS_DescriptionPanel)
+    --     p:SetFont("SS_DESCFONT")
+    --     p:SetText(self.iop.description)
+    --     local long = string.len(self.iop.description) > 50
+    --     p:SetColor(MenuTheme_TX)
+    --     p:SetContentAlignment(long and 7 or 8)
+    --     p:SetWrap(long)
+    --     p:SetAutoStretchVertical(long and true or false)
+    --     p.UpdateColours = function(pnl)
+    --         pnl:SetTextColor(MenuTheme_TX)
+    --     end
+    --     p:SizeToContentsY()
+    --     p:Think()
+    --     p:DockMargin(4, 4, 4, 4)
+    --     p:Dock(TOP)
+    -- end
     if self.product then
         local ln = 4
 
@@ -192,11 +187,8 @@ function PANEL:Select()
     else
         assert(self.item)
 
-        SS_ItemInteractionPanel = vgui("DPanel", SS_PREVPANE, function(p)
-            p:Dock(BOTTOM)
-            p:SetTall(64)
-            p:DockMargin(0, 0, 0, 0)
-            p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+        vgui("DPanel", SS_DescriptionPanel, function(p)
+            p:Dock(TOP)
             p.Paint = noop
             local orderedactions = {}
 
@@ -240,54 +232,10 @@ function PANEL:Select()
                     p.Paint = SS_PaintButtonBrandHL
                 end)
             end
-        end)
 
-        -- if self.item.configurable or (self.item.configurable_menu and (self.item.eq or self.item.never_equip)) then
-        --     vgui("DButton", function(p)
-        --         p:SetText(self.item.configurable_label or "Customize")
-        --         p.UpdateColours = function(pnl)
-        --             pnl:SetTextStyleColor(MenuTheme_TX)
-        --         end
-        --         p:Dock(TOP)
-        --         p:SetTall(24)
-        --         p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-        --         p.DoClick = function(butn)
-        --             if (isfunction(self.item.configurable_menu)) then
-        --                 self.item.configurable_menu()
-        --                 return
-        --             end
-        --             if SS_CustomizerPanel:IsVisible() then
-        --                 SS_CustomizerPanel:Close()
-        --             else
-        --                 SS_CustomizerPanel:Open(self.item)
-        --             end
-        --         end
-        --         --p:InvalidateLayout(true)
-        --         p.Paint = SS_PaintButtonBrandHL
-        --     end)
-        -- end
-        -- if (not self.item.always_have) then
-        --     vgui("DButton", function(p)
-        --         p:SetText(self.item:SellValue() > 0 and "Sell for " .. tostring(self.item:SellValue()) .. " points" or "Discard")
-        --         p.UpdateColours = function(pnl)
-        --             pnl:SetTextStyleColor(MenuTheme_TX)
-        --         end
-        --         p:Dock(TOP)
-        --         p:SetTall(24)
-        --         p:DockMargin(0, 0, 0, SS_SMALLMARGIN)
-        --         p.DoClick = function(butn)
-        --             if butn:GetText() == "CONFIRM?" then
-        --                 SS_SellItem(self.item.id)
-        --             else
-        --                 butn:SetText("CONFIRM?")
-        --             end
-        --         end
-        --         --p:InvalidateLayout(true)
-        --         p.Paint = SS_PaintButtonBrandHL
-        --     end)
-        -- end
-        SS_ItemInteractionPanel:InvalidateLayout(true)
-        SS_ItemInteractionPanel:SizeToChildren(false, true)
+            p:InvalidateLayout(true)
+            p:SizeToChildren(false, true)
+        end)
     end
 end
 
@@ -300,10 +248,7 @@ function PANEL:Deselect()
 
     if IsValid(SS_HoverCSModel) then
         SS_HoverCSModel:Remove()
-    end
-
-    if (SS_ItemInteractionPanel) then
-        SS_ItemInteractionPanel:Remove()
+        SS_HoverCSModel = nil
     end
 
     if IsValid(SS_DescriptionPanel) then
@@ -423,7 +368,7 @@ function PANEL:Think()
         local c = input.IsMouseDown(MOUSE_LEFT)
 
         if c and not self.lastc then
-            if not SS_MouseInsidePanel(self) and not SS_MouseInsidePanel(SS_PreviewPane) then
+            if not SS_MouseInsidePanel(self) and not SS_MouseInsidePanel(SS_PreviewPane) and not SS_CustomizerPanel:IsVisible() then
                 self:Deselect()
             end
         end
@@ -490,28 +435,31 @@ function PANEL:Think()
         self.barheight = 20
         self.textfont = "SS_ProductName"
         self.text = self.item:GetName()
-        local leqc = 0
-        local totalc = 0
 
-        for k, otheritem in ipairs(LocalPlayer().SS_Items or {}) do
-            if self.item.class == otheritem.class then
-                totalc = totalc + 1
+        if (self.item.auction_price or 0) == 0 then
+            local leqc = 0
+            local totalc = 0
 
-                if otheritem.id <= self.item.id then
-                    leqc = leqc + 1
+            for k, otheritem in ipairs(LocalPlayer().SS_Items or {}) do
+                if self.item:GetName() == otheritem:GetName() then
+                    totalc = totalc + 1
+
+                    if otheritem.id <= self.item.id then
+                        leqc = leqc + 1
+                    end
                 end
             end
-        end
 
-        if totalc > 1 then
-            self.text = self.text .. " (" .. tostring(leqc) .. ")"
+            if totalc > 1 then
+                self.text = self.text .. " (" .. tostring(leqc) .. ")"
+            end
         end
 
         self.textcolor = MenuTheme_TX
 
         if self:IsSelected() then
             self.BGColor = SS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
-            local labelview = self.hovered and not self.item.never_equip
+            local labelview = self.hovered and self.item.primaryaction --not self.item.never_equip
 
             if labelview then
                 self.barheight = 30
@@ -572,6 +520,23 @@ function PANEL:PaintOver(w, h)
     end
 
     draw.SimpleText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - (self.barheight / 2), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+    if self.item and self.item.auction_end_t then
+        local sex = math.max(self.item.auction_end_t - os.time(), 0)
+        local d = math.floor(sex / (3600 * 24))
+        local h = math.floor(sex / 3600) % 24
+        local m = math.floor(sex / 60) % 60
+        local s = math.floor(sex) % 60
+        local str = string.format("%02i:%02i:%02i", h, m, s)
+
+        if d > 0 then
+            str = d .. "d " .. str
+        end
+
+        local font = "CloseCaption_Bold"
+        draw.SimpleText(str, font, self:GetWide() / 2, 0, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        draw.SimpleText(tostring(self.item.bid_price), font, self:GetWide() / 2, self:GetTall() - self.barheight, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+    end
 end
 
 vgui.Register('DPointShopItem', PANEL, 'DPanel')

@@ -165,11 +165,12 @@ function Player:SS_BaseIncomeMultiplier()
     return mult
 end
 
-SS_AUCTION_COST = 1000
-SS_AUCTION_BID_MULTIPLIER = 1.1
-SS_AUCTION_PAY_FRACTION = 0.9
-SS_AUCTION_DURATION = 3 * 24 * 3600
-SS_AUCTION_BID_DURATION = 300
+SS_AUCTION_COST = 5000
+SS_AUCTION_BID_MULTIPLIER = 1.05
+SS_AUCTION_PAY_FRACTION = 0.95
+SS_AUCTION_DURATION = 5 * 24 * 3600
+SS_AUCTION_BID_DURATION = 600
+SS_AUCTION_PERPAGE = 20
 
 SS_ItemRatings = {
     {
@@ -236,6 +237,14 @@ SS_ItemRatings = {
         propnotes = "Texturable in inventory, not unfreezable or destroyable"
     },
 }
+
+function SS_GetRatingID(r)
+    if r == nil then
+        return 0
+    else
+        return SS_GetRating(r).id
+    end
+end
 
 function SS_GetRating(r)
     for i, v in ipairs(SS_ItemRatings) do

@@ -10,7 +10,7 @@ function PANEL:Close()
     end
 
     self:SetVisible(false)
-    SS_InventoryPanel:SetVisible(true)
+    -- SS_InventoryPanel:SetVisible(true)
 end
 
 function PANEL:Open(item)
@@ -45,8 +45,8 @@ function PANEL:Open(item)
     end)
 
     self:SetVisible(true)
-    SS_InventoryPanel:SetVisible(false)
 
+    -- SS_InventoryPanel:SetVisible(false)
     --main panel
     vgui("DPanel", self, function(p)
         p.Paint = noop
@@ -633,8 +633,9 @@ function PANEL:SetupControls()
     appearance_container.VBar:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
     SS_SetupVBar(appearance_container.VBar)
     appearance_container.VBar:SetWide(SS_SCROLL_WIDTH)
+    local limit = self.item:CanCfgColor()
 
-    if (self.item.configurable or {}).color then
+    if limit then
         local colorzone = Container(appearance_container, "Appearance")
         --[[
     local colorzone = vgui.Create("DPanel", appearance_container)
@@ -664,7 +665,7 @@ function PANEL:SetupControls()
         PSCMixer:DockMargin(0, 0, 0, 0)
         PSCMixer:Dock(TOP)
         PSBS = SliderMaker(colorzone, "Boost")
-        PSBS:SetMinMax(1, self.item.configurable.color.max)
+        PSBS:SetMinMax(1, limit.max)
         PSBS:SetValue(cvm)
         PSBS:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
 
@@ -677,7 +678,7 @@ function PANEL:SetupControls()
         PSBS.OnValueChanged = colorchanged
     end
 
-    if (self.item.configurable or {}).imgur then
+    if self.item:CanCfgImgur() then
         local texturezone = Container(appearance_container, "Custom Material")
         --[[
         local texturezone = vgui.Create("DPanel", appearance_container)
@@ -977,7 +978,7 @@ function ImageGetterPanel()
     if IsValid(SS_HoverCSModel) then
         mat = SS_HoverCSModel:GetMaterials()[1]
     else
-        mat = LocalPlayer():GetMaterials()[(SS_CustomizerPanel.item.cfg.submaterial or 0) + 1]
+        mat = SS_PreviewPane.Entity:GetMaterials()[(SS_CustomizerPanel.item.cfg.submaterial or 0) + 1]
     end
 
     local mat_inst = Material(mat)

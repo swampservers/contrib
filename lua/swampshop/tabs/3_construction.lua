@@ -70,8 +70,24 @@ SS_Item({
             Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
         }
     },
-    CanCfgColor = function(self) return (SS_GetRating(self.specs.rating).id >= 5) and 5.0 or false end,
-    CanCfgImgur = function(self) return SS_GetRating(self.specs.rating).id >= 7 end,
+    CanCfgColor = function(self)
+        return (SS_GetRating(self.specs.rating or 0).id >= 5) and {
+            max = 5
+        } or false
+    end,
+    CanCfgImgur = function(self) return SS_GetRating(self.specs.rating or 0).id >= 7 end,
+    GetColor = function(self)
+        if self:CanCfgColor() then return self.cfg.color end
+        local r = SS_GetRating(self.specs.rating).id
+        if r == 2 then return Vector(0.7, 0.7, 0.7) end
+        if r == 1 then return Vector(0.5, 0.3, 0.1) end
+    end,
+    configurable = {
+        color = {
+            max = 5
+        },
+        imgur = true
+    },
     SpawnPrice = function(self) return 100 end,
     invcategory = "Props",
     never_equip = true
@@ -79,7 +95,7 @@ SS_Item({
 
 SS_Product({
     class = 'sandbox',
-    price = 30000,
+    price = 25000,
     name = 'Sandbox Lootbox',
     description = "A random prop that you can spawn from your inventory as much as you want (trading coming soon)",
     model = 'models/Items/ammocrate_smg1.mdl',
@@ -89,29 +105,25 @@ SS_Product({
     OnBuy = function(self, ply)
         -- if ply.CANTSANDBOX then return end
         local item = SS_GenerateItem(ply, "prop")
-        ply:SS_GiveNewItem(item, 4)
-        local chosen = item.specs.model
-        assert(chosen)
-        local others = {}
 
-        for i = 1, 15 do
-            table.insert(others, GetSandboxProp())
-        end
+        ply:SS_GiveNewItem(item, function(item)
+            local chosen = item.specs.model
+            assert(chosen)
+            local others = {}
 
-        net.Start("LootBoxAnimation")
-        net.WriteString(chosen)
-        net.WriteTable(others)
+            for i = 1, 15 do
+                table.insert(others, GetSandboxProp())
+            end
 
-        net.WriteTable({item:GetName(), "Features (UNFINISHED): " .. SS_GetRating(item.specs.rating).propnotes})
+            net.Start("LootBoxAnimation")
+            net.WriteUInt(item.id, 32)
+            net.WriteTable(others)
+            net.Send(ply)
 
-        net.WriteFloat(item.specs.rating)
-        net.Send(ply)
-
-        -- ply.CANTSANDBOX = true
-        timer.Simple(4, function()
-            -- ply.CANTSANDBOX = false
-            makeTrash(ply, chosen)
-        end)
+            timer.Simple(4, function()
+                makeTrash(ply, chosen)
+            end)
+        end, 4)
     end
 })
 

@@ -126,13 +126,18 @@ SS_WeaponAndAmmoProduct({
     amount = 2
 })
 
+if SERVER then
+    language = language or {}
+    language.GetPhrase = function(s) return s:gsub("#Cstrike_WPNHUD_", "") end
+end
+
 SS_Item({
     class = "weapon",
     value = 5000,
     name = "Weapon",
     description = "Rating will affect specs in the future",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
-    GetName = function(self) return (weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown" end,
+    GetName = function(self) return language.GetPhrase((weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown") end,
     GetModel = function(self) return (weapons.GetStored(self.specs.class or "") or {}).WorldModel or self.model end,
     OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
     SanitizeSpecs = function(self)
@@ -198,27 +203,25 @@ for i, tm in ipairs({"CT", "TERRORIST"}) do
                 rating = math.random()
             end
 
-            net.Start("LootBoxAnimation")
-            net.WriteString(chosen.WorldModel or "")
-            net.WriteTable(others)
-
-            net.WriteTable({chosen.PrintName or chosen.ClassName})
-
-            net.WriteFloat(rating)
-            net.Send(ply)
+            -- net.Start("LootBoxAnimation")
+            -- net.WriteString(chosen.WorldModel or "")
+            -- net.WriteTable(others)
+            -- net.WriteTable({chosen.PrintName or chosen.ClassName})
+            -- net.WriteFloat(rating)
+            -- net.Send(ply)
             local w = chosen.ClassName
 
-            timer.Simple(4, function()
-                if ply:HasWeapon(w) then
-                    ply:StripWeapon(w)
-                end
+            -- timer.Simple(4, function()
+            if ply:HasWeapon(w) then
+                ply:StripWeapon(w)
+            end
 
-                ply:Give(w)
-                ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
-                ply:SelectWeapon(w)
-            end)
+            ply:Give(w)
+            ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
+            ply:SelectWeapon(w)
         end
     })
+    -- end)
 end
 
 -- hook.Add("Initialize","ss css setup", function()

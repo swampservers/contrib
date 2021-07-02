@@ -4,6 +4,7 @@ local Player = FindMetaTable('Player')
 local Entity = FindMetaTable('Entity')
 SS_MaterialCache = {}
 
+--NOMINIFY
 function SS_GetMaterial(nam)
     SS_MaterialCache[nam] = SS_MaterialCache[nam] or Material(nam)
 
@@ -34,7 +35,7 @@ function SS_PreRender(item)
         end
     end
 
-    local col = item.cfg.color or item.color
+    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color
 
     if col then
         render.SetColorModulation(col.x, col.y, col.z)
