@@ -6,12 +6,12 @@ SWEP.WorldModel = Model("models/dav0r/tnt/tnt.mdl")
 
 function SWEP:Deploy()
     self.Owner:DrawViewModel(false)
-    self.ActivateAfter = CurTime()+0.5
+    self.ActivateAfter = CurTime() + 0.5
 end
-
 
 function SWEP:PrimaryAttack()
     if CurTime() < (self.ActivateAfter or 0) then return end
+
     if CLIENT then
         if self.Owner == LocalPlayer() then
             if LocalPlayer():IsPony() then
