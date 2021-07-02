@@ -276,6 +276,11 @@ end
 local patternMat = Material("vgui/swamptitlebar.png", "noclamp")
 
 function BrandBackgroundPatternOverlay(x, y, w, h, px)
+    if h > 64 then
+        y = y + (h - 64)
+        h = 64
+    end
+
     if patternMat:IsError() then return end
     surface.SetDrawColor(Color(255, 255, 255, 64))
     surface.SetMaterial(patternMat)
@@ -286,6 +291,16 @@ function BrandBackgroundPattern(x, y, w, h, px)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(x, y, w, h)
     BrandBackgroundPatternOverlay(x, y, w, h, px)
+end
+
+function BrandGrayBackgroundPattern(x, y, w, h, px)
+    BrandGrayBackground(x, y, w, h)
+    BrandBackgroundPatternOverlay(x, y, w, h, px)
+end
+
+function BrandGrayBackground(x, y, w, h)
+    surface.SetDrawColor(BrandColorGray)
+    surface.DrawRect(x, y, w, h)
 end
 
 function BrandDropDownGradient(x, y, w)
@@ -347,12 +362,13 @@ function draw.GradientShadowUp(x, y, w, h, alpha)
     surface.DrawTexturedRectUV(x, y, w, h, 1, 0, 1, 1)
 end
 
-function draw.WrappedText(text, font, x, y, w, col, xalign, yalign)
+function draw.WrappedText(text, font, x, y, w, col, xalign, yalign, prepare_only)
     surface.SetFont(font)
     surface.SetTextColor(col)
     local buffer = {}
     local lines = {}
     local tw, th = 0, 0
+    local mw = 0
 
     for spaces, word in string.gmatch(text, "(%s*)(%S+)") do
         for s in string.gmatch(spaces, "\n") do
@@ -365,6 +381,8 @@ function draw.WrappedText(text, font, x, y, w, col, xalign, yalign)
         if tw > w then
             table.insert(lines, table.concat(buffer, " "))
             buffer = {}
+        else
+            mw = math.max(mw, tw)
         end
 
         table.insert(buffer, word)
@@ -382,11 +400,17 @@ function draw.WrappedText(text, font, x, y, w, col, xalign, yalign)
         y = y - (th * (#lines - 1) * 0.5)
     end
 
-    for i, line in ipairs(lines) do
-        draw.SimpleText(line, font, x, y + (i - 1) * th, col, xalign, yalign)
+    local function finish()
+        for i, line in ipairs(lines) do
+            draw.SimpleText(line, font, x, y + (i - 1) * th, col, xalign, yalign)
+        end
     end
 
-    return w, (th * (#lines))
+    local h = (th * (#lines))
+    if prepare_only then return mw, h, finish end
+    finish()
+
+    return mw, h
 end
 
 surface.CreateFont('SS_Heading', {

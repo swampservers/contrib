@@ -24,30 +24,24 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-idleslitpos = Vector(10, 14, -16)
-idleslitang = Vector(-20, 0, 0)
-activeslitpos = Vector(4, 20, -7)
-activeslitang = Vector(-65, 0, 2)
-slitlerp = 0
 lastslit = 0
 lastkillslit = 0
 justslitplayer = nil
 slitrspeed = .4
-slitlastreload = 0
 
 function SWEP:Initialize()
     self:SetHoldType("knife")
 end
 
-local function sinusoidlerp(lrp)
+local function sinlerp(lrp)
     --*math.pi
     return 0.5 - (0.5 * math.cos(lrp * 2.9))
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
-    slitlerp = 1 - math.min(1, (CurTime() - lastslit) / slitrspeed)
-    pos2 = LerpVector(sinusoidlerp(slitlerp), idleslitpos, activeslitpos)
-    ang2 = LerpVector(sinusoidlerp(slitlerp), idleslitang, activeslitang)
+    local slitlerp = 1 - math.min(1, (CurTime() - lastslit) / slitrspeed)
+    pos2 = LerpVector(sinlerp(slitlerp), Vector(10, 14, -16), Vector(4, 20, -7))
+    ang2 = LerpVector(sinlerp(slitlerp), Vector(-20, 0, 0), Vector(-65, 0, 2))
     local r = ang:Right()
     local f = ang:Forward()
     local u = ang:Up()
@@ -176,9 +170,9 @@ function SWEP:PrimaryAttack()
         local hitplayer = self:TargetedPlayer()
 
         if hitplayer then
-            net.Start("slitThroatneck")
+            net.Start("SlitThroatneck")
             net.WriteEntity(hitplayer)
-            net.WriteEntity(self)
+            net.WriteVector(LocalPlayer():EyeAngles():Forward())
             net.WriteVector(self.TraceHitPos)
             net.WriteVector(self.TraceHitNormal)
             net.SendToServer()
@@ -207,43 +201,40 @@ function SWEP:PrimaryAttack()
     self.Owner:SetAnimation(PLAYER_ATTACK1)
 end
 
-if SERVER then
-    --file to duration
-    --["illgetyou.ogg"]=0.95 }
-    slitterTaunts = {
-        ["throatneck.ogg"] = 1.3,
-        ["throatneck2.ogg"] = 2.1,
-    }
-end
-
 function SWEP:SecondaryAttack()
-    if SERVER then
-        local s = table.GetKeys(slitterTaunts)
-        s = s[math.random(#s)]
-        local p = math.random(50, 160)
+    if HumanTeamName then
+        if CLIENT and IsFirstTimePredicted() then
+            OpenCSBuyMenu()
+        end
 
-        self:ExtEmitSound(s, {
-            pitch = p,
-            speech = slitterTaunts[s],
-            channel = CHAN_VOICE
+        return
+    end
+
+    if SERVER then
+        local s = table.Random({
+            {"throatneck.ogg",},
+            {"throatneck2.ogg", 2.1}
         })
 
-        self:SetNextSecondaryFire(CurTime() + 1)
+        local p = math.random(50, 160)
+
+        self:ExtEmitSound(s[1], {
+            pitch = p,
+            speech = s[2],
+            channel = CHAN_VOICE
+        })
     end
+
+    self:SetNextSecondaryFire(CurTime() + 1)
 end
 
 function SWEP:DrawHUD()
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
     surface.SetDrawColor(Color(255, 255, 255, 150))
-    local tr = {}
-    tr.start = self.Owner:GetShootPos()
-    tr.endpos = self.Owner:GetShootPos() + (self.Owner:GetAimVector() * 100)
-    tr.filter = self.Owner
-    tr.mask = MASK_SHOT
     local hitplayer = self:TargetedPlayer()
 
-    if hitplayer and hitplayer ~= justslitplayer then
+    if hitplayer and (hitplayer ~= justslitplayer or (CurTime() - lastkillslit) >= 0.35) then
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, 16, Color(0, 0, 0, 100))
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, 15, Color(255, 255, 255, 60))
     end
@@ -254,17 +245,11 @@ function SWEP:DrawHUD()
         size = Lerp(killeffect, 16, 48)
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, size, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 100, 0)))
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, size - 1, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 60, 0)))
-    else
-        if (CurTime() - lastkillslit) >= 0.35 then
-            justslitplayer = nil
-        end
     end
 
     surface.SetDrawColor(Color(255, 255, 255, 255))
 end
-
-function SWEP:DoImpactEffect(tr, nDamageType)
-    util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
-
-    return true
-end
+-- function SWEP:DoImpactEffect(tr, nDamageType)
+--     util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
+--     return true
+-- end

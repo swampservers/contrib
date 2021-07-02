@@ -375,7 +375,14 @@ function PANEL:Think()
 
         self.lastc = c
     end
+end
 
+--NOMINIFY
+function PANEL:Paint(w, h)
+    SS_PaintFG(self, w, h)
+end
+
+function PANEL:PaintOver(w, h)
     self.fademodel = false
     self.barcolor = nil
     self.barheight = nil
@@ -470,13 +477,7 @@ function PANEL:Think()
             self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
         end
     end
-end
 
-function PANEL:Paint(w, h)
-    SS_PaintFG(self, w, h)
-end
-
-function PANEL:PaintOver(w, h)
     if self.fademodel then
         SS_PaintFGAlpha(w, h, 144)
     end

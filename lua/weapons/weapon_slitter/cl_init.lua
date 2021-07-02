@@ -2,34 +2,23 @@
 -- INSTALL: CINEMA
 include("shared.lua")
 
-if (CLIENT) then
-    killicon.AddFont("weapon_slitter", "CSKillIcons", "j", Color(255, 80, 0, 255))
+surface.CreateFont("CSKillIcons", {
+    font = "csd",
+    size = ScreenScale(30),
+    weight = 500,
+    antialias = true,
+    additive = true
+})
 
-    surface.CreateFont("CSKillIcons", {
-        font = "csd",
-        size = ScreenScale(30),
-        weight = 500,
-        antialias = true,
-        additive = true
-    })
-
-    surface.CreateFont("CSSelectIcons", {
-        font = "csd",
-        size = ScreenScale(60),
-        weight = 500,
-        antialias = true,
-        additive = true
-    })
-end
-
-BloodMaterials = {}
+killicon.AddFont("weapon_slitter", "CSKillIcons", "j", Color(255, 80, 0, 255))
+local BloodMaterials = {}
 
 for k = 1, 6 do
     local m = Material("decals/blood" .. tostring(k) .. "_subrect")
     table.insert(BloodMaterials, m)
 end
 
-net.Receive("slitThroatneck", function(len)
+net.Receive("SlitThroatneck", function(len)
     local ent = net.ReadEntity()
     local ply = net.ReadEntity()
     local pos = net.ReadVector()
@@ -53,32 +42,30 @@ net.Receive("slitThroatneck", function(len)
         end)
     end
 
-    if ply ~= LocalPlayer() then
-        sound.Play("Weapon_Knife.Hit", pos, 80, 100, 1)
+    local function blood(p, n, s)
         local effectdata = EffectData()
-        effectdata:SetOrigin(pos)
-        effectdata:SetNormal(norm)
+        effectdata:SetOrigin(p)
+        effectdata:SetNormal(n)
         effectdata:SetMagnitude(1)
-        effectdata:SetScale(15)
+        effectdata:SetScale(s)
         effectdata:SetColor(BLOOD_COLOR_RED)
         effectdata:SetFlags(3)
         util.Effect("bloodspray", effectdata, true, true)
     end
 
-    local scale = 14.0
-
-    timer.Create("UniqueNa" .. tostring(math.random(0, 1000)), 0.15, 15, function()
+    if ply ~= LocalPlayer() then
+        sound.Play("Weapon_Knife.Hit", pos, 80, 100, 1)
         local effectdata = EffectData()
+        blood(pos, norm, 15)
+    end
 
-        if ent and ent:IsValid() and ent:GetRagdollEntity() and ent:GetRagdollEntity():IsValid() then
-            effectdata:SetOrigin(ent:GetRagdollEntity():GetPos())
-            effectdata:SetNormal(Vector(0, 0, 1))
-            effectdata:SetMagnitude(1)
-            effectdata:SetScale(scale)
-            scale = scale - 0.6
-            effectdata:SetColor(BLOOD_COLOR_RED)
-            effectdata:SetFlags(3)
-            util.Effect("bloodspray", effectdata, true, true)
-        end
-    end)
+    for i = 1, 15 do
+        local nextscale = 14 - ((i - 1) * 0.6)
+
+        timer.Simple(0.15 * i, function()
+            if IsValid(ent) and IsValid(ent:GetRagdollEntity()) then
+                blood(ent:GetRagdollEntity():GetPos(), Vector(0, 0, 1), nextscale)
+            end
+        end)
+    end
 end)

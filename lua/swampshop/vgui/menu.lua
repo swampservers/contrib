@@ -387,7 +387,7 @@ function PANEL:Init()
 
         btn.Paint = function(pnl, w, h)
             if pnl:GetActive() then
-                surface.SetDrawColor(Color(0, 0, 0, 192))
+                surface.SetDrawColor(Color(0, 0, 0, 144))
                 surface.DrawRect(0, 0, w, h)
                 --gradient drop down?
             else

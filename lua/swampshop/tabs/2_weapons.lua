@@ -3,6 +3,14 @@
 SS_Tab("Weapons", "bomb")
 
 SS_WeaponProduct({
+    name = 'Throatneck Slitter',
+    description = "A deadly knife capable of killing one person before breaking.",
+    price = 2000,
+    model = 'models/weapons/w_knife_t.mdl',
+    class = 'weapon_slitter'
+})
+
+SS_WeaponProduct({
     name = 'Crossbow',
     description = "Kills players in one shot, and is capable of hitting distant targets. Also unfreezes props.",
     price = 5000,
@@ -34,14 +42,6 @@ SS_WeaponProduct({
     price = 8000,
     model = 'models/weapons/w_barrett_m98b.mdl',
     class = 'weapon_sniper'
-})
-
-SS_WeaponProduct({
-    name = 'Throatneck Slitter',
-    description = "A deadly knife capable of killing one person before breaking.",
-    price = 2000,
-    model = 'models/weapons/w_knife_t.mdl',
-    class = 'weapon_slitter'
 })
 
 SS_WeaponProduct({

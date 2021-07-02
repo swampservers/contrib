@@ -159,6 +159,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnRemove()
+    if not IsValid(self.Owner) then return end
     local vm = self:GetOwner():GetViewModel()
 
     if IsValid(vm) then

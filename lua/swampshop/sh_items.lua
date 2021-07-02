@@ -108,7 +108,24 @@ end
 --NOMINIFY
 --todo move this
 function SS_ItemOrProduct(iop)
-    iop.GetName = iop.GetName or function(self) return self.name end
+    if CLIENT then
+        iop.GetNameUncached = iop.GetName or function(self) return self.name end
+
+        --called a lot by the ordering thing
+        function iop:GetName()
+            local fn = FrameNumber()
+
+            if self._namecacheframe ~= fn then
+                self._namecacheframe = fn
+                self._namecache = self:GetNameUncached()
+            end
+
+            return self._namecache
+        end
+    else
+        iop.GetName = iop.GetName or function(self) return self.name end
+    end
+
     iop.GetModel = iop.GetModel or function(self) return self.model end
 end
 
