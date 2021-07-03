@@ -380,6 +380,9 @@ end
 --NOMINIFY
 function PANEL:Paint(w, h)
     SS_PaintFG(self, w, h)
+    if(self:IsSelected())then
+        SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_Brand,100))
+    end 
 end
 
 function PANEL:PaintOver(w, h)
@@ -479,7 +482,8 @@ function PANEL:PaintOver(w, h)
     end
 
     if self.fademodel then
-        SS_PaintFGAlpha(w, h, 144)
+        
+        SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(self:IsSelected() and MenuTheme_Brand or MenuTheme_FG,64))
     end
 
     if self.iop.class == "sandbox" then
