@@ -21,7 +21,7 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.Instructions = "Hold left mouse button to snap. wait time is based on target's health."
 SWEP.ChargeSound = Sound("ambient/machines/transformer_loop.wav")
-
+SWEP.TargetCone = 15
 if (CLIENT) then
     language.Add("infinitygauntlet_ammo", "Comedy Stones")
 end
@@ -34,7 +34,7 @@ hook.Add("Initialize", "InfinityGauntletAmmo", function()
 end)
 
 function SWEP:SetupDataTables()
-    --self:NetworkVar("Entity",0,"Target")
+    self:NetworkVar("Entity",0,"LockTarget")
     self:NetworkVar("Int", 0, "Charge")
 end
 
@@ -44,7 +44,37 @@ end
 function SWEP:GetMaxCharge()
     if (not IsValid(self:GetTarget())) then return 1 end
 
-    return 5 + (self:GetTarget():Health() / 20)
+    return 5 + (self:GetTarget():Health() / 40)
+end
+
+function SWEP:DoDrawCrosshair(x,y)
+    if(!self:CanPrimaryAttack())then return true end
+    local ply = self:GetOwner()
+    local target = self:GetTarget()
+    local dir = ply:GetAimVector():Angle()
+    dir:RotateAroundAxis(dir:Up(),self.TargetCone)
+    
+
+    local maxrad = 0
+
+    
+    local data2D = (EyePos() + (dir:Forward()*100)):ToScreen() -- Gets the position of the entity on your screen
+    
+
+    if (data2D.visible) then
+        maxrad = Vector(x, y, 0):Distance(Vector(data2D.x, data2D.y, 0))
+    end
+
+    local chg = self:GetCharge() * 1.1
+    local rd = (chg / self:GetMaxCharge())
+    self.RadiusLerp = Lerp(0.1,self.RadiusLerp or rd , rd)
+
+
+    rd = self.RadiusLerp
+    surface.DrawCircle( x, y, maxrad*(1-rd) , Color(128, 0, 255,255*rd) )
+    --surface.DrawCircle( x, y, maxrad , Color(128, 128, 128,64) )
+ 
+    return true
 end
 
 local meta = FindMetaTable("Player")
@@ -72,6 +102,7 @@ function SWEP:EquipAmmo(ply)
 end
 
 function SWEP:Snap()
+    self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
     if (SERVER) then
         self:GetOwner():EmitSound("gauntlet/snap.wav", 100)
         util.ScreenShake(self:GetOwner():GetPos(), 1, 2, 0.2, 300)
@@ -93,42 +124,70 @@ function SWEP:Snap()
     end
 end
 
+
+
+function SWEP:CanTarget(v)
+    if(!v:IsPlayer())then return false end
+    if (Safe(v)) then return false end
+    if(!v:Alive())then return false end
+    if(v == self:GetOwner())then return false end
+    if (theater and ply:GetTheater() and ply:GetTheater():IsPrivate() and ply:GetTheater():GetOwner() ~= ply and ply:GetLocationName() == v:GetLocationName()) then return false end
+    if(!self:GetTargetNearness(v))then return false end
+    return true
+end
+
+function SWEP:GetTargetNearness(v)
+    local ply = self:GetOwner()
+    local otherpos = v:LocalToWorld(v:OBBCenter())
+    local a = ply:GetAimVector()
+    local b = (otherpos - ply:GetShootPos()):GetNormalized()
+    local dis = otherpos:Distance(ply:GetShootPos()) / 20
+    local cn = math.deg(math.acos(a:Dot(b)))
+    if(cn > self.TargetCone)then return end 
+    if(dis*20 > 2000)then return end
+
+    return cn + dis
+end
+
 function SWEP:GetTarget()
     local eyetrace = self.Owner:GetEyeTrace()
+    local lock = self:GetLockTarget()
 
-    if eyetrace.Hit then
-        if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) then return eyetrace.Entity end
+    if(IsValid(lock))then 
+        return self:CanTarget(lock) and self:GetLockTarget() 
     end
 
-    local target = {nil, 50}
+    local target = {nil, 10000}
 
     local ply = self:GetOwner()
     local allply = player.GetAll()
     local tracepos = ply:GetEyeTrace().HitPos
-
+    
     for k, v in pairs(allply) do
-        if (Safe(v)) then continue end
-        if (theater and ply:GetTheater() and ply:GetTheater():IsPrivate() and ply:GetTheater():GetOwner() ~= ply and ply:GetLocationName() == v:GetLocationName()) then continue end
-
-        if (v:Alive() and v ~= self.Owner) then
-            local otherpos = v:LocalToWorld(v:OBBCenter())
-            local dis = tracepos:Distance(otherpos)
-
-            if (dis < target[2]) then
+        local otherpos = v:LocalToWorld(v:OBBCenter())
+        if(!self:CanTarget(v))then continue end 
+        local near = self:GetTargetNearness(v)
+            
+            if (near and near < target[2]) then
                 local tr = util.TraceLine({
-                    start = tracepos,
+                    start = ply:GetShootPos(),
                     endpos = otherpos,
-                    filter = allply
+                    filter = {ply,v}
+                })
+                local tr2 = util.TraceLine({
+                    start = ply:GetShootPos(),
+                    endpos = v:EyePos(),
+                    filter = {ply,v}
                 })
 
-                if tr.Hit then continue end
-
-                target = {v, dis}
+                if(!tr.Hit or !tr2.Hit)then
+                
+                target = {v, near}
+                end
             end
-        end
     end
 
-    if (target[2] < 50) then return target[1] end
+    if (target[1]) then return target[1] end
 end
 
 hook.Add("PreDrawHalos", "InfinityGauntletHalo", function()
@@ -141,15 +200,15 @@ hook.Add("PreDrawHalos", "InfinityGauntletHalo", function()
             local tb = {ply}
 
             if (ply.GetActiveWeapon and IsValid(ply:GetActiveWeapon())) then
-                tb[2] = ply:GetActiveWeapon()
+                tb[2] = ply:GetActiveWeapon() 
             end
 
             local rd = wep:GetCharge() / wep:GetMaxCharge()
-            halo.Add(tb, Color(128, 0, 255), 5, 5, 2, false)
+            halo.Add(tb, Color(128, 0, 255), 2, 2, 2, true,true)
 
             if (rd > 0) then
                 local rad = (rd * 8)
-                halo.Add(tb, Color(128, 0, 255, 255 * rd), rad, rad, 2, true)
+                halo.Add(tb, Color(128, 0, 255,255*rd), rad, rad, 10, true,true)
             end
         end
     end
@@ -161,13 +220,17 @@ end
 
 function SWEP:PrimaryAttack()
     local target = self:GetTarget()
+
     if (not self:CanPrimaryAttack()) then return end
 
     if (SERVER) then
         SuppressHostEvents(self:GetOwner())
     end
 
+    if(!IsValid(self:GetLockTarget()))then self:SetLockTarget(self:GetTarget()) end
+
     if (self:GetCharge() == 0) then
+        
         self:EmitSound(self.ChargeSound, nil, math.Rand(90, 110), 0.6, CHAN_WEAPON)
         util.ScreenShake(self:GetOwner():GetPos(), 0.5, 1, 0.2, 300)
     end
@@ -177,16 +240,17 @@ function SWEP:PrimaryAttack()
     if (self:GetCharge() >= self:GetMaxCharge()) then
         self:Snap()
         self:SetCharge(0)
-        self:SetNextPrimaryFire(CurTime() + 0.5)
+        self:SetNextPrimaryFire(CurTime() + 0.3)
         self:StopSound(self.ChargeSound)
+        self:SetLockTarget(nil)
     else
-        self:SetNextPrimaryFire(CurTime() + 0.1)
+        self:SetNextPrimaryFire(CurTime() + 0.05)
 
         self:TimerCreate("SnapExpire", 0.2, 1, function()
             if (SERVER) then
                 SuppressHostEvents(self:GetOwner())
             end
-
+            self:SetLockTarget(nil)
             self:StopSound(self.ChargeSound)
             self:SetCharge(0)
 
@@ -199,7 +263,7 @@ function SWEP:PrimaryAttack()
     end
 
     if (SERVER) then
-        SuppressHostEvents()
+       SuppressHostEvents()
     end
 end
 
@@ -227,6 +291,19 @@ function SWEP:CreateWorldModel()
     return self.WModel
 end
 
+if(CLIENT)then
+gauntletglow = CreateMaterial("gauntletglow", "UnlitGeneric", {
+    ["$basetexture"] = "sprites/light_glow02",
+    ["$model"] = 1,
+    ["$additive"] = 1,
+    ["$translucent"] = 1,
+    ["$color2"] = Vector(4, 4, 4),
+    ["$vertexalpha"] = 1,
+    ["$vertexcolor"] = 1
+})
+end
+
+
 function SWEP:DrawWorldModel()
     if (not IsValid(self:GetOwner())) then return end
     local wm = self:CreateWorldModel()
@@ -242,6 +319,17 @@ function SWEP:DrawWorldModel()
     if (ba) then
         oang = ba
     end
+
+
+    local spos = opos + oang:Forward()*4
+    render.SetMaterial(gauntletglow)
+    local rd = math.Clamp(self:GetCharge() / self:GetMaxCharge(),0,1)
+    local size = 32 + (rd*32)
+    if(rd > 0)then
+    for i=1,math.Round(rd*16) do
+    render.DrawQuadEasy(spos + VectorRand()*4*rd, -EyeAngles():Forward(), size, size, Color(136,17,255), math.Rand(0, 360))
+    end
+end
 
     wm:SetModelScale(3.5)
     opos = opos + oang:Right() * -18
