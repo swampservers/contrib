@@ -157,13 +157,18 @@ SS_Item({
 
         return name
     end,
-    GetModel = function(self) return (weapons.GetStored(self.specs.class or "") or {}).WorldModel or self.model end,
+    GetModel = function(self) return (weapons.GetStored(self.specs.class or "") or {}).WorldModel or 'models/error.mdl' end,
     OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
         if not specs.rating then
             specs.rating = math.random()
+            ch = true
+        end
+
+        if specs.class:StartWith("weapon_") then
+            specs.class =specs.class:gsub("weapon_","gun_")
             ch = true
         end
 
@@ -175,7 +180,18 @@ SS_Item({
             primary = true,
         }
     },
-    SpawnPrice = function(self) return self.specs.trophy_tag and 1000 or 5000 end,
+    SpawnPrice = function(self) 
+        return ({
+        pistol=2000,
+        heavypistol=2000,
+        smg=4000,
+        shotgun=3000,
+        autoshotgun=4000,
+        ar=4000,
+        autosniper=6000,
+        sniper=5000,
+        lmg=8000,
+    })[(weapons.GetStored(self.specs.class or "")  or {}).GunType] or 9999 end,
     invcategory = "Weapons",
     never_equip = true
 })
@@ -191,7 +207,7 @@ for i, tm in ipairs({"CT", "TERRORIST"}) do
             local options = {}
 
             for k, v in ipairs(weapons.GetList()) do
-                if v.Base == "weapon_csbasegun" then
+                if v.GunType then
                     if v._WeaponInfo.Team == tm then
                         table.insert(options, v)
                         table.insert(options, v)
