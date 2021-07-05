@@ -44,9 +44,10 @@ function SWEP:Initialize()
 end
 
 function SWEP:GetMaxCharge()
-    if (not IsValid(self:GetTarget())) then return 1 end
+    local lock = self:GetLockTarget()
+    if (not IsValid(lock)) then return 1 end
 
-    return 5 + (self:GetTarget():Health() / 40)
+    return 5 + (lock:Health() / 40)
 end
 
 function SWEP:DoDrawCrosshair(x, y)
@@ -66,7 +67,10 @@ function SWEP:DoDrawCrosshair(x, y)
     local rd = (chg / self:GetMaxCharge())
     self.RadiusLerp = Lerp(0.1, self.RadiusLerp or rd, rd)
     rd = self.RadiusLerp
-    surface.DrawCircle(x, y, maxrad * (1 - rd), Color(128, 0, 255, 255 * rd))
+    
+    for i=1,10 do
+    surface.DrawCircle( x, y, maxrad*(1-rd) + i , Color(128, 0, 255,255*rd) )
+    end
     --surface.DrawCircle( x, y, maxrad , Color(128, 128, 128,64) )
 
     return true
@@ -81,7 +85,7 @@ function meta:Fizzle(attacker, inflictor, damage)
         end
 
         local dmginfo = DamageInfo()
-        dmginfo:SetDamage(damage or self:Health())
+        dmginfo:SetDamage(damage or self:Health()*100)
         dmginfo:SetDamageType(DMG_DISSOLVE)
         dmginfo:SetAttacker(attacker or game.GetWorld())
         dmginfo:SetDamageForce(Vector(0, 0, 1))
@@ -125,8 +129,8 @@ function SWEP:CanTarget(v)
     if (Safe(v)) then return false end
     if (not v:Alive()) then return false end
     if (v == self:GetOwner()) then return false end
-    local ply = self.Owner
-    if (theater and ply:GetTheater() and ply:GetTheater():IsPrivate() and ply:GetTheater():GetOwner() ~= ply and ply:GetLocationName() == v:GetLocationName()) then return false end
+    local ply = self:GetOwner()
+    if (theater and ply:GetTheater() and ply:GetTheater():IsPrivate() and (ply:GetTheater():GetOwner() ~= ply or !IsValid(ply:GetTheater():GetOwner())) and ply:GetLocationName() == v:GetLocationName()) then return false end
     if (not self:GetTargetNearness(v)) then return false end
 
     return true
@@ -233,7 +237,7 @@ function SWEP:PrimaryAttack()
     if (self:GetCharge() >= self:GetMaxCharge()) then
         self:Snap()
         self:SetCharge(0)
-        self:SetNextPrimaryFire(CurTime() + 0.3)
+        self:SetNextPrimaryFire(CurTime() + 0.05)
         self:StopSound(self.ChargeSound)
         self:SetLockTarget(nil)
     else
@@ -315,13 +319,11 @@ function SWEP:DrawWorldModel()
 
     local spos = opos + oang:Forward() * 4
     render.SetMaterial(gauntletglow)
-    local rd = 0 --math.Clamp(self:GetCharge() / self:GetMaxCharge(), 0, 1)
+    local rd = math.Clamp(self:GetCharge() / self:GetMaxCharge(), 0, 1)
     local size = 32 + (rd * 32)
 
     if (rd > 0) then
-        for i = 1, math.Round(rd * 16) do
-            render.DrawQuadEasy(spos + VectorRand() * 4 * rd, -EyeAngles():Forward(), size, size, Color(136, 17, 255), math.Rand(0, 360))
-        end
+            render.DrawQuadEasy(spos, -EyeAngles():Forward(), size, size, Color(136, 17, 255), math.Rand(0, 360))
     end
 
     wm:SetModelScale(3.5)
