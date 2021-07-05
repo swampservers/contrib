@@ -160,7 +160,7 @@ function SWEP:TargetedPlayer()
 end
 
 function SWEP:PrimaryAttack()
-    self:SetNextPrimaryFire(CurTime() + 0.35)
+    self:SetNextPrimaryFire(CurTime() + 0.35 * (HumanTeamName and 3 or 1))
     if not IsFirstTimePredicted() then return end
     slitrspeed = math.Rand(.35, .45)
     lastslit = CurTime()

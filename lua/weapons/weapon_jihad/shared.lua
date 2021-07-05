@@ -13,14 +13,7 @@ function SWEP:PrimaryAttack()
     if CurTime() < (self.ActivateAfter or 0) then return end
 
     if CLIENT then
-        if self.Owner == LocalPlayer() then
-            if LocalPlayer():IsPony() then
-                RunConsoleCommand("act", "dance")
-            else
-                RunConsoleCommand("act", "zombie")
-            end
-        end
-    else
+    else -- if self.Owner == LocalPlayer() then --     if LocalPlayer():IsPony() then --         RunConsoleCommand("act", "dance") --     else --         RunConsoleCommand("act", "zombie") --     end -- end
         self:DoPrimaryAttack()
     end
 end

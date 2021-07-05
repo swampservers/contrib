@@ -230,7 +230,7 @@ function SS_Item(item)
     if not item.never_equip then
         item.actions.equip = {
             primary = true,
-            Text = function(item) return item.eq and "Dequip" or "Equip" end,
+            Text = function(item) return item.eq and "HOLSTER" or "EQUIP" end,
             Cannot = item.CannotEquip
         }
     end

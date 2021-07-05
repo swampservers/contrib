@@ -65,47 +65,29 @@ function ENT:Draw()
     local acd = self:GetPos():DistToSqr(EyePos())
     local acr = AutoCullBase() * (self:GetModelRadius() or 1)
     if acd > acr * 3.5 then return end
-    -- if PropTrashLookedAt == self then
+    -- REMOVE THE COMMENTS!!!
+    -- local painted = self:GetMaterial() == "phoenix_storms/gear"
+    -- if painted then
     --     local cr, cg, cb = render.GetColorModulation()
-    --     local id = LocalPlayer():SteamID()
-    --     render.SetColorModulation(1, 0.5, 0)
-    --     if self:GetTaped() then
-    --         if self:CanEdit(id) then
-    --             render.SetColorModulation(0, 1, 1)
-    --         end
-    --     else
-    --         if self:CanTape(id) then
-    --             render.SetColorModulation(1, 1, 1)
-    --         end
+    --     render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3, (cb * 1.6) + 0.3)
+    -- else
+    --     local c = self:GetNWVector("BasedColor", Vector(1, 1, 1))
+    --     render.SetColorModulation(c.x, c.y, c.z)
+    --     local imgur, own = self:GetImgur()
+    --     if imgur then
+    --         render.MaterialOverride(ImgurMaterial({
+    --             id = imgur,
+    --             owner = own,
+    --             worksafe = true,
+    --             pos = self:GetPos(),
+    --             stretch = true,
+    --             shader = "VertexLitGeneric"
+    --         }))
     --     end
-    --     self:DrawOutline()
-    --     render.SetColorModulation(cr, cg, cb)
     -- end
-    local painted = self:GetMaterial() == "phoenix_storms/gear"
-
-    if painted then
-        local cr, cg, cb = render.GetColorModulation()
-        render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3, (cb * 1.6) + 0.3)
-    else
-        local c = self:GetNWVector("BasedColor", Vector(1, 1, 1))
-        render.SetColorModulation(c.x, c.y, c.z)
-        local imgur, own = self:GetImgur()
-
-        if imgur then
-            render.MaterialOverride(ImgurMaterial({
-                id = imgur,
-                owner = own,
-                worksafe = true,
-                pos = self:GetPos(),
-                stretch = true,
-                shader = "VertexLitGeneric"
-            }))
-        end
-    end
-
     self:DrawModel()
-    render.SetColorModulation(1, 1, 1)
-    render.MaterialOverride()
+    -- render.SetColorModulation(1, 1, 1)
+    -- render.MaterialOverride()
     local h = self:Health()
 
     if h < 100 and MININGCRACKMATERIALS then

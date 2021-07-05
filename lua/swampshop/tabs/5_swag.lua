@@ -39,7 +39,7 @@ SS_Item({
     description = "Goofy clown shoe! Yes, just the one.",
     model = 'models/rockyscroll/clownshoes.mdl',
     color = Vector(0.8, 0.1, 0.1),
-    maxscale = 1.8,
+    maxscale = 1.4,
     wear = {
         attach = "right_foot",
         scale = 1,

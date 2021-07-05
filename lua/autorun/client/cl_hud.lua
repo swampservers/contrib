@@ -280,10 +280,10 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
     local ngraphpos = GetConVar("net_graphpos"):GetInt()
     local stack_height = 0
     local rightedge = ScrW()
-    if(ngraph > 0 and ngraphpos == 1)then 
-        rightedge = rightedge - (ScrW() / 3)
-     end
 
+    if (ngraph > 0 and ngraphpos == 1) then
+        rightedge = rightedge - (ScrW() / 3)
+    end
 
     if (AMMO_ALPHA > 0 and LASTAMMOTEXT) then
         local showtype = LASTAMMOTEXT[1]
