@@ -540,7 +540,7 @@ function PANEL:PaintOver(w, h)
 
         local font = "CloseCaption_Bold"
         draw.SimpleText(str, font, self:GetWide() / 2, 0, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-        draw.SimpleText(tostring(self.item.bid_price), font, self:GetWide() / 2, self:GetTall() - self.barheight, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+        draw.SimpleText(string.Comma(self.item.bid_price), font, self:GetWide() / 2, self:GetTall() - self.barheight, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
     end
 end
 

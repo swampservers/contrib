@@ -596,8 +596,8 @@ function SWEP:DrawHUD()
             surface.SetDrawColor(255, 255, 255, 255 * alpha)
             surface.DrawTexturedRect(data2D.x - 64, data2D.y - 64, 128, 128)
         else
-            -- print(3)
         end
+        -- print(3)
     end
 
     if not Safe(self.Owner) then

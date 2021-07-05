@@ -225,9 +225,9 @@ function LOADMIDI()
                 if notesPlayable > 0 then
                     instrument:OnRegisteredKeyPlayed(MIDIKeys[note].Sound)
                 else
-                    --chat.AddText("PIANO FLOOD DETECTED")
                 end
             end)
+            --chat.AddText("PIANO FLOOD DETECTED")
         else
             print("No MIDI devices found")
         end

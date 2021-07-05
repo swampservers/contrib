@@ -650,8 +650,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 
     if MusicPagePanel then
         if target == MusicPagePanel.target then
-            -- MusicPagePanel:RunJavascript("setAttenuation(" .. (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1") .. ")")
-        else
+        else -- MusicPagePanel:RunJavascript("setAttenuation(" .. (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1") .. ")")
             if (target == "cavern" or target == "cavernalt") and (MusicPagePanel.target == "cavern" or MusicPagePanel.target == "cavernalt") then return end
             --don't remove panel for caverns themes
             MusicPagePanel:Remove()

@@ -137,7 +137,26 @@ SS_Item({
     name = "Weapon",
     description = "Rating will affect specs in the future",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
-    GetName = function(self) return language.GetPhrase((weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown") end,
+    GetDescription = function(self)
+        local d = "Rating will affect specs in the future"
+
+        if self.specs.trophy_winner then
+            local p = player.GetBySteamID64(self.specs.trophy_winner)
+            local n = IsValid(p) and p:GetName() or self.specs.trophy_winner
+            d = d .. "\n\nGranted to " .. n .. " for their service (#" .. self.specs.trophy_rank .. ")"
+        end
+
+        return d
+    end,
+    GetName = function(self)
+        local name = language.GetPhrase((weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown")
+
+        if self.specs.trophy_tag then
+            name = self.specs.trophy_tag .. " " .. name
+        end
+
+        return name
+    end,
     GetModel = function(self) return (weapons.GetStored(self.specs.class or "") or {}).WorldModel or self.model end,
     OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
     SanitizeSpecs = function(self)
@@ -156,17 +175,17 @@ SS_Item({
             primary = true,
         }
     },
-    SpawnPrice = function(self) return 5000 end,
+    SpawnPrice = function(self) return self.specs.trophy_tag and 1000 or 5000 end,
     invcategory = "Weapons",
     never_equip = true
 })
 
 for i, tm in ipairs({"CT", "TERRORIST"}) do
     SS_Product({
-        class = 'csslootbox' .. tm:lower(),
-        price = 8000, --5000,3000
+        class = 'csslootbox2' .. tm:lower(),
+        price = 100000,
         name = tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
-        description = "Random CS:S gun (might be an error lol).",
+        description = "Random CS:S gun blueprint",
         model = 'models/Items/ammocrate_smg1.mdl',
         OnBuy = function(self, ply)
             local options = {}
@@ -192,33 +211,28 @@ for i, tm in ipairs({"CT", "TERRORIST"}) do
 
             local chosen = options[math.random(#options)]
             local rating
+            local item = SS_GenerateItem(ply, "weapon")
+            item.specs.class = chosen.ClassName
+            item:Sanitize()
+            rating = item.specs.rating
 
-            if ply == ME() then
-                local item = SS_GenerateItem(ply, "weapon")
-                item.specs.class = chosen.ClassName
-                item:Sanitize()
-                rating = item.specs.rating
-                ply:SS_GiveNewItem(item, 4)
-            else
-                rating = math.random()
-            end
+            ply:SS_GiveNewItem(item, function(item)
+                net.Start("LootBoxAnimation")
+                net.WriteUInt(item.id, 32)
+                net.WriteTable(others)
+                net.Send(ply)
+                local w = chosen.ClassName
 
-            -- net.Start("LootBoxAnimation")
-            -- net.WriteString(chosen.WorldModel or "")
-            -- net.WriteTable(others)
-            -- net.WriteTable({chosen.PrintName or chosen.ClassName})
-            -- net.WriteFloat(rating)
-            -- net.Send(ply)
-            local w = chosen.ClassName
+                timer.Simple(5, function()
+                    if ply:HasWeapon(w) then
+                        ply:StripWeapon(w)
+                    end
 
-            -- timer.Simple(4, function()
-            if ply:HasWeapon(w) then
-                ply:StripWeapon(w)
-            end
-
-            ply:Give(w)
-            ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
-            ply:SelectWeapon(w)
+                    ply:Give(w)
+                    ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
+                    ply:SelectWeapon(w)
+                end)
+            end)
         end
     })
     -- end)

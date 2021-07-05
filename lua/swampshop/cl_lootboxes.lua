@@ -41,8 +41,10 @@ function SS_DrawIOPInfo(iop, x, y, w, txtcolor, alpha)
         y = y - 8
     end
 
-    if iop.description then
-        local w, h = draw.WrappedText(iop.description, 'SS_DESCFONT', cx, y, w, txtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+    local desc = iop.GetDescription and iop:GetDescription() or iop.description
+
+    if desc then
+        local w, h = draw.WrappedText(desc, 'SS_DESCFONT', cx, y, w, txtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
         y = y - (h + 4)
     end
 

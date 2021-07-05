@@ -84,17 +84,17 @@ function GM:ShouldCollide(Ent1, Ent2)
 end
 
 function GM:Move(ply, mv)
-    -- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 end
 
+-- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 function GM:SetupMove(ply, mv, cmd)
-    -- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 end
 
+-- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 function GM:FinishMove(ply, mv)
-    -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 end
 
+-- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 -- Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
 function GM:PhysgunPickup(ply, ent)
     if (ent:GetClass():lower() == "player") then

@@ -651,13 +651,14 @@ function PANEL:Init()
 
             -- Hmm, lets override metatable keys on the item instance
             item.primaryaction = false
-            item.description = (item.description or "") .. "\n(Item class: " .. item.class .. ")"
-            item.description = item.description .. "\n\nSold by " .. sn
+            local desc = item.GetDescription and item:GetDescription() or item.description or ""
+            desc = desc .. "\n(Item class: " .. item.class .. ")"
+            desc = desc .. "\n\nSold by " .. sn
 
             if item.auction_bidder == "0" then
-                item.description = item.description .. "\nNo bidders"
+                desc = desc .. "\nNo bidders"
             else
-                item.description = item.description .. "\nHighest bidder is " .. bn .. " (" .. item.auction_price .. ")"
+                desc = desc .. "\nHighest bidder is " .. bn .. " (" .. item.auction_price .. ")"
             end
 
             -- if item.seller == LocalPlayer():SteamID64() then
@@ -674,7 +675,7 @@ function PANEL:Init()
                         }
                     }
                 else
-                    item.description = item.description .. "\n\nCan't cancel a bidded auction."
+                    desc = desc .. "\n\nCan't cancel a bidded auction."
                     item.actions = {}
                 end
             else
@@ -701,6 +702,7 @@ function PANEL:Init()
                 end
             end
 
+            item.GetDescription = function() return desc end
             local model = vgui.Create('DPointShopItem')
             model:SetItem(item)
             model:SetSize(SS_TILESIZE, SS_TILESIZE)
@@ -793,7 +795,9 @@ function PANEL:Init()
         end
     end
 
-    inventorythink(NewCategory("Blueprints", 'icon16/book.png', true), {"Weapons", "Props"})
+    inventorythink(NewCategory("Weapons", 'icon16/gun.png', true), {"Weapons"})
+
+    inventorythink(NewCategory("Props", 'icon16/book.png', true), {"Props"})
 
     SS_InventoryPanel = NewCategory("Cosmetics", 'icon16/status_online.png', true)
 

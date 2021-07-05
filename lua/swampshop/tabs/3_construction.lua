@@ -64,8 +64,12 @@ SS_Item({
 
         return ch
     end,
-    actions = {},
-    -- spawnprop = { --     primary = true, --     Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end, -- }
+    actions = {
+        spawnprop = {
+            primary = true,
+            Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
+        }
+    },
     CanCfgColor = function(self)
         return (SS_GetRating(self.specs.rating or 0).id >= 5) and {
             max = 5

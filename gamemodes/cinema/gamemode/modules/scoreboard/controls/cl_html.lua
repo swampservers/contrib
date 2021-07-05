@@ -72,6 +72,7 @@ function PANEL:Think()
     end
 
     if self:IsLoading() then
+    else
         --[[
 		-- Call started loading
 		if not self._loading then
@@ -89,7 +90,6 @@ function PANEL:Think()
 			self:OnStartLoading()
 			
 		end]]
-    else
         --[[
 		-- Call finished loading
 		if self._loading then
