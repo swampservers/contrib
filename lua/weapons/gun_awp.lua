@@ -4,8 +4,8 @@ DEFINE_BASECLASS("gun")
 local function FloatEquals(x, y)
     return math.abs(x - y) < 1.19209290E-07
 end
-SWEP.GunType="sniper"
 
+SWEP.GunType = "sniper"
 --Jvs: I wish this weapon defining shit was this easy
 CSParseWeaponInfo(SWEP, [[WeaponData
 {

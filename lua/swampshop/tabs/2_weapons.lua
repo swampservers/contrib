@@ -168,7 +168,7 @@ SS_Item({
         end
 
         if specs.class:StartWith("weapon_") then
-            specs.class =specs.class:gsub("weapon_","gun_")
+            specs.class = specs.class:gsub("weapon_", "gun_")
             ch = true
         end
 
@@ -180,18 +180,19 @@ SS_Item({
             primary = true,
         }
     },
-    SpawnPrice = function(self) 
+    SpawnPrice = function(self)
         return ({
-        pistol=2000,
-        heavypistol=2000,
-        smg=4000,
-        shotgun=3000,
-        autoshotgun=4000,
-        ar=4000,
-        autosniper=6000,
-        sniper=5000,
-        lmg=8000,
-    })[(weapons.GetStored(self.specs.class or "")  or {}).GunType] or 9999 end,
+            pistol = 2000,
+            heavypistol = 2000,
+            smg = 4000,
+            shotgun = 3000,
+            autoshotgun = 4000,
+            ar = 4000,
+            autosniper = 6000,
+            sniper = 5000,
+            lmg = 8000,
+        })[(weapons.GetStored(self.specs.class or "") or {}).GunType] or 9999
+    end,
     invcategory = "Weapons",
     never_equip = true
 })

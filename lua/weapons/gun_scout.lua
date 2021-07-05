@@ -5,7 +5,7 @@ local function FloatEquals(x, y)
 end
 
 DEFINE_BASECLASS"gun"
-SWEP.GunType="sniper"
+SWEP.GunType = "sniper"
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed" 		"260"

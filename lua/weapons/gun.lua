@@ -1,11 +1,9 @@
 ﻿AddCSLuaFile()
-
 AddCSLuaFile()
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = true
 SWEP.CSSWeapon = true
-
 
 SWEP.WeaponTypeToString = {
     Knife = CS_WEAPONTYPE_KNIFE,
@@ -117,7 +115,6 @@ end
 function SWEP:IsSilenced()
     return self:GetHasSilencer()
 end
-
 
 function SWEP:WeaponSound(soundtype)
     if not self:GetWeaponInfo() then return end
@@ -290,12 +287,7 @@ else
     end
 end
 
-
-
 --BASE ABOVE, BASEGUN BELOW
-
-
-
 local function FloatEquals(x, y)
     return math.abs(x - y) < 1.19209290E-07
 end
@@ -327,7 +319,6 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 1, "HasSilencer")
     self:NetworkVar("Bool", 2, "DelayFire")
     self:NetworkVar("Bool", 3, "FullReload")
-
     --Jvs: stuff that is scattered around all the weapons code that I'm going to try and unify here
     self:NetworkVar("Float", 5, "ZoomFullyActiveTime")
     self:NetworkVar("Float", 6, "ZoomLevel")
@@ -383,7 +374,6 @@ function SWEP:Deploy()
 
     return true
 end
-
 
 --Jvs : this function handles the zoom smoothing and decay
 function SWEP:HandleZoom()
@@ -441,7 +431,6 @@ function SWEP:Think()
     self:FOVThink()
     self:UpdateWorldModel()
     self:HandleZoom()
-
     local pPlayer = self:GetOwner()
     if not IsValid(pPlayer) then return end
 
@@ -490,7 +479,6 @@ function SWEP:Think()
 
         self:Idle()
     end
-
 
     if not self:InReload() and self:GetBurstFireEnabled() and self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
         if self:GetBurstFires() < (self:GetMaxBurstFires() - 1) then
@@ -1020,7 +1008,6 @@ if CLIENT then
     SWEP.ScopeArcTexture = Material("sprites/scope_arc")
     SWEP.ScopeDustTexture = Material("overlays/scope_lens.vmt")
     SWEP.ScopeFallback = true
-
     --[[
 		m_iScopeArcTexture = vgui::surface()->CreateNewTextureID()
 		vgui::surface()->DrawSetTextureFile(m_iScopeArcTexture, "sprites/scope_arc", true, false)
@@ -1028,32 +1015,25 @@ if CLIENT then
 		m_iScopeDustTexture = vgui::surface()->CreateNewTextureID()
 		vgui::surface()->DrawSetTextureFile(m_iScopeDustTexture, "overlays/scope_lens", true, false)
 	]]
-
-
-
-        SWEP.CrosshairDistance = 0
-        local cl_crosshaircolor = CreateConVar("cl_cs_crosshaircolor", "0", FCVAR_ARCHIVE)
-        local cl_dynamiccrosshair = CreateConVar("cl_cs_dynamiccrosshair", "1", FCVAR_ARCHIVE)
-        local cl_scalecrosshair = CreateConVar("cl_cs_scalecrosshair", "1", FCVAR_ARCHIVE)
-        local cl_crosshairscale = CreateConVar("cl_cs_crosshairscale", "0", FCVAR_ARCHIVE)
-        local cl_crosshairalpha = CreateConVar("cl_cs_crosshairalpha", "200", FCVAR_ARCHIVE)
-        local cl_crosshairusealpha = CreateConVar("cl_cs_crosshairusealpha", "0", FCVAR_ARCHIVE)
-        SWEP.CSSBobbing = false
-        SWEP.LateralBob = 0
-        SWEP.VerticalBob = 0
-        SWEP.BobTime = 0
-        SWEP.LastBobTime = 0
-        SWEP.LastSpeed = 0
-        local cl_bobcycle = CreateConVar("cl_cs_bobcycle", "0.8", FCVAR_ARCHIVE + FCVAR_CHEAT)
-        local cl_bob = CreateConVar("cl_cs_bob", "0.002", FCVAR_ARCHIVE + FCVAR_CHEAT)
-        local cl_bobup = CreateConVar("cl_cs_bobup", "0.5", FCVAR_ARCHIVE + FCVAR_CHEAT)
-    
-
-
+    SWEP.CrosshairDistance = 0
+    local cl_crosshaircolor = CreateConVar("cl_cs_crosshaircolor", "0", FCVAR_ARCHIVE)
+    local cl_dynamiccrosshair = CreateConVar("cl_cs_dynamiccrosshair", "1", FCVAR_ARCHIVE)
+    local cl_scalecrosshair = CreateConVar("cl_cs_scalecrosshair", "1", FCVAR_ARCHIVE)
+    local cl_crosshairscale = CreateConVar("cl_cs_crosshairscale", "0", FCVAR_ARCHIVE)
+    local cl_crosshairalpha = CreateConVar("cl_cs_crosshairalpha", "200", FCVAR_ARCHIVE)
+    local cl_crosshairusealpha = CreateConVar("cl_cs_crosshairusealpha", "0", FCVAR_ARCHIVE)
+    SWEP.CSSBobbing = false
+    SWEP.LateralBob = 0
+    SWEP.VerticalBob = 0
+    SWEP.BobTime = 0
+    SWEP.LastBobTime = 0
+    SWEP.LastSpeed = 0
+    local cl_bobcycle = CreateConVar("cl_cs_bobcycle", "0.8", FCVAR_ARCHIVE + FCVAR_CHEAT)
+    local cl_bob = CreateConVar("cl_cs_bob", "0.002", FCVAR_ARCHIVE + FCVAR_CHEAT)
+    local cl_bobup = CreateConVar("cl_cs_bobup", "0.5", FCVAR_ARCHIVE + FCVAR_CHEAT)
 
     function SWEP:DoDrawCrosshair(x, y)
         if self:GetWeaponType() == CS_WEAPONTYPE_SNIPER_RIFLE then return true end
-
         local iDistance = self:GetWeaponInfo().CrosshairMinDistance -- The minimum distance the crosshair can achieve...
         local iDeltaDistance = self:GetWeaponInfo().CrosshairDeltaDistance -- Distance at which the crosshair shrinks at each step
 

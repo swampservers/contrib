@@ -4,8 +4,7 @@ local function FloatEquals(x, y)
     return math.abs(x - y) < 1.19209290E-07
 end
 
-SWEP.GunType="ar"
-
+SWEP.GunType = "ar"
 DEFINE_BASECLASS("gun")
 CSParseWeaponInfo(SWEP, [[WeaponData
 {

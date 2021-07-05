@@ -1,6 +1,6 @@
 ﻿AddCSLuaFile()
 DEFINE_BASECLASS("gun")
-SWEP.GunType="pistol"
+SWEP.GunType = "pistol"
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed" 		"250"

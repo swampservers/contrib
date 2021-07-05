@@ -1,8 +1,6 @@
 ﻿AddCSLuaFile()
 DEFINE_BASECLASS("gun")
-SWEP.GunType="ar"
-
-
+SWEP.GunType = "ar"
 --Jvs: I wish this weapon defining shit was this easy
 CSParseWeaponInfo(SWEP, [[WeaponData
 {

@@ -8,7 +8,6 @@ function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "OwnerID")
     self:NetworkVar("Bool", 0, "Taped")
     self:NetworkVar("Int", 0, "ItemID")
-
     self:NetworkVar("Bool", 1, "Painted")
     self:NetworkVar("Vector", 1, "PaintColor")
 end
