@@ -3,27 +3,34 @@ STEAMWS_MOUNTED = STEAMWS_MOUNTED or {}
 STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT or 0
 
 function SafeMountGMA(wsid, filename)
+    -- print("safemount")
+    local badmodels = {}
+
+    for mdl, mwsid in pairs(STEAMWS_REGISTRY) do
+        if mwsid == wsid then
+            print("MOUNTING FOR", mdl)
+            badmodels[mdl] = true
+        end
+    end
+
+    local resetmodels = {}
+
+    for i, v in ipairs(ents.GetAll()) do
+        if v:EntIndex() == -1 and badmodels[v:GetModel()] then
+            resetmodels[v] = {v:GetModel(), v:GetSequence()}
+
+            v:SetModel("models/maxofs2d/logo_gmod_b.mdl")
+        end
+    end
+
+    game.MountGMA(filename)
+
+    for ent, mod in pairs(resetmodels) do
+        ent:SetModel(mod[1])
+        ent:SetSequence(mod[2])
+    end
 end
 
--- local badmodels = {}
--- for mdl, mwsid in pairs(STEAMWS_REGISTRY) do
---     if mwsid == wsid then
---         print("MOUNTING FOR", mdl)
---         badmodels[mdl] = true
---     end
--- end
--- local resetmodels = {}
--- for i, v in ipairs(ents.GetAll()) do
---     if v:EntIndex() == -1 and badmodels[v:GetModel()] then
---         resetmodels[v] = {v:GetModel(), v:GetSequence()}
---         v:SetModel("models/maxofs2d/logo_gmod_b.mdl")
---     end
--- end
--- game.MountGMA(filename)
--- for ent, mod in pairs(resetmodels) do
---     ent:SetModel(mod[1])
---     ent:SetSequence(mod[2])
--- end
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
 --or: models/props_phx/gears/spur24.mdl
 function require_workshop(id)

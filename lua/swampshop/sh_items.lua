@@ -109,18 +109,21 @@ end
 --todo move this
 function SS_ItemOrProduct(iop)
     if CLIENT then
-        iop.GetNameUncached = iop.GetName or function(self) return self.name end
+        -- gets called twice by item/product, needs fixing...
+        if not iop.GetNameUncached then
+            iop.GetNameUncached = iop.GetName or function(self) return self.name end
 
-        --called a lot by the ordering thing
-        function iop:GetName()
-            local fn = FrameNumber()
+            --called a lot by the ordering thing
+            function iop:GetName()
+                local fn = FrameNumber()
 
-            if self._namecacheframe ~= fn then
-                self._namecacheframe = fn
-                self._namecache = self:GetNameUncached()
+                if self._namecacheframe ~= fn then
+                    self._namecacheframe = fn
+                    self._namecache = self:GetNameUncached()
+                end
+
+                return self._namecache
             end
-
-            return self._namecache
         end
     else
         iop.GetName = iop.GetName or function(self) return self.name end

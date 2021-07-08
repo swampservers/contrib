@@ -520,6 +520,7 @@ local HUDTargets = {}
 local fadeTime = 2
 
 hook.Add("DrawTranslucentAccessories", "DrawPlayerNames2", function(ply)
+    if IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera" then return end
     if not render.DrawingScreen() then return end
     if HideNamesConVar and HideNamesConVar:GetBool() then return end
     if not IsValid(LocalPlayer()) or not LocalPlayer().InTheater then return end

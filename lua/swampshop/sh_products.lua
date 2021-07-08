@@ -20,7 +20,7 @@ function SS_Product(product)
     function product:OnBuy(ply)
         local function finish_buy()
             self:SS_Product_OnBuy(ply)
-            ply:Notify('Bought ', self.name, ' for ', self.price, ' points')
+            ply:Notify('Bought ', self:GetName(), ' for ', self.price, ' points')
         end
 
         if self.price > 0 then
@@ -191,14 +191,14 @@ function SS_UniqueModelProduct(product)
         if s then return s end
 
         for k, v in pairs(player.GetAll()) do
-            if v:GetNWString("uniqmodl") == self.name and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or (v:Nick() .. " is using this - kill them.") end
+            if v:GetNWString("uniqmodl") == self:GetName() and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or (v:Nick() .. " is using this - kill them.") end
         end
     end
 
     product.SS_UniqueModelProduct_OnBuy = product.OnBuy or function() end
 
     function product:OnBuy(ply)
-        ply:SetNWString("uniqmodl", self.name)
+        ply:SetNWString("uniqmodl", self:GetName())
         ply:SetModel(self.model)
         self:SS_UniqueModelProduct_OnBuy(ply)
     end

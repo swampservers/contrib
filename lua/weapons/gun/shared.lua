@@ -212,7 +212,7 @@ SWEP.DrawAmmo = true
 SWEP.DropOnGround = true
 
 function SWEP:Initialize()
-    self:SetHoldType("normal")
+    self:SetHoldType(self.HoldType)
     self:SetDelayFire(true)
     self:SetFullReload(true)
     self:SetWeaponType(self.WeaponTypeToString[self:GetWeaponInfo().WeaponType])
@@ -252,13 +252,12 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 5, "MaxBurstFires")
 end
 
-function SWEP:SetHoldType(ht)
-    self.keepht = ht
-
-    return BaseClass.SetHoldType(self, ht)
-end
-
+-- function SWEP:SetHoldType(ht)
+--     self.keepht = ht
+--     return BaseClass.SetHoldType(self, ht)
+-- end
 function SWEP:Deploy()
+    self:SetHoldType(self.HoldType)
     self:SetDelayFire(false)
     self:SetZoomFullyActiveTime(-1)
     self:SetAccuracy(0.2)
@@ -270,11 +269,9 @@ function SWEP:Deploy()
     self:SetTargetFOVStartTime(0)
     self:SetTargetFOVTime(0)
     self:SetResumeZoom(false)
-
-    if self.keepht then
-        self:SetHoldType(self.keepht)
-    end
-
+    -- if self.keepht then
+    --     self:SetHoldType(self.keepht)
+    -- end
     self:SetNextDecreaseShotsFired(CurTime())
     self:SetShotsFired(0)
     self:SetInReload(false)

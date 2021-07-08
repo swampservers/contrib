@@ -3,7 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "smg"
 SWEP.PrintName = "MP5"
-SWEP.HoldType = "ar2"
+SWEP.HoldType = "smg"
 SWEP.Slot = 0
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
