@@ -5,24 +5,24 @@ TRASH_SPAWN_COOLDOWN = 4
 TRASH_MANAGER_LOAD_RANGE = 1000
 TRASH_MANAGER_PROP_LIMIT = 50
 
-function GetTrashClass(mdl)
-    return TRASH_MODEL_CLASSES[mdl] or "prop_trash"
-end
+-- function GetTrashClass(mdl)
+--     return TRASH_MODEL_CLASSES[mdl] or "prop_trash"
+-- end
 
-function AddTrashClass(class, models)
-    if isstring(models) then
-        TRASH_MODEL_CLASSES[models] = class
-    else
-        for k, v in pairs(models) do
-            if isstring(k) then
-                TRASH_MODEL_CLASSES[k] = class
-            else
-                assert(isstring(v))
-                TRASH_MODEL_CLASSES[v] = class
-            end
-        end
-    end
-end
+-- function AddTrashClass(class, models)
+--     if isstring(models) then
+--         TRASH_MODEL_CLASSES[models] = class
+--     else
+--         for k, v in pairs(models) do
+--             if isstring(k) then
+--                 TRASH_MODEL_CLASSES[k] = class
+--             else
+--                 assert(isstring(v))
+--                 TRASH_MODEL_CLASSES[v] = class
+--             end
+--         end
+--     end
+-- end
 
 TRASHLOC_BUILD = 1
 TRASHLOC_NOBUILD = 2
@@ -85,29 +85,3 @@ TrashNoFreezeNodes = {
     {Vector(-1970, -1120, 100), 150}
 }
 
--- {Vector(660,-1860,36),100},
-TrashFieldEntsCache = {}
-TrashFieldEntsCacheTime = 0
-
-function GetTrashFields()
-    local it = TrashFieldEntsCache
-    TrashFieldEntsCache = {}
-
-    if TrashFieldEntsCacheTime + 0.2 < CurTime() then
-        TrashFieldEntsCacheTime = CurTime()
-        it = ents.GetAll()
-    end
-
-    -- Ensures invalid ents can't be returned from the cache
-    for i, v in ipairs(it) do
-        if IsValid(v) then
-            local c = v:GetClass()
-
-            if c == "prop_trash_field" or c == "prop_trash_theater" then
-                table.insert(TrashFieldEntsCache, v)
-            end
-        end
-    end
-
-    return TrashFieldEntsCache
-end

@@ -378,36 +378,9 @@ Map = {
     --[[Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 512 end,
 		Min = Vector(-512,-1152-512,-128),
 		Max = Vector(512,-1152+512,192)]] -- 10 "Mobile" theaters are used by prop_trash_theater
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
+
+    "mobiletheaters",
+
     {
         Name = "SushiTheater Basement",
         Min = Vector(-2912, -2008, -176),
@@ -599,29 +572,39 @@ Map = {
 --set up and index mobile theaters
 MobileLocations = {}
 
-for k, v in pairs(Map) do
-    if v.Name == "MOBILE" then
-        table.insert(MobileLocations, k)
-        v.MobileLocationIndex = #MobileLocations
-        v.Name = "MobileTheater" .. tostring(v.MobileLocationIndex)
-        v.Min = Vector(-1, -1, -10001)
-        v.Max = Vector(1, 1, -10000)
 
-        v.Theater = {
-            Flags = 1,
-            Pos = Vector(0, 0, 0),
-            Ang = Angle(0, 0, 0),
-            Width = 32,
-            Height = 18
-        }
+local i = 1
+while i <= #Map do
+    if Map[i] == "mobiletheaters" then
+        table.remove(Map, i)
+        for j=0,31 do
+            table.insert(MobileLocations, i+j)
+            table.insert(Map, i, {
+                MobileLocationIndex = #MobileLocations,
+                Name = "MobileTheater" .. tostring(#MobileLocations),
+                Min = Vector(-1, -1, -10001),
+                Max = Vector(1, 1, -10000),
+                Theater = {
+                    Flags = 1,
+                    Pos = Vector(0, 0, 0),
+                    Ang = Angle(0, 0, 0),
+                    Width = 32,
+                    Height = 18
+                }
+
+            })
+            
+        end
+        break
     end
+    i=i+1
 end
 
 function RefreshPositions()
     for k, v in pairs(ents.GetAll()) do
-        if v.LastLocationCoords ~= nil then
+        
             v.LastLocationCoords = nil
-        end
+        
     end
 end
 

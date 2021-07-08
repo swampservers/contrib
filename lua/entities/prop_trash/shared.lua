@@ -25,7 +25,18 @@ PropTrashLightData = {
         brightness = 2,
         style = 0,
         pos = Vector(0, 0, 0)
+    },
+    ["models/brian/flare.mdl"] = {
+        untaped = true,
+        size = 300,
+        brightness = 2,
+        style = 6,
+        pos = Vector(0, 0, 8)
     }
+}
+
+PropTrashDoors = {
+    ["models/staticprop/props_c17/door01_left.mdl"]=true
 }
 
 function ENT:SetupDataTables()
@@ -83,8 +94,8 @@ function TrashLocationOwner(locid, pos)
 
     if class ~= TRASHLOC_BUILD then return nil end -- The only way to own a non build area is with a theater. Not a field.
 
-    for k, v in ipairs(GetTrashFields()) do
-        if IsValid(v) and v:ProtectsPoint(pos) then return v:GetOwnerID() end
+    for k, v in pairs(Ents.prop_trash_zone) do
+        if v:Protects(pos) then return v:GetOwnerID() end
     end
 
     return nil
@@ -126,22 +137,4 @@ function ENT:CanTape(userid)
     local lown, lcl = self:GetLocationOwner(), self:GetLocationClass()
 
     return ((self:GetOwnerID() == userid) and (lown == nil) and ((lcl == TRASHLOC_BUILD) or (self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD))) or (lown == userid and userid ~= nil)
-end
-
--- only used by field thing currently
-local whitemat = Material("models/debug/debugwhite")
-
-function ENT:DrawOutline()
-    render.SuppressEngineLighting(true)
-    render.MaterialOverride(whitemat)
-    local sc = self:GetModelScale()
-    local rad = self:BoundingRadius()
-    self:SetModelScale(sc * (rad + 0.2) / rad)
-    render.CullMode(MATERIAL_CULLMODE_CW)
-    self:SetupBones()
-    self:DrawModel()
-    render.CullMode(MATERIAL_CULLMODE_CCW)
-    self:SetModelScale(sc)
-    render.MaterialOverride()
-    render.SuppressEngineLighting(false)
 end

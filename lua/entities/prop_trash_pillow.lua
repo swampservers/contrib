@@ -4,7 +4,7 @@ AddCSLuaFile()
 DEFINE_BASECLASS("prop_trash")
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.CanChangeTrashOwner = false
-AddTrashClass("prop_trash_pillow", "models/swamponions/bodypillow.mdl")
+-- AddTrashClass("prop_trash_pillow", "models/swamponions/bodypillow.mdl")
 
 function ENT:OnTakeDamage(dmg)
     if dmg:GetDamageType() == DMG_ACID then
@@ -82,9 +82,4 @@ function ENT:Draw()
     if url then
         render.MaterialOverride()
     end
-end
-
-function ENT:DrawOutline()
-    local r, g, b = render.GetColorModulation()
-    render.DrawWireframeBox(self:GetPos(), self:GetAngles(), self:OBBMins() + Vector(2, 2, 2), self:OBBMaxs() - Vector(2, 2, 2), Color(255 * r, 255 * g, 255 * b, 255), true)
 end
