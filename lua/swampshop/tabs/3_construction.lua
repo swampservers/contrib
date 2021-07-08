@@ -192,18 +192,18 @@ SS_Product({
     model = 'models/maxofs2d/hover_classic.mdl',
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_field")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeForcefield(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+                MakeTrashZone(ply, self.model)
+        --     end)
+        -- end)
     end
 })
 
@@ -215,18 +215,18 @@ SS_Product({
     model = 'models/dav0r/hoverball.mdl',
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_field")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeForcefield(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+            -- timer.Simple(0.001, function()
+                MakeTrashZone(ply, self.model)
+            -- end)
+        -- end)
     end
 })
 
@@ -271,6 +271,28 @@ SS_Product({
 })
 
 SS_Product({
+    class = 'trashdoor',
+    price = 2000,
+    name = 'Doors',
+    description = "Can be opened",
+    model = 'models/staticprop/props_c17/door01_left.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = {}
+
+        for k, v in pairs(PropTrashDoors) do
+
+                table.insert(nxt, k)
+ 
+        end
+
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+
+
+SS_Product({
     class = 'trashtheater',
     price = 8000,
     name = 'Medium Theater Screen',
@@ -278,18 +300,19 @@ SS_Product({
     model = 'models/props_phx/rt_screen.mdl',
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeTrashTheater(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+                -- makeTrashTheater(ply, self.model)
+                MakeTrashZone(ply, self.model)
+        --     end)
+        -- end)
     end
 })
 
@@ -301,18 +324,19 @@ SS_Product({
     model = "models/props_c17/tv_monitor01.mdl",
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeTrashTheater(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+        --         makeTrashTheater(ply, self.model)
+        --     end)
+        -- end)
+        MakeTrashZone(ply, self.model)
     end
 })
 
@@ -325,18 +349,19 @@ SS_Product({
     material = "tools/toolsblack",
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeTrashTheater(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+        --         makeTrashTheater(ply, self.model)
+        --     end)
+        -- end)
+        MakeTrashZone(ply, self.model)
     end
 })
 -- TODO finish this, make env_projectedtexture when in the theater
@@ -347,7 +372,7 @@ SS_Product({
 --     description = "Create your own private theater anywhere! You'll remain owner even if you walk away.",
 --     model = "models/dav0r/camera.mdl",
 --     OnBuy = function(self, ply)
---         for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+--         for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
 --             if v:GetOwnerID() == ply:SteamID() then
 --                 v:Remove()
 --             end

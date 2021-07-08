@@ -74,14 +74,20 @@ hook.Add("Think", "TrashLights", function()
     local ep = LocalPlayer():EyePos()
 
     for e, l in pairs(TRASH_LIGHTS) do
+
+
+        
         if not IsValid(e) then
             TRASH_LIGHTS[e] = nil
             continue
         end
 
+        -- for edits
+        l = PropTrashLightData[e:GetModel()]
+
         if e:IsDormant() then continue end
 
-        if e:GetTaped() and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
+        if (l.untaped or e:GetTaped()) and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
             local dlight = DynamicLight(e:EntIndex())
             local c = e:GetUnboundedColor() * 255
 
@@ -114,6 +120,8 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
     if not IsValid(LocalPlayer()) then return end
     local id = LocalPlayer():SteamID()
 
+    local sz = ScrH() / 200
+
     if IsValid(PropTrashLookedAt) then
         local c = Color(255, 128, 0)
 
@@ -127,9 +135,25 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
             end
         end
 
-        local sz = ScrH() / 200
-
         halo.Add({PropTrashLookedAt}, c, sz, sz, 1, true, false)
+
+        if PropTrashLookedAt:GetClass()=="prop_trash_zone" then
+            local e = {}
+            for k,v in ipairs(ents.FindByClass('prop_trash')) do
+                if v~=PropTrashLookedAt and v:GetPos():WithinAABox(PropTrashLookedAt:GetBounds()) then
+                    table.insert(e, v)
+                end
+            end
+
+            halo.Add(e, Color(255, 0, 255), sz, sz, 1, true, false)
+
+            -- TODO: check:
+            -- if v:GetOwnerID() == LocalPlayer():SteamID() then
+            --     render.SetColorModulation(0, 1, 1)
+            -- else
+            --     render.SetColorModulation(1, 0.5, 0)
+            -- end
+        end
     end
 
     if IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "weapon_trash_manager" then
