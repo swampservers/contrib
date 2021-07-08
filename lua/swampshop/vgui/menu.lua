@@ -651,7 +651,7 @@ function PANEL:Init()
 
             -- Hmm, lets override metatable keys on the item instance
             item.primaryaction = false
-            local desc = item.GetDescription and item:GetDescription() or item.description or ""
+            local desc = item:GetDescription() or ""
             desc = desc .. "\n(Item class: " .. item.class .. ")"
             desc = desc .. "\n\nSold by " .. sn
 
