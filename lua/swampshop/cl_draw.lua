@@ -217,104 +217,89 @@ local EntityGetModel = Entity.GetModel
 -- end
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
 --TODO this is lag causin
-function SS_DrawWornCSModel(item, mdl, ent, dontactually)
-    local pone = isPonyModel(EntityGetModel(ent))
-    local attach = item.wear.attach
-    local scale = item.wear.scale
-    local translate = item.wear.translate
-    local rotate = item.wear.rotate
-
-    if pone and item.wear.pony then
-        attach = item.wear.pony.attach or attach
-        scale = item.wear.pony.scale or scale
-        translate = item.wear.pony.translate or translate
-        rotate = item.wear.pony.rotate or rotate
-    end
-
-    local cfgk = pone and "wear_p" or "wear_h"
-
-    if item.cfg[cfgk] then
-        attach = item.cfg[cfgk].attach or attach
-        scale = item.cfg[cfgk].scale or scale
-        translate = item.cfg[cfgk].pos or translate
-        rotate = item.cfg[cfgk].ang or rotate
-    end
-
-    local pos, ang
-
-    if attach == "eyes" then
-        local fn = FrameNumber()
-
-        if ent.attachcacheframe ~= fn then
-            ent.attachcacheframe = fn
-            local attach_id = ent:LookupAttachment("eyes")
-
-            if attach_id then
-                local attacht = ent:GetAttachment(attach_id)
-
-                if attacht then
-                    ent.attachcache = attacht
-                    pos = attacht.Pos
-                    ang = attacht.Ang
-                end
-            end
-        else
-            local attacht = ent.attachcache
-
-            if attacht then
-                pos = attacht.Pos
-                ang = attacht.Ang
-            end
-        end
-    else
-        local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
-
-        if bone_id then
-            pos, ang = ent:GetBonePosition(bone_id)
-        end
-    end
-
-    if not pos then
-        pos = ent:GetPos()
-        ang = ent:GetAngles()
-    end
-
-    pos, ang = LocalToWorld(translate, rotate, pos, ang)
-
-    if mdl.scaleapplied ~= scale then
-        mdl.scaleapplied = scale
-
-        if isnumber(scale) then
-            mdl.matrix = Matrix({
-                {scale, 0, 0, 0},
-                {0, scale, 0, 0},
-                {0, 0, scale, 0},
-                {0, 0, 0, 1}
-            })
-        else
-            mdl.matrix = Matrix({
-                {scale.x, 0, 0, 0},
-                {0, scale.y, 0, 0},
-                {0, 0, scale.z, 0},
-                {0, 0, 0, 1}
-            })
-        end
-
-        mdl:EnableMatrix("RenderMultiply", mdl.matrix)
-    end
-
-    mdl:SetPos(pos)
-    mdl:SetAngles(ang)
-    mdl:SetupBones()
-
-    if not dontactually then
-        SS_PreRender(item, ent)
-        mdl:DrawModel()
-        SS_PostRender()
-    end
-end
-
-hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
+-- function SS_GetItemWorldPos(item, ent)
+--     local pone = isPonyModel(EntityGetModel(ent))
+--     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
+--     local pos, ang
+--     if attach == "eyes" then
+--         local attach_id = ent:LookupAttachment("eyes")
+--         if attach_id then
+--             local attacht = ent:GetAttachment(attach_id)
+--             if attacht then
+--                 pos = attacht.Pos
+--                 ang = attacht.Ang
+--             end
+--         end
+--     else
+--         local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
+--         if bone_id then
+--             pos, ang = ent:GetBonePosition(bone_id)
+--         end
+--     end
+--     if not pos then return end
+--     pos, ang = LocalToWorld(translate, rotate, pos, ang)
+--     return pos, ang
+-- end
+-- function SS_DrawWornCSModel(item, mdl, ent)
+--     local pos, ang = SS_GetItemWorldPos(item, ent)
+--     mdl:Refresh()
+--     -- local pone = isPonyModel(EntityGetModel(ent))
+--     -- local attach, translate, rotate, scale = item:AccessoryTransform(pone)
+--     -- local pos, ang
+--     -- if attach == "eyes" then
+--     --     local fn = FrameNumber()
+--     --     if ent.attachcacheframe ~= fn then
+--     --         ent.attachcacheframe = fn
+--     --         local attach_id = ent:LookupAttachment("eyes")
+--     --         if attach_id then
+--     --             local attacht = ent:GetAttachment(attach_id)
+--     --             if attacht then
+--     --                 ent.attachcache = attacht
+--     --                 pos = attacht.Pos
+--     --                 ang = attacht.Ang
+--     --             end
+--     --         end
+--     --     else
+--     --         local attacht = ent.attachcache
+--     --         if attacht then
+--     --             pos = attacht.Pos
+--     --             ang = attacht.Ang
+--     --         end
+--     --     end
+--     -- else
+--     --     local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
+--     --     if bone_id then
+--     --         pos, ang = ent:GetBonePosition(bone_id)
+--     --     end
+--     -- end
+--     -- if not pos then
+--     --     pos = ent:GetPos()
+--     --     ang = ent:GetAngles()
+--     -- end
+--     -- pos, ang = LocalToWorld(translate, rotate, pos, ang)
+--     print("DRAW",mdl:GetModel(),pos)
+--     -- mdl:SetParent()
+--     mdl:SetPos(pos)
+--     mdl:SetAngles(ang)
+--     mdl:SetupBones()
+--     -- local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
+--     -- -- if attach=="eyes" then
+--     -- -- --     mdl:SetParent(ent, ent:LookupAttachment("eyes"))
+--     -- if bone_id then
+--     --     print(ent, bone_id)
+--     --     mdl:FollowBone(ent, bone_id)
+--     --     mdl:SetLocalPos(translate)
+--     --     mdl:SetLocalAngles(rotate)
+--     -- end
+--     -- SS_PreRender(item)
+--     DrawingInShop = true
+--     mdl:DrawModel()
+--     DrawingInShop = false
+--     -- SS_PostRender()
+-- end
+--NOMINIFY
+-- hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
+hook.Add("PrePlayerDraw", 'SS_DrawPlayerAccessories', function(ply)
     if ply.SS_Items == nil and ply.SS_ShownItems == nil then return end
     if not ply:Alive() then return end
     if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
@@ -323,77 +308,35 @@ hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
     if GAMEMODE.FolderName == "fatkid" and ply:Team() ~= TEAM_HUMAN then return end
 
     --in SPADES, the renderboost.lua is disabled!
-    for _, prop in ipairs(ply:SS_GetCSModels()) do
-        SS_DrawWornCSModel(prop.item, prop.mdl, ply)
+    -- Note: this is only called when alive
+    for i, v in ipairs(ply:SS_GetCSModels() or {}) do
+        -- if ply==LocalPlayer() then print(v.mdl:GetPos(), v.mdl:GetParent(), v.mdl:GetLocalPos()) end
+        v:Attach(ply)
     end
 end)
 
-SS_GibProps = {}
-
 hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, rag)
     if IsValid(ply) and ply:IsPlayer() then
-        --print(rag:GetPhysicsObjectNum(0):GetVelocity())
         local counter = 0
 
         for k, v in pairs(SS_CSModels[ply] or {}) do
             counter = counter + 1
-            if counter > 8 then return end
-            vm = v.mdl
-            local gib = GibClientProp(vm:GetModel(), vm:GetPos(), vm:GetAngles(), ply:GetVelocity(), 1, 6)
+            if counter > 10 then return end
+            local gib = GibClientProp(v:GetModel(), v:GetPos(), v:GetAngles(), ply:GetVelocity(), 1, 6)
 
-            if vm.matrix then
-                gib:EnableMatrix("RenderMultiply", vm.matrix)
+            if v.matrix then
+                gib:EnableMatrix("RenderMultiply", v.matrix)
             end
 
-            gib.csmodel = v
-            gib:SetNoDraw(true)
-            table.insert(SS_GibProps, gib)
-        end
-    end
-end)
+            local item = v.item
 
-concommand.Add("ps_proptest", function()
-    for j, itm in pairs(SS_Items) do
-        local mdl = itm.model
-        local gib = GibClientProp(mdl, LocalPlayer():EyePos(), Angle(0, 0, 0), LocalPlayer():GetVelocity(), 1, 6)
-        gib = gib:GetPhysicsObject():GetMesh()
-        local mins = nil
-        local maxs = nil
-
-        for k, v in pairs(gib) do
-            local p = v.pos
-
-            if mins then
-                mins = Vector(math.min(mins.x, p.x), math.min(mins.y, p.y), math.min(mins.z, p.z))
-                maxs = Vector(math.max(maxs.x, p.x), math.max(maxs.y, p.y), math.max(maxs.z, p.z))
-            else
-                mins = p
-                maxs = p
+            gib.RenderOverride = function(e, fl)
+                SS_PreRender(item)
+                e:DrawModel()
+                SS_PostRender()
             end
         end
-
-        print(mdl)
-        maxs = (maxs - mins)
-        print("Vector(" .. tostring(math.Round(maxs.x, 0)) .. ", " .. tostring(math.Round(maxs.y, 0)) .. ", " .. tostring(math.Round(maxs.z, 0)) .. ")")
     end
-end)
-
-hook.Add("PostDrawOpaqueRenderables", "SS_RenderGibs", function(depth, sky)
-    if sky or depth then return end
-    local nextgibs = {}
-
-    while #SS_GibProps > 0 do
-        local gib = table.remove(SS_GibProps)
-
-        if IsValid(gib) then
-            SS_PreRender(gib.csmodel.item)
-            gib:DrawModel()
-            SS_PostRender()
-            table.insert(nextgibs, gib)
-        end
-    end
-
-    SS_GibProps = nextgibs
 end)
 
 SS_CSModels = SS_CSModels or {}
@@ -401,8 +344,8 @@ SS_CSModels = SS_CSModels or {}
 hook.Add('Think', 'SS_Cleanup', function()
     for ply, mdls in pairs(SS_CSModels) do
         if not IsValid(ply) then
-            for k, v in pairs(mdls) do
-                v.mdl:Remove()
+            for i, v in ipairs(mdls) do
+                v:Remove()
             end
 
             SS_CSModels[ply] = nil
@@ -410,29 +353,127 @@ hook.Add('Think', 'SS_Cleanup', function()
     end
 end)
 
---makes a CSModel for a worn item
-function SS_CreateWornCSModel(item)
-    if item.wear == nil then return end
-
-    return SS_CreateCSModel(item)
-end
+-- --makes a CSModel for a worn item
+-- function SS_CreateWornCSModel(item)
+--     if item.wear == nil then return end
+--     local mdl = SS_CreateCSModel(item)
+--     mdl.Refresh = function(e)
+--         if scale ~= e.appliedscale then
+--             e.matrix = isnumber(scale) and Matrix({
+--                 {scale, 0, 0, 0},
+--                 {0, scale, 0, 0},
+--                 {0, 0, scale, 0},
+--                 {0, 0, 0, 1}
+--             }) or Matrix({
+--                 {scale.x, 0, 0, 0},
+--                 {0, scale.y, 0, 0},
+--                 {0, 0, scale.z, 0},
+--                 {0, 0, 0, 1}
+--             })
+--             -- TODO: do we need to adjust renderbounds?
+--             e:EnableMatrix("RenderMultiply", e.matrix)
+--             e.appliedscale = scale
+--         end
+--     end
+--     return mdl
+-- end
+local DrawingInShop = false
 
 --makes a CSModel for a product or item
 function SS_CreateCSModel(item)
-    local mdlname = item.model or item.cfg.model
-    if mdlname == nil then return end
-    local mdl = ClientsideModel(mdlname, RENDERGROUP_OPAQUE)
+    local ply = item.owner == SS_SAMPLE_ITEM_OWNER and LocalPlayer() or item.owner
+    local mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
+    mdl.item = item
 
-    if IsValid(mdl) then
-        mdl:SetNoDraw(true)
+    if item.AccessoryTransform then
+        mdl.Attach = function(e, ent)
+            ent = ent or ply
 
-        return mdl
+            if not IsValid(e:GetParent()) or e.lastent ~= ent then
+                e.appliedmodel = nil
+                e.lastent = ent
+            end
+
+            local desiredmodel = EntityGetModel(ent)
+            local pone = isPonyModel(desiredmodel)
+            local attach, translate, rotate, scale = item:AccessoryTransform(pone)
+
+            if desiredmodel ~= e.appliedmodel then
+                if attach == "eyes" then
+                    local attach_id = ent:LookupAttachment("eyes")
+                    if attach_id < 1 then return end
+                    e:SetParent(ent, attach_id)
+                else
+                    local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
+                    if not bone_id then return end
+                    e:FollowBone(ent, bone_id)
+                end
+
+                e.appliedmodel = desiredmodel
+            end
+
+            if scale ~= e.appliedscale then
+                e.matrix = isnumber(scale) and Matrix({
+                    {scale, 0, 0, 0},
+                    {0, scale, 0, 0},
+                    {0, 0, scale, 0},
+                    {0, 0, 0, 1}
+                }) or Matrix({
+                    {scale.x, 0, 0, 0},
+                    {0, scale.y, 0, 0},
+                    {0, 0, scale.z, 0},
+                    {0, 0, 0, 1}
+                })
+
+                -- TODO: do we need to adjust renderbounds?
+                e:EnableMatrix("RenderMultiply", e.matrix)
+                e.appliedscale = scale
+            end
+
+            --this likes to change itself
+            e:SetLocalPos(translate)
+            e:SetLocalAngles(rotate)
+        end
+
+        mdl.DrawInShop = function(self, ent)
+            -- local pos, ang = SS_GetItemWorldPos(item, ent)
+            -- self:SetPos(pos)
+            -- self:SetAngles(ang)
+            self:Attach(ent)
+            -- make sure it isn't cached bone position from the world version
+            self:SetupBones()
+            DrawingInShop = true
+            self:DrawModel()
+            DrawingInShop = false
+        end
     end
+
+    mdl.RenderOverride = function(e, fl)
+        if not DrawingInShop then
+            -- will be cleaned up
+            if not IsValid(ply) then return end
+            if ply == LocalPlayer() and not ply:ShouldDrawLocalPlayer() then return end
+            -- TODO use these models as the gibs?
+            if not ply:Alive() then return end
+
+            if ply:IsDormant() then
+                ply:SS_ClearCSModels()
+
+                return
+            end
+        end
+
+        SS_PreRender(item)
+        e:DrawModel()
+        SS_PostRender()
+    end
+
+    return mdl
 end
 
 function Player:SS_ClearCSModels()
-    for k, v in pairs(SS_CSModels[self] or {}) do
-        v.mdl:Remove()
+    for i, v in ipairs(SS_CSModels[self] or {}) do
+        v:Remove()
     end
 
     SS_CSModels[self] = nil
@@ -443,13 +484,8 @@ function Player:SS_GetCSModels()
         SS_CSModels[self] = {}
 
         for k, item in pairs(self.SS_ShownItems or {}) do
-            local mdl = SS_CreateWornCSModel(item)
-
-            if mdl then
-                table.insert(SS_CSModels[self], {
-                    mdl = mdl,
-                    item = item
-                })
+            if item.AccessoryTransform then
+                table.insert(SS_CSModels[self], SS_CreateCSModel(item))
             end
         end
     end

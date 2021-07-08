@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 --Note: CAN BE PRODUCT OR ITEM
+-- TODO: why does it look down so much on the preview compared to the item?
 function SS_PreviewShopModel(self)
     local min, max = self.Entity:GetRenderBounds()
     local center, radius = (min + max) / 2, min:Distance(max) / 2

@@ -136,32 +136,48 @@ function SS_ClientsideFakeItem(item)
     SS_Item(item)
 end
 
---ITEMS are stuff that is saved in the database
-function SS_Item(item)
-    if item.wear then
-        item.configurable = item.configurable or {}
-        item.configurable.wear = item.configurable.wear or {}
+function SS_AccessoryItem(item)
+    assert(item.wear)
+    item.configurable = item.configurable or {}
+    item.configurable.wear = item.configurable.wear or {}
 
-        --Pass -1 for default?
-        item.configurable.wear.scale = {
-            min = Vector(0.05, 0.05, 0.05),
-            max = (item.maxscale or 1) * Vector(1, 1, 1)
-        }
+    --Pass -1 for default?
+    item.configurable.wear.scale = {
+        min = Vector(0.05, 0.05, 0.05),
+        max = (item.maxscale or 1) * Vector(1, 1, 1)
+    }
 
-        item.configurable.wear.pos = {
-            min = Vector(-16, -16, -16),
-            max = Vector(16, 16, 16)
-        }
+    item.configurable.wear.pos = {
+        min = Vector(-16, -16, -16),
+        max = Vector(16, 16, 16)
+    }
 
-        item.configurable.color = {
-            max = 5
-        }
+    item.configurable.color = {
+        max = 5
+    }
 
-        item.configurable.imgur = true
-        item.accessory_slot = true
-        item.invcategory = "Accessories"
+    item.configurable.imgur = true
+    item.accessory_slot = true
+    item.invcategory = "Accessories"
+
+    function item:AccessoryTransform(pone)
+        local wear = pone and self.wear.pony or self.wear
+        local wear2 = self.wear
+        local cfg = self.cfg[pone and "wear_p" or "wear_h"] or {}
+        local attach = cfg.attach or wear.attach or wear2.attach
+        local translate = cfg.pos or wear.translate or wear2.translate
+        local rotate = cfg.ang or wear.rotate or wear2.rotate
+        local scale = cfg.scale or wear.scale or wear2.scale
+        -- isnumber(scale) and Vector(scale,scale,scale) or scale
+
+        return attach, translate, rotate, scale
     end
 
+    SS_Item(item)
+end
+
+--ITEMS are stuff that is saved in the database
+function SS_Item(item)
     -- change this to just one function that returns the tab above
     item.CanCfgColor = item.CanCfgColor or function(i) return (i.configurable or {}).color end
     item.CanCfgImgur = item.CanCfgImgur or function(i) return (i.configurable or {}).imgur end

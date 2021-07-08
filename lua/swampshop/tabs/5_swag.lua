@@ -3,7 +3,7 @@
 SS_Tab("Swag", "color_swatch")
 SS_Heading("Accessories")
 
-SS_Item({
+SS_AccessoryItem({
     class = 'trumphatfree',
     price = 0,
     name = 'Unstumpable',
@@ -32,7 +32,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "clownshoe",
     price = 50000,
     name = 'Clown Shoe',
@@ -54,7 +54,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "bigburger",
     price = 100000,
     name = 'Burger',
@@ -75,7 +75,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "bicyclehelmet",
     price = 120000,
     name = 'Safety Helmet',
@@ -96,7 +96,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "buckethat",
     price = 10000,
     name = 'Bucket Head',
@@ -124,7 +124,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "combinehelmet",
     price = 150000,
     name = 'Combine Helmet',
@@ -146,7 +146,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "conehattest",
     price = 1000,
     name = 'Cone Head',
@@ -170,7 +170,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "kleinerglasses",
     price = 1000000,
     name = "Kleiner's Glasses",
@@ -191,7 +191,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "santahat",
     price = 25000,
     name = 'Christmas Hat',
@@ -219,7 +219,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "shrunkenhead",
     price = 150000,
     name = 'Conjoined Twin',
@@ -239,7 +239,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "spikecollar",
     price = 200000,
     name = 'Spike Collar',
@@ -265,7 +265,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "tinfoilhat",
     price = 40000,
     name = "InfoWarrior's Hat",
@@ -292,7 +292,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "trashhattest",
     price = 10000000,
     name = 'Party Hat',
@@ -319,7 +319,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "turtleplush",
     price = 1000,
     name = 'Turtle Plush',
@@ -345,7 +345,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "pickelhaube",
     price = 250000,
     name = 'Pickelhaube',
@@ -370,7 +370,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "horsemask",
     price = 500,
     name = 'Poverty Pony',
@@ -394,7 +394,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = 'sombrero',
     price = 30000,
     name = 'Sombrero',
@@ -414,7 +414,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = 'headcrabhat',
     price = 600000,
     name = 'Headcrab',
@@ -434,7 +434,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = 'catears',
     price = 1450,
     name = 'Cat Ears',
@@ -454,7 +454,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = 'uwumask',
     price = 50000,
     name = 'Mask',
@@ -474,7 +474,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = 'tophat',
     price = 300000,
     name = 'Top Hat',
@@ -494,7 +494,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = 'swampyhat',
     price = 25000,
     name = 'Krusty Hat',
@@ -514,7 +514,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "commandercap",
     price = 1933000,
     name = 'Commander Hat',
@@ -535,7 +535,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "woolcap",
     price = 50000,
     name = 'Wool Cap with Brim',
@@ -557,7 +557,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "gasmask",
     price = 600000,
     name = 'Gas Mask',
@@ -579,7 +579,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "ushanka",
     price = 275000,
     name = 'Ushanka',
@@ -601,7 +601,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "americanhelmet",
     price = 19450,
     name = 'WWII American Army Helmet',
@@ -623,7 +623,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "germanhelmet",
     price = 88000,
     name = 'WWII German Army Helmet',
@@ -645,7 +645,7 @@ SS_Item({
     }
 })
 
-SS_Item({
+SS_AccessoryItem({
     class = "bone",
     price = 9000,
     name = 'Bone',
@@ -725,5 +725,5 @@ for k, v in pairs(primitives) do
         itm.perslot = 2
     end
 
-    SS_Item(itm)
+    SS_AccessoryItem(itm)
 end

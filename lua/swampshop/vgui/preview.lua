@@ -96,6 +96,8 @@ function PANEL:LayoutEntity(thisEntity)
     end
 
     if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
+        -- Uh, you have to do this or the hovered model won't follow the animation
+        self.Angles.y = self.Angles.y + 0.0001
         thisEntity:SetAngles(self.Angles)
 
         if not SS_CustomizerPanel:IsVisible() then
@@ -122,16 +124,18 @@ function PANEL:Paint()
 
     local pos = self.vCamPos
 
-    if SS_CustomizerPanel:IsVisible() then
-        if IsValid(SS_HoverCSModel) then
-            SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity, true)
-            pos = LerpVector(0, SS_HoverCSModel:GetPos() - (ang:Forward() * 25), pos)
-        end
+    -- if SS_CustomizerPanel:IsVisible() then
+    -- TODO
+    if IsValid(SS_HoverCSModel) then
+        -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
+        local p2 = SS_HoverCSModel:GetPos()
+        pos = p2 - (ang:Forward() * 50)
+    end
 
-        if SS_HoverItem and SS_HoverItem.playermodelmod then
-            pos = pos + (ang:Forward() * 25)
-            --positions are wrong
-            --[[
+    if SS_HoverItem and SS_HoverItem.playermodelmod then
+        pos = pos + (ang:Forward() * 25)
+        --positions are wrong
+        --[[
 			local pone = isPonyModel(self.Entity:GetModel())
 			local suffix = pone and "_p" or "_h"
 
@@ -143,9 +147,9 @@ function PANEL:Paint()
 				pos = LerpVector(0, pos2 - (ang:Forward() * 35), pos)
 			end
 			]]
-        end
     end
 
+    -- end
     local w, h = self:GetSize()
     cam.Start3D(pos + ang:Forward() * (self.ZoomOffset or 0) * 2.0, ang, self.fFOV, x, y, w, h, 5, 4096)
     cam.IgnoreZ(true)
@@ -230,17 +234,19 @@ function PANEL:Paint()
     if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
         for _, prop in pairs(ply:SS_GetCSModels()) do
             if SS_HoverItem == nil or SS_HoverItem.id ~= prop.item.id then
-                SS_DrawWornCSModel(prop.item, prop.mdl, self.Entity)
+                -- SS_DrawWornCSModel(prop.item, prop, self.Entity)
+                prop:DrawInShop(self.Entity)
             end
         end
     end
 
     if SS_HoverItem and SS_HoverItem.wear then
         if not IsValid(SS_HoverCSModel) then
-            SS_HoverCSModel = SS_CreateWornCSModel(SS_HoverItem)
+            SS_HoverCSModel = SS_CreateCSModel(SS_HoverItem)
         end
 
-        SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity)
+        SS_HoverCSModel:DrawInShop(self.Entity)
+        -- SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity)
     end
 
     -- ForceDrawPlayer(LocalPlayer())
