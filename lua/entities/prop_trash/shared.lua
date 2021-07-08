@@ -36,7 +36,7 @@ PropTrashLightData = {
 }
 
 PropTrashDoors = {
-    ["models/staticprop/props_c17/door01_left.mdl"]=true
+    ["models/staticprop/props_c17/door01_left.mdl"] = true
 }
 
 function ENT:SetupDataTables()

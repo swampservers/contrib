@@ -74,9 +74,6 @@ hook.Add("Think", "TrashLights", function()
     local ep = LocalPlayer():EyePos()
 
     for e, l in pairs(TRASH_LIGHTS) do
-
-
-        
         if not IsValid(e) then
             TRASH_LIGHTS[e] = nil
             continue
@@ -84,7 +81,6 @@ hook.Add("Think", "TrashLights", function()
 
         -- for edits
         l = PropTrashLightData[e:GetModel()]
-
         if e:IsDormant() then continue end
 
         if (l.untaped or e:GetTaped()) and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
@@ -119,7 +115,6 @@ end)
 hook.Add("PreDrawHalos", "TrashHalos", function()
     if not IsValid(LocalPlayer()) then return end
     local id = LocalPlayer():SteamID()
-
     local sz = ScrH() / 200
 
     if IsValid(PropTrashLookedAt) then
@@ -137,16 +132,16 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
 
         halo.Add({PropTrashLookedAt}, c, sz, sz, 1, true, false)
 
-        if PropTrashLookedAt:GetClass()=="prop_trash_zone" then
+        if PropTrashLookedAt:GetClass() == "prop_trash_zone" then
             local e = {}
-            for k,v in ipairs(ents.FindByClass('prop_trash')) do
-                if v~=PropTrashLookedAt and v:GetPos():WithinAABox(PropTrashLookedAt:GetBounds()) then
+
+            for k, v in ipairs(ents.FindByClass('prop_trash')) do
+                if v ~= PropTrashLookedAt and v:GetPos():WithinAABox(PropTrashLookedAt:GetBounds()) then
                     table.insert(e, v)
                 end
             end
 
             halo.Add(e, Color(255, 0, 255), sz, sz, 1, true, false)
-
             -- TODO: check:
             -- if v:GetOwnerID() == LocalPlayer():SteamID() then
             --     render.SetColorModulation(0, 1, 1)

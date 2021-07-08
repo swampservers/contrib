@@ -201,12 +201,12 @@ SS_Product({
         --Delay 1 tick
         -- timer.Simple(0, function()
         --     timer.Simple(0.001, function()
-                MakeTrashZone(ply, self.model)
-        --     end)
-        -- end)
+        MakeTrashZone(ply, self.model)
     end
 })
 
+--     end)
+-- end)
 SS_Product({
     class = 'trashfieldlarge',
     price = 3000,
@@ -223,13 +223,13 @@ SS_Product({
 
         --Delay 1 tick
         -- timer.Simple(0, function()
-            -- timer.Simple(0.001, function()
-                MakeTrashZone(ply, self.model)
-            -- end)
-        -- end)
+        -- timer.Simple(0.001, function()
+        MakeTrashZone(ply, self.model)
     end
 })
 
+-- end)
+-- end)
 SS_Product({
     class = 'trashlight',
     price = 1000,
@@ -281,16 +281,12 @@ SS_Product({
         local nxt = {}
 
         for k, v in pairs(PropTrashDoors) do
-
-                table.insert(nxt, k)
- 
+            table.insert(nxt, k)
         end
 
         e = makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
-
-
 
 SS_Product({
     class = 'trashtheater',
@@ -309,13 +305,13 @@ SS_Product({
         --Delay 1 tick
         -- timer.Simple(0, function()
         --     timer.Simple(0.001, function()
-                -- makeTrashTheater(ply, self.model)
-                MakeTrashZone(ply, self.model)
-        --     end)
-        -- end)
+        -- makeTrashTheater(ply, self.model)
+        MakeTrashZone(ply, self.model)
     end
 })
 
+--     end)
+-- end)
 SS_Product({
     class = 'trashtheatertiny',
     price = 4000,

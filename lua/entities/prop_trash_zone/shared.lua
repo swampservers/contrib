@@ -2,7 +2,6 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 DEFINE_BASECLASS("prop_trash")
-
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 ENT.CanChangeTrashOwner = false
 
@@ -16,51 +15,50 @@ TrashZoneModels = {
             w = 16 * 0.95,
             h = 9 * 0.95
         }
-        
     },
     ["models/props_phx/rt_screen.mdl"] = {
         center = Vector(100, 0, 0),
         cubesize = 250,
         theater = {
-        pos = Vector(6.16, -28, 35),
-        ang = Angle(0, 90, 0),
-        w = 56,
-        h = 31.5
+            pos = Vector(6.16, -28, 35),
+            ang = Angle(0, 90, 0),
+            w = 56,
+            h = 31.5
         }
     },
     ["models/hunter/plates/plate1x2.mdl"] = {
         center = Vector(0, 0, 150),
         cubesize = 350,
         theater = {
-        pos = Vector(-21.1, -28 * 1.36, 5.5),
-        ang = Angle(0, 90, -90),
-        w = 56 * 1.36,
-        h = 31.5 * 1.36
+            pos = Vector(-21.1, -28 * 1.36, 5.5),
+            ang = Angle(0, 90, -90),
+            w = 56 * 1.36,
+            h = 31.5 * 1.36
         }
     },
     ["models/dav0r/camera.mdl"] = {
         center = Vector(150, 0, 0),
         cubesize = 400,
         theater = {
-        pos = Vector(300, 160, 90),
-        ang = Angle(0, -90, 0),
-        w = 320,
-        h = 180,
-        projection = {
-            pos = Vector(0, 0, 0),
-            ang = Angle(0, 0, 0),
+            pos = Vector(300, 160, 90),
+            ang = Angle(0, -90, 0),
+            w = 320,
+            h = 180,
+            projection = {
+                pos = Vector(0, 0, 0),
+                ang = Angle(0, 0, 0),
+            }
         }
-    }
     },
     ["models/maxofs2d/hover_classic.mdl"] = {
-        cubesize=200
+        cubesize = 200
     },
-    ["models/dav0r/hoverball.mdl"] = { cubesize=300 }
-
+    ["models/dav0r/hoverball.mdl"] = {
+        cubesize = 300
+    }
 }
 
 -- AddTrashClass("prop_trash_zone", TrashMobileTheaterData)
-
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables(self, true)
     self:NetworkVar("String", 1, "TheaterName")
@@ -69,7 +67,6 @@ end
 
 -- function ENT:Draw()
 --     local realmodel = self:GetModel()
-
 --     if realmodel == "models/hunter/plates/plate1x2.mdl" then
 --         self:SetModel("models/props_phx/rt_screen.mdl")
 --         local oldpos = self:GetPos()
@@ -87,46 +84,35 @@ end
 --     else
 --         BaseClass.Draw(self, true)
 --     end
-
 --     TrashDrawProtectionOutlines(self)
 -- end
-
 -- function ENT:GetAreaMin()
 --     local tmtd = TrashMobileTheaterData[self:GetModel()]
 --     local cs = tmtd.cubesize
-
 --     return self:LocalToWorld(tmtd.center) - Vector(cs / 2, cs / 2, cs / 2)
 -- end
-
 -- function ENT:GetAreaMax()
 --     local cs = TrashMobileTheaterData[self:GetModel()].cubesize
-
 --     return self:GetAreaMin() + Vector(cs, cs, cs)
 -- end
-
 -- function ENT:ProtectionRadius()
 --     local field_size = TrashFieldModelToRadius[self:GetModel()]
 --     local locid = self:GetLocation()
 --     local ln = Location.GetLocationNameByIndex(locid)
-
 --     if ln == "The Pit" then
 --         field_size = field_size / 2
 --     end
-
 --     if ln == "In Minecraft" then
 --         field_size = field_size * 1.5
 --     end
-
 --     return field_size
 -- end
-
-
 function ENT:GetBounds()
     local dat = TrashZoneModels[self:GetModel()]
     local center = dat.center and self:LocalToWorld(dat.center) or self:GetPos()
-    local v = Vector(dat.cubesize,dat.cubesize,dat.cubesize) * 0.5
+    local v = Vector(dat.cubesize, dat.cubesize, dat.cubesize) * 0.5
 
-    return center-v, center+v
+    return center - v, center + v
 end
 
 function ENT:Think()
@@ -150,22 +136,17 @@ end
 
 function ENT:CreateTheater()
     local i = self:GetMobileLocationIndex()
-
     local tzm = TrashZoneModels[self:GetModel()]
     local th = tzm.theater
     if not th then return end
-
     print(i)
     local li = Location.MobileLocations[i]
     local l = Location.GetLocationByIndex(li)
-    l.Min,l.Max = self:GetBounds()
+    l.Min, l.Max = self:GetBounds()
     l.Name = self:GetTheaterName()
-
     l.Theater.Width, l.Theater.Height = th.w, th.h
     l.Theater.Pos, l.Theater.Ang = LocalToWorld(th.pos, th.ang, self:GetPos(), self:GetAngles())
-
     print(l.Theater.Pos, l.Theater.Ang)
-
     -- if tmtd.projection then
     --     -- TODO implement this
     --     l.Theater.Projector = {
@@ -173,7 +154,6 @@ function ENT:CreateTheater()
     --         ang = self:LocalToWorldAngles(tmtd.projection.ang),
     --     }
     -- end
-
     l.Theater.PermanentOwnerID = self:GetOwnerID()
     local t = theater.GetByLocation(li)
 
@@ -214,52 +194,35 @@ function ENT:OnRemove()
     self:DestroyTheater()
 end
 
-
-
 function ENT:CannotTape(userid)
     -- self:GetPos():Distance(Vector(0, -1152, 0)) > 900 and 
     local basederror = BaseClass.CannotTape(self, userid)
     if basederror then return basederror end
-
-
     local badcount = -1
-
-    local mn,mx = self:GetBounds()
+    local mn, mx = self:GetBounds()
 
     for k, v in pairs(ents.FindByClass("prop_trash*")) do
-        if v:GetTaped()  then
-            if v:GetPos():WithinAABox(mn,mx) then
+        if v:GetTaped() then
+            if v:GetPos():WithinAABox(mn, mx) then
                 badcount = badcount + ((v:GetOwnerID() == self:GetOwnerID()) and -1 or 1)
             end
-            if v:GetClass()=="prop_trash_zone" and v:GetOwnerID() ~= self:GetOwnerID() then
 
-                local on,ox = v:GetBounds()
-
-                if not (
-                    (mn.x > ox.x or on.x > mx.x) or 
-                    (mn.y > ox.y or on.y > mx.y) or 
-                    (mn.z > ox.z or on.z > mx.z) ) then
-
-                    return "Intersects other zone!"
-                end
-
+            if v:GetClass() == "prop_trash_zone" and v:GetOwnerID() ~= self:GetOwnerID() then
+                local on, ox = v:GetBounds()
+                if not ((mn.x > ox.x or on.x > mx.x) or (mn.y > ox.y or on.y > mx.y) or (mn.z > ox.z or on.z > mx.z)) then return "Intersects other zone!" end
             end
         end
     end
 
-    if badcount > 0 then
-        return "Too many of others' props nearby!"
-    end
+    if badcount > 0 then return "Too many of others' props nearby!" end
 end
 
 -- function ENT:ProtectsIfTaped(other)
 --     return other:GetPos():WithinAABox(self:GetAreaMin(), self:GetAreaMax())
 -- end
-
 function ENT:Protects(pos)
     return self:GetTaped() and pos:WithinAABox(self:GetBounds())
 end
-
 -- function ENT:Protects(other)
 --     return self:GetTaped() and self:ProtectsIfTaped(other)
 -- end

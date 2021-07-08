@@ -4,11 +4,9 @@ TRASH_MODEL_CLASSES = TRASH_MODEL_CLASSES or {}
 TRASH_SPAWN_COOLDOWN = 4
 TRASH_MANAGER_LOAD_RANGE = 1000
 TRASH_MANAGER_PROP_LIMIT = 50
-
 -- function GetTrashClass(mdl)
 --     return TRASH_MODEL_CLASSES[mdl] or "prop_trash"
 -- end
-
 -- function AddTrashClass(class, models)
 --     if isstring(models) then
 --         TRASH_MODEL_CLASSES[models] = class
@@ -23,7 +21,6 @@ TRASH_MANAGER_PROP_LIMIT = 50
 --         end
 --     end
 -- end
-
 TRASHLOC_BUILD = 1
 TRASHLOC_NOBUILD = 2
 TRASHLOC_NOSPAWN = 3
@@ -84,4 +81,3 @@ TrashNoFreezeNodes = {
     {Vector(-2040, -60, 80), 120},
     {Vector(-1970, -1120, 100), 150}
 }
-

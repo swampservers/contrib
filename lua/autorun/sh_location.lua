@@ -378,10 +378,7 @@ Map = {
     --[[Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 512 end,
 		Min = Vector(-512,-1152-512,-128),
 		Max = Vector(512,-1152+512,192)]] -- 10 "Mobile" theaters are used by prop_trash_theater
-
-    "mobiletheaters",
-
-    {
+    "mobiletheaters", {
         Name = "SushiTheater Basement",
         Min = Vector(-2912, -2008, -176),
         Max = Vector(-2096, -1100, -24)
@@ -571,14 +568,15 @@ Map = {
 --after everything
 --set up and index mobile theaters
 MobileLocations = {}
-
-
 local i = 1
+
 while i <= #Map do
     if Map[i] == "mobiletheaters" then
         table.remove(Map, i)
-        for j=0,31 do
-            table.insert(MobileLocations, i+j)
+
+        for j = 0, 31 do
+            table.insert(MobileLocations, i + j)
+
             table.insert(Map, i, {
                 MobileLocationIndex = #MobileLocations,
                 Name = "MobileTheater" .. tostring(#MobileLocations),
@@ -591,20 +589,18 @@ while i <= #Map do
                     Width = 32,
                     Height = 18
                 }
-
             })
-            
         end
+
         break
     end
-    i=i+1
+
+    i = i + 1
 end
 
 function RefreshPositions()
     for k, v in pairs(ents.GetAll()) do
-        
-            v.LastLocationCoords = nil
-        
+        v.LastLocationCoords = nil
     end
 end
 
