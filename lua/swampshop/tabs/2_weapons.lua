@@ -149,7 +149,7 @@ SS_Item({
         return d
     end,
     GetName = function(self)
-        local name = language.GetPhrase((weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown")
+        local name = language.GetPhrase((weapons.GetStored(self:FixClass() or "") or {}).PrintName or "Unknown")
 
         if self.specs.trophy_tag then
             name = self.specs.trophy_tag .. " " .. name
@@ -157,8 +157,14 @@ SS_Item({
 
         return name
     end,
-    GetModel = function(self) return (weapons.GetStored(self.specs.class or "") or {}).WorldModel or 'models/error.mdl' end,
+    GetModel = function(self) return (weapons.GetStored(self:FixClass() or "") or {}).WorldModel or 'models/error.mdl' end,
     OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
+    FixClass = function(self)
+        if not self.specs.class then return nil end
+        if self.specs.class:StartWith("weapon_") then return self.specs.class:gsub("weapon_", "gun_") end
+
+        return self.specs.class
+    end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
@@ -167,8 +173,10 @@ SS_Item({
             ch = true
         end
 
-        if specs.class:StartWith("weapon_") then
-            specs.class = specs.class:gsub("weapon_", "gun_")
+        local cl = self:FixClass()
+
+        if specs.class ~= cl then
+            specs.class = cl
             ch = true
         end
 
@@ -183,7 +191,7 @@ SS_Item({
     SpawnPrice = function(self)
         return ({
             pistol = 2000,
-            heavypistol = 2000,
+            heavypistol = 2500,
             smg = 4000,
             shotgun = 3000,
             autoshotgun = 4000,
@@ -191,12 +199,14 @@ SS_Item({
             autosniper = 6000,
             sniper = 5000,
             lmg = 8000,
-        })[(weapons.GetStored(self.specs.class or "") or {}).GunType] or 9999
+        })[(weapons.GetStored(self:FixClass() or "") or {}).GunType] or 9999
     end,
+    SellValue = function(self) return 500 * 2 ^ SS_GetRating(self.specs.rating).id end,
     invcategory = "Weapons",
     never_equip = true
 })
 
+--NOMINIFY
 for i, tm in ipairs({"CT", "TERRORIST"}) do
     SS_Product({
         class = 'csslootbox2' .. tm:lower(),

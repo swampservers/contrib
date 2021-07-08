@@ -126,6 +126,7 @@ function SS_ItemOrProduct(iop)
         iop.GetName = iop.GetName or function(self) return self.name end
     end
 
+    iop.GetDescription = iop.GetDescription or function(self) return self.description end
     iop.GetModel = iop.GetModel or function(self) return self.model end
 end
 

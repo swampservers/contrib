@@ -1,6 +1,10 @@
-﻿AddCSLuaFile()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "ar"
+SWEP.PrintName = "AK-47"
+SWEP.HoldType = "ar2"
+SWEP.Slot = 0
 --Jvs: I wish this weapon defining shit was this easy
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
@@ -118,14 +122,6 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-SWEP.Spawnable = true
-SWEP.Slot = 0
-
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetHoldType("ar2")
-    self:SetWeaponID(CS_WEAPON_AK47)
-end
 
 function SWEP:PrimaryAttack()
     if self:GetNextPrimaryAttack() > CurTime() then return end

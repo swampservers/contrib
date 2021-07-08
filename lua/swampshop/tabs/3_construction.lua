@@ -23,6 +23,14 @@ SS_WeaponProduct({
     price = 2000
 })
 
+SS_WeaponProduct({
+    class = "weapon_trash_manager",
+    name = 'Manager',
+    description = "Use to save and load your builds!",
+    model = 'models/props_lab/clipboard.mdl',
+    price = 5000
+})
+
 SS_Product({
     class = 'trash',
     price = 0,
@@ -88,7 +96,7 @@ SS_Item({
         },
         imgur = true
     },
-    SpawnPrice = function(self) return 100 end,
+    SpawnPrice = function(self) return 200 end,
     invcategory = "Props",
     never_equip = true
 })
@@ -98,18 +106,16 @@ SS_Product({
     class = 'sandbox',
     price = 25000,
     name = 'Sandbox Lootbox',
-    description = "A random prop that you can spawn from your inventory as much as you want (trading coming soon)",
+    description = "A random prop that you can spawn from your inventory anytime",
     model = 'models/Items/ammocrate_smg1.mdl',
     CannotBuy = function(self, ply)
-        if ply:SS_CountItem("prop") >= 100 then return "Max 100 props, please sell some!" end
+        if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
     end,
     OnBuy = function(self, ply)
         -- if ply.CANTSANDBOX then return end
         local item = SS_GenerateItem(ply, "prop")
 
         ply:SS_GiveNewItem(item, function(item)
-            local chosen = item.specs.model
-            assert(chosen)
             local others = {}
 
             for i = 1, 15 do
@@ -122,7 +128,7 @@ SS_Product({
             net.Send(ply)
 
             timer.Simple(4, function()
-                makeTrash(ply, chosen)
+                MakeTrashItem(ply, item)
             end)
         end, 4)
     end

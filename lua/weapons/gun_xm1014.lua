@@ -1,6 +1,10 @@
-﻿AddCSLuaFile()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "autoshotgun"
+SWEP.PrintName = "XM1014"
+SWEP.HoldType = "shotgun"
+SWEP.Slot = 0
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed" 		"240"
@@ -114,9 +118,6 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-SWEP.Spawnable = true
-SWEP.Slot = 0
-SWEP.SlotPos = 0
 
 function SWEP:SetupDataTables()
     BaseClass.SetupDataTables(self)
@@ -125,8 +126,6 @@ end
 
 function SWEP:Initialize()
     BaseClass.Initialize(self)
-    self:SetHoldType("shotgun")
-    self:SetWeaponID(CS_WEAPON_XM1014)
     self:SetSpecialReload(0)
 end
 

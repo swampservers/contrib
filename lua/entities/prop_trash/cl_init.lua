@@ -2,63 +2,23 @@
 -- INSTALL: CINEMA
 include('shared.lua')
 DEFINE_BASECLASS("base_anim")
+TRASH_LIGHTS = TRASH_LIGHTS or {}
 
--- DEFINE_BASECLASS("base_gmodentity")
-PropTrashLightData = {
-    ["models/props_interiors/furniture_lamp01a.mdl"] = {
-        untaped = false,
-        size = 500,
-        brightness = 2,
-        style = 0,
-        pos = Vector(0, 0, 27)
-    },
-    ["models/maxofs2d/light_tubular.mdl"] = {
-        untaped = false,
-        size = 300,
-        brightness = 2,
-        style = -1,
-        pos = Vector(0, 0, 0)
-    }
-}
+function ENT:Initialize()
+    -- default light thing
+    local mn = table.remove(string.Explode("/", self:GetModel())):lower()
 
-function ENT:Think()
-    local light = PropTrashLightData[self:GetModel()]
-
-    if light and (self:GetTaped() or light.untaped) and EyePos():Distance(self:GetPos()) < (self:GetPos().z > -48 and 1000 or 3000) then
-        local dlight = DynamicLight(self:EntIndex())
-
-        if dlight then
-            dlight.pos = self:LocalToWorld(light.pos)
-            dlight.r = self:GetColor().r
-            dlight.g = self:GetColor().g
-            dlight.b = self:GetColor().b
-            dlight.brightness = light.brightness
-            dlight.Size = light.size
-            dlight.style = (light.style == -1) and self:EntIndex() % 12 or light.style
-
-            if light.dir then
-                local d = Vector(0, 0, 0)
-                d:Set(light.dir)
-                d:Rotate(self:GetAngles())
-                dlight.dir = d
-                dlight.innerangle = light.innerangle
-                dlight.outerangle = light.outerangle
-            end
-
-            dlight.Decay = 500
-            dlight.DieTime = CurTime() + 1
-        end
-
-        self:SetNextClientThink(CurTime() + 0.1)
-    else
-        if light then
-            self:SetNextClientThink(CurTime() + 0.1)
-        else
-            self:SetNextClientThink(CurTime() + 9999)
-        end
+    if mn:find("light") or mn:find("lamp") or mn:find("lantern") then
+        PropTrashLightData[self:GetModel()] = {
+            untaped = false,
+            size = 300,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 0)
+        }
     end
 
-    return true
+    TRASH_LIGHTS[self] = PropTrashLightData[self:GetModel()]
 end
 
 function ENT:Draw()
@@ -71,8 +31,11 @@ function ENT:Draw()
         local cr, cg, cb = render.GetColorModulation()
         render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3, (cb * 1.6) + 0.3)
     else
-        local c = self:GetNWVector("BasedColor", Vector(1, 1, 1))
-        render.SetColorModulation(c.x, c.y, c.z)
+        if self.GetUnboundedColor then
+            local c = self:GetUnboundedColor()
+            render.SetColorModulation(c.x, c.y, c.z)
+        end
+
         local imgur, own = self:GetImgur()
 
         if imgur then
@@ -104,7 +67,53 @@ function ENT:Draw()
     end
 end
 
+TRASH_LIGHTS = TRASH_LIGHTS or {}
+
+hook.Add("Think", "TrashLights", function()
+    if not IsValid(LocalPlayer()) then return end
+    local ep = LocalPlayer():EyePos()
+
+    for e, l in pairs(TRASH_LIGHTS) do
+        if not IsValid(e) then
+            TRASH_LIGHTS[e] = nil
+            continue
+        end
+
+        if e:IsDormant() then continue end
+
+        if e:GetTaped() and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
+            local dlight = DynamicLight(e:EntIndex())
+            local c = e:GetUnboundedColor() * 255
+
+            if dlight then
+                dlight.pos = e:LocalToWorld(l.pos)
+                dlight.r = c.x
+                dlight.g = c.y
+                dlight.b = c.z
+                dlight.brightness = l.brightness
+                dlight.Size = l.size
+                dlight.style = (l.style == -1) and e:EntIndex() % 12 or l.style
+
+                if l.dir then
+                    local d = Vector(0, 0, 0)
+                    d:Set(l.dir)
+                    d:Rotate(e:GetAngles())
+                    dlight.dir = d
+                    dlight.innerangle = light.innerangle
+                    dlight.outerangle = light.outerangle
+                end
+
+                dlight.Decay = 500
+                dlight.DieTime = CurTime() + 1
+            end
+        end
+    end
+end)
+
 hook.Add("PreDrawHalos", "TrashHalos", function()
+    if not IsValid(LocalPlayer()) then return end
+    local id = LocalPlayer():SteamID()
+
     if IsValid(PropTrashLookedAt) then
         local c = Color(255, 128, 0)
 
@@ -122,14 +131,52 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
 
         halo.Add({PropTrashLookedAt}, c, sz, sz, 1, true, false)
     end
+
+    if IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "weapon_trash_manager" then
+        if IsValid(TRASHMANAGERWINDOW) then
+            if TRASHMANAGERDELETEBUTTON:IsHovered() or TRASHMANAGERDELETEBUTTON:GetText() == "" then
+                local d = LocalPlayer():GetActiveWeapon():GetDeleteEntities()
+                TRASHMANAGERDELETEBUTTON:SetText("Cleanup " .. #d .. " props")
+
+                if TRASHMANAGERDELETEBUTTON:IsHovered() then
+                    halo.Add(d, Color(255, 0, 0), sz, sz, 1, true, false)
+                end
+            end
+
+            if TRASHMANAGERSAVEBUTTON:IsHovered() or TRASHMANAGERSAVEBUTTON:GetText() == "" then
+                local t = LocalPlayer():GetActiveWeapon():GetSaveEntities()
+                TRASHMANAGERSAVEBUTTON:SetText("Save " .. #t .. " props")
+
+                if TRASHMANAGERSAVEBUTTON:IsHovered() then
+                    halo.Add(t, Color(255, 255, 0), sz, sz, 1, true, false)
+                end
+            end
+
+            if IsValid(TRASHMANAGERFILEBUTTONS) then
+                halo.Add(TRASHMANAGERFILEBUTTONS.mymodels, Color(0, 255, 0), sz, sz, 1, true, false)
+            end
+        end
+        -- 
+        -- halo.Add(LocalPlayer():GetActiveWeapon():GetSaveEntities(), Color( 0,255, 0), sz, sz, 1, true, false)
+    end
 end)
 
 hook.Add("HUDPaint", "TrashHUD", function()
+    if not IsValid(LocalPlayer()) then return end
+
     if IsValid(PropTrashLookedAt) then
         local c = PropTrashLookedAt:LocalToWorld(PropTrashLookedAt:OBBCenter()):ToScreen()
 
         if c.visible then
             draw.SimpleText(PropTrashLookedAt:GetOwnerID() == LocalPlayer():SteamID() and "Yours" or "Not yours", "DermaDefault", c.x, c.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
+    end
+
+    local lastt = LocalPlayer():GetNWFloat("LastTrash", 0)
+
+    if lastt + TRASH_SPAWN_COOLDOWN > CurTime() then
+        local barsize = (1 - (CurTime() - lastt) / TRASH_SPAWN_COOLDOWN) * ScrW() / 2
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.DrawRect(ScrW() / 2 - barsize, ScrH() - 10, barsize * 2, 10)
     end
 end)

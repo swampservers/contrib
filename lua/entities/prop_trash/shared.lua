@@ -4,22 +4,45 @@ AddCSLuaFile()
 DEFINE_BASECLASS("base_anim")
 ENT.Type = "anim"
 
+PropTrashLightData = {
+    ["models/props_interiors/furniture_lamp01a.mdl"] = {
+        untaped = false,
+        size = 500,
+        brightness = 2,
+        style = 0,
+        pos = Vector(0, 0, 27)
+    },
+    ["models/maxofs2d/light_tubular.mdl"] = {
+        untaped = false,
+        size = 300,
+        brightness = 2,
+        style = -1,
+        pos = Vector(0, 0, 0)
+    },
+    ["models/light/cagedlight.mdl"] = {
+        untaped = false,
+        size = 300,
+        brightness = 2,
+        style = 0,
+        pos = Vector(0, 0, 0)
+    }
+}
+
 function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "OwnerID")
     self:NetworkVar("Bool", 0, "Taped")
-    self:NetworkVar("Int", 0, "ItemID")
-    self:NetworkVar("Bool", 1, "Painted")
-    self:NetworkVar("Vector", 1, "PaintColor")
+    self:NetworkVar("Int", 0, "Rating")
+    self:SetRating(4)
+    self:NetworkVar("Int", 1, "ItemID")
+    -- self:NetworkVar("Bool", 1, "Painted")
+    self:NetworkVar("Vector", 0, "UnboundedColor")
+    self:SetUnboundedColor(Vector(1, 1, 1))
 end
 
 ENT.CanChangeTrashOwner = true
 
 function ENT:CanChangeOwner()
     return true
-end
-
-function ENT:GetRating()
-    return self:GetNW2Int("Rating", 4)
 end
 
 function ENT:GetLocation()
@@ -31,8 +54,7 @@ function ENT:GetLocation()
     return self.LastLocationIndex
 end
 
-function ENT:GetLocationClass()
-    local locid = self:GetLocation()
+function TrashLocationClass(locid)
     local ln = Location.GetLocationNameByIndex(locid)
     if TrashLocationOverrides[ln] then return TrashLocationOverrides[ln] end
     local t = theater.GetByLocation(locid)
@@ -46,9 +68,13 @@ function ENT:GetLocationClass()
     return TRASHLOC_NOBUILD
 end
 
-function ENT:GetLocationOwner()
-    local class = self:GetLocationClass()
-    local t = theater.GetByLocation(self:GetLocation())
+function ENT:GetLocationClass()
+    return TrashLocationClass(self:GetLocation())
+end
+
+function TrashLocationOwner(locid, pos)
+    local class = TrashLocationClass(locid)
+    local t = theater.GetByLocation(locid)
 
     if t and t:IsPrivate() then
         if t._PermanentOwnerID then return t._PermanentOwnerID end
@@ -58,10 +84,14 @@ function ENT:GetLocationOwner()
     if class ~= TRASHLOC_BUILD then return nil end -- The only way to own a non build area is with a theater. Not a field.
 
     for k, v in ipairs(GetTrashFields()) do
-        if IsValid(v) and v:Protects(self) then return v:GetOwnerID() end
+        if IsValid(v) and v:ProtectsPoint(pos) then return v:GetOwnerID() end
     end
 
     return nil
+end
+
+function ENT:GetLocationOwner()
+    return TrashLocationOwner(self:GetLocation(), self:GetPos())
 end
 
 -- MIGHT BE A FILE RUN ORDER ISSUE

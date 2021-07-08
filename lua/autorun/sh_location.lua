@@ -323,11 +323,6 @@ Map = {
         Max = Vector(-2096, -1192, 192)
     },
     {
-        Name = "SushiTheater Basement",
-        Min = Vector(-2912, -2008, -176),
-        Max = Vector(-2096, -1100, -24)
-    },
-    {
         Name = "SushiTheater Second Floor",
         Min = Vector(-2832, -1928, 192),
         Max = Vector(-2176, -1272, 376)
@@ -412,6 +407,11 @@ Map = {
     },
     {
         Name = "MOBILE",
+    },
+    {
+        Name = "SushiTheater Basement",
+        Min = Vector(-2912, -2008, -176),
+        Max = Vector(-2096, -1100, -24)
     },
     {
         Name = "Control Room",
@@ -665,8 +665,11 @@ function GetLocationByName(strName)
 end
 
 -- returns the index of the players current location or 0 if unknown
-function Find(ply)
-    local pos = ply:GetPos()
+function Find(pos)
+    if isentity(pos) then
+        pos = pos:GetPos()
+    end
+
     if (Map == nil) then return 0 end
 
     for k, v in next, Map do

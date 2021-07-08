@@ -1,6 +1,10 @@
-﻿AddCSLuaFile()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
+SWEP.PrintName = "Five-Seven"
+SWEP.HoldType = "pistol"
+SWEP.Slot = 0
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"		"250"
@@ -113,15 +117,6 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-SWEP.Spawnable = true
-SWEP.Slot = 1
-SWEP.SlotPos = 0
-
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetHoldType("pistol")
-    self:SetWeaponID(CS_WEAPON_FIVESEVEN)
-end
 
 function SWEP:PrimaryAttack()
     if self:GetNextPrimaryAttack() > CurTime() then return end

@@ -1,6 +1,10 @@
-﻿AddCSLuaFile()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "heavypistol"
+SWEP.PrintName = "Desert Eagle"
+SWEP.HoldType = "revolver"
+SWEP.Slot = 0
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"		"250"
@@ -113,15 +117,6 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-SWEP.Spawnable = true
-SWEP.Slot = 1
-SWEP.SlotPos = 0
-
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetHoldType("pistol")
-    self:SetWeaponID(CS_WEAPON_DEAGLE)
-end
 
 function SWEP:Deploy()
     self:SetAccuracy(0.9)

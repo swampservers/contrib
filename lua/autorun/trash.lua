@@ -1,6 +1,9 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 TRASH_MODEL_CLASSES = TRASH_MODEL_CLASSES or {}
+TRASH_SPAWN_COOLDOWN = 4
+TRASH_MANAGER_LOAD_RANGE = 1000
+TRASH_MANAGER_PROP_LIMIT = 50
 
 function GetTrashClass(mdl)
     return TRASH_MODEL_CLASSES[mdl] or "prop_trash"
@@ -45,7 +48,7 @@ TrashLocationOverrides = {
     ['Elevator Shaft'] = TRASHLOC_NOSPAWN,
     ['Trump Lobby'] = TRASHLOC_BUILD,
     ['SushiTheater'] = TRASHLOC_NOSPAWN,
-    ['SushiTheater Basement'] = TRASHLOC_NOSPAWN,
+    ['SushiTheater Basement'] = TRASHLOC_BUILD,
     ['SushiTheater Second Floor'] = TRASHLOC_NOSPAWN,
     ['SushiTheater Attic'] = TRASHLOC_BUILD,
     ['Auditorium'] = TRASHLOC_BUILD,

@@ -1,6 +1,10 @@
-﻿AddCSLuaFile()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
+SWEP.PrintName = "Glock"
+SWEP.HoldType = "pistol"
+SWEP.Slot = 0
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"		"250"
@@ -122,17 +126,12 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-SWEP.Spawnable = true
-SWEP.Slot = 1
-SWEP.SlotPos = 0
 
 function SWEP:Initialize()
     BaseClass.Initialize(self)
-    self:SetHoldType("pistol")
     self:SetBurstFireEnabled(false)
     self:SetMaxBurstFires(3)
     self:SetBurstFireDelay(0.1)
-    self:SetWeaponID(CS_WEAPON_GLOCK)
 end
 
 function SWEP:Deploy()

@@ -1,11 +1,10 @@
-﻿AddCSLuaFile()
-
-local function FloatEquals(x, y)
-    return math.abs(x - y) < 1.19209290E-07
-end
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "ar"
+SWEP.PrintName = "SG 552"
+SWEP.HoldType = "ar2"
+SWEP.Slot = 0
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"		"235"
@@ -133,15 +132,6 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-SWEP.Spawnable = true
-SWEP.Slot = 0
-SWEP.SlotPos = 0
-
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetHoldType("ar2")
-    self:SetWeaponID(CS_WEAPON_AK47)
-end
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
 end
@@ -163,7 +153,7 @@ function SWEP:SecondaryAttack()
 
     if not self:IsScoped() then
         self:SetFOVRatio(55 / 90, 0.2)
-    elseif (FloatEquals(self:GetFOVRatio(), 55 / 90)) then
+    elseif (math.abs(self:GetFOVRatio() - 55 / 90) < 0.00001) then
         self:SetFOVRatio(1, 0.15)
     else
         self:SetFOVRatio(1, 0)

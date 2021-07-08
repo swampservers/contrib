@@ -1,6 +1,10 @@
-﻿AddCSLuaFile()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
+SWEP.PrintName = "USP"
+SWEP.HoldType = "pistol"
+SWEP.Slot = 0
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"		"250"
@@ -126,9 +130,6 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-SWEP.Spawnable = true
-SWEP.Slot = 1
-SWEP.SlotPos = 0
 
 SWEP.SilencedTranslation = {
     [ACT_VM_RELOAD] = ACT_VM_RELOAD_SILENCED,
@@ -136,12 +137,6 @@ SWEP.SilencedTranslation = {
     [ACT_VM_DRAW] = ACT_VM_DRAW_SILENCED,
     [ACT_VM_IDLE] = ACT_VM_IDLE_SILENCED,
 }
-
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetHoldType("pistol")
-    self:SetWeaponID(CS_WEAPON_USP)
-end
 
 function SWEP:Deploy()
     self:SetAccuracy(0.92)
