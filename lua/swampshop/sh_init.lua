@@ -60,9 +60,11 @@ end
 
 function Player:SS_AccessorySlots()
     local c = 1
+    local cfound = {}
 
     for k, v in ipairs(self.SS_Items or {}) do
-        if v.class:StartWith("accslot_") then
+        if v.class:StartWith("accslot_") and not cfound[v.class] then
+            cfound[v.class] = true
             c = c + 1
         end
     end

@@ -4,7 +4,7 @@ AddCSLuaFile()
 DEFINE_BASECLASS("base_anim")
 ENT.Type = "anim"
 
-PropTrashLightData = {
+PropTrashLightData = PropTrashLightData or {
     ["models/props_interiors/furniture_lamp01a.mdl"] = {
         untaped = false,
         size = 500,
@@ -94,6 +94,7 @@ function TrashLocationOwner(locid, pos)
 
     if class ~= TRASHLOC_BUILD then return nil end -- The only way to own a non build area is with a theater. Not a field.
 
+    -- print(table.Count(Ents.prop_trash_zone))
     for k, v in pairs(Ents.prop_trash_zone) do
         if v:Protects(pos) then return v:GetOwnerID() end
     end
@@ -105,6 +106,7 @@ function ENT:GetLocationOwner()
     return TrashLocationOwner(self:GetLocation(), self:GetPos())
 end
 
+--NOMINIFY
 -- MIGHT BE A FILE RUN ORDER ISSUE
 if HumanTeamName then
     function ENT:CanExist()

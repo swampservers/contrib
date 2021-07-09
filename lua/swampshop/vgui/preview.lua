@@ -231,24 +231,49 @@ function PANEL:Paint()
         self.Entity:DrawModel()
     end
 
+    -- print("HOVER", SS_HoverItem)
     if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
-        for _, prop in pairs(ply:SS_GetCSModels()) do
-            if SS_HoverItem == nil or SS_HoverItem.id ~= prop.item.id then
-                -- SS_DrawWornCSModel(prop.item, prop, self.Entity)
-                prop:DrawInShop(self.Entity)
+        local function GetShopAccessoryItems()
+            local a = {}
+
+            if SS_HoverItem then
+                print("HOVER")
+                table.insert(a, SS_HoverItem)
             end
+
+            if IsValid(LocalPlayer()) then
+                for _, item in ipairs(LocalPlayer().SS_ShownItems) do
+                    if SS_HoverItem == nil or SS_HoverItem.id ~= item.id then
+                        table.insert(a, item)
+                    end
+                end
+            end
+
+            return a
+        end
+
+        if not SS_ShopAccessoriesClean then
+            -- remake every frame lol
+            self.Entity:SS_AttachAccessories()
+            -- SS_ShopAccessoriesClean = true
+            -- print("REMAKE")
+        end
+
+        self.Entity:SS_AttachAccessories(GetShopAccessoryItems())
+        local acc = SS_CreatedAccessories[self.Entity]
+        SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
+
+        for _, prop in pairs(acc) do
+            prop:DrawModel() --self.Entity)
         end
     end
 
-    if SS_HoverItem and SS_HoverItem.wear then
-        if not IsValid(SS_HoverCSModel) then
-            SS_HoverCSModel = SS_CreateCSModel(SS_HoverItem)
-        end
-
-        SS_HoverCSModel:DrawInShop(self.Entity)
-        -- SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity)
-    end
-
+    -- if SS_HoverItem and SS_HoverItem.wear then
+    --     if not IsValid(SS_HoverCSModel) then
+    --         SS_HoverCSModel = SS_CreateCSModel(SS_HoverItem)
+    --     end
+    --     -- SS_HoverCSModel:DrawInShop(self.Entity)
+    -- end
     -- ForceDrawPlayer(LocalPlayer())
     render.SuppressEngineLighting(false)
     cam.IgnoreZ(false)
@@ -286,6 +311,10 @@ function PANEL:SetModelCaching(sm)
         --     PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
         -- end
     end
+end
+
+function SS_RefreshShopAccessories()
+    SS_ShopAccessoriesClean = false
 end
 
 vgui.Register('DPointShopPreview', PANEL, 'DModelPanel')

@@ -164,8 +164,13 @@ net.Receive('SS_ShownItems', function(length)
 
     SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
         ply.SS_ShownItems = SS_MakeItems(ply, ply.SS_ShownItems)
-        ply:SS_ClearCSModels()
+        -- ply:SS_ClearCSModels() -- old
+        ply:SS_AttachAccessories() -- new
         ply.SS_PlayermodelModsClean = false
+
+        if ply == LocalPlayer() then
+            SS_RefreshShopAccessories()
+        end
     end)
 end)
 
@@ -237,12 +242,6 @@ function SS_ItemServerAction(item_id, action_id, args)
     net.WriteTableHD(args or {})
     net.SendToServer()
 end
-
-concommand.Add("ps_prop_autorefresh", function()
-    timer.Create("ppau", 0.05, 0, function()
-        LocalPlayer():SS_ClearCSModels()
-    end)
-end)
 
 function SendPointsCmd(cmd)
     cmd = string.Explode(" ", cmd)

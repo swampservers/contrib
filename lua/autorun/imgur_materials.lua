@@ -113,15 +113,17 @@ function Entity:GetImgur()
 end
 
 if SERVER then
-    function Entity:SetImgur(url, own)
+    function Entity:SetImgur(url, own, auto)
         url = SanitizeImgurId(url)
 
         if url then
             self:SetNWString("imgur_url", url)
             self:SetNWString("imgur_own", own or "")
+            self:SetNWBool("imgur_auto", auto or false)
         else
             self:SetNWString("imgur_url", "")
             self:SetNWString("imgur_own", "")
+            self:SetNWBool("imgur_auto", false)
         end
     end
 

@@ -81,6 +81,12 @@ hook.Add("Think", "TrashLights", function()
 
         -- for edits
         l = PropTrashLightData[e:GetModel()]
+
+        if not l then
+            TRASH_LIGHTS[e] = nil
+            continue
+        end
+
         if e:IsDormant() then continue end
 
         if (l.untaped or e:GetTaped()) and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
@@ -180,6 +186,7 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
     end
 end)
 
+--NOMINIFY
 hook.Add("HUDPaint", "TrashHUD", function()
     if not IsValid(LocalPlayer()) then return end
 
