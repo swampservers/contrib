@@ -34,16 +34,9 @@ hook.Add("Initialize", "InfinityGauntletAmmo", function()
     })
 end)
 
-
-
 function SWEP:Initialize()
 end
 
-
-function SWEP:DoDrawCrosshair(x, y)
-
-    return true
-end
 
 local meta = FindMetaTable("Player")
 
@@ -160,8 +153,6 @@ function SWEP:FindTarget()
             end
 
             if (not tr.Hit or not tr2.Hit) then
-                debugoverlay.Box(Vector(), wmins, wmaxs, 0.1, Color(255, 0, 0, 32))
-
                 target = {v, near}
             end
         end
