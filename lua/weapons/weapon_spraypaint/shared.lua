@@ -33,18 +33,21 @@ SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
 SWEP.MaxMovementDistance = 128 -- Maxmimum distance the player can move while drawing before it's prevented
-SPRAYPAINT_DECALS_WHITELIST = {}
-SPRAYPAINT_DECALS = {}
 
-for i = 1, 27 do
-    local dname = "spraypaint_decal" .. i
-    local matname = "spray/" .. dname
-    SPRAYPAINT_DECALS[i] = dname
-    SPRAYPAINT_DECALS_WHITELIST[dname] = true
-    game.AddDecal(dname, matname)
-    --Material(matname)
-    list.Set("SprayPaintDecals", i, dname)
-end
+hook.Add("Initialize", "stencilpaint_regdecals", function()
+    SPRAYPAINT_DECALS_WHITELIST = {}
+    SPRAYPAINT_DECALS = {}
+
+    for i = 1, 27 do
+        local dname = "spraypaint_decal" .. i
+        local matname = "spray/" .. dname
+        SPRAYPAINT_DECALS[i] = dname
+        SPRAYPAINT_DECALS_WHITELIST[dname] = true
+        game.AddDecal(dname, matname)
+        --Material(matname)
+        list.Set("SprayPaintDecals", i, dname)
+    end
+end)
 
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
