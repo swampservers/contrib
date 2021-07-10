@@ -47,7 +47,7 @@ function meta:Fizzle(attacker, inflictor, damage)
         end
 
         local dmginfo = DamageInfo()
-        dmginfo:SetDamage(damage or 10000)
+        dmginfo:SetDamage(damage or 200)
         dmginfo:SetDamageType(DMG_DISSOLVE)
         dmginfo:SetAttacker(attacker or game.GetWorld())
         dmginfo:SetDamageForce(Vector(0, 0, 1))
