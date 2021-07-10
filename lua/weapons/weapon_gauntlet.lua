@@ -202,9 +202,6 @@ end
 function SWEP:SecondaryAttack()
 end
 
-function SWEP:OnRemove()
-end
-
 function SWEP:Reload()
 end
 
@@ -222,20 +219,40 @@ function SWEP:CreateWorldModel()
     return self.WModel
 end
 
-if (CLIENT) then
-    gauntletglow = CreateMaterial("gauntletglow", "UnlitGeneric", {
-        ["$basetexture"] = "sprites/light_glow02",
-        ["$model"] = 1,
-        ["$additive"] = 1,
-        ["$translucent"] = 1,
-        ["$color2"] = Vector(4, 4, 4),
-        ["$vertexalpha"] = 1,
-        ["$vertexcolor"] = 1
-    })
-end
+
 
 function SWEP:DrawWorldModel()
-    if (not IsValid(self:GetOwner())) then return end
+    if (not IsValid(self:GetOwner())) then 
+        
+        local pos = self:GetPos()
+        local ang = Angle(0,0,0)
+        self.Spin = self.Spin or math.Rand(0,360)
+        ang:RotateAroundAxis(Vector(0,0,1),self.Spin + CurTime()*90)
+
+        ang:RotateAroundAxis(ang:Right(),15)
+
+        ang:RotateAroundAxis(ang:Forward(),15)
+
+
+
+        pos = pos + ang:Right()*12
+        pos = pos + ang:Forward()*-24
+
+        pos = pos + Vector(0,0,math.sin(CurTime()*2)*2)
+
+
+        local wm = self:CreateWorldModel()
+
+
+
+        wm:SetModelScale(3.5)
+
+        wm:SetRenderOrigin(pos)
+        wm:SetRenderAngles(ang)
+        wm:DrawModel()
+    return end
+
+
     local wm = self:CreateWorldModel()
     local bone = self.Owner:LookupBone("ValveBiped.Bip01_L_Hand") or 0
     local opos = self:GetPos()
