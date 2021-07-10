@@ -261,8 +261,7 @@ function SWEP:PrimaryAttack()
             self:SetLockTarget(target)
             util.ScreenShake(self:GetOwner():GetPos(), 0.5, 1, 0.2, 300)
         else
-            self:EmitSound("buttons/combine_button_locked.wav")
-            self:SetNextPrimaryFire(CurTime() + 0.5)
+            self:SetNextPrimaryFire(CurTime() + 0.25)
             return
         end
 
