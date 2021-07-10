@@ -59,12 +59,21 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
         --timer.Simple(1, function() if IsValid(ply) then ply.SS_PlayermodelModsClean = false end end)
     end
 
+    -- note: this gets unset by PPM render.lua
     if not ply.SS_PlayermodelModsClean then
         ply.SS_PlayermodelModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         ply.SS_PlayermodelModsLastModel = mounted_model
+        -- RP_PUSH("matmods")
+        SS_ApplyMaterialMods(ply, ply:SS_GetActivePlayermodelMods())
+        -- RP_POP()
+        -- ply.SS_RefreshMaterialTime = CurTime() + math.Rand(1,1.5)
+        -- elseif CurTime() > (ply.SS_RefreshMaterialTime or 0) then
+        --     -- current solution for https://github.com/Facepunch/garrysmod-issues/issues/4953
+        --     RP_PUSH("matmods")
+        --     SS_ApplyMaterialMods(ply, ply:SS_GetActivePlayermodelMods())
+        --     RP_POP()
+        --     ply.SS_RefreshMaterialTime = CurTime() + math.Rand(1,1.5)
     end
-
-    SS_ApplyMaterialMods(ply, ply:SS_GetActivePlayermodelMods())
 end)
 
 local function AddScaleRecursive(ent, b, scn, recurse, safety)
@@ -164,8 +173,14 @@ function SS_ApplyBoneMods(ent, mods)
 end
 
 function SS_ApplyMaterialMods(ent, mods)
+    -- print("RESET", ent)
     ent:SetSubMaterial()
 
+    if ent:IsPPMPony() then
+        PPM_SetPonyMaterials(ent)
+    end
+
+    -- TODO update this when ent.ponymaterials updates
     if SS_PPM_SetSubMaterials then
         SS_PPM_SetSubMaterials(ent)
     end
@@ -176,11 +191,19 @@ function SS_ApplyMaterialMods(ent, mods)
         if item.materialmod then
             local col = item.cfg.color or Vector(1, 1, 1)
 
-            local mat = ImgurMaterial({
+            -- local mat = ImgurMaterial({
+            --     id = (item.cfg.imgur or {}).url or "EG84dgp.png",
+            --     owner = ent,
+            --     worksafe = true, 
+            --     pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+            --     stretch = true,
+            --     shader = "VertexLitGeneric",
+            --     params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
+            -- })
+            local mat = WebMaterial({
                 id = (item.cfg.imgur or {}).url or "EG84dgp.png",
                 owner = ent,
-                worksafe = true,
-                pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+                -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = true,
                 shader = "VertexLitGeneric",
                 params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
@@ -295,7 +318,7 @@ local EntityGetModel = Entity.GetModel
 --     mdl:DrawModel()
 --     DrawingInShop = false
 --     -- SS_PostRender()
--- end
+-- end 
 --NOMINIFY
 -- hook.Add("DrawOpaqueAccessories", 'SS_DrawPlayerAccessories', function(ply)
 -- --makes a CSModel for a worn item
@@ -323,6 +346,28 @@ local EntityGetModel = Entity.GetModel
 --     return mdl
 -- end
 local DrawingInShop = false
+
+function SS_SetMaterialToItem(item, ent, ply)
+    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color or Vector(1, 1, 1)
+
+    if item.cfg.imgur then
+        ent:SetMaterial("!" .. WebMaterial({
+            id = item.cfg.imgur.url,
+            owner = ply,
+            -- worksafe=true,
+            params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
+        }):GetName())
+        --     ent.RenderOverride = function(e, fl)
+        --         SS_PreRender(item)
+        --         e:DrawModel()
+        --         SS_PostRender()
+        --     end
+    else
+        if col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
+            ent:SetColoredBaseMaterial(col)
+        end
+    end
+end
 
 --makes a CSModel for a product or item
 function SS_AttachAccessory(item, ent)
@@ -384,12 +429,35 @@ function SS_AttachAccessory(item, ent)
     --this likes to change itself
     mdl:SetLocalPos(translate)
     mdl:SetLocalAngles(rotate)
-
-    mdl.RenderOverride = function(e, fl)
-        SS_PreRender(item)
-        e:DrawModel()
-        SS_PostRender()
-    end
+    -- if item.cfg.imgur then
+    --     local imat = ImgurMaterial({
+    --         id = item.cfg.imgur.url,
+    --         owner = item.owner,
+    --         worksafe = true,
+    --         pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
+    --         stretch = true,
+    --         shader = "VertexLitGeneric",
+    --         params = [[{["$alphatest"]=1}]]
+    --     })
+    --     render.MaterialOverride(imat)
+    --     --render.OverrideDepthEnable(true,true)
+    -- else
+    --     local mat = item.cfg.material or item.material
+    --     if mat then
+    --         render.MaterialOverride(SS_GetMaterial(mat))
+    --     else
+    --         render.MaterialOverride()
+    --     end
+    -- end
+    -- local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color
+    -- if item.cfg.imgur then
+    --     mdl:SetImgurMaterial(item.cfg.imgur.url)
+    -- end
+    -- if IsValid(LocalPlayer()) and LocalPlayer():GetName()=="Joker Gaming" then
+    --     mdl:SetColoredBaseMaterial(Vector(1,0,0)) 
+    -- else
+    SS_SetMaterialToItem(item, mdl, item.owner == SS_SAMPLE_ITEM_OWNER and LocalPlayer() or item.owner)
+    -- end
 
     return mdl
 end
@@ -416,7 +484,6 @@ hook.Add("PrePlayerDraw", 'SS_AttachPlayerAccessories', function(ply)
     end
 
     if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
-    local m = ply:GetActualModel()
     ply:SS_AttachAccessories(ply.SS_ShownItems)
 end)
 
@@ -428,7 +495,7 @@ hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
         ply:SS_AttachAccessories(ply.SS_ShownItems)
         local d = ply:ShouldDrawLocalPlayer()
 
-        for i, v in ipairs(SS_CreatedAccessories[ply]) do
+        for i, v in ipairs(SS_CreatedAccessories[ply] or {}) do
             -- Setting this on and off during same frame doesn't work
             v:SetNoDraw(true)
 
@@ -454,12 +521,7 @@ hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, 
             end
 
             local item = mdl.item
-
-            gib.RenderOverride = function(e, fl)
-                SS_PreRender(item)
-                e:DrawModel()
-                SS_PostRender()
-            end
+            SS_SetMaterialToItem(item, gib, ply)
         end
     end
 end)
@@ -478,12 +540,13 @@ function Entity:SS_AttachAccessories(items)
     SS_UpdatedAccessories[self] = true
     local m = self:GetModel()
     m = util.IsValidModel(m or "") and m or "models/error.mdl"
-    if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end --SS_CreatedAccessories[self]==nil then
+    local current = SS_CreatedAccessories[self]
+    if self.SS_AttachedModel == m and self.SS_AttachedItems == items and (current == nil or #current == 0 or IsValid(current[1]:GetParent())) then return end --SS_CreatedAccessories[self]==nil then
     self.SS_AttachedModel = m
     self.SS_AttachedItems = items
 
-    if SS_CreatedAccessories[self] then
-        for i, v in ipairs(SS_CreatedAccessories[self]) do
+    if current then
+        for i, v in ipairs(current) do
             v:Remove()
         end
     end
@@ -493,7 +556,11 @@ function Entity:SS_AttachAccessories(items)
 
         for i, item in ipairs(items) do
             if item.AccessoryTransform then
-                table.insert(SS_CreatedAccessories[self], SS_AttachAccessory(item, self))
+                local mdl = SS_AttachAccessory(item, self)
+
+                if mdl then
+                    table.insert(SS_CreatedAccessories[self], mdl)
+                end
             end
         end
     else
@@ -518,6 +585,19 @@ hook.Add("Think", "SS_CleanupAccessories", function()
 
     SS_UpdatedAccessories = {}
 end)
--- hook.Add("EntityRemoved","RemoveAccessories",function(ent)
---     -- ent:SS_AttachAccessories()
--- end)
+
+function Entity:SetColoredBaseMaterial(color)
+    local sc = "c" .. tostring(color):gsub("%.", "p")
+    self:SetMaterial()
+    self:SetSubMaterial()
+    local mats = self:GetMaterials()
+
+    for i, mat in ipairs(mats) do
+        -- print(emi, mat)
+        local mi = i - 1
+        local mn = mat .. sc -- "coloredbase"..emi.."s"..mi
+        local clone = PPM_CLONE_MATERIAL(Material(mat), mn)
+        clone:SetVector("$color2", color)
+        self:SetSubMaterial(mi, "!" .. mn)
+    end
+end

@@ -143,7 +143,7 @@ function SWEP:SecondaryAttack()
 
     if (not self:IsScoped()) then
         self:SetFOVRatio(40 / 90, 0.15)
-    elseif (FloatEquals(self:GetFOVRatio(), 40 / 90)) then
+    elseif (math.abs(self:GetFOVRatio() - 40 / 90) < 0.00001) then
         self:SetFOVRatio(10 / 90, 0.08)
     else
         self:SetFOVRatio(1, 0.1)

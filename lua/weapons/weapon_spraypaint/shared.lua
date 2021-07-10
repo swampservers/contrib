@@ -231,7 +231,7 @@ function SWEP:MakePaint(trace, delay)
     local ply = self:GetOwner()
     local color, size = self:GetDecalColor()
 
-    if (CLIENT) then
+    if CLIENT then
         self:DoParticle(trace.HitPos, color)
         self:DoSound(delay)
 
@@ -245,10 +245,15 @@ function SWEP:MakePaint(trace, delay)
     local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
     local decalname = self:GetCurrentDecal()
 
-    if (SERVER) then
+    if SERVER then
         self:SetLastDecal(decalname)
 
         util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
+
+        if (self.lastLog or 0) + 2 < CurTime() then
+            self.lastLog = CurTime()
+            sc.log(self.Owner, " spraypainting in ", self.Owner:GetLocationName(), " at ", math.floor(trace.HitPos.x), ",", math.floor(trace.HitPos.y), ",", math.floor(trace.HitPos.z))
+        end
     end
 end
 

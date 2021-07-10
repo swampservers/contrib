@@ -26,15 +26,28 @@ function PPM_PrePonyDraw(ent)
     end
 
     PPM_PONIES_NEARBY[ply] = true
+    if ent:IsPlayer() and SS_ApplyMaterialMods then return end
+    ply:SetSubMaterial()
+    PPM_SetPonyMaterials(ent)
+
+    -- Only applies to editor models; ragdolls are handled in hook below and players are handled serverside
+    if ent:EntIndex() == -1 then
+        PPM_SetBodyGroups(ent)
+    end
+end
+
+function PPM_SetPonyMaterials(ent)
+    -- print("PONYMAT", ent)
+    local ply = ent:PonyPlayer()
+    if not IsValid(ply) then return end
 
     for k, v in ipairs(ply.ponymaterials or {}) do
         if k == 10 and ((ply.ponydata or {}).imgurcmark or "") ~= "" then
             -- big TODO: make imgur materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
-            v = ImgurMaterial({
+            v = WebMaterial({
                 id = ply.ponydata.imgurcmark,
                 owner = ent,
-                worksafe = true,
-                pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+                -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = false,
                 shader = "VertexLitGeneric",
                 params = [[{["$translucent"]=1}]]
@@ -43,28 +56,25 @@ function PPM_PrePonyDraw(ent)
 
         ent:SetSubMaterial(k - 1, "!" .. v:GetName())
     end
-
-    -- Only applies to editor models; ragdolls are handled in hook below and players are handled serverside
-    if ent:EntIndex() == -1 then
-        PPM_SetBodyGroups(ent)
-    end
 end
 
--- gets removed when the shop is present
 hook.Add("PrePlayerDraw", "PPM_PrePlayerDraw", function(ply)
-    if not ply:Alive() then return true end
-    ply:SetSubMaterial()
+    if not ply:Alive() then
+        print("DEAD?")
+
+        return true
+    end
+
     PPM_PrePonyDraw(ply)
 end)
 
--- alternate path so sps materials stack correctly
-function SS_PPM_SetSubMaterials(ent)
-    hook.Remove("PrePlayerDraw", "PPM_PrePlayerDraw")
-    RP_PUSH("ponydraw")
-    PPM_PrePonyDraw(ent)
-    RP_POP()
-end
-
+-- -- alternate path so sps materials stack correctly
+-- function SS_PPM_SetSubMaterials(ent)
+--     hook.Remove("PrePlayerDraw", "PPM_PrePlayerDraw")
+--     RP_PUSH("ponydraw")
+--     PPM_PrePonyDraw(ent)
+--     RP_POP()
+-- end
 local UNIQUEVALUE = tostring(os.time())
 
 -- draw textures
@@ -99,6 +109,8 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 -- return
                 -- end
             end
+
+            ply.SS_PlayermodelModsClean = false
         end
     end
 
@@ -107,7 +119,7 @@ end)
 
 PPM_NEXT_CLONE_MAT = PPM_NEXT_CLONE_MAT or 0
 
-function PPM_CLONE_MATERIAL(mat)
+function PPM_CLONE_MATERIAL(mat, forcename)
     PPM_NEXT_CLONE_MAT = PPM_NEXT_CLONE_MAT + 1
     local kvs = mat:GetKeyValues()
     local junk = {}
@@ -141,7 +153,7 @@ function PPM_CLONE_MATERIAL(mat)
     end
 
     -- add os time because of materials getting saved when you rejoin
-    local clone = CreateMaterial("PPMCLONE" .. tostring(os.time()) .. "/" .. tostring(PPM_NEXT_CLONE_MAT), mat:GetShader(), kvs)
+    local clone = CreateMaterial(forcename or ("PPMCLONE" .. tostring(os.time()) .. "/" .. tostring(PPM_NEXT_CLONE_MAT)), mat:GetShader(), kvs)
 
     for k, v in pairs(junk) do
         clone:SetInt(k, v)

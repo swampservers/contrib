@@ -221,7 +221,7 @@ function SS_Item(item)
                 end
             end
 
-            if table.Count(urls) > 4 then return "You can only equip 4 different imgur materials at once." end
+            if table.Count(urls) > 5 then return "You can only equip 5 different imgur materials at once." end
         end
     end
 
