@@ -237,7 +237,6 @@ function PANEL:Paint()
             local a = {}
 
             if SS_HoverItem then
-                print("HOVER")
                 table.insert(a, SS_HoverItem)
             end
 
