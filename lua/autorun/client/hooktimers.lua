@@ -94,7 +94,9 @@ hook.Add("RenderScreenspaceEffects", "FishEyeEffect", function()
     end
 end)
 
-hook.Add("DrawTranslucentAccessories", "DrawSpacehat", function(ply)
+-- translucent error here but whatever
+-- it might be cool to make this piggyback off the shop accessories (ply:GetExtraAccessories...?)
+hook.Add("PrePlayerDraw", "DrawSpacehat", function(ply)
     if ply:GetNWBool("spacehat", false) and ply:Alive() then
         if not IsValid(SpaceHatCSModel) then
             local prod = SS_Products['spacehat']
@@ -519,23 +521,36 @@ end
 local HUDTargets = {}
 local fadeTime = 2
 
-hook.Add("DrawTranslucentAccessories", "DrawPlayerNames2", function(ply)
-    if IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera" then return end
+hook.Add("PrePlayerDraw", "RecordDrawPlayerNames", function(ply)
+    if ply ~= LocalPlayer() then
+        HUDTargets[ply] = true
+    end
+end)
+
+hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sky, sky3d)
+    local drawme = HUDTargets
+    HUDTargets = {}
+    if depth or sky3d then return end
     if not render.DrawingScreen() then return end
     if HideNamesConVar and HideNamesConVar:GetBool() then return end
     if not IsValid(LocalPlayer()) or not LocalPlayer().InTheater then return end
-    if ply == LocalPlayer() then return end
+    if IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera" then return end
+    if LocalPlayer():InTheater() and (theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool()) then return end
+    local tv = LocalPlayer():InTheater() or LocalPlayer():InVehicle()
     local fwd = EyeAngles():Forward()
-    local to = ply:EyePos() - EyePos()
-    local dist = to:Length()
-    to = to / dist
-    local dot = fwd:Dot(to)
+    local ep = EyePos()
 
-    if LocalPlayer():InTheater() or LocalPlayer():InVehicle() then
-        if LocalPlayer():InTheater() and (theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool()) then return end
-        DrawName(ply, 0.5 * math.min(1, ((dot - 0.85) * 6.66 + math.max(-0.5, (1 - dist) * 0.01))))
-    else
-        DrawName(ply, math.min(1, (dot - 0.8) * 5 + math.max(0, (200 - dist) * 0.01)))
+    for ply, _ in pairs(drawme) do
+        local to = ply:EyePos() - ep
+        local dist = to:Length()
+        to = to / dist
+        local dot = fwd:Dot(to)
+
+        if tv then
+            DrawName(ply, 0.5 * math.min(1, ((dot - 0.85) * 6.66 + math.max(-0.5, (1 - dist) * 0.01))))
+        else
+            DrawName(ply, math.min(1, (dot - 0.8) * 5 + math.max(0, (200 - dist) * 0.01)))
+        end
     end
 end)
 

@@ -36,9 +36,25 @@ function PPM_PrePonyDraw(ent)
     end
 end
 
+hook.Add("PrePlayerDraw", "PPM_PrePlayerDraw", function(ply)
+    if not ply:Alive() then return end
+    PPM_PrePonyDraw(ply)
+end)
+
+hook.Add("SetPlayerModelMaterials", "ponymaterials", function(ent, ply)
+    if ent:IsPPMPony() then
+        PPM_SetPonyMaterials(ent)
+    end
+end)
+
 function PPM_SetPonyMaterials(ent)
     -- print("PONYMAT", ent)
     local ply = ent:PonyPlayer()
+
+    if ent ~= ply then
+        print("THISS", ply, ent)
+    end
+
     if not IsValid(ply) then return end
 
     for k, v in ipairs(ply.ponymaterials or {}) do
@@ -58,11 +74,10 @@ function PPM_SetPonyMaterials(ent)
     end
 end
 
-hook.Add("PrePlayerDraw", "PPM_PrePlayerDraw", function(ply)
-    if not ply:Alive() then return end
-    PPM_PrePonyDraw(ply)
-end)
-
+-- hook.Add("PrePlayerDraw", "PPM_PrePlayerDraw", function(ply)
+--     if not ply:Alive() then return end
+--     PPM_PrePonyDraw(ply)
+-- end)
 -- -- alternate path so sps materials stack correctly
 -- function SS_PPM_SetSubMaterials(ent)
 --     hook.Remove("PrePlayerDraw", "PPM_PrePlayerDraw")
@@ -167,18 +182,16 @@ concommand.Add("ppm_refresh", function(ply, cmd, args)
         ent.ponymaterials = nil
     end
 end)
-
 -- if this causes conflicts maybe just set the materials one time
-function PPM_RagdollRender(self)
-    PPM_PrePonyDraw(self)
-    self:DrawModel()
-end
-
-hook.Add("CreateClientsideRagdoll", "PPM_CreateClientsideRagdoll", function(entity, ragdoll)
-    -- IsPPMPony check added because of outfitter issue
-    if entity:IsPlayer() and entity:IsPPMPony() then
-        ragdoll.RagdollSourcePlayer = entity
-        PPM_SetBodyGroups(ragdoll)
-        ragdoll.RenderOverride = PPM_RagdollRender
-    end
-end)
+-- function PPM_RagdollRender(self)
+--     PPM_PrePonyDraw(self)
+--     self:DrawModel()
+-- end
+-- hook.Add("CreateClientsideRagdoll", "PPM_CreateClientsideRagdoll", function(entity, ragdoll)
+--     -- IsPPMPony check added because of outfitter issue
+--     -- if entity:IsPlayer() and entity:IsPPMPony() then
+--     --     ragdoll.RagdollSourcePlayer = entity
+--     --     PPM_SetBodyGroups(ragdoll)
+--     --     ragdoll.RenderOverride = PPM_RagdollRender
+--     -- end
+-- end)

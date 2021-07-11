@@ -4,7 +4,7 @@ local Entity = FindMetaTable("Entity")
 --[[
 To use web materials, just call in your draw hook:
 
-mat = ImgurMaterial(args)
+mat = WebMaterial(args)
 
 Then set/override material to mat
 
@@ -16,7 +16,7 @@ args is a table with the following potential keys:
     shader: str = "VertexLitGeneric"
     params: str = "{}" (NOT A TABLE, A STRING THAT CAN BE PARSED AS A TABLE)
     pointsample: bool = false
-    worksafe: bool = false
+    nsfw: bool = false (can be false, true, or "?")
 ]]
 --returns nil if invalid
 function SanitizeImgurId(id)

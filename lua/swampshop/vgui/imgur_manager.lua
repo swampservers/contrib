@@ -15,10 +15,9 @@ end
 
 function THUMB:Paint(w, h)
     if (self:GetImgur() ~= "") then
-        local m = ImgurMaterial({
+        local m = WebMaterial({
             id = self:GetImgur(),
-            shader = "UnlitGeneric",
-            worksafe = true
+            shader = "UnlitGeneric"
         })
 
         surface.SetDrawColor(255, 255, 255, 255)

@@ -488,11 +488,10 @@ function PANEL:PaintOver(w, h)
     end
 
     if self.iop.class == "sandbox" then
-        local m = ImgurMaterial({
+        local m = WebMaterial({
             id = "nrLaHIZ.png",
             shader = "UnlitGeneric",
-            params = [[{["$translucent"]=1}]],
-            worksafe = true
+            params = [[{["$translucent"]=1}]]
         })
 
         surface.SetDrawColor(255, 255, 255, 255)

@@ -226,7 +226,7 @@ function PANEL:Paint()
         end
 
         SS_ApplyBoneMods(self.Entity, mods)
-        SS_ApplyMaterialMods(self.Entity, mods)
+        SS_ApplyMaterialMods(self.Entity, LocalPlayer())
         self.Entity:SetEyeTarget(self:GetCamPos())
         self.Entity:DrawModel()
     end

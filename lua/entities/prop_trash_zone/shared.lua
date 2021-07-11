@@ -62,7 +62,7 @@ TrashZoneModels = {
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables(self, true)
     self:NetworkVar("String", 2, "TheaterName")
-    self:NetworkVar("Int", 0, "MobileLocationIndex")
+    self:NetworkVar("Int", 2, "MobileLocationIndex")
 end
 
 -- function ENT:Draw()

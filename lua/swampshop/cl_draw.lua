@@ -63,7 +63,7 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
         ply.SS_PlayermodelModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         ply.SS_PlayermodelModsLastModel = mounted_model
         -- RP_PUSH("matmods")
-        SS_ApplyMaterialMods(ply, ply:SS_GetActivePlayermodelMods())
+        SS_ApplyMaterialMods(ply, ply)
         -- RP_POP()
         -- ply.SS_RefreshMaterialTime = CurTime() + math.Rand(1,1.5)
         -- elseif CurTime() > (ply.SS_RefreshMaterialTime or 0) then
@@ -174,19 +174,11 @@ function SS_ApplyBoneMods(ent, mods)
     return true
 end
 
-function SS_ApplyMaterialMods(ent, mods)
+function SS_ApplyMaterialMods(ent, ply)
+    local mods = ply:SS_GetActivePlayermodelMods()
     -- print("RESET", ent)
     ent:SetSubMaterial()
-
-    if ent:IsPPMPony() then
-        PPM_SetPonyMaterials(ent)
-    end
-
-    -- TODO update this when ent.ponymaterials updates
-    if SS_PPM_SetSubMaterials then
-        SS_PPM_SetSubMaterials(ent)
-    end
-
+    hook.Run("SetPlayerModelMaterials", ent, ply)
     if ent:GetModel() == HumanTeamModel or ent:GetModel() == PonyTeamModel then return end
 
     for _, item in ipairs(mods) do
@@ -517,6 +509,10 @@ hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, 
             local item = mdl.item
             SS_SetMaterialToItem(item, gib, ply)
         end
+
+        -- used by pony model TODO remove
+        rag.RagdollSourcePlayer = ply
+        SS_ApplyMaterialMods(rag, ply)
     end
 end)
 

@@ -122,12 +122,13 @@ function SWEP:DrawWorldModel()
     end
 
     if url then
-        render.MaterialOverride(ImgurMaterial({
+        render.MaterialOverride(WebMaterial({
             id = url,
             owner = own,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            nsfw = "?"
         }))
     end
 
@@ -156,12 +157,13 @@ function SWEP:PreDrawViewModel(vm, ply, wep)
     end
 
     if url then
-        render.MaterialOverride(ImgurMaterial({
+        render.MaterialOverride(WebMaterial({
             id = url,
             owner = own,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            nsfw = "?"
         }))
     end
 

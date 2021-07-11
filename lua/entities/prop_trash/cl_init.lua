@@ -44,7 +44,8 @@ function ENT:Initialize()
         }
     end
 
-    TRASH_LIGHTS[self] = PropTrashLightData[self:GetModel()]
+    self.MyLightData = PropTrashLightData[self:GetModel()]
+    TRASH_LIGHTS[self] = self.MyLightData
     self:ApplyMaterialData(self:GetMaterialData())
     -- local col = self:GetUnboundedColor()
     -- local imgur, own = self:GetImgur()
@@ -62,6 +63,14 @@ function ENT:Initialize()
     --     end
     -- end
 end
+
+hook.Add("NotifyShouldTransmit", "ReaddTrashLight", function(ent, trans)
+    local ld = ent.MyLightData
+
+    if ld then
+        TRASH_LIGHTS[ent] = trans and ld or nil
+    end
+end)
 
 TRASH_PAINT_MATERIALS = TRASH_PAINT_MATERIALS or {}
 
@@ -154,26 +163,24 @@ end
 
 TRASH_LIGHTS = TRASH_LIGHTS or {}
 
-hook.Add("Think", "TrashLights", function()
+-- TODO can we do one every tick cyclically instead of all at once
+timer.Create("TrashLights", 0.2, 0, function()
     if not IsValid(LocalPlayer()) then return end
     local ep = LocalPlayer():EyePos()
 
     for e, l in pairs(TRASH_LIGHTS) do
-        if not IsValid(e) then
+        if not IsValid(e) or e:IsDormant() then
             TRASH_LIGHTS[e] = nil
             continue
         end
 
         -- for edits
-        l = PropTrashLightData[e:GetModel()]
-
-        if not l then
-            TRASH_LIGHTS[e] = nil
-            continue
-        end
-
-        if e:IsDormant() then continue end
-
+        -- l = PropTrashLightData[e:GetModel()]
+        -- if not l then
+        --     TRASH_LIGHTS[e] = nil
+        --     continue
+        -- end
+        -- if e:IsDormant() then continue end
         if (l.untaped or e:GetTaped()) and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
             local dlight = DynamicLight(e:EntIndex())
             local c = (e.lightcolor or Vector(1, 1, 1)) * 255
@@ -196,8 +203,9 @@ hook.Add("Think", "TrashLights", function()
                     dlight.outerangle = light.outerangle
                 end
 
-                dlight.Decay = 500
-                dlight.DieTime = CurTime() + 1
+                -- 1000 seconds to fade out
+                dlight.Decay = 1
+                dlight.DieTime = CurTime() + 0.5
             end
         end
     end

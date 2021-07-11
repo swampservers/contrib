@@ -51,35 +51,30 @@ function ENT:Use(ply)
         end
     end
 end
-
-function ENT:Draw()
-    local url, own = self:GetImgur()
-
-    if not url and self:GetHardened() then
-        url = "cogLTj5.png" -- the default texture, hacky solution
-    end
-
-    --HACK to not load on painted things
-    if url and self:GetMaterial() ~= "phoenix_storms/gear" then
-        render.MaterialOverride(ImgurMaterial({
-            id = url,
-            owner = own,
-            pos = self:GetPos(),
-            stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((self:GetOwnerID() or "") .. url)) or nil
-        }))
-    end
-
-    if self:GetHardened() then
-        -- local m = self:GetModel()
-        -- self:SetModel("models/error.mdl")
-        -- self:SetModel(m)
-        bodypillow_unjiggle(self)
-    end
-
-    BaseClass.Draw(self) --, true)
-
-    if url then
-        render.MaterialOverride()
-    end
-end
+-- function ENT:Draw()
+--     local url, own = self:GetImgur()
+--     if not url and self:GetHardened() then
+--         url = "cogLTj5.png" -- the default texture, hacky solution
+--     end
+--     --HACK to not load on painted things
+--     if url and self:GetMaterial() ~= "phoenix_storms/gear" then
+--         render.MaterialOverride(WebMaterial({
+--             id = url,
+--             owner = own,
+--             pos = self:GetPos(),
+--             nsfw="?",
+--             stretch = true,
+--             params = self:GetHardened() and HardenedPillowArgs(util.CRC((self:GetOwnerID() or "") .. url)) or nil
+--         }))
+--     end
+--     if self:GetHardened() then
+--         -- local m = self:GetModel()
+--         -- self:SetModel("models/error.mdl")
+--         -- self:SetModel(m)
+--         bodypillow_unjiggle(self)
+--     end
+--     BaseClass.Draw(self) --, true)
+--     if url then
+--         render.MaterialOverride()
+--     end
+-- end

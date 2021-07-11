@@ -21,7 +21,7 @@ if CLIENT then
     -- end)
     hook.Add("NetworkEntityCreated", "CreatedTrashProp", function(ent)
         -- if ent:GetClass()=="prop_physics" then print("TC2", ent:GetTrashClass(),  ent:GetModel()) end
-        if ent:GetTrashClass() and not ent.SetupTrashAlready then
+        if ent:GetClass() == "prop_physics" and ent:GetTrashClass() and not ent.SetupTrashAlready then
             ent.SetupTrashAlready = true
             ent:SetTrashClass(ent:GetTrashClass())
             ent:InstallDataTable()
@@ -31,7 +31,7 @@ if CLIENT then
     end)
 
     hook.Add("EntityNetworkedVarChanged", "CreatedTrashProp", function(ent, name, oldval, newval)
-        if name == "trc" and ent:GetModel() and not ent.SetupTrashAlready then
+        if ent:GetClass() == "prop_physics" and name == "trc" and ent:GetModel() and not ent.SetupTrashAlready then
             ent.SetupTrashAlready = true
             ent:SetTrashClass(newval)
             ent:InstallDataTable()
