@@ -33,18 +33,22 @@ SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
 SWEP.MaxMovementDistance = 128 -- Maxmimum distance the player can move while drawing before it's prevented
-SPRAYPAINT_DECALS_WHITELIST = {}
-SPRAYPAINT_DECALS = {}
 
-for i = 1, 27 do
-    local dname = "spraypaint_decal" .. i
-    local matname = "spray/" .. dname
-    SPRAYPAINT_DECALS[i] = dname
-    SPRAYPAINT_DECALS_WHITELIST[dname] = true
-    game.AddDecal(dname, matname)
-    --Material(matname)
-    list.Set("SprayPaintDecals", i, dname)
-end
+
+    SPRAYPAINT_DECALS_WHITELIST = {}
+    SPRAYPAINT_DECALS = {}
+    SPRAYPAINT_MATLOOKUP = SPRAYPAINT_MATLOOKUP or {}
+    for i = 1, 27 do
+        local dname = "spraypaint_decal" .. i
+        local matname = "spray/" .. dname
+        SPRAYPAINT_DECALS[i] = dname
+        SPRAYPAINT_DECALS_WHITELIST[dname] = true
+        SPRAYPAINT_MATLOOKUP[dname] = matname
+        game.AddDecal(dname, matname)
+        --Material(matname)
+        list.Set("SprayPaintDecals", i, dname)
+    end
+
 
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
@@ -201,7 +205,7 @@ function SWEP:GetDecalColor(decal)
     if (not IsValid(ply)) then return Vector(1, 1, 1), 1 end
     decal = decal or self:GetCurrentDecal()
     if (SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
-    local mat = Material(util.DecalMaterial(decal))
+    local mat = Material(SPRAYPAINT_MATLOOKUP[decal] or util.DecalMaterial(decal))
     local maintex
 
     if (mat:GetTexture("$basetexture")) then
