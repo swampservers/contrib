@@ -166,7 +166,7 @@ net.Receive('SS_ShownItems', function(length)
         ply.SS_ShownItems = SS_MakeItems(ply, ply.SS_ShownItems)
         -- ply:SS_ClearCSModels() -- old
         ply:SS_AttachAccessories() -- new
-        ply.SS_PlayermodelModsClean = false
+        ply.SS_SetupPlayermodel = nil
 
         if ply == LocalPlayer() then
             SS_RefreshShopAccessories()

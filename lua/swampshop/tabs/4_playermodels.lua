@@ -84,12 +84,35 @@ SS_Item({
     never_equip = true
 })
 
-if SERVER then
-    timer.Create("syncoutfitter", 1, 0, function()
-        for k, v in pairs(player.GetAll()) do
-            if v:GetNWBool("oufitr") ~= v:SS_HasItem("outfitter2") then
-                v:SetNWBool("oufitr", v:SS_HasItem("outfitter2"))
+SS_Item({
+    class = "outfitter3",
+    price = 8000000,
+    name = 'Outfitter+',
+    description = "Allows a higher vertex limit for outfitter models. Requires outfitter.",
+    model = 'models/props_phx/facepunch_logo.mdl',
+    actions = {
+        customize = {
+            Text = function() return "Change Model" end,
+            OnClient = function()
+                RunConsoleCommand("outfitter")
+                SS_ToggleMenu()
             end
+        }
+    },
+    invcategory = "Playermodels",
+    never_equip = true
+})
+
+if SERVER then
+    hook.Add("SS_UpdateItems", "outfitterbools", function(v)
+        local has2, has3 = v:SS_HasItem("outfitter2"), v:SS_HasItem("outfitter3")
+
+        if v:GetNWBool("oufitr") ~= has2 then
+            v:SetNWBool("oufitr", has2)
+        end
+
+        if v:GetNWBool("oufitr+") ~= has3 then
+            v:SetNWBool("oufitr+", has3)
         end
     end)
 end

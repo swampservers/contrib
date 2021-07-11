@@ -2,6 +2,7 @@
 -- INSTALL: CINEMA
 local Player = FindMetaTable('Player')
 local Entity = FindMetaTable('Entity')
+local EntityGetModel = Entity.GetModel
 SS_MaterialCache = {}
 
 --NOMINIFY
@@ -47,31 +48,18 @@ function SS_PostRender()
     --render.OverrideDepthEnable(false)
 end
 
-hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
+hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     if not ply:Alive() then return end
     -- will be "false" if the model is not mounted yet
-    local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
+    local m = ply:GetActualModel()
 
-    if ply.SS_PlayermodelModsLastModel ~= mounted_model then
-        ply.SS_PlayermodelModsClean = false
-        --seems to have issues if you apply the bone mods as soon as the model changes...
-        --timer.Simple(1, function() if IsValid(ply) then ply.SS_PlayermodelModsClean = false end end)
+    if ply.SS_SetupPlayermodel ~= m then
+        ply.SS_SetupPlayermodel = SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods()) and m or nil
+        SS_ApplyMaterialMods(ply, ply)
     end
 
-    -- note: this gets unset by PPM render.lua
-    if not ply.SS_PlayermodelModsClean then
-        ply.SS_PlayermodelModsClean = SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
-        ply.SS_PlayermodelModsLastModel = mounted_model
-        -- RP_PUSH("matmods")
-        SS_ApplyMaterialMods(ply, ply)
-        -- RP_POP()
-        -- ply.SS_RefreshMaterialTime = CurTime() + math.Rand(1,1.5)
-        -- elseif CurTime() > (ply.SS_RefreshMaterialTime or 0) then
-        --     -- current solution for https://github.com/Facepunch/garrysmod-issues/issues/4953
-        --     RP_PUSH("matmods")
-        --     SS_ApplyMaterialMods(ply, ply:SS_GetActivePlayermodelMods())
-        --     RP_POP()
-        --     ply.SS_RefreshMaterialTime = CurTime() + math.Rand(1,1.5)
+    if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
+        ply:SS_AttachAccessories(ply.SS_ShownItems)
     end
 end)
 
@@ -112,10 +100,10 @@ function SS_ApplyBoneMods(ent, mods)
         ent:ManipulateBonePosition(x, Vector(0, 0, 0))
     end
 
-    if ent:GetModel() == HumanTeamModel or ent:GetModel() == PonyTeamModel then return end
+    if HumanTeamName then return end
     local pone = isPonyModel(ent:GetModel())
     local suffix = pone and "_p" or "_h"
-    --if pelvis has no children, its not ready!
+    --if pelvis has no children, it's not ready!
     local pelvis = ent:LookupBone(pone and "LrigPelvis" or "ValveBiped.Bip01_Pelvis")
 
     if pelvis then
@@ -179,7 +167,7 @@ function SS_ApplyMaterialMods(ent, ply)
     -- print("RESET", ent)
     ent:SetSubMaterial()
     hook.Run("SetPlayerModelMaterials", ent, ply)
-    if ent:GetModel() == HumanTeamModel or ent:GetModel() == PonyTeamModel then return end
+    if HumanTeamName then return end
 
     for _, item in ipairs(mods) do
         if item.materialmod then
@@ -206,7 +194,6 @@ function SS_ApplyMaterialMods(ent, ply)
     end
 end
 
-local EntityGetModel = Entity.GetModel
 -- Entity.SS_True_LookupAttachment = Entity.SS_True_LookupAttachment or Entity.LookupAttachment
 -- Entity.SS_True_LookupBone = Entity.SS_True_LookupBone or Entity.LookupBone
 -- function Entity:LookupAttachment(id)
@@ -372,11 +359,9 @@ function SS_AttachAccessory(item, ent)
     -- end
     local mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
     mdl.item = item
-    local desiredmodel = EntityGetModel(ent)
-    local pone = isPonyModel(desiredmodel)
+    local pone = isPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 
-    -- if desiredmodel ~= e.appliedmodel then
     if attach == "eyes" then
         local attach_id = ent:LookupAttachment("eyes")
 
@@ -399,8 +384,6 @@ function SS_AttachAccessory(item, ent)
         mdl:FollowBone(ent, bone_id)
     end
 
-    -- e.appliedmodel = desiredmodel
-    -- end
     -- if scale ~= e.appliedscale then
     mdl.matrix = isnumber(scale) and Matrix({
         {scale, 0, 0, 0},
@@ -466,13 +449,6 @@ function Player:SS_GetActivePlayermodelMods()
     return mods
 end
 
-hook.Add("PrePlayerDraw", 'SS_AttachPlayerAccessories', function(ply)
-    if ply.SS_ShownItems == nil then return end
-    if not ply:Alive() then return end
-    if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
-    ply:SS_AttachAccessories(ply.SS_ShownItems)
-end)
-
 -- Revise if we add translucent accessories
 hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
     local ply = LocalPlayer()
@@ -525,13 +501,23 @@ end
 SS_CreatedAccessories = {}
 SS_UpdatedAccessories = {}
 
+hook.Add("NetworkEntityCreated", "RefreshAccessories", function(ent)
+    ent.SS_AttachedModel = nil
+end)
+
 -- Note: we expect items table not to change internally when items are updated (make whole new table)
 function Entity:SS_AttachAccessories(items)
+    -- print(items, rangecheck)
     SS_UpdatedAccessories[self] = true
-    local m = self:GetModel()
-    m = util.IsValidModel(m or "") and m or "models/error.mdl"
+    local m = self:GetActualModel()
     local current = SS_CreatedAccessories[self]
-    if self.SS_AttachedModel == m and self.SS_AttachedItems == items and (current == nil or #current == 0 or IsValid(current[1]:GetParent())) then return end --SS_CreatedAccessories[self]==nil then
+    -- slow, havent found better way
+    -- if CurTime() > (self.SS_DetachCheckTime or 0) then
+    --     print("CHE")
+    --     if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
+    --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
+    -- end
+    if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
     self.SS_AttachedItems = items
 

@@ -120,7 +120,7 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 -- end
             end
 
-            ply.SS_PlayermodelModsClean = false
+            ply.SS_SetupPlayermodel = nil
         end
     end
 

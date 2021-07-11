@@ -10,9 +10,9 @@ hook.Add("PostDrawTranslucentRenderables", "TrashDamage", function()
         if IsValid(ent) then
             if MININGCRACKMATERIALS then
                 local acd = ent:GetPos():DistToSqr(EyePos())
-                local acr = AutoCullBase() * (ent:GetModelRadius() or 1)
+                local acr = 200000 * (ent:GetModelRadius() or 1)
 
-                if acd < acr * 1 then
+                if acd < acr then
                     local h = math.min(math.ceil((1 - ent:GetStrength()) * 10), 10)
 
                     if h > 0 then
@@ -162,11 +162,17 @@ function ENT:Draw()
 end
 
 TRASH_LIGHTS = TRASH_LIGHTS or {}
+local mind2 = 600 ^ 2
+local maxd2 = 3000 ^ 2
+local targetcount = 8
 
 -- TODO can we do one every tick cyclically instead of all at once
-timer.Create("TrashLights", 0.2, 0, function()
+timer.Create("TrashLights", 0.1, 0, function()
     if not IsValid(LocalPlayer()) then return end
     local ep = LocalPlayer():EyePos()
+    local ev = LocalPlayer():EyeAngles():Forward()
+    local f = CurrentFrustrum()
+    local candidates = {}
 
     for e, l in pairs(TRASH_LIGHTS) do
         if not IsValid(e) or e:IsDormant() then
@@ -174,39 +180,49 @@ timer.Create("TrashLights", 0.2, 0, function()
             continue
         end
 
-        -- for edits
-        -- l = PropTrashLightData[e:GetModel()]
-        -- if not l then
-        --     TRASH_LIGHTS[e] = nil
-        --     continue
-        -- end
-        -- if e:IsDormant() then continue end
-        if (l.untaped or e:GetTaped()) and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
-            local dlight = DynamicLight(e:EntIndex())
-            local c = (e.lightcolor or Vector(1, 1, 1)) * 255
+        local p = e:LocalToWorld(l.pos)
+        local d = ep:DistToSqr(p)
 
-            if dlight then
-                dlight.pos = e:LocalToWorld(l.pos)
-                dlight.r = c.x
-                dlight.g = c.y
-                dlight.b = c.z
-                dlight.brightness = l.brightness
-                dlight.Size = l.size
-                dlight.style = (l.style == -1) and e:EntIndex() % 12 or l.style
+        if (l.untaped or e:GetTaped()) and d < maxd2 and not FrustrumCull(f, p, 250) then
+            table.insert(candidates, {
+                e = e,
+                l = l,
+                p = p,
+                d = d
+            })
+        end
+    end
 
-                if l.dir then
-                    local d = Vector(0, 0, 0)
-                    d:Set(l.dir)
-                    d:Rotate(e:GetAngles())
-                    dlight.dir = d
-                    dlight.innerangle = light.innerangle
-                    dlight.outerangle = light.outerangle
-                end
+    -- print("Candidates", #candidates)
+    table.SortByMember(candidates, "d", true)
 
-                -- 1000 seconds to fade out
-                dlight.Decay = 1
-                dlight.DieTime = CurTime() + 0.5
+    for i, v in ipairs(candidates) do
+        if i > targetcount and v.d > mind2 then break end -- print("break", i-1)
+        local e, l, p = v.e, v.l, v.p
+        local dlight = DynamicLight(e:EntIndex())
+        local c = (e.lightcolor or Vector(1, 1, 1)) * 255
+
+        if dlight then
+            dlight.pos = p
+            dlight.r = c.x
+            dlight.g = c.y
+            dlight.b = c.z
+            dlight.brightness = l.brightness
+            dlight.Size = l.size
+            dlight.style = (l.style == -1) and e:EntIndex() % 12 or l.style
+
+            if l.dir then
+                local d = Vector(0, 0, 0)
+                d:Set(l.dir)
+                d:Rotate(e:GetAngles())
+                dlight.dir = d
+                dlight.innerangle = light.innerangle
+                dlight.outerangle = light.outerangle
             end
+
+            -- 1000 seconds to fade out
+            dlight.Decay = 1
+            dlight.DieTime = CurTime() + 0.3
         end
     end
 end)
