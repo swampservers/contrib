@@ -136,87 +136,25 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-SWEP.SilencedTranslation = {
-    [ACT_VM_RELOAD] = ACT_VM_RELOAD_SILENCED,
-    [ACT_VM_PRIMARYATTACK] = ACT_VM_PRIMARYATTACK_SILENCED,
-    [ACT_VM_DRAW] = ACT_VM_DRAW_SILENCED,
-    [ACT_VM_IDLE] = ACT_VM_IDLE_SILENCED,
-}
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread())
+-- end
+-- function SWEP:GunFire(spread)
+--     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
+--     --Jvs: this is so goddamn lame
+--     if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
+--         self:KickBack(1, 0.45, 0.28, 0.045, 3.75, 3, 7)
+--     elseif not self:GetOwner():OnGround() then
+--         self:KickBack(1.2, 0.5, 0.23, 0.15, 5.5, 3.5, 6)
+--     elseif self:GetOwner():Crouching() then
+--         self:KickBack(0.6, 0.3, 0.2, 0.0125, 3.25, 2, 7)
+--     else
+--         self:KickBack(0.65, 0.35, 0.25, 0.015, 3.5, 2.25, 7)
+--     end
+-- end
+SWEP.KickMoving = {1, 0.45, 0.28, 0.045, 3.75, 3, 7}
 
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetDoneSwitchingSilencer(0)
-    self:SetDelayFire(true)
-end
+SWEP.KickStanding = {0.65, 0.35, 0.25, 0.015, 3.5, 2.25, 7}
 
-function SWEP:Deploy()
-    local ret = BaseClass.Deploy(self)
-    self:SetDoneSwitchingSilencer(0)
-    self:SetDelayFire(true)
-
-    return ret
-end
-
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread())
-end
-
-function SWEP:GunFire(spread)
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, not self:IsSilenced()) then return end
-
-    --Jvs: this is so goddamn lame
-    if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
-        self:KickBack(1, 0.45, 0.28, 0.045, 3.75, 3, 7)
-    elseif not self:GetOwner():OnGround() then
-        self:KickBack(1.2, 0.5, 0.23, 0.15, 5.5, 3.5, 6)
-    elseif self:GetOwner():Crouching() then
-        self:KickBack(0.6, 0.3, 0.2, 0.0125, 3.25, 2, 7)
-    else
-        self:KickBack(0.65, 0.35, 0.25, 0.015, 3.5, 2.25, 7)
-    end
-end
-
-function SWEP:SecondaryAttack()
-    if self:GetNextSecondaryAttack() > CurTime() then return end
-
-    if self:GetHasSilencer() then
-        self:SendWeaponAnim(ACT_VM_DETACH_SILENCER)
-    else
-        self:SendWeaponAnim(ACT_VM_ATTACH_SILENCER)
-    end
-
-    self:GetOwner():DoReloadEvent()
-    self:SetHasSilencer(not self:GetHasSilencer())
-    self:SetDoneSwitchingSilencer(CurTime() + 2)
-    self:SetNextSecondaryAttack(CurTime() + 2)
-    self:SetNextPrimaryAttack(CurTime() + 2)
-    self:SetNextIdle(CurTime() + 2)
-end
-
-function SWEP:TranslateViewModelActivity(act)
-    if self:IsSilenced() and self.SilencedTranslation[act] then
-        return self.SilencedTranslation[act]
-    else
-        return BaseClass.TranslateViewModelActivity(self, act)
-    end
-end
-
---this is called every tick inside of Think and every frame inside of DrawWorldModel, so it should update the worldmodel pretty often
-function SWEP:UpdateWorldModel()
-    if self:IsSilenced() then
-        self.WorldModel = self:GetWeaponInfo().SilencerModel
-    else
-        self.WorldModel = self:GetWeaponInfo().playermodel
-    end
-end
-
-function SWEP:Holster()
-    if self:GetDoneSwitchingSilencer() > 0 and self:GetDoneSwitchingSilencer() > CurTime() then
-        self:SetHasSilencer(false)
-    end
-
-    self:UpdateWorldModel()
-
-    return BaseClass.Holster(self)
-end
+SWEP.KickCrouching = {0.6, 0.3, 0.2, 0.0125, 3.25, 2, 7}

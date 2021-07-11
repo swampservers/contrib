@@ -139,7 +139,7 @@ function SWEP:SecondaryAttack()
     local pPlayer = self:GetOwner()
     if not IsValid(pPlayer) then return end
 
-    if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryAttack() > CurTime() then
+    if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime() then
         self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
 
         return
@@ -173,29 +173,30 @@ function SWEP:GetSpeedRatio()
     return 1
 end
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread())
-end
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread())
+-- end
+-- function SWEP:GunFire(spread)
+--     local cycleTime = self.CycleTime
+--     if self:IsScoped() then
+--         cycleTime = 0.135
+--     end
+--     if not self:BaseGunFire(spread, cycleTime, true) then return end
+--     local pPlayer = self:GetOwner()
+--     if not IsValid(pPlayer) then return end
+--     if pPlayer:GetAbsVelocity():Length2D() > 5 then
+--         self:KickBack(1, 0.45, 0.275, 0.05, 4, 2.5, 7)
+--     elseif not pPlayer:OnGround() then
+--         self:KickBack(1.25, 0.45, 0.22, 0.18, 5.5, 4, 5)
+--     elseif pPlayer:Crouching() then
+--         self:KickBack(0.575, 0.325, 0.2, 0.011, 3.25, 2, 8)
+--     else
+--         self:KickBack(0.625, 0.375, 0.25, 0.0125, 3.5, 2.25, 8)
+--     end
+-- end
+SWEP.KickMoving = {1, 0.45, 0.275, 0.05, 4, 2.5, 7}
 
-function SWEP:GunFire(spread)
-    local cycleTime = self:GetWeaponInfo().CycleTime
+SWEP.KickStanding = {0.625, 0.375, 0.25, 0.0125, 3.5, 2.25, 8}
 
-    if self:IsScoped() then
-        cycleTime = 0.135
-    end
-
-    if not self:BaseGunFire(spread, cycleTime, true) then return end
-    local pPlayer = self:GetOwner()
-    if not IsValid(pPlayer) then return end
-
-    if pPlayer:GetAbsVelocity():Length2D() > 5 then
-        self:KickBack(1, 0.45, 0.275, 0.05, 4, 2.5, 7)
-    elseif not pPlayer:OnGround() then
-        self:KickBack(1.25, 0.45, 0.22, 0.18, 5.5, 4, 5)
-    elseif pPlayer:Crouching() then
-        self:KickBack(0.575, 0.325, 0.2, 0.011, 3.25, 2, 8)
-    else
-        self:KickBack(0.625, 0.375, 0.25, 0.0125, 3.5, 2.25, 8)
-    end
-end
+SWEP.KickCrouching = {0.575, 0.325, 0.2, 0.011, 3.25, 2, 8}

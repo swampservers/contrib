@@ -123,13 +123,12 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread())
-end
-
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryAttack() > CurTime() then return end
+--     self:GunFire(self:BuildSpread())
+-- end
 function SWEP:GunFire(spread)
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, true) then return end
+    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
 
     --Jvs: this is so goddamn lame
     if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
@@ -142,3 +141,9 @@ function SWEP:GunFire(spread)
         self:KickBack(1, 0.375, 0.175, 0.0375, 5.75, 1.75, 8)
     end
 end
+
+SWEP.KickMoving = {1.5, 0.45, 0.225, 0.05, 6.5, 2.5, 7}
+
+SWEP.KickStanding = {1, 0.375, 0.175, 0.0375, 5.75, 1.75, 8}
+
+SWEP.KickCrouching = {0.9, 0.35, 0.15, 0.025, 5.5, 1.5, 9}

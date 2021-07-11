@@ -127,32 +127,23 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetBurstFireEnabled(false)
-    self:SetMaxBurstFires(3)
-    self:SetBurstFireDelay(0.1)
-end
-
 function SWEP:Deploy()
     self:SetAccuracy(0.9)
 
     return BaseClass.Deploy(self)
 end
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread(), self:GetBurstFireEnabled())
-end
-
-function SWEP:TranslateViewModelActivity(act)
-    if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
-        return ACT_VM_SECONDARYATTACK
-    else
-        return BaseClass.TranslateViewModelActivity(self, act)
-    end
-end
-
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread(), true) -- self:GetBurstFireEnabled())
+-- end
+-- function SWEP:TranslateViewModelActivity(act)
+--     if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
+--         return ACT_VM_SECONDARYATTACK
+--     else
+--         return BaseClass.TranslateViewModelActivity(self, act)
+--     end
+-- end
 function SWEP:GunFire(spread, mode)
     self:SetAccuracy(self:GetAccuracy() - 0.275 * (0.325 - CurTime() - self:GetLastFire()))
 
@@ -162,11 +153,5 @@ function SWEP:GunFire(spread, mode)
         self:SetAccuracy(0.6)
     end
 
-    self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, mode)
-end
-
-function SWEP:SecondaryAttack()
-    if self:GetNextSecondaryAttack() > CurTime() then return end
-    self:ToggleBurstFire()
-    self:SetNextSecondaryAttack(CurTime() + 0.3)
+    self:BaseGunFire(spread, self.CycleTime, mode)
 end

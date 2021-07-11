@@ -5,6 +5,8 @@ SWEP.GunType = "ar"
 SWEP.PrintName = "Famas"
 SWEP.HoldType = "ar2"
 SWEP.Slot = 0
+SWEP.BurstFire = 3
+SWEP.BurstFireDelay = 0.05
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"			"220"
@@ -132,42 +134,36 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetBurstFireEnabled(false)
-    self:SetMaxBurstFires(3)
-    self:SetBurstFireDelay(0.05)
-end
+-- function SWEP:Initialize()
+--     BaseClass.Initialize(self)
+--     self:SetBurstFireEnabled(false)
+--     self:SetMaxBurstFires(3)
+--     self:SetBurstFireDelay(0.05)
+-- end
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread(), true) --self:GetBurstFireEnabled())
+-- end
+-- function SWEP:GunFire(spread, mode)
+--     local cycleTime = self.CycleTime
+--     if mode then
+--         cycleTime = 0.55
+--     else
+--         spread = spread + 0.01
+--     end
+--     if not self:BaseGunFire(spread, cycleTime, mode) then return end
+--     if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
+--         self:KickBack(0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7)
+--     elseif not self:GetOwner():OnGround() then
+--         self:KickBack(0.9, 0.45, 0.35, 0.04, 5.25, 3.5, 4)
+--     elseif self:GetOwner():Crouching() then
+--         self:KickBack(0.275, 0.2, 0.125, 0.02, 3, 1, 9)
+--     else
+--         self:KickBack(0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8)
+--     end
+-- end
+SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread(), self:GetBurstFireEnabled())
-end
+SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 
-function SWEP:GunFire(spread, mode)
-    local cycleTime = self:GetWeaponInfo().CycleTime
-
-    if mode then
-        cycleTime = 0.55
-    else
-        spread = spread + 0.01
-    end
-
-    if not self:BaseGunFire(spread, cycleTime, mode) then return end
-
-    if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
-        self:KickBack(0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7)
-    elseif not self:GetOwner():OnGround() then
-        self:KickBack(0.9, 0.45, 0.35, 0.04, 5.25, 3.5, 4)
-    elseif self:GetOwner():Crouching() then
-        self:KickBack(0.275, 0.2, 0.125, 0.02, 3, 1, 9)
-    else
-        self:KickBack(0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8)
-    end
-end
-
-function SWEP:SecondaryAttack()
-    if self:GetNextSecondaryAttack() > CurTime() then return end
-    self:ToggleBurstFire()
-    self:SetNextSecondaryAttack(CurTime() + 0.3)
-end
+SWEP.KickCrouching = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}

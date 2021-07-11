@@ -5,6 +5,7 @@ SWEP.GunType = "smg"
 SWEP.PrintName = "TMP"
 SWEP.HoldType = "ar2"
 SWEP.Slot = 0
+SWEP.Silenced = true
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"		"250"
@@ -124,25 +125,27 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread())
-end
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread())
+-- end
+-- function SWEP:GunFire(spread)
+--     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
+--     if not self:GetOwner():OnGround() then
+--         self:KickBack(1.1, 0.5, 0.35, 0.045, 4.5, 3.5, 6)
+--     elseif self:GetOwner():GetAbsVelocity():Length2D() > 5 then
+--         self:KickBack(0.8, 0.4, 0.2, 0.03, 3, 2.5, 7)
+--     elseif self:GetOwner():Crouching() then
+--         self:KickBack(0.7, 0.35, 0.125, 0.025, 2.5, 2, 10)
+--     else
+--         self:KickBack(0.725, 0.375, 0.15, 0.025, 2.75, 2.25, 9)
+--     end
+-- end
+-- function SWEP:FireAnimationEvent()
+--     return true
+-- end
+SWEP.KickMoving = {0.8, 0.4, 0.2, 0.03, 3, 2.5, 7}
 
-function SWEP:GunFire(spread)
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, true) then return end
+SWEP.KickStanding = {0.725, 0.375, 0.15, 0.025, 2.75, 2.25, 9}
 
-    if not self:GetOwner():OnGround() then
-        self:KickBack(1.1, 0.5, 0.35, 0.045, 4.5, 3.5, 6)
-    elseif self:GetOwner():GetAbsVelocity():Length2D() > 5 then
-        self:KickBack(0.8, 0.4, 0.2, 0.03, 3, 2.5, 7)
-    elseif self:GetOwner():Crouching() then
-        self:KickBack(0.7, 0.35, 0.125, 0.025, 2.5, 2, 10)
-    else
-        self:KickBack(0.725, 0.375, 0.15, 0.025, 2.75, 2.25, 9)
-    end
-end
-
-function SWEP:FireAnimationEvent()
-    return true
-end
+SWEP.KickCrouching = {0.7, 0.35, 0.125, 0.025, 2.5, 2, 10}

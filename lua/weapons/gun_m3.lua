@@ -119,30 +119,20 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:SetupDataTables()
-    BaseClass.SetupDataTables(self)
-    self:NetworkVar("Int", 0, "SpecialReload")
-end
-
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetSpecialReload(0)
-end
-
 function SWEP:PrimaryAttack()
     local pPlayer = self.Owner
     if not IsValid(pPlayer) then return end
-    if self:GetNextPrimaryAttack() > CurTime() then return end
+    if self:GetNextPrimaryFire() > CurTime() then return end
 
     if pPlayer:WaterLevel() == 3 then
         self:PlayEmptySound()
-        self:SetNextPrimaryAttack(CurTime() + 0.2)
+        self:SetNextPrimaryFire(CurTime() + 0.2)
 
         return false
     end
 
     local spread = self:BuildSpread()
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, true) then return end
+    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
     self:SetSpecialReload(0)
     local angle = pPlayer:GetViewPunchAngles()
 
@@ -162,13 +152,13 @@ function SWEP:Reload()
     local pPlayer = self.Owner
     if not IsValid(pPlayer) then return end
     if pPlayer:GetAmmoCount(self.Primary.Ammo) <= 0 or self:Clip1() >= self.Primary.ClipSize then return end
-    if self:GetNextPrimaryAttack() > CurTime() then return end
+    if self:GetNextPrimaryFire() > CurTime() then return end
 
     if self:GetSpecialReload() == 0 then
         pPlayer:SetAnimation(PLAYER_RELOAD)
         self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
         self:SetSpecialReload(1)
-        self:SetNextPrimaryAttack(CurTime() + 0.5)
+        self:SetNextPrimaryFire(CurTime() + 0.5)
         self:SetNextIdle(CurTime() + 0.5)
         -- DoAnimationEvent( PLAYERANIMEVENT_RELOAD_START ) - Missing event
 

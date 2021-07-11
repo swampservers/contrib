@@ -50,11 +50,9 @@ end)
 function PPM_SetPonyMaterials(ent)
     -- print("PONYMAT", ent)
     local ply = ent:PonyPlayer()
-
-    if ent ~= ply then
-        print("THISS", ply, ent)
-    end
-
+    -- if ent ~= ply then
+    --     print("THISS", ply, ent)
+    -- end
     if not IsValid(ply) then return end
 
     for k, v in ipairs(ply.ponymaterials or {}) do

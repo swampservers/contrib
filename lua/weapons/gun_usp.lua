@@ -131,52 +131,10 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-SWEP.SilencedTranslation = {
-    [ACT_VM_RELOAD] = ACT_VM_RELOAD_SILENCED,
-    [ACT_VM_PRIMARYATTACK] = ACT_VM_PRIMARYATTACK_SILENCED,
-    [ACT_VM_DRAW] = ACT_VM_DRAW_SILENCED,
-    [ACT_VM_IDLE] = ACT_VM_IDLE_SILENCED,
-}
-
-function SWEP:Deploy()
-    self:SetAccuracy(0.92)
-    self:SetDoneSwitchingSilencer(0)
-
-    return BaseClass.Deploy(self)
-end
-
-function SWEP:Holster()
-    if self:GetDoneSwitchingSilencer() > 0 and self:GetDoneSwitchingSilencer() > CurTime() then
-        self:SetHasSilencer(false)
-    end
-
-    self:UpdateWorldModel()
-
-    return BaseClass.Holster(self)
-end
-
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread(), not self:IsSilenced())
-end
-
-function SWEP:TranslateViewModelActivity(act)
-    if self:IsSilenced() and self.SilencedTranslation[act] then
-        return self.SilencedTranslation[act]
-    else
-        return BaseClass.TranslateViewModelActivity(self, act)
-    end
-end
-
---this is called every tick inside of Think and every frame inside of DrawWorldModel, so it should update the worldmodel pretty often
-function SWEP:UpdateWorldModel()
-    if self:IsSilenced() then
-        self.WorldModel = self:GetWeaponInfo().SilencerModel
-    else
-        self.WorldModel = self:GetWeaponInfo().playermodel
-    end
-end
-
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread(), true)
+-- end
 function SWEP:GunFire(spread, mode)
     --Jvs: technically this should be > 1, but since this is increased in basegunfire, we have to do it this way
     if self:GetShotsFired() > 0 then return end
@@ -189,25 +147,18 @@ function SWEP:GunFire(spread, mode)
     end
 
     self:SetNextIdle(CurTime() + 2)
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, mode) then return end
+    if not self:BaseGunFire(spread, self.CycleTime, mode) then return end
     local angle = self:GetOwner():GetViewPunchAngles()
     angle.p = angle.p - 2
     self:GetOwner():SetViewPunchAngles(angle)
 end
-
-function SWEP:SecondaryAttack()
-    if self:GetNextSecondaryAttack() > CurTime() then return end
-
-    if self:GetHasSilencer() then
-        self:SendWeaponAnim(ACT_VM_DETACH_SILENCER)
-    else
-        self:SendWeaponAnim(ACT_VM_ATTACH_SILENCER)
-    end
-
-    self:GetOwner():DoReloadEvent()
-    self:SetHasSilencer(not self:GetHasSilencer())
-    self:SetDoneSwitchingSilencer(CurTime() + 3)
-    self:SetNextSecondaryAttack(CurTime() + 3)
-    self:SetNextPrimaryAttack(CurTime() + 3)
-    self:SetNextIdle(CurTime() + 3)
-end
+-- set this for silenced variants AND USE SilencerModel for worldmodel
+-- SWEP.Silenced = true
+-- function SWEP:TranslateViewModelActivity(act)
+-- 	return {
+-- 		[ACT_VM_RELOAD] = ACT_VM_RELOAD_SILENCED,
+-- 		[ACT_VM_PRIMARYATTACK] = ACT_VM_PRIMARYATTACK_SILENCED,
+-- 		[ACT_VM_DRAW] = ACT_VM_DRAW_SILENCED,
+-- 		[ACT_VM_IDLE] = ACT_VM_IDLE_SILENCED,
+-- 	}[act] or act
+-- end

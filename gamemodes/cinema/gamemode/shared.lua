@@ -46,8 +46,12 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 end
 
 function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
-    if hitgroup == HITGROUP_HEAD then
-        dmginfo:ScaleDamage(2)
+    local inf = dmginfo:GetInflictor()
+
+    if not IsValid(inf) or not inf.GunType then
+        if hitgroup == HITGROUP_HEAD then
+            dmginfo:ScaleDamage(2)
+        end
     end
 
     if ply:InVehicle() and dmginfo:GetDamageType() == DMG_BURN then

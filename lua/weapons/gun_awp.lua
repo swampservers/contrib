@@ -126,16 +126,15 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread())
-end
-
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread())
+-- end
 function SWEP:SecondaryAttack()
     local pPlayer = self:GetOwner()
     if not IsValid(pPlayer) then return end
 
-    if (self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryAttack() > CurTime()) then
+    if (self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime()) then
         self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
 
         return
@@ -143,7 +142,7 @@ function SWEP:SecondaryAttack()
 
     if (not self:IsScoped()) then
         self:SetFOVRatio(40 / 90, 0.15)
-    elseif (math.abs(self:GetFOVRatio() - 40 / 90) < 0.00001) then
+    elseif (math.abs(self:GetFOVRatio() - 40 / 90) < 0.001) then
         self:SetFOVRatio(10 / 90, 0.08)
     else
         self:SetFOVRatio(1, 0.1)
@@ -179,7 +178,7 @@ function SWEP:GunFire(spread)
     local pPlayer = self:GetOwner()
 
     if (CurTime() < self:GetZoomFullyActiveTime()) then
-        self:SetNextPrimaryAttack(self:GetZoomFullyActiveTime())
+        self:SetNextPrimaryFire(self:GetZoomFullyActiveTime())
 
         return
     end
@@ -188,7 +187,7 @@ function SWEP:GunFire(spread)
         spread = spread + .08
     end
 
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, true) then return end
+    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
 
     if (self:IsScoped()) then
         self:SetLastZoom(self:GetTargetFOVRatio())

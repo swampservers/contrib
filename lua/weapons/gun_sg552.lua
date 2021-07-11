@@ -136,16 +136,15 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 function SWEP:PreDrawViewModel(vm, weapon, ply)
 end
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread())
-end
-
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread())
+-- end
 function SWEP:SecondaryAttack()
     local pPlayer = self:GetOwner()
     if not IsValid(pPlayer) then return end
 
-    if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryAttack() > CurTime() then
+    if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime() then
         self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
 
         return
@@ -172,7 +171,7 @@ function SWEP:HandleReload()
 end
 
 function SWEP:GunFire(spread)
-    local flCycleTime = self:GetWeaponInfo().CycleTime
+    local flCycleTime = self.CycleTime
 
     if self:IsScoped() then
         flCycleTime = 0.135
@@ -197,3 +196,9 @@ function SWEP:GetSpeedRatio()
 
     return 1
 end
+
+SWEP.KickMoving = {1, 0.45, 0.28, 0.04, 4.25, 2.5, 7}
+
+SWEP.KickStanding = {0.625, 0.375, 0.25, 0.0125, 4, 2.25, 9}
+
+SWEP.KickCrouching = {0.6, 0.35, 0.2, 0.0125, 3.7, 2, 10}

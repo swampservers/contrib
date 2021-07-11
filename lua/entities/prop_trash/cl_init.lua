@@ -303,7 +303,8 @@ hook.Add("HUDPaint", "TrashHUD", function()
         local c = PropTrashLookedAt:LocalToWorld(PropTrashLookedAt:OBBCenter()):ToScreen()
 
         if c.visible then
-            draw.SimpleText(PropTrashLookedAt:GetOwnerID() == LocalPlayer():SteamID() and "Yours" or "Not yours", "DermaDefault", c.x, c.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            local owner = player.GetBySteamID(PropTrashLookedAt:GetOwnerID())
+            draw.SimpleText(owner == LocalPlayer() and "Yours" or (IsValid(owner) and "Belongs to " .. owner:GetName() or "Belongs to someone offline."), "DermaDefault", c.x, c.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
     end
 

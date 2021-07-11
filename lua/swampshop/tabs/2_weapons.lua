@@ -149,7 +149,7 @@ SS_Item({
         return d
     end,
     GetName = function(self)
-        local name = language.GetPhrase((weapons.GetStored(self:FixClass() or "") or {}).PrintName or "Unknown")
+        local name = (weapons.GetStored(self:FixClass() or "") or {}).PrintName or "Unknown"
 
         if self.specs.trophy_tag then
             name = self.specs.trophy_tag .. " " .. name

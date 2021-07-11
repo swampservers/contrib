@@ -88,7 +88,7 @@ SS_Item({
     class = "outfitter3",
     price = 8000000,
     name = 'Outfitter+',
-    description = "Allows a higher vertex limit for outfitter models. Requires outfitter.",
+    description = "Allows a higher vertex limit for outfitter models. Requires outfitter. High price is because it causes lag.",
     model = 'models/props_phx/facepunch_logo.mdl',
     actions = {
         customize = {

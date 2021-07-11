@@ -124,19 +124,17 @@ function SWEP:Deploy()
     return BaseClass.Deploy(self)
 end
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread(), true)
-end
-
-function SWEP:TranslateViewModelActivity(act)
-    if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
-        return ACT_VM_SECONDARYATTACK
-    else
-        return BaseClass.TranslateViewModelActivity(self, act)
-    end
-end
-
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     self:GunFire(self:BuildSpread(), true)
+-- end
+-- function SWEP:TranslateViewModelActivity(act)
+--     -- if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
+--     --     return ACT_VM_SECONDARYATTACK
+--     -- else
+--         return BaseClass.TranslateViewModelActivity(self, act)
+--     -- end
+-- end
 function SWEP:GunFire(spread, mode)
     self:SetAccuracy(self:GetAccuracy() - 0.35 * (0.4 - CurTime() - self:GetLastFire()))
 
@@ -146,7 +144,7 @@ function SWEP:GunFire(spread, mode)
         self:SetAccuracy(0.55)
     end
 
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, mode) then return end
+    if not self:BaseGunFire(spread, self.CycleTime, mode) then return end
     --Python: this is so goddamn lame
     local a = self:GetOwner():GetViewPunchAngles()
     a.p = a.p - 2

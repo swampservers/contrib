@@ -125,11 +125,10 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:PrimaryAttack()
-    if self:GetNextPrimaryAttack() > CurTime() then return end
-    self:GunFire(self:BuildSpread())
-end
-
+-- function SWEP:PrimaryAttack()
+--     if self:GetNextPrimaryAttack() > CurTime() then return end
+--     self:GunFire(self:BuildSpread())
+-- end
 function SWEP:SecondaryAttack()
     local pPlayer = self:GetOwner()
     if not IsValid(pPlayer) then return end
@@ -187,7 +186,7 @@ function SWEP:GunFire(spread)
         spread = spread + .08
     end
 
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, true) then return end
+    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
     local a = self:GetOwner():GetViewPunchAngles()
     a.p = a.p - 2
     self:GetOwner():SetViewPunchAngles(a)

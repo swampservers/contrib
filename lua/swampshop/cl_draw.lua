@@ -349,7 +349,7 @@ function SS_SetMaterialToItem(item, ent, ply)
 end
 
 --makes a CSModel for a product or item
-function SS_AttachAccessory(item, ent)
+function SS_AttachAccessory(item, ent, recycle_mdl)
     -- local ply = item.owner == SS_SAMPLE_ITEM_OWNER and LocalPlayer() or item.owner
     -- mdl.Attach = function(e, ent)
     --     ent = ent or ply
@@ -357,7 +357,15 @@ function SS_AttachAccessory(item, ent)
     --     e.appliedmodel = nil
     --     e.lastent = ent
     -- end
-    local mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
+    local mdl
+
+    if recycle_mdl then
+        mdl = recycle_mdl
+        assert(item:GetModel() == mdl:GetModel())
+    else
+        mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
+    end
+
     mdl.item = item
     local pone = isPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
@@ -498,6 +506,10 @@ for k, v in pairs(SS_CreatedAccessories or {}) do
     end
 end
 
+for i, v in ipairs(player.GetAll()) do
+    v.SS_SetupPlayermodel = nil
+end
+
 SS_CreatedAccessories = {}
 SS_UpdatedAccessories = {}
 
@@ -520,10 +532,11 @@ function Entity:SS_AttachAccessories(items)
     if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
     self.SS_AttachedItems = items
+    local recycle = defaultdict(function() return {} end)
 
     if current then
         for i, v in ipairs(current) do
-            v:Remove()
+            table.insert(recycle[v:GetModel()], v)
         end
     end
 
@@ -532,7 +545,8 @@ function Entity:SS_AttachAccessories(items)
 
         for i, item in ipairs(items) do
             if item.AccessoryTransform then
-                local mdl = SS_AttachAccessory(item, self)
+                local rmodels = recycle[item:GetModel()]
+                local mdl = SS_AttachAccessory(item, self, #rmodels > 0 and table.remove(rmodels) or nil)
 
                 if mdl then
                     table.insert(SS_CreatedAccessories[self], mdl)
@@ -541,6 +555,12 @@ function Entity:SS_AttachAccessories(items)
         end
     else
         SS_CreatedAccessories[self] = nil
+    end
+
+    for m, mt in pairs(recycle) do
+        for i, v in ipairs(mt) do
+            v:Remove()
+        end
     end
 end
 

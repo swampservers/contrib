@@ -119,57 +119,48 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:SetupDataTables()
-    BaseClass.SetupDataTables(self)
-    self:NetworkVar("Int", 0, "SpecialReload")
-end
-
-function SWEP:Initialize()
-    BaseClass.Initialize(self)
-    self:SetSpecialReload(0)
-end
-
 function SWEP:PrimaryAttack()
-    local pPlayer = self.Owner
-    if not IsValid(pPlayer) then return end
-
-    if pPlayer:WaterLevel() == 3 then
-        self:PlayEmptySound()
-        self:SetNextPrimaryFire(CurTime() + 0.15)
-
-        return
-    end
-
-    if self:GetNextPrimaryAttack() > CurTime() then return end
+    -- local pPlayer = self.Owner
+    -- if not IsValid(pPlayer) then return end
+    -- if pPlayer:WaterLevel() == 3 then
+    --     self:PlayEmptySound()
+    --     self:SetNextPrimaryFire(CurTime() + 0.15)
+    --     return
+    -- end
+    if self:GetNextPrimaryFire() > CurTime() then return end
     self:GunFire(self:BuildSpread())
     self:SetSpecialReload(0)
 end
 
-function SWEP:GunFire(spread)
-    if not self:BaseGunFire(spread, self:GetWeaponInfo().CycleTime, true) then return end
+-- function SWEP:GunFire(spread)
+--     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
+--     if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
+--         self:KickBack(0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7)
+--     elseif not self:GetOwner():OnGround() then
+--         self:KickBack(0.9, 0.45, 0.35, 0.04, 5.25, 3.5, 4)
+--     elseif self:GetOwner():Crouching() then
+--         self:KickBack(0.275, 0.2, 0.125, 0.02, 3, 1, 9)
+--     else
+--         self:KickBack(0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8)
+--     end
+-- end
+SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 
-    if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
-        self:KickBack(0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7)
-    elseif not self:GetOwner():OnGround() then
-        self:KickBack(0.9, 0.45, 0.35, 0.04, 5.25, 3.5, 4)
-    elseif self:GetOwner():Crouching() then
-        self:KickBack(0.275, 0.2, 0.125, 0.02, 3, 1, 9)
-    else
-        self:KickBack(0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8)
-    end
-end
+SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
+
+SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}
 
 function SWEP:Reload()
     local pPlayer = self.Owner
     if not IsValid(pPlayer) then return end
     if pPlayer:GetAmmoCount(self.Primary.Ammo) <= 0 or self:Clip1() >= self.Primary.ClipSize then return end
-    if self:GetNextPrimaryAttack() > CurTime() then return end
+    if self:GetNextPrimaryFire() > CurTime() then return end
 
     if self:GetSpecialReload() == 0 then
         pPlayer:SetAnimation(PLAYER_RELOAD)
         self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
         self:SetSpecialReload(1)
-        self:SetNextPrimaryAttack(CurTime() + 0.5)
+        self:SetNextPrimaryFire(CurTime() + 0.5)
         self:SetNextIdle(CurTime() + 0.5)
         -- DoAnimationEvent( PLAYERANIMEVENT_RELOAD_START ) - Missing event
 

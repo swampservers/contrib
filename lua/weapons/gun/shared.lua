@@ -4,37 +4,42 @@ SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = true
 SWEP.CSSWeapon = true
+SWEP.DropOnGround = true
+SWEP.DrawWeaponInfoBox = false
+SWEP.BounceWeaponIcon = false
 
-SWEP.WeaponTypeToString = {
-    Knife = CS_WEAPONTYPE_KNIFE,
-    Pistol = CS_WEAPONTYPE_PISTOL,
-    Rifle = CS_WEAPONTYPE_RIFLE,
-    Shotgun = CS_WEAPONTYPE_SHOTGUN,
-    SniperRifle = CS_WEAPONTYPE_SNIPER_RIFLE,
-    SubMachinegun = CS_WEAPONTYPE_SUBMACHINEGUN,
-    Machinegun = CS_WEAPONTYPE_MACHINEGUN,
-    C4 = CS_WEAPONTYPE_C4,
-    Grenade = CS_WEAPONTYPE_GRENADE,
-}
+hook.Add("EntityNetworkedVarChanged", "SetPrintName", function(ent, name, oldval, newval)
+    if name == "PrintName" then
+        timer.Simple(0, function()
+            if IsValid(ent) then
+                ent.PrintName = newval
+            end
+        end)
+    end
+end)
 
---[[
-	returns the raw data parsed from the vdf in table form,
-	some of this data is already applied to the weapon table ( such as .Slot, .PrintName and etc )
-]]
-function SWEP:GetWeaponInfo()
-    return self._WeaponInfo
+function SWEP:GetSpray()
+    local recoverytime = (self:GetOwner():Crouching() and self.RecoveryTimeCrouch or self.RecoveryTimeStand)
+    recoverytime = recoverytime * (self.SprayMax / self.SprayIncrement)
+
+    return math.max(0, self:GetLastShotSpray() - math.max(0, CurTime() - self:GetSprayUpdateTime()) / recoverytime)
+end
+
+function SWEP:AddSpray()
+    self:SetLastShotSpray(math.min(self.SprayMax, self:GetSpray() + self.SprayIncrement))
+    self:SetSprayUpdateTime(CurTime())
 end
 
 function SWEP:Reload()
-    if self:GetMaxClip1() ~= -1 and not self:InReload() and self:GetNextPrimaryAttack() < CurTime() then
+    if self:GetMaxClip1() ~= -1 and not self:GetInReload() and self:GetNextPrimaryFire() < CurTime() then
         self:SetShotsFired(0)
-        local bCanReload = self:MainReload(self:TranslateViewModelActivity(ACT_VM_RELOAD))
+        local can = self:MainReload(self:TranslateViewModelActivity(ACT_VM_RELOAD))
 
-        if (bCanReload) then
+        if can then
             self:HandleReload()
         end
 
-        return bCanReload
+        return can
     end
 end
 
@@ -43,56 +48,30 @@ end
 
 --Jvs: can't call it DefaultReload because there's already one in the weapon's metatable and I'd rather not cause conflicts
 function SWEP:MainReload(act)
-    local pOwner = self:GetOwner()
-    -- If I don't have any spare ammo, I can't reload
-    if pOwner:GetAmmoCount(self:GetPrimaryAmmoType()) <= 0 then return false end
-    local bReload = false
-
-    -- If you don't have clips, then don't try to reload them.
-    if self:GetMaxClip1() ~= -1 then
-        -- need to reload primary clip?
-        local primary = math.min(self:GetMaxClip1() - self:Clip1(), pOwner:GetAmmoCount(self:GetPrimaryAmmoType()))
-
-        if primary ~= 0 then
-            bReload = true
-        end
-    end
-
-    if self:GetMaxClip2() ~= -1 then
-        -- need to reload secondary clip?
-        local secondary = math.min(self:GetMaxClip2() - self:Clip2(), pOwner:GetAmmoCount(self:GetSecondaryAmmoType()))
-
-        if secondary ~= 0 then
-            bReload = true
-        end
-    end
-
-    if not bReload then return false end
+    local owner = self:GetOwner()
+    if owner:GetAmmoCount(self:GetPrimaryAmmoType()) <= 0 then return false end
+    if not (self:GetMaxClip1() ~= -1 and self:GetMaxClip1() > self:Clip1() and owner:GetAmmoCount(self:GetPrimaryAmmoType()) > 0) then return end
     self:WeaponSound("reload")
     self:SendWeaponAnim(act)
-
-    -- Play the player's reload animation
-    if pOwner:IsPlayer() then
-        pOwner:DoReloadEvent()
-    end
-
-    local flSequenceEndTime = CurTime() + self:SequenceDuration()
-    self:SetNextPrimaryAttack(flSequenceEndTime)
-    self:SetNextSecondaryAttack(flSequenceEndTime)
+    owner:DoReloadEvent()
+    local endtime = CurTime() + self:SequenceDuration()
+    self:SetNextPrimaryFire(endtime)
+    self:SetNextSecondaryFire(endtime)
     self:SetInReload(true)
 
     return true
 end
 
-function SWEP:GetMaxClip1()
-    return self.Primary.ClipSize
-end
-
-function SWEP:GetMaxClip2()
-    return self.Secondary.ClipSize
-end
-
+-- function SWEP:GetMaxClip1()
+--     return self.Primary.ClipSize
+-- end
+-- function SWEP:GetMaxClip2()
+--     return self.Secondary.ClipSize
+-- end
 function SWEP:PrimaryAttack()
+    -- if self:GetNextPrimaryFire() > CurTime() then return end
+    -- print("BASEPRIMARY")
+    self:GunFire(self:BuildSpread(), true)
 end
 
 function SWEP:SecondaryAttack()
@@ -104,32 +83,11 @@ function SWEP:Holster()
     return true
 end
 
-function SWEP:InReload()
-    return self:GetInReload()
-end
-
-function SWEP:IsPistol()
-    return self:GetWeaponType() == CS_WEAPONTYPE_PISTOL
-end
-
-function SWEP:IsSilenced()
-    return self:GetHasSilencer()
-end
-
 function SWEP:WeaponSound(soundtype)
-    if not self:GetWeaponInfo() then return end
-    local sndname = self:GetWeaponInfo().SoundData[soundtype]
+    local sndname = (self.SoundData or {})[soundtype]
 
     if sndname then
         self:EmitSound(sndname, nil, nil, nil, CHAN_AUTO)
-    end
-end
-
-function SWEP:PlayEmptySound()
-    if self:IsPistol() then
-        self:EmitSound("Default.ClipEmpty_Pistol", nil, nil, nil, CHAN_AUTO) --an actual undocumented feature!
-    else
-        self:EmitSound("Default.ClipEmpty_Rifle", nil, nil, nil, CHAN_AUTO)
     end
 end
 
@@ -188,56 +146,30 @@ function SWEP:KickBack(up_base, lateral_base, up_modifier, lateral_modifier, up_
     self:GetOwner():SetViewPunchAngles(angle)
 end
 
---[[
-	Jvs:
-		this function is here to make the player faster or slower depending on the weapon equipped ( and mode of the weapon )
-		in CS:S the value here is actually a flat movement speed, but here we still want to replicate the movement speed of when you're zoomed in / use a knife
-		and forcing flat movement speeds in other gamemodes is dumb as hell
-]]
-function SWEP:GetSpeedRatio()
-    --Jvs: rare case where the speed might still be undefined
-    if self:GetWeaponInfo().MaxPlayerSpeed == 1 then return 1 end
-
-    return self:GetWeaponInfo().MaxPlayerSpeed / 250
-end
-
---BASE ABOVE, BASEGUN BELOW
-local function FloatEquals(x, y)
-    return math.abs(x - y) < 1.19209290E-07
-end
-
-SWEP.Spawnable = false
-SWEP.UseHands = true
-SWEP.DrawAmmo = true
-SWEP.DropOnGround = true
-
 function SWEP:Initialize()
     self:SetHoldType(self.HoldType)
     self:SetDelayFire(true)
-    self:SetFullReload(true)
-    self:SetWeaponType(self.WeaponTypeToString[self:GetWeaponInfo().WeaponType])
+    self:SetSpecialReload(0)
+    -- self:SetWeaponType(self.WeaponTypeToString[self.WeaponType])
     self:SetLastFire(CurTime())
 end
 
 function SWEP:SetupDataTables()
-    self:NetworkVar("Float", 0, "NextPrimaryAttack")
-    self:NetworkVar("Float", 1, "NextSecondaryAttack")
+    self:NetworkVar("Float", 0, "LastShotSpray")
+    self:NetworkVar("Float", 1, "SprayUpdateTime")
     self:NetworkVar("Float", 2, "Accuracy")
-    self:NetworkVar("Float", 3, "NextIdle")
     self:NetworkVar("Float", 4, "NextDecreaseShotsFired")
     self:NetworkVar("Int", 0, "WeaponType")
     self:NetworkVar("Int", 1, "ShotsFired")
     self:NetworkVar("Int", 2, "Direction")
     self:NetworkVar("Int", 3, "WeaponID")
+    self:NetworkVar("Int", 4, "SpecialReload")
     self:NetworkVar("Bool", 0, "InReload")
-    self:NetworkVar("Bool", 1, "HasSilencer")
     self:NetworkVar("Bool", 2, "DelayFire")
-    self:NetworkVar("Bool", 3, "FullReload")
     --Jvs: stuff that is scattered around all the weapons code that I'm going to try and unify here
     self:NetworkVar("Float", 5, "ZoomFullyActiveTime")
     self:NetworkVar("Float", 6, "ZoomLevel")
     self:NetworkVar("Float", 7, "NextBurstFire") --when the next burstfire is gonna happen, same as nextprimaryattack
-    self:NetworkVar("Float", 8, "DoneSwitchingSilencer")
     self:NetworkVar("Float", 9, "BurstFireDelay") --the speed of the burst fire itself, 0.5 means two shots every second etc
     self:NetworkVar("Float", 10, "LastFire")
     self:NetworkVar("Float", 11, "TargetFOVRatio")
@@ -246,10 +178,9 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 14, "CurrentFOVRatio")
     self:NetworkVar("Float", 15, "StoredFOVRatio")
     self:NetworkVar("Float", 16, "LastZoom")
-    self:NetworkVar("Bool", 4, "BurstFireEnabled")
     self:NetworkVar("Bool", 5, "ResumeZoom")
     self:NetworkVar("Int", 4, "BurstFires") --goes from X to 0, how many burst fires we're going to do
-    self:NetworkVar("Int", 5, "MaxBurstFires")
+    -- self:NetworkVar("Int", 5, "MaxBurstFires")
 end
 
 -- function SWEP:SetHoldType(ht)
@@ -261,8 +192,7 @@ function SWEP:Deploy()
     self:SetDelayFire(false)
     self:SetZoomFullyActiveTime(-1)
     self:SetAccuracy(0.2)
-    self:SetBurstFireEnabled(false)
-    self:SetBurstFires(self:GetMaxBurstFires())
+    self:SetBurstFires(self.BurstFire or 0)
     self:SetCurrentFOVRatio(1)
     self:SetTargetFOVRatio(1)
     self:SetStoredFOVRatio(1)
@@ -276,8 +206,8 @@ function SWEP:Deploy()
     self:SetShotsFired(0)
     self:SetInReload(false)
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
-    self:SetNextPrimaryAttack(CurTime() + self:SequenceDuration())
-    self:SetNextSecondaryAttack(CurTime() + self:SequenceDuration())
+    self:SetNextPrimaryFire(CurTime() + self:SequenceDuration())
+    self:SetNextSecondaryFire(CurTime() + self:SequenceDuration())
 
     if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
         self:GetOwner():SetFOV(0, 0)
@@ -293,7 +223,7 @@ function SWEP:HandleZoom()
     local pPlayer = self:GetOwner()
     if not pPlayer:IsValid() then return end
 
-    if ((self:GetNextPrimaryAttack() <= CurTime()) and self:GetResumeZoom()) then
+    if ((self:GetNextPrimaryFire() <= CurTime()) and self:GetResumeZoom()) then
         if (self:GetFOVRatio() == self:GetLastZoom()) then
             -- return the fade level in zoom.
             self:SetResumeZoom(false)
@@ -302,7 +232,7 @@ function SWEP:HandleZoom()
         end
 
         self:SetFOVRatio(self:GetLastZoom(), 0.05)
-        self:SetNextPrimaryAttack(CurTime() + 0.05)
+        self:SetNextPrimaryFire(CurTime() + 0.05)
         self:SetZoomFullyActiveTime(CurTime() + 0.05) -- Make sure we think that we are zooming on the server so we don't get instant acc bonus
     end
 end
@@ -340,7 +270,7 @@ end
 
 function SWEP:Think()
     self:FOVThink()
-    self:UpdateWorldModel()
+    -- self:UpdateWorldModel()
     self:HandleZoom()
     local pPlayer = self:GetOwner()
     if not IsValid(pPlayer) then return end
@@ -351,7 +281,7 @@ function SWEP:Think()
 			can add other behaviours ( such as cs:go finishing the reload with a different delay, based on when the
 			magazine actually gets inserted )
 	]]
-    if self:InReload() and self:GetNextPrimaryAttack() <= CurTime() then
+    if self:GetInReload() and self:GetNextPrimaryFire() <= CurTime() then
         -- complete the reload.
         --Jvs TODO: shotgun reloading here
         local j = math.min(self:GetMaxClip1() - self:Clip1(), pPlayer:GetAmmoCount(self:GetPrimaryAmmoType()))
@@ -378,27 +308,30 @@ function SWEP:Think()
             self:SetNextDecreaseShotsFired(CurTime() + 0.4)
         end
 
-        -- if it's a pistol then set the shots fired to 0 after the player releases a button
-        if self:IsPistol() then
-            self:SetShotsFired(0)
-        else
-            if self:GetShotsFired() > 0 and self:GetNextDecreaseShotsFired() < CurTime() then
-                self:SetNextDecreaseShotsFired(CurTime() + 0.0225)
-                self:SetShotsFired(self:GetShotsFired() - 1)
-            end
+        -- REMOVED?
+        -- if self:IsPistol() then
+        --     self:SetShotsFired(0)
+        -- else
+        if self:GetShotsFired() > 0 and self:GetNextDecreaseShotsFired() < CurTime() then
+            self:SetNextDecreaseShotsFired(CurTime() + 0.0225)
+            self:SetShotsFired(self:GetShotsFired() - 1)
         end
-
-        self:Idle()
+        -- end
+        -- there are no idle animations
+        -- if CurTime() > self:GetNextIdle() and self:GetNextPrimaryFire() <= CurTime() and self:GetNextSecondaryFire() <= CurTime() and self:Clip1() ~= 0 then
+        --     self:SetNextIdle(CurTime() + self.IdleInterval)
+        --     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_IDLE))
+        -- end
     end
 
-    if not self:InReload() and self:GetBurstFireEnabled() and self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
-        if self:GetBurstFires() < (self:GetMaxBurstFires() - 1) then
+    if not self:GetInReload() and self.BurstFire and self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
+        if self:GetBurstFires() < (self.BurstFire - 1) then
             if self:Clip1() <= 0 then
-                self:SetBurstFires(self:GetMaxBurstFires())
+                self:SetBurstFires(self.BurstFire)
             else
-                self:SetNextPrimaryAttack(CurTime() - 1)
+                self:SetNextPrimaryFire(CurTime() - 1)
                 self:PrimaryAttack()
-                self:SetNextPrimaryAttack(CurTime() + 0.5) --this artificial delay is inherited from the glock code
+                self:SetNextPrimaryFire(CurTime() + 0.5) --this artificial delay is inherited from the glock code
                 self:SetBurstFires(self:GetBurstFires() + 1)
             end
         else
@@ -411,7 +344,7 @@ function SWEP:Think()
 end
 
 function SWEP:DoFireEffects()
-    if not self:IsSilenced() then
+    if not self.Silenced then
         --Jvs: on the client, we don't want to show this muzzle flash on the owner of this weapon if he's in first person
         --TODO: spectator support? who even gives a damn but ok
         if CLIENT then
@@ -423,23 +356,13 @@ function SWEP:DoFireEffects()
         data:SetFlags(0)
         data:SetEntity(self)
         data:SetAttachment(self:LookupAttachment("muzzle"))
-        data:SetScale(self:GetWeaponInfo().MuzzleFlashScale)
+        data:SetScale(self.MuzzleFlashScale)
 
         if self.CSMuzzleX then
             util.Effect("CS_MuzzleFlash_X", data)
         else
             util.Effect("CS_MuzzleFlash", data)
         end
-    end
-end
-
-function SWEP:Idle()
-    if CurTime() <= self:GetNextIdle() then return end
-    if self:GetNextPrimaryAttack() > CurTime() or self:GetNextSecondaryAttack() > CurTime() then return end
-
-    if self:Clip1() ~= 0 then
-        self:SetNextIdle(CurTime() + self:GetWeaponInfo().IdleInterval)
-        self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_IDLE))
     end
 end
 
@@ -452,15 +375,29 @@ function SWEP:IsScoped()
     return false
 end
 
-function SWEP:BaseGunFire(spread, cycletime, primarymode)
-    -- ADDED
-    if self._WeaponInfo.WeaponType == "SubMachinegun" then
-        cycletime = cycletime * 5 / 6
-    end
+function SWEP:GunFire(spread)
+    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
 
-    local pPlayer = self:GetOwner()
-    if not pPlayer:IsValid() then return false end -- this happens with certain addons
-    local pCSInfo = self:GetWeaponInfo()
+    --Jvs: this is so goddamn lame
+    if self:GetOwner():GetAbsVelocity():Length2DSqr() > 25 or not self:GetOwner():OnGround() then
+        self:KickBack(unpack(self.KickMoving))
+    elseif self:GetOwner():Crouching() then
+        self:KickBack(unpack(self.KickCrouching))
+    else
+        self:KickBack(unpack(self.KickStanding))
+    end
+end
+
+SWEP.KickMoving = {0, 0, 0, 0, 0, 0, 0}
+
+SWEP.KickStanding = {0, 0, 0, 0, 0, 0, 0}
+
+SWEP.KickCrouching = {0, 0, 0, 0, 0, 0, 0}
+
+function SWEP:BaseGunFire(spread, cycletime, primarymode)
+    local ply = self:GetOwner()
+    -- print("GF",cycletime)
+    -- cycletime=cycletime*10 
     self:SetDelayFire(true)
     self:SetShotsFired(self:GetShotsFired() + 1)
 
@@ -479,8 +416,8 @@ function SWEP:BaseGunFire(spread, cycletime, primarymode)
     -- end
     -- Out of ammo?
     if self:Clip1() <= 0 then
-        self:PlayEmptySound()
-        self:SetNextPrimaryAttack(CurTime() + 0.2)
+        self:EmitSound((self.GunType == "pistol" or self.GunType == "heavypistol") and "Default.ClipEmpty_Pistol" or "Default.ClipEmpty_Rifle", nil, nil, nil, CHAN_AUTO)
+        self:SetNextPrimaryFire(CurTime() + 0.2)
 
         return false
     end
@@ -488,206 +425,148 @@ function SWEP:BaseGunFire(spread, cycletime, primarymode)
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_PRIMARYATTACK))
     self:SetClip1(self:Clip1() - 1)
 
-    if SERVER and (self.Owner.GetLocationName and self.Owner:GetLocationName() == "Weapons Testing Range") then
-        self.Owner:GiveAmmo(1, self:GetPrimaryAmmoType())
+    if SERVER and (ply.GetLocationName and ply:GetLocationName() == "Weapons Testing Range") then
+        ply:GiveAmmo(1, self:GetPrimaryAmmoType())
     end
 
     -- player "shoot" animation
-    pPlayer:DoAttackEvent()
-    spread = self:MyBuildSpread()
+    ply:DoAttackEvent()
+    spread = self:GetSpread()
     -- self:FireCSSBullet(pPlayer:GetAimVector():Angle() + 2 * pPlayer:GetViewPunchAngles(), primarymode, spread)
-    self:FireCSSBullet(pPlayer:EyeAngles() + pPlayer:GetViewPunchAngles(), primarymode, spread)
-    self:DoFireEffects()
-    self:SetNextPrimaryAttack(CurTime() + cycletime)
-    self:SetNextSecondaryAttack(CurTime() + cycletime)
-    self:SetNextIdle(CurTime() + pCSInfo.TimeToIdle)
+    local ang = ply:EyeAngles() + ply:GetViewPunchAngles()
+    --use "special1" for silenced m4 and usp
+    self:WeaponSound("single_shot")
 
-    if self:GetBurstFireEnabled() then
+    for i = 1, self.Bullets do
+        local r = util.SharedRandom("Spread", 0, 2 * math.pi)
+        local x = math.sin(r) * util.SharedRandom("SpreadX" .. i, 0, 0.5)
+        local y = math.cos(r) * util.SharedRandom("SpreadY" .. i, 0, 1)
+        local dir = ang:Forward() + x * spread * ang:Right() + y * spread * ang:Up()
+        dir:Normalize()
+        self:PenetrateBullet(dir, ply:GetShootPos(), self.Range, self.Penetration, self.Damage, self.RangeModifier, self:GetPenetrationFromBullet())
+    end
+
+    self:DoFireEffects()
+    self:SetNextPrimaryFire(CurTime() + cycletime)
+    self:SetNextSecondaryFire(CurTime() + cycletime)
+
+    -- self:SetNextIdle(CurTime() + self.TimeToIdle)
+    if self.BurstFire then
         self:SetNextBurstFire(CurTime() + self:GetBurstFireDelay())
     else
         self:SetNextBurstFire(-1)
     end
 
     self:SetLastFire(CurTime())
+    self:AddSpray()
 
     return true
 end
 
-function SWEP:ToggleBurstFire()
-    if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
-        if self:GetBurstFireEnabled() then
-            self:GetOwner():PrintMessage(HUD_PRINTCENTER, tobool(tonumber(self:GetWeaponInfo().FullAuto)) and "#Cstrike_TitlesTXT_Switch_To_FullAuto" or "#Cstrike_TitlesTXT_Switch_To_SemiAuto")
-        else
-            self:GetOwner():PrintMessage(HUD_PRINTCENTER, "#Cstrike_TitlesTXT_Switch_To_BurstFire")
-        end
-    end
-
-    self:SetBurstFireEnabled(not self:GetBurstFireEnabled())
+function SWEP:MovementPenalty()
+    -- softplus: ln(1+exp x)
+    return math.Clamp((self:GetOwner():GetAbsVelocity():Length2D() - 10) / 100, 0, 1)
 end
 
-function SWEP:FireCSSBullet(ang, primarymode, spread)
+function SWEP:GetSpread()
     local ply = self:GetOwner()
-    local pCSInfo = self:GetWeaponInfo()
-    local iDamage = pCSInfo.Damage
-    local flRangeModifier = pCSInfo.RangeModifier
-    local soundType = "single_shot"
-
-    --Valve's horrible hacky balance
-    --Jvs: TODO , implement this either in the parser or directly on the weapon itself
-    if self:GetClass() == "gun_glock" then
-        if not primarymode then
-            iDamage = 18 -- reduced power for burst shots
-            flRangeModifier = 0.9
-        end
-    elseif self:GetClass() == "gun_m4a1" then
-        if not primarymode then
-            flRangeModifier = 0.95 -- slower bullets in silenced mode
-            soundType = "special1"
-        end
-    elseif self:GetClass() == "gun_usp" then
-        if not primarymode then
-            iDamage = 30 -- reduced damage in silenced mode
-            soundType = "special1"
-        end
-    end
-
-    self:WeaponSound(soundType)
-
-    for iBullet = 1, pCSInfo.Bullets do
-        local r = util.SharedRandom("Spread", 0, 2 * math.pi)
-        local x = math.sin(r) * util.SharedRandom("SpreadX" .. iBullet, 0, 0.5)
-        local y = math.cos(r) * util.SharedRandom("SpreadY" .. iBullet, 0, 1)
-        local dir = ang:Forward() + x * spread * ang:Right() + y * spread * ang:Up()
-        dir:Normalize()
-        local flDistance = self:GetWeaponInfo().Range
-        local iPenetration = self:GetWeaponInfo().Penetration
-        local flRangeModifier = self:GetWeaponInfo().RangeModifier
-        self:PenetrateBullet(dir, ply:GetShootPos(), flDistance, iPenetration, iDamage, flRangeModifier, self:GetPenetrationFromBullet())
-    end
-end
-
-function SWEP:MyBuildSpread()
-    local pCSInfo = self:GetWeaponInfo()
-    local pPlayer = self:GetOwner()
-    if not pPlayer:IsValid() then return end
+    if not ply:IsValid() then return end
     local spread
-    local movepenalty = math.Clamp((pPlayer:GetAbsVelocity():Length2D() - 10) / 100, 0, 1)
+    local movepenalty = self:MovementPenalty()
 
     --added
-    if pCSInfo.WeaponType == "Rifle" or pCSInfo.WeaponType == "SniperRifle" then
+    if self.WeaponType == "Rifle" or self.WeaponType == "SniperRifle" then
         movepenalty = movepenalty * 2
     end
 
-    if (not self:IsScoped() and not self:GetBurstFireEnabled() and not self:IsSilenced()) then
-        spread = pCSInfo.Spread + (pPlayer:Crouching() and pCSInfo.InaccuracyCrouch or pCSInfo.InaccuracyStand)
+    --and not self:GetBurstFireEnabled()) then
+    if not self:IsScoped() then
+        spread = self.Spread + (ply:Crouching() and self.InaccuracyCrouch or self.InaccuracyStand)
 
-        if (pPlayer:GetMoveType() == MOVETYPE_LADDER) then
-            spread = spread + pCSInfo.InaccuracyLadder
+        if (ply:GetMoveType() == MOVETYPE_LADDER) then
+            spread = spread + self.InaccuracyLadder
         end
 
-        -- if (pPlayer:GetAbsVelocity():Length2D() > 50) then
-        spread = spread + pCSInfo.InaccuracyMove * movepenalty
+        -- if (ply:GetAbsVelocity():Length2D() > 50) then
+        spread = spread + self.InaccuracyMove * movepenalty
 
         -- end
-        if (pPlayer:IsOnFire()) then
-            spread = spread + pCSInfo.InaccuracyFire
-        end
-
-        if (not pPlayer:IsOnGround()) then
-            spread = spread + pCSInfo.InaccuracyJump
+        if (not ply:IsOnGround()) then
+            spread = spread + self.InaccuracyJump
         end
     else
-        spread = pCSInfo.SpreadAlt + (pPlayer:Crouching() and pCSInfo.InaccuracyCrouchAlt or not pPlayer:IsOnGround() and pCSInfo.InaccuracyJumpAlt or pCSInfo.InaccuracyStandAlt)
+        spread = self.SpreadAlt + (ply:Crouching() and self.InaccuracyCrouchAlt or not ply:IsOnGround() and self.InaccuracyJumpAlt or self.InaccuracyStandAlt)
 
-        if (pPlayer:GetMoveType() == MOVETYPE_LADDER) then
-            spread = spread + pCSInfo.InaccuracyLadderAlt
+        if (ply:GetMoveType() == MOVETYPE_LADDER) then
+            spread = spread + self.InaccuracyLadderAlt
         end
 
-        -- if (pPlayer:GetAbsVelocity():Length2D() > 50) then
-        spread = spread + pCSInfo.InaccuracyMoveAlt * movepenalty
+        -- if (ply:GetAbsVelocity():Length2D() > 50) then
+        spread = spread + self.InaccuracyMoveAlt * movepenalty
 
         -- end
-        if (pPlayer:IsOnFire()) then
-            spread = spread + pCSInfo.InaccuracyFireAlt
-        end
-
-        if (not pPlayer:IsOnGround()) then
-            spread = spread + pCSInfo.InaccuracyJumpAlt
+        if (not ply:IsOnGround()) then
+            spread = spread + self.InaccuracyJumpAlt
         end
     end
 
     --added
     spread = spread * 1.5
-    local accuracy = 0.2
-    local pCSInfo = self:GetWeaponInfo()
-
-    -- These modifications feed back into flSpread eventually.
-    if pCSInfo.AccuracyDivisor ~= -1 then
-        local iShotsFired = self:GetShotsFired()
-
-        if pCSInfo.AccuracyQuadratic then
-            iShotsFired = iShotsFired * iShotsFired
-        else
-            iShotsFired = iShotsFired * iShotsFired * iShotsFired
-        end
-
-        accuracy = math.min((iShotsFired / pCSInfo.AccuracyDivisor) + pCSInfo.AccuracyOffset, pCSInfo.MaxInaccuracy)
-    end
-
-    -- print("AC9", accuracy, spread)
-    if self.GunType == "pistol" or self.GunType == "sniper" then
-        accuracy = (1 - accuracy)
-    end
+    -- local accuracy = 0.2
+    -- -- These modifications feed back into flSpread eventually.
+    -- if self.AccuracyDivisor ~= -1 then
+    --     local iShotsFired = self:GetShotsFired()
+    --     if self.AccuracyQuadratic then
+    --         iShotsFired = iShotsFired * iShotsFired
+    --     else
+    --         iShotsFired = iShotsFired * iShotsFired * iShotsFired
+    --     end
+    --     accuracy = math.min((iShotsFired / self.AccuracyDivisor) + self.AccuracyOffset, self.MaxInaccuracy)
+    -- end
+    -- -- print("AC9", accuracy, spread)
+    -- if self.GunType == "pistol" or self.GunType == "sniper" then
+    --     accuracy = (1 - accuracy)
+    -- end
     --(1 - self:GetAccuracy())
+    -- print("SPRAY", self:GetSpray(), self.SprayMax)
+    local sprayfactor = (self:GetSpray() ^ self.SprayExponent) + self.SprayBase
+    -- print("NEW")
+    -- sprayfactor = accuracy
 
-    return spread * accuracy
+    return spread * sprayfactor
 end
 
+-- OLD
 function SWEP:BuildSpread()
-    local pCSInfo = self:GetWeaponInfo()
-    local pPlayer = self:GetOwner()
-    if not pPlayer:IsValid() then return end
-    local spread
-
-    if (not self:IsScoped() and not self:GetBurstFireEnabled() and not self:IsSilenced()) then
-        spread = pCSInfo.Spread + (pPlayer:Crouching() and pCSInfo.InaccuracyCrouch or pCSInfo.InaccuracyStand)
-
-        if (pPlayer:GetMoveType() == MOVETYPE_LADDER) then
-            spread = spread + pCSInfo.InaccuracyLadder
-        end
-
-        if (pPlayer:GetAbsVelocity():Length2D() > 5) then
-            spread = spread + pCSInfo.InaccuracyMove
-        end
-
-        if (pPlayer:IsOnFire()) then
-            spread = spread + pCSInfo.InaccuracyFire
-        end
-
-        if (not pPlayer:IsOnGround()) then
-            spread = spread + pCSInfo.InaccuracyJump
-        end
-    else
-        spread = pCSInfo.SpreadAlt + (pPlayer:Crouching() and pCSInfo.InaccuracyCrouchAlt or not pPlayer:IsOnGround() and pCSInfo.InaccuracyJumpAlt or pCSInfo.InaccuracyStandAlt)
-
-        if (pPlayer:GetMoveType() == MOVETYPE_LADDER) then
-            spread = spread + pCSInfo.InaccuracyLadderAlt
-        end
-
-        if (pPlayer:GetAbsVelocity():Length2D() > 5) then
-            spread = spread + pCSInfo.InaccuracyMoveAlt
-        end
-
-        if (pPlayer:IsOnFire()) then
-            spread = spread + pCSInfo.InaccuracyFireAlt
-        end
-
-        if (not pPlayer:IsOnGround()) then
-            spread = spread + pCSInfo.InaccuracyJumpAlt
-        end
-    end
-
-    return spread * (1 - self:GetAccuracy())
+    -- local pPlayer = self:GetOwner()
+    -- if not pPlayer:IsValid() then return end
+    -- local spread
+    -- --and not self:GetBurstFireEnabled() and not self:IsSilenced()) then
+    -- if (not self:IsScoped()) then
+    --     spread = self.Spread + (pPlayer:Crouching() and self.InaccuracyCrouch or self.InaccuracyStand)
+    --     if (pPlayer:GetMoveType() == MOVETYPE_LADDER) then
+    --         spread = spread + self.InaccuracyLadder
+    --     end
+    --     if (pPlayer:GetAbsVelocity():Length2D() > 5) then
+    --         spread = spread + self.InaccuracyMove
+    --     end
+    --     if (not pPlayer:IsOnGround()) then
+    --         spread = spread + self.InaccuracyJump
+    --     end
+    -- else
+    --     spread = self.SpreadAlt + (pPlayer:Crouching() and self.InaccuracyCrouchAlt or not pPlayer:IsOnGround() and self.InaccuracyJumpAlt or self.InaccuracyStandAlt)
+    --     if (pPlayer:GetMoveType() == MOVETYPE_LADDER) then
+    --         spread = spread + self.InaccuracyLadderAlt
+    --     end
+    --     if (pPlayer:GetAbsVelocity():Length2D() > 5) then
+    --         spread = spread + self.InaccuracyMoveAlt
+    --     end
+    --     if (not pPlayer:IsOnGround()) then
+    --         spread = spread + self.InaccuracyJumpAlt
+    --     end
+    -- end
+    -- return spread * (1 - self:GetAccuracy())
+    return 0
 end
 
 function SWEP:GetPenetrationFromBullet()
@@ -788,12 +667,13 @@ function SWEP:PenetrateBullet(dir, vecStart, flDistance, iPenetration, iDamage, 
         AmmoType = self.Primary.Ammo,
         Distance = flDistance,
         Tracer = 1,
-        Attacker = self:GetOwner(),
         Damage = iDamage,
         Src = vecStart,
         Dir = dir,
         Spread = vector_origin,
         Callback = function(hitent, trace, dmginfo)
+            dmginfo:SetInflictor(self)
+
             --TODO: penetration
             --unfortunately this can't be done with a static function or we'd need to set global variables for range and shit
             if flRangeModifier then
@@ -802,15 +682,8 @@ function SWEP:PenetrateBullet(dir, vecStart, flDistance, iPenetration, iDamage, 
                 dmginfo:SetDamage(dmginfo:GetDamage() * math.pow(flRangeModifier, (flCurrentDistance / 500)))
             end
 
-            --extra
             if trace.HitGroup == HITGROUP_HEAD then
-                dmginfo:ScaleDamage(1.2)
-            else
-                dmginfo:ScaleDamage(0.8)
-            end
-
-            if self:GetClass() == "gun_awp" then
-                dmginfo:ScaleDamage(2)
+                dmginfo:ScaleDamage(self.HeadshotMultiplier or 1)
             end
 
             if (trace.Fraction == 1) then return end
@@ -868,7 +741,4 @@ function SWEP:PenetrateBullet(dir, vecStart, flDistance, iPenetration, iDamage, 
     }
     -- Disabled lmao
     -- self:PenetrateBullet(dir, vecStart, flDistance, iPenetration, iDamage, flRangeModifier, fPenetrationPower, flPenetrationDistance, flCurrentDistance)
-end
-
-function SWEP:UpdateWorldModel()
 end
