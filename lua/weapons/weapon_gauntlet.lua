@@ -37,7 +37,6 @@ end)
 function SWEP:Initialize()
 end
 
-
 local meta = FindMetaTable("Player")
 
 function meta:Fizzle(attacker, inflictor, damage)
@@ -108,9 +107,9 @@ function SWEP:GetTargetNearness(v)
     local cn = math.deg(math.acos(a:Dot(b)))
     if (cn > self.TargetCone) then return end
     if (dis * 20 > 1000) then return end --2000
+
     return cn + dis
 end
-
 
 function SWEP:FindTarget()
     local eyetrace = self.Owner:GetEyeTrace()
@@ -172,6 +171,7 @@ hook.Add("PreDrawHalos", "InfinityGauntletHalo", function()
             if (ply.GetActiveWeapon and IsValid(ply:GetActiveWeapon())) then
                 tb[2] = ply:GetActiveWeapon()
             end
+
             halo.Add(tb, Color(128, 0, 255), 2, 2, 2, true, true)
         end
     end
@@ -189,7 +189,7 @@ function SWEP:PrimaryAttack()
         SuppressHostEvents(self:GetOwner())
     end
 
-    if(IsValid(target))then
+    if (IsValid(target)) then
         self:Snap(target)
         self:SetNextPrimaryFire(CurTime() + 0.5)
     end
@@ -219,39 +219,25 @@ function SWEP:CreateWorldModel()
     return self.WModel
 end
 
-
-
 function SWEP:DrawWorldModel()
-    if (not IsValid(self:GetOwner())) then 
-        
+    if (not IsValid(self:GetOwner())) then
         local pos = self:GetPos()
-        local ang = Angle(0,0,0)
-        self.Spin = self.Spin or math.Rand(0,360)
-        ang:RotateAroundAxis(Vector(0,0,1),self.Spin + CurTime()*90)
-
-        ang:RotateAroundAxis(ang:Right(),15)
-
-        ang:RotateAroundAxis(ang:Forward(),15)
-
-
-
-        pos = pos + ang:Right()*12
-        pos = pos + ang:Forward()*-24
-
-        pos = pos + Vector(0,0,math.sin(CurTime()*2)*2)
-
-
+        local ang = Angle(0, 0, 0)
+        self.Spin = self.Spin or math.Rand(0, 360)
+        ang:RotateAroundAxis(Vector(0, 0, 1), self.Spin + CurTime() * 90)
+        ang:RotateAroundAxis(ang:Right(), 15)
+        ang:RotateAroundAxis(ang:Forward(), 15)
+        pos = pos + ang:Right() * 12
+        pos = pos + ang:Forward() * -24
+        pos = pos + Vector(0, 0, math.sin(CurTime() * 2) * 2)
         local wm = self:CreateWorldModel()
-
-
-
         wm:SetModelScale(3.5)
-
         wm:SetRenderOrigin(pos)
         wm:SetRenderAngles(ang)
         wm:DrawModel()
-    return end
 
+        return
+    end
 
     local wm = self:CreateWorldModel()
     local bone = self.Owner:LookupBone("ValveBiped.Bip01_L_Hand") or 0
@@ -266,7 +252,6 @@ function SWEP:DrawWorldModel()
     if (ba) then
         oang = ba
     end
-
 
     wm:SetModelScale(3.5)
     opos = opos + oang:Right() * -18
