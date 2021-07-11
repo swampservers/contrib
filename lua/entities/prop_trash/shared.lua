@@ -3,6 +3,68 @@
 AddCSLuaFile()
 DEFINE_BASECLASS("base_anim")
 ENT.Type = "anim"
+local Entity = FindMetaTable("Entity")
+
+function Entity:GetTrashClass()
+    local tc = self:GetNW2String("trc")
+
+    if tc == "" then
+        if self:GetClass():StartWith("prop_trash") then return self:GetClass() end
+    else
+        return tc
+    end
+end
+
+if CLIENT then
+    -- hook.Add("OnEntityCreated","CreatedTrashProp",function(ent)
+    --     -- if ent:GetClass()=="prop_physics" then print("TC1", ent:GetTrashClass(),  ent:GetModel()) end
+    -- end)
+    hook.Add("NetworkEntityCreated", "CreatedTrashProp", function(ent)
+        -- if ent:GetClass()=="prop_physics" then print("TC2", ent:GetTrashClass(),  ent:GetModel()) end
+        if ent:GetTrashClass() and not ent.SetupTrashAlready then
+            ent.SetupTrashAlready = true
+            ent:SetTrashClass(ent:GetTrashClass())
+            ent:InstallDataTable()
+            ent:SetupDataTables()
+            ent:Initialize()
+        end
+    end)
+
+    hook.Add("EntityNetworkedVarChanged", "CreatedTrashProp", function(ent, name, oldval, newval)
+        if name == "trc" and ent:GetModel() and not ent.SetupTrashAlready then
+            ent.SetupTrashAlready = true
+            ent:SetTrashClass(newval)
+            ent:InstallDataTable()
+            ent:SetupDataTables()
+            ent:Initialize()
+        end
+    end)
+end
+
+local function copyentitytable(self, class)
+    local t = scripted_ents.GetStored(class)
+
+    if t.Base and t.Base ~= "base_anim" then
+        copyentitytable(self, t.Base)
+    end
+
+    local mytab = self:GetTable()
+
+    for k, v in pairs(t.t) do
+        mytab[k] = v
+    end
+end
+
+if SERVER then
+    function Entity:SetTrashClass(tc)
+        self:SetNW2String("trc", tc)
+        copyentitytable(self, tc)
+    end
+else
+    function Entity:SetTrashClass(tc)
+        copyentitytable(self, tc)
+    end
+end
 
 PropTrashLightData = PropTrashLightData or {
     ["models/props_interiors/furniture_lamp01a.mdl"] = {
@@ -40,14 +102,36 @@ PropTrashDoors = {
 }
 
 function ENT:SetupDataTables()
-    self:NetworkVar("String", 0, "OwnerID")
+    -- Use instead of Health so we can monitor it
+    self:NetworkVar("Float", 0, "Strength")
+
+    if SERVER then
+        self:SetStrength(1)
+    else
+        self:NetworkVarNotify("Strength", function(ent, name, old, new)
+            DAMAGED_TRASH[ent] = (ent:GetTrashClass() and name == "Strength" and new < 1) and true or nil
+        end)
+    end
+
+    --
+    self:NetworkVar("String", 0, "MaterialData")
+
+    if CLIENT then
+        self:NetworkVarNotify("MaterialData", function(ent, name, old, new)
+            ent:ApplyMaterialData(new)
+        end)
+    end
+
+    --
+    self:NetworkVar("String", 1, "OwnerID")
     self:NetworkVar("Bool", 0, "Taped")
     self:NetworkVar("Int", 0, "Rating")
-    self:SetRating(4)
+
+    if SERVER then
+        self:SetRating(4)
+    end
+
     self:NetworkVar("Int", 1, "ItemID")
-    -- self:NetworkVar("Bool", 1, "Painted")
-    self:NetworkVar("Vector", 0, "UnboundedColor")
-    self:SetUnboundedColor(Vector(1, 1, 1))
 end
 
 ENT.CanChangeTrashOwner = true

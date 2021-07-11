@@ -320,8 +320,8 @@ function SWEP:GetDeleteEntities()
     local id = self.Owner:SteamID()
     local cleanups = {}
 
-    for i, v in ipairs(ents.FindByClass("prop_trash")) do
-        if v:GetLocationOwner() == id and v:GetPos():Distance(self.Owner:GetPos()) <= TRASH_MANAGER_LOAD_RANGE then
+    for i, v in ipairs(ents.GetAll()) do
+        if v:GetTrashClass() and v:GetLocationOwner() == id and v:GetPos():Distance(self.Owner:GetPos()) <= TRASH_MANAGER_LOAD_RANGE then
             table.insert(cleanups, v)
         end
     end
@@ -337,11 +337,13 @@ function SWEP:GetSaveEntities()
         itemids[v.id] = v
     end
 
-    for i, v in ipairs(ents.FindByClass("prop_trash*")) do
-        local id = v:GetItemID()
+    for i, v in ipairs(ents.GetAll()) do
+        if v:GetTrashClass() then
+            local id = v:GetItemID()
 
-        if id ~= 0 and itemids[id] and v:GetTaped() and not v:IsDormant() then
-            table.insert(saves, v)
+            if id ~= 0 and itemids[id] and v:GetTaped() and not v:IsDormant() then
+                table.insert(saves, v)
+            end
         end
     end
 

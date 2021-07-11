@@ -169,7 +169,8 @@ if CLIENT then
             local trace = util.TraceLine(tr)
 
             if trace.Hit then
-                if trace.Entity:GetClass():StartWith("prop_trash") then
+                --:GetClass():StartWith("prop_trash") then
+                if trace.Entity:GetTrashClass() then
                     PropTrashLookedAt = trace.Entity
                     PropTrashLookedAtPos = trace.HitPos
                 end

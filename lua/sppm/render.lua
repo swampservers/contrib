@@ -27,7 +27,7 @@ function PPM_PrePonyDraw(ent)
 
     PPM_PONIES_NEARBY[ply] = true
     if ent:IsPlayer() and SS_ApplyMaterialMods then return end
-    ply:SetSubMaterial()
+    ent:SetSubMaterial()
     PPM_SetPonyMaterials(ent)
 
     -- Only applies to editor models; ragdolls are handled in hook below and players are handled serverside
@@ -59,12 +59,7 @@ function PPM_SetPonyMaterials(ent)
 end
 
 hook.Add("PrePlayerDraw", "PPM_PrePlayerDraw", function(ply)
-    if not ply:Alive() then
-        print("DEAD?")
-
-        return true
-    end
-
+    if not ply:Alive() then return end
     PPM_PrePonyDraw(ply)
 end)
 
@@ -139,7 +134,10 @@ function PPM_CLONE_MATERIAL(mat, forcename)
         end
 
         if type(v) == "VMatrix" then
-            assert(v:IsIdentity())
+            if not (v:IsIdentity()) then
+                print("NON IDENTITY MATRIX!!!")
+            end
+
             kvs[k] = nil
         end
 

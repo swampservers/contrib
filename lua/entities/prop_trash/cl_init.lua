@@ -3,6 +3,32 @@
 include('shared.lua')
 DEFINE_BASECLASS("base_anim")
 TRASH_LIGHTS = TRASH_LIGHTS or {}
+DAMAGED_TRASH = DAMAGED_TRASH or {}
+
+hook.Add("PostDrawTranslucentRenderables", "TrashDamage", function()
+    for ent, _ in pairs(DAMAGED_TRASH) do
+        if IsValid(ent) then
+            if MININGCRACKMATERIALS then
+                local acd = ent:GetPos():DistToSqr(EyePos())
+                local acr = AutoCullBase() * (ent:GetModelRadius() or 1)
+
+                if acd < acr * 1 then
+                    local h = math.min(math.ceil((1 - ent:GetStrength()) * 10), 10)
+
+                    if h > 0 then
+                        render.MaterialOverride(MININGCRACKMATERIALS[h])
+                        render.DepthRange(0, 0.9998)
+                        ent:DrawModel()
+                        render.DepthRange(0, 1)
+                        render.MaterialOverride()
+                    end
+                end
+            end
+        else
+            DAMAGED_TRASH[ent] = nil
+        end
+    end
+end)
 
 function ENT:Initialize()
     -- default light thing
@@ -19,52 +45,111 @@ function ENT:Initialize()
     end
 
     TRASH_LIGHTS[self] = PropTrashLightData[self:GetModel()]
+    self:ApplyMaterialData(self:GetMaterialData())
+    -- local col = self:GetUnboundedColor()
+    -- local imgur, own = self:GetImgur()
+    -- print(self, col, imgur, self:GetModel())
+    -- if imgur then
+    --     self:SetWebMaterial({
+    --         id = imgur,
+    --         owner = own,
+    --         params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
+    --     })
+    -- else
+    --     if col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
+    --         print("COL",self)
+    --         self:SetColoredBaseMaterial(col)
+    --     end
+    -- end
+end
+
+TRASH_PAINT_MATERIALS = TRASH_PAINT_MATERIALS or {}
+
+local function GetPaintMaterial(paintid, col)
+    TRASH_PAINT_MATERIALS[paintid] = TRASH_PAINT_MATERIALS[paintid] or {}
+    local t = TRASH_PAINT_MATERIALS[paintid]
+    local colstr = tostring(col)
+
+    if not t[colstr] then
+        t[colstr] = CreateMaterial("trashpaint" .. paintid .. " " .. colstr:gsub("%.", "p"), "VertexLitGeneric", {
+            ["$basetexture"] = "phoenix_storms/gear",
+            ["$color2"] = "[" .. tostring(col * 1.7 + 0.3) .. "]"
+        })
+        --was *1.6 + 0.3
+    end
+
+    return t[colstr]
+end
+
+-- function ENT:GetUnboundedColor()
+--     return self:GetNWVector("col",Vector(1,1,1))
+-- end
+-- put it into one string to make sure only one update callback runs
+function ENT:ApplyMaterialData(data)
+    data = util.JSONToTable(data) or {}
+
+    if data.p then
+        self:SetMaterial("!" .. GetPaintMaterial(data.p, data.pc):GetName())
+        self.lightcolor = data.pc
+
+        return
+    end
+
+    local col = data.c or Vector(1, 1, 1)
+    self.lightcolor = col
+
+    if data.i then
+        self:SetWebMaterial({
+            id = data.i,
+            owner = data.o,
+            params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
+        })
+    elseif col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
+        self:SetColoredBaseMaterial(col)
+    else
+        self:SetMaterial()
+    end
 end
 
 function ENT:Draw()
-    local acd = self:GetPos():DistToSqr(EyePos())
-    local acr = AutoCullBase() * (self:GetModelRadius() or 1)
-    if acd > acr * 3.5 then return end
-    local painted = self:GetMaterial() == "phoenix_storms/gear"
-
-    if painted then
-        local cr, cg, cb = render.GetColorModulation()
-        render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3, (cb * 1.6) + 0.3)
-    else
-        if self.GetUnboundedColor then
-            local c = self:GetUnboundedColor()
-            render.SetColorModulation(c.x, c.y, c.z)
-        end
-
-        local imgur, own = self:GetImgur()
-
-        if imgur then
-            render.MaterialOverride(ImgurMaterial({
-                id = imgur,
-                owner = own,
-                worksafe = true,
-                pos = self:GetPos(),
-                stretch = true,
-                shader = "VertexLitGeneric"
-            }))
-        end
-    end
-
+    --     local acd = self:GetPos():DistToSqr(EyePos())
+    --     local acr = AutoCullBase() * (self:GetModelRadius() or 1)
+    --     if acd > acr * 3.5 then return end
+    --     local painted = self:GetMaterial() == "phoenix_storms/gear"
+    --     if painted then
+    --         local cr, cg, cb = render.GetColorModulation()
+    --         render.SetColorModulation((cr * 1.6) + 0.3, (cg * 1.6) + 0.3, (cb * 1.6) + 0.3)
+    --     else
+    --         if self.GetUnboundedColor then
+    --             local c = self:GetUnboundedColor()
+    --             render.SetColorModulation(c.x, c.y, c.z)
+    --         end
+    --         local imgur, own = self:GetImgur()
+    --         if imgur then
+    --             render.MaterialOverride(ImgurMaterial({
+    --                 id = imgur,
+    --                 owner = own,
+    --                 worksafe = true,
+    --                 pos = self:GetPos(),
+    --                 stretch = true,
+    --                 shader = "VertexLitGeneric"
+    --             }))
+    --         end
+    --     end
     self:DrawModel()
-    render.SetColorModulation(1, 1, 1)
-    render.MaterialOverride()
-    local h = self:Health()
-
-    if h < 100 and MININGCRACKMATERIALS then
-        if acd > acr * 1 then return end
-        h = math.min(math.ceil((1 - (h / 100)) * 10), 10)
-        if h <= 0 then return end
-        render.MaterialOverride(MININGCRACKMATERIALS[h])
-        render.DepthRange(0, 0.9998)
-        self:DrawModel()
-        render.DepthRange(0, 1)
-        render.MaterialOverride()
-    end
+    --     render.SetColorModulation(1, 1, 1)
+    --     render.MaterialOverride()
+    --     -- local h = self.GetStrength and self:GetStrength()*100 or 100 --self:Health()
+    --     -- if h < 100 and MININGCRACKMATERIALS then
+    --     --     if acd > acr * 1 then return end
+    --     --     h = math.min(math.ceil((1 - (h / 100)) * 10), 10)
+    --     --     if h <= 0 then return end
+    --     --     render.MaterialOverride(MININGCRACKMATERIALS[h])
+    --     --     render.DepthRange(0, 0.9998)
+    --     --     self:DrawModel()
+    --     --     render.DepthRange(0, 1)
+    --     --     render.MaterialOverride()
+    --     -- end
 end
 
 TRASH_LIGHTS = TRASH_LIGHTS or {}
@@ -91,7 +176,7 @@ hook.Add("Think", "TrashLights", function()
 
         if (l.untaped or e:GetTaped()) and ep:DistToSqr(e:GetPos()) < (e:GetPos().z > -48 and 1000 * 1000 or 3000 * 3000) then
             local dlight = DynamicLight(e:EntIndex())
-            local c = e:GetUnboundedColor() * 255
+            local c = (e.lightcolor or Vector(1, 1, 1)) * 255
 
             if dlight then
                 dlight.pos = e:LocalToWorld(l.pos)
@@ -141,7 +226,7 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
         if PropTrashLookedAt:GetClass() == "prop_trash_zone" then
             local e = {}
 
-            for k, v in ipairs(ents.FindByClass('prop_trash')) do
+            for k, v in ipairs(FindAllTrash()) do
                 if v ~= PropTrashLookedAt and v:GetPos():WithinAABox(PropTrashLookedAt:GetBounds()) then
                     table.insert(e, v)
                 end

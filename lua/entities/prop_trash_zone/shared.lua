@@ -61,7 +61,7 @@ TrashZoneModels = {
 -- AddTrashClass("prop_trash_zone", TrashMobileTheaterData)
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables(self, true)
-    self:NetworkVar("String", 1, "TheaterName")
+    self:NetworkVar("String", 2, "TheaterName")
     self:NetworkVar("Int", 0, "MobileLocationIndex")
 end
 
@@ -201,13 +201,13 @@ function ENT:CannotTape(userid)
     local badcount = -1
     local mn, mx = self:GetBounds()
 
-    for k, v in pairs(ents.FindByClass("prop_trash*")) do
+    for k, v in pairs(FindAllTrash()) do
         if v:GetTaped() then
             if v:GetPos():WithinAABox(mn, mx) then
                 badcount = badcount + ((v:GetOwnerID() == self:GetOwnerID()) and -1 or 1)
             end
 
-            if v:GetClass() == "prop_trash_zone" and v:GetOwnerID() ~= self:GetOwnerID() then
+            if v:GetTrashClass() == "prop_trash_zone" and v:GetOwnerID() ~= self:GetOwnerID() then
                 local on, ox = v:GetBounds()
                 if not ((mn.x > ox.x or on.x > mx.x) or (mn.y > ox.y or on.y > mx.y) or (mn.z > ox.z or on.z > mx.z)) then return "Intersects other zone!" end
             end

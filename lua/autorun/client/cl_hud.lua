@@ -203,8 +203,6 @@ local wicons = {
     weapon_frag = "hud/ammo_grenade.png",
     weapon_rpg = "hud/ammo_rocket.png",
     weapon_crossbow = "hud/ammo_projectile.png",
-    weapon_357 = "hud/ammo_misc.png",
-    weapon_peacekeeper = "hud/ammo_misc.png",
 }
 
 hook.Add("HUDPaint", "SwampHealthAmmo", function()

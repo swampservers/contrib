@@ -1,5 +1,17 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+function FindAllTrash()
+    local tab = {}
+
+    for i, v in ipairs(ents.GetAll()) do
+        if v:GetTrashClass() then
+            table.insert(tab, v)
+        end
+    end
+
+    return tab
+end
+
 TRASH_MODEL_CLASSES = TRASH_MODEL_CLASSES or {}
 TRASH_SPAWN_COOLDOWN = 4
 TRASH_MANAGER_LOAD_RANGE = 1000

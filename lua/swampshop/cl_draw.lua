@@ -13,11 +13,10 @@ end
 
 function SS_PreRender(item)
     if item.cfg.imgur then
-        local imat = ImgurMaterial({
+        local imat = WebMaterial({
             id = item.cfg.imgur.url,
             owner = item.owner,
-            worksafe = true,
-            pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
+            -- worksafe = true, -- pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
             stretch = true,
             shader = "VertexLitGeneric",
             params = [[{["$alphatest"]=1}]]
@@ -49,9 +48,9 @@ function SS_PostRender()
 end
 
 hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
+    if not ply:Alive() then return end
     -- will be "false" if the model is not mounted yet
     local mounted_model = require_workshop_model(ply:GetModel()) and ply:GetModel()
-    if not ply:Alive() then return true end
 
     if ply.SS_PlayermodelModsLastModel ~= mounted_model then
         ply.SS_PlayermodelModsClean = false
@@ -76,6 +75,9 @@ hook.Add("PrePlayerDraw", "SS_BoneMods", function(ply)
     end
 end)
 
+-- hook.Add("NetworkEntityCreated","fix2",function(ent)
+--     if ent:IsPlayer() then print("NEC", ent) end
+--     ent.SS_PlayermodelModsClean=false end)
 local function AddScaleRecursive(ent, b, scn, recurse, safety)
     if safety[b] then
         error("BONE LOOP!")
@@ -200,7 +202,7 @@ function SS_ApplyMaterialMods(ent, mods)
             --     shader = "VertexLitGeneric",
             --     params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
             -- })
-            local mat = WebMaterial({
+            ent:SetWebSubMaterial(item.cfg.submaterial or 0, {
                 id = (item.cfg.imgur or {}).url or "EG84dgp.png",
                 owner = ent,
                 -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
@@ -208,8 +210,6 @@ function SS_ApplyMaterialMods(ent, mods)
                 shader = "VertexLitGeneric",
                 params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
             })
-
-            ent:SetSubMaterial(item.cfg.submaterial or 0, "!" .. mat:GetName())
         end
     end
 end
@@ -351,12 +351,12 @@ function SS_SetMaterialToItem(item, ent, ply)
     local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color or Vector(1, 1, 1)
 
     if item.cfg.imgur then
-        ent:SetMaterial("!" .. WebMaterial({
+        ent:SetWebMaterial({
             id = item.cfg.imgur.url,
             owner = ply,
             -- worksafe=true,
             params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
-        }):GetName())
+        })
         --     ent.RenderOverride = function(e, fl)
         --         SS_PreRender(item)
         --         e:DrawModel()
@@ -476,13 +476,7 @@ end
 
 hook.Add("PrePlayerDraw", 'SS_AttachPlayerAccessories', function(ply)
     if ply.SS_ShownItems == nil then return end
-
-    if not ply:Alive() then
-        print("DEAD???")
-
-        return
-    end
-
+    if not ply:Alive() then return end
     if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
     ply:SS_AttachAccessories(ply.SS_ShownItems)
 end)
@@ -587,17 +581,45 @@ hook.Add("Think", "SS_CleanupAccessories", function()
 end)
 
 function Entity:SetColoredBaseMaterial(color)
+    MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
     local sc = "c" .. tostring(color):gsub("%.", "p")
     self:SetMaterial()
     self:SetSubMaterial()
     local mats = self:GetMaterials()
 
     for i, mat in ipairs(mats) do
-        -- print(emi, mat)
-        local mi = i - 1
-        local mn = mat .. sc -- "coloredbase"..emi.."s"..mi
-        local clone = PPM_CLONE_MATERIAL(Material(mat), mn)
-        clone:SetVector("$color2", color)
-        self:SetSubMaterial(mi, "!" .. mn)
+        -- mat = mat:gsub("'","")
+        local mat2 = Material(MATERIALCLONEINDEX .. "/../" .. mat)
+        local matname = mat2:GetName()
+
+        if matname == "___error" then
+            -- print("INVALID MATERIAL", mat)
+            local data = file.Read("materials/" .. mat .. ".vmt", "GAME") or "vertexlitgeneric\n{\n}"
+            local fixdata = data:Trim():lower()
+
+            if not (fixdata:StartWith("vertexlitgeneric") or fixdata:StartWith("'vertexlitgeneric") or fixdata:StartWith("\"vertexlitgeneric")) then
+                print("WARNING, WRONG SHADER ON BAD MATERIAL")
+                print(mat, data)
+            elseif fixdata:find("proxies") then
+                print("WARNING, PROXIES ON BAD MATERIAL")
+                print(mat, data)
+            end
+
+            mat2 = CreateMaterial("clonedmaterial" .. MATERIALCLONEINDEX .. "and" .. i, "vertexlitgeneric", util.KeyValuesToTable(data))
+            --     mat2 = PPM_CLONE_MATERIAL(Material(mat), mat .. sc )
+            --     print("FIXED", mat2:GetName())
+            -- mat2 = Material(mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
+            -- print(mat2:GetName(), mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
+            matname = "!" .. mat2:GetName()
+        end
+
+        mat2:SetVector("$color2", color * mat2:GetVector("$color2"))
+        self:SetSubMaterial(i - 1, matname)
+        -- print(i, mat)
+        -- local mi = i - 1
+        -- local mn = mat .. sc -- "coloredbase"..emi.."s"..mi
+        -- local clone = PPM_CLONE_MATERIAL(Material(mat), mn)
+        -- clone:SetVector("$color2", color)
+        -- self:SetSubMaterial(mi, "!" .. mn)
     end
 end
