@@ -21,8 +21,6 @@ SWEP.PaintDelay = 0.25
 SWEP.SlotPos = 101
 SWEP.WindowTitle = "Pick a Stencil (You can use your keyboard to choose)"
 
-
-
 if (CLIENT) then
     CreateClientConVar("spraypaint_stencil", "stencil_decal27", true, true, "decal to spray from the can")
 end
@@ -56,14 +54,11 @@ SPRAYPAINT_STENCILS_WHITELIST["Nought"] = true
 SPRAYPAINT_STENCILS_WHITELIST["Cross"] = true
 SPRAYPAINT_STENCILS_WHITELIST["Eye"] = true
 SPRAYPAINT_STENCILS_WHITELIST["Smile"] = true
-
 SPRAYPAINT_MATLOOKUP["Noughtsncrosses"] = "decals/noughtsncrosses"
 SPRAYPAINT_MATLOOKUP["Nought"] = "decals/nought"
 SPRAYPAINT_MATLOOKUP["Cross"] = "decals/cross"
 SPRAYPAINT_MATLOOKUP["Eye"] = "decals/eye"
 SPRAYPAINT_MATLOOKUP["Smile"] = "decals/smile"
-
-
 SWEP.DecalSet = "SprayPaintStencils"
 SWEP.MenuColumns = 8
 SWEP.ConVar = "spraypaint_stencil"
