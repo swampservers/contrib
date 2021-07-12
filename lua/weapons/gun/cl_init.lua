@@ -34,7 +34,7 @@ function SWEP:DoDrawCrosshair(x, y)
     local barw = 1
     local barwofs = -math.floor(barw / 2)
     local pixelfix = barw % 2
-    local dist = math.Round((EyePos() + EyeAngles():Forward() + EyeAngles():Right() * self:GetSpread()):ToScreen().x - (ScrW() / 2))
+    local dist = math.Round((EyePos() + EyeAngles():Forward() + EyeAngles():Right() * self:GetSpread(true)):ToScreen().x - (ScrW() / 2))
     surface.SetDrawColor(255, 224, 48, 255)
     surface.DrawRect(x - (barl + dist) + pixelfix, y + barwofs, barl, barw)
     surface.DrawRect(x + dist, y + barwofs, barl, barw)
@@ -49,7 +49,7 @@ function SWEP:DrawHUDBackground()
     if self:IsScoped() then
         local x = ScrW() / 2
         local y = ScrH() / 2
-        local blur = math.max(0, self:GetSpread() - 0.003)
+        local blur = math.max(0, self:GetSpread(true) - 0.003)
         -- TODO use a gradient
         local boxsize = blur * ScrH() / 6
         surface.SetDrawColor(Color(0, 0, 0, math.max(0, 255 - blur * 3000)))

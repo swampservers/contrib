@@ -118,91 +118,27 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-
-function SWEP:PrimaryAttack()
-    local pPlayer = self.Owner
-    if not IsValid(pPlayer) then return end
-    if self:GetNextPrimaryFire() > CurTime() then return end
-
-    if pPlayer:WaterLevel() == 3 then
-        self:PlayEmptySound()
-        self:SetNextPrimaryFire(CurTime() + 0.2)
-
-        return false
-    end
-
-    local spread = self:BuildSpread()
-    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
-    self:SetSpecialReload(0)
-    local angle = pPlayer:GetViewPunchAngles()
-
-    -- Update punch angles.
-    if not pPlayer:OnGround() then
-        angle.x = angle.x - util.SharedRandom("M3PunchAngleGround", 4, 6)
-    else
-        angle.x = angle.x - util.SharedRandom("M3PunchAngle", 8, 11)
-    end
-
-    pPlayer:SetViewPunchAngles(angle)
-
-    return true
-end
-
-function SWEP:Reload()
-    local pPlayer = self.Owner
-    if not IsValid(pPlayer) then return end
-    if pPlayer:GetAmmoCount(self.Primary.Ammo) <= 0 or self:Clip1() >= self.Primary.ClipSize then return end
-    if self:GetNextPrimaryFire() > CurTime() then return end
-
-    if self:GetSpecialReload() == 0 then
-        pPlayer:SetAnimation(PLAYER_RELOAD)
-        self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
-        self:SetSpecialReload(1)
-        self:SetNextPrimaryFire(CurTime() + 0.5)
-        self:SetNextIdle(CurTime() + 0.5)
-        -- DoAnimationEvent( PLAYERANIMEVENT_RELOAD_START ) - Missing event
-
-        return true
-    elseif self:GetSpecialReload() == 1 then
-        if self:GetNextIdle() > CurTime() then return true end
-        self:SetSpecialReload(2)
-        self:SendWeaponAnim(ACT_VM_RELOAD)
-        self:SetNextIdle(CurTime() + 0.5)
-
-        if self:Clip1() >= 7 then
-            pPlayer:DoAnimationEvent(PLAYERANIMEVENT_RELOAD_END)
-        else
-            pPlayer:DoAnimationEvent(PLAYERANIMEVENT_RELOAD_LOOP)
-        end
-    else
-        self:SetClip1(self:Clip1() + 1)
-        pPlayer:DoAnimationEvent(PLAYERANIMEVENT_RELOAD)
-        pPlayer:RemoveAmmo(1, self.Primary.Ammo)
-        self:SetSpecialReload(1)
-    end
-
-    return true
-end
-
-function SWEP:Think()
-    local pPlayer = self.Owner
-    if not IsValid(pPlayer) then return end
-
-    if self:GetNextIdle() < CurTime() then
-        if self:Clip1() == 0 and self:GetSpecialReload() == 0 and pPlayer:GetAmmoCount(self.Primary.Ammo) ~= 0 then
-            self:Reload()
-        elseif self:GetSpecialReload() ~= 0 then
-            if self:Clip1() ~= self:GetMaxClip1() and pPlayer:GetAmmoCount(self.Primary.Ammo) ~= 0 then
-                self:Reload()
-            else
-                self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
-                self:SetSpecialReload(0)
-                self:SetNextIdle(CurTime() + 1.5)
-            end
-        else
-            self:SendWeaponAnim(ACT_VM_IDLE)
-        end
-    end
-end
-
-SWEP.AdminOnly = false
+SWEP.UseShellReload = true
+SWEP.KickSimple = 5.0
+-- function SWEP:PrimaryAttack()
+--     local pPlayer = self.Owner
+--     if not IsValid(pPlayer) then return end
+--     if self:GetNextPrimaryFire() > CurTime() then return end
+--     if pPlayer:WaterLevel() == 3 then
+--         self:PlayEmptySound()
+--         self:SetNextPrimaryFire(CurTime() + 0.2)
+--         return false
+--     end
+--     local spread = self:BuildSpread()
+--     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
+--     self:SetSpecialReload(0)
+--     local angle = pPlayer:GetViewPunchAngles()
+--     -- Update punch angles.
+--     if not pPlayer:OnGround() then
+--         angle.x = angle.x - util.SharedRandom("M3PunchAngleGround", 4, 6)
+--     else
+--         angle.x = angle.x - util.SharedRandom("M3PunchAngle", 8, 11)
+--     end
+--     pPlayer:SetViewPunchAngles(angle)
+--     return true
+-- end

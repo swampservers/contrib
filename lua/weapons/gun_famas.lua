@@ -6,7 +6,7 @@ SWEP.PrintName = "Famas"
 SWEP.HoldType = "ar2"
 SWEP.Slot = 0
 SWEP.BurstFire = 3
-SWEP.BurstFireDelay = 0.05
+SWEP.BurstFireDelay = 0.5
 CSParseWeaponInfo(SWEP, [[WeaponData
 {
 	"MaxPlayerSpeed"			"220"

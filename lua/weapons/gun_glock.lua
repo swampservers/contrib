@@ -127,31 +127,33 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:Deploy()
-    self:SetAccuracy(0.9)
-
-    return BaseClass.Deploy(self)
-end
-
--- function SWEP:PrimaryAttack()
---     if self:GetNextPrimaryFire() > CurTime() then return end
---     self:GunFire(self:BuildSpread(), true) -- self:GetBurstFireEnabled())
+-- function SWEP:Deploy()
+--     self:SetAccuracy(0.9)
+--     return BaseClass.Deploy(self)
 -- end
--- function SWEP:TranslateViewModelActivity(act)
---     if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
---         return ACT_VM_SECONDARYATTACK
---     else
---         return BaseClass.TranslateViewModelActivity(self, act)
+-- -- function SWEP:PrimaryAttack()
+-- --     if self:GetNextPrimaryFire() > CurTime() then return end
+-- --     self:GunFire(self:BuildSpread(), true) -- self:GetBurstFireEnabled())
+-- -- end
+-- -- function SWEP:TranslateViewModelActivity(act)
+-- --     if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
+-- --         return ACT_VM_SECONDARYATTACK
+-- --     else
+-- --         return BaseClass.TranslateViewModelActivity(self, act)
+-- --     end
+-- -- end
+-- function SWEP:GunFire(spread, mode)
+--     self:SetAccuracy(self:GetAccuracy() - 0.275 * (0.325 - CurTime() - self:GetLastFire()))
+--     if self:GetAccuracy() > 0.9 then
+--         self:SetAccuracy(0.9)
+--     elseif self:GetAccuracy() < 0.6 then
+--         self:SetAccuracy(0.6)
 --     end
+--     self:BaseGunFire(spread, self.CycleTime, mode)
 -- end
-function SWEP:GunFire(spread, mode)
-    self:SetAccuracy(self:GetAccuracy() - 0.275 * (0.325 - CurTime() - self:GetLastFire()))
+-- It had no kick...?
+SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 
-    if self:GetAccuracy() > 0.9 then
-        self:SetAccuracy(0.9)
-    elseif self:GetAccuracy() < 0.6 then
-        self:SetAccuracy(0.6)
-    end
+SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 
-    self:BaseGunFire(spread, self.CycleTime, mode)
-end
+SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}

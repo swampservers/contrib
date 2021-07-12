@@ -127,21 +127,19 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 --     if self:GetNextPrimaryAttack() > CurTime() then return end
 --     self:GunFire(self:BuildSpread())
 -- end
-function SWEP:GunFire(spread)
-    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
-
-    --Jvs: this is so goddamn lame
-    if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
-        self:KickBack(1.5, 0.45, 0.225, 0.05, 6.5, 2.5, 7)
-    elseif not self:GetOwner():OnGround() then
-        self:KickBack(2, 1.0, 0.5, 0.35, 9, 6, 5)
-    elseif self:GetOwner():Crouching() then
-        self:KickBack(0.9, 0.35, 0.15, 0.025, 5.5, 1.5, 9)
-    else
-        self:KickBack(1, 0.375, 0.175, 0.0375, 5.75, 1.75, 8)
-    end
-end
-
+-- function SWEP:GunFire(spread)
+--     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
+--     --Jvs: this is so goddamn lame
+--     if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
+--         self:KickBack(1.5, 0.45, 0.225, 0.05, 6.5, 2.5, 7)
+--     elseif not self:GetOwner():OnGround() then
+--         self:KickBack(2, 1.0, 0.5, 0.35, 9, 6, 5)
+--     elseif self:GetOwner():Crouching() then
+--         self:KickBack(0.9, 0.35, 0.15, 0.025, 5.5, 1.5, 9)
+--     else
+--         self:KickBack(1, 0.375, 0.175, 0.0375, 5.75, 1.75, 8)
+--     end
+-- end
 SWEP.KickMoving = {1.5, 0.45, 0.225, 0.05, 6.5, 2.5, 7}
 
 SWEP.KickStanding = {1, 0.375, 0.175, 0.0375, 5.75, 1.75, 8}

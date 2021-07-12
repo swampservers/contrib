@@ -117,36 +117,32 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-
-function SWEP:Deploy()
-    self:SetAccuracy(0.9)
-
-    return BaseClass.Deploy(self)
-end
-
--- function SWEP:PrimaryAttack()
---     if self:GetNextPrimaryFire() > CurTime() then return end
---     self:GunFire(self:BuildSpread(), true)
+-- function SWEP:Deploy()
+--     self:SetAccuracy(0.9)
+--     return BaseClass.Deploy(self)
 -- end
--- function SWEP:TranslateViewModelActivity(act)
---     -- if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
---     --     return ACT_VM_SECONDARYATTACK
---     -- else
---         return BaseClass.TranslateViewModelActivity(self, act)
---     -- end
+-- -- function SWEP:PrimaryAttack()
+-- --     if self:GetNextPrimaryFire() > CurTime() then return end
+-- --     self:GunFire(self:BuildSpread(), true)
+-- -- end
+-- -- function SWEP:TranslateViewModelActivity(act)
+-- --     -- if self:GetBurstFireEnabled() and act == ACT_VM_PRIMARYATTACK then
+-- --     --     return ACT_VM_SECONDARYATTACK
+-- --     -- else
+-- --         return BaseClass.TranslateViewModelActivity(self, act)
+-- --     -- end
+-- -- end
+-- function SWEP:GunFire(spread, mode)
+--     self:SetAccuracy(self:GetAccuracy() - 0.35 * (0.4 - CurTime() - self:GetLastFire()))
+--     if self:GetAccuracy() > 0.9 then
+--         self:SetAccuracy(0.9)
+--     elseif self:GetAccuracy() < 0.55 then
+--         self:SetAccuracy(0.55)
+--     end
+--     if not self:BaseGunFire(spread, self.CycleTime, mode) then return end
+--     --Python: this is so goddamn lame
+--     local a = self:GetOwner():GetViewPunchAngles()
+--     a.p = a.p - 2
+--     self:GetOwner():SetViewPunchAngles(a)
 -- end
-function SWEP:GunFire(spread, mode)
-    self:SetAccuracy(self:GetAccuracy() - 0.35 * (0.4 - CurTime() - self:GetLastFire()))
-
-    if self:GetAccuracy() > 0.9 then
-        self:SetAccuracy(0.9)
-    elseif self:GetAccuracy() < 0.55 then
-        self:SetAccuracy(0.55)
-    end
-
-    if not self:BaseGunFire(spread, self.CycleTime, mode) then return end
-    --Python: this is so goddamn lame
-    local a = self:GetOwner():GetViewPunchAngles()
-    a.p = a.p - 2
-    self:GetOwner():SetViewPunchAngles(a)
-end
+SWEP.KickSimple = 2.0

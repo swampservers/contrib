@@ -125,76 +125,64 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
+SWEP.ScopeLevels = {40 / 90, 10 / 90}
+
+SWEP.ScopedSpeedRatio = 220 / 260
+SWEP.KickSimple = 2.0
 -- function SWEP:PrimaryAttack()
 --     if self:GetNextPrimaryFire() > CurTime() then return end
 --     self:GunFire(self:BuildSpread())
 -- end
-function SWEP:SecondaryAttack()
-    local pPlayer = self:GetOwner()
-    if not IsValid(pPlayer) then return end
-
-    if (self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime()) then
-        self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
-
-        return
-    end
-
-    if (not self:IsScoped()) then
-        self:SetFOVRatio(40 / 90, 0.15)
-    elseif (math.abs(self:GetFOVRatio() - 40 / 90) < 0.00001) then
-        self:SetFOVRatio(10 / 90, 0.08)
-    else
-        self:SetFOVRatio(1, 0.1)
-    end
-
-    -- If this isn't guarded, the sound will be emitted twice, once by the server and once by the client.
-    -- Let the server play it since if only the client plays it, it's liable to get played twice cause of
-    -- a prediction error. joy.
-    self:EmitSound("Default.Zoom", nil, nil, nil, CHAN_AUTO)
-    self:SetNextSecondaryFire(CurTime() + 0.3)
-    self:SetZoomFullyActiveTime(CurTime() + 0.15) -- The worst zoom time from above.
-end
-
-function SWEP:AdjustMouseSensitivity()
-    if (self:IsScoped()) then return self:GetCurrentFOVRatio() * GetConVar"zoom_sensitivity_ratio":GetFloat() end -- is a hack, maybe change?
-end
-
-function SWEP:IsScoped()
-    return self:GetTargetFOVRatio() ~= 1
-end
-
-function SWEP:HandleReload()
-    self:SetFOVRatio(1, 0.05)
-end
-
-function SWEP:GetSpeedRatio()
-    if (self:IsScoped()) then return 220 / 260 end
-
-    return 1
-end
-
-function SWEP:GunFire(spread)
-    local pPlayer = self:GetOwner()
-
-    if (CurTime() < self:GetZoomFullyActiveTime()) then
-        self:SetNextPrimaryFire(self:GetZoomFullyActiveTime())
-
-        return
-    end
-
-    if (not self:IsScoped()) then
-        spread = spread + .08
-    end
-
-    if not self:BaseGunFire(spread, self.CycleTime, true) then return end
-
-    if (self:IsScoped()) then
-        self:SetLastZoom(self:GetTargetFOVRatio())
-        self:SetResumeZoom(true)
-        self:SetFOVRatio(1, 0.1)
-    end
-
-    local a = self:GetOwner():GetViewPunchAngles()
-    a.p = a.p - 2
-    self:GetOwner():SetViewPunchAngles(a)
-end
+-- function SWEP:SecondaryAttack()
+--     local pPlayer = self:GetOwner()
+--     if not IsValid(pPlayer) then return end
+--     if (self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime()) then
+--         self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
+--         return
+--     end
+--     if (not self:IsScoped()) then
+--         self:SetFOVRatio(40 / 90, 0.15)
+--     elseif (math.abs(self:GetFOVRatio() - 40 / 90) < 0.00001) then
+--         self:SetFOVRatio(10 / 90, 0.08)
+--     else
+--         self:SetFOVRatio(1, 0.1)
+--     end
+--     -- If this isn't guarded, the sound will be emitted twice, once by the server and once by the client.
+--     -- Let the server play it since if only the client plays it, it's liable to get played twice cause of
+--     -- a prediction error. joy.
+--     self:EmitSound("Default.Zoom", nil, nil, nil, CHAN_AUTO)
+--     self:SetNextSecondaryFire(CurTime() + 0.3)
+--     self:SetZoomFullyActiveTime(CurTime() + 0.15) -- The worst zoom time from above.
+-- end
+-- function SWEP:AdjustMouseSensitivity()
+--     if (self:IsScoped()) then return self:GetCurrentFOVRatio() * GetConVar"zoom_sensitivity_ratio":GetFloat() end -- is a hack, maybe change?
+-- end
+-- function SWEP:IsScoped()
+--     return self:GetTargetFOVRatio() ~= 1
+-- end
+-- function SWEP:HandleReload()
+--     self:SetFOVRatio(1, 0.05)
+-- end
+-- function SWEP:GetSpeedRatio()
+--     if (self:IsScoped()) then return 220 / 260 end
+--     return 1
+-- end
+-- function SWEP:GunFire(spread)
+--     local pPlayer = self:GetOwner()
+--     if (CurTime() < self:GetZoomFullyActiveTime()) then
+--         self:SetNextPrimaryFire(self:GetZoomFullyActiveTime())
+--         return
+--     end
+--     if (not self:IsScoped()) then
+--         spread = spread + .08
+--     end
+--     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
+--     if (self:IsScoped()) then
+--         self:SetLastZoom(self:GetTargetFOVRatio())
+--         self:SetResumeZoom(true)
+--         self:SetFOVRatio(1, 0.1)
+--     end
+--     local a = self:GetOwner():GetViewPunchAngles()
+--     a.p = a.p - 2
+--     self:GetOwner():SetViewPunchAngles(a)
+-- end

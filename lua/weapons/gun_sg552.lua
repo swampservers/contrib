@@ -133,69 +133,59 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:PreDrawViewModel(vm, weapon, ply)
-end
-
--- function SWEP:PrimaryAttack()
---     if self:GetNextPrimaryFire() > CurTime() then return end
---     self:GunFire(self:BuildSpread())
+-- function SWEP:PreDrawViewModel(vm, weapon, ply)
 -- end
-function SWEP:SecondaryAttack()
-    local pPlayer = self:GetOwner()
-    if not IsValid(pPlayer) then return end
+-- -- function SWEP:PrimaryAttack()
+-- --     if self:GetNextPrimaryFire() > CurTime() then return end
+-- --     self:GunFire(self:BuildSpread())
+-- -- end
+-- function SWEP:SecondaryAttack()
+--     local pPlayer = self:GetOwner()
+--     if not IsValid(pPlayer) then return end
+--     if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime() then
+--         self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
+--         return
+--     end
+--     if not self:IsScoped() then
+--         self:SetFOVRatio(55 / 90, 0.2)
+--     elseif (math.abs(self:GetFOVRatio() - 55 / 90) < 0.00001) then
+--         self:SetFOVRatio(1, 0.15)
+--     else
+--         self:SetFOVRatio(1, 0)
+--     end
+--     self:SetNextSecondaryFire(CurTime() + 0.3)
+--     self:SetZoomFullyActiveTime(CurTime() + 0.2) -- The worst zoom time from above.
+-- end
+-- function SWEP:IsScoped()
+--     return self:GetFOVRatio() ~= 1
+-- end
+-- function SWEP:HandleReload()
+--     self:SetFOVRatio(1, 0.05)
+-- end
+-- function SWEP:GunFire(spread)
+--     local flCycleTime = self.CycleTime
+--     if self:IsScoped() then
+--         flCycleTime = 0.135
+--     end
+--     if not self:BaseGunFire(spread, flCycleTime, true) then return end
+--     --Jvs: this is so goddamn lame
+--     if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
+--         self:KickBack(1, 0.45, 0.28, 0.04, 4.25, 2.5, 7)
+--     elseif not self:GetOwner():OnGround() then
+--         self:KickBack(1.25, 0.45, 0.22, 0.18, 6, 4, 5)
+--     elseif self:GetOwner():Crouching() then
+--         self:KickBack(0.6, 0.35, 0.2, 0.0125, 3.7, 2, 10)
+--     else
+--         self:KickBack(0.625, 0.375, 0.25, 0.0125, 4, 2.25, 9)
+--     end
+-- end
+-- function SWEP:GetSpeedRatio()
+--     if self:IsScoped() then return 200 / 260 end
+--     return 1
+-- end
+SWEP.ScopeLevels = {55 / 90}
 
-    if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime() then
-        self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
-
-        return
-    end
-
-    if not self:IsScoped() then
-        self:SetFOVRatio(55 / 90, 0.2)
-    elseif (math.abs(self:GetFOVRatio() - 55 / 90) < 0.00001) then
-        self:SetFOVRatio(1, 0.15)
-    else
-        self:SetFOVRatio(1, 0)
-    end
-
-    self:SetNextSecondaryFire(CurTime() + 0.3)
-    self:SetZoomFullyActiveTime(CurTime() + 0.2) -- The worst zoom time from above.
-end
-
-function SWEP:IsScoped()
-    return self:GetFOVRatio() ~= 1
-end
-
-function SWEP:HandleReload()
-    self:SetFOVRatio(1, 0.05)
-end
-
-function SWEP:GunFire(spread)
-    local flCycleTime = self.CycleTime
-
-    if self:IsScoped() then
-        flCycleTime = 0.135
-    end
-
-    if not self:BaseGunFire(spread, flCycleTime, true) then return end
-
-    --Jvs: this is so goddamn lame
-    if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
-        self:KickBack(1, 0.45, 0.28, 0.04, 4.25, 2.5, 7)
-    elseif not self:GetOwner():OnGround() then
-        self:KickBack(1.25, 0.45, 0.22, 0.18, 6, 4, 5)
-    elseif self:GetOwner():Crouching() then
-        self:KickBack(0.6, 0.35, 0.2, 0.0125, 3.7, 2, 10)
-    else
-        self:KickBack(0.625, 0.375, 0.25, 0.0125, 4, 2.25, 9)
-    end
-end
-
-function SWEP:GetSpeedRatio()
-    if self:IsScoped() then return 200 / 260 end
-
-    return 1
-end
+SWEP.ScopedSpeedRatio = 200 / 260
 
 SWEP.KickMoving = {1, 0.45, 0.28, 0.04, 4.25, 2.5, 7}
 

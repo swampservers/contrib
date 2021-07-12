@@ -214,10 +214,10 @@ function CSParseWeaponInfo(self, str)
         self.Damage = 200
     end
 
-    self.SprayBase = tab.AccuracyOffset
-    self.SprayExponent = (tab.AccuracyQuadratic == 1) and 2 or 3
+    self.SprayBase = tab.AccuracyOffset or 0.2
+    self.SprayExponent = 2 --(tab.AccuracyQuadratic==1) and 2 or 3
     self.SprayIncrement = (tab.AccuracyDivisor or 200) ^ (-1 / self.SprayExponent)
-    self.SprayMax = (tab.MaxInaccuracy - tab.AccuracyOffset) ^ (1 / self.SprayExponent)
+    self.SprayMax = ((tab.MaxInaccuracy or 1) - self.SprayBase) ^ (1 / self.SprayExponent)
 
     if CLIENT then
         if tab.TextureData then

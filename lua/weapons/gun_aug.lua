@@ -132,47 +132,40 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 	}
 }]])
 
-function SWEP:PreDrawViewModel(vm, weapon, ply)
-end
+-- function SWEP:PreDrawViewModel(vm, weapon, ply)
+-- end
+-- function SWEP:SecondaryAttack()
+--     local pPlayer = self:GetOwner()
+--     if not IsValid(pPlayer) then return end
+--     if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime() then
+--         self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
+--         return
+--     end
+--     if not self:IsScoped() then
+--         self:SetFOVRatio(55 / 90, 0.2)
+--     else
+--         self:SetFOVRatio(1, 0.15)
+--     end
+--     self:SetNextSecondaryFire(CurTime() + 0.3)
+--     self:SetZoomFullyActiveTime(CurTime() + 0.2)
+-- end
+-- function SWEP:AdjustMouseSensitivity()
+--     if (self:IsScoped()) then return self:GetCurrentFOVRatio() * GetConVar"zoom_sensitivity_ratio":GetFloat() end -- is a hack, maybe change?
+-- end
+-- function SWEP:IsScoped()
+--     return self:GetTargetFOVRatio() ~= 1
+-- end
+-- function SWEP:HandleReload()
+--     self:SetFOVRatio(1, 0.05)
+-- end
+SWEP.ScopeLevels = {55 / 90}
 
-function SWEP:SecondaryAttack()
-    local pPlayer = self:GetOwner()
-    if not IsValid(pPlayer) then return end
+SWEP.ScopedSpeedRatio = 220 / 260
 
-    if self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime() then
-        self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
-
-        return
-    end
-
-    if not self:IsScoped() then
-        self:SetFOVRatio(55 / 90, 0.2)
-    else
-        self:SetFOVRatio(1, 0.15)
-    end
-
-    self:SetNextSecondaryFire(CurTime() + 0.3)
-    self:SetZoomFullyActiveTime(CurTime() + 0.2)
-end
-
-function SWEP:AdjustMouseSensitivity()
-    if (self:IsScoped()) then return self:GetCurrentFOVRatio() * GetConVar"zoom_sensitivity_ratio":GetFloat() end -- is a hack, maybe change?
-end
-
-function SWEP:IsScoped()
-    return self:GetTargetFOVRatio() ~= 1
-end
-
-function SWEP:HandleReload()
-    self:SetFOVRatio(1, 0.05)
-end
-
-function SWEP:GetSpeedRatio()
-    if (self:IsScoped()) then return 220 / 260 end
-
-    return 1
-end
-
+-- function SWEP:GetSpeedRatio()
+--     if (self:IsScoped()) then return 220 / 260 end
+--     return 1
+-- end
 -- function SWEP:PrimaryAttack()
 --     if self:GetNextPrimaryFire() > CurTime() then return end
 --     self:GunFire(self:BuildSpread())

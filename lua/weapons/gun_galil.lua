@@ -140,7 +140,7 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 --         self:KickBack(0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8)
 --     end
 -- end
-SWEP.KickMoving = {(0.45), 0.3, 0.2, 0.0275, 4, 2.25, 7}
+SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 
 SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 

@@ -130,28 +130,29 @@ CSParseWeaponInfo(SWEP, [[WeaponData
 		}
 	}
 }]])
-
+SWEP.KickSimple = 2
 -- function SWEP:PrimaryAttack()
 --     if self:GetNextPrimaryFire() > CurTime() then return end
 --     self:GunFire(self:BuildSpread(), true)
 -- end
-function SWEP:GunFire(spread, mode)
-    --Jvs: technically this should be > 1, but since this is increased in basegunfire, we have to do it this way
-    if self:GetShotsFired() > 0 then return end
-    self:SetAccuracy(self:GetAccuracy() - 0.275 * (0.3 - CurTime() - self:GetLastFire()))
-
-    if self:GetAccuracy() > 0.92 then
-        self:SetAccuracy(0.92)
-    elseif self:GetAccuracy() < 0.6 then
-        self:SetAccuracy(0.6)
-    end
-
-    self:SetNextIdle(CurTime() + 2)
-    if not self:BaseGunFire(spread, self.CycleTime, mode) then return end
-    local angle = self:GetOwner():GetViewPunchAngles()
-    angle.p = angle.p - 2
-    self:GetOwner():SetViewPunchAngles(angle)
-end
+-- function SWEP:GunFire(spread, mode)
+--     --Jvs: technically this should be > 1, but since this is increased in basegunfire, we have to do it this way
+--     if self:GetShotsFired() > 0 then return end
+--     self:SetAccuracy(self:GetAccuracy() - 0.275 * (0.3 - CurTime() - self:GetLastFire()))
+--     if self:GetAccuracy() > 0.92 then
+--         self:SetAccuracy(0.92)
+--     elseif self:GetAccuracy() < 0.6 then
+--         self:SetAccuracy(0.6)
+--     end
+--     self:SetNextIdle(CurTime() + 2)
+--     if not self:BaseGunFire(spread, self.CycleTime, mode) then return end
+--     local angle = self:GetOwner():GetViewPunchAngles()
+--     angle.p = angle.p - 2
+--     self:GetOwner():SetViewPunchAngles(angle)
+-- end
+--
+--
+--
 -- set this for silenced variants AND USE SilencerModel for worldmodel
 -- SWEP.Silenced = true
 -- function SWEP:TranslateViewModelActivity(act)
