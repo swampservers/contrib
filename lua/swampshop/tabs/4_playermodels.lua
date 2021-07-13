@@ -69,7 +69,7 @@ SS_Item({
     class = "outfitter2",
     price = 2000000,
     name = 'Outfitter',
-    description = "Allows wearing any model from workshop - type !outfitter",
+    description = "Allows wearing any playermodel from workshop (under 30,000 vertices)",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
     actions = {
         customize = {

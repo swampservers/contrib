@@ -15,40 +15,76 @@ end
 
 -- todo relocate
 function SS_DrawIOPInfo(iop, x, y, w, txtcolor, alpha)
-    txtcolor = Color(txtcolor.r, txtcolor.g, txtcolor.b, 255 * alpha)
+    local atxtcolor = Color(txtcolor.r, txtcolor.g, txtcolor.b, 255 * alpha)
     local cx = x + w / 2
 
     if iop.specs and iop.specs.rating then
-        local r = SS_GetRating(iop.specs.rating)
-
-        if iop.class == "prop" then
-            y = y - 4
-            local w, h = draw.WrappedText("Features: " .. r.propnotes, 'SS_DESCFONT', cx, y, w, txtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-            y = y - h
-        end
-
-        local bw = math.min(150, w / 2 - 10)
-        local bh = 20
-        y = y - 24
-        surface.SetDrawColor(0, 0, 0, 255 * alpha)
-        surface.DrawRect(cx - bw, y, bw * 2, bh)
-        surface.SetDrawColor(r.color.r, r.color.g, r.color.b, 255 * alpha)
-        -- render.SetScissorRect( -1000, -1000, 0, 1000, true )
-        -- surface.DrawRect(cx - bw, y +5, (bw * 2 - 2), bh-2)
-        surface.DrawRect(cx - bw + 1, y + 1, (bw * 2 - 2) * iop.specs.rating, bh - 2)
-        draw.WrappedText("Rating: " .. r.name, "DermaDefault", cx, y + bh / 2, w, Color(255, 255, 255, 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        -- render.SetScissorRect( 0, 0, 0, 0, false )
-        y = y - 8
+        y = SS_DrawSpecInfo(iop, x, y, w, txtcolor, alpha)
     end
 
     local desc = iop:GetDescription()
 
     if desc then
-        local w, h = draw.WrappedText(desc, 'SS_DESCFONT', cx, y, w, txtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+        local w, h = draw.WrappedText(desc, 'SS_DESCFONT', cx, y, w, atxtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
         y = y - (h + 4)
     end
 
-    draw.WrappedText(iop:GetName(), 'SS_DESCTITLEFONT', cx, y, w, txtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+    draw.WrappedText(iop:GetName(), 'SS_DESCTITLEFONT', cx, y, w, atxtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+end
+
+function SS_DrawBar(txt, cx, y, w, col, pct, alpha)
+    local bw = math.min(150, w / 2 - 10)
+    local bh = 20
+    y = y - 24
+    surface.SetDrawColor(0, 0, 0, 255 * alpha)
+    surface.DrawRect(cx - bw, y, bw * 2, bh)
+    surface.SetDrawColor(col.r, col.g, col.b, 255 * alpha)
+    -- render.SetScissorRect( -1000, -1000, 0, 1000, true )
+    -- surface.DrawRect(cx - bw, y +5, (bw * 2 - 2), bh-2)
+    surface.DrawRect(cx - bw + 1, y + 1, (bw * 2 - 2) * pct, bh - 2)
+    draw.WrappedText(txt, "DermaDefault", cx, y + bh / 2, w, Color(255, 255, 255, 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    -- render.SetScissorRect( 0, 0, 0, 0, false )
+    y = y - 4
+
+    return y
+end
+
+function SS_ConvertSpec(sp)
+end
+
+function SS_DrawSpecInfo(iop, x, y, w, txtcolor, alpha)
+    local atxtcolor = Color(txtcolor.r, txtcolor.g, txtcolor.b, 255 * alpha)
+    local cx = x + w / 2
+    local r = SS_GetRating(iop.specs.rating)
+    local dspecs = iop.dspecs or {}
+
+    for i = #dspecs, 1, -1 do
+        local v = dspecs[i]
+
+        if isstring(v) then
+            y = y - 4
+            local w, h = draw.WrappedText(v, 'SS_DESCFONT', cx, y, w, atxtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+            y = y - h
+        else
+            y = SS_DrawBar(v[3], cx, y, w, Color(128, 128, 128), v[4], alpha)
+        end
+    end
+
+    y = SS_DrawBar("Rating: " .. r.name, cx, y, w, r.color, iop.specs.rating, alpha)
+    -- local bw = math.min(150, w / 2 - 10)
+    -- local bh = 20
+    -- y = y - 24
+    -- surface.SetDrawColor(0, 0, 0, 255 * alpha)
+    -- surface.DrawRect(cx - bw, y, bw * 2, bh)
+    -- surface.SetDrawColor(r.color.r, r.color.g, r.color.b, 255 * alpha)
+    -- -- render.SetScissorRect( -1000, -1000, 0, 1000, true )
+    -- -- surface.DrawRect(cx - bw, y +5, (bw * 2 - 2), bh-2)
+    -- surface.DrawRect(cx - bw + 1, y + 1, (bw * 2 - 2) * iop.specs.rating, bh - 2)
+    -- draw.WrappedText("Rating: " .. r.name, "DermaDefault", cx, y + bh / 2, w, Color(255, 255, 255, 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    -- -- render.SetScissorRect( 0, 0, 0, 0, false )
+    -- y = y - 8
+
+    return y
 end
 
 net.Receive("LootBoxAnimation", function(len)

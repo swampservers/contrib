@@ -241,7 +241,7 @@ function PANEL:Paint()
             end
 
             if IsValid(LocalPlayer()) then
-                for _, item in ipairs(LocalPlayer().SS_ShownItems) do
+                for _, item in ipairs(LocalPlayer().SS_ShownItems or {}) do
                     if SS_HoverItem == nil or SS_HoverItem.id ~= item.id then
                         table.insert(a, item)
                     end
@@ -258,11 +258,14 @@ function PANEL:Paint()
             -- print("REMAKE")
         end
 
+        SS_FORCE_LOAD_WEBMATERIAL = true
         self.Entity:SS_AttachAccessories(GetShopAccessoryItems())
+        SS_FORCE_LOAD_WEBMATERIAL = nil
         local acc = SS_CreatedAccessories[self.Entity]
         SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
 
         for _, prop in pairs(acc) do
+            print(prop:GetMaterial())
             prop:DrawModel() --self.Entity)
         end
     end

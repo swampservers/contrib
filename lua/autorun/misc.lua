@@ -9,7 +9,8 @@ if SERVER then
     hook.Add("PostEntityTakeDamage", "DamageMarker", function(ent, dmg, took)
         local att = dmg:GetAttacker()
 
-        if ent:IsPlayer() and (ent:IsBot() or (HumanTeamName and att.hvp ~= ent.hvp)) then
+        --and (ent:IsBot() or (HumanTeamName and att.hvp ~= ent.hvp)) then
+        if ent:IsPlayer() then
             if IsValid(att) and att:IsPlayer() then
                 HITMARKERCACHE[att] = (HITMARKERCACHE[att] or 0) + dmg:GetDamage()
                 -- if not ent:Alive() then

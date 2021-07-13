@@ -131,14 +131,48 @@ if SERVER then
     language.GetPhrase = function(s) return s:gsub("#Cstrike_WPNHUD_", "") end
 end
 
+SS_WeaponPerkData = {
+    -- rating 1
+    min = {"Scuffed", "It's just bad (min all stats)"},
+    rusted = {"Rusted", "Gets jammed after every shot"},
+    cracked = {"Cracked", "Ooops! (crack on scope when zoomed)"},
+    --rating 1-2
+    lessdamage = {"Less-lethal", "Fires less-lethal rubber bullets"},
+    -- rating 2-4
+    compliant = {"Libtard-Compliant", "10 round magazine, semi-auto only, and slow to reload."},
+    --rating 5-6
+    fullauto = {"Full-Auto", "Black market full-auto sear installed"},
+    lightweight = {"Lightweight", "Easier to fire on the move"},
+    heavyweight = {"Heavyweight", "Less recoil"},
+    --rating 5-7
+    extended = {"Extended", "Extended mags"},
+    skullpiercing = {"Skullpiercing", "1 headshot kill"},
+    highvelocity = {"High-velocity", "Longer damage range"},
+    -- rating 5-7
+    slug = {"Slug", "Fires devastating slug ammunition"},
+    -- rating 7-8
+    antimaterial = {"Anti-Material", "Does heavy damage to props (for AWP, instaremove anything)"},
+    selfloading = {"Self-Loading", "Semi-automatic firepower (AWP/scout)"},
+    boomstick = {"Boomstick", "Fires way more pellets, but in a wider cone"},
+    moredamage = {"Armor-piercing", "More damage"},
+    antikleiner = {},
+    antipony = {},
+    antihuman = {},
+    --rating 8
+    explosiveslug = {"Explosive Slug", "Fires devastating slug ammunition"},
+    bottomless = {"Bottomless", "Never needs to be reloaded (you still have to buy ammo though!)"},
+    dragon = {"Dragon's Breath", "Ignites targets"},
+    max = {"Golden", "Worthy of Trump (max all stats)"}
+}
+
 SS_Item({
     class = "weapon",
     value = 5000,
     name = "Weapon",
-    description = "Rating will affect specs in the future",
+    description = "STATS ARE WORK IN PROGRESS AND WILL CHANGE",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
     GetDescription = function(self)
-        local d = "Rating will affect specs in the future"
+        local d = self.description
 
         if self.specs.trophy_winner then
             local p = player.GetBySteamID64(self.specs.trophy_winner)
@@ -207,64 +241,63 @@ SS_Item({
 })
 
 --NOMINIFY
-for i, tm in ipairs({"CT", "TERRORIST"}) do
-    SS_Product({
-        class = 'csslootbox2' .. tm:lower(),
-        price = 100000,
-        name = tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
-        description = "Random CS:S gun blueprint",
-        model = 'models/Items/ammocrate_smg1.mdl',
-        OnBuy = function(self, ply)
-            local options = {}
+-- for i, tm in ipairs({"CT", "TERRORIST"}) do
+SS_Product({
+    class = 'csslootbox', --'csslootbox2' .. tm:lower(),
+    price = 100000,
+    name = "CS:S Gun Blueprint", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
+    description = "What is Counter-Strike: Source, anyway?",
+    model = 'models/Items/ammocrate_smg1.mdl',
+    OnBuy = function(self, ply)
+        local options = {}
 
-            for k, v in ipairs(weapons.GetList()) do
-                if v.GunType then
-                    if v._WeaponInfo.Team == tm then
-                        table.insert(options, v)
-                        table.insert(options, v)
-                    end
-
-                    if v._WeaponInfo.Team == "ANY" then
-                        table.insert(options, v)
-                    end
-                end
+        for k, v in ipairs(weapons.GetList()) do
+            if v.GunType then
+                -- if v._WeaponInfo.Team == tm then
+                --     table.insert(options, v)
+                --     table.insert(options, v)
+                -- end
+                -- if v._WeaponInfo.Team == "ANY" then
+                table.insert(options, v)
+                -- end
             end
-
-            local others = {}
-
-            for i = 1, 15 do
-                table.insert(others, options[math.random(#options)].WorldModel)
-            end
-
-            local chosen = options[math.random(#options)]
-            local rating
-            local item = SS_GenerateItem(ply, "weapon")
-            item.specs.class = chosen.ClassName
-            item:Sanitize()
-            rating = item.specs.rating
-
-            ply:SS_GiveNewItem(item, function(item)
-                net.Start("LootBoxAnimation")
-                net.WriteUInt(item.id, 32)
-                net.WriteTable(others)
-                net.Send(ply)
-                local w = chosen.ClassName
-
-                timer.Simple(5, function()
-                    if ply:HasWeapon(w) then
-                        ply:StripWeapon(w)
-                    end
-
-                    ply:Give(w)
-                    ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
-                    ply:SelectWeapon(w)
-                end)
-            end)
         end
-    })
-    -- end)
-end
 
+        local others = {}
+
+        for i = 1, 15 do
+            table.insert(others, options[math.random(#options)].WorldModel)
+        end
+
+        local chosen = options[math.random(#options)]
+        local rating
+        local item = SS_GenerateItem(ply, "weapon")
+        item.specs.class = chosen.ClassName
+        item:Sanitize()
+        rating = item.specs.rating
+
+        ply:SS_GiveNewItem(item, function(item)
+            net.Start("LootBoxAnimation")
+            net.WriteUInt(item.id, 32)
+            net.WriteTable(others)
+            net.Send(ply)
+            local w = chosen.ClassName
+
+            timer.Simple(5, function()
+                if ply:HasWeapon(w) then
+                    ply:StripWeapon(w)
+                end
+
+                ply:Give(w)
+                ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
+                ply:SelectWeapon(w)
+            end)
+        end)
+    end
+})
+
+-- end)
+-- end
 -- hook.Add("Initialize","ss css setup", function()
 --     for k, wep in ipairs(weapons.GetList()) do
 --         if wep.Base == "weapon_csbasegun" then

@@ -150,7 +150,8 @@ function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
 end
 
 net.Receive('SS_Items', function(length)
-    local items = net.ReadTableHD()
+    -- local items = net.ReadTableHD()
+    local items = net.ReadCompressedTable()
 
     SetLoadingPlayerProperty(-1, "SS_Items", items, function(ply)
         ply.SS_Items = SS_MakeItems(ply, ply.SS_Items)

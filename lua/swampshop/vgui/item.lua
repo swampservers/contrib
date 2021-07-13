@@ -487,7 +487,7 @@ function PANEL:PaintOver(w, h)
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(self:IsSelected() and MenuTheme_Brand or MenuTheme_FG, 64))
     end
 
-    if self.iop.class == "sandbox" then
+    if self.iop.class == "sandbox" or self.iop.class == "csslootbox" then
         local m = WebMaterial({
             id = "nrLaHIZ.png",
             shader = "UnlitGeneric",

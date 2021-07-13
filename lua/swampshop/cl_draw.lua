@@ -333,6 +333,7 @@ function SS_SetMaterialToItem(item, ent, ply)
         ent:SetWebMaterial({
             id = item.cfg.imgur.url,
             owner = ply,
+            forceload = SS_FORCE_LOAD_WEBMATERIAL,
             -- worksafe=true,
             params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
         })
@@ -582,41 +583,50 @@ hook.Add("Think", "SS_CleanupAccessories", function()
     SS_UpdatedAccessories = {}
 end)
 
+CLONEDMATERIALS = CLONEDMATERIALS or {}
+
 function Entity:SetColoredBaseMaterial(color)
     MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
-    local sc = "c" .. tostring(color):gsub("%.", "p")
+    local sc = "c" .. tostring(color):gsub("%.", "p"):gsub(" ", "_")
     self:SetMaterial()
     self:SetSubMaterial()
     local mats = self:GetMaterials()
 
     for i, mat in ipairs(mats) do
-        -- mat = mat:gsub("'","")
-        local mat2 = Material(MATERIALCLONEINDEX .. "/../" .. mat)
-        local matname = mat2:GetName()
+        local clonekey = sc .. "/../" .. mat
 
-        if matname == "___error" then
-            -- print("INVALID MATERIAL", mat)
-            local data = file.Read("materials/" .. mat .. ".vmt", "GAME") or "vertexlitgeneric\n{\n}"
-            local fixdata = data:Trim():lower()
+        if not CLONEDMATERIALS[clonekey] then
+            print("MAKE", clonekey)
+            -- mat = mat:gsub("'","")
+            local mat2 = Material(clonekey)
+            local matname = mat2:GetName()
 
-            if not (fixdata:StartWith("vertexlitgeneric") or fixdata:StartWith("'vertexlitgeneric") or fixdata:StartWith("\"vertexlitgeneric")) then
-                print("WARNING, WRONG SHADER ON BAD MATERIAL")
-                print(mat, data)
-            elseif fixdata:find("proxies") then
-                print("WARNING, PROXIES ON BAD MATERIAL")
-                print(mat, data)
+            if matname == "___error" then
+                -- print("INVALID MATERIAL", mat)
+                local data = file.Read("materials/" .. mat .. ".vmt", "GAME") or "vertexlitgeneric\n{\n}"
+                local fixdata = data:Trim():lower()
+
+                if not (fixdata:StartWith("vertexlitgeneric") or fixdata:StartWith("'vertexlitgeneric") or fixdata:StartWith("\"vertexlitgeneric")) then
+                    print("WARNING, WRONG SHADER ON BAD MATERIAL")
+                    print(mat, data)
+                elseif fixdata:find("proxies") then
+                    print("WARNING, PROXIES ON BAD MATERIAL")
+                    print(mat, data)
+                end
+
+                mat2 = CreateMaterial("clonedmaterial" .. MATERIALCLONEINDEX .. "and" .. i, "vertexlitgeneric", util.KeyValuesToTable(data))
+                --     mat2 = PPM_CLONE_MATERIAL(Material(mat), mat .. sc )
+                --     print("FIXED", mat2:GetName())
+                -- mat2 = Material(mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
+                -- print(mat2:GetName(), mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
+                matname = "!" .. mat2:GetName()
             end
 
-            mat2 = CreateMaterial("clonedmaterial" .. MATERIALCLONEINDEX .. "and" .. i, "vertexlitgeneric", util.KeyValuesToTable(data))
-            --     mat2 = PPM_CLONE_MATERIAL(Material(mat), mat .. sc )
-            --     print("FIXED", mat2:GetName())
-            -- mat2 = Material(mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
-            -- print(mat2:GetName(), mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
-            matname = "!" .. mat2:GetName()
+            mat2:SetVector("$color2", color * mat2:GetVector("$color2"))
+            CLONEDMATERIALS[clonekey] = matname
         end
 
-        mat2:SetVector("$color2", color * mat2:GetVector("$color2"))
-        self:SetSubMaterial(i - 1, matname)
+        self:SetSubMaterial(i - 1, CLONEDMATERIALS[clonekey])
         -- print(i, mat)
         -- local mi = i - 1
         -- local mn = mat .. sc -- "coloredbase"..emi.."s"..mi
