@@ -3,6 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "smg"
 SWEP.PrintName = "TMP"
+SWEP.Purpose = "Burst fire silenced SMG"
 SWEP.HoldType = "smg"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "d")
@@ -19,21 +20,26 @@ SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = true
 SWEP.Damage = 26
-SWEP.CycleTime = 0.0575
+SWEP.CycleTime = 0.066
 SWEP.HalfDamageDistance = 2048
 --
 SWEP.SpreadBase = 0.01
 SWEP.SpreadMove = 0.01
-SWEP.Spray = 0.04
-SWEP.SprayExponent = 3
-SWEP.SprayIncrement = 0.15
-SprayControlFactor(SWEP, 0.35)
+SWEP.Spray = 0.05
+SWEP.SprayExponent = 3.5
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.3,
+    ShotsTo90Spray = 20
+})
+
 --
 -- SWEP.Silenced = true
-SWEP.KickUBase = 0.725
-SWEP.KickUSpray = 2.25
-SWEP.KickLBase = 0.375
-SWEP.KickLSpray = 0.375
+SWEP.KickUBase = 0.5
+SWEP.KickUSpray = 0.5
+SWEP.KickLBase = 0.3
+SWEP.KickLSpray = 0
+SWEP.MoveKickMultiplier = 1
 -- SWEP.KickMoving = {0.8, 0.4, 0.2, 0.03, 3, 2.5, 7}
 -- SWEP.KickStanding = {0.725, 0.375, 0.15, 0.025, 2.75, 2.25, 9}
 -- SWEP.KickCrouching = {0.7, 0.35, 0.125, 0.025, 2.5, 2, 10}

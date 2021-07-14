@@ -3,7 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "ar"
 SWEP.PrintName = "Galil"
-SWEP.Purpose = "Good for spraying."
+SWEP.Purpose = "Good for spraying"
 SWEP.HoldType = "ar2"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "v")

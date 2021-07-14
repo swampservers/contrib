@@ -3,6 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
 SWEP.PrintName = "Dual Berettas"
+SWEP.Purpose = "How come you get TWO guns?"
 SWEP.HoldType = "duel"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "s")
@@ -18,21 +19,26 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_9MM"
 SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = false
-SWEP.Damage = 28
-SWEP.CycleTime = 0.1200
+SWEP.Damage = 27
+SWEP.CycleTime = 0.12
 SWEP.HalfDamageDistance = 2048
 --
 SWEP.SpreadBase = 0.008
 SWEP.SpreadMove = 0.01
-SWEP.Spray = 0.05
-SWEP.SprayExponent = 1
-SWEP.SprayIncrement = 0.4
-SprayControlFactor(SWEP, 0.6)
+SWEP.Spray = 0.06
+SWEP.SprayExponent = 2
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.45,
+    ShotsTo90Spray = 8
+})
+
 --
-SWEP.KickUBase = 0.3
-SWEP.KickUSpray = 1.875
-SWEP.KickLBase = 0.225
-SWEP.KickLSpray = 0.3
+SWEP.KickDance = 2
+SWEP.KickUBase = 0.5
+SWEP.KickUSpray = 1.5
+SWEP.KickLBase = 0.2
+SWEP.KickLSpray = 1
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}

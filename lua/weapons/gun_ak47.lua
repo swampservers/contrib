@@ -32,11 +32,11 @@ SWEP.CrouchKickMultiplier = 0.8
 
 ComputeSpray(SWEP, {
     TapFireInterval = 0.5,
-    ShotsTo90Spray = 12
+    ShotsTo90Spray = 14
 })
 
-SWEP.KickUBase = 1
-SWEP.KickUSpray = 2.8
+SWEP.KickUBase = 0.5
+SWEP.KickUSpray = 3
 SWEP.KickLBase = 0.1
 SWEP.KickLSpray = 0.5
 -- SWEP.SprayIncrement = 0.5

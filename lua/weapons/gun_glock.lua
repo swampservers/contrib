@@ -3,6 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
 SWEP.PrintName = "Glock"
+SWEP.Purpose = "Lightweight pistol"
 SWEP.HoldType = "pistol"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "c")
@@ -19,15 +20,19 @@ SWEP.Primary.ClipSize = 20
 SWEP.Primary.DefaultClip = 20
 SWEP.Primary.Automatic = false
 SWEP.Damage = 26
-SWEP.CycleTime = 0.14
+SWEP.CycleTime = 0.13
 SWEP.HalfDamageDistance = 2048
 --
 SWEP.SpreadBase = 0.008
 SWEP.SpreadMove = 0.01
-SWEP.Spray = 0.04
-SWEP.SprayExponent = 2
-SWEP.SprayIncrement = 0.3
-SprayControlFactor(SWEP, 0.5)
+SWEP.Spray = 0.05
+SWEP.SprayExponent = 3
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.3,
+    ShotsTo90Spray = 8
+})
+
 --
 SWEP.KickUBase = 0.3
 SWEP.KickUSpray = 1.875

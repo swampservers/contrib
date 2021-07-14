@@ -2,6 +2,7 @@
 -- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
+SWEP.Purpose = "High DPS pistol, but small magazine"
 SWEP.PrintName = "P228"
 SWEP.HoldType = "pistol"
 SWEP.Slot = 0
@@ -19,15 +20,19 @@ SWEP.Primary.ClipSize = 13
 SWEP.Primary.DefaultClip = 13
 SWEP.Primary.Automatic = false
 SWEP.Damage = 30
-SWEP.CycleTime = 0.1400
+SWEP.CycleTime = 0.12
 SWEP.HalfDamageDistance = 2048
 --
 SWEP.SpreadBase = 0.008
 SWEP.SpreadMove = 0.01
-SWEP.Spray = 0.04
-SWEP.SprayExponent = 2
-SWEP.SprayIncrement = 0.4
-SprayControlFactor(SWEP, 0.5)
+SWEP.Spray = 0.05
+SWEP.SprayExponent = 3
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.4,
+    ShotsTo90Spray = 7
+})
+
 --
 SWEP.KickUBase = 0.3
 SWEP.KickUSpray = 1.875

@@ -75,11 +75,27 @@ end
 -- SWEP.SprayExponent = 1
 -- SWEP.SprayIncrement = 0.5
 -- SWEP.SprayDecay = 0.4
+function SWEP:GetPrintName()
+    return self:GetNWString("PrintName", self.PrintName or "unknown")
+end
+
+function SWEP:GetInterval()
+    return self.CycleTime / self:GetNWFloat("rof", 1)
+end
+
+function SWEP:GetControl()
+    return self:GetNWFloat("control", 1)
+end
+
+function SWEP:GetBasedSpread()
+    return (self.SpreadBase or 0) / self:GetNWFloat("accuracy", 1)
+end
+
 function SWEP:GetSpray(curtime, firetime)
     -- local recoverytime = (self:GetOwner():Crouching() and self.RecoveryTimeCrouch or self.RecoveryTimeStand)
     -- recoverytime = recoverytime * (self.SprayMax / self.SprayIncrement)
     -- / recoverytime)
-    local spraydecay = self.SprayDecay * Lerp(self:Standingness(), self.CrouchSprayDecayMultiplier, 1)
+    local spraydecay = self:GetControl() * self.SprayDecay * Lerp(self:Standingness(), self.CrouchSprayDecayMultiplier, 1)
 
     return math.max(0, self:GetLastShotSpray() - math.max(0, (curtime or CurTime()) - (firetime or self:GetLastFire())) * spraydecay)
 end
@@ -155,8 +171,8 @@ function SWEP:DoKickBack()
     local sfac = self:Standingness()
     local multiplier = Lerp(mfac, 1, self.MoveKickMultiplier) * Lerp(sfac, self.CrouchKickMultiplier, 1)
     local spraymodifier = self:GetSpray()
-    local flKickUp = multiplier * (self.KickUBase + spraymodifier * self.KickUSpray)
-    local flKickLateral = multiplier * (self.KickLBase + spraymodifier * self.KickLSpray)
+    local flKickUp = multiplier * (self.KickUBase / self:GetControl() + spraymodifier * self.KickUSpray)
+    local flKickLateral = multiplier * (self.KickLBase / self:GetControl() + spraymodifier * self.KickLSpray)
     --[[
 		Jvs:
 			I implemented the shots fired and direction stuff on the cs base because it would've been dumb to do it
@@ -185,7 +201,7 @@ function SWEP:DoKickBack()
     angle.y = angle.y + (self:GetKickLeft() and flKickLateral or -flKickLateral)
 
     -- vel.x = vel.x - flKickUp
-    if spraymodifier > self.KickDanceMinSpray and util.SharedRandom("KickBack", 0, 1) < ((self.CycleTime * self.KickDance) * Lerp(mfac, 1, self.MoveKickDanceMultiplier) * Lerp(sfac, self.CrouchKickDanceMultiplier, 1)) then
+    if spraymodifier > self.KickDanceMinSpray and util.SharedRandom("KickBack", 0, 1) < ((self:GetInterval() * self.KickDance) * Lerp(mfac, 1, self.MoveKickDanceMultiplier) * Lerp(sfac, self.CrouchKickDanceMultiplier, 1)) then
         self:SetKickLeft(not self:GetKickLeft())
     end
 
@@ -551,7 +567,8 @@ function SWEP:GunFire()
     dir:Normalize()
     -- self:PenetrateBullet(dir, ply:GetShootPos(), self.Range, self.Penetration, self.Damage, self.RangeModifier) --, self:GetPenetrationFromBullet())
     -- flCurrentDistance = flCurrentDistance or 0
-    local dist = self.HalfDamageDistance * 4
+    local hdd = self.HalfDamageDistance * self:GetNWFloat("range", 1)
+    local dist = hdd * 4
 
     self:GetOwner():FireBullets({
         Num = self.NumPellets,
@@ -566,8 +583,8 @@ function SWEP:GunFire()
             dmginfo:SetInflictor(self)
             local scale = 1
 
-            if self.HalfDamageDistance > 0 then
-                scale = scale * math.pow(0.5, (trace.Fraction * dist) / self.HalfDamageDistance)
+            if hdd > 0 then
+                scale = scale * math.pow(0.5, (trace.Fraction * dist) / hdd)
             end
 
             if trace.HitGroup == HITGROUP_HEAD then
@@ -587,15 +604,15 @@ function SWEP:GunFire()
     local ti = engine.TickInterval()
 
     -- its been within the full auto number of ticks
-    if CurTime() - self:GetActualLastFire() < math.ceil(self.CycleTime / ti) * ti + 0.001 then
+    if CurTime() - self:GetActualLastFire() < math.ceil(self:GetInterval() / ti) * ti + 0.001 then
         -- print("CORRECT", correctedcurtime-self:GetLastFire())
-        correctedcurtime = self:GetLastFire() + self.CycleTime
+        correctedcurtime = self:GetLastFire() + self:GetInterval()
     else
     end
 
     -- print("NOCORRECT", correctedcurtime - self:GetLastFire())
-    self:SetNextPrimaryFire(correctedcurtime + self.CycleTime - ti / 4)
-    self:SetNextSecondaryFire(correctedcurtime + self.CycleTime - ti / 4)
+    self:SetNextPrimaryFire(correctedcurtime + self:GetInterval() - ti / 4)
+    self:SetNextSecondaryFire(correctedcurtime + self:GetInterval() - ti / 4)
 
     -- self:SetNextIdle(CurTime() + self.TimeToIdle)
     if self.BurstFire then
@@ -690,7 +707,7 @@ end
 
 -- Note: self.SpreadStand only applies when unscoped
 function SWEP:GetSpread(clientsmoothing)
-    local spread = (self.SpreadBase or 0) + self:MovementPenalty(clientsmoothing) * (self.SpreadMove or 0)
+    local spread = self:GetBasedSpread() + self:MovementPenalty(clientsmoothing) * (self.SpreadMove or 0)
 
     if not self:IsScoped() then
         spread = spread + (self.SpreadUnscoped or 0)

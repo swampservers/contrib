@@ -3,7 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "ar"
 SWEP.PrintName = "SG 552"
-SWEP.Purpose = "Good for long-range headshots and spraying."
+SWEP.Purpose = "Good for long-range headshots/tapfire and spraying."
 SWEP.HoldType = "ar2"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "[")

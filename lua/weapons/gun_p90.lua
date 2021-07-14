@@ -3,6 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "smg"
 SWEP.PrintName = "P90"
+SWEP.Purpose = "Mobile SMG with lots of ammo"
 SWEP.HoldType = "ar2"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "m")
@@ -24,7 +25,7 @@ SWEP.HalfDamageDistance = 4096
 --
 SWEP.SpreadBase = 0.01
 SWEP.SpreadMove = 0.01
-SWEP.Spray = 0.04
+SWEP.Spray = 0.05
 SWEP.SprayExponent = 3
 
 ComputeSpray(SWEP, {
@@ -33,11 +34,11 @@ ComputeSpray(SWEP, {
 })
 
 -- 
+SWEP.KickDance = 1
 SWEP.KickUBase = 0.2
 SWEP.KickUSpray = 1.5
 SWEP.KickLBase = 0.1
 SWEP.KickLSpray = 0.3
-SWEP.KickDance = 1
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}

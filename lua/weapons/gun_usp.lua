@@ -3,6 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
 SWEP.PrintName = "USP"
+SWEP.Purpose = "Long range pistol"
 SWEP.HoldType = "pistol"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "a")
@@ -24,13 +25,17 @@ SWEP.HalfDamageDistance = 4096
 --
 SWEP.SpreadBase = 0.006
 SWEP.SpreadMove = 0.014
-SWEP.Spray = 0.04
-SWEP.SprayExponent = 1.5
-SWEP.SprayIncrement = 0.3
-SprayControlFactor(SWEP, 0.6)
+SWEP.Spray = 0.05
+SWEP.SprayExponent = 2.5
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.35,
+    ShotsTo90Spray = 7
+})
+
 --
-SWEP.KickUBase = 2
-SWEP.KickUSpray = 0
+SWEP.KickUBase = 1
+SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
 -- SWEP.KickSimple = 2

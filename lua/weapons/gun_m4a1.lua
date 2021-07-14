@@ -35,9 +35,9 @@ ComputeSpray(SWEP, {
 })
 
 --
-SWEP.KickUBase = 0.3
+SWEP.KickUBase = 0.2
 SWEP.KickUSpray = 2.5
-SWEP.KickLBase = 0.1
+SWEP.KickLBase = 0.05
 SWEP.KickLSpray = 0.3
 -- SWEP.KickMoving = {1, 0.45, 0.28, 0.045, 3.75, 3, 7}
 -- SWEP.KickStanding = {0.65, 0.35, 0.25, 0.015, 3.5, 2.25, 7}

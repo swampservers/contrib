@@ -265,7 +265,7 @@ function PANEL:Paint()
         SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
 
         for _, prop in pairs(acc) do
-            print(prop:GetMaterial())
+            -- print(prop:GetMaterial())
             prop:DrawModel() --self.Entity)
         end
     end

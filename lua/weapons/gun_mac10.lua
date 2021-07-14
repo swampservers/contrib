@@ -3,6 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "smg"
 SWEP.PrintName = "MAC-10"
+SWEP.Purpose = "It spits lead"
 SWEP.HoldType = "pistol"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "l")
@@ -19,20 +20,26 @@ SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = true
 SWEP.Damage = 27
-SWEP.CycleTime = 0.06
+SWEP.CycleTime = 0.055
 SWEP.HalfDamageDistance = 2048
 --
-SWEP.SpreadBase = 0.012
-SWEP.SpreadMove = 0.008
+SWEP.SpreadBase = 0.013
+SWEP.SpreadMove = 0.01
 SWEP.Spray = 0.05
-SWEP.SprayExponent = 1
-SWEP.SprayIncrement = 0.15
-SprayControlFactor(SWEP, 0.5)
+SWEP.SprayExponent = 2
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.3,
+    ShotsTo90Spray = 20
+})
+
 --
-SWEP.KickUBase = 0.3
-SWEP.KickUSpray = 1.875
-SWEP.KickLBase = 0.225
-SWEP.KickLSpray = 0.3
+SWEP.KickDance = 3
+SWEP.KickUBase = 0.2
+SWEP.KickUSpray = 1
+SWEP.KickLBase = 0.1
+SWEP.KickLSpray = 0.5
+SWEP.MoveKickMultiplier = 2
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}

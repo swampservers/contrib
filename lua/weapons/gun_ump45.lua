@@ -3,6 +3,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "smg"
 SWEP.PrintName = "UMP-45"
+SWEP.Purpose = "High damage, long range SMG"
 SWEP.HoldType = "smg"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "q")
@@ -24,16 +25,18 @@ SWEP.HalfDamageDistance = 4096
 --
 SWEP.SpreadBase = 0.008
 SWEP.SpreadMove = 0.02
-SWEP.Spray = 0.04
-SWEP.SprayExponent = 1.5
--- SWEP.SprayIncrement = 0.35
--- SprayControlFactor(SWEP, 0.5)
-SWEP.SprayIncrement = 0.4
-SprayShotsTo80(SWEP, 20)
+SWEP.Spray = 0.05
+SWEP.SprayExponent = 2.5
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.5,
+    ShotsTo90Spray = 16
+})
+
 --
 SWEP.KickUBase = 0.3
-SWEP.KickUSpray = 1.875
-SWEP.KickLBase = 0.225
+SWEP.KickUSpray = 1
+SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
