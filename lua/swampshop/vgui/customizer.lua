@@ -13,154 +13,7 @@ function PANEL:Close()
     -- SS_InventoryPanel:SetVisible(true)
 end
 
-function PANEL:Open(item)
-    for k, v in pairs(self:GetChildren()) do
-        v:Remove()
-    end
-
-    self.item = item
-    item.applied_cfg = table.Copy(item.cfg)
-    self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
-
-    if IsValid(SS_PopupPanel) then
-        SS_ShopMenu:SetParent()
-        SS_PopupPanel:Remove()
-    end
-
-    SS_ShopMenu:MakePopup()
-    --SS_PaintTileBG
-    self.Paint = SS_PaintBG
-
-    --.Paint = SS_PaintGridBG
-    --.Paint = SS_PaintTileBG
-    SS_PopupPanel = vgui("DFrame", function(p)
-        p:SetPos(0, 0)
-        p:SetSize(ScrW(), ScrH())
-        p:SetDraggable(false)
-        p:ShowCloseButton(true)
-        p:SetTitle("")
-        p:RequestFocus()
-        p.Paint = function() end
-        p:SetParent(SS_PopupPanel)
-    end)
-
-    self:SetVisible(true)
-
-    -- SS_InventoryPanel:SetVisible(false)
-    --main panel
-    vgui("DPanel", self, function(p)
-        p.Paint = noop
-        p:Dock(FILL)
-        p:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
-
-        self.controlzone = vgui("DPanel", function(p)
-            p:Dock(FILL)
-            p:DockMargin(0, 0, 0, 0)
-            p.Paint = SS_PaintBG
-        end)
-
-        self:SetupControls()
-
-        vgui("DPanel", function(p)
-            p.Paint = SS_PaintFG
-            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-            p:SetTall(SS_CUSTOMIZER_HEADINGSIZE)
-            p:Dock(TOP)
-
-            vgui("DLabel", function(p)
-                p:SetFont("SS_LargeTitle")
-                p:SetText("βUSTOMIZER")
-
-                p.UpdateColours = function(pnl)
-                    pnl:SetTextColor(MenuTheme_TX)
-                end
-
-                p:SetColor(SS_SwitchableColor)
-                p:SetContentAlignment(5)
-                p:SizeToContents()
-                p:DockMargin(80, 8, 0, 10)
-                p:Dock(LEFT)
-            end)
-
-            vgui("DLabel", function(p)
-                p:SetFont("SS_DESCINSTFONT")
-                p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
-
-                p.UpdateColours = function(pnl)
-                    pnl:SetTextColor(MenuTheme_TX)
-                end
-
-                p:SetColor(SS_SwitchableColor)
-                p:SetContentAlignment(5)
-                p:SizeToContents()
-                p:DockMargin(0, 0, 32, 0)
-                p:Dock(RIGHT)
-            end)
-        end)
-
-        --bottom panel
-        vgui("DPanel", function(p)
-            p.Paint = function() end
-            p:SetTall(SS_CUSTOMIZER_HEADINGSIZE)
-            p:Dock(BOTTOM)
-
-            vgui("DButton", function(p)
-                p:SetText("Reset")
-                p:SetFont("SS_DESCTITLEFONT")
-                p:SetWide(SS_GetMainGridDivision(4))
-                p:DockMargin(0, SS_COMMONMARGIN, SS_COMMONMARGIN, 0)
-                p:Dock(LEFT)
-                p.Paint = SS_PaintButtonBrandHL
-
-                p.UpdateColours = function(pnl)
-                    pnl:SetTextStyleColor(MenuTheme_TX)
-                end
-
-                p.DoClick = function(butn)
-                    self.item.cfg = {}
-                    self:UpdateCfg()
-                    self:SetupControls()
-                end
-            end)
-
-            vgui("DButton", function(p)
-                p:SetText("Cancel")
-                p:SetFont("SS_DESCTITLEFONT")
-                p:SetWide(SS_GetMainGridDivision(4))
-                p:DockMargin(0, SS_COMMONMARGIN, 0, 0)
-                p:Dock(LEFT)
-                p.Paint = SS_PaintButtonBrandHL
-
-                p.UpdateColours = function(pnl)
-                    pnl:SetTextStyleColor(MenuTheme_TX)
-                end
-
-                p.DoClick = function(butn)
-                    self.item.cfg = self.item.applied_cfg
-                    self:Close()
-                end
-            end)
-
-            vgui("DButton", function(p)
-                p:SetText("Done")
-                p:SetFont("SS_DESCTITLEFONT")
-                p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, 0)
-                p:Dock(FILL)
-                p.Paint = SS_PaintButtonBrandHL
-
-                p.UpdateColours = function(pnl)
-                    pnl:SetTextStyleColor(MenuTheme_TX)
-                end
-
-                p.DoClick = function(butn)
-                    SS_ItemServerAction(self.item.id, "configure", self.item.cfg)
-                    self:Close()
-                end
-            end)
-        end)
-    end)
-end
-
+ 
 local function GapMaker(parent)
     local GAP = vgui.Create("DPanel", parent)
     GAP:Dock(TOP)
@@ -278,7 +131,39 @@ local function CheckboxMaker(parent, text)
     return p3
 end
 
-local function Container(parent, label)
+function PANEL:AddSection(name)
+    self.Sections = self.Sections or {}
+    if(self.Sections[name])then
+        return self.Sections[name]
+    end
+    local sect = vgui.Create("DScrollPanel",self.controlzone)
+
+    sect:Dock(LEFT)
+        sect:DockMargin(0, 0, SS_COMMONMARGIN, 0)
+        sect.VBar:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+        SS_SetupVBar(sect.VBar)
+        sect.VBar:SetWide(SS_SCROLL_WIDTH)
+        sect.BasedLayout = sect.PerformLayout
+        sect.PerformLayout = function(pnl)
+        pnl:BasedLayout()
+        if(pnl:GetDock() != FILL)then pnl:SetWide(SS_GetMainGridDivision(math.max(table.Count(self.Sections) or 1,2))) end
+
+
+        end
+
+    self.Sections[name] = sect
+    for k,v in pairs(self.Sections)do
+        v:Dock(k == name and table.Count(self.Sections) > 1 and FILL or LEFT)
+        sect:DockMargin(0, 0, k == name and SS_COMMONMARGIN or 0, 0)
+        
+    end
+
+
+
+    return self.Sections[name]
+end
+
+local function Container(parent,label)
     local pane = vgui.Create("Panel", parent)
     pane:DockMargin(0, 0, 0, 0)
     pane:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
@@ -299,60 +184,465 @@ local function Container(parent, label)
     LabelMaker(pane, label, true)
 
     return pane
+
 end
+
+function PANEL:AddContainer(section, label)
+    local parent = self.Sections[section]
+    if(!IsValid(parent))then
+        parent = self:AddSection(section)
+        ErrorNoHaltWithStack("container defined before section!!!! please fix this")
+    end
+    local pane = Container(parent,label)
+    return pane
+end
+
+
+--read tab is configurable
+--write tab is .cfg.
+function PANEL:AddVectorOption(section,read_tab,write_tab,writeprop,label)
+    local suffix = self.WEARSUFFIX
+    
+    local options = read_tab
+
+        local pane = self:AddContainer(section, label)
+        local translate = write_tab and write_tab[writeprop] or Vector(0, 0, 0)
+        pane.XSlider = SliderMaker(pane, "X (Along)")
+        pane.XSlider:SetMinMax(read_tab.min.x, read_tab.max.x)
+        pane.XSlider:SetValue(translate.x)
+        pane.YSlider = SliderMaker(pane, "Y")
+        pane.YSlider:SetMinMax(read_tab.min.y, read_tab.max.y)
+        pane.YSlider:SetValue(translate.y)
+        pane.ZSlider = SliderMaker(pane, "Z")
+        pane.ZSlider:SetMinMax(read_tab.min.z, read_tab.max.z)
+        pane.ZSlider:SetValue(translate.z)
+
+        local function UpdateTransform(pnl)
+       
+            if read_tab then
+                write_tab[writeprop]:Set( Vector(pane.XSlider:GetValue(), pane.YSlider:GetValue(), pane.ZSlider:GetValue()) )
+            end
+            PrintTable(self.item)
+            --self:UpdateCfg()
+        end
+
+
+        pane.XSlider.OnValueChanged = UpdateTransform
+        pane.YSlider.OnValueChanged = UpdateTransform
+        pane.ZSlider.OnValueChanged = UpdateTransform
+end
+
+function PANEL:AddAngleOption(section,read_tab,write_tab,writeprop,label)
+    local suffix = self.WEARSUFFIX
+    
+    local options = read_tab
+
+        local pane = self:AddContainer(section, label)
+        local rotate = write_tab and write_tab[writeprop] or Angle(0, 0, 0)
+        pane.PitchSlider = SliderMaker(pane, "Pitch")
+        pane.PitchSlider:SetMinMax(-180, 180)
+        pane.PitchSlider:SetValue(rotate.p)
+        pane.YawSlider = SliderMaker(pane, "Yaw")
+        pane.YawSlider:SetMinMax(-180, 180)
+        pane.YawSlider:SetValue(rotate.y)
+        pane.RollSlider = SliderMaker(pane, "Roll")
+        pane.RollSlider:SetMinMax(-180, 180)
+        pane.RollSlider:SetValue(rotate.r)
+        local function UpdateTransform(pnl)
+       
+            if read_tab then
+                write_tab[writeprop]:Set( Angle(pane.PitchSlider:GetValue(), pane.YawSlider:GetValue(), pane.RollSlider:GetValue()) )
+            end
+            PrintTable(self.item)
+            --self:UpdateCfg()
+        end
+        pane.PitchSlider.OnValueChanged = UpdateTransform
+        pane.YawSlider.OnValueChanged = UpdateTransform
+        pane.RollSlider.OnValueChanged = UpdateTransform
+end
+
+
+function PANEL:AddColorOption(section,read_tab,write_tab,writeprop,label)
+    local suffix = self.WEARSUFFIX
+    
+    local options = read_tab
+
+        local pane = self:AddContainer(section, label)
+        
+        local cv = Vector()
+        cv:Set(write_tab[writeprop] or Vector(1, 1, 1))
+        local cvm = math.max(1, cv.x, cv.y, cv.z)
+        local PSCMixer = vgui.Create("DColorMixer", pane)
+        PSCMixer:SetPalette(true)
+        PSCMixer:SetAlphaBar(false)
+        PSCMixer:SetWangs(true)
+        PSCMixer:SetVector(cv / cvm)
+        PSCMixer:SetTall(250)
+        PSCMixer:DockMargin(0, 0, 0, 0)
+        PSCMixer:Dock(TOP)
+        local PSBS = SliderMaker(pane, "Boost")
+        PSBS:SetMinMax(1, read_tab.max)
+        PSBS:SetValue(cvm)
+        PSBS:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+
+        local function colorchanged()
+            write_tab[writeprop] = PSCMixer:GetVector() * PSBS:GetValue()
+            self:UpdateCfg()
+        end
+
+        PSCMixer.ValueChanged = colorchanged
+        PSBS.ValueChanged = colorchanged
+        
+end
+
+function PANEL:AddImgurOption(section,read_tab,write_tab,writeprop,label)
+    local suffix = self.WEARSUFFIX
+    
+    local options = read_tab
+
+    local pane = self:AddContainer(section, label)
+        
+    local texturebarhelp = vgui.Create("DLabel", pane)
+    texturebarhelp:Dock(TOP)
+    texturebarhelp:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+    texturebarhelp:SetText("Upload an image to imgur.com and enter the link into the field below.\nFor example: https://imgur.com/a/3AOvcC1\nNo videos or GIFs!")
+    texturebarhelp:SetWrap(true)
+    texturebarhelp:SetTall(128)
+    texturebarhelp:SetAutoStretchVertical(true)
+
+    texturebarhelp.UpdateColours = function(pnl)
+        pnl:SetTextColor(MenuTheme_TX)
+    end
+
+    local texturec = vgui.Create("DPanel", pane)
+    texturec:Dock(TOP)
+    texturec.Paint = noop
+    local texturedl = vgui.Create("DButton", texturec)
+    texturedl:SetText("Show Reference Material")
+    texturedl:Dock(RIGHT)
+    texturedl:SetWide(180)
+    texturedl:SetTextColor(MenuTheme_TX)
+    texturedl:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
+    texturedl.Paint = SS_PaintButtonBrandHL
+
+    texturedl.UpdateColours = function(pnl)
+        pnl:SetTextStyleColor(MenuTheme_TX)
+    end
+
+    texturedl.DoClick = function()
+        ImageGetterPanel()
+    end
+
+    local texturebarc = vgui.Create("DPanel", texturec)
+    texturebarc:Dock(TOP)
+    texturebarc.Paint = SS_PaintBG
+    local texturebar = vgui.Create("DTextEntry", texturebarc)
+    texturebar:Dock(FILL)
+    self.TextureBar = texturebar
+    texturebar:SetPaintBackground(false)
+    texturebar:SetUpdateOnType(true)
+    texturebar:SetTextColor(MenuTheme_TX)
+    texturebar:SetText(write_tab and write_tab[writeprop] or "")
+
+    texturebar.UpdateColours = function(pnl)
+        pnl:SetTextColor(MenuTheme_TX)
+        pnl:SetCursorColor(MenuTheme_TX)
+    end
+
+    texturebar.OnValueChange = function(textself, new)
+
+        write_tab[writeprop] = new and {
+            url = new,
+            nsfw = nsfw
+        } or nil
+
+        self:UpdateCfg()
+    end
+
+    local savebutton = vgui.Create("DImageButton", texturebarc)
+    savebutton:SetSize(16, 16)
+    savebutton:SetImage("icon16/disk.png")
+    savebutton:SetToolTip("Manage Saved Textures")
+    savebutton:DockMargin(4, 4, 4, 4)
+    savebutton:Dock(RIGHT)
+
+    savebutton.DoClick = function(pnl)
+        if (IsValid(SS_CustTextureHistory)) then
+            SS_CustTextureHistory:Remove()
+
+            return
+        end
+
+        ImageHistoryPanel(pnl)
+    end
+end
+
+
+
+
+
+
+
+function PANEL:AddSelectionOption(section,tab,key,property)
+    local parent = self.Sections[section]
+    local pane = Container(parent, "Attachment")
+    local cnt = vgui.Create("DPanel", pane)
+    cnt:Dock(TOP)
+    cnt:SetTall(24)
+    cnt.Paint = noop
+    ATTACHSELECT = vgui.Create("DComboBox", cnt)
+    ATTACHSELECT:SetValue((self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
+
+    for k, v in pairs(SS_Attachments) do
+        ATTACHSELECT:AddChoice(k)
+    end
+
+    ATTACHSELECT:SetTall(32)
+    ATTACHSELECT:Dock(FILL)
+    ATTACHSELECT.Paint = SS_PaintBG
+
+    ATTACHSELECT.UpdateColours = function(pnl)
+        pnl:SetTextStyleColor(MenuTheme_TX)
+        pnl:SetTextColor(MenuTheme_TX)
+    end
+
+    p = vgui.Create("DLabel", cnt)
+    p:Dock(LEFT)
+    p:SetText("Attach to")
+
+    p.UpdateColours = function(pnl)
+        pnl:SetTextColor(MenuTheme_TX)
+    end
+
+    ATTACHSELECT.OnSelect = function(panel, index, value)
+        self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
+        self.item.cfg[self.wear].attach = value
+        self:UpdateCfg()
+    end
+
+
+end
+
+
+
+
+
+function PANEL:Open(item)
+    for k, v in pairs(self:GetChildren()) do
+        v:Remove()
+    end
+
+    self.item = item
+    
+    self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
+
+    if IsValid(SS_PopupPanel) then
+        SS_ShopMenu:SetParent()
+        SS_PopupPanel:Remove()
+    end
+
+    SS_ShopMenu:MakePopup()
+    --SS_PaintTileBG
+    self.Paint = SS_PaintBG
+
+    --.Paint = SS_PaintGridBG
+    --.Paint = SS_PaintTileBG
+    SS_PopupPanel = vgui("DFrame", function(p)
+        p:SetPos(0, 0)
+        p:SetSize(ScrW(), ScrH())
+        p:SetDraggable(false)
+        p:ShowCloseButton(true)
+        p:SetTitle("")
+        p:RequestFocus()
+        p.Paint = function() end
+        p:SetParent(SS_PopupPanel)
+    end)
+
+    self:SetVisible(true)
+
+    -- SS_InventoryPanel:SetVisible(false)
+    --main panel
+    vgui("DPanel", self, function(p)
+        p.Paint = noop
+        p:Dock(FILL)
+        p:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+
+        self.controlzone = vgui("DPanel", function(p)
+            p:Dock(FILL)
+            p:DockMargin(0, 0, 0, 0)
+            p.Paint = SS_PaintBG
+            
+        end)
+        
+        self:SetupControls()
+        vgui("DPanel", function(p)
+            p.Paint = SS_PaintFG
+            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+            p:SetTall(SS_CUSTOMIZER_HEADINGSIZE)
+            p:Dock(TOP)
+
+            vgui("DLabel", function(p)
+                p:SetFont("SS_LargeTitle")
+                p:SetText("βUSTOMIZER")
+
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextColor(MenuTheme_TX)
+                end
+
+                p:SetColor(SS_SwitchableColor)
+                p:SetContentAlignment(5)
+                p:SizeToContents()
+                p:DockMargin(80, 8, 0, 10)
+                p:Dock(LEFT)
+            end)
+
+            vgui("DLabel", function(p)
+                p:SetFont("SS_DESCINSTFONT")
+                p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
+
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextColor(MenuTheme_TX)
+                end
+
+                p:SetColor(SS_SwitchableColor)
+                p:SetContentAlignment(5)
+                p:SizeToContents()
+                p:DockMargin(0, 0, 32, 0)
+                p:Dock(RIGHT)
+            end)
+        end)
+
+        --bottom panel
+        vgui("DPanel", function(p)
+            p.Paint = function() end
+            p:SetTall(SS_CUSTOMIZER_HEADINGSIZE)
+            p:Dock(BOTTOM)
+
+            vgui("DButton", function(p)
+                p:SetText("Reset")
+                p:SetFont("SS_DESCTITLEFONT")
+                p:SetWide(SS_GetMainGridDivision(4))
+                p:DockMargin(0, SS_COMMONMARGIN, SS_COMMONMARGIN, 0)
+                p:Dock(LEFT)
+                p.Paint = SS_PaintButtonBrandHL
+
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                end
+
+                p.DoClick = function(butn)
+                    self.item.cfg = {}
+                    self:UpdateCfg()
+                    self:SetupControls(self.controlzone)
+                end
+            end)
+
+            vgui("DButton", function(p)
+                p:SetText("Cancel")
+                p:SetFont("SS_DESCTITLEFONT")
+                p:SetWide(SS_GetMainGridDivision(4))
+                p:DockMargin(0, SS_COMMONMARGIN, 0, 0)
+                p:Dock(LEFT)
+                p.Paint = SS_PaintButtonBrandHL
+
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                end
+
+                p.DoClick = function(butn)
+                    self.item.cfg = self.item.applied_cfg
+                    self:Close()
+                end
+            end)
+
+            vgui("DButton", function(p)
+                p:SetText("Done")
+                p:SetFont("SS_DESCTITLEFONT")
+                p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, 0)
+                p:Dock(FILL)
+                p.Paint = SS_PaintButtonBrandHL
+
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                end
+
+                p.DoClick = function(butn)
+                    SS_ItemServerAction(self.item.id, "configure", self.item.cfg)
+                    self:Close()
+                end
+            end)
+        end)
+    end)
+   
+
+end
+
+
 
 function PANEL:SetupControls()
     for k, v in pairs(self.controlzone:GetChildren()) do
         v:Remove()
     end
-
-    local wear_container = vgui.Create("DScrollPanel", self.controlzone)
-    wear_container:Dock(LEFT)
-    wear_container:SetWide(SS_GetMainGridDivision(2))
-    wear_container:DockMargin(0, 0, SS_COMMONMARGIN, 0)
-    wear_container.VBar:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-    SS_SetupVBar(wear_container.VBar)
-    wear_container.VBar:SetWide(SS_SCROLL_WIDTH)
     local pone = LocalPlayer():IsPony()
+    self.item.applied_cfg = table.Copy(self.item.cfg)
     local suffix = pone and "_p" or "_h"
-    local itmcw = self.item.configurable.wear
+    local sufname = pone and "Pony" or "Human"
+    local parsufname = "("..sufname..")"
+    self.WEARSUFFIX = suffix
 
+    self.Sections = {}
+
+    --quick little hack, if you wanna stick your diffent config types into subtables it will organize them. probably don't wanna use more than 2 per item though.
+   
+    if(self.item.configurable and self.item.configurable.wear and self.item.configurable.wear.pos)then
+        self.item.configurable.wear.ang = {}
+    end
+
+    for k,v in pairs(self.item.configurable)do
+        local sname = "default"
+        if(k == "wear")then sname = k end 
+
+        if(k == "wear")then sname = "wear"..suffix end 
+
+        self:AddSection(sname)
+        timer.Simple(0,function()
+        
+
+        if(k == "wear")then
+            for k2,v2 in pairs(v)do
+                print(k2)
+                
+                if(k2 == "pos")then self:AddVectorOption(sname,self.item.configurable.wear[k2],self.item.cfg[k..suffix],k2,"Offset"..parsufname) end
+                if(k2 == "scale")then self:AddVectorOption(sname,self.item.configurable.wear[k2],self.item.cfg[k..suffix],k2,"Scale"..parsufname,true) end
+                if(k2 == "ang")then self:AddAngleOption(sname,self.item.configurable.wear[k2],self.item.cfg[k..suffix],k2,"Rotate"..parsufname) end
+            end
+        else
+            self.item.cfg[k..suffix] = self.item.cfg[k..suffix] or k == scale and Vector(1,1,1) or Vector(0,0,0)
+            if(k == "pos")then self:AddVectorOption(sname,self.item.configurable[k],self.item.cfg,k..suffix,"Offset"..parsufname) end
+            if(k == "scale")then self:AddVectorOption(sname,self.item.configurable[k],self.item.cfg,k..suffix,"Scale"..parsufname,true) end
+            if(k == "rotate")then self:AddAngleOption(sname,self.item.configurable[k],self.item.cfg,k..suffix,"Rotate"..parsufname) end
+            
+            if(k == "color")then self:AddColorOption(sname,self.item.configurable[k],self.item.cfg,k,"Color") end
+            if(k == "imgur")then self:AddImgurOption(sname,self.item.configurable[k],self.item.cfg[k],"url","Imgur") end
+
+
+        end 
+
+
+
+
+    end)
+    end
+
+    
+
+
+
+    
+    local itmcw = self.item.configurable.wear
+    --[[[
     if (self.item.configurable or {}).wear then
         --LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
-        local pane = Container(wear_container, "Attachment")
-        local cnt = vgui.Create("DPanel", pane)
-        cnt:Dock(TOP)
-        cnt:SetTall(24)
-        cnt.Paint = noop
-        ATTACHSELECT = vgui.Create("DComboBox", cnt)
-        ATTACHSELECT:SetValue((self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
-
-        for k, v in pairs(SS_Attachments) do
-            ATTACHSELECT:AddChoice(k)
-        end
-
-        ATTACHSELECT:SetTall(32)
-        ATTACHSELECT:Dock(FILL)
-        ATTACHSELECT.Paint = SS_PaintBG
-
-        ATTACHSELECT.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
-
-        p = vgui.Create("DLabel", cnt)
-        p:Dock(LEFT)
-        p:SetText("Attach to")
-
-        p.UpdateColours = function(pnl)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
-
-        ATTACHSELECT.OnSelect = function(panel, index, value)
-            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
-            self.item.cfg[self.wear].attach = value
-            self:UpdateCfg()
-        end
 
         local pane = Container(wear_container, "Offset")
         local translate = (self.item.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
@@ -366,16 +656,7 @@ function PANEL:SetupControls()
         ZSL:SetMinMax(itmcw.pos.min.z, itmcw.pos.max.z)
         ZSL:SetValue(translate.z)
         local pane = Container(wear_container, "Angle")
-        local rotate = (self.item.cfg[self.wear] or {}).ang or (pone and (self.item.wear.pony or {}).rotate) or self.item.wear.rotate
-        XRSL = SliderMaker(pane, "Pitch")
-        XRSL:SetMinMax(-180, 180)
-        XRSL:SetValue(rotate.p)
-        YRSL = SliderMaker(pane, "Yaw")
-        YRSL:SetMinMax(-180, 180)
-        YRSL:SetValue(rotate.y)
-        ZRSL = SliderMaker(pane, "Roll")
-        ZRSL:SetMinMax(-180, 180)
-        ZRSL:SetValue(rotate.r)
+       
         local pane = Container(wear_container, "Scale")
         local scale = (self.item.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
 
@@ -489,36 +770,7 @@ function PANEL:SetupControls()
         end
 
         --bunch of copied shit
-        local function transformslidersupdate()
-            if self.item.configurable.scale then
-                self.item.cfg["scale" .. suffix] = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
-            end
-
-            if self.item.configurable.pos then
-                self.item.cfg["pos" .. suffix] = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
-            end
-
-            self:UpdateCfg()
-        end
-
-        local itmcp = self.item.configurable.pos
-
-        if itmcp then
-            local pane = Container(wear_container, "Offset")
-            local translate = self.item.cfg["pos" .. suffix] or Vector(0, 0, 0)
-            XSL = SliderMaker(pane, "X (Along)")
-            XSL:SetMinMax(itmcp.min.x, itmcp.max.x)
-            XSL:SetValue(translate.x)
-            YSL = SliderMaker(pane, "Y")
-            YSL:SetMinMax(itmcp.min.y, itmcp.max.y)
-            YSL:SetValue(translate.y)
-            ZSL = SliderMaker(pane, "Z")
-            ZSL:SetMinMax(itmcp.min.z, itmcp.max.z)
-            ZSL:SetValue(translate.z)
-            XSL.OnValueChanged = transformslidersupdate
-            YSL.OnValueChanged = transformslidersupdate
-            ZSL.OnValueChanged = transformslidersupdate
-        end
+        --ADD SCALE CHECK HERE AAAAAA
 
         local itmcs = self.item.configurable.scale
 
@@ -627,149 +879,17 @@ function PANEL:SetupControls()
         end
     end
 
-    local appearance_container = vgui.Create("DScrollPanel", self.controlzone)
-    appearance_container:Dock(FILL)
-    appearance_container:SetPadding(0)
-    appearance_container.VBar:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
-    SS_SetupVBar(appearance_container.VBar)
-    appearance_container.VBar:SetWide(SS_SCROLL_WIDTH)
+    
     local limit = self.item:CanCfgColor()
 
     if limit then
         local colorzone = Container(appearance_container, "Appearance")
-        --[[
-    local colorzone = vgui.Create("DPanel", appearance_container)
-    colorzone.Paint = SS_PaintFG
-    colorzone:Dock(TOP)
-    colorzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-    colorzone:DockMargin(0,0,0,SS_COMMONMARGIN)
-
-    
-    --colorzone:SetTall( SS_GetCustomizerHeight())
-    colorzone.PerformLayout = function(pnl)
         
-        pnl:SizeToChildren(false, true)
-        pnl:InvalidateParent(true)
-        pnl:DockMargin(0, 0, appearance_container.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
-    end
-    ]]
-        local cv = Vector()
-        cv:Set(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
-        local cvm = math.max(1, cv.x, cv.y, cv.z)
-        PSCMixer = vgui.Create("DColorMixer", colorzone)
-        PSCMixer:SetPalette(true)
-        PSCMixer:SetAlphaBar(false)
-        PSCMixer:SetWangs(true)
-        PSCMixer:SetVector(cv / cvm)
-        PSCMixer:SetTall(250)
-        PSCMixer:DockMargin(0, 0, 0, 0)
-        PSCMixer:Dock(TOP)
-        PSBS = SliderMaker(colorzone, "Boost")
-        PSBS:SetMinMax(1, limit.max)
-        PSBS:SetValue(cvm)
-        PSBS:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
-
-        local function colorchanged()
-            self.item.cfg.color = PSCMixer:GetVector() * PSBS:GetValue()
-            self:UpdateCfg()
-        end
-
-        PSCMixer.ValueChanged = colorchanged
-        PSBS.OnValueChanged = colorchanged
     end
 
-    if self.item:CanCfgImgur() then
-        local texturezone = Container(appearance_container, "Custom Material")
-        --[[
-        local texturezone = vgui.Create("DPanel", appearance_container)
-        texturezone.Paint = SS_PaintFG
-        texturezone:Dock(TOP)
-        texturezone:DockMargin(0,SS_COMMONMARGIN*2,0,0)
-        texturezone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-        texturezone.PerformLayout = function(pnl)
-            pnl:SizeToChildren(false, true)
-            pnl:InvalidateParent(true)
-            pnl:DockMargin(0, 0, appearance_container.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
-        end
-        
+   
 
-        LabelMaker(texturezone, "Custom Material", true)
-        ]]
-        local texturebarhelp = vgui.Create("DLabel", texturezone)
-        texturebarhelp:Dock(TOP)
-        texturebarhelp:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-        texturebarhelp:SetText("Upload an image to imgur.com and enter the link into the field below.\nFor example: https://imgur.com/a/3AOvcC1\nNo videos or GIFs!")
-        texturebarhelp:SetWrap(true)
-        texturebarhelp:SetTall(128)
-        texturebarhelp:SetAutoStretchVertical(true)
-
-        texturebarhelp.UpdateColours = function(pnl)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
-
-        local texturec = vgui.Create("DPanel", texturezone)
-        texturec:Dock(TOP)
-        texturec.Paint = noop
-        local texturedl = vgui.Create("DButton", texturec)
-        texturedl:SetText("Show Reference Material")
-        texturedl:Dock(RIGHT)
-        texturedl:SetWide(180)
-        texturedl:SetTextColor(MenuTheme_TX)
-        texturedl:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
-        texturedl.Paint = SS_PaintButtonBrandHL
-
-        texturedl.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-        end
-
-        texturedl.DoClick = function()
-            ImageGetterPanel()
-        end
-
-        local texturebarc = vgui.Create("DPanel", texturec)
-        texturebarc:Dock(TOP)
-        texturebarc.Paint = SS_PaintBG
-        local texturebar = vgui.Create("DTextEntry", texturebarc)
-        texturebar:Dock(FILL)
-        self.TextureBar = texturebar
-        texturebar:SetPaintBackground(false)
-        texturebar:SetUpdateOnType(true)
-        texturebar:SetTextColor(MenuTheme_TX)
-        texturebar:SetText(self.item and self.item.cfg and self.item.cfg.imgur and self.item.cfg.imgur.url or "")
-
-        texturebar.UpdateColours = function(pnl)
-            pnl:SetTextColor(MenuTheme_TX)
-            pnl:SetCursorColor(MenuTheme_TX)
-        end
-
-        texturebar.OnValueChange = function(textself, new)
-            self.item.cfg.imgur = new and {
-                url = new,
-                nsfw = nsfw
-            } or nil
-
-            self:UpdateCfg()
-        end
-
-        local savebutton = vgui.Create("DImageButton", texturebarc)
-        savebutton:SetSize(16, 16)
-        savebutton:SetImage("icon16/disk.png")
-        savebutton:SetToolTip("Manage Saved Textures")
-        savebutton:DockMargin(4, 4, 4, 4)
-        savebutton:Dock(RIGHT)
-
-        savebutton.DoClick = function(pnl)
-            if (IsValid(SS_CustTextureHistory)) then
-                SS_CustTextureHistory:Remove()
-
-                return
-            end
-
-            ImageHistoryPanel(pnl)
-        end
-    end
-
-    local rawzone = vgui.Create("DCollapsibleCategory", appearance_container)
+    local rawzone = vgui.Create("DCollapsibleCategory", self.Sections["default"])
     rawzone:Dock(TOP)
     rawzone:SetTall(256)
     rawzone:DockMargin(0, 0, 0, 0)
@@ -779,7 +899,7 @@ function PANEL:SetupControls()
     rawzone.PerformLayout = function(pnl)
         pnl:SizeToChildren(false, true)
         pnl:InvalidateParent(true)
-        pnl:DockMargin(0, 0, appearance_container.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
+        pnl:DockMargin(0, 0, pnl:GetParent():GetParent().VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
         pnl:BasedPerformLayout(pnl:GetWide(), pnl:GetTall())
     end
 
@@ -835,6 +955,7 @@ function PANEL:SetupControls()
 
     RAWENTRY:SetUpdateOnType(true)
     --RAWENTRY:SetValue("unset") --(self.item.cfg.imgur or {}).url or "")
+]]
     self:UpdateCfg()
 end
 
@@ -1045,6 +1166,7 @@ function ImageGetterPanel()
 end
 
 function PANEL:UpdateCfg(skiptext)
+    PrintTable(self.item)
     self.item:Sanitize()
 
     if IsValid(RAWENTRY) and not skiptext then
