@@ -85,15 +85,13 @@ end
 
 
 function SWEP:CanTarget(v)
-    if (not v:IsPlayer()) then return false ,"NOT PLAYER" end
+    if (not v:IsPlayer()) then return false end
     
-    if (not v:Alive()) then return false,"DEAD" end
-    if (v == self:GetOwner()) then return false,"IS OWNER" end
-    if (not self:GetTargetNearness(v)) then return false,"OUT OF RANGE" end
+    if (not v:Alive()) then return false end
+    if (v == self:GetOwner()) then return false end
+    if (not self:GetTargetNearness(v)) then return false end
     local ply = self:GetOwner()
-    local hookt = hook.Call("PlayerShouldTakeDamage", gmod.GetGamemode() ,v, ply)
-    
-    if (hookt == false) then return false,"CANT DAMAGE" end
+    if (Safe(v,ply)) then return false end
 
     return true
 end
@@ -186,20 +184,7 @@ function SWEP:CanPrimaryAttack()
 end
 
 if(SERVER)then
-    concommand.Add("gauntlet_targettest",function(ply,cmd,args)
-        local target = Player(args[1])
-        if(!IsValid(target))then return ply:ChatPrint("invalid target") end
-        local gaunt = ply:GetWeapon("weapon_gauntlet")
-        local gtarget = gaunt:FindTarget()
-        local gtn = IsValid(gtarget) and gtarget:Nick() or "nil"
-        ply:ChatPrint(target:Nick() .."reported by client")
-        
-        ply:ChatPrint(gtn .."reported by server")
 
-    
-
-
-    end)
 end
 
 function SWEP:PrimaryAttack()
@@ -213,11 +198,10 @@ function SWEP:PrimaryAttack()
     end
 
     if (IsValid(target)) then
-        self:GetOwner():ChatPrint((SERVER and "SERVER-" or CLIENT and "CLIENT-").. target:UserID())
-    
         self:Snap(target)
         self:SetNextPrimaryFire(CurTime() + 0.5)
     else
+        --running this every tick on failure is pretty stupid, sorry
         self:SetNextPrimaryFire(CurTime() + 0.15)
     end
 
