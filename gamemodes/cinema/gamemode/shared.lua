@@ -36,9 +36,7 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
     if attacker:GetClass() == "sent_popcorn_thrown" then return false end
     if attacker.dodgeball then return false end
 
-    if Safe(ply) or Safe(attacker) then
-        if attacker:IsPlayer() and ply:InTheater() and ply:GetTheater():GetOwner() == attacker then return true end
-
+    if Safe(ply,attacker) then
         return false
     end
 
