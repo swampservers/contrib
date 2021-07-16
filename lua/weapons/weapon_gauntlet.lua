@@ -89,7 +89,7 @@ function SWEP:CanTarget(v)
     if (v == self:GetOwner()) then return false end
     if (not self:GetTargetNearness(v)) then return false end
     local ply = self:GetOwner()
-    local hookt = hook.Run("PlayerShouldTakeDamage", v, ply)
+    local hookt = hook.Call("PlayerShouldTakeDamage", gmod.GetGamemode() ,v, ply)
     if (hookt == false) then return false end
 
     return true
