@@ -83,14 +83,17 @@ function SWEP:Snap(target)
     end
 end
 
+
 function SWEP:CanTarget(v)
-    if (not v:IsPlayer()) then return false end
-    if (not v:Alive()) then return false end
-    if (v == self:GetOwner()) then return false end
-    if (not self:GetTargetNearness(v)) then return false end
+    if (not v:IsPlayer()) then return false ,"NOT PLAYER" end
+    
+    if (not v:Alive()) then return false,"DEAD" end
+    if (v == self:GetOwner()) then return false,"IS OWNER" end
+    if (not self:GetTargetNearness(v)) then return false,"OUT OF RANGE" end
     local ply = self:GetOwner()
     local hookt = hook.Call("PlayerShouldTakeDamage", gmod.GetGamemode() ,v, ply)
-    if (hookt == false) then return false end
+    
+    if (hookt == false) then return false,"CANT DAMAGE" end
 
     return true
 end
@@ -112,6 +115,7 @@ function SWEP:GetTargetNearness(v)
 end
 
 function SWEP:FindTarget()
+
     local eyetrace = self.Owner:GetEyeTrace()
 
     local target = {nil, 10000}
@@ -181,8 +185,27 @@ function SWEP:CanPrimaryAttack()
     return self:GetOwner():GetAmmoCount("infinitygauntlet") > 0
 end
 
+if(SERVER)then
+    concommand.Add("gauntlet_targettest",function(ply,cmd,args)
+        local target = Player(args[1])
+        if(!IsValid(target))then return ply:ChatPrint("invalid target") end
+        local gaunt = ply:GetWeapon("weapon_gauntlet")
+        local gtarget = gaunt:FindTarget()
+        local gtn = IsValid(gtarget) and gtarget:Nick() or "nil"
+        ply:ChatPrint(target:Nick() .."reported by client")
+        
+        ply:ChatPrint(gtn .."reported by server")
+
+    
+
+
+    end)
+end
+
 function SWEP:PrimaryAttack()
     local target = self:FindTarget()
+
+    
     if (not self:CanPrimaryAttack()) then return end
 
     if (SERVER) then
@@ -190,8 +213,12 @@ function SWEP:PrimaryAttack()
     end
 
     if (IsValid(target)) then
+        self:GetOwner():ChatPrint((SERVER and "SERVER-" or CLIENT and "CLIENT-").. target:UserID())
+    
         self:Snap(target)
         self:SetNextPrimaryFire(CurTime() + 0.5)
+    else
+        self:SetNextPrimaryFire(CurTime() + 0.15)
     end
 
     if (SERVER) then
