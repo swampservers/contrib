@@ -86,9 +86,16 @@ if CLIENT then
             if IsValid(LocalPlayer():GetActiveWeapon()) then
                 if notifyWeapons[LocalPlayer():GetActiveWeapon():GetClass()] then
                     local col = Color(255, 255, 255, 255)
-                    draw.WordBox(8, ScrW() / 2 - 100, (ScrH() / 2) + 80, "This is a Safe Space", "Trebuchet24", Color(0, 0, 0, 100), col)
-                    draw.WordBox(8, ScrW() / 2 - 108, (ScrH() / 2) + 120, "You can't harm anyone here.", "HudHintTextLarge", Color(0, 0, 0, 100), col)
-                    draw.WordBox(8, ScrW() / 2 - 108, (ScrH() / 2) + 150, "Holster your weapon to hide this.", "HudHintTextLarge", Color(0, 0, 0, 100), col)
+                    local cy = ScrH()*0.7
+                    
+                    local pt = protectedTheaterTable and protectedTheaterTable[LocalPlayer():GetLocation()]
+                    local protected = pt ~= nil and pt["time"] > 1
+                    local owner = LocalPlayer():InTheater() and protected and LocalPlayer():GetTheater():GetOwner() == LocalPlayer()
+                    local m0 = "This is "..(owner and "your" or "a").." Safe Space"
+                    local m1 = owner and "You can defend this area from players you don't want inside" or "You can't harm anyone here."
+                    draw.WordBox(8, ScrW() / 2 , cy , m0, "Trebuchet24", Color(0, 0, 0, 100), col,TEXT_ALIGN_CENTER)
+                    draw.WordBox(8, ScrW() / 2 , cy + 42, m1, "HudHintTextLarge", Color(0, 0, 0, 100), col,TEXT_ALIGN_CENTER)
+                    draw.WordBox(8, ScrW() / 2 , cy + 74, "Holster your weapon to hide this.", "HudHintTextLarge", Color(0, 0, 0, 100), col,TEXT_ALIGN_CENTER)
                 end
             end
         end

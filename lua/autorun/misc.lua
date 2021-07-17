@@ -87,9 +87,14 @@ if CLIENT then
     })
 end
 
-function Safe(ent)
+function Safe(ent, attacker)
     local loc = 0
     local name = "Unknown"
+
+    --treat world as nil since damageinfo typically uses worldspawn as nothing
+    if (attacker == game.GetWorld()) then
+        attacker = nil
+    end
 
     if Location then
         loc = ent:IsPlayer() and ent:GetLocation() or Location.Find(ent)
@@ -110,7 +115,14 @@ function Safe(ent)
     end
 
     local pt = protectedTheaterTable and protectedTheaterTable[loc]
-    if pt ~= nil and pt["time"] > 1 then return true end
+
+    if pt ~= nil and pt["time"] > 1 then
+        --if theater is protected and the attacker is the theater owner, than this player is not safe from them.
+        local owner = ent:GetTheater() and ent:GetTheater():GetOwner()
+
+        if IsValid(attacker) and attacker:IsPlayer() and ent:IsPlayer() and ent:InTheater() and owner == attacker then return false end
+        return true
+    end
 
     if ent:IsPlayer() then
         if IsValid(ent:GetVehicle()) then
