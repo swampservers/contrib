@@ -202,6 +202,7 @@ SS_WeaponAndAmmoProduct({
     description = "Makes a funny dot. Keep away from eyes. Right click for lethal beam. Re-buy for battery refill.",
     price = 1000,
     ammotype = "laserpointer",
+    amount = 1000,
     model = 'models/brian/laserpointer.mdl',
     class = 'weapon_laserpointer'
 })

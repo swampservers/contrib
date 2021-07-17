@@ -76,7 +76,7 @@ end
 
 function SWEP:Initialize()
     ---self:SetHoldType( "pistol" )
-    self:SetHoldType("knife")
+    self:SetHoldType("slam")
 end
 
 function SWEP:SetupDataTables()

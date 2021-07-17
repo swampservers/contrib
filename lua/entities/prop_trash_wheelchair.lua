@@ -3,6 +3,7 @@
 AddCSLuaFile()
 DEFINE_BASECLASS("prop_trash")
 
+-- AddTrashClass("prop_trash_wheelchair", "models/props_wasteland/controlroom_chair001a.mdl")
 function ENT:Initialize()
     self:SetModel("models/props_wasteland/controlroom_chair001a.mdl")
     BaseClass.Initialize(self, true)

@@ -69,18 +69,50 @@ SS_Item({
     class = "outfitter2",
     price = 2000000,
     name = 'Outfitter',
-    description = "Allows wearing any model from workshop - type !outfitter",
+    description = "Allows wearing any playermodel from workshop (under 30,000 vertices)",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
+    actions = {
+        customize = {
+            Text = function() return "Change Model" end,
+            OnClient = function()
+                RunConsoleCommand("outfitter")
+                SS_ToggleMenu()
+            end
+        }
+    },
+    invcategory = "Playermodels",
+    never_equip = true
+})
+
+SS_Item({
+    class = "outfitter3",
+    price = 8000000,
+    name = 'Outfitter+',
+    description = "Allows a higher vertex limit for outfitter models. Requires outfitter. High price is because it causes lag.",
+    model = 'models/props_phx/facepunch_logo.mdl',
+    actions = {
+        customize = {
+            Text = function() return "Change Model" end,
+            OnClient = function()
+                RunConsoleCommand("outfitter")
+                SS_ToggleMenu()
+            end
+        }
+    },
     invcategory = "Playermodels",
     never_equip = true
 })
 
 if SERVER then
-    timer.Create("syncoutfitter", 1, 0, function()
-        for k, v in pairs(player.GetAll()) do
-            if v:GetNWBool("oufitr") ~= v:SS_HasItem("outfitter2") then
-                v:SetNWBool("oufitr", v:SS_HasItem("outfitter2"))
-            end
+    hook.Add("SS_UpdateItems", "outfitterbools", function(v)
+        local has2, has3 = v:SS_HasItem("outfitter2"), v:SS_HasItem("outfitter3")
+
+        if v:GetNWBool("oufitr") ~= has2 then
+            v:SetNWBool("oufitr", has2)
+        end
+
+        if v:GetNWBool("oufitr+") ~= has3 then
+            v:SetNWBool("oufitr+", has3)
         end
     end)
 end
@@ -114,6 +146,23 @@ SS_PlayermodelItem({
     price = 400064,
     name = 'Block Man',
     description = "A Minecraft player model capable of applying custom skins.",
+    actions = {
+        customize = {
+            Text = function() return "Change Skin" end,
+            OnClient = function()
+                local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Minecraft skin.", "", function(text)
+                    RunConsoleCommand("say", "!minecraftskin " .. text)
+                end, function() end, "Change Skin", "Cancel")
+
+                local srdx, srdy = mderma:GetSize()
+                local mdermacredits = Label("Minecraft Skins by Chev for Swamp Servers", mderma)
+                mdermacredits:Dock(BOTTOM)
+                mdermacredits:SetContentAlignment(2)
+                mderma:SetSize(srdx, srdy + 15)
+                mderma:SetIcon("icon16/user.png")
+            end
+        }
+    },
     model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
     PlayerSetModel = function(self, ply) end
 })
@@ -146,6 +195,14 @@ SS_PlayermodelItem({
     name = 'Pony',
     description = "*boop*",
     model = 'models/ppm/player_default_base.mdl',
+    actions = {
+        customize = {
+            Text = function() return "Customize Pony" end,
+            OnClient = function()
+                RunConsoleCommand("ppm_chared3")
+            end
+        }
+    },
     PlayerSetModel = function(self, ply)
         ply:Give("weapon_squee")
         ply:SelectWeapon("weapon_squee")

@@ -323,11 +323,6 @@ Map = {
         Max = Vector(-2096, -1192, 192)
     },
     {
-        Name = "SushiTheater Basement",
-        Min = Vector(-2912, -2008, -176),
-        Max = Vector(-2096, -1100, -24)
-    },
-    {
         Name = "SushiTheater Second Floor",
         Min = Vector(-2832, -1928, 192),
         Max = Vector(-2176, -1272, 376)
@@ -383,35 +378,10 @@ Map = {
     --[[Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 512 end,
 		Min = Vector(-512,-1152-512,-128),
 		Max = Vector(512,-1152+512,192)]] -- 10 "Mobile" theaters are used by prop_trash_theater
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
+    "mobiletheaters", {
+        Name = "SushiTheater Basement",
+        Min = Vector(-2912, -2008, -176),
+        Max = Vector(-2096, -1100, -24)
     },
     {
         Name = "Control Room",
@@ -598,30 +568,39 @@ Map = {
 --after everything
 --set up and index mobile theaters
 MobileLocations = {}
+local i = 1
 
-for k, v in pairs(Map) do
-    if v.Name == "MOBILE" then
-        table.insert(MobileLocations, k)
-        v.MobileLocationIndex = #MobileLocations
-        v.Name = "MobileTheater" .. tostring(v.MobileLocationIndex)
-        v.Min = Vector(-1, -1, -10001)
-        v.Max = Vector(1, 1, -10000)
+while i <= #Map do
+    if Map[i] == "mobiletheaters" then
+        table.remove(Map, i)
 
-        v.Theater = {
-            Flags = 1,
-            Pos = Vector(0, 0, 0),
-            Ang = Angle(0, 0, 0),
-            Width = 32,
-            Height = 18
-        }
+        for j = 0, 31 do
+            table.insert(MobileLocations, i + j)
+
+            table.insert(Map, i, {
+                MobileLocationIndex = #MobileLocations,
+                Name = "MobileTheater" .. tostring(#MobileLocations),
+                Min = Vector(-1, -1, -10001),
+                Max = Vector(1, 1, -10000),
+                Theater = {
+                    Flags = 1,
+                    Pos = Vector(0, 0, 0),
+                    Ang = Angle(0, 0, 0),
+                    Width = 32,
+                    Height = 18
+                }
+            })
+        end
+
+        break
     end
+
+    i = i + 1
 end
 
 function RefreshPositions()
     for k, v in pairs(ents.GetAll()) do
-        if v.LastLocationCoords ~= nil then
-            v.LastLocationCoords = nil
-        end
+        v.LastLocationCoords = nil
     end
 end
 
@@ -665,8 +644,11 @@ function GetLocationByName(strName)
 end
 
 -- returns the index of the players current location or 0 if unknown
-function Find(ply)
-    local pos = type(ply) == "Vector" and ply or ply:GetPos()
+function Find(pos)
+    if isentity(pos) then
+        pos = pos:GetPos()
+    end
+
     if (Map == nil) then return 0 end
 
     for k, v in next, Map do

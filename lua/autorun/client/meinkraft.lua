@@ -153,6 +153,7 @@ CVXDynamicLight = function(idx, elight)
     return CVX_TRACKED_DLIGHTS[idx]
 end
 
+--NOMINIFY
 hook.Add("Think", "DlightCleanup", function()
     -- chat.AddText(table.Count(CVX_TRACKED_DLIGHTS))
     local nxt = {}
@@ -244,7 +245,7 @@ MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
 
 hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
     if sky or depth then return end
-    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
+    if not (CVX_WORLD_ID and IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
     MINECRAFT_OREANGLE = Angle(0, 0, 0)
     MINECRAFT_OREMINS = -Vector(0.51, 0.51, 0.51) * CVX_SCALE
     MINECRAFT_OREMAXS = Vector(0.51, 0.51, 0.51) * CVX_SCALE
@@ -324,7 +325,7 @@ hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
 end)
 
 hook.Add("Think", "MinecraftOreUpdates", function()
-    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
+    if not (CVX_WORLD_ID and IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
 
     if not REQUESTED_ORES then
         net.Start("cvxOres")
@@ -417,7 +418,7 @@ hook.Add("PreDrawOpaqueRenderables", "SpadesAntiXray", function()
 end)
 
 timer.Create("MinecraftPlayerLighting", 0.1, 0, function()
-    if IsValid(LocalPlayer()) and LocalPlayer().GetLocationName and LocalPlayer():GetLocationName() == "In Minecraft" then
+    if CVX_WORLD_ID and IsValid(LocalPlayer()) and LocalPlayer().GetLocationName and LocalPlayer():GetLocationName() == "In Minecraft" then
         --hack but it works
         hook.Add("PrePlayerDraw", "MCPRPD", function(ply)
             cvx_pre_draw_leaf(ply)

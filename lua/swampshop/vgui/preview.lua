@@ -2,10 +2,12 @@
 -- INSTALL: CINEMA
 local PANEL = {}
 
+--NOMINIFY
 function PANEL:Init()
     self:SetModel(LocalPlayer():GetModel())
     self.Angles = Angle(0, 0, 0)
     self.ZoomOffset = 0
+    self:SetFOV(30)
 end
 
 function PANEL:OnMouseWheeled(amt)
@@ -67,7 +69,6 @@ function PANEL:LayoutEntity(thisEntity)
                         crangm:Invert()
                         nlangm = crangm * ngangm
                         nlang = nlangm:GetAngles()
-                        print(nlang)
                         XRSL:SetValue(nlang.x)
                         YRSL:SetValue(nlang.y)
                         ZRSL:SetValue(nlang.z)
@@ -76,10 +77,27 @@ function PANEL:LayoutEntity(thisEntity)
             end
         end
 
+        --[[ this shit isnt ready yet
+        if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(XSL) and IsValid(SS_HoverCSModel) then
+            local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
+            local attach = (SS_CustomizerPanel.item.cfg[SS_CustomizerPanel.wear] or {}).attach or (pone and (SS_CustomizerPanel.item.wear.pony or {}).attach) or SS_CustomizerPanel.item.wear.attach
+            local angpos = self.Entity:GetAttachment(self.Entity:LookupAttachment(attach))
+            local apos, aang = LocalToWorld(ofs, Angle(), angpos.Pos, angpos.Ang)
+            local camang = (self:GetLookAt() - self:GetCamPos()):Angle()
+            apos = apos + camang:Right() * (mx + (self.PressX or mx)) * 0.3
+            apos = apos + camang:Up() * (my + (self.PressY or my)) * 0.3
+            apos, aang = WorldToLocal(apos, aang, angpos.Pos, angpos.Ang)
+            XSL:SetValue(apos.x)
+            YSL:SetValue(apos.y)
+            ZSL:SetValue(apos.z)
+        end
+        ]]
         self.PressX, self.PressY = gui.MousePos()
     end
 
     if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
+        -- Uh, you have to do this or the hovered model won't follow the animation
+        self.Angles.y = self.Angles.y + 0.0001
         thisEntity:SetAngles(self.Angles)
 
         if not SS_CustomizerPanel:IsVisible() then
@@ -106,16 +124,18 @@ function PANEL:Paint()
 
     local pos = self.vCamPos
 
-    if SS_CustomizerPanel:IsVisible() then
-        if IsValid(SS_HoverCSModel) then
-            SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity, true)
-            pos = LerpVector(0, SS_HoverCSModel:GetPos() - (ang:Forward() * 25), pos)
-        end
+    -- if SS_CustomizerPanel:IsVisible() then
+    -- TODO
+    if IsValid(SS_HoverCSModel) then
+        -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
+        local p2 = SS_HoverCSModel:GetPos()
+        pos = p2 - (ang:Forward() * 50)
+    end
 
-        if SS_HoverItem and SS_HoverItem.playermodelmod then
-            pos = pos + (ang:Forward() * 25)
-            --positions are wrong
-            --[[
+    if SS_HoverItem and SS_HoverItem.playermodelmod then
+        pos = pos + (ang:Forward() * 25)
+        --positions are wrong
+        --[[
 			local pone = isPonyModel(self.Entity:GetModel())
 			local suffix = pone and "_p" or "_h"
 
@@ -127,9 +147,9 @@ function PANEL:Paint()
 				pos = LerpVector(0, pos2 - (ang:Forward() * 35), pos)
 			end
 			]]
-        end
     end
 
+    -- end
     local w, h = self:GetSize()
     cam.Start3D(pos + ang:Forward() * (self.ZoomOffset or 0) * 2.0, ang, self.fFOV, x, y, w, h, 5, 4096)
     cam.IgnoreZ(true)
@@ -150,7 +170,7 @@ function PANEL:Paint()
     local mdl = ply:GetModel()
 
     if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        mdl = SS_HoverIOP.model
+        mdl = SS_HoverIOP:GetModel()
     end
 
     require_workshop_model(mdl)
@@ -169,6 +189,7 @@ function PANEL:Paint()
         end
 
         SS_PreviewShopModel(self, SS_HoverIOP)
+        self:SetCamPos(self:GetCamPos() * 2)
         self.Entity:DrawModel()
 
         if SS_HoverItem then
@@ -205,26 +226,56 @@ function PANEL:Paint()
         end
 
         SS_ApplyBoneMods(self.Entity, mods)
-        SS_ApplyMaterialMods(self.Entity, mods)
+        SS_ApplyMaterialMods(self.Entity, LocalPlayer())
+        self.Entity:SetEyeTarget(self:GetCamPos())
         self.Entity:DrawModel()
     end
 
+    -- print("HOVER", SS_HoverItem)
     if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
-        for _, prop in pairs(ply:SS_GetCSModels()) do
-            if SS_HoverItem == nil or SS_HoverItem.id ~= prop.item.id then
-                SS_DrawWornCSModel(prop.item, prop.mdl, self.Entity)
+        local function GetShopAccessoryItems()
+            local a = {}
+
+            if SS_HoverItem then
+                table.insert(a, SS_HoverItem)
             end
+
+            if IsValid(LocalPlayer()) then
+                for _, item in ipairs(LocalPlayer().SS_ShownItems or {}) do
+                    if SS_HoverItem == nil or SS_HoverItem.id ~= item.id then
+                        table.insert(a, item)
+                    end
+                end
+            end
+
+            return a
+        end
+
+        if not SS_ShopAccessoriesClean then
+            -- remake every frame lol
+            self.Entity:SS_AttachAccessories()
+            -- SS_ShopAccessoriesClean = true
+            -- print("REMAKE")
+        end
+
+        SS_FORCE_LOAD_WEBMATERIAL = true
+        self.Entity:SS_AttachAccessories(GetShopAccessoryItems())
+        SS_FORCE_LOAD_WEBMATERIAL = nil
+        local acc = SS_CreatedAccessories[self.Entity]
+        SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
+
+        for _, prop in pairs(acc) do
+            -- print(prop:GetMaterial())
+            prop:DrawModel() --self.Entity)
         end
     end
 
-    if SS_HoverItem and SS_HoverItem.wear then
-        if not IsValid(SS_HoverCSModel) then
-            SS_HoverCSModel = SS_CreateWornCSModel(SS_HoverItem)
-        end
-
-        SS_DrawWornCSModel(SS_HoverItem, SS_HoverCSModel, self.Entity)
-    end
-
+    -- if SS_HoverItem and SS_HoverItem.wear then
+    --     if not IsValid(SS_HoverCSModel) then
+    --         SS_HoverCSModel = SS_CreateCSModel(SS_HoverItem)
+    --     end
+    --     -- SS_HoverCSModel:DrawInShop(self.Entity)
+    -- end
     -- ForceDrawPlayer(LocalPlayer())
     render.SuppressEngineLighting(false)
     cam.IgnoreZ(false)
@@ -233,9 +284,22 @@ function PANEL:Paint()
     if SS_CustomizerPanel:IsVisible() then
         if ValidPanel(XRSL) then
             if IsValid(SS_HoverCSModel) then
-                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, SS_SwitchableColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
+    end
+end
+
+function PANEL:PaintOver(w, h)
+    if IsValid(SS_DescriptionPanel) then
+        _, h = SS_DescriptionPanel:GetPos()
+    end
+
+    -- print(w,h)
+    -- surface.SetDrawColor(255,0,0,255)
+    -- surface.DrawRect(0,h-10,w,10)
+    if SS_HoverIOP then
+        SS_DrawIOPInfo(SS_HoverIOP, 0, h, w, MenuTheme_TX, 1)
     end
 end
 
@@ -249,6 +313,10 @@ function PANEL:SetModelCaching(sm)
         --     PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
         -- end
     end
+end
+
+function SS_RefreshShopAccessories()
+    SS_ShopAccessoriesClean = false
 end
 
 vgui.Register('DPointShopPreview', PANEL, 'DModelPanel')

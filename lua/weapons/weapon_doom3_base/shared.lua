@@ -279,9 +279,9 @@ function SWEP:DrawWeaponSelection(x, y, wide, tall, alpha)
 end
 
 function SWEP:DryFire()
-    --self:EmitSound("weapons/doom3/shotgun/dryfire_0"..math.random(1,3)..".wav")
 end
 
+--self:EmitSound("weapons/doom3/shotgun/dryfire_0"..math.random(1,3)..".wav")
 function SWEP:Smoke()
     if IsFirstTimePredicted() then
         local fx = EffectData()

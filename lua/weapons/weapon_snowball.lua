@@ -87,7 +87,11 @@ end
 
 function SWEP:PrimaryAttack()
     local vm = self:GetOwner():GetViewModel()
-    vm:SetPlaybackRate(1)
+
+    if IsValid(vm) then
+        vm:SetPlaybackRate(1)
+    end
+
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     self.Weapon:SendWeaponAnim(ACT_VM_THROW)
     self.Weapon:SetNextPrimaryFire(CurTime() + 1)
@@ -155,8 +159,12 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnRemove()
+    if not IsValid(self.Owner) then return end
     local vm = self:GetOwner():GetViewModel()
-    vm:SetPlaybackRate(1)
+
+    if IsValid(vm) then
+        vm:SetPlaybackRate(1)
+    end
 end
 
 function SWEP:Reload()
@@ -172,5 +180,8 @@ function SWEP:Reload()
 
     self.Weapon:SetNextPrimaryFire(CurTime() + delay)
     self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
-    vm:SetPlaybackRate(1 / delay)
+
+    if IsValid(vm) then
+        vm:SetPlaybackRate(1 / delay)
+    end
 end

@@ -2,12 +2,17 @@
 -- INSTALL: CINEMA
 include("sh_init.lua")
 include("cl_draw.lua")
+include("cl_lootboxes.lua")
 include("vgui/menu.lua")
 include("vgui/panels.lua")
 include("vgui/item.lua")
 include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
+include("vgui/imgur_manager.lua")
+local ALL_ITEMS = 1
+local OWNED_ITEMS = 2
+local UNOWNED_ITEMS = 3
 local wasf3down = false
 local wascontextdown = false
 OLDBINDSCONVAR = CreateClientConVar("swamp_old_binds", "0", true, false)
@@ -46,46 +51,6 @@ concommand.Add("ps_togglemenu", function(ply, cmd, args)
     SS_ToggleMenu()
 end)
 
-CreateClientConVar("ps_darkmode", "0", true)
-
-function SetPointshopTheme(dark)
-    SS_DarkMode = dark
-
-    if SS_DarkMode then
-        SS_TileBGColor = Color(37, 37, 37)
-        SS_GridBGColor = Color(33, 33, 33)
-        SS_BotBGColor = Color(33, 33, 33)
-        SS_SwitchableColor = Color(200, 200, 200)
-    else
-        SS_TileBGColor = Color(234, 234, 234)
-        SS_GridBGColor = Color(200, 200, 200)
-        SS_BotBGColor = Color(64, 64, 64)
-        SS_SwitchableColor = Color(0, 0, 0)
-    end
-
-    if IsValid(SS_CustomizerPanel) then
-        SS_CustomizerPanel:Remove()
-    end
-
-    if IsValid(SS_ShopMenu) then
-        if SS_ShopMenu:IsVisible() then
-            SS_ShopMenu:Remove()
-            SS_ShopMenu = vgui.Create('DPointShopMenu')
-            SS_ShopMenu:Show()
-        else
-            SS_ShopMenu:Remove()
-            SS_ShopMenu = vgui.Create('DPointShopMenu')
-            SS_ShopMenu:SetVisible(false)
-        end
-    end
-end
-
-SetPointshopTheme(GetConVar("ps_darkmode"):GetBool())
-
-cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
-    SetPointshopTheme(tobool(new))
-end)
-
 function SS_ReloadMenu()
     if IsValid(SS_CustomizerPanel) then
         SS_CustomizerPanel:Close()
@@ -99,6 +64,16 @@ end
 concommand.Add("ps_destroymenu", function(ply, cmd, args)
     SS_ReloadMenu()
 end)
+
+SS_ReloadMenu()
+
+if IsValid(SS_CustomizerPanel) then
+    SS_CustomizerPanel:Close()
+end
+
+if IsValid(SS_ShopMenu) then
+    SS_ShopMenu:Remove()
+end
 
 function SS_ToggleMenu()
     if not IsValid(SS_ShopMenu) then
@@ -175,11 +150,12 @@ function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
 end
 
 net.Receive('SS_Items', function(length)
-    local items = net.ReadTableHD()
+    -- local items = net.ReadTableHD()
+    local items = net.ReadCompressedTable()
 
     SetLoadingPlayerProperty(-1, "SS_Items", items, function(ply)
         ply.SS_Items = SS_MakeItems(ply, ply.SS_Items)
-        SS_ValidInventory = false
+        SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
     end)
 end)
 
@@ -189,8 +165,13 @@ net.Receive('SS_ShownItems', function(length)
 
     SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
         ply.SS_ShownItems = SS_MakeItems(ply, ply.SS_ShownItems)
-        ply:SS_ClearCSModels()
-        ply.SS_PlayermodelModsClean = false
+        -- ply:SS_ClearCSModels() -- old
+        ply:SS_AttachAccessories() -- new
+        ply.SS_SetupPlayermodel = nil
+
+        if ply == LocalPlayer() then
+            SS_RefreshShopAccessories()
+        end
     end)
 end)
 
@@ -233,26 +214,35 @@ concommand.Add("ps_buy", function(ply, cmd, args)
     SS_BuyProduct(args[1])
 end)
 
-function SS_SellItem(item_id)
+-- function SS_SellItem(item_id)
+--     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     net.Start('SS_SellItem')
+--     net.WriteUInt(item_id, 32)
+--     net.SendToServer()
+-- end
+-- -- REMOVE THIS
+-- function SS_EquipItem(item_id, state)
+--     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     net.Start('SS_EquipItem')
+--     net.WriteUInt(item_id, 32)
+--     net.WriteBool(state)
+--     net.SendToServer()
+-- end
+-- function SS_ActivateItem(item_id, args)
+--     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     net.Start('SS_ActivateItem')
+--     net.WriteUInt(item_id, 32)
+--     net.WriteTable(args or {})
+--     net.SendToServer()
+-- end
+function SS_ItemServerAction(item_id, action_id, args)
     if not LocalPlayer():SS_FindItem(item_id) then return end
-    net.Start('SS_SellItem')
+    net.Start('SS_ItemAction')
     net.WriteUInt(item_id, 32)
+    net.WriteString(action_id)
+    net.WriteTableHD(args or {})
     net.SendToServer()
 end
-
-function SS_EquipItem(item_id, state)
-    if not LocalPlayer():SS_FindItem(item_id) then return end
-    net.Start('SS_EquipItem')
-    net.WriteUInt(item_id, 32)
-    net.WriteBool(state)
-    net.SendToServer()
-end
-
-concommand.Add("ps_prop_autorefresh", function()
-    timer.Create("ppau", 0.05, 0, function()
-        LocalPlayer():SS_ClearCSModels()
-    end)
-end)
 
 function SendPointsCmd(cmd)
     cmd = string.Explode(" ", cmd)

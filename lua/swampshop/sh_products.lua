@@ -20,7 +20,7 @@ function SS_Product(product)
     function product:OnBuy(ply)
         local function finish_buy()
             self:SS_Product_OnBuy(ply)
-            ply:Notify('Bought ', self.name, ' for ', self.price, ' points')
+            ply:Notify('Bought ', self:GetName(), ' for ', self.price, ' points')
         end
 
         if self.price > 0 then
@@ -38,6 +38,16 @@ function SS_Product(product)
         end
     end
 
+    -- product.primaryaction = {
+    --     Text = function(self, second) return second and (self.price == 0 and ">  GET  <" or ">  BUY  <") or (self.price == 0 and "FREE" or "-" .. tostring(self.price)) end
+    -- }
+    -- OnClient= function(self, second)
+    --     if second then
+    --         surface.PlaySound("UI/buttonclick.wav")
+    --         SS_BuyProduct(self.class)
+    --     end
+    -- end
+    SS_ItemOrProduct(product)
     local tab = _SS_TABADDTARGET.layout
     table.insert(tab[#tab].products, product)
     SS_Products[product.class] = product
@@ -47,24 +57,24 @@ function SS_Product(product)
     end
 end
 
+function SS_GenerateItem(ply, class)
+    local item = SS_MakeItem(ply, {
+        class = class,
+        id = -1,
+        specs = {},
+        cfg = {},
+        eq = true,
+    })
+
+    item:Sanitize()
+
+    return item
+end
+
 function SS_ItemProduct(item)
-    local product = item --TODO maybe only copy needed keys
+    local product = table.Copy(item) --TODO maybe only copy needed keys
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((product.price or 0) == 0 and "return" or "sell") .. " it."
-
-    function product:GenerateItem(ply)
-        local item = SS_MakeItem(ply, {
-            class = self.class,
-            id = -1,
-            cfg = {},
-            eq = true,
-        })
-
-        item:Sanitize()
-
-        return item
-    end
-
-    product.sample_item = product:GenerateItem(SS_SAMPLE_ITEM_OWNER)
+    product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.class)
 
     function product:CannotBuy(ply)
         local maxcount = (self.accessory_slot and ply:SS_AccessorySlots() * (self.perslot or 1)) or self.maxowned or 1
@@ -72,7 +82,7 @@ function SS_ItemProduct(item)
     end
 
     function product:OnBuy(ply)
-        ply:SS_GiveItem(self:GenerateItem(ply))
+        ply:SS_GiveNewItem(SS_GenerateItem(ply, self.class))
     end
 
     SS_Product(product)
@@ -107,6 +117,7 @@ function SS_WeaponProduct(product)
 end
 
 function SS_WeaponAndAmmoProduct(product)
+    -- used by buyammo system
     function product:AmmoTypeAndAmount(wep)
         local ammotype, ammogive = (self.ammotype or game.GetAmmoName(self.clip2 and wep:GetSecondaryAmmoType() or wep:GetPrimaryAmmoType())), (self.amount or math.max(1, (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) or 0))
         assert(ammotype ~= nil and ammogive > 0, self.class .. " " .. ammogive .. " " .. (ammotype or "nil"))
@@ -180,14 +191,14 @@ function SS_UniqueModelProduct(product)
         if s then return s end
 
         for k, v in pairs(player.GetAll()) do
-            if v:GetNWString("uniqmodl") == self.name and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or (v:Nick() .. " is using this - kill them.") end
+            if v:GetNWString("uniqmodl") == self:GetName() and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or (v:Nick() .. " is using this - kill them.") end
         end
     end
 
     product.SS_UniqueModelProduct_OnBuy = product.OnBuy or function() end
 
     function product:OnBuy(ply)
-        ply:SetNWString("uniqmodl", self.name)
+        ply:SetNWString("uniqmodl", self:GetName())
         ply:SetModel(self.model)
         self:SS_UniqueModelProduct_OnBuy(ply)
     end

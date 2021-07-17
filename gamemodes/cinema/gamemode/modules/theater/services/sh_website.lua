@@ -32,12 +32,12 @@ if CLIENT then
     end
 
     function SERVICE:SetVolume(vol, panel)
-        -- TODO: maybe iterate all <video> or <sound> elements and set their volume?
     end
 
+    -- TODO: maybe iterate all <video> or <sound> elements and set their volume?
     function SERVICE:SeekTo(time, panel)
-        -- This service won't support seeking
     end
+    -- This service won't support seeking
 end
 
 theater.RegisterService("website", SERVICE)

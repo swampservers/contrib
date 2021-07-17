@@ -203,8 +203,6 @@ local wicons = {
     weapon_frag = "hud/ammo_grenade.png",
     weapon_rpg = "hud/ammo_rocket.png",
     weapon_crossbow = "hud/ammo_projectile.png",
-    weapon_357 = "hud/ammo_misc.png",
-    weapon_peacekeeper = "hud/ammo_misc.png",
 }
 
 hook.Add("HUDPaint", "SwampHealthAmmo", function()
@@ -276,7 +274,14 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
     end
 
     AMMO_ALPHA = math.Approach(AMMO_ALPHA or 0, drawammo and 1 or 0, FrameTime() * 4)
+    local ngraph = GetConVar("net_graph"):GetInt()
+    local ngraphpos = GetConVar("net_graphpos"):GetInt()
     local stack_height = 0
+    local rightedge = ScrW()
+
+    if (ngraph > 0 and ngraphpos == 1) then
+        rightedge = rightedge - (ScrW() / 3)
+    end
 
     if (AMMO_ALPHA > 0 and LASTAMMOTEXT) then
         local showtype = LASTAMMOTEXT[1]
@@ -285,21 +290,21 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         local w, h = 0, 0
 
         if (showtype == AMMOLABEL_MAGCOUNTER) then
-            w, h = DrawAmmoGauge(value, icon, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
+            w, h = DrawAmmoGauge(value, icon, rightedge - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
         end
 
         if (showtype == AMMOLABEL_LABEL) then
-            w, h = DrawHL2Label(value, ScrW() - 8, ScrH() - 8, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
+            w, h = DrawHL2Label(value, rightedge - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, AMMO_ALPHA)
         end
 
         h = h * AMMO_ALPHA
         stack_height = stack_height + h + 4
     end
 
-    local drawhealth = ply:Alive() and ply:Health() < ply:GetMaxHealth()
+    local drawhealth = ply:Alive() and (ply:Health() < ply:GetMaxHealth() or HumanTeamName)
     HEALTH_ALPHA = math.Approach(HEALTH_ALPHA or 0, drawhealth and 1 or 0, FrameTime() * 4)
 
     if (HEALTH_ALPHA > 0) then
-        DrawHL2Bubble("HEALTH", math.max(0, LocalPlayer():Health()), ScrW() - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, HEALTH_ALPHA, ply:Health() <= 20)
+        DrawHL2Bubble("HEALTH", math.max(0, LocalPlayer():Health()), rightedge - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, HEALTH_ALPHA, ply:Health() <= 20)
     end
 end)

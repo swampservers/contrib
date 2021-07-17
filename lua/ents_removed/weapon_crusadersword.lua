@@ -127,9 +127,9 @@ function SWEP:PostDrawViewModel(vm, ply, wep)
         pos = pos + ang:Forward() * 2.7
 
         for i = 0, 128 do
-            --print(i,vm:GetBoneName(i))
         end
 
+        --print(i,vm:GetBoneName(i))
         self:DrawGlow(pos, ang)
         render.SuppressEngineLighting(false)
     end

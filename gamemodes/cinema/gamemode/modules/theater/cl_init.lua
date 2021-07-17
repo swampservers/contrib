@@ -141,10 +141,9 @@ function ToggleFullscreen()
 
         -- Toggle fullscreen
         if Fullscreen then
-            --ActivePanel:ParentToHUD() -- Render before the HUD
-        else
-            --ActivePanel:SetParent(vgui.GetWorldPanel())
+        else --ActivePanel:ParentToHUD() -- Render before the HUD
         end
+        --ActivePanel:SetParent(vgui.GetWorldPanel())
     end
 
     RunConsoleCommand("cinema_fullscreen_freeze", tostring(Fullscreen))

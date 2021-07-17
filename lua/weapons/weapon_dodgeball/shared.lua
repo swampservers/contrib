@@ -38,8 +38,10 @@ function SWEP:OnChangeThrowState(name, old, new)
     end
 
     if (new == 1 and old == 0) then
-        local gest = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, gest, true)
+        if (IsValid(self:GetOwner())) then
+            local gest = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE
+            self:GetOwner():AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, gest, true)
+        end
     end
 
     if (self:GetHoldType() ~= holdtype) then

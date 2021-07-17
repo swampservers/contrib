@@ -33,9 +33,7 @@ function THEATERLIST:Init()
 end
 
 function THEATERLIST:Paint(w, h)
-    surface.SetDrawColor(BrandColorPrimary)
-    surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-    surface.SetDrawColor(0, 0, 0, 160)
+    surface.SetDrawColor(MenuTheme_BrandDarker)
     surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
     local xp, _ = self:GetPos()
     BrandBackgroundPattern(0, 0, self:GetWide(), self.TitleHeight, xp)
@@ -62,13 +60,13 @@ end
 
 --[[
 function THEATERLIST:RemoveTheater( th )
-
+  
 	if ValidPanel( self.Theaters[ th.loc ] ) then
 		self.TheaterList:RemoveItem( self.Theaters[ th.loc ] )
 		self.Theaters[ th.loc ]:Remove()
 		self.Theaters[ th.loc ] = nil
 	end
-
+ 
 end ]]
 function THEATERLIST:Update()
     -- Prevent spamming requests

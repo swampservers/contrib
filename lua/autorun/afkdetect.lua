@@ -31,7 +31,9 @@ if SERVER then
         end
     end)
 else
-    --[[
+end
+
+--[[
 	afk_start_time = 0
 	hook.Add("HUDPaint", "DrawPTAFKwarning", function()
 		if LocalPlayer():GetNWBool("afk",false) then
@@ -47,8 +49,6 @@ else
 			draw.WordBox( 8, ScrW() / 2 - 160, ScrH() / 2 + 50, "Please move your mouse or your theater ownership will be removed.", "Trebuchet18", Color(0,0,0,100), Color(255,255,255,255) )
 		end
 	end) ]]
-end
-
 function isLockingPT(v)
     if v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner() == v then
         return true

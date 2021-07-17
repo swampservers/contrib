@@ -1234,8 +1234,7 @@ function ENT:EndGame(winner, HideMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --White:SS_GivePoints( self.WagerValue )
-                else
+                else --White:SS_GivePoints( self.WagerValue )
                     if White.addMoney then
                         White:addMoney(self.WagerValue)
                     else
@@ -1275,8 +1274,7 @@ function ENT:EndGame(winner, HideMsg)
 
             if self.WagerValue then
                 if self:GetPSWager() then
-                    --Black:SS_GivePoints( self.WagerValue )
-                else
+                else --Black:SS_GivePoints( self.WagerValue )
                     if Black.addMoney then
                         Black:addMoney(self.WagerValue)
                     else

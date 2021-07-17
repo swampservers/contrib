@@ -70,8 +70,8 @@ function SS_PlayermodelItem(item)
         if eq then
             for k, v in ipairs(ply.SS_ShownItems) do
                 -- todo: change this to sanitizing all items, local item last?
-                if SS_Items[v.class] and SS_Items[v.class].PlayerSetModel then
-                    ply:SS_EquipItem(v, false)
+                if v.PlayerSetModel and v.eq then
+                    v.actions.equip.OnServer(ply, v)
                 end
             end
         end
@@ -105,31 +105,85 @@ function SS_WeaponBlueprintItem(item)
     SS_Item(item)
 end
 
+--NOMINIFY
+--todo move this
+function SS_ItemOrProduct(iop)
+    if CLIENT then
+        -- gets called twice by item/product, needs fixing...
+        if not iop.GetNameUncached then
+            iop.GetNameUncached = iop.GetName or function(self) return self.name end
+
+            --called a lot by the ordering thing
+            function iop:GetName()
+                local fn = FrameNumber()
+
+                if self._namecacheframe ~= fn then
+                    self._namecacheframe = fn
+                    self._namecache = self:GetNameUncached()
+                end
+
+                return self._namecache
+            end
+        end
+    else
+        iop.GetName = iop.GetName or function(self) return self.name end
+    end
+
+    iop.GetDescription = iop.GetDescription or function(self) return self.description end
+    iop.GetModel = iop.GetModel or function(self) return self.model end
+end
+
+function SS_ClientsideFakeItem(item)
+    if SERVER then return end
+    item.clientside_fake = true
+    SS_Item(item)
+end
+
+function SS_AccessoryItem(item)
+    assert(item.wear)
+    item.configurable = item.configurable or {}
+    item.configurable.wear = item.configurable.wear or {}
+
+    --Pass -1 for default?
+    item.configurable.wear.scale = {
+        min = Vector(0.05, 0.05, 0.05),
+        max = (item.maxscale or 1) * Vector(1, 1, 1)
+    }
+
+    item.configurable.wear.pos = {
+        min = Vector(-16, -16, -16),
+        max = Vector(16, 16, 16)
+    }
+
+    item.configurable.color = {
+        max = 5
+    }
+
+    item.configurable.imgur = true
+    item.accessory_slot = true
+    item.invcategory = "Accessories"
+
+    function item:AccessoryTransform(pone)
+        local wear = pone and self.wear.pony or self.wear
+        local wear2 = self.wear
+        local cfg = self.cfg[pone and "wear_p" or "wear_h"] or {}
+        local attach = cfg.attach or wear.attach or wear2.attach
+        local translate = cfg.pos or wear.translate or wear2.translate
+        local rotate = cfg.ang or wear.rotate or wear2.rotate
+        local scale = cfg.scale or wear.scale or wear2.scale
+        -- isnumber(scale) and Vector(scale,scale,scale) or scale
+
+        return attach, translate, rotate, scale
+    end
+
+    SS_Item(item)
+end
+
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
-    if item.wear then
-        item.configurable = item.configurable or {}
-        item.configurable.wear = item.configurable.wear or {}
-
-        --Pass -1 for default?
-        item.configurable.wear.scale = {
-            min = Vector(0.05, 0.05, 0.05),
-            max = (item.maxscale or 1) * Vector(1, 1, 1)
-        }
-
-        item.configurable.wear.pos = {
-            min = Vector(-16, -16, -16),
-            max = Vector(16, 16, 16)
-        }
-
-        item.configurable.color = {
-            max = 5
-        }
-
-        item.configurable.imgur = true
-        item.accessory_slot = true
-        item.invcategory = "Accessories"
-    end
+    -- change this to just one function that returns the tab above
+    item.CanCfgColor = item.CanCfgColor or function(i) return (i.configurable or {}).color end
+    item.CanCfgImgur = item.CanCfgImgur or function(i) return (i.configurable or {}).imgur end
 
     function item:Sanitize()
         _SS_SanitizeConfig(self)
@@ -137,6 +191,8 @@ function SS_Item(item)
         if self.owner ~= SS_SAMPLE_ITEM_OWNER and self:CannotEquip() then
             self.eq = false
         end
+
+        if self.SanitizeSpecs and self:SanitizeSpecs() then return true end
     end
 
     function item:CannotEquip()
@@ -165,7 +221,7 @@ function SS_Item(item)
                 end
             end
 
-            if table.Count(urls) > 4 then return "You can only equip 4 different imgur materials at once." end
+            if table.Count(urls) > 5 then return "You can only equip 5 different imgur materials at once." end
         end
     end
 
@@ -173,15 +229,96 @@ function SS_Item(item)
         return self.eq
     end
 
-    function item:SellValue()
-        return math.floor(self.value * 0.8)
+    item.SellValue = item.SellValue or function(self) return math.floor(self.value * 0.8) end
+    -- item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
+    -- item.HoverClick = item.HoverClick or function(self, second)
+    --     if second then
+    --         local status = (not self.eq) and self:CannotEquip() or nil
+    --         if status then
+    --             surface.PlaySound("common/wpn_denyselect.wav")
+    --             LocalPlayerNotify(status)
+    --         else
+    --             surface.PlaySound("weapons/smg1/switch_single.wav")
+    --             SS_EquipItem(self.id, not self.eq)
+    --         end
+    --     end
+    -- end
+    -- setup actions
+    item.actions = item.actions or {}
+
+    -- Default actions
+    if not item.never_equip then
+        item.actions.equip = {
+            primary = true,
+            Text = function(item) return item.eq and "HOLSTER" or "EQUIP" end,
+            Cannot = item.CannotEquip
+        }
     end
 
+    if item.configurable then
+        item.actions.configure = {
+            sort = -1,
+            Text = function() return "Customize" end,
+            OnClient = function(item)
+                if SS_CustomizerPanel:IsVisible() then
+                    SS_CustomizerPanel:Close()
+                else
+                    SS_CustomizerPanel:Open(item)
+                end
+            end
+        }
+    end
+
+    if not item.clientside_fake then
+        item.actions.auction = {
+            sort = -2,
+            Text = function(item, args) return "Auction" end,
+            OnClient = function(item)
+                -- if LocalPlayer():SteamID() ~= "STEAM_0:0:38422842" then return end
+                SS_OpenAuctionWindow(item)
+            end
+        }
+
+        item.actions.sell = {
+            sort = -3,
+            Text = function(item, args) return SS_SELLCONFIRMID == item.id and "CONFIRM?" or "Recycle for " .. tostring(item:SellValue()) .. " points" end,
+            OnClient = function(item)
+                if SS_SELLCONFIRMID == item.id then
+                    SS_ItemServerAction(item.id, "sell")
+                else
+                    SS_SELLCONFIRMID = item.id
+                end
+            end
+        }
+    end
+
+    -- Default action functions
+    for id, v in pairs(item.actions) do
+        if not v.OnClient then
+            local act = id
+
+            v.OnClient = function(item)
+                SS_ItemServerAction(item.id, act)
+            end
+        end
+
+        if SERVER then
+            v.OnServer = v.OnServer or SS_ServerActions[id]
+        end
+
+        v.Cannot = v.Cannot or function() end
+
+        if v.primary then
+            item.primaryaction = v
+        end
+    end
+
+    SS_ItemOrProduct(item)
     item.__index = item
     SS_Items[item.class] = item
 
     if item.price then
-        item.value = item.price
+        item.value = item.value or item.price
         SS_ItemProduct(item)
     end
 
@@ -204,11 +341,15 @@ function _SS_SanitizeConfig(item)
         return isvector(val) and val:Clamp(min, max) or nil
     end
 
-    if itmc.color then
-        cfg.color = sanitize_vector(dirty_cfg.color, Vector(0, 0, 0), Vector(itmc.color.max, itmc.color.max, itmc.color.max))
+    local limits = item:CanCfgColor()
+
+    if limits then
+        cfg.color = sanitize_vector(dirty_cfg.color, Vector(0, 0, 0), Vector(limits.max, limits.max, limits.max))
     end
 
-    if itmc.imgur then
+    limits = item:CanCfgImgur()
+
+    if limits then
         local url = istable(dirty_cfg.imgur) and SanitizeImgurId(dirty_cfg.imgur.url)
 
         cfg.imgur = url and {

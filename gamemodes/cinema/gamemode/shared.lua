@@ -36,9 +36,7 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
     if attacker:GetClass() == "sent_popcorn_thrown" then return false end
     if attacker.dodgeball then return false end
 
-    if Safe(ply) or Safe(attacker) then
-        if attacker:IsPlayer() and ply:InTheater() and ply:GetTheater():GetOwner() == attacker then return true end
-
+    if Safe(ply,attacker) then
         return false
     end
 
@@ -46,8 +44,12 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 end
 
 function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
-    if hitgroup == HITGROUP_HEAD then
-        dmginfo:ScaleDamage(2)
+    local inf = dmginfo:GetInflictor()
+
+    if not IsValid(inf) or not inf.GunType then
+        if hitgroup == HITGROUP_HEAD then
+            dmginfo:ScaleDamage(2)
+        end
     end
 
     if ply:InVehicle() and dmginfo:GetDamageType() == DMG_BURN then
@@ -84,17 +86,17 @@ function GM:ShouldCollide(Ent1, Ent2)
 end
 
 function GM:Move(ply, mv)
-    -- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 end
 
+-- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 function GM:SetupMove(ply, mv, cmd)
-    -- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 end
 
+-- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 function GM:FinishMove(ply, mv)
-    -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 end
 
+-- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 -- Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
 function GM:PhysgunPickup(ply, ent)
     if (ent:GetClass():lower() == "player") then

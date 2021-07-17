@@ -4,14 +4,25 @@
 if SERVER then
     util.AddNetworkString("HitMarker")
     HITMARKERCACHE = {}
+    KILLCACHE = {}
 
     hook.Add("PostEntityTakeDamage", "DamageMarker", function(ent, dmg, took)
         local att = dmg:GetAttacker()
 
-        if ent:IsPlayer() and ent:IsBot() then
+        --and (ent:IsBot() or (HumanTeamName and att.hvp ~= ent.hvp)) then
+        if ent:IsPlayer() then
             if IsValid(att) and att:IsPlayer() then
                 HITMARKERCACHE[att] = (HITMARKERCACHE[att] or 0) + dmg:GetDamage()
+                -- if not ent:Alive() then
+                --     KILLCACHE[att] = true
+                -- end
             end
+        end
+    end)
+
+    hook.Add("PlayerDeath", "KillMarker", function(victim, inflictor, attacker)
+        if IsValid(attacker) and attacker:IsPlayer() then
+            KILLCACHE[attacker] = true
         end
     end)
 
@@ -19,28 +30,34 @@ if SERVER then
         for k, v in pairs(HITMARKERCACHE) do
             if IsValid(k) then
                 net.Start("HitMarker")
-                net.WriteUInt(v, 8)
+                net.WriteUInt(v, 16)
+                net.WriteBool(KILLCACHE[k] or false)
                 net.Send(k)
             end
         end
 
         HITMARKERCACHE = {}
+        KILLCACHE = {}
     end)
 else
     local hitmarkers = {}
 
     net.Receive("HitMarker", function(len)
-        local dmg = net.ReadUInt(8)
+        local dmg = net.ReadUInt(16)
+        local kill = net.ReadBool()
 
         table.insert(hitmarkers, {
             dmg = dmg,
+            kill = kill,
             t = SysTime(),
             x = 0.1, --math.Rand(-0.5,0.5),
             
         })
     end)
 
-    hook.Add("PostDrawHUD", "DrawHitMarkers", function()
+    hook.Add("PostDrawHUD", "DrawHitMarkers", function() end)
+
+    hook.Add("HUDDrawScoreBoard", "DrawHitMarkers", function()
         local duration = 1
         local t = SysTime()
         local i = 1
@@ -55,15 +72,29 @@ else
                 local drift = (t - marker.t) / duration
                 local alpha = 1 - drift
                 drift = drift + 0.1
-                draw.SimpleText(tostring(marker.dmg), "Trebuchet24", ScrW() / 2 + drift * 100 * marker.x + 20, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                -- ..marker.dmg..""
+                draw.SimpleText(marker.kill and ("KILL " .. marker.dmg) or tostring(marker.dmg), "HitDamageFont", ScrW() / 2 + drift * 100 * marker.x, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
             end
         end
     end)
 end
 
-function Safe(ent)
+if CLIENT then
+    surface.CreateFont("HitDamageFont", {
+        font = "Trebuchet",
+        size = 24,
+        weight = 1000
+    })
+end
+
+function Safe(ent, attacker)
     local loc = 0
     local name = "Unknown"
+
+    --treat world as nil since damageinfo typically uses worldspawn as nothing
+    if (attacker == game.GetWorld()) then
+        attacker = nil
+    end
 
     if Location then
         loc = ent:IsPlayer() and ent:GetLocation() or Location.Find(ent)
@@ -84,7 +115,14 @@ function Safe(ent)
     end
 
     local pt = protectedTheaterTable and protectedTheaterTable[loc]
-    if pt ~= nil and pt["time"] > 1 then return true end
+
+    if pt ~= nil and pt["time"] > 1 then
+        --if theater is protected and the attacker is the theater owner, than this player is not safe from them.
+        local owner = ent:GetTheater() and ent:GetTheater():GetOwner()
+
+        if IsValid(attacker) and attacker:IsPlayer() and ent:IsPlayer() and ent:InTheater() and owner == attacker then return false end
+        return true
+    end
 
     if ent:IsPlayer() then
         if IsValid(ent:GetVehicle()) then

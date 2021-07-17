@@ -40,22 +40,22 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Deploy()
-    -- local ply = self:GetOwner()
-    -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Clavicle"),Vector(1,2,2))
-    -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_UpperArm"),Vector(2,3,3))
-    -- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(2,2,2))
-    -- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(10,0,0))
-    -- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Hand"),Vector(10,0,0))
 end
 
+-- local ply = self:GetOwner()
+-- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Clavicle"),Vector(1,2,2))
+-- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_UpperArm"),Vector(2,3,3))
+-- ply:ManipulateBoneScale(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(2,2,2))
+-- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Forearm"),Vector(10,0,0))
+-- ply:ManipulateBonePosition(ply:LookupBone("ValveBiped.Bip01_R_Hand"),Vector(10,0,0))
 function SWEP:Holster()
     local ply = self:GetOwner()
     if not IsValid(ply) then return end
 
     for i = 0, 128 do
-        -- ply:ManipulateBoneScale(i,Vector(1,1,1))
-        -- ply:ManipulateBonePosition(i,Vector(0,0,0))
     end
+    -- ply:ManipulateBoneScale(i,Vector(1,1,1))
+    -- ply:ManipulateBonePosition(i,Vector(0,0,0))
 
     return true
 end

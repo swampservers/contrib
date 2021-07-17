@@ -40,56 +40,70 @@ setmetatable(vgui, {
     end
 })
 
-function vgui_example()
-    vgui("DFrame", function(p)
-        p:SetSize(400, 400)
-        p:Center()
-        p:MakePopup()
-        p:SetTitle("Hi")
-        p:DockPadding(50, 50, 50, 50)
+timer.Simple(0, function()
+    vgui.GetControlTable("DFrame").CloseOnEscape = function(self)
+        VGUI_CLOSE_ON_ESCAPE = (VGUI_CLOSE_ON_ESCAPE or 0) + 1
+        local p = self
+        local hookname = "CloseOnEscape" .. tostring(VGUI_CLOSE_ON_ESCAPE)
 
-        vgui("Panel", function(p)
-            p:SetWidth(100)
-            p:Dock(LEFT)
+        if gui.IsGameUIVisible() then
+            gui.HideGameUI()
+        end
 
-            function p:Paint(w, h)
-                surface.SetDrawColor(255, 0, 0)
-                surface.DrawRect(0, 0, w, h)
+        hook.Add("Think", hookname, function()
+            -- and p:HasHierarchicalFocus() then
+            if IsValid(p) then
+                if gui.IsGameUIVisible() then
+                    gui.HideGameUI()
+                    p:Close()
+                end
+            else
+                hook.Remove("Think", hookname)
             end
-
-            vgui("DLabel", function(p)
-                p:SetText("Based")
-                p:Dock(TOP)
-            end)
-
-            vgui("DLabel", function(p)
-                p:SetText("Redpilled")
-                p:Dock(BOTTOM)
-            end)
         end)
-
-        vgui("Panel", function(p)
-            p:DockMargin(20, 20, 20, 20)
-            p:Dock(FILL)
-
-            function p:Paint(w, h)
-                surface.SetDrawColor(0, 0, 255)
-                surface.DrawRect(0, 0, w, h)
-            end
-
-            vgui("Panel", function(p)
-                p:Dock(BOTTOM)
-
-                vgui("DButton", function(p)
-                    p:SetText("Cringe")
-                    p:Dock(LEFT)
-                end)
-
-                vgui("DButton", function(p)
-                    p:SetText("Bluepilled")
-                    p:Dock(RIGHT)
-                end)
-            end)
-        end)
-    end)
-end
+    end
+end)
+-- function vgui_example()
+--     vgui("DFrame", function(p)
+--         p:SetSize(400, 400)
+--         p:Center()
+--         p:MakePopup()
+--         p:SetTitle("Hi")
+--         p:DockPadding(50, 50, 50, 50)
+--         vgui("Panel", function(p)
+--             p:SetWidth(100)
+--             p:Dock(LEFT)
+--             function p:Paint(w, h)
+--                 surface.SetDrawColor(255, 0, 0)
+--                 surface.DrawRect(0, 0, w, h)
+--             end
+--             vgui("DLabel", function(p)
+--                 p:SetText("Based")
+--                 p:Dock(TOP)
+--             end)
+--             vgui("DLabel", function(p)
+--                 p:SetText("Redpilled")
+--                 p:Dock(BOTTOM)
+--             end)
+--         end)
+--         vgui("Panel", function(p)
+--             p:DockMargin(20, 20, 20, 20)
+--             p:Dock(FILL)
+--             function p:Paint(w, h)
+--                 surface.SetDrawColor(0, 0, 255)
+--                 surface.DrawRect(0, 0, w, h)
+--             end
+--             vgui("Panel", function(p)
+--                 p:Dock(BOTTOM)
+--                 vgui("DButton", function(p)
+--                     p:SetText("Cringe")
+--                     p:Dock(LEFT)
+--                 end)
+--                 vgui("DButton", function(p)
+--                     p:SetText("Bluepilled")
+--                     p:Dock(RIGHT)
+--                 end)
+--             end)
+--         end)
+--     end)
+-- end

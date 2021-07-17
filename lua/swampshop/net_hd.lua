@@ -126,3 +126,15 @@ function net.ReadTypeHD(typeid)
     if (rv) then return rv() end
     error("net.ReadType: Couldn't read type " .. typeid)
 end
+
+function net.WriteCompressedTable(tab)
+    local data = util.Compress(util.TableToJSON(tab))
+    net.WriteUInt(#data, 16)
+    net.WriteData(data, #data)
+end
+
+function net.ReadCompressedTable()
+    local len = net.ReadUInt(16)
+
+    return util.JSONToTable(util.Decompress(net.ReadData(len)))
+end

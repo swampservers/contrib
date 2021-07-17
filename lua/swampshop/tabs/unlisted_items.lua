@@ -10,6 +10,46 @@ SS_Item({
     never_equip = true
 })
 
+SS_ClientsideFakeItem({
+    class = "defaultplayermodel",
+    value = 0,
+    name = 'Default Playermodels',
+    description = "Customization for the poor.",
+    GetModel = function(self) return player_manager.TranslatePlayerModel(GetConVar("cl_playermodel"):GetString() or "kleiner") or "models/player/kleiner.mdl" end,
+    actions = {
+        revertcustomize = {
+            Text = function()
+                local any = false
+
+                for i, v in ipairs(LocalPlayer().SS_Items) do
+                    if v.PlayerSetModel and v.eq then
+                        any = true
+                    end
+                end
+
+                return any and "Revert to default model" or "Choose Playermodel"
+            end,
+            OnClient = function()
+                local any = false
+
+                for i, v in ipairs(LocalPlayer().SS_Items) do
+                    if v.PlayerSetModel and v.eq then
+                        v.actions.equip.OnClient(v)
+                        any = true
+                    end
+                end
+
+                if not any then
+                    SS_ToggleMenu()
+                    RunConsoleCommand("customize")
+                end
+            end
+        }
+    },
+    invcategory = "Playermodels",
+    never_equip = true
+})
+
 SS_Item({
     class = "whiteeyestest",
     name = "white eyes",
