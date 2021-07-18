@@ -20,7 +20,7 @@ function ENT:Initialize()
     self:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
     self:SetUseType(SIMPLE_USE)
     self:SetColor(HSVToColor(math.Rand(0, 360), 1, 1))
-
+    self:SetTrigger(true)
     
 
     timer.Simple(60 * 60, function()
@@ -49,12 +49,15 @@ end
 
 function ENT:OnRemove()
     self.Removing = true
+    if(self.playingsound)then
+        self:StopSound(self.playingsound)
+    end
     self:Transmit()
 end
 
 function ENT:SpawnFunction(ply, tr, ClassName)
     local ent = ents.Create(ClassName)
-    local trace = ent:FindHidingSpot(tr.HitPos)
+    local trace = ent:FindHidingSpot(tr.HitPos + tr.HitNormal * 32)
     --[[testing placement
     local newt = {}
     newt.start = ply:GetShootPos()
@@ -151,13 +154,9 @@ end
 function ENT:Use(activator)
     if (not self.Pressed) then
         self.Pressed = true
+        self:SetSolid(SOLID_NONE)
         self:Transmit()
-        activator:EmitSound("buttons/button9.wav")
-        timer.Simple(8, function()
-            if (IsValid(self)) then
-                self:Remove()
-            end
-        end)
+        SafeRemoveEntityDelayed( self, self.OverrideDieTime or 8)
 
         MAGICBUTTON_STAT_TRACKING(activator)
 
@@ -167,7 +166,38 @@ function ENT:Use(activator)
             message = "[yellow]The Hilarious One [white]" .. message
             BotSayGlobal(":banana:" .. message)
         end
+        activator:EmitSound("buttons/button9.wav") 
+    end
+end
 
-         
+function ENT:OnTakeDamage(dmg)
+    if(dmg:GetDamageType() == DMG_BLAST)then return end
+    if(dmg:GetAttacker():IsPlayer())then
+        local ply = dmg:GetAttacker()
+
+        
+        if(!self.SpecialUsed)then
+        timer.Simple(0,function()
+            if(IsValid(self))then
+                self:Use(ply)
+            end
+        end)
+        end
+        self.SpecialUsed = true
+
+    end
+
+end
+
+function ENT:Touch(ent)
+    if(ent:IsPlayer())then
+        if(!self.SpecialUsed)then
+            timer.Simple(0,function()
+                if(IsValid(self))then
+                    self:Use(ent)
+                end
+            end)
+            end
+        self.SpecialUsed = true
     end
 end
