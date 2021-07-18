@@ -1,15 +1,13 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- this is where we generate a random amount of points to give the player
 function ButtonMoneyPrize()
     local min, max = 1000, 600000
     local silly = math.random(1, 30) == 1
-    if(math.random(1,1000) == 1)then return 1 end
-    if(math.random(1,100) == 1)then return math.random(1, 1000) end
-    if(math.random(1,69) == 1)then return 69 end
-    if(math.random(1,420) == 1)then return 420 end
-
+    if (math.random(1, 1000) == 1) then return 1 end
+    if (math.random(1, 100) == 1) then return math.random(1, 1000) end
+    if (math.random(1, 69) == 1) then return 69 end
+    if (math.random(1, 420) == 1) then return 420 end
 
     return math.Round(math.pow(math.Rand(0, 1), 6) * (max - min) + min, 0)
 end
@@ -68,6 +66,7 @@ local function MagicOutcomePrize(ply)
     if (amount < 5000) then
         emote = ";annoyed;"
     end
+
     if (targetply ~= ply) then
         ply:ChatPrint(":banana: [yellow]haha " .. targetply:Nick() .. " got your prize instead of you")
     end
@@ -81,6 +80,7 @@ local function MagicOutcomeBounty(ply)
     local add = GetPlayerBounty(targetply) + amount
     SetPlayerBounty(targetply, add)
     local str = string.Comma(amount) .. " point" .. (amount ~= 1 and "s" or "")
+
     if (targetply ~= ply) then
         ply:ChatPrint(":banana: [yellow]haha " .. targetply:Nick() .. " got your bounty instead of you")
     end
@@ -97,7 +97,7 @@ local function MagicOutcomeBountyAndPrize(ply)
     local add = GetPlayerBounty(targetply) + amount
     SetPlayerBounty(targetply, add)
     local str = string.Comma(amount) .. " point" .. (amount ~= 1 and "s" or "")
-    
+
     if (targetply ~= ply) then
         ply:ChatPrint(":banana: [yellow]haha " .. targetply:Nick() .. " got your points and bounty instead of you")
     end
@@ -107,27 +107,24 @@ end
 
 local function MagicOutcomeBountyAll(ply)
     if (SetPlayerBounty == nil or GetPlayerBounty == nil) then return nil end
-    local amount = 1000 + math.Round(ButtonMoneyPrize()/25,-2)
+    local amount = 1000 + math.Round(ButtonMoneyPrize() / 25, -2)
     --with this value, the highest possible bounty it can set everyone to is 25,000. 
-
-
     local set = player.GetHumans()
     local whose = "every player's"
     local scatterbots
     local hidingspots = {}
 
     --bounty only kleiners
-
-
-    if(math.random(1,5) == 1)then
+    if (math.random(1, 5) == 1) then
         set = player.GetBots()
         whose = "every kleiner's"
-        if(math.random(1,4) == 1)then
+
+        if (math.random(1, 4) == 1) then
             amount = amount * 3
             scatterbots = true
             hidingspots = navmesh.GetAllNavAreas()
         end
-    elseif ( math.random(1,5) == 1)then
+    elseif (math.random(1, 5) == 1) then
         set = player.GetAll()
         whose = "every player and kleiner's"
     end
@@ -137,22 +134,19 @@ local function MagicOutcomeBountyAll(ply)
         SetPlayerBounty(v, add)
     end
 
-    local msg = "increased "..whose.." bounty by [yellow]" .. string.Comma(amount) .. " points"
+    local msg = "increased " .. whose .. " bounty by [yellow]" .. string.Comma(amount) .. " points"
 
-    if(scatterbots)then
+    if (scatterbots) then
         for k, v in pairs(set) do
-            v:SetPos(table.Random(hidingspots):GetCenter() + Vector(0,0,16))
+            v:SetPos(table.Random(hidingspots):GetCenter() + Vector(0, 0, 16))
             --v:Unstick()
         end
+
         msg = msg .. " [white]and spread them around the map"
     end
-    
-    
 
     return msg .. "!;dougie;"
 end
-
-
 
 local function MagicOutcomeFreeze(ply)
     local targetply, noun = ButtonTarget(ply, 20)
@@ -172,8 +166,9 @@ local function MagicOutcomeDecals(ply, button)
     Sound("coomer/splort.ogg")
 
     local decalrange = {36, 37, 38, 39, 40}
-    if(math.random(1,4) == 1)then
-        decalrange = {14,9,7,7,5,18}
+
+    if (math.random(1, 4) == 1) then
+        decalrange = {14, 9, 7, 7, 5, 18}
     end
 
     local navareas = navmesh.GetAllNavAreas()
@@ -300,23 +295,23 @@ local function MagicOutcomeButtonSpawn(ply)
         local locname = locd.Name
         local hint = ""
 
-            if (locname == "Outside") then
-                local nearest = 1000000
-                local nearestname
-                local secondnearestname
+        if (locname == "Outside") then
+            local nearest = 1000000
+            local nearestname
+            local secondnearestname
 
-                for k, v in pairs(MagicButtonLandmarks) do
-                    if (v:Distance(button:GetPos()) < nearest) then
-                        secondnearestname = nearestname
-                        nearestname = k
-                        nearest = v:Distance(button:GetPos())
-                    end
+            for k, v in pairs(MagicButtonLandmarks) do
+                if (v:Distance(button:GetPos()) < nearest) then
+                    secondnearestname = nearestname
+                    nearestname = k
+                    nearest = v:Distance(button:GetPos())
                 end
-
-                locname = locname .. " (" .. nearestname .. ")"
             end
 
-            hint = " at [white]" .. (locname or "Somewhere autistic") .. "!"
+            locname = locname .. " (" .. nearestname .. ")"
+        end
+
+        hint = " at [white]" .. (locname or "Somewhere autistic") .. "!"
 
         if (math.random(1, 4) == 1) then
             button.CoolEffectOnly = true
@@ -366,7 +361,7 @@ local function MagicOutcomeSpawnObject(ply, button)
         npc_manhack = {
             "Manhack", math.random(1, 2), function(ent, button)
                 local pos = table.Random(navmesh.Find(button:GetPos() + button:GetUp() * 50, 200, 2000, 2000)):GetRandomPoint()
-                ent:SetPos(pos + Vector(0,0,16))
+                ent:SetPos(pos + Vector(0, 0, 16))
             end
         },
         npc_grenade_frag = {
@@ -464,18 +459,21 @@ end
 local function MagicOutcomeBFG(ply, button)
     button:EmitSound("weapons/doom3/bfg/bfg_explode" .. math.random(1, 4) .. ".wav", 100, 100)
     local ent = ents.Create("doom3_bfg")
-    if(IsValid(ent))then
+
+    if (IsValid(ent)) then
         ent:SetAngles(button:GetUp():Angle())
         ent:SetPos(button:GetPos() + button:GetUp() * 32)
         ent:SetOwner(button)
-        ent:SetDamage(200,100)
+        ent:SetDamage(200, 100)
         ent:Spawn()
         ent:Activate()
         local phys = ent:GetPhysicsObject()
+
         if IsValid(phys) then
             phys:SetVelocity(button:GetUp() * 350)
         end
     end
+
     return ""
 end
 
@@ -510,9 +508,11 @@ local function MagicOutcomeBigSnap(ply, button)
         local bty = GetPlayerBounty(targetply)
         local incb = 100000
         SetPlayerBounty(targetply, bty + incb)
-        gaunt:TimerSimple(0.1,function()
-        gaunt:GetOwner():GiveAmmo(49, "infinitygauntlet", true)
+
+        gaunt:TimerSimple(0.1, function()
+            gaunt:GetOwner():GiveAmmo(49, "infinitygauntlet", true)
         end)
+
         return "[fbc]granted [white]" .. noun .. " [fbc] an extra powerful gauntlet, and a bounty of [white]" .. string.Comma(incb) .. "[fbc] points. ;snap;;thanos;[fbc]"
     end
 end
@@ -521,7 +521,10 @@ local function MagicOutcomeSoreNeck(ply, button)
     ply:EmitSound("physics/body/body_medium_break" .. math.random(2, 4) .. ".wav")
     local eang = ply:EyeAngles()
     local amount = 15
-    if(math.random(1,10)==1)then amount = 180 end
+
+    if (math.random(1, 10) == 1) then
+        amount = 180
+    end
 
     eang.roll = eang.roll + ((math.random(0, 1) and amount) or -amount)
     ply:SetEyeAngles(eang)
@@ -531,26 +534,26 @@ local function MagicOutcomeSoreNeck(ply, button)
     ply:ManipulateBoneAngles(bone, bang)
     local timername = ply:UserID() .. "neckpainreset"
 
-        timer.Create(timername, 5, 0, function()
-            if (IsValid(ply)) then
-                local eang = ply:EyeAngles()
-                local val = eang.roll > 0 and 1 or eang.roll < 0 or 0
-                eang.roll = eang.roll - 15 * val
+    timer.Create(timername, 5, 0, function()
+        if (IsValid(ply)) then
+            local eang = ply:EyeAngles()
+            local val = eang.roll > 0 and 1 or eang.roll < 0 or 0
+            eang.roll = eang.roll - 15 * val
 
-                if (val ~= 0) then
-                    ply:EmitSound("physics/body/body_medium_break" .. math.random(2, 4) .. ".wav")
-                    ply:SetEyeAngles(eang)
-                    local bone = ply:LookupBone("ValveBiped.Bip01_Head1") or ply:LookupBone("LRigScull")
-                    local bang = ply:GetManipulateBoneAngles(bone)
-                    bang.pitch = -eang.roll
-                    ply:ManipulateBoneAngles(bone, bang)
-                    if(eang.roll == 0)then
-                        timer.Destroy(timername)
-                    end
+            if (val ~= 0) then
+                ply:EmitSound("physics/body/body_medium_break" .. math.random(2, 4) .. ".wav")
+                ply:SetEyeAngles(eang)
+                local bone = ply:LookupBone("ValveBiped.Bip01_Head1") or ply:LookupBone("LRigScull")
+                local bang = ply:GetManipulateBoneAngles(bone)
+                bang.pitch = -eang.roll
+                ply:ManipulateBoneAngles(bone, bang)
+
+                if (eang.roll == 0) then
+                    timer.Destroy(timername)
                 end
             end
-        end)
-
+        end
+    end)
 
     return ""
 end
@@ -570,8 +573,8 @@ local function MagicOutcomeNothing(ply, button)
             randomsound = checksound
         end
     end
-    ply:ChatPrint(":banana: [yellow]haha here's a cool sound for you, it's called \""..randomsound.."\".")
 
+    ply:ChatPrint(":banana: [yellow]haha here's a cool sound for you, it's called \"" .. randomsound .. "\".")
     button:EmitSound(randomsound, 65, math.Rand(80, 120), nil, nil, nil, 56)
     button.playingsound = randomsound
     button.playedpresssound = true
@@ -696,190 +699,222 @@ local function MagicOutcomeKleinerTeleBot(ply, button)
     end
 end
 
-function MagicOutcomeSlowMode(ply,button)
-    local val = table.Random({0.1,0.25,0.5,0.75,1.50,2,2.5})
+function MagicOutcomeSlowMode(ply, button)
+    local val = table.Random({0.1, 0.25, 0.5, 0.75, 1.50, 2, 2.5})
 
-    if(ply.slowscream)then
+    if (ply.slowscream) then
         ply.slowscream:Stop()
         ply.slowscream = nil
     end
 
-    ply.slowscream = CreateSound( ply, "vo/k_lab/kl_ahhhh.wav" )
-    ply.slowscream:ChangePitch(ply:GetLaggedMovementValue() , 0)
+    ply.slowscream = CreateSound(ply, "vo/k_lab/kl_ahhhh.wav")
+    ply.slowscream:ChangePitch(ply:GetLaggedMovementValue(), 0)
     ply.slowscream:Play()
-    ply.slowscream:ChangePitch(val*100 , 1)
+    ply.slowscream:ChangePitch(val * 100, 1)
+    ply:SetLaggedMovementValue(val)
 
-    ply:SetLaggedMovementValue( val )
-    ply:TimerCreate("magicoutcomeslowmode_expire",60,1,function()
-    ply:SetLaggedMovementValue(1)
+    ply:TimerCreate("magicoutcomeslowmode_expire", 60, 1, function()
+        ply:SetLaggedMovementValue(1)
     end)
-    ply:ChatPrint(":banana: [yellow]haha your heart rate has changed "..math.Round(val*100).."% of normal for 1 minute" )
+
+    ply:ChatPrint(":banana: [yellow]haha your heart rate has changed " .. math.Round(val * 100) .. "% of normal for 1 minute")
+
     return ""
 end
 
-function MagicOutcomeHealth(ply,button)
-    ply:SetHealth(table.Random({125,150,150,200,200,500}))
+function MagicOutcomeHealth(ply, button)
+    ply:SetHealth(table.Random({125, 150, 150, 200, 200, 500}))
+
     return ""
 end
 
 --yeah i know some of these functions fit in here but it's a pain in the ass to tweak the chances with so much code stuck in the list randomly.
 MagicButtonOutcomes = {
     {
+        --Plays a random sound effect
         name = "Nothing",
         func = MagicOutcomeNothing,
         uncool = true,
         weight = 19
     },
     {
+        --Gives the player or someone else some points
         name = "MoneyPrize",
         func = MagicOutcomePrize,
         cool = true,
         weight = 6
     },
     {
+        --Gives the player or someone else a bounty
         name = "Bounty",
         func = MagicOutcomeBounty,
         weight = 6
     },
     {
+        --gives the player or someone else both some points and the same amount as a bounty
         name = "BountyAndPrize",
         func = MagicOutcomeBountyAndPrize,
         cool = true,
         weight = 9,
     },
     {
+        --gives all players, all kleiners, or both a random bounty. sometimes this will teleport all kleiners to random spots and offer a slightly higher bounty.
         name = "BountyAll",
         func = MagicOutcomeBountyAll,
         cool = true,
         weight = 4,
     },
     {
+        --for the kleiner npcs, makes them all prioritize the player or someone else
         name = "KleinerFanclub",
         func = MagicOutcomeKleinerFanclub,
         weight = 0,
     },
     {
+        --for the kleiner npcs, teleports them all to player or someone else
         name = "KleinerTele",
         func = MagicOutcomeKleinerTeleported,
         weight = 0,
     },
     {
+        --for the kleiner npcs, makes all kleiners treat this player or someone else as hostile
         name = "KleinerSlur",
         func = MagicOutcomeKleinerSlur,
         weight = 0,
     },
     {
+        --sticks a stupid effect on your screen
         name = "Overlay",
         func = MagicOutcomeOverlay,
         weight = 8,
     },
     {
+        --spawns some objects
         name = "SpawnObject",
         func = MagicOutcomeSpawnObject,
         weight = 18,
     },
     {
+        --teleports the player somewhere random
         name = "TeleportRandom",
         func = MagicOutcomeTeleportRandom,
         weight = 17,
     },
     {
+        --spawns a new button somewhere else
         name = "ButtonSpawn",
         func = MagicOutcomeButtonSpawn,
         weight = 20,
     },
     {
+        --freezes the player for 30 seconds
         name = "Freeze",
         func = MagicOutcomeFreeze,
         weight = 5,
     },
     {
+        --spawns an explosion under the player's or someone else's feet
         name = "Explode",
         func = MagicOutcomeExplode,
         weight = 25,
     },
     {
+        --fires a peacekeeper shot out of the button in the player's direction. 
         name = "Shoot",
         func = MagicOutcomeShoot,
         uncool = true,
         weight = 10,
     },
     {
+        --shoots a bfg projectile out of the button
         name = "BFG",
         func = MagicOutcomeBFG,
         uncool = true,
         weight = 6,
     },
     {
+        --gauntlet snaps the player or someone else
         name = "Snap",
         func = MagicOutcomeSnap,
         weight = 24,
     },
     {
+        --gives the player or someone else a gauntlet and 50 ammo
         name = "BigSnap",
         func = MagicOutcomeBigSnap,
         weight = 2,
     },
     {
+        --spawns a bunch of stencil decals nearby
         name = "Decals",
         func = MagicOutcomeDecals,
         weight = 12,
     },
     {
+        --sprays some crap all over a specific couch if a specific moderator is sitting there
         name = "PoopCouch",
         func = MagicOutcomePoopCouch,
         weight = 2,
     },
     {
+        --tilts your screen by 15 or 180 degrees. automatically in
         name = "SoreNeck",
         func = MagicOutcomeSoreNeck,
         uncool = true,
         weight = 7,
     },
     {
+        --Gives the player the contents of a mystery box
         name = "MysteryBox",
         func = MagicOutcomeMysteryBox,
         cool = true,
         weight = 32,
     },
     {
+        --Spawns some mystery boxes in random spots on the map
         name = "MysteryBoxSpawn",
         func = MagicOutcomeMysteryBoxSpawn,
         weight = 4,
     },
     {
+        --Opens a prop lootbox for the player or someone else
         name = "SandboxLootbox",
         func = MagicOutcomeSandboxLootbox,
         weight = 2,
     },
     {
+        --Opens a CS:S lootbox for the player or someone else
         name = "WeaponLootbox",
         func = MagicOutcomeWeaponLootbox,
         weight = 2,
     },
     {
+        --changes the player into a random available temporary playermodel
         name = "TempModel",
         func = MagicOutcomeTempModel,
         weight = 15,
     },
     {
+        --changes the player's timescale to a random multiplier for 1 minute
         name = "Slow",
         func = MagicOutcomeSlowMode,
         weight = 4,
     },
     {
+        --Sets the player's health to a random amount
         name = "HealthBoost",
         func = MagicOutcomeHealth,
         weight = 7,
     },
     {
+        --Teleports every kleiner bot to the player or someone else
         name = "KleinerTele_Bots",
         func = MagicOutcomeKleinerTeleBot,
         weight = 5,
     },
 }
 
-if(CLIENT)then return end
+if (CLIENT) then return end
 
 function MagicButton_SeeChances()
     --super cool code that displays the chances
@@ -920,13 +955,9 @@ function MagicButton_SeeChances()
     end
 
     BUTTONSTAT_POINTS_CHANCE = pointchance
-
     print(total .. " total roll size")
-
     BtnFindMoneyAverage()
-
 end
-
 
 function BtnCollectMoneyAverage()
     print("testing average point prize output...")
@@ -939,16 +970,18 @@ function BtnCollectMoneyAverage()
     local prizepeak = 0
     --we end the test if the average is the same 25,000 times in a row
     local staticlimit = 500000
+
     while staticcount < staticlimit do
-        
         if (math.Rand(0, 1) <= BUTTONSTAT_POINTS_CHANCE) then
             local prize = ButtonMoneyPrize()
             gather = gather + prize
-            prizepeak = math.max(prizepeak,prize)
+            prizepeak = math.max(prizepeak, prize)
         end
+
         BUTTONSTAT_MONEYAVERAGE_TESTS = BUTTONSTAT_MONEYAVERAGE_TESTS + 1
         local average = math.Round(gather / BUTTONSTAT_MONEYAVERAGE_TESTS)
-        if(lastav == average and BUTTONSTAT_MONEYAVERAGE_TESTS >= 10000)then
+
+        if (lastav == average and BUTTONSTAT_MONEYAVERAGE_TESTS >= 10000) then
             staticcount = staticcount + 1
         else
             staticcount = 0
@@ -957,51 +990,51 @@ function BtnCollectMoneyAverage()
         lastav = average
         timesample = timesample + (os.clock() - lasttime)
         iter = iter + 1
-        if(timesample > 1/300)then
-           
+
+        if (timesample > 1 / 300) then
             coroutine.yield()
             --print("tested "..iter.. " times...",staticcount,lastav)
             --stop for now and do more next frame
             timesample = 0
             iter = 0
         end
-        lasttime = os.clock()
 
+        lasttime = os.clock()
     end
+
     print("Done!")
     coroutine.yield()
     print("Okay here's the result:")
     coroutine.yield()
-    print("I tested point output for "..string.Comma(BUTTONSTAT_MONEYAVERAGE_TESTS).." button presses.")
-    print("This test concluded after the average remained the same after "..string.Comma(staticlimit).." presses.")
-
+    print("I tested point output for " .. string.Comma(BUTTONSTAT_MONEYAVERAGE_TESTS) .. " button presses.")
+    print("This test concluded after the average remained the same after " .. string.Comma(staticlimit) .. " presses.")
     coroutine.yield()
     print("Pressing a button will reward on average " .. string.Comma(math.Round(lastav)) .. " points. is this ideal?")
-    print("Of all of these tests, the highest prize given out was "..string.Comma(math.Round(prizepeak)).." points.")
-
-
+    print("Of all of these tests, the highest prize given out was " .. string.Comma(math.Round(prizepeak)) .. " points.")
     coroutine.yield()
+
     return "done"
 end
 
 function BtnFindMoneyAverage()
     BUTTONSTAT_MONEYAVERAGE_TESTS = 0
     local mproc = coroutine.create(BtnCollectMoneyAverage)
-    timer.Create("button_mproc",0,0,function()
-    if(mproc)then coroutine.resume(mproc) 
-    local stat = coroutine.status(mproc)
-    if(stat == "dead")then
-        mproc = nil
-    end
-    end
+
+    timer.Create("button_mproc", 0, 0, function()
+        if (mproc) then
+            coroutine.resume(mproc)
+            local stat = coroutine.status(mproc)
+
+            if (stat == "dead") then
+                mproc = nil
+            end
+        end
     end)
-    timer.Create("button_mproc2",1,0,function()
-        if(mproc)then print("thinking...") end
+
+    timer.Create("button_mproc2", 1, 0, function()
+        if (mproc) then
+            print("thinking...")
+        end
     end)
 end
-
-
-
-
-
 --MagicButton_SeeChances()
