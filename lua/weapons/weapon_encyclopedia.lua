@@ -14,6 +14,7 @@ SWEP.ViewModelFOV = 85
 SWEP.ViewModel = Model("models/props_lab/bindergreen.mdl")
 SWEP.WorldModel = Model("models/props_lab/bindergreen.mdl")
 SWEP.AutoSwitchTo = false
+SWEP.DrawCrosshair = false
 SWEP.AutoSwitchFrom = false
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.Damage = -1

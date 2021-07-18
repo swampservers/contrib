@@ -16,6 +16,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = false
+SWEP.DrawCrosshair = false
 SWEP.HoldType = "Slam"
 SWEP.Category = "Airhorn"
 

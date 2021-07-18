@@ -1,4 +1,5 @@
 ﻿AddCSLuaFile()
+SWEP.Base = "weapon_base"
 SWEP.PrintName = "Laser Pointer"
 SWEP.Author = "PYROTEKNIK & Brian"
 SWEP.Category = "PYROTEKNIK"
@@ -21,7 +22,7 @@ SWEP.BobScale = 0
 SWEP.SwayScale = 0
 SWEP.ClickSound = Sound("Weapon_Pistol.Empty")
 SWEP.UnClickSound = Sound("Weapon_AR2.Empty")
-SWEP.DrawCrosshair = false
+SWEP.DrawCrosshair = true
 SWEP.BounceWeaponIcon = false
 SWEP.LaserMask = nil --MASK_SHOT
 SWEP.DrawAmmo = false

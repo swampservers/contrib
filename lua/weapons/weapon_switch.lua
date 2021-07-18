@@ -15,6 +15,7 @@ SWEP.ViewModel = Model("models/swamponions/switchbox.mdl")
 SWEP.WorldModel = Model("models/swamponions/switchbox.mdl")
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
+SWEP.DrawCrosshair = false
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.Damage = -1
 SWEP.Primary.DefaultClip = -1
