@@ -133,32 +133,61 @@ function SWEP:TraceCapsule(vp, vr, cp, ca, cmin, cmax, radius, maxdist)
     return self:TraceSphere(vp, vr, cp + thing * ca, radius, maxdist)
 end
 
+--can we just do this instead of some gay capsule please it's way simpler
+function SWEP:TestHit(target)
+    local ply = self:GetOwner()
+    local bbox_origin = target:GetPos()
+    local mins, maxs = target:GetCollisionBounds() --or we can use a static bbox
+    local bscale = Vector(0.7, 0.7, 1)
+    mins = mins * bscale
+    maxs = maxs * bscale
+    local ray_origin = ply:GetShootPos()
+    local ray_delta = ply:GetAimVector() * 100
+    local hpos, hnormal, hfrac = util.IntersectRayWithOBB(ray_origin, ray_delta, bbox_origin, Angle(0, 0, 0), mins, maxs)
+    local allply = player.GetAll()
+
+    if (hpos ~= nil) then
+        local tr = util.TraceLine({
+            start = ray_origin,
+            endpos = hpos,
+            filter = allply
+        })
+
+        if (not tr.Hit) then return hpos, hnormal end
+    end
+end
+
 function SWEP:TargetedPlayer()
     local vp = self.Owner:EyePos()
     local vr = self.Owner:EyeAngles():Forward()
     local ca = Vector(0, 0, 1)
+    local allply = player.GetAll()
     local allply = Ents["player"]
+    local besttarget
+    local bestpos
+    local bestnormal
 
     for k, v in pairs(allply) do
         if v == self.Owner then continue end
         if v:InVehicle() then continue end
         if not v:Alive() then continue end
-        if Safe(v,self.Owner) then continue end --just a funny idea haha lol
-        
+        if (v:GetPos():Distance(self:GetOwner():GetPos()) > 200) then continue end --just don't check past this distance
+        if Safe(v, self:GetOwner()) then continue end --just a funny idea haha lol
+        local bestpos = (IsValid(besttarget) and besttarget:GetPos()) or Vector(0, 0, 160000)
+        local tpos = v:GetPos()
+        local hit, hitpos, hitnormal = self:TestHit(v)
 
-        --radius was 12
-        if self:TraceCapsule(vp, vr, v:GetPos(), ca, 12, v:Crouching() and 38 or 58, 12.5, 100) then
-            local tr = util.TraceLine({
-                start = vp,
-                endpos = self.TraceHitPos,
-                filter = allply
-            })
-
-            if tr.Hit then continue end
-
-            return v
+        if (hit and tpos:Distance(vp) < bestpos:Distance(vp)) then
+            besttarget = v
+            bestpos = hitpos
+            bestnormal = hitnormal
         end
     end
+
+    self.TraceHitPos = bestpos or Vector(0, 0, 0)
+    self.TraceHitNormal = bestnormal or Vector(0, 0, 0)
+
+    return besttarget
 end
 
 function SWEP:PrimaryAttack()
