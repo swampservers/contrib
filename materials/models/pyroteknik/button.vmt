@@ -1,0 +1,16 @@
+VertexLitGeneric
+{
+	$basetexture "models/pyroteknik/button_diffuse"
+	"$bumpmap" "models/pyroteknik/button_normal"
+	"$selfillum" "1"
+	"$nocull" "1" 
+	"$blendtintbybasealpha" "1"
+	"$basemapluminancephongmask" "1"
+	"$surfaceprop" "metal"
+	
+	"$phong" "1"
+	"$phongboost" "32"
+	"$phongalbedotint" "1"
+	"$phongexponent" "12"
+	"$phongfresnelranges"	"[0 0.5 1]"
+}

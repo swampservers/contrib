@@ -146,7 +146,7 @@ function DrawAmmoGauge(count, icon, x, y, alignh, alignv, alpha)
     local minwidth = math.Round(ScreenScale(64 * overall_scale))
     local margin = math.Round(ScreenScale(2 * overall_scale))
     local gap = 0
-    local collimit = 8
+    local collimit = 7
     alpha = alpha or 1
     local bgcol = ColorAlpha(color_bg, color_bg.a * alpha)
     local fgcol = ColorAlpha(color_fg, color_fg.a * alpha)
@@ -301,7 +301,7 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         stack_height = stack_height + h + 4
     end
 
-    local drawhealth = ply:Alive() and (ply:Health() < ply:GetMaxHealth() or HumanTeamName)
+    local drawhealth = ply:Alive() and (ply:Health() != ply:GetMaxHealth() or HumanTeamName)
     HEALTH_ALPHA = math.Approach(HEALTH_ALPHA or 0, drawhealth and 1 or 0, FrameTime() * 4)
 
     if (HEALTH_ALPHA > 0) then
