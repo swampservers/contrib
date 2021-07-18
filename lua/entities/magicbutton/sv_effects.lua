@@ -537,7 +537,7 @@ local function MagicOutcomeSoreNeck(ply, button)
     timer.Create(timername, 5, 0, function()
         if (IsValid(ply)) then
             local eang = ply:EyeAngles()
-            local val = eang.roll > 0 and 1 or eang.roll < 0 or 0
+            local val = (eang.roll > 0 and 1) or (eang.roll < 0 or -1) or 1
             eang.roll = eang.roll - 15 * val
 
             if (val ~= 0) then
@@ -574,7 +574,7 @@ local function MagicOutcomeNothing(ply, button)
         end
     end
 
-    ply:ChatPrint(":banana: [yellow]haha here's a cool sound for you, it's called \"" .. randomsound .. "\".")
+    ply:ChatPrint(":banana: [yellow]I really, really, really like this sound: \"" .. randomsound .. "\".")
     button:EmitSound(randomsound, 65, math.Rand(80, 120), nil, nil, nil, 56)
     button.playingsound = randomsound
     button.playedpresssound = true
