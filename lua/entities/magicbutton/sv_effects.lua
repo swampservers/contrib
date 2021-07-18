@@ -497,8 +497,9 @@ local function MagicOutcomeBigSnap(ply, button)
         local bty = GetPlayerBounty(targetply)
         local incb = 100000
         SetPlayerBounty(targetply, bty + incb)
-        gaunt:GetOwner():GiveAmmo(math.floor(table.Count(player.GetHumans()) / 2), "infinitygauntlet", true)
-
+        gaunt:TimerSimple(0.1,function()
+        gaunt:GetOwner():GiveAmmo(49, "infinitygauntlet", true)
+        end)
         return "[fbc]granted [white]" .. noun .. " [fbc] an extra powerful gauntlet, and a bounty of [white]" .. string.Comma(incb) .. "[fbc] points. ;snap;;thanos;[fbc]"
     end
 end
