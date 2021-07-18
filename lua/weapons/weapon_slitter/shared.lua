@@ -11,7 +11,7 @@ SWEP.ViewModelFOV = 90
 SWEP.ViewModel = "models/weapons/w_knife_t.mdl"
 SWEP.WorldModel = "models/weapons/w_knife_t.mdl"
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = false
+SWEP.DrawCrosshair = true
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
 SWEP.Primary.ClipSize = -1
@@ -230,26 +230,30 @@ function SWEP:SecondaryAttack()
     self:SetNextSecondaryFire(CurTime() + 1)
 end
 
-function SWEP:DrawHUD()
-    surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
-    surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
+function SWEP:DrawHUD() 
+end
+
+function SWEP:DoDrawCrosshair(x,y)
+    surface.DrawCircle(x, y, 2, Color(0, 0, 0, 25))
+    surface.DrawCircle(x, y, 1, Color(255, 255, 255, 10))
     surface.SetDrawColor(Color(255, 255, 255, 150))
     local hitplayer = self:TargetedPlayer()
 
     if hitplayer and (hitplayer ~= justslitplayer or (CurTime() - lastkillslit) >= 0.35) then
-        surface.DrawCircle(ScrW() / 2, ScrH() / 2, 16, Color(0, 0, 0, 100))
-        surface.DrawCircle(ScrW() / 2, ScrH() / 2, 15, Color(255, 255, 255, 60))
+        surface.DrawCircle(x, y, 16, Color(0, 0, 0, 100))
+        surface.DrawCircle(x, y, 15, Color(255, 255, 255, 60))
     end
 
     local killeffect = math.min(CurTime() - lastkillslit, .15) / .15
 
     if killeffect < 0.98 then
         size = Lerp(killeffect, 16, 48)
-        surface.DrawCircle(ScrW() / 2, ScrH() / 2, size, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 100, 0)))
-        surface.DrawCircle(ScrW() / 2, ScrH() / 2, size - 1, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 60, 0)))
+        surface.DrawCircle(x, y, size, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 100, 0)))
+        surface.DrawCircle(x, y, size - 1, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 60, 0)))
     end
 
     surface.SetDrawColor(Color(255, 255, 255, 255))
+    return true
 end
 -- function SWEP:DoImpactEffect(tr, nDamageType)
 --     util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
