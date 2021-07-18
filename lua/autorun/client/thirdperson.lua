@@ -99,11 +99,14 @@ hook.Add("InputMouseApply", "FreezeTurning", function(cmd, x, y, ang)
         end
 
         for i = 0, FrameTime() * 20 do
-            Thirdperson_ViewYaw = Thirdperson_ViewYaw / 1.03
-            Thirdperson_ViewPitch = Thirdperson_ViewPitch / 1.03
+            Thirdperson_ViewYaw = Thirdperson_ViewYaw / 1.08
+            Thirdperson_ViewPitch = Thirdperson_ViewPitch / 1.08
         end
 
         Thirdperson_ViewYaw = math.Round(Thirdperson_ViewYaw, 3)
+    else
+        Thirdperson_ViewYaw = 0
+        Thirdperson_ViewPitch = 0
     end
 end)
 
