@@ -172,6 +172,9 @@ local function MagicOutcomeDecals(ply, button)
     Sound("coomer/splort.ogg")
 
     local decalrange = {36, 37, 38, 39, 40}
+    if(math.random(1,4) == 1)then
+        decalrange = {14,9,7,7,5,18}
+    end
 
     local navareas = navmesh.GetAllNavAreas()
     local spamcounter = 0
@@ -295,21 +298,8 @@ local function MagicOutcomeButtonSpawn(ply)
         local loc = Location.Find(button)
         local locd = Location.GetLocationByIndex(loc or -1)
         local locname = locd.Name
-        local hinttype = math.random(1, 2)
         local hint = ""
 
-        if (hinttype == 1) then
-            local soundhints = {
-                ["keem/gamer.ogg"] = "gamer",
-                ["boop.wav"] = "pony",
-                ["mowsquee.wav"] = "pony",
-                ["mow.ogg"] = "meow",
-            }
-
-            local snddesc, sndname = table.Random(soundhints)
-            button.HintSound = sndname
-            hint = ", making " .. snddesc .. " sounds!"
-        elseif (hinttype == 2) then
             if (locname == "Outside") then
                 local nearest = 1000000
                 local nearestname
@@ -327,7 +317,6 @@ local function MagicOutcomeButtonSpawn(ply)
             end
 
             hint = " at [white]" .. (locname or "Somewhere autistic") .. "!"
-        end
 
         if (math.random(1, 4) == 1) then
             button.CoolEffectOnly = true
@@ -372,6 +361,12 @@ local function MagicOutcomeSpawnObject(ply, button)
             "Headcrab", math.random(1, 5), function(ent, button)
                 local pos = table.Random(navmesh.Find(button:GetPos() + button:GetUp() * 50, 200, 2000, 2000)):GetRandomPoint()
                 ent:SetPos(pos)
+            end
+        },
+        npc_manhack = {
+            "Manhack", math.random(1, 2), function(ent, button)
+                local pos = table.Random(navmesh.Find(button:GetPos() + button:GetUp() * 50, 200, 2000, 2000)):GetRandomPoint()
+                ent:SetPos(pos + Vector(0,0,16))
             end
         },
         npc_grenade_frag = {
@@ -466,6 +461,31 @@ local function MagicOutcomeShoot(ply, button)
     return ""
 end
 
+local function MagicOutcomeBFG(ply, button)
+    local blame = ents.Create("weapon_doom3_bfg")
+    blame:SetPos(Vector(0,0,-16000))
+    blame:Spawn()
+    blame:SetMoveType(MOVETYPE_NONE)
+    blame:SetSolid(SOLID_NONE)
+    blame:SetNoDraw(true)
+    SafeRemoveEntityDelayed(blame, 8)
+    button:EmitSound("weapons/doom3/bfg/bfg_explode" .. math.random(1, 4) .. ".wav", 100, 100)
+    local ent = ents.Create("doom3_bfg")
+    if(IsValid(ent))then
+        ent:SetAngles(button:GetUp():Angle())
+        ent:SetPos(button:GetPos() + button:GetUp() * 32)
+        ent:SetOwner(button)
+        ent:SetDamage(200,100)
+        ent:Spawn()
+        ent:Activate()
+        local phys = ent:GetPhysicsObject()
+        if IsValid(phys) then
+            phys:SetVelocity(button:GetUp() * 350)
+        end
+    end
+    return ""
+end
+
 local function MagicOutcomeSnap(ply, button)
     if (ply.Fizzle) then
         button:EmitSound("gauntlet/snap.wav", 100)
@@ -507,7 +527,10 @@ end
 local function MagicOutcomeSoreNeck(ply, button)
     ply:EmitSound("physics/body/body_medium_break" .. math.random(2, 4) .. ".wav")
     local eang = ply:EyeAngles()
-    eang.roll = eang.roll + ((math.random(0, 1) and 15) or -15)
+    local amount = 15
+    if(math.random(1,10)==1)then amount = 180 end
+
+    eang.roll = eang.roll + ((math.random(0, 1) and amount) or -amount)
     ply:SetEyeAngles(eang)
     local bone = ply:LookupBone("ValveBiped.Bip01_Head1") or ply:LookupBone("LRigScull")
     local bang = ply:GetManipulateBoneAngles(bone)
@@ -515,11 +538,7 @@ local function MagicOutcomeSoreNeck(ply, button)
     ply:ManipulateBoneAngles(bone, bang)
     local timername = ply:UserID() .. "neckpainreset"
 
-    if (timer.Exists(timername)) then
-        local reps = timer.RepsLeft(timername)
-        timer.Adjust(timername, 8, reps + 1)
-    else
-        timer.Create(timername, 8, 1, function()
+        timer.Create(timername, 5, 0, function()
             if (IsValid(ply)) then
                 local eang = ply:EyeAngles()
                 local val = eang.roll > 0 and 1 or eang.roll < 0 or 0
@@ -532,10 +551,13 @@ local function MagicOutcomeSoreNeck(ply, button)
                     local bang = ply:GetManipulateBoneAngles(bone)
                     bang.pitch = -eang.roll
                     ply:ManipulateBoneAngles(bone, bang)
+                    if(eang.roll == 0)then
+                        timer.Destroy(timername)
+                    end
                 end
             end
         end)
-    end
+
 
     return ""
 end
@@ -788,6 +810,12 @@ MagicButtonOutcomes = {
         func = MagicOutcomeShoot,
         uncool = true,
         weight = 10,
+    },
+    {
+        name = "BFG",
+        func = MagicOutcomeBFG,
+        uncool = true,
+        weight = 6,
     },
     {
         name = "Snap",
