@@ -24,107 +24,136 @@ function UseThirdperson()
     local wep = LocalPlayer():GetActiveWeapon()
     local wc = IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass()
     if LocalPlayer():IsPlayingTaunt() then return true end
-    if(wep.IsScoped and wep:IsScoped())then
+
+    if (wep.IsScoped and wep:IsScoped()) then
         Thirdperson_Lerp = 0
         Thirdperson_LerpSide = 0
+
         return false
     end
-
 
     return THIRDPERSON or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(LocalPlayer()) and not LocalPlayer():InVehicle())
 end
 
 local cwep = {}
-cwep["weapon_pistol"] = true 
-cwep["weapon_357"] = true 
-cwep["weapon_smg1"] = true 
-cwep["weapon_ar2"] = true 
-cwep["weapon_shotgun"] = true 
-
-cwep["weapon_crossbow"] = true 
-
-cwep["weapon_rpg"] = true 
-cwep["weapon_grenade"] = true 
+cwep["weapon_pistol"] = true
+cwep["weapon_357"] = true
+cwep["weapon_smg1"] = true
+cwep["weapon_ar2"] = true
+cwep["weapon_shotgun"] = true
+cwep["weapon_crossbow"] = true
+cwep["weapon_rpg"] = true
+cwep["weapon_grenade"] = true
 
 function UseThirdpersonSide()
     local ply = LocalPlayer()
-
     if ply:IsPlayingTaunt() then return false end
-    if(IsValid(ply:GetActiveWeapon()) )then
-        if(ply:GetActiveWeapon().DrawCrosshair)then return true end
-        if(cwep[ply:GetActiveWeapon():GetClass()])then return true end
+    if (math.abs(Thirdperson_ViewYaw) > 1) then return false end
+
+    if (IsValid(ply:GetActiveWeapon())) then
+        if (ply:GetActiveWeapon().DrawCrosshair) then return true end
+        if (cwep[ply:GetActiveWeapon():GetClass()]) then return true end
     end
-    
+
     return false
 end
 
+hook.Add("HUDShouldDraw", "Swamp_HideCrosshair", function(name)
+    if (name == "CHudCrosshair" and Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0 or math.abs(Thirdperson_ViewYaw) > 1) then return false end
+end)
 
-hook.Add( "HUDShouldDraw", "Swamp_HideCrosshair", function( name )
-	if ( name == "CHudCrosshair" and Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0) then
-		return false
-	end
-end )
+concommand.Add("+swamp_freecam", function()
+    Thirdperson_FreeRotate = true
+end)
+
+concommand.Add("-swamp_freecam", function()
+    Thirdperson_FreeRotate = nil
+end)
+
+Thirdperson_Lerp = 0
+Thirdperson_SideLerp = 0
+Thirdperson_FreeRotate = false
+Thirdperson_ViewYaw = 0
+Thirdperson_ViewPitch = 0
+
+hook.Add("InputMouseApply", "FreezeTurning", function(cmd, x, y, ang)
+    if (Thirdperson_Lerp > 0) then
+        if (not input.LookupBinding("+swamp_freecam") and not input.LookupKeyBinding(MOUSE_MIDDLE)) then
+            Thirdperson_FreeRotate = input.IsButtonDown(MOUSE_MIDDLE)
+
+            if (Thirdperson_FreeRotate and not ThirdPerson_BindingHint) then
+                LocalPlayerNotify("You can freely rotate your camera while in third person with middle mouse, or by binding +swamp_freecam to the key of your choice.")
+                ThirdPerson_BindingHint = true
+            end
+        end
+
+        if (Thirdperson_FreeRotate) then
+            Thirdperson_ViewYaw = (Thirdperson_ViewYaw or 0) - x / 44
+            Thirdperson_ViewPitch = (Thirdperson_ViewPitch or 0) - y / 44
+            Thirdperson_ViewYaw = math.NormalizeAngle(Thirdperson_ViewYaw)
+            Thirdperson_ViewPitch = math.NormalizeAngle(Thirdperson_ViewPitch)
+            cmd:SetMouseX(0)
+            cmd:SetMouseY(0)
+
+            return true
+        end
+
+        for i = 0, FrameTime() * 20 do
+            Thirdperson_ViewYaw = Thirdperson_ViewYaw / 1.03
+            Thirdperson_ViewPitch = Thirdperson_ViewPitch / 1.03
+        end
+
+        Thirdperson_ViewYaw = math.Round(Thirdperson_ViewYaw, 3)
+    end
+end)
 
 local col = NamedColor("FGColor")
-hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
-	
 
-    if(Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0)then
+hook.Add("HUDPaint", "HUDPaint_ThirdPersonCrosshair", function()
+    if (Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0) then
         local ply = LocalPlayer()
-    local trace = ply:GetEyeTrace()
-    local data2D = trace.HitPos:ToScreen() -- Gets the position of the entity on your screen
-    local data2Do = trace.StartPos:ToScreen() -- Gets the position of the entity on your screen
+        local trace = ply:GetEyeTrace()
+        local data2D = trace.HitPos:ToScreen() -- Gets the position of the entity on your screen
+        local data2Do = trace.StartPos:ToScreen() -- Gets the position of the entity on your screen
+        -- The position is not visible from our screen, don't draw and continue onto the next prop
+        local wep = ply:GetActiveWeapon()
 
+        if (IsValid(wep) and data2D.visible) then
+            local x, y = data2D.x, data2D.y
+            local ox, oy = data2Do.x, data2Do.y
+            x = math.floor(x)
+            y = math.floor(y)
+            local ovr
 
+            if (IsValid(wep) and wep.DoDrawCrosshair) then
+                ovr = wep:DoDrawCrosshair(x, y)
+            end
 
-    -- The position is not visible from our screen, don't draw and continue onto the next prop
-    local wep = ply:GetActiveWeapon()
-    if ( IsValid(wep) and data2D.visible ) then 
-        local x,y = data2D.x,data2D.y
-        local ox,oy = data2Do.x,data2Do.y
-
-
-        x = math.floor(x)
-        y = math.floor(y)
-        local ovr 
-
-        if(IsValid(wep) and wep.DoDrawCrosshair)then
-            ovr = wep:DoDrawCrosshair(x,y)
+            if (not ovr) then
+                surface.SetDrawColor(col)
+                surface.DrawRect(x, y, 1, 1)
+                surface.DrawRect(x + 10, y, 1, 1)
+                surface.DrawRect(x - 10, y, 1, 1)
+                surface.DrawRect(x, y + 8, 1, 1)
+                surface.DrawRect(x, y - 8, 1, 1)
+                surface.SetDrawColor(ColorAlpha(col, 7 * Thirdperson_Lerp))
+            end
         end
-        
-        if(!ovr)then
-            surface.SetDrawColor( col)
-            surface.DrawRect( x, y, 1, 1 )
-            surface.DrawRect( x + 10 , y, 1, 1 )
-            surface.DrawRect( x - 10 , y, 1, 1 )
-            surface.DrawRect( x , y + 8, 1, 1 )
-            surface.DrawRect( x , y - 8, 1, 1 )
-            surface.SetDrawColor( ColorAlpha(col,7*Thirdperson_Lerp))
-        end
-        
-
-
-
     end
-
-end
-
-end )
-
-
+end)
 
 hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
     local use = UseThirdperson()
-    Thirdperson_Lerp = math.Approach(Thirdperson_Lerp or 0, use and 1 or 0, FrameTime()*4.5)
-    Thirdperson_LerpSide = math.Approach(Thirdperson_LerpSide or 0, (use and UseThirdpersonSide()) and 1 or 0, FrameTime()*4.5)
+    Thirdperson_Lerp = math.Approach(Thirdperson_Lerp or 0, use and 1 or 0, FrameTime() * 4.5)
+    Thirdperson_LerpSide = math.Approach(Thirdperson_LerpSide or 0, (use and UseThirdpersonSide()) and 1 or 0, FrameTime() * 4.5)
 
-    if(Thirdperson_Lerp > 0)then
-
-        local distance = Thirdperson_Lerp*100
-
-        pos = pos + angles:Right() * -16 * Thirdperson_LerpSide
-        pos = pos + angles:Up() * 8 * Thirdperson_LerpSide
-
+    if (Thirdperson_Lerp > 0) then
+        local distance = Thirdperson_Lerp * 100
+        pos = pos + angles:Right() * -20 * Thirdperson_LerpSide
+        pos = pos + angles:Up() * 5 * Thirdperson_LerpSide
+        
+        angles:RotateAroundAxis(Vector(0, 0, 1), (Thirdperson_ViewYaw or 0) * Thirdperson_Lerp)
+        angles:RotateAroundAxis(angles:Right(), (Thirdperson_ViewPitch or 0) * Thirdperson_Lerp)
         THIRDPERSON_TRACE = trace2
 
         local trace = {
