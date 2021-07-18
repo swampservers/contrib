@@ -2,7 +2,7 @@
 -- INSTALL: CINEMA
 AddCSLuaFile()
 include("shared.lua")
-language.Add("magicbutton", "Comedy")
+language.Add("magicbutton", "The Hilarious One")
 
 hook.Add("GetTeamColor", "magicbutton_deathnotice", function(ent)
     if (ent:GetClass() == "magicbutton") then return Color(248, 204, 58) end

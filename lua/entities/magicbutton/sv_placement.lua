@@ -371,7 +371,7 @@ function ENT:FindHidingSpot(findpos)
         end
     end
 
-    assert(trace1 and trace2, "button placement failure")
+    assert(trace1 and trace2, "button placement failure from " ..tostring(findpos))
     if (trace1 and trace2) then return trace2, trace1 end
 end
 
