@@ -22,6 +22,7 @@ ENT.PlacementSettings.StupidLocations = {
     ["Deep Space"] = true,
     ["Rat's Lair"] = true,
     ["Reddit"] = true,
+    ["Movie Theater"] = true,
 }
 
 --Areas that should not be considered when IndoorsOnly is true
@@ -260,7 +261,7 @@ function ENT:FindCastBox(casttrace)
     end
 
     randir = randir:GetNormalized()
-    local traceorigin = LerpVector(math.Rand(0.4, 0.6), casttrace.StartPos, casttrace.HitPos)
+    local traceorigin = LerpVector(math.Rand(0.1, 1), casttrace.StartPos, casttrace.HitPos)
     local tr2 = {}
     tr2.start = traceorigin
     tr2.endpos = traceorigin + randir * tracedist
