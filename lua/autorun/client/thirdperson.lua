@@ -21,18 +21,115 @@ hook.Add("Think", "ThirdPersonToggler", function()
 end)
 
 function UseThirdperson()
+    local wep = LocalPlayer():GetActiveWeapon()
     local wc = IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass()
     if LocalPlayer():IsPlayingTaunt() then return true end
+    if(wep.IsScoped and wep:IsScoped())then
+        Thirdperson_Lerp = 0
+        Thirdperson_LerpSide = 0
+        return false
+    end
+
+
     return THIRDPERSON or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(LocalPlayer()) and not LocalPlayer():InVehicle())
 end
 
-hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
-   
+local cwep = {}
+cwep["weapon_pistol"] = true 
+cwep["weapon_357"] = true 
+cwep["weapon_smg1"] = true 
+cwep["weapon_ar2"] = true 
+cwep["weapon_shotgun"] = true 
 
-    if UseThirdperson() then
+cwep["weapon_crossbow"] = true 
+
+cwep["weapon_rpg"] = true 
+cwep["weapon_grenade"] = true 
+
+function UseThirdpersonSide()
+    local ply = LocalPlayer()
+
+    if ply:IsPlayingTaunt() then return false end
+    if(IsValid(ply:GetActiveWeapon()) )then
+        if(ply:GetActiveWeapon().DrawCrosshair)then return true end
+        if(cwep[ply:GetActiveWeapon():GetClass()])then return true end
+    end
+    
+    return false
+end
+
+
+hook.Add( "HUDShouldDraw", "Swamp_HideCrosshair", function( name )
+	if ( name == "CHudCrosshair" and Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0) then
+		return false
+	end
+end )
+
+local col = NamedColor("FGColor")
+hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
+	
+
+    if(Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0)then
+        local ply = LocalPlayer()
+    local trace = ply:GetEyeTrace()
+    local data2D = trace.HitPos:ToScreen() -- Gets the position of the entity on your screen
+    local data2Do = trace.StartPos:ToScreen() -- Gets the position of the entity on your screen
+
+
+
+    -- The position is not visible from our screen, don't draw and continue onto the next prop
+    local wep = ply:GetActiveWeapon()
+    if ( IsValid(wep) and data2D.visible ) then 
+        local x,y = data2D.x,data2D.y
+        local ox,oy = data2Do.x,data2Do.y
+
+
+        x = math.floor(x)
+        y = math.floor(y)
+        local ovr 
+
+        if(IsValid(wep) and wep.DoDrawCrosshair)then
+            ovr = wep:DoDrawCrosshair(x,y)
+        end
+        
+        if(!ovr)then
+            surface.SetDrawColor( col)
+            surface.DrawRect( x, y, 1, 1 )
+            surface.DrawRect( x + 10 , y, 1, 1 )
+            surface.DrawRect( x - 10 , y, 1, 1 )
+            surface.DrawRect( x , y + 8, 1, 1 )
+            surface.DrawRect( x , y - 8, 1, 1 )
+            surface.SetDrawColor( ColorAlpha(col,7*Thirdperson_Lerp))
+        end
+        
+
+
+
+    end
+
+end
+
+end )
+
+
+
+hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
+    local use = UseThirdperson()
+    Thirdperson_Lerp = math.Approach(Thirdperson_Lerp or 0, use and 1 or 0, FrameTime()*4.5)
+    Thirdperson_LerpSide = math.Approach(Thirdperson_LerpSide or 0, (use and UseThirdpersonSide()) and 1 or 0, FrameTime()*4.5)
+
+    if(Thirdperson_Lerp > 0)then
+
+        local distance = Thirdperson_Lerp*100
+
+        pos = pos + angles:Right() * -16 * Thirdperson_LerpSide
+        pos = pos + angles:Up() * 8 * Thirdperson_LerpSide
+
+        THIRDPERSON_TRACE = trace2
+
         local trace = {
             start = pos,
-            endpos = pos - (angles:Forward() * 100),
+            endpos = pos - (angles:Forward() * distance),
             mask = MASK_SOLID_BRUSHONLY
         }
 
@@ -40,9 +137,9 @@ hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
         local view = {}
 
         if trace.Hit then
-            view.origin = pos - (angles:Forward() * ((100 * trace.Fraction) - 5))
+            view.origin = pos - (angles:Forward() * ((distance * trace.Fraction) - 5))
         else
-            view.origin = pos - (angles:Forward() * 100)
+            view.origin = pos - (angles:Forward() * distance)
         end
 
         view.angles = angles
@@ -53,5 +150,5 @@ hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
 end)
 
 hook.Add("ShouldDrawLocalPlayer", "MyShouldDrawLocalPlthridpersonayer", function(ply)
-    if UseThirdperson() then return true end
+    if Thirdperson_Lerp and Thirdperson_Lerp > 0 then return true end
 end)
