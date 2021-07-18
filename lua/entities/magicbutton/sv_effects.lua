@@ -462,13 +462,6 @@ local function MagicOutcomeShoot(ply, button)
 end
 
 local function MagicOutcomeBFG(ply, button)
-    local blame = ents.Create("weapon_doom3_bfg")
-    blame:SetPos(Vector(0,0,-16000))
-    blame:Spawn()
-    blame:SetMoveType(MOVETYPE_NONE)
-    blame:SetSolid(SOLID_NONE)
-    blame:SetNoDraw(true)
-    SafeRemoveEntityDelayed(blame, 8)
     button:EmitSound("weapons/doom3/bfg/bfg_explode" .. math.random(1, 4) .. ".wav", 100, 100)
     local ent = ents.Create("doom3_bfg")
     if(IsValid(ent))then
