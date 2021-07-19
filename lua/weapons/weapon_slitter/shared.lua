@@ -137,7 +137,7 @@ function SWEP:TargetedPlayer()
     local vp = self.Owner:EyePos()
     local vr = self.Owner:EyeAngles():Forward()
     local ca = Vector(0, 0, 1)
-    local allply = Ents["player"]
+    local allply = player.GetAll()
 
     for k, v in pairs(allply) do
         if v == self.Owner then continue end
