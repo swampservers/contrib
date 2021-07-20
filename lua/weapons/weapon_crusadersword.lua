@@ -256,12 +256,11 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SetupMove(ply,mv,cmd)
-    local wep = ply:GetActiveWeapon()
 
-    if (IsValid(wep) and wep:GetClass() == "weapon_crusadersword" and wep.GetChargeEnd and wep:GetChargeEnd() > CurTime()) then
-        mv:SetMaxClientSpeed(wep.ChargeAttackVelocity * 155)
-        mv:SetForwardSpeed(wep.ChargeAttackVelocity * 155)
-        mv:SetVelocity(ply:GetRenderAngles():Forward() * wep.ChargeAttackVelocity)
+  if(self.GetChargeEnd and self:GetChargeEnd() > CurTime()) then
+        mv:SetMaxClientSpeed(self.ChargeAttackVelocity * 155)
+        mv:SetForwardSpeed(self.ChargeAttackVelocity * 155)
+        mv:SetVelocity(ply:GetRenderAngles():Forward() * self.ChargeAttackVelocity)
     end
 end
 
