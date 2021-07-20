@@ -32,6 +32,15 @@ function PLAYER:SetLocation(locationId)
     return self:SetDTInt(0, locationId)
 end
 
+hook.Add("SetupMove", "Weapon_SetupMove", function(ply, mv, cmd)
+    local wep = ply:GetActiveWeapon()
+
+    if wep.SetupMove then
+        wep:SetupMove(ply, mv, cmd)
+    end
+end)
+
+
 PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
 local specials = "[]{}()<>-|= "
 local specials2 = "["

@@ -255,7 +255,7 @@ function SWEP:PrimaryAttack()
     self:SetHitNext(CurTime() + 0.15)
 end
 
-hook.Add("SetupMove", "CrusaderSwordCharge", function(ply, mv, cmd)
+function SWEP:SetupMove(ply,mv,cmd)
     local wep = ply:GetActiveWeapon()
 
     if (IsValid(wep) and wep:GetClass() == "weapon_crusadersword" and wep.GetChargeEnd and wep:GetChargeEnd() > CurTime()) then
@@ -263,7 +263,9 @@ hook.Add("SetupMove", "CrusaderSwordCharge", function(ply, mv, cmd)
         mv:SetForwardSpeed(wep.ChargeAttackVelocity * 155)
         mv:SetVelocity(ply:GetRenderAngles():Forward() * wep.ChargeAttackVelocity)
     end
-end)
+end
+
+
 
 function SWEP:Think()
     local delta = CurTime() - (self.LastThink or CurTime())
