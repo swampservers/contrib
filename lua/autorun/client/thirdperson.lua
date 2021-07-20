@@ -35,15 +35,16 @@ function UseThirdperson()
     return THIRDPERSON or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(LocalPlayer()) and not LocalPlayer():InVehicle())
 end
 
-local cwep = {}
-cwep["weapon_pistol"] = true
-cwep["weapon_357"] = true
-cwep["weapon_smg1"] = true
-cwep["weapon_ar2"] = true
-cwep["weapon_shotgun"] = true
-cwep["weapon_crossbow"] = true
-cwep["weapon_rpg"] = true
-cwep["weapon_grenade"] = true
+local cwep = {
+weapon_pistol = true,
+weapon_357 = true,
+weapon_smg1 = true,
+weapon_ar2 = true,
+weapon_shotgun = true,
+weapon_crossbow = true,
+weapon_rpg = true,
+weapon_grenade = true,
+}
 
 function UseThirdpersonSide()
     local ply = LocalPlayer()
