@@ -27,9 +27,8 @@ end
 local CMoveDataKeyPressed = FindMetaTable("CMoveData").KeyPressed
 
 function SWEP:SetupMove(ply,mv,cmd)
-    if CMoveDataKeyPressed(mv, IN_JUMP) and ply:UsingWeapon("weapon_flappy") and not ply:InVehicle() then
+    if CMoveDataKeyPressed(mv, IN_JUMP) and not ply:InVehicle() then
         if ply.Obesity and ply:Obesity() > 40 then return end
-        local self = ply:GetActiveWeapon()
         local power = 200
 
         if ply.InTheater and ply:InTheater() then
