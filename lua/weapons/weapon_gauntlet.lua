@@ -83,15 +83,13 @@ function SWEP:Snap(target)
     end
 end
 
-
 function SWEP:CanTarget(v)
     if (not v:IsPlayer()) then return false end
-    
     if (not v:Alive()) then return false end
     if (v == self:GetOwner()) then return false end
     if (not self:GetTargetNearness(v)) then return false end
     local ply = self:GetOwner()
-    if (Safe(v,ply)) then return false end
+    if (Safe(v, ply)) then return false end
 
     return true
 end
@@ -113,7 +111,6 @@ function SWEP:GetTargetNearness(v)
 end
 
 function SWEP:FindTarget()
-
     local eyetrace = self.Owner:GetEyeTrace()
 
     local target = {nil, 10000}
@@ -183,14 +180,10 @@ function SWEP:CanPrimaryAttack()
     return self:GetOwner():GetAmmoCount("infinitygauntlet") > 0
 end
 
-if(SERVER)then
-
-end
+if (SERVER) then end
 
 function SWEP:PrimaryAttack()
     local target = self:FindTarget()
-
-    
     if (not self:CanPrimaryAttack()) then return end
 
     if (SERVER) then

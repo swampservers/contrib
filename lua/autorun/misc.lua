@@ -119,8 +119,8 @@ function Safe(ent, attacker)
     if pt ~= nil and pt["time"] > 1 then
         --if theater is protected and the attacker is the theater owner, than this player is not safe from them.
         local owner = ent:GetTheater() and ent:GetTheater():GetOwner()
-
         if IsValid(attacker) and attacker:IsPlayer() and ent:IsPlayer() and ent:InTheater() and owner == attacker then return false end
+
         return true
     end
 

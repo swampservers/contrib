@@ -143,8 +143,7 @@ function SWEP:TargetedPlayer()
         if v == self.Owner then continue end
         if v:InVehicle() then continue end
         if not v:Alive() then continue end
-        if Safe(v,self.Owner) then continue end --just a funny idea haha lol
-        
+        if Safe(v, self.Owner) then continue end --just a funny idea haha lol
 
         --radius was 12
         if self:TraceCapsule(vp, vr, v:GetPos(), ca, 12, v:Crouching() and 38 or 58, 12.5, 100) then
