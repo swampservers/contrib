@@ -171,8 +171,8 @@ function SWEP:DoKickBack()
     local sfac = self:Standingness()
     local multiplier = Lerp(mfac, 1, self.MoveKickMultiplier) * Lerp(sfac, self.CrouchKickMultiplier, 1)
     local spraymodifier = self:GetSpray()
-    local flKickUp = multiplier * (self.KickUBase / self:GetControl() + spraymodifier * self.KickUSpray)
-    local flKickLateral = multiplier * (self.KickLBase / self:GetControl() + spraymodifier * self.KickLSpray)
+    local flKickUp = multiplier * (self.KickUBase + spraymodifier * self.KickUSpray) / self:GetControl()
+    local flKickLateral = multiplier * (self.KickLBase + spraymodifier * self.KickLSpray) / self:GetControl()
     --[[
 		Jvs:
 			I implemented the shots fired and direction stuff on the cs base because it would've been dumb to do it
