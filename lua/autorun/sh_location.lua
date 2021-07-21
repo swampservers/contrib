@@ -558,7 +558,7 @@ Locations = {
     },
     --after everything
     {
-        Name = "Way Outside",
+        Name = "Unknown",
         Min = Vector(-100000, -100000, -100000),
         Max = Vector(100000, 100000, 100000)
     }
@@ -597,7 +597,6 @@ while i <= #Locations do
     i = i + 1
 end
 
-
 LocationByName = {}
 
 for i,v in ipairs(Locations) do
@@ -612,39 +611,7 @@ function RefreshLocations()
     end
 end
 
--- returns the location string of the index
-function GetLocationNameByIndex(iIndex)
-    local temp = Locations[iIndex]
 
-    return temp and temp.Name or "Unknown"
-end
-
--- find a location by name
--- note: this can be optimized with a second data structure
-function GetLocationIndexByName(strName)
-    local locations = GetLocations()
-    if not locations then return end
-
-    for k, v in pairs(locations) do
-        if (v.Name == strName) then return k end
-    end
-end
-
--- find a location by index
-function GetLocationByIndex(iIndex)
-    return Locations[iIndex]
-end
-
--- find a location by name
--- note: this can be optimized with a second data structure
-function GetLocationByName(strName)
-    local locations = GetLocations()
-    if not locations then return end
-
-    for k, v in pairs(locations) do
-        if (v.Name == strName) then return v end
-    end
-end
 
 -- returns the index of the players current location or 0 if unknown
 function FindLocation(pos)
@@ -654,7 +621,7 @@ function FindLocation(pos)
 
     if (Locations == nil) then return 0 end
 
-    for k, v in next, Locations do
+    for k, v in ipairs(Locations) do
         if (pos:InBox(v.Min, v.Max)) then
             if v.Filter then
                 if v.Filter(pos) then return k end
@@ -664,7 +631,7 @@ function FindLocation(pos)
         end
     end
 
-    return 0
+    return #Locations
 end
 
 function GetPlayersInLocation(iIndex)
@@ -679,17 +646,17 @@ function GetPlayersInLocation(iIndex)
     return tab
 end
 
-Location = {
-    GetLocationByIndex=GetLocationByIndex,
-    GetLocationNameByIndex=GetLocationNameByIndex,
-    Find=FindLocation
-}
 
-
+local Player = FindMetaTable("Player")
 local Entity = FindMetaTable("Entity")
 
+function Player:GetLocation()
+    local set  =self:GetDTInt(0)
+    if Locations[set]==nil then print("FUCK") set=#Locations end
+    return set
+end
+
 function Entity:GetLocation()
-    -- should be overridden by player class NetworkVar
     assert(not self:IsPlayer())
 
     local pos = self:GetPos()
@@ -700,7 +667,6 @@ function Entity:GetLocation()
     
     return self.LastLocation
 end
---NOMINIFY
 
 function Entity:GetLocationName()
     return self:GetLocationTable().Name or "Unknown"
