@@ -1,13 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-module("Location", package.seeall)
+
 local THEATER_NONE = 0 --default/public theater
 local THEATER_PRIVATE = 1 --private theater
 local THEATER_REPLICATED = 2 --public theater, shows on the scoreboard
 local THEATER_PRIVATEREPLICATED = 3 --private theater, shows on the scoreboard
-Debug = true
 
-Map = {
+Locations = {
     {
         Name = "Entrance",
         Min = Vector(-512, -256, -16),
@@ -570,14 +569,14 @@ Map = {
 MobileLocations = {}
 local i = 1
 
-while i <= #Map do
-    if Map[i] == "mobiletheaters" then
-        table.remove(Map, i)
+while i <= #Locations do
+    if Locations[i] == "mobiletheaters" then
+        table.remove(Locations, i)
 
         for j = 0, 31 do
             table.insert(MobileLocations, i + j)
 
-            table.insert(Map, i, {
+            table.insert(Locations, i, {
                 MobileLocationIndex = #MobileLocations,
                 Name = "MobileTheater" .. tostring(#MobileLocations),
                 Min = Vector(-1, -1, -10001),
@@ -598,20 +597,24 @@ while i <= #Map do
     i = i + 1
 end
 
-function RefreshPositions()
+
+LocationByName = {}
+
+for i,v in ipairs(Locations) do
+    v.Index = i
+    LocationByName[v.Name] = v
+end
+
+
+function RefreshLocations()
     for k, v in pairs(ents.GetAll()) do
         v.LastLocationCoords = nil
     end
 end
 
--- returns a table of locations for the specified map, or the current map if nil
-function GetLocations()
-    return Map
-end
-
 -- returns the location string of the index
 function GetLocationNameByIndex(iIndex)
-    local temp = Map[iIndex]
+    local temp = Locations[iIndex]
 
     return temp and temp.Name or "Unknown"
 end
@@ -629,7 +632,7 @@ end
 
 -- find a location by index
 function GetLocationByIndex(iIndex)
-    return Map[iIndex]
+    return Locations[iIndex]
 end
 
 -- find a location by name
@@ -649,9 +652,9 @@ function Find(pos)
         pos = pos:GetPos()
     end
 
-    if (Map == nil) then return 0 end
+    if (Locations == nil) then return 0 end
 
-    for k, v in next, Map do
+    for k, v in next, Locations do
         if (pos:InBox(v.Min, v.Max)) then
             if v.Filter then
                 if v.Filter(pos) then return k end
@@ -664,14 +667,55 @@ function Find(pos)
     return 0
 end
 
-function GetPlayersInLocation(iIndex)
-    local players = {}
+FindLocation =Find
 
-    for _, ply in pairs(player.GetAll()) do
+function GetPlayersInLocation(iIndex)
+    local tab = {}
+
+    for _, ply in ipairs(Ents.player) do
         if ply:GetLocation() == iIndex then
-            table.insert(players, ply)
+            table.insert(tab, ply)
         end
     end
 
-    return players
+    return tab
 end
+
+Location = {
+    GetLocationByIndex=GetLocationByIndex,
+    GetLocationNameByIndex=GetLocationNameByIndex
+}
+
+
+local Entity = FindMetaTable("Entity")
+
+function Entity:GetLocation()
+    -- should be overridden by player class NetworkVar
+    assert(not self:IsPlayer())
+
+    local pos = self:GetPos()
+    if self.LastLocationCoords == nil or self.LastLocationCoords:DistToSqr(pos) > 1 then
+        self.LastLocationCoords = pos
+        self.LastLocation = Find(self)
+    end
+    
+    return self.LastLocation
+end
+--NOMINIFY
+
+function Entity:GetLocationName()
+    return self:GetLocationTable().Name or "Unknown"
+end
+
+function Entity:GetLocationTable()
+    return Locations[self:GetLocation()] or {}
+end
+
+function Entity:InTheater()
+    return self:GetLocationTable().Theater ~= nil
+end
+
+function Entity:GetTheater()
+    return theater.GetByLocation(self:GetLocation())
+end
+

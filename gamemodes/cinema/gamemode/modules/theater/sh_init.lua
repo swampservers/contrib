@@ -25,7 +25,7 @@ function GetByLocation(locId, setup)
     local Theater = Theaters[locId]
 
     if SERVER and not Theater and setup then
-        local loc = Location.GetLocationByIndex(locId)
+        local loc = Locations[locId]
         -- Theater defined in location code
         local info = loc.Theater
 

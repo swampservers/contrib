@@ -47,7 +47,7 @@ function getPTProtectionTime(loc)
     -- 	end
     -- end
     -- return 0
-    return ((Location.GetLocationByIndex(loc).Theater or {}).ProtectionTime or 1200)
+    return ((Locations[loc].Theater or {}).ProtectionTime or 1200)
 end
 
 function getPTProtectionCost(time)
@@ -106,7 +106,7 @@ if CLIENT then
         window:SetTitle("Protect Theater")
         local desc = vgui.Create("DLabel", window)
         desc:SetWrap(true)
-        desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for " .. tostring(math.floor(getPTProtectionTime(Location.Find(LocalPlayer())) / 60)) .. " minutes.")
+        desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for " .. tostring(math.floor(getPTProtectionTime(LocalPlayer():GetLocation()) / 60)) .. " minutes.")
         desc:SetFont("Trebuchet24")
         desc:SetContentAlignment(5)
         desc:SetSize(window:GetWide() - 16, 60)
@@ -126,7 +126,7 @@ if CLIENT then
         end
 
         window.Think = function(pnl)
-            local t = getPTProtectionCost(getPTProtectionTime(Location.Find(LocalPlayer())))
+            local t = getPTProtectionCost(getPTProtectionTime(LocalPlayer():GetLocation()))
 
             if t > 0 then
                 rentButton:SetText("Purchase for " .. tostring(t) .. " Points")

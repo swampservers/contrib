@@ -631,13 +631,14 @@ net.Receive("ReportGUIMousePos", function(len)
 end)
 
 ShowEyeAng = false
+--NOMINIFY
 
 concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
 end)
 
 timer.Create("AreaMusicController", 0.5, 0, function()
-    if LocalPlayer().GetLocationName == nil then return end
+    if not IsValid(LocalPlayer()) or LocalPlayer().GetLocationName == nil then return end
     local target = ""
     local loc = LocalPlayer():GetLocationName()
 

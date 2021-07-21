@@ -246,7 +246,7 @@ net.Receive("TheaterInfo", function()
     table.Empty(Theaters)
     local Theater = nil
     -- Merge shared theater data
-    local loc = Location.GetLocationByIndex(v.Location)
+    local loc = Locations[v.Location]
 
     if loc and loc.Theater then
         -- puts the received values OVER the location
