@@ -5,9 +5,10 @@ local EntClass = Entity.GetClass
 local EntIndex = Entity.EntIndex
 local EntTable = Entity.GetTable
 
-local classmapping = {
+local classmapping = SERVER and {
     prop_physics_override = "prop_physics",
-}
+    prop_dynamic_override = "prop_dynamic",
+} or {}
 
 
 function _SetupEnts1()
