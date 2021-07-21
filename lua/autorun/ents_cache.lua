@@ -10,7 +10,6 @@ local classmapping = SERVER and {
     prop_dynamic_override = "prop_dynamic",
 } or {}
 
-
 function _SetupEnts1()
     local _Ents = defaultdict(function() return {} end)
 
@@ -196,7 +195,7 @@ function _TestEnts()
                 assert(svl[v2])
             end
 
-            assert(table.Count(v) == table.Count(svl), k.." "..table.Count(v) .." ".. table.Count(svl))
+            assert(table.Count(v) == table.Count(svl), k .. " " .. table.Count(v) .. " " .. table.Count(svl))
             assert(#v == table.Count(v))
         end
     end
@@ -210,11 +209,7 @@ function _TestEnts()
 
     assert(classcount == table.Count(realclasses))
     print("ENTS OK")
-end 
+end
 
 --
-timer.Create("TestTheEnts", 5, 0, function()
-    -- if SERVER or IsValid(LocalPlayer()) and LocalPlayer():Nick() == "Joker Gaming" then
-    --     _TestEnts()
-    -- end
-end)
+timer.Create("TestTheEnts", 5, 0, function() end) -- if SERVER or IsValid(LocalPlayer()) and LocalPlayer():Nick() == "Joker Gaming" then --     _TestEnts() -- end
