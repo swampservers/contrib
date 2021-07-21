@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 local THEATER_NONE = 0 --default/public theater
 local THEATER_PRIVATE = 1 --private theater
 local THEATER_REPLICATED = 2 --public theater, shows on the scoreboard
@@ -597,14 +596,12 @@ while i <= #Locations do
     i = i + 1
 end
 
-
 LocationByName = {}
 
-for i,v in ipairs(Locations) do
+for i, v in ipairs(Locations) do
     v.Index = i
     LocationByName[v.Name] = v
 end
-
 
 function RefreshLocations()
     for k, v in pairs(ents.GetAll()) do
@@ -667,7 +664,7 @@ function Find(pos)
     return 0
 end
 
-FindLocation =Find
+FindLocation = Find
 
 function GetPlayersInLocation(iIndex)
     local tab = {}
@@ -682,27 +679,26 @@ function GetPlayersInLocation(iIndex)
 end
 
 Location = {
-    GetLocationByIndex=GetLocationByIndex,
-    GetLocationNameByIndex=GetLocationNameByIndex
+    GetLocationByIndex = GetLocationByIndex,
+    GetLocationNameByIndex = GetLocationNameByIndex
 }
-
 
 local Entity = FindMetaTable("Entity")
 
 function Entity:GetLocation()
     -- should be overridden by player class NetworkVar
     assert(not self:IsPlayer())
-
     local pos = self:GetPos()
+
     if self.LastLocationCoords == nil or self.LastLocationCoords:DistToSqr(pos) > 1 then
         self.LastLocationCoords = pos
         self.LastLocation = Find(self)
     end
-    
+
     return self.LastLocation
 end
---NOMINIFY
 
+--NOMINIFY
 function Entity:GetLocationName()
     return self:GetLocationTable().Name or "Unknown"
 end
@@ -718,4 +714,3 @@ end
 function Entity:GetTheater()
     return theater.GetByLocation(self:GetLocation())
 end
-

@@ -91,22 +91,18 @@ local Entity = FindMetaTable("Entity")
 
 function Entity:IsProtected(att)
     if HumanTeamName ~= nil then return false end
-
-    local loc,ln = self:GetLocation(), self:GetLocationName()
-
-
+    local loc, ln = self:GetLocation(), self:GetLocationName()
     if name == "Movie Theater" and (self:GetPos().y > 1400 or self:GetPos().z > 150) then return true end
 
     if name == "Golf" then
         if self:IsPlayer() then
             local w = self:GetActiveWeapon()
+
             if IsValid(w) and w:GetClass() == "weapon_golfclub" then
                 if IsValid(w:GetBall()) then return true end
             end
         end
     end
-
-
 
     local pt = protectedTheaterTable and protectedTheaterTable[loc]
 
@@ -129,7 +125,6 @@ function Entity:IsProtected(att)
             if (v.SeatData ~= nil) and (v.SeatData.Ent ~= nil) and IsValid(v.SeatData.Ent) and v.SeatData.Ent:GetName() == "rocketseat" then return true end
         end
     end
-
 
     return false
 end

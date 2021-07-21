@@ -10,8 +10,6 @@ function PLAYER:GetLastLocation()
     return self.LastLocation or -1
 end
 
-
-
 PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
 local specials = "[]{}()<>-|= "
 local specials2 = "["

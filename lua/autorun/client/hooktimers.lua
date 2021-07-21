@@ -631,8 +631,8 @@ net.Receive("ReportGUIMousePos", function(len)
 end)
 
 ShowEyeAng = false
---NOMINIFY
 
+--NOMINIFY
 concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
 end)
