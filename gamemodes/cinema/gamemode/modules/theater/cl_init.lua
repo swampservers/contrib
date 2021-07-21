@@ -10,7 +10,7 @@ Queue = Queue or {}
 local _Volume = -1
 
 hook.Add("Tick", "TheaterPanelRemover", function()
-    if (LocalPlayer().GetTheater) then
+    if IsValid(LocalPlayer()) then
         if not LocalPlayer():GetTheater() then
             RemovePanels()
         end
@@ -225,6 +225,8 @@ net.Receive("TheaterVideo", function()
 
     LastInfoDraw = CurTime()
 end)
+
+--NOMINIFY
 
 net.Receive("TheaterSeek", function()
     local seconds = net.ReadFloat()

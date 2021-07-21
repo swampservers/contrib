@@ -278,7 +278,7 @@ function PlayerVisUpdate(depth, sky)
 
     if depth or sky then return end
     if not Location then return end
-    SKYBOXLOC = Location.GetLocationIndexByName("Way Outside")
+    SKYBOXLOC = LocationByName["Way Outside"]
 
     if not render.DrawingScreen() then
         local nam = render.GetRenderTarget():GetName()
