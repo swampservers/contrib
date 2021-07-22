@@ -165,11 +165,21 @@ SS_WeaponPerkData = {
     max = {"Golden", "Worthy of Trump (max all stats)"}
 }
 
+local weaponspecs = {
+    "rating",
+    "roll_rof",
+    "roll_range",
+    "roll_accuracy",
+    "roll_control",
+    "roll_handling",
+    "roll_mobility"
+}
+
 SS_Item({
     class = "weapon",
     value = 5000,
     name = "Weapon",
-    description = "STATS ARE WORK IN PROGRESS AND WILL CHANGE",
+    description = "STATS ARE WORK IN PROGRESS",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
     GetDescription = function(self)
         local d = self.description
@@ -183,7 +193,7 @@ SS_Item({
         return d
     end,
     GetName = function(self)
-        local name = (weapons.GetStored(self:FixClass() or "") or {}).PrintName or "Unknown"
+        local name = (weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown"
 
         if self.specs.trophy_tag then
             name = self.specs.trophy_tag .. " " .. name
@@ -191,27 +201,16 @@ SS_Item({
 
         return name
     end,
-    GetModel = function(self) return (weapons.GetStored(self:FixClass() or "") or {}).WorldModel or 'models/error.mdl' end,
+    GetModel = function(self) return (weapons.GetStored(self.specs.class or "") or {}).WorldModel or 'models/error.mdl' end,
     OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
-    FixClass = function(self)
-        if not self.specs.class then return nil end
-        if self.specs.class:StartWith("weapon_") then return self.specs.class:gsub("weapon_", "gun_") end
-
-        return self.specs.class
-    end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
-        if not specs.rating then
-            specs.rating = math.random()
-            ch = true
-        end
-
-        local cl = self:FixClass()
-
-        if specs.class ~= cl then
-            specs.class = cl
-            ch = true
+        for i,spec in ipairs(weaponspecs) do
+            if not specs[spec] then
+                specs[spec] = math.random()
+                ch = true
+            end
         end
 
         return ch
@@ -233,7 +232,7 @@ SS_Item({
             autosniper = 6000,
             sniper = 5000,
             lmg = 8000,
-        })[(weapons.GetStored(self:FixClass() or "") or {}).GunType] or 9999
+        })[(weapons.GetStored(self.specs.class or "") or {}).GunType] or 9999
     end,
     SellValue = function(self) return 500 * 2 ^ SS_GetRating(self.specs.rating).id end,
     invcategory = "Weapons",
