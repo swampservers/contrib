@@ -54,7 +54,6 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     local m = ply:GetActualModel()
 
     if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0) ~= 0 then
-        print(1)
         SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         SS_ApplyMaterialMods(ply, ply)
         ply.SS_SetupPlayermodel = m
@@ -598,7 +597,8 @@ function Entity:SetColoredBaseMaterial(color)
         local clonekey = sc .. "/../" .. mat
 
         if not CLONEDMATERIALS[clonekey] then
-            print("MAKE", clonekey)
+            -- print("MAKE", clonekey)
+            
             -- mat = mat:gsub("'","")
             local mat2 = Material(clonekey)
             local matname = mat2:GetName()

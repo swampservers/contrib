@@ -49,7 +49,10 @@ SWEP.KickLSpray = 0.3
 -- SWEP.KickCrouching = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- BURST NEEDS FIX
 SWEP.BurstFire = 3
-SWEP.BurstFireDelay = 0.01
+SWEP.BurstFireInterval = 0.1
+
+SWEP.MoveSpeed = 220/250
+
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed"			"220"

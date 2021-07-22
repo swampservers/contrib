@@ -245,14 +245,15 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 2, "Direction")
     self:NetworkVar("Int", 3, "WeaponID")
     self:NetworkVar("Int", 4, "SpecialReload")
+    self:NetworkVar("Int", 5, "BurstFires") --goes from X to 0, how many burst fires we're going to do
     self:NetworkVar("Bool", 0, "InReload")
     self:NetworkVar("Bool", 1, "KickLeft")
     self:NetworkVar("Bool", 2, "DelayFire")
     --Jvs: stuff that is scattered around all the weapons code that I'm going to try and unify here
     -- self:NetworkVar("Float", 5, "ZoomFullyActiveTime")
     -- self:NetworkVar("Float", 6, "ZoomLevel")
-    self:NetworkVar("Float", 7, "NextBurstFire") --when the next burstfire is gonna happen, same as nextprimaryattack
-    self:NetworkVar("Float", 9, "BurstFireDelay") --the speed of the burst fire itself, 0.5 means two shots every second etc
+    -- self:NetworkVar("Float", 7, "NextBurstFire") --when the next burstfire is gonna happen, same as nextprimaryattack
+    -- self:NetworkVar("Float", 9, "BurstFireDelay") --the speed of the burst fire itself, 0.5 means two shots every second etc
     self:NetworkVar("Float", 10, "LastFire")
     self:NetworkVar("Float", 18, "ActualLastFire")
     self:NetworkVar("Float", 14, "PreviousTargetFOVRatio")
@@ -263,7 +264,7 @@ function SWEP:SetupDataTables()
     -- self:NetworkVar("Float", 15, "StoredFOVRatio")
     -- self:NetworkVar("Float", 16, "LastZoom")
     -- self:NetworkVar("Bool", 5, "ResumeZoom")
-    self:NetworkVar("Int", 4, "BurstFires") --goes from X to 0, how many burst fires we're going to do
+    
     -- self:NetworkVar("Int", 5, "MaxBurstFires")
 end
 
@@ -483,21 +484,26 @@ function SWEP:Think()
     --     --     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_IDLE))
     --     -- end
     -- end
-    if not self:GetInReload() and self.BurstFire and self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
-        if self:GetBurstFires() < (self.BurstFire - 1) then
-            if self:Clip1() <= 0 then
-                self:SetBurstFires(self.BurstFire)
-            else
-                self:SetNextPrimaryFire(CurTime() - 1)
-                self:PrimaryAttack()
-                self:SetNextPrimaryFire(CurTime() + 0.5) --this artificial delay is inherited from the glock code
-                self:SetBurstFires(self:GetBurstFires() + 1)
-            end
-        else
-            if self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
-                self:SetBurstFires(0)
-                self:SetNextBurstFire(-1)
-            end
+    -- if not self:GetInReload() and self.BurstFire and self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
+    --     if self:GetBurstFires() < (self.BurstFire - 1) then
+    --         if self:Clip1() <= 0 then
+    --             self:SetBurstFires(self.BurstFire)
+    --         else
+    --             self:SetNextPrimaryFire(CurTime() - 1)
+    --             self:PrimaryAttack()
+    --             self:SetNextPrimaryFire(CurTime() + 0.5) --this artificial delay is inherited from the glock code
+    --             self:SetBurstFires(self:GetBurstFires() + 1)
+    --         end
+    --     else
+    --         if self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
+    --             self:SetBurstFires(0)
+    --             self:SetNextBurstFire(-1)
+    --         end
+    --     end
+    -- end
+    if not self:GetInReload() and self.BurstFire  then
+        if self:GetBurstFires() < self.BurstFire and self:GetNextPrimaryFire() < CurTime() then
+            self:PrimaryAttack()
         end
     end
 end
@@ -628,12 +634,21 @@ function SWEP:GunFire()
     self:SetNextPrimaryFire(correctedcurtime + self:GetInterval() - ti / 4)
     self:SetNextSecondaryFire(correctedcurtime + self:GetInterval() - ti / 4)
 
-    -- self:SetNextIdle(CurTime() + self.TimeToIdle)
     if self.BurstFire then
-        self:SetNextBurstFire(CurTime() + self:GetBurstFireDelay())
-    else
-        self:SetNextBurstFire(-1)
+        -- if self:Clip1()==0 then self:SetBurstFires(self.BurstFire)
+        self:SetBurstFires( self:GetBurstFires()-1)
+        if self:GetBurstFires() <=0 or self:Clip1()==0 then
+            self:SetNextPrimaryFire(correctedcurtime + self.BurstFireInterval)
+            self:SetBurstFires(self.BurstFire)
+        end
     end
+
+    -- self:SetNextIdle(CurTime() + self.TimeToIdle)
+    -- if self.BurstFire then
+    --     self:SetNextBurstFire(CurTime() + self.BurstFireDelay)
+    -- else
+    --     self:SetNextBurstFire(-1)
+    -- end
 
     local curspray = self:GetSpray(correctedcurtime)
 
@@ -734,10 +749,18 @@ function SWEP:GetSpread(clientsmoothing)
 end
 
 function SWEP:GetSpeedRatio()
-    if (self:IsScoped()) then return self.ScopedSpeedRatio or 0.5 end
+    local spd = self.MoveSpeed or 1
 
-    return 1
+    if self:IsScoped() then spd = spd * (self.ScopedSpeedRatio or 0.5) end
+
+    return spd
 end
+
+function SWEP:SetupMove(ply, mv, cmd)
+
+    mv:SetMaxClientSpeed(mv:GetMaxClientSpeed()*self:GetSpeedRatio())
+end
+
 -- function SWEP:GetSpread(clientsmoothing)
 --     local ply = self:GetOwner()
 --     if not ply:IsValid() then return end

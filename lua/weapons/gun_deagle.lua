@@ -38,6 +38,9 @@ SWEP.KickUBase = 2
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
+
+SWEP.MoveSpeed = 1
+
 -- SWEP.ShootSound = "Weapon_DEagle.Single"
 -- SWEP.CSSTeam = "ANY" 
 -- CSParseWeaponInfo(SWEP, [[WeaponData
