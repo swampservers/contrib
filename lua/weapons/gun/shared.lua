@@ -99,11 +99,10 @@ function SWEP:GetMobility()
     return self:GetNWFloat("mobility", 1)
 end
 
-
 function CalculateRolledSpread(accuracy_roll, spreadbase)
-    accuracy_roll = accuracy_roll*2
+    accuracy_roll = accuracy_roll * 2
 
-    return (2- accuracy_roll)*spreadbase + (math.max(1-accuracy_roll,0)^2)*0.001
+    return (2 - accuracy_roll) * spreadbase + (math.max(1 - accuracy_roll, 0) ^ 2) * 0.001
 end
 
 function SWEP:GetBasedSpread()
@@ -272,7 +271,6 @@ function SWEP:SetupDataTables()
     -- self:NetworkVar("Float", 15, "StoredFOVRatio")
     -- self:NetworkVar("Float", 16, "LastZoom")
     -- self:NetworkVar("Bool", 5, "ResumeZoom")
-    
     -- self:NetworkVar("Int", 5, "MaxBurstFires")
 end
 
@@ -509,7 +507,7 @@ function SWEP:Think()
     --         end
     --     end
     -- end
-    if not self:GetInReload() and self.BurstFire  then
+    if not self:GetInReload() and self.BurstFire then
         if self:GetBurstFires() < self.BurstFire and self:GetNextPrimaryFire() < CurTime() then
             self:PrimaryAttack()
         end
@@ -644,8 +642,9 @@ function SWEP:GunFire()
 
     if self.BurstFire then
         -- if self:Clip1()==0 then self:SetBurstFires(self.BurstFire)
-        self:SetBurstFires( self:GetBurstFires()-1)
-        if self:GetBurstFires() <=0 or self:Clip1()==0 then
+        self:SetBurstFires(self:GetBurstFires() - 1)
+
+        if self:GetBurstFires() <= 0 or self:Clip1() == 0 then
             self:SetNextPrimaryFire(correctedcurtime + self.BurstFireInterval)
             self:SetBurstFires(self.BurstFire)
         end
@@ -657,7 +656,6 @@ function SWEP:GunFire()
     -- else
     --     self:SetNextBurstFire(-1)
     -- end
-
     local curspray = self:GetSpray(correctedcurtime)
 
     -- if self.Owner:SteamID() == "STEAM_0:0:38422842" then
@@ -759,16 +757,16 @@ end
 function SWEP:GetSpeedRatio()
     local spd = self.MoveSpeed or 1
 
-    if self:IsScoped() then spd = spd * (self.ScopedSpeedRatio or 0.5) end
+    if self:IsScoped() then
+        spd = spd * (self.ScopedSpeedRatio or 0.5)
+    end
 
     return spd
 end
 
 function SWEP:SetupMove(ply, mv, cmd)
-
-    mv:SetMaxClientSpeed(mv:GetMaxClientSpeed()*self:GetSpeedRatio())
+    mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * self:GetSpeedRatio())
 end
-
 -- function SWEP:GetSpread(clientsmoothing)
 --     local ply = self:GetOwner()
 --     if not ply:IsValid() then return end

@@ -165,15 +165,7 @@ SS_WeaponPerkData = {
     max = {"Golden", "Worthy of Trump (max all stats)"}
 }
 
-local weaponspecs = {
-    "rating",
-    "roll_rof",
-    "roll_range",
-    "roll_accuracy",
-    "roll_control",
-    "roll_handling",
-    "roll_mobility"
-}
+local weaponspecs = {"rating", "roll_rof", "roll_range", "roll_accuracy", "roll_control", "roll_handling", "roll_mobility"}
 
 SS_Item({
     class = "weapon",
@@ -206,7 +198,7 @@ SS_Item({
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
-        for i,spec in ipairs(weaponspecs) do
+        for i, spec in ipairs(weaponspecs) do
             if not specs[spec] then
                 specs[spec] = math.random()
                 ch = true
