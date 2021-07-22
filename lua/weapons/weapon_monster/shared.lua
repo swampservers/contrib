@@ -14,6 +14,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = false
+SWEP.DrawCrosshair = false
 SWEP.Spawnable = true
 SWEP.ViewModel = "models/noz/monsterzero.mdl"
 SWEP.WorldModel = "models/noz/monsterzero.mdl"

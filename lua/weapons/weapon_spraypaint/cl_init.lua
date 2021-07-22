@@ -178,7 +178,7 @@ end)
 function SWEP:DrawSpraypaintReticle()
     if (CurTime() < self:GetNextPrimaryFire() - FrameTime()) then return end
     local trace = self:GetTrace()
-    if (not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance()) then return end
+    if (not trace.Hit or trace.HitPos:Distance(LocalPlayer():EyePos()) > self:GetPaintDistance()) then return end
     if (trace.HitSky) then return end
     local pos = trace.HitPos + trace.HitNormal * 0.1
     local ang = trace.HitNormal:Angle()

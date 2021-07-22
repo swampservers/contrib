@@ -2,11 +2,18 @@
 -- INSTALL: CINEMA
 include("shared.lua")
 SWEP.Instructions = "Primary: Fire\nVaporizes Kleiners\nSecondary: Play sound"
-SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = false
+SWEP.DrawAmmo = true
+SWEP.DrawCrosshair = true
+SWEP.Primary.ClipSize = 0
+function SWEP:CustomAmmoDisplay()
+    return {
+        PrimaryAmmo = self:GetNWInt("mana"),
+        Draw = true,
+    }
+end
 
 function SWEP:DrawHUD()
-    draw.SimpleText("Mana: " .. tostring(self:GetNWInt("mana")), "CloseCaption_Bold", ScrW() / 2, ScrH() - 40, Color(255, 255, 255, 255))
+
 end
 
 hook.Add("Think", "magicmissilelight", function()

@@ -12,7 +12,7 @@ SWEP.Slot = 3
 SWEP.HoldType = "shotgun"
 SWEP.FiresUnderwater = true
 SWEP.Weight = 50
-SWEP.DrawCrosshair = false
+SWEP.DrawCrosshair = true
 
 game.AddAmmoType({
     name = "peaceshot",
@@ -96,19 +96,22 @@ function SWEP:DrawWorldModel()
     self:DrawModel()
 end
 
-function SWEP:DrawHUD()
-    local mx = ScrW() / 2
-    local my = ScrH() / 2
+function SWEP:DoDrawCrosshair(x,y)
+    local mx = x
+    local my = y
     self.XHairspread = (EyePos() + EyeAngles():Forward() + EyeAngles():Right() * self:GetCone()):ToScreen().x - mx
     local spread = self.XHairspread
     local len = 10
-    local mx = ScrW() / 2
-    local my = ScrH() / 2
     surface.SetDrawColor(255, 200, 20, Lerp(math.Clamp((self:GetCone() - 0.3) * 10, 0, 1), 255, 0))
     surface.DrawLine(mx - (spread + len), my, mx - spread, my)
     surface.DrawLine(mx + (spread + len), my, mx + spread, my)
     surface.DrawLine(mx, my - (spread + len), mx, my - spread)
     surface.DrawLine(mx, my + (spread + len), mx, my + spread)
+    return true
+end
+
+function SWEP:DrawHUD()
+
 end
 
 if CLIENT then

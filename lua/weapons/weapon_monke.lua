@@ -16,6 +16,7 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Primary.Automatic = true
 SWEP.Secondary.Automatic = true
 SWEP.DrawAmmo = false
+SWEP.DrawCrosshair = false
 SWEP.Spawnable = true
 
 SWEP.TauntsPrimary = {ACT_GMOD_GESTURE_RANGE_FRENZY}
