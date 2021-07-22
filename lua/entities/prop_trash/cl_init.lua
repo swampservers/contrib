@@ -108,7 +108,6 @@ function ENT:ApplyMaterialData(data)
     self.lightcolor = col
 
     -- ["$alphatest"]=1,
-
     if data.i then
         self:SetWebMaterial({
             id = data.i,

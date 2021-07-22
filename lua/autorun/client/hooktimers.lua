@@ -539,12 +539,12 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
     local tv = LocalPlayer():InTheater() or LocalPlayer():InVehicle()
     local fwd = EyeAngles():Forward()
     local ep = EyePos()
-
     local sorteddraw = {}
 
     for ply, _ in pairs(drawme) do
         local to = ply:EyePos() - ep
         local dist = to:Length()
+
         table.insert(sorteddraw, {ply, to, dist})
     end
 

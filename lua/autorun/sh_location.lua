@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 local THEATER_NONE = 0 --default/public theater
 local THEATER_PRIVATE = 1 --private theater
 local THEATER_REPLICATED = 2 --public theater, shows on the scoreboard
@@ -599,19 +598,16 @@ end
 
 LocationByName = {}
 
-for i,v in ipairs(Locations) do
+for i, v in ipairs(Locations) do
     v.Index = i
     LocationByName[v.Name] = v
 end
-
 
 function RefreshLocations()
     for k, v in pairs(ents.GetAll()) do
         v.LastLocationCoords = nil
     end
 end
-
-
 
 -- returns the index of the players current location or 0 if unknown
 function FindLocation(pos)
@@ -646,25 +642,29 @@ function GetPlayersInLocation(idx)
     return tab
 end
 
-
 local Player = FindMetaTable("Player")
 local Entity = FindMetaTable("Entity")
 
 function Player:GetLocation()
-    local set  =self:GetDTInt(0)
-    if Locations[set]==nil then print("FUCK") set=#Locations end
+    local set = self:GetDTInt(0)
+
+    if Locations[set] == nil then
+        print("FUCK")
+        set = #Locations
+    end
+
     return set
 end
 
 function Entity:GetLocation()
     assert(not self:IsPlayer())
-
     local pos = self:GetPos()
+
     if self.LastLocationCoords == nil or self.LastLocationCoords:DistToSqr(pos) > 1 then
         self.LastLocationCoords = pos
         self.LastLocation = FindLocation(self)
     end
-    
+
     return self.LastLocation
 end
 
@@ -683,4 +683,3 @@ end
 function Entity:GetTheater()
     return theater.GetByLocation(self:GetLocation())
 end
-

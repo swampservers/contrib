@@ -42,7 +42,6 @@ SWEP.PelletSpread = 0
 SWEP.NumPellets = 1
 -- DELETE THIS
 SWEP.SpraySaturation = 2
-
 -- handled by deploy
 SWEP.m_WeaponDeploySpeed = 1000
 
@@ -100,9 +99,8 @@ function SWEP:GetMobility()
     return self:GetNWFloat("mobility", 1)
 end
 
-
 function SWEP:GetBasedSpread()
-    return ( (self.SpreadBase or 0) / self:GetNWFloat("accuracy", 1) ) + self:GetNWFloat("extraspread", 0)
+    return ((self.SpreadBase or 0) / self:GetNWFloat("accuracy", 1)) + self:GetNWFloat("extraspread", 0)
 end
 
 function SWEP:GetSpray(curtime, firetime)
@@ -294,7 +292,6 @@ function SWEP:Deploy()
     self:SetInReload(false)
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
     self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
-
     self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
     self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
 
@@ -402,7 +399,6 @@ function SWEP:Reload()
         self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_RELOAD))
         -- vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
         self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
-
         owner:DoReloadEvent()
         local endtime = CurTime() + (self:SequenceDuration() / self:GetHandling())
         self:SetNextPrimaryFire(endtime)
@@ -560,11 +556,10 @@ function SWEP:GunFire()
     end
 
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_PRIMARYATTACK))
-
     -- if self.Owner:SteamID() ~= "STEAM_0:0:38422842" then
-        self:SetClip1(self:Clip1() - 1)
-    -- end
+    self:SetClip1(self:Clip1() - 1)
 
+    -- end
     if SERVER and (ply.GetLocationName and ply:GetLocationName() == "Weapons Testing Range") then
         ply:GiveAmmo(1, self:GetPrimaryAmmoType())
     end

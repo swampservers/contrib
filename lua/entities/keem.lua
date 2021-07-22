@@ -108,7 +108,7 @@ function ENT:Think()
         end
     end
 
-    if SERVER and CurTime() > (self.AttackThink or 0) and (not self:IsOnFire())  then
+    if SERVER and CurTime() > (self.AttackThink or 0) and (not self:IsOnFire()) then
         self.AttackThink = CurTime() + 0.35
 
         if hasTarget then

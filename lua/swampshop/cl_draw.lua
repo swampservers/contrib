@@ -391,7 +391,6 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     end
 
     -- mdl:SetPredictable(true)
-
     -- if scale ~= e.appliedscale then
     mdl.matrix = isnumber(scale) and Matrix({
         {scale, 0, 0, 0},
@@ -531,7 +530,6 @@ function Entity:SS_AttachAccessories(items)
     --     if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
     --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
     -- end
-    
     if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end
     -- if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m

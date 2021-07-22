@@ -92,7 +92,6 @@ local Entity = FindMetaTable("Entity")
 function Entity:IsProtected(att)
     if HumanTeamName ~= nil then return false end
     local loc, name = self:GetLocation(), self:GetLocationName()
-
     if name == "Movie Theater" and (self:GetPos().y > 1400 or self:GetPos().z > 150) then return true end
 
     if name == "Golf" then
