@@ -32,6 +32,8 @@ SWEP.SoundsSecondary = {"monke/monkey_long1.ogg", "monke/monkey_long2.ogg"}
 
 SWEP.SoundsSecondaryLength = {5.466, 4.875}
 
+--NOMINIFY
+
 --i was going to use SoundDuration but it appears to be fucked
 function SWEP:CanPrimaryAttack()
     if (self:GetNextPrimaryFire() > CurTime()) then return false end

@@ -161,7 +161,7 @@ function SWEP:Initialize()
 end
 
 local function issafe(v)
-    return Safe(v) or (v:InTheater() and v:InVehicle())
+    return v:IsProtected() or (v:InTheater() and v:InVehicle())
 end
 
 if SERVER then
@@ -385,7 +385,7 @@ end
 -- Vector(eyer.y, -eyer.x, 0):GetNormalized()
 -- self.Owner:GetPos():Distance(ply:GetPos())
 function SWEP:GetTargetPlayer()
-    if Safe(self.Owner) then return nil, 0, {} end
+    if self.Owner:IsProtected() then return nil, 0, {} end
     local maxdist = self:MaxRange()
     local ep = self.Owner:EyePos()
     local av = self.Owner:EyeAngles():Forward()
@@ -600,7 +600,7 @@ function SWEP:DrawHUD()
         -- print(3)
     end
 
-    if not Safe(self.Owner) then
+    if not self.Owner:IsProtected() then
         for i, v in ipairs(blocked) do
             local data2D = v:LocalToWorld(v:OBBCenter()):ToScreen()
             -- draw.SimpleText("X", "DermaLarge", data2D.x, data2D.y, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)

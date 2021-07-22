@@ -53,9 +53,10 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     -- will be "false" if the model is not mounted yet
     local m = ply:GetActualModel()
 
-    if ply.SS_SetupPlayermodel ~= m then
-        ply.SS_SetupPlayermodel = SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods()) and m or nil
+    if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0)~=0 then
+        SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         SS_ApplyMaterialMods(ply, ply)
+        ply.SS_SetupPlayermodel = m
     end
 
     if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
@@ -107,8 +108,9 @@ function SS_ApplyBoneMods(ent, mods)
     local pelvis = ent:LookupBone(pone and "LrigPelvis" or "ValveBiped.Bip01_Pelvis")
 
     if pelvis then
-        if #ent:GetChildBones(pelvis) == 0 then return false end
+        -- assert(#ent:GetChildBones(pelvis) > 0, ent:GetModel() ) 
     end
+    
 
     for _, item in ipairs(mods) do
         if item.bonemod then
@@ -158,8 +160,6 @@ function SS_ApplyBoneMods(ent, mods)
         old.z = math.Clamp(old.z, -8, 8)
         ent:ManipulateBonePosition(x, old)
     end
-
-    return true
 end
 
 function SS_ApplyMaterialMods(ent, ply)
@@ -523,6 +523,9 @@ function Entity:SS_AttachAccessories(items)
     -- print(items, rangecheck)
     SS_UpdatedAccessories[self] = true
     local m = self:GetActualModel()
+
+    -- they sometimes go NULL when in/out of vehicle
+    local iv = self:IsPlayer() and self:InVehicle()
     local current = SS_CreatedAccessories[self]
     -- slow, havent found better way
     -- if CurTime() > (self.SS_DetachCheckTime or 0) then
@@ -530,8 +533,9 @@ function Entity:SS_AttachAccessories(items)
     --     if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
     --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
     -- end
-    if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
+    if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
+    self.SS_AttachedInVehicle = iv
     self.SS_AttachedItems = items
     local recycle = defaultdict(function() return {} end)
 

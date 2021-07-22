@@ -88,9 +88,7 @@ function SWEP:CanTarget(v)
     if (not v:Alive()) then return false end
     if (v == self:GetOwner()) then return false end
     if (not self:GetTargetNearness(v)) then return false end
-    local ply = self:GetOwner()
-    if (Safe(v, ply)) then return false end
-
+    if v:IsProtected(self.Owner) then return false end
     return true
 end
 

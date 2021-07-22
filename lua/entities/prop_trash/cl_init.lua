@@ -7,7 +7,7 @@ DAMAGED_TRASH = DAMAGED_TRASH or {}
 
 hook.Add("PostDrawTranslucentRenderables", "TrashDamage", function()
     for ent, _ in pairs(DAMAGED_TRASH) do
-        if IsValid(ent) then
+        if IsValid(ent) and not ent:IsDormant() then
             if MININGCRACKMATERIALS then
                 local acd = ent:GetPos():DistToSqr(EyePos())
                 local acr = 200000 * (ent:GetModelRadius() or 1)
