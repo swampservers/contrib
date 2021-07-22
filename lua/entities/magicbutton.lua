@@ -448,8 +448,8 @@ local function MagicOutcomeButtonSpawn(ply)
     end
 
     if (IsValid(button)) then
-        local loc = Location.Find(button)
-        local locd = Location.GetLocationByIndex(loc or -1)
+        local loc = button:GetLocation()
+        local locd = Locations[loc]
         local locname = locd.Name
 
         if (locname == "Outside") then

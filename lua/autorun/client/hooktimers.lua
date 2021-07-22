@@ -278,7 +278,7 @@ function PlayerVisUpdate(depth, sky)
 
     if depth or sky then return end
     if not Location then return end
-    SKYBOXLOC = Location.GetLocationIndexByName("Way Outside")
+    SKYBOXLOC = LocationByName["Way Outside"]
 
     if not render.DrawingScreen() then
         local nam = render.GetRenderTarget():GetName()
@@ -632,12 +632,13 @@ end)
 
 ShowEyeAng = false
 
+--NOMINIFY
 concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
 end)
 
 timer.Create("AreaMusicController", 0.5, 0, function()
-    if LocalPlayer().GetLocationName == nil then return end
+    if not IsValid(LocalPlayer()) or LocalPlayer().GetLocationName == nil then return end
     local target = ""
     local loc = LocalPlayer():GetLocationName()
 

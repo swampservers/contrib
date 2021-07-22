@@ -34,7 +34,7 @@ function ENT:Think()
 
     if CurTime() > (self.TargetThink or 0) then
         self.TargetThink = CurTime() + 0.1
-        local temp = Location.GetPlayersInLocation(Location.GetLocationIndexByName("Rat's Lair"))
+        local temp = GetPlayersInLocation(LocationByName["Rat's Lair"])
 
         for k, v in pairs(temp) do
             if not v:Alive() then

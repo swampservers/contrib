@@ -47,7 +47,7 @@ function getPTProtectionTime(loc)
     -- 	end
     -- end
     -- return 0
-    return ((Location.GetLocationByIndex(loc).Theater or {}).ProtectionTime or 1200)
+    return ((Locations[loc].Theater or {}).ProtectionTime or 1200)
 end
 
 function getPTProtectionCost(time)
@@ -86,16 +86,15 @@ if CLIENT then
             if IsValid(LocalPlayer():GetActiveWeapon()) then
                 if notifyWeapons[LocalPlayer():GetActiveWeapon():GetClass()] then
                     local col = Color(255, 255, 255, 255)
-                    local cy = ScrH()*0.7
-                    
+                    local cy = ScrH() * 0.7
                     local pt = protectedTheaterTable and protectedTheaterTable[LocalPlayer():GetLocation()]
                     local protected = pt ~= nil and pt["time"] > 1
                     local owner = LocalPlayer():InTheater() and protected and LocalPlayer():GetTheater():GetOwner() == LocalPlayer()
-                    local m0 = "This is "..(owner and "your" or "a").." Safe Space"
+                    local m0 = "This is " .. (owner and "your" or "a") .. " Safe Space"
                     local m1 = owner and "You can defend this area from players you don't want inside" or "You can't harm anyone here."
-                    draw.WordBox(8, ScrW() / 2 , cy , m0, "Trebuchet24", Color(0, 0, 0, 100), col,TEXT_ALIGN_CENTER)
-                    draw.WordBox(8, ScrW() / 2 , cy + 42, m1, "HudHintTextLarge", Color(0, 0, 0, 100), col,TEXT_ALIGN_CENTER)
-                    draw.WordBox(8, ScrW() / 2 , cy + 74, "Holster your weapon to hide this.", "HudHintTextLarge", Color(0, 0, 0, 100), col,TEXT_ALIGN_CENTER)
+                    draw.WordBox(8, ScrW() / 2, cy, m0, "Trebuchet24", Color(0, 0, 0, 100), col, TEXT_ALIGN_CENTER)
+                    draw.WordBox(8, ScrW() / 2, cy + 42, m1, "HudHintTextLarge", Color(0, 0, 0, 100), col, TEXT_ALIGN_CENTER)
+                    draw.WordBox(8, ScrW() / 2, cy + 74, "Holster your weapon to hide this.", "HudHintTextLarge", Color(0, 0, 0, 100), col, TEXT_ALIGN_CENTER)
                 end
             end
         end
@@ -107,7 +106,7 @@ if CLIENT then
         window:SetTitle("Protect Theater")
         local desc = vgui.Create("DLabel", window)
         desc:SetWrap(true)
-        desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for " .. tostring(math.floor(getPTProtectionTime(Location.Find(LocalPlayer())) / 60)) .. " minutes.")
+        desc:SetText("Protect your theater to prevent weapons from being used inside it. Lasts for " .. tostring(math.floor(getPTProtectionTime(LocalPlayer():GetLocation()) / 60)) .. " minutes.")
         desc:SetFont("Trebuchet24")
         desc:SetContentAlignment(5)
         desc:SetSize(window:GetWide() - 16, 60)
@@ -127,7 +126,7 @@ if CLIENT then
         end
 
         window.Think = function(pnl)
-            local t = getPTProtectionCost(getPTProtectionTime(Location.Find(LocalPlayer())))
+            local t = getPTProtectionCost(getPTProtectionTime(LocalPlayer():GetLocation()))
 
             if t > 0 then
                 rentButton:SetText("Purchase for " .. tostring(t) .. " Points")
