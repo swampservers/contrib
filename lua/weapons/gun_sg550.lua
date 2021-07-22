@@ -37,7 +37,7 @@ ComputeSpray(SWEP, {
 --
 SWEP.ScopeLevels = {40 / 90, 10 / 90}
 
-SWEP.MoveSpeed = 210/250
+SWEP.MoveSpeed = 210 / 250
 SWEP.ScopedSpeedRatio = 220 / 260
 SWEP.KickUBase = 1
 SWEP.KickUSpray = 1

@@ -38,9 +38,7 @@ SWEP.KickUBase = 1
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
-
 SWEP.MoveSpeed = 1
-
 -- SWEP.KickSimple = 2
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

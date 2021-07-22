@@ -40,9 +40,7 @@ SWEP.KickUSpray = 0.5
 SWEP.KickLBase = 0.3
 SWEP.KickLSpray = 0
 SWEP.MoveKickMultiplier = 1
-
 SWEP.MoveSpeed = 1
-
 -- SWEP.KickMoving = {0.8, 0.4, 0.2, 0.03, 3, 2.5, 7}
 -- SWEP.KickStanding = {0.725, 0.375, 0.15, 0.025, 2.75, 2.25, 9}
 -- SWEP.KickCrouching = {0.7, 0.35, 0.125, 0.025, 2.5, 2, 10}

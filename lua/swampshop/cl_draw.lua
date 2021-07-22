@@ -598,7 +598,6 @@ function Entity:SetColoredBaseMaterial(color)
 
         if not CLONEDMATERIALS[clonekey] then
             -- print("MAKE", clonekey)
-            
             -- mat = mat:gsub("'","")
             local mat2 = Material(clonekey)
             local matname = mat2:GetName()
