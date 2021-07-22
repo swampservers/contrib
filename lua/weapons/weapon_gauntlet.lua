@@ -89,6 +89,7 @@ function SWEP:CanTarget(v)
     if (v == self:GetOwner()) then return false end
     if (not self:GetTargetNearness(v)) then return false end
     if v:IsProtected(self.Owner) then return false end
+
     return true
 end
 

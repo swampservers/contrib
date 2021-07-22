@@ -143,7 +143,7 @@ function SWEP:TargetedPlayer()
         if v:InVehicle() then continue end
         if not v:Alive() then continue end
         if v:IsProtected(self.Owner) then continue end
-        
+
         --radius was 12
         if self:TraceCapsule(vp, vr, v:GetPos(), ca, 12, v:Crouching() and 38 or 58, 12.5, 100) then
             local tr = util.TraceLine({

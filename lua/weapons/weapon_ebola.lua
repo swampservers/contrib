@@ -31,7 +31,6 @@ if SERVER then
     ebprint = true
 
     timer.Create("Ebolaaa", 1.8, 0, function()
-
         ebprint = not ebprint
 
         for k, v in ipairs(Ents.player) do
@@ -57,7 +56,6 @@ if SERVER then
                 end
             end
         end
-
     end)
 end
 

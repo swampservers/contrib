@@ -53,7 +53,7 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     -- will be "false" if the model is not mounted yet
     local m = ply:GetActualModel()
 
-    if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0)~=0 then
+    if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0) ~= 0 then
         SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         SS_ApplyMaterialMods(ply, ply)
         ply.SS_SetupPlayermodel = m
@@ -106,11 +106,7 @@ function SS_ApplyBoneMods(ent, mods)
     local suffix = pone and "_p" or "_h"
     --if pelvis has no children, it's not ready!
     local pelvis = ent:LookupBone(pone and "LrigPelvis" or "ValveBiped.Bip01_Pelvis")
-
-    if pelvis then
-        -- assert(#ent:GetChildBones(pelvis) > 0, ent:GetModel() ) 
-    end
-    
+    if pelvis then end -- assert(#ent:GetChildBones(pelvis) > 0, ent:GetModel() ) 
 
     for _, item in ipairs(mods) do
         if item.bonemod then
@@ -523,7 +519,6 @@ function Entity:SS_AttachAccessories(items)
     -- print(items, rangecheck)
     SS_UpdatedAccessories[self] = true
     local m = self:GetActualModel()
-
     -- they sometimes go NULL when in/out of vehicle
     local iv = self:IsPlayer() and self:InVehicle()
     local current = SS_CreatedAccessories[self]

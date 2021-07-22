@@ -388,12 +388,12 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase)
         else
             if (IsValid(tr.Entity) and tr.Entity.Health ~= nil) then
                 -- if (Safe == nil or (isfunction(Safe) and not Safe(tr.Entity))) then
-                    local d = DamageInfo()
-                    d:SetDamage(1)
-                    d:SetAttacker(ply)
-                    d:SetInflictor(wep)
-                    d:SetDamageType(DMG_DISSOLVE)
-                    tr.Entity:TakeDamageInfo(d)
+                local d = DamageInfo()
+                d:SetDamage(1)
+                d:SetAttacker(ply)
+                d:SetInflictor(wep)
+                d:SetDamageType(DMG_DISSOLVE)
+                tr.Entity:TakeDamageInfo(d)
                 -- end
             end
         end
