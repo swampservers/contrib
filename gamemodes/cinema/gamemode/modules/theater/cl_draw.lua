@@ -58,7 +58,7 @@ function DrawVideoInfo(w, h)
         DrawTheaterText(NumVoteSkips .. "/" .. ReqVoteSkips, "VideoInfoMedium", w - 72, 246, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
 
-    if Safe(LocalPlayer()) then
+    if LocalPlayer():IsProtected() then
         DrawTheaterText("PROTECTED", "VideoInfoSmall", w - 72, 90, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
 

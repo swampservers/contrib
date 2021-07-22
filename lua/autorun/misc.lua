@@ -129,9 +129,9 @@ function Entity:IsProtected(att)
     return false
 end
 
-function Safe(ent, attacker)
-    return ent:IsProtected(attacker)
-end
+-- function Safe(ent, attacker)
+--     return ent:IsProtected(attacker)
+-- end
 
 util.PrecacheModel("models/ppm/pony_anims.mdl")
 SkyboxPortalEnabled = SkyboxPortalEnabled or false

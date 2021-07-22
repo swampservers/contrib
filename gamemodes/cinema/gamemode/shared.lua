@@ -34,8 +34,8 @@ end
 -----------------------------------------------------------]]
 function GM:PlayerShouldTakeDamage(ply, attacker)
     if attacker:GetClass() == "sent_popcorn_thrown" then return false end
-    if attacker.dodgeball then return false end
-    if Safe(ply, attacker) then return false end
+    if attacker:GetClass()=="dodgeball" then return false end
+    if ply:IsProtected( attacker) then return false end
 
     return true
 end
@@ -96,14 +96,12 @@ end
 -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 -- Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
 function GM:PhysgunPickup(ply, ent)
-    if (ent:GetClass():lower() == "player") then
-        if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) and not ent:IsFrozen() then
-            if ent.Obesity and ent:Obesity() > 40 then return end
-            ply.physgunHeld = ent
 
-            return true
-        end
+    if ent:IsPlayer() and ent:Alive() and not ent:IsProtected() and not ply:IsProtected() and not ent:IsFrozen() then
+        if ent.Obesity and ent:Obesity() > 40 then return end
+        return true
     end
+
 
     if ply:GetMoveType() == MOVETYPE_NOCLIP then return true end
 
