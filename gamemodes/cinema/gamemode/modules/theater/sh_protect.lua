@@ -82,7 +82,7 @@ if CLIENT then
     }
 
     hook.Add("HUDPaint", "drawSAFENOTIFY", function()
-        if not LocalPlayer():InVehicle() and Safe(LocalPlayer()) then
+        if not LocalPlayer():InVehicle() and LocalPlayer():IsProtected() then
             if IsValid(LocalPlayer():GetActiveWeapon()) then
                 if notifyWeapons[LocalPlayer():GetActiveWeapon():GetClass()] then
                     local col = Color(255, 255, 255, 255)

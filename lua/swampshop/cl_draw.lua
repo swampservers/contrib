@@ -54,6 +54,7 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     local m = ply:GetActualModel()
 
     if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0) ~= 0 then
+        print(1)
         SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         SS_ApplyMaterialMods(ply, ply)
         ply.SS_SetupPlayermodel = m
@@ -389,6 +390,8 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
         mdl:FollowBone(ent, bone_id)
     end
 
+    -- mdl:SetPredictable(true)
+
     -- if scale ~= e.appliedscale then
     mdl.matrix = isnumber(scale) and Matrix({
         {scale, 0, 0, 0},
@@ -528,7 +531,9 @@ function Entity:SS_AttachAccessories(items)
     --     if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
     --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
     -- end
+    
     if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end
+    -- if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
     self.SS_AttachedInVehicle = iv
     self.SS_AttachedItems = items

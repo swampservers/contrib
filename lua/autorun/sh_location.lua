@@ -634,11 +634,11 @@ function FindLocation(pos)
     return #Locations
 end
 
-function GetPlayersInLocation(iIndex)
+function GetPlayersInLocation(idx)
     local tab = {}
 
     for _, ply in ipairs(Ents.player) do
-        if ply:GetLocation() == iIndex then
+        if ply:GetLocation() == idx then
             table.insert(tab, ply)
         end
     end

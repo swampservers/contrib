@@ -107,11 +107,13 @@ function ENT:ApplyMaterialData(data)
     local col = data.c or Vector(1, 1, 1)
     self.lightcolor = col
 
+    -- ["$alphatest"]=1,
+
     if data.i then
         self:SetWebMaterial({
             id = data.i,
             owner = data.o,
-            params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
+            params = [[{["$color2"]="[]] .. tostring(col) .. [[]"}]]
         })
     elseif col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
         self:SetColoredBaseMaterial(col)
