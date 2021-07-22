@@ -132,7 +132,6 @@ end
 -- function Safe(ent, attacker)
 --     return ent:IsProtected(attacker)
 -- end
-
 util.PrecacheModel("models/ppm/pony_anims.mdl")
 SkyboxPortalEnabled = SkyboxPortalEnabled or false
 SkyboxPortalCenter = Vector(290, -418, -8)
