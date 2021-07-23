@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "sniper"
 SWEP.PrintName = "AWP"
