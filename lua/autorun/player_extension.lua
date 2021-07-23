@@ -32,14 +32,6 @@ function StripNameAdvert(name, advert)
     return n2
 end
 
-hook.Add("SetupMove", "Weapon_SetupMove", function(ply, mv, cmd)
-    local wep = ply:GetActiveWeapon()
-
-    if wep.SetupMove then
-        wep:SetupMove(ply, mv, cmd)
-    end
-end)
-
 -- local stripme = {"- swamp.sv", "-swamp.sv", "swamp.sv"}
 function PLAYER:ComputeName()
     if self:IsBot() then return "Kleiner" end
