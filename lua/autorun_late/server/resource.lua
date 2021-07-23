@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 --	resource.AddWorkshop( "893884637" ) -- SwampCommon
-if GAMEMODE.FolderName == "cinema" then
+if GAMEMODE.FolderName == "cinema" or GAMEMODE.FolderName == "gungame" then
     -- shards of contrib
     resource.AddWorkshop("2453150484")
     resource.AddWorkshop("2453150686")
@@ -29,6 +29,11 @@ end
 if GAMEMODE.FolderName == "fatkid" then
     resource.AddWorkshop("625476776") -- Fat Kid playermodel
     resource.AddWorkshop("205268453") -- pony playermodel
+end
+
+if GAMEMODE.FolderName == "gungame" then
+    resource.AddWorkshop("1524544510")
+
 end
 
 if GAMEMODE.FolderName == "spades" then
