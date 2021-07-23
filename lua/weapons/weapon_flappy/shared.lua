@@ -23,10 +23,10 @@ function SWEP:Holster()
     return true
 end
 
-
 function SWEP:SetupMove(ply, mv, cmd)
     if mv:KeyPressed(IN_JUMP) then
         if ply.Obesity and ply:Obesity() > 40 then return end
+        local self = ply:GetActiveWeapon()
         local power = 200
 
         if ply.InTheater and ply:InTheater() then
