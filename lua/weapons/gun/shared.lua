@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = true

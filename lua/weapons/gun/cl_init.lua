@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 include("shared.lua")
 
 --copied from weapon_base, add self.CSMuzzleFlashScale
