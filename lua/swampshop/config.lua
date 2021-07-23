@@ -176,7 +176,7 @@ SS_ItemRatings = {
     {
         id = 1,
         max = 0.1,
-        name = "doo doo",
+        name = "Scuffed",
         color = Color(100, 50, 0),
         propnotes = "Can't be frozen, all models destroyable by light damage"
     },

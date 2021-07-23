@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "ar"
 SWEP.PrintName = "SG 552"
@@ -44,6 +43,7 @@ SWEP.KickUSpray = 2
 SWEP.KickLBase = 0.4
 SWEP.KickLSpray = 0.2
 SWEP.KickDance = 1
+SWEP.MoveSpeed = 235 / 250
 -- SWEP.KickMoving = {1, 0.45, 0.28, 0.04, 4.25, 2.5, 7}
 -- SWEP.KickStanding = {0.625, 0.375, 0.25, 0.0125, 4, 2.25, 9}
 -- SWEP.KickCrouching = {0.6, 0.35, 0.2, 0.0125, 3.7, 2, 10}

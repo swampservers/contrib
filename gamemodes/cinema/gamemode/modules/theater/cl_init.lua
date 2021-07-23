@@ -10,7 +10,7 @@ Queue = Queue or {}
 local _Volume = -1
 
 hook.Add("Tick", "TheaterPanelRemover", function()
-    if (LocalPlayer().GetTheater) then
+    if IsValid(LocalPlayer()) then
         if not LocalPlayer():GetTheater() then
             RemovePanels()
         end
@@ -226,6 +226,8 @@ net.Receive("TheaterVideo", function()
     LastInfoDraw = CurTime()
 end)
 
+--NOMINIFY
+
 net.Receive("TheaterSeek", function()
     local seconds = net.ReadFloat()
     local Video = CurrentVideo
@@ -246,7 +248,7 @@ net.Receive("TheaterInfo", function()
     table.Empty(Theaters)
     local Theater = nil
     -- Merge shared theater data
-    local loc = Location.GetLocationByIndex(v.Location)
+    local loc = Locations[v.Location]
 
     if loc and loc.Theater then
         -- puts the received values OVER the location

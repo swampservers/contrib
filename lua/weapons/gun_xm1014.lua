@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "autoshotgun"
 SWEP.PrintName = "XM1014"
@@ -41,6 +40,7 @@ SWEP.KickUBase = 1.5
 SWEP.KickUSpray = 1.5
 SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
+SWEP.MoveSpeed = 240 / 250
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}

@@ -65,6 +65,26 @@ SS_Item({
 
 SS_Heading("Permanent")
 
+SS_PlayermodelItem({
+    class = 'ponymodel',
+    price = 500000,
+    name = 'Pony',
+    description = "*boop*",
+    model = 'models/ppm/player_default_base.mdl',
+    actions = {
+        customize = {
+            Text = function() return "Customize Pony" end,
+            OnClient = function()
+                RunConsoleCommand("ppm_chared3")
+            end
+        }
+    },
+    PlayerSetModel = function(self, ply)
+        ply:Give("weapon_squee")
+        ply:SelectWeapon("weapon_squee")
+    end
+})
+
 SS_Item({
     class = "outfitter2",
     price = 2000000,
@@ -187,26 +207,6 @@ SS_PlayermodelItem({
     model = 'models/player/pyroteknik/shrek.mdl',
     workshop = '314261589',
     PlayerSetModel = function(self, ply) end
-})
-
-SS_PlayermodelItem({
-    class = 'ponymodel',
-    price = 500000,
-    name = 'Pony',
-    description = "*boop*",
-    model = 'models/ppm/player_default_base.mdl',
-    actions = {
-        customize = {
-            Text = function() return "Customize Pony" end,
-            OnClient = function()
-                RunConsoleCommand("ppm_chared3")
-            end
-        }
-    },
-    PlayerSetModel = function(self, ply)
-        ply:Give("weapon_squee")
-        ply:SelectWeapon("weapon_squee")
-    end
 })
 
 SS_Heading("One-Life, Unique")

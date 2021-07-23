@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = true
@@ -42,6 +41,8 @@ SWEP.PelletSpread = 0
 SWEP.NumPellets = 1
 -- DELETE THIS
 SWEP.SpraySaturation = 2
+-- handled by deploy
+SWEP.m_WeaponDeploySpeed = 1000
 
 -- Works on server too 
 hook.Add("EntityNetworkedVarChanged", "SetNetworkedProperty", function(ent, name, oldval, newval)
@@ -87,8 +88,25 @@ function SWEP:GetControl()
     return self:GetNWFloat("control", 1)
 end
 
+-- reload and deploy speed
+function SWEP:GetHandling()
+    return self:GetNWFloat("handling", 1)
+end
+
+-- movespeed and moving spread
+function SWEP:GetMobility()
+    return self:GetNWFloat("mobility", 1)
+end
+
+function CalculateRolledSpread(accuracy_roll, spreadbase)
+    accuracy_roll = accuracy_roll * 2
+
+    return (2 - accuracy_roll) * spreadbase + (math.max(1 - accuracy_roll, 0) ^ 2) * 0.001
+end
+
 function SWEP:GetBasedSpread()
-    return (self.SpreadBase or 0) / self:GetNWFloat("accuracy", 1)
+    -- return ((self.SpreadBase or 0) / self:GetNWFloat("accuracy", 1)) + self:GetNWFloat("extraspread", 0)
+    return CalculateRolledSpread(self:GetNWFloat("accuracy", 0.5), self.SpreadBase or 0)
 end
 
 function SWEP:GetSpray(curtime, firetime)
@@ -171,8 +189,8 @@ function SWEP:DoKickBack()
     local sfac = self:Standingness()
     local multiplier = Lerp(mfac, 1, self.MoveKickMultiplier) * Lerp(sfac, self.CrouchKickMultiplier, 1)
     local spraymodifier = self:GetSpray()
-    local flKickUp = multiplier * (self.KickUBase / self:GetControl() + spraymodifier * self.KickUSpray)
-    local flKickLateral = multiplier * (self.KickLBase / self:GetControl() + spraymodifier * self.KickLSpray)
+    local flKickUp = multiplier * (self.KickUBase + spraymodifier * self.KickUSpray) / self:GetControl()
+    local flKickLateral = multiplier * (self.KickLBase + spraymodifier * self.KickLSpray) / self:GetControl()
     --[[
 		Jvs:
 			I implemented the shots fired and direction stuff on the cs base because it would've been dumb to do it
@@ -233,14 +251,15 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 2, "Direction")
     self:NetworkVar("Int", 3, "WeaponID")
     self:NetworkVar("Int", 4, "SpecialReload")
+    self:NetworkVar("Int", 5, "BurstFires") --goes from X to 0, how many burst fires we're going to do
     self:NetworkVar("Bool", 0, "InReload")
     self:NetworkVar("Bool", 1, "KickLeft")
     self:NetworkVar("Bool", 2, "DelayFire")
     --Jvs: stuff that is scattered around all the weapons code that I'm going to try and unify here
     -- self:NetworkVar("Float", 5, "ZoomFullyActiveTime")
     -- self:NetworkVar("Float", 6, "ZoomLevel")
-    self:NetworkVar("Float", 7, "NextBurstFire") --when the next burstfire is gonna happen, same as nextprimaryattack
-    self:NetworkVar("Float", 9, "BurstFireDelay") --the speed of the burst fire itself, 0.5 means two shots every second etc
+    -- self:NetworkVar("Float", 7, "NextBurstFire") --when the next burstfire is gonna happen, same as nextprimaryattack
+    -- self:NetworkVar("Float", 9, "BurstFireDelay") --the speed of the burst fire itself, 0.5 means two shots every second etc
     self:NetworkVar("Float", 10, "LastFire")
     self:NetworkVar("Float", 18, "ActualLastFire")
     self:NetworkVar("Float", 14, "PreviousTargetFOVRatio")
@@ -251,7 +270,6 @@ function SWEP:SetupDataTables()
     -- self:NetworkVar("Float", 15, "StoredFOVRatio")
     -- self:NetworkVar("Float", 16, "LastZoom")
     -- self:NetworkVar("Bool", 5, "ResumeZoom")
-    self:NetworkVar("Int", 4, "BurstFires") --goes from X to 0, how many burst fires we're going to do
     -- self:NetworkVar("Int", 5, "MaxBurstFires")
 end
 
@@ -279,8 +297,9 @@ function SWEP:Deploy()
     -- self:SetShotsFired(0)
     self:SetInReload(false)
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
-    self:SetNextPrimaryFire(CurTime() + self:SequenceDuration())
-    self:SetNextSecondaryFire(CurTime() + self:SequenceDuration())
+    self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
+    self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+    self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
 
     if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
         self:GetOwner():SetFOV(0)
@@ -384,8 +403,10 @@ function SWEP:Reload()
         if not (self:GetMaxClip1() ~= -1 and self:GetMaxClip1() > self:Clip1() and owner:GetAmmoCount(self:GetPrimaryAmmoType()) > 0) then return end
         self:WeaponSound("reload")
         self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_RELOAD))
+        -- vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
+        self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
         owner:DoReloadEvent()
-        local endtime = CurTime() + self:SequenceDuration()
+        local endtime = CurTime() + (self:SequenceDuration() / self:GetHandling())
         self:SetNextPrimaryFire(endtime)
         self:SetNextSecondaryFire(endtime)
         self:SetInReload(true)
@@ -468,21 +489,26 @@ function SWEP:Think()
     --     --     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_IDLE))
     --     -- end
     -- end
-    if not self:GetInReload() and self.BurstFire and self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
-        if self:GetBurstFires() < (self.BurstFire - 1) then
-            if self:Clip1() <= 0 then
-                self:SetBurstFires(self.BurstFire)
-            else
-                self:SetNextPrimaryFire(CurTime() - 1)
-                self:PrimaryAttack()
-                self:SetNextPrimaryFire(CurTime() + 0.5) --this artificial delay is inherited from the glock code
-                self:SetBurstFires(self:GetBurstFires() + 1)
-            end
-        else
-            if self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
-                self:SetBurstFires(0)
-                self:SetNextBurstFire(-1)
-            end
+    -- if not self:GetInReload() and self.BurstFire and self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
+    --     if self:GetBurstFires() < (self.BurstFire - 1) then
+    --         if self:Clip1() <= 0 then
+    --             self:SetBurstFires(self.BurstFire)
+    --         else
+    --             self:SetNextPrimaryFire(CurTime() - 1)
+    --             self:PrimaryAttack()
+    --             self:SetNextPrimaryFire(CurTime() + 0.5) --this artificial delay is inherited from the glock code
+    --             self:SetBurstFires(self:GetBurstFires() + 1)
+    --         end
+    --     else
+    --         if self:GetNextBurstFire() < CurTime() and self:GetNextBurstFire() ~= -1 then
+    --             self:SetBurstFires(0)
+    --             self:SetNextBurstFire(-1)
+    --         end
+    --     end
+    -- end
+    if not self:GetInReload() and self.BurstFire then
+        if self:GetBurstFires() < self.BurstFire and self:GetNextPrimaryFire() < CurTime() then
+            self:PrimaryAttack()
         end
     end
 end
@@ -541,11 +567,10 @@ function SWEP:GunFire()
     end
 
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_PRIMARYATTACK))
+    -- if self.Owner:SteamID() ~= "STEAM_0:0:38422842" then
+    self:SetClip1(self:Clip1() - 1)
 
-    if self.Owner:SteamID() ~= "STEAM_0:0:38422842" then
-        self:SetClip1(self:Clip1() - 1)
-    end
-
+    -- end
     if SERVER and (ply.GetLocationName and ply:GetLocationName() == "Weapons Testing Range") then
         ply:GiveAmmo(1, self:GetPrimaryAmmoType())
     end
@@ -614,13 +639,22 @@ function SWEP:GunFire()
     self:SetNextPrimaryFire(correctedcurtime + self:GetInterval() - ti / 4)
     self:SetNextSecondaryFire(correctedcurtime + self:GetInterval() - ti / 4)
 
-    -- self:SetNextIdle(CurTime() + self.TimeToIdle)
     if self.BurstFire then
-        self:SetNextBurstFire(CurTime() + self:GetBurstFireDelay())
-    else
-        self:SetNextBurstFire(-1)
+        -- if self:Clip1()==0 then self:SetBurstFires(self.BurstFire)
+        self:SetBurstFires(self:GetBurstFires() - 1)
+
+        if self:GetBurstFires() <= 0 or self:Clip1() == 0 then
+            self:SetNextPrimaryFire(correctedcurtime + self.BurstFireInterval)
+            self:SetBurstFires(self.BurstFire)
+        end
     end
 
+    -- self:SetNextIdle(CurTime() + self.TimeToIdle)
+    -- if self.BurstFire then
+    --     self:SetNextBurstFire(CurTime() + self.BurstFireDelay)
+    -- else
+    --     self:SetNextBurstFire(-1)
+    -- end
     local curspray = self:GetSpray(correctedcurtime)
 
     -- if self.Owner:SteamID() == "STEAM_0:0:38422842" then
@@ -707,7 +741,7 @@ end
 
 -- Note: self.SpreadStand only applies when unscoped
 function SWEP:GetSpread(clientsmoothing)
-    local spread = self:GetBasedSpread() + self:MovementPenalty(clientsmoothing) * (self.SpreadMove or 0)
+    local spread = self:GetBasedSpread() + self:MovementPenalty(clientsmoothing) * (self.SpreadMove or 0) / self:GetMobility()
 
     if not self:IsScoped() then
         spread = spread + (self.SpreadUnscoped or 0)
@@ -720,9 +754,17 @@ function SWEP:GetSpread(clientsmoothing)
 end
 
 function SWEP:GetSpeedRatio()
-    if (self:IsScoped()) then return self.ScopedSpeedRatio or 0.5 end
+    local spd = self.MoveSpeed or 1
 
-    return 1
+    if self:IsScoped() then
+        spd = spd * (self.ScopedSpeedRatio or 0.5)
+    end
+
+    return spd
+end
+
+function SWEP:SetupMove(ply, mv, cmd)
+    mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * self:GetSpeedRatio())
 end
 -- function SWEP:GetSpread(clientsmoothing)
 --     local ply = self:GetOwner()

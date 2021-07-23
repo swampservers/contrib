@@ -2,36 +2,6 @@
 local PLAYER = FindMetaTable("Player")
 local ENTITY = FindMetaTable("Entity")
 
-function PLAYER:GetLocation()
-    return self:GetDTInt(0) or 0
-end
-
-function PLAYER:GetLastLocation()
-    return self.LastLocation or -1
-end
-
-function PLAYER:GetLocationName()
-    return Location.GetLocationNameByIndex(self:GetLocation())
-end
-
-function PLAYER:GetLocationTable()
-    return Location.GetLocationByIndex(self:GetLocation()) or {}
-end
-
-function PLAYER:InTheater()
-    return self:GetLocationTable().Theater ~= nil
-end
-
-function PLAYER:GetTheater()
-    return theater.GetByLocation(self:GetLocation())
-end
-
-function PLAYER:SetLocation(locationId)
-    self.LastLocation = self:GetLocation()
-
-    return self:SetDTInt(0, locationId)
-end
-
 PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
 local specials = "[]{}()<>-|= "
 local specials2 = "["

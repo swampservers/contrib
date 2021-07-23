@@ -23,11 +23,8 @@ function SWEP:Holster()
     return true
 end
 
--- NOTE: If we make more weapons like this (with setupmove) we should make a single hook that calls a SetupMove member function on the weapon itself
-local CMoveDataKeyPressed = FindMetaTable("CMoveData").KeyPressed
-
-hook.Add("SetupMove", "flappy_SetupMove", function(ply, mv, cmd)
-    if CMoveDataKeyPressed(mv, IN_JUMP) and ply:UsingWeapon("weapon_flappy") and not ply:InVehicle() then
+function SWEP:SetupMove(ply, mv, cmd)
+    if mv:KeyPressed(IN_JUMP) then
         if ply.Obesity and ply:Obesity() > 40 then return end
         local self = ply:GetActiveWeapon()
         local power = 200
@@ -51,7 +48,7 @@ hook.Add("SetupMove", "flappy_SetupMove", function(ply, mv, cmd)
             shared = true
         })
     end
-end)
+end
 
 function SWEP:PrimaryAttack()
     self:ExtEmitSound("nice meme.ogg", {

@@ -32,9 +32,9 @@ function ENT:Think()
     self.BaseClass.Think(self)
     local hasTarget = false
 
-    if CurTime() > (self.TargetThink or 0) then
+    if SERVER and CurTime() > (self.TargetThink or 0) then
         self.TargetThink = CurTime() + 0.1
-        local temp = Location.GetPlayersInLocation(Location.GetLocationIndexByName("Rat's Lair"))
+        local temp = GetPlayersInLocation(LocationByName["Rat's Lair"].Index)
 
         for k, v in pairs(temp) do
             if not v:Alive() then
@@ -108,7 +108,7 @@ function ENT:Think()
         end
     end
 
-    if CurTime() > (self.AttackThink or 0) and (not self:IsOnFire()) and SERVER then
+    if SERVER and CurTime() > (self.AttackThink or 0) and (not self:IsOnFire()) then
         self.AttackThink = CurTime() + 0.35
 
         if hasTarget then

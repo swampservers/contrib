@@ -97,7 +97,7 @@ function SWEP:TagPlayer(target, attacker)
 end
 
 function SWEP:TestTagPlayer(target, attacker)
-    if not Safe(target) and not target:InVehicle() then
+    if not target:IsProtected() and not target:InVehicle() then
         self:TagPlayer(target, attacker)
     elseif not target:IsAFK() and target:InVehicle() then
         self:TagPlayer(target, attacker)
@@ -135,7 +135,7 @@ function SWEP:PrimaryAttack(right)
     local eyetrace = self.Owner:GetEyeTrace()
 
     if eyetrace.Hit then
-        if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) and not Safe(eyetrace.Entity) then
+        if (eyetrace.Entity:IsPlayer() and eyetrace.Entity:Alive()) and not eyetrace.Entity:IsProtected() then
             self:TestTagPlayer(eyetrace.Entity, self.Owner)
         else
             local target = {nil, 58}
