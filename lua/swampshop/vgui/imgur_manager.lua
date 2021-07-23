@@ -236,20 +236,3 @@ end
 
 vgui.Register('DImgurManager', CONTENTPICKER, 'DPanel')
 
-concommand.Add("imgurtest", function()
-    local wind = vgui.Create("DFrame")
-    wind:SetSize(512 + 10, 512 + 12)
-    wind:Center()
-    wind:SetSizable(true)
-    wind:MakePopup()
-
-    local manager = vgui("DImgurManager", wind, function(p)
-        p:Dock(FILL)
-    end)
-
-    manager:SetColumns(5)
-
-    for i = 1, 32 do
-        manager:Add(math.random(0, 1) == 1 and "yWPiba1.png" or "XNmSNPo.png", false)
-    end
-end)
