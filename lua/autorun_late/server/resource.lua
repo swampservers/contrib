@@ -33,7 +33,6 @@ end
 
 if GAMEMODE.FolderName == "gungame" then
     resource.AddWorkshop("1524544510")
-
 end
 
 if GAMEMODE.FolderName == "spades" then
