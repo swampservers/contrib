@@ -23,11 +23,9 @@ function SWEP:Holster()
     return true
 end
 
--- NOTE: If we make more weapons like this (with setupmove) we should make a single hook that calls a SetupMove member function on the weapon itself
-local CMoveDataKeyPressed = FindMetaTable("CMoveData").KeyPressed
 
-function SWEP:SetupMove(ply,mv,cmd)
-    if CMoveDataKeyPressed(mv, IN_JUMP) and not ply:InVehicle() then
+function SWEP:SetupMove(ply, mv, cmd)
+    if mv:KeyPressed(IN_JUMP) then
         if ply.Obesity and ply:Obesity() > 40 then return end
         local power = 200
 

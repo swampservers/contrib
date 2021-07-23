@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "autosniper"
 SWEP.PrintName = "SG 550"
@@ -37,6 +36,7 @@ ComputeSpray(SWEP, {
 --
 SWEP.ScopeLevels = {40 / 90, 10 / 90}
 
+SWEP.MoveSpeed = 210 / 250
 SWEP.ScopedSpeedRatio = 220 / 260
 SWEP.KickUBase = 1
 SWEP.KickUSpray = 1

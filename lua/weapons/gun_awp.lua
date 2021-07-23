@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "sniper"
 SWEP.PrintName = "AWP"
@@ -38,9 +37,10 @@ SWEP.SpreadUnscoped = 0.2
 
 SWEP.ScopeLevels = {40 / 90, 10 / 90}
 
-SWEP.ScopedSpeedRatio = 0.5
 SWEP.UnscopeOnShoot = true
 SWEP.KickUBase = 3
+SWEP.MoveSpeed = 210 / 250
+SWEP.ScopedSpeedRatio = 0.5
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed"			"210"

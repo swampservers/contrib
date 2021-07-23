@@ -51,10 +51,10 @@ TrashZoneModels = {
         }
     },
     ["models/maxofs2d/hover_classic.mdl"] = {
-        cubesize = 200
+        cubesize = 300
     },
     ["models/dav0r/hoverball.mdl"] = {
-        cubesize = 300
+        cubesize = 400
     }
 }
 

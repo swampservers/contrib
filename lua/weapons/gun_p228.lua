@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
 SWEP.Purpose = "High DPS pistol, but small magazine"
@@ -38,6 +37,7 @@ SWEP.KickUBase = 0.3
 SWEP.KickUSpray = 1.875
 SWEP.KickLBase = 0.225
 SWEP.KickLSpray = 0.3
+SWEP.MoveSpeed = 1
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}

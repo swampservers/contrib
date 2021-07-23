@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "shotgun"
 SWEP.PrintName = "M3"
@@ -41,6 +40,7 @@ SWEP.KickUBase = 5
 SWEP.KickUSpray = 0
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
+SWEP.MoveSpeed = 220 / 250
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"220"

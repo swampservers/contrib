@@ -389,6 +389,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
         mdl:FollowBone(ent, bone_id)
     end
 
+    -- mdl:SetPredictable(true)
     -- if scale ~= e.appliedscale then
     mdl.matrix = isnumber(scale) and Matrix({
         {scale, 0, 0, 0},
@@ -529,6 +530,7 @@ function Entity:SS_AttachAccessories(items)
     --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
     -- end
     if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end
+    -- if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
     self.SS_AttachedInVehicle = iv
     self.SS_AttachedItems = items
@@ -595,7 +597,7 @@ function Entity:SetColoredBaseMaterial(color)
         local clonekey = sc .. "/../" .. mat
 
         if not CLONEDMATERIALS[clonekey] then
-            print("MAKE", clonekey)
+            -- print("MAKE", clonekey)
             -- mat = mat:gsub("'","")
             local mat2 = Material(clonekey)
             local matname = mat2:GetName()
