@@ -1,6 +1,5 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- damage indicator shit
-
 if SERVER then
     util.AddNetworkString("HitMarker")
     HITMARKERCACHE = {}

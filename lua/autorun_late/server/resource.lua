@@ -38,7 +38,6 @@ end
 if GAMEMODE.FolderName == "spades" then
     resource.AddWorkshop("1326275319") -- AOS content
 end
-
 -- print(GAMEMODE, GAMEMODE.FolderName)
 --[[
 	resource.AddSingleFile("models/error.mdl") -- FUCK error meme
