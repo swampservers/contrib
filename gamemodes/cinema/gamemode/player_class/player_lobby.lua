@@ -76,10 +76,18 @@ end
 -- Allow player class to create move
 --
 
+
 function PLAYER:CreateMove( cmd )
 
 	--if ( self.TauntCam:CreateMove( cmd, self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
-
+	local ply = self.Player 
+	if(IsLockedByTaunting(ply))then
+		cmd:SetViewAngles(TAUNTING_LOCK_ANG or Angle())
+		cmd:ClearButtons()
+		cmd:ClearMovement()
+	else
+		TAUNTING_LOCK_ANG = ply:EyeAngles()
+	end
 end
 
 --
