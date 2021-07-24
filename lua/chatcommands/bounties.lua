@@ -110,8 +110,8 @@ RegisterChatCommand({'bountyrandom', 'setbountyrandom', 'randombounty', 'setrand
         if p >= 1000 then
             local ranply = {}
 
-            for k, v in pairs(player.GetHumans()) do
-                if not Safe(v) then
+            for k, v in ipairs(player.GetHumans()) do
+                if not v:IsProtected() then
                     table.insert(ranply, v)
                 end
             end
@@ -163,7 +163,7 @@ RegisterChatCommand({'bounties', 'showbounties'}, function(ply, arg)
 
         for k, v in ipairs(t) do
             if k <= 10 then
-                if not Safe(v[1]) then
+                if not v[1]:IsProtected() then
                     ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. ")")
                 else
                     ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. " - Protected)")

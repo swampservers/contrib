@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
 SWEP.PrintName = "USP"
@@ -38,6 +37,7 @@ SWEP.KickUBase = 1
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
+SWEP.MoveSpeed = 1
 -- SWEP.KickSimple = 2
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 function ComputeSpray(SWEP, args)
     local stableinterval, shotsto90 = args.TapFireInterval, args.ShotsTo90Spray
     local targetsos = 0.9

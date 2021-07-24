@@ -278,7 +278,7 @@ function PlayerVisUpdate(depth, sky)
 
     if depth or sky then return end
     if not Location then return end
-    SKYBOXLOC = Location.GetLocationIndexByName("Way Outside")
+    SKYBOXLOC = LocationByName["Way Outside"]
 
     if not render.DrawingScreen() then
         local nam = render.GetRenderTarget():GetName()
@@ -539,10 +539,21 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
     local tv = LocalPlayer():InTheater() or LocalPlayer():InVehicle()
     local fwd = EyeAngles():Forward()
     local ep = EyePos()
+    local sorteddraw = {}
 
     for ply, _ in pairs(drawme) do
         local to = ply:EyePos() - ep
         local dist = to:Length()
+
+        table.insert(sorteddraw, {ply, to, dist})
+    end
+
+    table.SortByMember(sorteddraw, 3)
+
+    for _, stuff in ipairs(sorteddraw) do
+        local ply = stuff[1]
+        local to = stuff[2]
+        local dist = stuff[3]
         to = to / dist
         local dot = fwd:Dot(to)
 
@@ -632,12 +643,13 @@ end)
 
 ShowEyeAng = false
 
+--NOMINIFY
 concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
 end)
 
 timer.Create("AreaMusicController", 0.5, 0, function()
-    if LocalPlayer().GetLocationName == nil then return end
+    if not IsValid(LocalPlayer()) or LocalPlayer().GetLocationName == nil then return end
     local target = ""
     local loc = LocalPlayer():GetLocationName()
 

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "autosniper"
 SWEP.PrintName = "G3SG1"
@@ -42,6 +41,7 @@ SWEP.KickUBase = 2
 SWEP.KickUSpray = 0
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
+SWEP.MoveSpeed = 210 / 250
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"210"

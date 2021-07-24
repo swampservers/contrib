@@ -140,17 +140,17 @@ function ENT:CanChangeOwner()
     return true
 end
 
-function ENT:GetLocation()
-    if (self.LastLocationCoords == nil) or (self:GetPos():DistToSqr(self.LastLocationCoords) > 1) then
-        self.LastLocationCoords = self:GetPos()
-        self.LastLocationIndex = Location.Find(self)
-    end
+-- function ENT:GetLocation()
+--     if (self.LastLocationCoords == nil) or (self:GetPos():DistToSqr(self.LastLocationCoords) > 1) then
+--         self.LastLocationCoords = self:GetPos()
+--         self.LastLocationIndex = Location.Find(self)
+--     end
 
-    return self.LastLocationIndex
-end
+--     return self.LastLocationIndex
+-- end
 
 function TrashLocationClass(locid)
-    local ln = Location.GetLocationNameByIndex(locid)
+    local ln = Locations[locid].Name
     if TrashLocationOverrides[ln] then return TrashLocationOverrides[ln] end
     local t = theater.GetByLocation(locid)
 

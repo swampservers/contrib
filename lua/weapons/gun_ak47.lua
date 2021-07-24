@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "ar"
 SWEP.PrintName = "AK-47"
@@ -39,6 +38,7 @@ SWEP.KickUBase = 0.5
 SWEP.KickUSpray = 3
 SWEP.KickLBase = 0.1
 SWEP.KickLSpray = 0.5
+SWEP.MoveSpeed = 221 / 250
 -- SWEP.SprayIncrement = 0.5
 --TODO: CycleTime for no spread instead of SprayIncrement?
 -- SprayShotsTo80(SWEP, 8)   

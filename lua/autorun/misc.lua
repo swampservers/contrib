@@ -1,112 +1,15 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
--- damage indicator shit
-if SERVER then
-    util.AddNetworkString("HitMarker")
-    HITMARKERCACHE = {}
-    KILLCACHE = {}
+local Entity = FindMetaTable("Entity")
 
-    hook.Add("PostEntityTakeDamage", "DamageMarker", function(ent, dmg, took)
-        local att = dmg:GetAttacker()
-
-        --and (ent:IsBot() or (HumanTeamName and att.hvp ~= ent.hvp)) then
-        if ent:IsPlayer() then
-            if IsValid(att) and att:IsPlayer() then
-                HITMARKERCACHE[att] = (HITMARKERCACHE[att] or 0) + dmg:GetDamage()
-                -- if not ent:Alive() then
-                --     KILLCACHE[att] = true
-                -- end
-            end
-        end
-    end)
-
-    hook.Add("PlayerDeath", "KillMarker", function(victim, inflictor, attacker)
-        if IsValid(attacker) and attacker:IsPlayer() then
-            KILLCACHE[attacker] = true
-        end
-    end)
-
-    hook.Add("Tick", "FlushHitMarkers", function()
-        for k, v in pairs(HITMARKERCACHE) do
-            if IsValid(k) then
-                net.Start("HitMarker")
-                net.WriteUInt(v, 16)
-                net.WriteBool(KILLCACHE[k] or false)
-                net.Send(k)
-            end
-        end
-
-        HITMARKERCACHE = {}
-        KILLCACHE = {}
-    end)
-else
-    local hitmarkers = {}
-
-    net.Receive("HitMarker", function(len)
-        local dmg = net.ReadUInt(16)
-        local kill = net.ReadBool()
-
-        table.insert(hitmarkers, {
-            dmg = dmg,
-            kill = kill,
-            t = SysTime(),
-            x = 0.1, --math.Rand(-0.5,0.5),
-            
-        })
-    end)
-
-    hook.Add("PostDrawHUD", "DrawHitMarkers", function() end)
-
-    hook.Add("HUDDrawScoreBoard", "DrawHitMarkers", function()
-        local duration = 1
-        local t = SysTime()
-        local i = 1
-
-        while i <= #hitmarkers do
-            local marker = hitmarkers[i]
-
-            if marker.t + duration < t then
-                table.remove(hitmarkers, i)
-            else
-                i = i + 1
-                local drift = (t - marker.t) / duration
-                local alpha = 1 - drift
-                drift = drift + 0.1
-                -- ..marker.dmg..""
-                draw.SimpleText(marker.kill and ("KILL " .. marker.dmg) or tostring(marker.dmg), "HitDamageFont", ScrW() / 2 + drift * 100 * marker.x, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            end
-        end
-    end)
-end
-
-if CLIENT then
-    surface.CreateFont("HitDamageFont", {
-        font = "Trebuchet",
-        size = 24,
-        weight = 1000
-    })
-end
-
-function Safe(ent, attacker)
-    local loc = 0
-    local name = "Unknown"
-
-    --treat world as nil since damageinfo typically uses worldspawn as nothing
-    if (attacker == game.GetWorld()) then
-        attacker = nil
-    end
-
-    if Location then
-        loc = ent:IsPlayer() and ent:GetLocation() or Location.Find(ent)
-        name = Location.GetLocationNameByIndex(loc)
-    end
-
-    if HumanTeamName ~= nil then return false end --and name ~= "Movie Theater"
-    if name == "Movie Theater" and (ent:GetPos().y > 1400 or ent:GetPos().z > 150) then return true end
+function Entity:IsProtected(att)
+    if HumanTeamName ~= nil then return false end
+    local loc, name = self:GetLocation(), self:GetLocationName()
+    if name == "Movie Theater" and (self:GetPos().y > 1400 or self:GetPos().z > 150) then return true end
 
     if name == "Golf" then
-        if ent:IsPlayer() then
-            local w = ent:GetActiveWeapon()
+        if self:IsPlayer() then
+            local w = self:GetActiveWeapon()
 
             if IsValid(w) and w:GetClass() == "weapon_golfclub" then
                 if IsValid(w:GetBall()) then return true end
@@ -117,21 +20,21 @@ function Safe(ent, attacker)
     local pt = protectedTheaterTable and protectedTheaterTable[loc]
 
     if pt ~= nil and pt["time"] > 1 then
-        --if theater is protected and the attacker is the theater owner, than this player is not safe from them.
-        local owner = ent:GetTheater() and ent:GetTheater():GetOwner()
+        --if theater is protected and the attacker is the theater owner, then this player is not safe from them.
+        local owner = self:GetTheater() and self:GetTheater():GetOwner()
+        if IsValid(att) and att:IsPlayer() and self:IsPlayer() and self:InTheater() and owner == att then return false end
 
-        if IsValid(attacker) and attacker:IsPlayer() and ent:IsPlayer() and ent:InTheater() and owner == attacker then return false end
         return true
     end
 
-    if ent:IsPlayer() then
-        if IsValid(ent:GetVehicle()) then
-            if ent:GetVehicle():GetNWBool("IsChessSeat", false) then
-                local e = ent:GetVehicle():GetNWEntity("ChessBoard", nil)
+    if self:IsPlayer() then
+        if IsValid(self:GetVehicle()) then
+            if self:GetVehicle():GetNWBool("IsChessSeat", false) then
+                local e = self:GetVehicle():GetNWEntity("ChessBoard", nil)
                 if IsValid(e) and e:GetPlaying() then return true end
             end
 
-            local v = ent:GetVehicle()
+            local v = self:GetVehicle()
             if (v.SeatData ~= nil) and (v.SeatData.Ent ~= nil) and IsValid(v.SeatData.Ent) and v.SeatData.Ent:GetName() == "rocketseat" then return true end
         end
     end
@@ -139,6 +42,9 @@ function Safe(ent, attacker)
     return false
 end
 
+-- function Safe(ent, attacker)
+--     return ent:IsProtected(attacker)
+-- end
 util.PrecacheModel("models/ppm/pony_anims.mdl")
 SkyboxPortalEnabled = SkyboxPortalEnabled or false
 SkyboxPortalCenter = Vector(290, -418, -8)

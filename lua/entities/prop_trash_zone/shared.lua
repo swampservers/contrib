@@ -51,10 +51,10 @@ TrashZoneModels = {
         }
     },
     ["models/maxofs2d/hover_classic.mdl"] = {
-        cubesize = 200
+        cubesize = 300
     },
     ["models/dav0r/hoverball.mdl"] = {
-        cubesize = 300
+        cubesize = 400
     }
 }
 
@@ -140,8 +140,8 @@ function ENT:CreateTheater()
     local th = tzm.theater
     if not th then return end
     print(i)
-    local li = Location.MobileLocations[i]
-    local l = Location.GetLocationByIndex(li)
+    local li = MobileLocations[i]
+    local l = Locations[li]
     l.Min, l.Max = self:GetBounds()
     l.Name = self:GetTheaterName()
     l.Theater.Width, l.Theater.Height = th.w, th.h
@@ -171,7 +171,7 @@ function ENT:CreateTheater()
         t._PermanentOwnerID = l.Theater.PermanentOwnerID
     end
 
-    Location.RefreshPositions()
+    RefreshLocations()
 end
 
 function ENT:DestroyTheater()
@@ -182,11 +182,11 @@ function ENT:DestroyTheater()
     end
 
     if i > 0 then
-        local li = Location.MobileLocations[i]
-        local l = Location.GetLocationByIndex(li)
+        local li = MobileLocations[i]
+        local l = Locations[li]
         l.Min = Vector(-1, -1, -10001)
         l.Max = Vector(1, 1, -10000)
-        Location.RefreshPositions()
+        RefreshLocations()
     end
 end
 

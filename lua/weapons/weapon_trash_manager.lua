@@ -85,7 +85,7 @@ end
 local function CorrectSaveData(data)
     for k, v in pairs(data) do
         for pti = 4, 2, -1 do
-            local l = Location.GetLocationByName("Private Theater " .. pti)
+            local l = LocationByName["Private Theater " .. pti]
             print(type(v.pos))
 
             if v.pos:WithinAABox(l.Min, l.Max) then
@@ -105,7 +105,7 @@ local function DecorrectSaveData(data)
     end
 
     if shift then
-        local l = Location.GetLocationByName("Private Theater 1")
+        local l = LocationByName["Private Theater 1"]
 
         for k, v in pairs(data) do
             if v.pos:WithinAABox(l.Min, l.Max) then
@@ -232,7 +232,7 @@ but you need a nearby theater/field to respawn them.]])
                             while i <= #d do
                                 local v = d[i]
 
-                                if not items[v.id] or v.pos:Distance(LocalPlayer():GetPos()) > TRASH_MANAGER_LOAD_RANGE or TrashLocationOwner(Location.Find(v.pos), v.pos) ~= LocalPlayer():SteamID() then
+                                if not items[v.id] or v.pos:Distance(LocalPlayer():GetPos()) > TRASH_MANAGER_LOAD_RANGE or TrashLocationOwner(FindLocation(v.pos), v.pos) ~= LocalPlayer():SteamID() then
                                     table.remove(d, i)
                                 else
                                     i = i + 1
