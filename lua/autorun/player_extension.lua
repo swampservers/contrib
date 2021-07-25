@@ -62,82 +62,57 @@ function StripNameAdvert(name, advert)
     return n2
 end
 
---return whatever animation is already playing
-hook.Add("CalcMainActivity","HandleFrozenAnim",function(ply,vel)
-    if(ply:IsFrozen())then
-        return ply:GetSequenceActivity(ply:GetSequence()),ply:GetSequence()
-    end
-end)
 
 --gay little override for default animation
-timer.Simple(0, function()
+timer.Simple(0,function()
     local GM = gmod.GetGamemode()
-    function GM:UpdateAnimation(ply, velocity, maxseqgroundspeed)
-        
-        local len = velocity:Length()
-        local movement = 1.0
+function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed )
 
-        if (len > 0.2) then
-            movement = (len / maxseqgroundspeed)
-        end
+	local len = velocity:Length()
+	local movement = 1.0
 
-        local rate = math.min(movement, 2)
+	if ( len > 0.2 ) then
+		movement = ( len / maxseqgroundspeed )
+	end
 
-        -- if we're under water we want to constantly be swimming..
-        if (ply:WaterLevel() >= 2) then
-            rate = math.max(rate, 0.5)
-        elseif (not ply:IsOnGround() and len >= 1000) then
-            rate = 0.1
-        end
+	local rate = math.min( movement, 2 )
 
-        --override pose param to whatever it was last time we weren't frozen.
-        if (ply:IsFrozen()) then 
-            ply:SetPoseParameter("move_x",ply._fppmx or 0)
-            ply:SetPoseParameter("move_y",ply._fppmy or 0)
-            for i=0,10 do
-                ply:SetLayerPlaybackRate(i,0)
-            end
+	-- if we're under water we want to constantly be swimming..
+	if ( ply:WaterLevel() >= 2 ) then
+		rate = math.max( rate, 0.5 )
+	elseif ( !ply:IsOnGround() && len >= 1000 ) then
+		rate = 0.1
+	end
+    rate = rate * ply:GetLaggedMovementValue()
+	ply:SetPlaybackRate( rate )
 
-            if(CLIENT)then ply:InvalidateBoneCache() end
+	-- We only need to do this clientside..
+	if ( CLIENT ) then
+		if ( ply:InVehicle() ) then
+			--
+			-- This is used for the 'rollercoaster' arms
+			--
+			local Vehicle = ply:GetVehicle()
+			local Velocity = Vehicle:GetVelocity()
+			local fwd = Vehicle:GetUp()
+			local dp = fwd:Dot( Vector( 0, 0, 1 ) )
 
-            rate = 0.001
-        else
-            ply._fppmx = ply:GetPoseParameter("move_x")
-            ply._fppmy = ply:GetPoseParameter("move_y")
-        end
+			ply:SetPoseParameter( "vertical_velocity", ( dp < 0 && dp || 0 ) + fwd:Dot( Velocity ) * 0.005 )
 
+			-- Pass the vehicles steer param down to the player
+			local steer = Vehicle:GetPoseParameter( "vehicle_steer" )
+			steer = steer * 2 - 1 -- convert from 0..1 to -1..1
+			if ( Vehicle:GetClass() == "prop_vehicle_prisoner_pod" ) then steer = 0 ply:SetPoseParameter( "aim_yaw", math.NormalizeAngle( ply:GetAimVector():Angle().y - Vehicle:GetAngles().y - 90 ) ) end
+			ply:SetPoseParameter( "vehicle_steer", steer )
 
-        rate = rate * ply:GetLaggedMovementValue()
-        ply:SetPlaybackRate(rate)
+		end
+		GAMEMODE:GrabEarAnimation( ply )
+		GAMEMODE:MouthMoveAnimation( ply )
+	end
 
-        -- We only need to do this clientside..
-        if (CLIENT) then
-            if (ply:InVehicle()) then
-                --
-                -- This is used for the 'rollercoaster' arms
-                --
-                local Vehicle = ply:GetVehicle()
-                local Velocity = Vehicle:GetVelocity()
-                local fwd = Vehicle:GetUp()
-                local dp = fwd:Dot(Vector(0, 0, 1))
-                ply:SetPoseParameter("vertical_velocity", (dp < 0 and dp or 0) + fwd:Dot(Velocity) * 0.005)
-                -- Pass the vehicles steer param down to the player
-                local steer = Vehicle:GetPoseParameter("vehicle_steer")
-                steer = steer * 2 - 1 -- convert from 0..1 to -1..1
-
-                if (Vehicle:GetClass() == "prop_vehicle_prisoner_pod") then
-                    steer = 0
-                    ply:SetPoseParameter("aim_yaw", math.NormalizeAngle(ply:GetAimVector():Angle().y - Vehicle:GetAngles().y - 90))
-                end
-
-                ply:SetPoseParameter("vehicle_steer", steer)
-            end
-
-            GAMEMODE:GrabEarAnimation(ply)
-            GAMEMODE:MouthMoveAnimation(ply)
-        end
-    end
+end
 end)
+
 
 -- local stripme = {"- swamp.sv", "-swamp.sv", "swamp.sv"}
 function PLAYER:ComputeName()
