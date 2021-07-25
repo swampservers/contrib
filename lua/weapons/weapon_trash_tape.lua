@@ -6,7 +6,7 @@ SWEP.ViewModelFOV = 85
 SWEP.Slot = 5
 SWEP.SlotPos = 0
 SWEP.Purpose = "Build things"
-SWEP.Instructions = "Primary: Tape Object Down\nSecondary: Untape object\nReload: Destroy item (or quick spawn trash)"
+SWEP.Instructions = "Primary: Tape Object Down\nSecondary: Untape object\nReload: Destroy item (or quick spawn trash)\n\nTip: Get another player to hold a prop in position while you tape it!"
 SWEP.AdminSpawnable = false
 SWEP.ViewModel = Model("models/swamponions/ducktape.mdl")
 SWEP.WorldModel = Model("models/swamponions/ducktape.mdl")
@@ -169,7 +169,8 @@ if CLIENT then
             local trace = util.TraceLine(tr)
 
             if trace.Hit then
-                if trace.Entity:GetClass():StartWith("prop_trash") then
+                --:GetClass():StartWith("prop_trash") then
+                if trace.Entity:GetTrashClass() then
                     PropTrashLookedAt = trace.Entity
                     PropTrashLookedAtPos = trace.HitPos
                 end

@@ -1,0 +1,7 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\weapons\v_models\rif_galil\rif_galil"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\weapons\v_models\rif_galil\rif_galil_ref"
+
+}

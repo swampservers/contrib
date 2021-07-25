@@ -18,74 +18,65 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 end
 
 function SWEP:DrawWorldModel(flags)
-    local ply = self:GetOwner()
-    self:SetModelScale(1, 0)
-    self:SetSubMaterial()
-    local matrix
-    local horn = false
-    local opos = self:GetPos()
-    local oang = self:GetAngles()
-
-    if IsValid(ply) then
-        local isPony = ply:IsPony()
-        local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-        local bon = ply:LookupBone(bn) or 0
-
-        if (bon) then
-            local bp, ba = ply:GetBonePosition(bon)
-            bp = bp or self:GetPos()
-            ba = ba or self:GetAngles()
-
-            if bp then
-                opos = bp
-            end
-
-            if ba then
-                oang = ba
-            end
-
-            if isPony then
-                opos = opos + (oang:Forward() * 6.4) + (oang:Right() * -1.8) + (oang:Up() * 0)
-                oang:RotateAroundAxis(oang:Right(), 80)
-                oang:RotateAroundAxis(oang:Forward(), 12)
-                oang:RotateAroundAxis(oang:Up(), 20)
-            else
-                oang:RotateAroundAxis(oang:Forward(), 90)
-                oang:RotateAroundAxis(oang:Right(), 90)
-                oang:RotateAroundAxis(oang:Forward(), 90)
-                opos = opos + oang:Right() * 3.5
-                opos = opos + oang:Forward() * 2
-                opos = opos + oang:Up() * 0
-                oang:RotateAroundAxis(oang:Up(), -90)
-            end
-
-            if (isPony) then
-                if (horn) then
-                    opos = opos - oang:Up() * 5
-                else
-                    opos = opos + oang:Up() * 3
-                end
-            end
-
-            self:SetupBones()
-            matrix = self:GetBoneMatrix(0)
-
-            if matrix then
-                matrix:SetTranslation(opos)
-                matrix:SetAngles(oang)
-                self:SetBoneMatrix(0, matrix)
-            end
-        end
-    end
-
-    render.MaterialOverride()
-    draw.NoTexture()
-    local cl = self:GetDecalColor()
-    render.SetColorModulation(cl.x, cl.y, cl.z)
-    render.SetBlend(1)
-    self:SetBodygroup(1, 1)
+    -- local ply = self:GetOwner()
+    -- self:SetModelScale(1, 0)
+    -- self:SetSubMaterial()
+    -- local matrix
+    -- local horn = false
+    -- local opos = self:GetPos()
+    -- local oang = self:GetAngles()
+    -- if IsValid(ply) then
+    --     local isPony = ply:IsPony()
+    --     local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+    --     local bon = ply:LookupBone(bn) or 0
+    --     if (bon) then
+    --         local bp, ba = ply:GetBonePosition(bon)
+    --         bp = bp or self:GetPos()
+    --         ba = ba or self:GetAngles()
+    --         if bp then
+    --             opos = bp
+    --         end
+    --         if ba then
+    --             oang = ba
+    --         end
+    --         if isPony then
+    --             opos = opos + (oang:Forward() * 6.4) + (oang:Right() * -1.8) + (oang:Up() * 0)
+    --             oang:RotateAroundAxis(oang:Right(), 80)
+    --             oang:RotateAroundAxis(oang:Forward(), 12)
+    --             oang:RotateAroundAxis(oang:Up(), 20)
+    --         else
+    --             oang:RotateAroundAxis(oang:Forward(), 90)
+    --             oang:RotateAroundAxis(oang:Right(), 90)
+    --             oang:RotateAroundAxis(oang:Forward(), 90)
+    --             opos = opos + oang:Right() * 3.5
+    --             opos = opos + oang:Forward() * 2
+    --             opos = opos + oang:Up() * 0
+    --             oang:RotateAroundAxis(oang:Up(), -90)
+    --         end
+    --         if (isPony) then
+    --             if (horn) then
+    --                 opos = opos - oang:Up() * 5
+    --             else
+    --                 opos = opos + oang:Up() * 3
+    --             end
+    --         end
+    --         self:SetupBones()
+    --         matrix = self:GetBoneMatrix(0)
+    --         if matrix then
+    --             matrix:SetTranslation(opos)
+    --             matrix:SetAngles(oang)
+    --             self:SetBoneMatrix(0, matrix)
+    --         end
+    --     end
+    -- end
+    -- render.MaterialOverride()
+    -- draw.NoTexture()
+    -- local cl = self:GetDecalColor()
+    -- render.SetColorModulation(cl.x, cl.y, cl.z)
+    -- render.SetBlend(1)
+    -- self:SetBodygroup(1, 1)
     self:DrawModel()
-    render.SetColorModulation(1, 1, 1)
+    -- render.SetColorModulation(1, 1, 1)
 end
 
 function SWEP:GetViewModelPosition(epos, eang)
@@ -138,7 +129,7 @@ SPRAYPAINT_DECALPREVIEW_CACHE = {}
 function SWEP:GetPreviewMat(decal)
     local ply = self:GetOwner()
     decal = decal or self:GetCurrentDecal()
-    local decalmat = util.DecalMaterial(decal)
+    local decalmat = SPRAYPAINT_MATLOOKUP[decal] or util.DecalMaterial(decal)
     if (not decalmat) then return Material("___error") end
     local mat = Material(decalmat) --let's create a new material
     if (not mat or (mat and mat:IsError())) then return Material("___error") end
@@ -169,7 +160,7 @@ function SWEP:GetPreviewMat(decal)
         params["$vertexcolor"] = 1
         params["$vertexalpha"] = 1
         params["$decalscale"] = sc
-        SPRAYPAINT_DECALPREVIEW_CACHE[decal] = CreateMaterial(decal .. "decalpreviewmat", shader, params)
+        SPRAYPAINT_DECALPREVIEW_CACHE[decal] = CreateMaterial(decal .. "decalpreviewmat1", shader, params)
     end
 
     return SPRAYPAINT_DECALPREVIEW_CACHE[decal]
@@ -185,7 +176,7 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
 end)
 
 function SWEP:DrawSpraypaintReticle()
-    if (CurTime() < self:GetNextPrimaryFire()) then return end
+    if (CurTime() < self:GetNextPrimaryFire() - FrameTime()) then return end
     local trace = self:GetTrace()
     if (not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance()) then return end
     if (trace.HitSky) then return end

@@ -39,6 +39,18 @@ if ValidPanel(Gui) then
     Gui = nil
 end
 
+concommand.Add("test_killscoreboard", function()
+    if ValidPanel(Gui) then
+        Gui:Remove()
+        Gui = nil
+    end
+
+    if ValidPanel(LASTSCOREBOARD) then
+        LASTSCOREBOARD:Remove()
+        LASTSCOREBOARD = nil
+    end
+end)
+
 if ValidPanel(GuiQueue) then
     GuiQueue:Remove()
     GuiQueue = nil
@@ -47,6 +59,11 @@ end
 if ValidPanel(GuiAdmin) then
     GuiAdmin:Remove()
     GuiAdmin = nil
+end
+
+if ValidPanel(GuiSeekBar) then
+    GuiSeekBar:Remove()
+    GuiSeekBar = nil
 end
 
 function GM:ScoreboardShow()
@@ -111,6 +128,44 @@ function GM:MenuShow()
 
         GuiAdmin:InvalidateLayout()
         GuiAdmin:SetVisible(true)
+
+        if not ValidPanel(GuiSeekBar) then
+            GuiSeekBar = vgui.Create("DButton")
+            GuiSeekBar:SetText("")
+            GuiSeekBar:SetSize(ScrW(), ScrH() * .142)
+            GuiSeekBar:SetPos(0, ScrH() - ScrH() * .142)
+
+            function GuiSeekBar:Paint(w, h)
+                Theater = LocalPlayer():GetTheater()
+                local Video = Theater and Theater:GetVideo()
+
+                if Video and Video:IsTimed() and (Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
+                    local percent = math.Clamp(((CurTime() - Video:StartTime()) / Video:Duration()) * 100, 0, 100)
+                    local bh = h * 1 / 4
+                    draw.RoundedBox(0, 0, h - bh, w, bh + 1, Color(0, 0, 0, 200))
+                    draw.RoundedBox(0, 0, h - bh, w * (percent / 100), bh + 1, Color(255, 255, 255, 255))
+
+                    if GuiSeekBar:IsHovered() and (ScrH() - gui.MouseY()) <= bh then
+                        local mpos = gui.MouseX()
+                        self.hovertime = (mpos / w) * Video:Duration()
+                        local strSeconds = string.FormatSeconds(math.Clamp(math.Round(self.hovertime), 0, Video:Duration()))
+                        surface.SetFont("VideoInfoMedium")
+                        local ts = surface.GetTextSize(strSeconds)
+                        local xpos = math.Clamp(mpos - (ts / 2), 0, w - ts)
+                        DrawTheaterText(strSeconds, "VideoInfoMedium", xpos, h - bh, Color(255, 255, 255, 255), nil, TEXT_ALIGN_BOTTOM)
+                    end
+                end
+            end
+
+            GuiSeekBar.DoClick = function(self)
+                if self.hovertime then
+                    RunConsoleCommand("cinema_seek", self.hovertime)
+                end
+            end
+        end
+
+        GuiSeekBar:InvalidateLayout()
+        GuiSeekBar:SetVisible(true)
     end
 end
 
@@ -124,6 +179,10 @@ function GM:MenuHide()
 
     if ValidPanel(GuiAdmin) then
         GuiAdmin:SetVisible(false)
+    end
+
+    if ValidPanel(GuiSeekBar) then
+        GuiSeekBar:SetVisible(false)
     end
 
     GAMEMODE:HideMouse()

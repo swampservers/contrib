@@ -2,30 +2,6 @@
 -- INSTALL: CINEMA
 local wasf4down = false
 
-concommand.Add("gmod_undo", function()
-    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
-        THIRDPERSON = not THIRDPERSON
-    end
-end)
-
-concommand.Add("+gmod_undo", function()
-    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
-        THIRDPERSON = not THIRDPERSON
-    end
-end)
-
-concommand.Add("undo", function()
-    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
-        THIRDPERSON = not THIRDPERSON
-    end
-end)
-
-concommand.Add("+undo", function()
-    if not (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
-        THIRDPERSON = not THIRDPERSON
-    end
-end)
-
 concommand.Add("swamp_thirdperson", function()
     THIRDPERSON = not THIRDPERSON
 end)
@@ -34,11 +10,11 @@ hook.Add("Think", "ThirdPersonToggler", function()
     local isf4down = input.IsKeyDown(KEY_F4)
 
     if isf4down and not wasf4down then
-        if (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
-            THIRDPERSON = not THIRDPERSON
-        else
-            LocalPlayerNotify("The thirdperson binding is now " .. tostring(input.LookupBinding("gmod_undo") or "unbound"):upper() .. " (bind gmod_undo, or bind swamp_thirdperson, or set swamp_old_binds 1)")
-        end
+        -- if (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
+        THIRDPERSON = not THIRDPERSON
+        -- else
+        --     LocalPlayerNotify("The thirdperson binding is now " .. tostring(input.LookupBinding("gmod_undo") or "unbound"):upper() .. " (bind gmod_undo, or bind swamp_thirdperson, or set swamp_old_binds 1)")
+        -- end
     end
 
     wasf4down = isf4down
@@ -47,7 +23,7 @@ end)
 function UseThirdperson()
     local wc = IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass()
 
-    return THIRDPERSON or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk")
+    return THIRDPERSON or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(LocalPlayer()) and not LocalPlayer():InVehicle())
 end
 
 hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)

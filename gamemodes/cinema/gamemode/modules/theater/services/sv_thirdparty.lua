@@ -35,8 +35,8 @@ sv_GetVideoInfo.thirdparty = function(self, key, ply, onSuccess, onFailure)
         method = "HEAD",
         url = realkey,
         headers = {
-            ["Referer"] = "https://swampservers.net/",
-            ["Origin"] = "https://swampservers.net/",
+            ["Referer"] = "https://swamp.sv/",
+            ["Origin"] = "https://swamp.sv/",
             ["Cache-Control"] = "no-cache"
         },
         success = function(code, body, headers)

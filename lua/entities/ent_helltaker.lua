@@ -128,7 +128,7 @@ if CLIENT then
         HELLTAKERHTML = vgui.Create("HTML", HELLTAKERFRAME)
         HELLTAKERHTML:SetPos(0, 24)
         HELLTAKERHTML:SetSize(900, 890)
-        HELLTAKERHTML:OpenURL("swampservers.net/helltaker")
+        HELLTAKERHTML:OpenURL("swamp.sv/helltaker")
         HELLTAKERHTML:SetZPos(-10000)
         HELLTAKERHTML:RunJavascript("defaultcontrols=false;")
         HELLTAKERFRAME:SetMouseInputEnabled(false)

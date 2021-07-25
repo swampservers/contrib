@@ -5,37 +5,51 @@ ColDefault = Color(200, 200, 200)
 ColHighlight = Color(158, 37, 33)
 include('shared.lua')
 
-GM.HUDToHide = {"CHudHealth", "CHudSuitPower", "CHudBattery", "CHudCrosshair", "CHudAmmo", "CHudSecondaryAmmo", "CHudZoom", "CHUDQuickInfo"}
+-- CHudCrosshair=true,
+GM.HUDToHide = {
+    CHudHealth = true,
+    CHudSuitPower = true,
+    CHudBattery = true,
+    CHudAmmo = true,
+    CHudSecondaryAmmo = true,
+    CHudZoom = true,
+    CHUDQuickInfo = true
+}
 
-GM.CrosshairWeapons = {"weapon_357", "weapon_ar2", "weapon_bugbait", "weapon_crossbow", "weapon_crowbar", "weapon_frag", "weapon_physcannon", "weapon_pistol", "weapon_rpg", "weapon_smg1", "weapon_stunstick", "weapon_shotgun"}
-
-GM.AmmoWeapons = {"weapon_boltaction", "cvx_blocks",}
-
+-- GM.CrosshairWeapons = {
+--     weapon_crossbow = true,
+--     weapon_physcannon = true,
+--     weapon_physgun = true,
+--     weapon_pistol = true,
+--     weapon_357 = true,
+--     weapon_ar2 = true,
+--     weapon_bugbait = true,
+--     weapon_crowbar = true,
+--     weapon_frag = true,
+--     weapon_rpg = true,
+--     weapon_smg1 = true,
+--     weapon_stunstick = true,
+--     weapon_shotgun = true
+-- }
+-- GM.AmmoWeapons = {"weapon_boltaction", "cvx_blocks",}
 --[[---------------------------------------------------------
    Name: gamemode:HUDShouldDraw( name )
    Desc: return true if we should draw the named element
 -----------------------------------------------------------]]
 function GM:HUDShouldDraw(name)
-    -- Allow the weapon to override this
     local ply = LocalPlayer()
+    local wep = IsValid(ply) and ply:GetActiveWeapon()
 
-    if (IsValid(ply)) then
-        local wep = ply:GetActiveWeapon()
-
-        if wep and wep:IsValid() then
-            if name == "CHudCrosshair" and table.HasValue(self.CrosshairWeapons, wep:GetClass()) then return true end
-            if name == "CHudAmmo" and table.HasValue(self.AmmoWeapons, wep:GetClass()) then return true end
-        end
-
-        if (wep and wep:IsValid() and wep.HUDShouldDraw ~= nil) then return wep.HUDShouldDraw(wep, name) end
+    if (IsValid(wep)) then
+        -- local cl = wep:GetClass()
+        -- if name == "CHudCrosshair" and (wep.Base == "weapon_csbasegun" or self.CrosshairWeapons[cl]) then return true end
+        -- if name == "CHudAmmo" and table.HasValue(self.AmmoWeapons, wep:GetClass()) then return true end
+        if wep.HUDShouldDraw then return wep:HUDShouldDraw(name) end
+    else
+        if name == "CHudCrosshair" then return false end
     end
 
-    if not Init then
-        while true do
-        end
-    end
-
-    return not table.HasValue(self.HUDToHide, name)
+    return (not self.HUDToHide[name])
 end
 
 --[[---------------------------------------------------------

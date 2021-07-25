@@ -3,7 +3,7 @@
 GM.Name = "Cinema"
 GM.Author = "Swamp(STEAM_0:0:38422842) and pixelTail Games"
 GM.Email = "swampservers@gmail.com"
-GM.Website = "swampservers.net"
+GM.Website = "swamp.sv"
 GM.Version = "swamp"
 GM.TeamBased = false
 include('sh_load.lua')
@@ -34,20 +34,19 @@ end
 -----------------------------------------------------------]]
 function GM:PlayerShouldTakeDamage(ply, attacker)
     if attacker:GetClass() == "sent_popcorn_thrown" then return false end
-    if attacker.dodgeball then return false end
-
-    if Safe(ply) or Safe(attacker) then
-        if attacker:IsPlayer() and ply:InTheater() and ply:GetTheater():GetOwner() == attacker then return true end
-
-        return false
-    end
+    if attacker:GetClass() == "dodgeball" then return false end
+    if ply:IsProtected(attacker) then return false end
 
     return true
 end
 
 function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
-    if hitgroup == HITGROUP_HEAD then
-        dmginfo:ScaleDamage(2)
+    local inf = dmginfo:GetInflictor()
+
+    if not IsValid(inf) or not inf.GunType then
+        if hitgroup == HITGROUP_HEAD then
+            dmginfo:ScaleDamage(2)
+        end
     end
 
     if ply:InVehicle() and dmginfo:GetDamageType() == DMG_BURN then
@@ -59,7 +58,7 @@ function GM:EntityTakeDamage(target, dmginfo)
     att = dmginfo:GetAttacker()
 
     if (dmginfo:GetInflictor() and dmginfo:GetInflictor():IsValid() and dmginfo:GetInflictor():GetClass() == "npc_grenade_frag") then
-        dmginfo:ScaleDamage(100)
+        dmginfo:ScaleDamage(2) --100)
     end
 
     if (dmginfo:GetAttacker() and dmginfo:GetAttacker():IsValid() and dmginfo:GetAttacker():GetClass() == "player" and dmginfo:GetAttacker():GetActiveWeapon() and dmginfo:GetAttacker():GetActiveWeapon():IsValid() and dmginfo:GetAttacker():GetActiveWeapon():GetClass() == "weapon_shotgun") then
@@ -84,25 +83,23 @@ function GM:ShouldCollide(Ent1, Ent2)
 end
 
 function GM:Move(ply, mv)
-    -- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 end
 
+-- if (player_manager.RunClass(ply, "Move", mv)) then return true end
 function GM:SetupMove(ply, mv, cmd)
-    -- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 end
 
+-- if (player_manager.RunClass(ply, "StartMove", mv, cmd)) then  return true end
 function GM:FinishMove(ply, mv)
-    -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 end
 
+-- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 -- Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
 function GM:PhysgunPickup(ply, ent)
-    if (ent:GetClass():lower() == "player") then
-        if ent:Alive() and (not Safe(ent)) and (not Safe(ply)) and not ent:IsFrozen() then
-            ply.physgunHeld = ent
+    if ent:IsPlayer() and ent:Alive() and not ent:IsProtected() and not ply:IsProtected() and not ent:IsFrozen() then
+        if ent.Obesity and ent:Obesity() > 40 then return end
 
-            return true
-        end
+        return true
     end
 
     if ply:GetMoveType() == MOVETYPE_NOCLIP then return true end

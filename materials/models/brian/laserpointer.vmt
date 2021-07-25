@@ -2,8 +2,11 @@
 {
 	$basetexture "models/brian/laserpointer"
 
-	$bumpmap "models/brian/laserpointer_mask"
-	$phong "1"
-	$phongboost "1"
-	$phongfresnelranges "[0.05 0.5 1]"
+	$bumpmap "effects/flat_normal"
+	"$basemapluminancephongmask" "1"
+	"$phong" "1"
+	"$phongboost" "15"
+	"$phongexponent" "16"
+	"$phongfresnelranges"	"[0 0.5 1]"
+
 }

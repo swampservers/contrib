@@ -6,7 +6,7 @@
 if CLIENT then
     include('weapon_vape/cl_init.lua')
 else
-    include('weapon_vape/shared.lua')
+    include('weapon_vape/init.lua')
 end
 
 SWEP.PrintName = "American Vape"

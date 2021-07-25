@@ -1,270 +1,353 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-surface.CreateFont('SS_Heading', {
-    font = 'coolvetica',
-    size = 64
-})
-
-surface.CreateFont('SS_Heading2', {
-    font = 'coolvetica',
-    size = 24
-})
-
-surface.CreateFont('SS_Heading3', {
-    font = 'coolvetica',
-    size = 19
-})
-
-surface.CreateFont('SS_Heading4', {
-    font = 'Arial',
-    size = 14
-})
-
-surface.CreateFont('SS_POINTSFONT', {
-    font = 'Righteous',
-    size = 42
-})
-
-surface.CreateFont('SS_INCOMEFONT', {
-    font = 'Lato',
-    size = 22
-})
-
-surface.CreateFont('SS_JOINFONT', {
-    font = 'Lato',
-    size = 18,
-    weight = 700
-})
-
-surface.CreateFont('SS_JOINFONTBIG', {
-    font = 'Lato',
-    size = 22,
-    weight = 700
-})
-
-surface.CreateFont('SS_DESCTITLEFONT', {
-    font = 'Righteous',
-    size = 32
-})
-
-surface.CreateFont('SS_DESCFONT', {
-    font = 'Lato',
-    size = 18
-})
-
-surface.CreateFont('SS_DESCINSTFONT', {
-    font = 'Lato',
-    size = 20
-})
-
-pointshopDollarImage = Material("icon16/money_dollar.png")
-pointshopMoneyImage = Material("icon16/money.png")
-
-surface.CreateFont("SS_Default", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 13,
-    weight = 500,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Donate1", {
-    font = "Roboto",
-    size = 36,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Donate2", {
-    font = "Roboto",
-    size = 28,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Models", {
-    font = "Roboto",
-    size = 24,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_DefaultBold", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 13,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Heading1", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 18,
-    weight = 500,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Heading1Bold", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 18,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_ButtonText1", {
-    font = "Roboto",
-    size = 22,
-    weight = 700,
-    antialias = true,
-})
-
-surface.CreateFont("SS_ItemText", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 11,
-    weight = 500,
-    antialias = true,
-})
-
-surface.CreateFont("SS_LargeTitle", {
-    font = "Righteous",
-    size = 48,
-    weight = 900,
-    antialias = true,
-})
-
-surface.CreateFont("SS_SubCategory", {
-    font = "Righteous",
-    size = 36,
-})
-
-surface.CreateFont('SS_ProductName', {
-    font = 'Lato',
-    size = 17
-})
-
-surface.CreateFont("SS_Price", {
-    font = "Righteous",
-    size = 31,
-    weight = 900,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Category", {
-    font = "Lato",
-    size = 18,
-    weight = 200,
-    antialias = true,
-})
-
-local ALL_ITEMS = 1
-local OWNED_ITEMS = 2
-local UNOWNED_ITEMS = 3
-SS_ColorWhite = Color(255, 255, 255)
-SS_ColorBlack = Color(0, 0, 0)
-
-SS_PaintTileBG = function(pnl, w, h)
-    surface.SetDrawColor(SS_TileBGColor)
-    surface.DrawRect(0, 0, w, h)
-end
-
-SS_PaintGridBG = function(pnl, w, h)
-    surface.SetDrawColor(SS_GridBGColor)
-    surface.DrawRect(0, 0, w, h)
-end
-
-SS_PaintDarkenOnHover = function(pnl, w, h)
-    if pnl:IsHovered() then
-        surface.SetDrawColor(Color(0, 0, 0, 100))
-        surface.DrawRect(0, 0, w, h)
-    end
-end
-
 local PANEL = {}
-SS_MENUWIDTH = 1203
-SS_MENUHEIGHT = 808
-SS_NAVBARHEIGHT = 56
-SS_BOTBARHEIGHT = 88
-SS_RPANEWIDTH = 360
-SS_PREVIEWHEIGHT = 470
-SS_TILESIZE = 156
-SS_AVATARPAD = 5
-SS_INVENTORY_POINT_OUT = -100
+local froggy = Material("vgui/frog.png")
 
-net.Receive("SS_PointOutInventory", function()
-    SS_INVENTORY_POINT_OUT = RealTime()
-end)
+surface.CreateFont("SwampShop1", {
+    font = "averiaserif-bold",
+    weight = 1000,
+    size = 40
+})
+
+surface.CreateFont("SwampShop2", {
+    font = "averiaserif-bold",
+    weight = 1000,
+    size = 36
+})
 
 function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
-    self.navbar = vgui.Create("DPanel", self)
-    self.navbar:SetTall(SS_NAVBARHEIGHT)
-    self.navbar:Dock(TOP)
-    self.navbar:SetBackgroundColor(BrandColorAlternate)
-    self.botbar = vgui.Create("DPanel", self)
-    self.botbar:SetTall(SS_BOTBARHEIGHT)
-    self.botbar:Dock(BOTTOM)
-    self.botbar:SetBackgroundColor(SS_BotBGColor)
-    self.rpane = vgui.Create('DPanel', self)
-    self.rpane:SetWide(SS_RPANEWIDTH)
-    self.rpane:Dock(RIGHT)
-    self.rpane:SetBackgroundColor(SS_TileBGColor)
-    SS_PreviewPane = self.rpane
-    self.lpane = vgui.Create('DPanel', self)
-    self.lpane:Dock(FILL)
-    self.lpane:SetBackgroundColor(SS_GridBGColor)
-    local p = vgui.Create("DLabel", self.navbar)
-    p:SetText("TOY SHOβ")
-    p:SetFont('SS_LargeTitle')
-    p:SizeToContentsX()
-    p:DockMargin(16, 0, 16, 0)
-    p:SetColor(SS_ColorWhite)
-    --p:SetPaintBackground(false)
-    p:Dock(LEFT)
-    -- close button
-    p = vgui.Create('DButton', self.navbar)
-    p:SetFont('marlett')
-    p:SetText('r')
-    p.Paint = SS_PaintDarkenOnHover
-    p:SetColor(SS_ColorWhite)
-    p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
-    p:Dock(RIGHT)
 
-    p.DoClick = function()
-        SS_ToggleMenu()
-    end
+    self.topbar = vgui("DPanel", self, function(navbar)
+        navbar:SetTall(SS_NAVBARHEIGHT)
+        navbar:Dock(TOP)
+        navbar:SetZPos(32767)
+        navbar.Paint = SS_PaintBrandStripes
 
-    -- help button
-    p = vgui.Create('DButton', self.navbar)
-    p:SetFont('marlett')
-    p:SetText('s')
-    p.Paint = SS_PaintDarkenOnHover
-    p:SetColor(SS_ColorWhite)
-    p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
-    p:Dock(RIGHT)
+        --title text 
+        vgui("DLabel", function(p)
+            p:SetText("SWAMP SHOP") --SHOβ") ⮩ \n  
+            p:SetFont('ScoreboardTitleSmall') --SS_LargeTitle') --ScoreboardTitleSmall
+            p:SizeToContentsX()
+            p:DockMargin(16, 0, 8, 0)
+            -- p:DockMargin(16, 0, 0, 0)
+            p:SetColor(SS_ColorWhite)
+            --p:SetPaintBackground(false)
+            p:Dock(LEFT)
+        end)
 
-    p.DoClick = function()
-        SS_ToggleMenu()
-        ShowMotd("https://swampservers.net/points")
-    end
+        -- close button
+        vgui("DButton", function(p)
+            p:SetFont('marlett')
+            p:SetText('r')
+            p.Paint = SS_PaintDarkenOnHover
+            p:SetColor(SS_ColorWhite)
+            p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
+            p:Dock(RIGHT)
 
-    -- toggle theme button
-    p = vgui.Create('DImageButton', self.navbar)
-    p:SetImage("icon16/lightbulb.png")
-    p:SetStretchToFit(false)
-    p.Paint = SS_PaintDarkenOnHover
-    p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
-    p:SetTooltip("Toggle dark mode/light mode")
-    p:Dock(RIGHT)
+            p.DoClick = function()
+                SS_ToggleMenu()
+            end
+        end)
 
-    p.DoClick = function()
-        GetConVar("ps_darkmode"):SetBool(not SS_DarkMode) --activates the callback function
-    end
+        -- toggle theme button
+        vgui("DImageButton", function(p)
+            p:SetImage("icon16/palette.png")
+            p:SetStretchToFit(false)
+            p.Paint = SS_PaintDarkenOnHover
+            p:SetSize(SS_NAVBARHEIGHT, SS_NAVBARHEIGHT)
+            p:SetTooltip("Change UI Color")
+            p:Dock(RIGHT)
+
+            p.DoClick = function()
+                if (IsValid(p.menu)) then
+                    p.menu:Remove()
+
+                    return
+                end
+
+                local menu = DermaMenu()
+                p.menu = menu
+                menu:SetMinimumWidth(24)
+                menu.Paint = SS_PaintShaded
+                local p2 = vgui.Create("DImageButton", menu)
+                p2:SetImage("icon16/lightbulb.png")
+                p2:SetStretchToFit(false)
+                p2.Paint = SS_PaintDarkenOnHover
+                -- p:SetSize(SS_NAVBARHEIGHT / 2, SS_NAVBARHEIGHT)
+                p2:SetTooltip("Toggle dark mode/light mode")
+
+                -- p:Dock(RIGHT)
+                p2.DoClick = function()
+                    GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
+                end
+
+                menu:AddPanel(p2)
+                p2:SetSize(24, 24)
+
+                for k, v in pairs(BrandColors) do
+                    local ColorChoice = vgui.Create("DButton", menu)
+                    ColorChoice:SetText("")
+
+                    ColorChoice.Paint = function(pnl, w, h)
+                        surface.SetDrawColor(GetConVar("ps_themecolor"):GetInt() == k and Color(255, 255, 255) or Color(64, 64, 64))
+                        surface.DrawRect(2, 2, w - 4, w - 4)
+                        surface.SetDrawColor(v)
+                        surface.DrawRect(4, 4, w - 8, w - 8)
+                    end
+
+                    ColorChoice.DoClick = function(pnl)
+                        GetConVar("ps_themecolor"):SetInt(k)
+                        menu:Remove()
+                    end
+
+                    menu:AddPanel(ColorChoice)
+                    ColorChoice:SetSize(24, 24)
+                end
+
+                local w, h = p:GetSize()
+                local x, y = p:LocalToScreen((w / 2) - 12, (h / 2) + 12)
+                menu:Open(x, y)
+            end
+        end)
+    end)
+
+    --bottompane
+    self.botbar = vgui("DPanel", self, function(p)
+        p:SetTall(SS_BOTBARHEIGHT)
+        p:SetZPos(32767)
+        p:Dock(BOTTOM)
+
+        function p:Paint(w, h)
+            SS_PaintMD(self, w, h)
+            -- BrandBackgroundPatternOverlay(0,h-SS_BOTBARSUBHEIGHT,w,SS_BOTBARSUBHEIGHT,500)
+            BrandBackgroundPatternOverlay(0, 0, w, h - SS_BOTBARSUBHEIGHT, 500)
+            -- BrandBackgroundPattern(0,40,w,h-40,500)
+            -- surface.SetDrawColor(BrandColorGray)
+            -- surface.DrawRect(0,0,w,h-SS_BOTBARSUBHEIGHT)
+            -- -- SS_PaintMD(self, w,h-SS_BOTBARSUBHEIGHT)
+            BrandDropDownGradient(0, h - SS_BOTBARSUBHEIGHT, w)
+        end
+
+        -- avatar/points area
+        vgui("DPanel", function(p)
+            p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+            p:Dock(LEFT)
+            p:SetWide(420)
+            p.Paint = noop
+
+            local av = vgui("AvatarImage", function(p)
+                p:Dock(LEFT)
+                p:SetPlayer(LocalPlayer(), 184)
+                p:SetSize(SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2), SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2))
+                p:SetPos(SS_COMMONMARGIN, SS_COMMONMARGIN)
+            end)
+
+            vgui("DPanel", function(p)
+                p:SetWide(384 - av:GetWide() - SS_COMMONMARGIN * 2)
+                p:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
+                p:Dock(FILL)
+                p:InvalidateLayout(true)
+
+                local helpbutton = vgui('DImageButton', function(p)
+                    p:SetSize(16, 16)
+                    p:SetTooltip("Info")
+                    p:SetTextColor(MenuTheme_TX)
+                    p:SetImage("icon16/help.png")
+
+                    p.DoClick = function()
+                        SS_ToggleMenu()
+                        ShowMotd("https://swamp.sv/points")
+                    end
+                end)
+
+                -- vgui("DButton", function(p)
+                --     p:SetFont('DermaDefault')
+                --     p:SetText('(?)')
+                --     p.Paint = SS_PaintDarkenOnHover
+                --     p:SetColor(SS_ColorWhite)
+                --     p:SetSize(20,20)
+                --     p:SetContentAlignment(5)
+                --     p.DoClick = function()
+                --         SS_ToggleMenu()
+                --         ShowMotd("https://swamp.sv/points")
+                --     end
+                -- end)
+                local givebutton = vgui('DImageButton', function(p)
+                    p:SetSize(16, 16)
+                    p:SetTooltip("Give Points")
+                    p:SetTextColor(MenuTheme_TX)
+                    p:SetImage("icon16/group_go.png")
+
+                    p.DoClick = function()
+                        vgui.Create('DPointShopGivePoints')
+                    end
+                end)
+
+                p.Paint = function(pnl, w, h)
+                    local x, y = 4, (h / 2)
+                    draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', x, y - 15, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                    local newoffset = 5
+                    local w2, h2 = draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', x, y + 16 + newoffset, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                    helpbutton:SetPos(x + w2 + 7, y + 11 + newoffset)
+                    givebutton:SetPos(x + w2 + 28, y + 10 + newoffset)
+                end
+            end)
+        end)
+
+        vgui("DPanel", function(p)
+            p:Dock(FILL)
+            p.Paint = noop
+
+            self.invbar = vgui("DPanel", function(p)
+                -- p:SetWide(SS_RPANEWIDTH)
+                p:Dock(FILL)
+                -- p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+                p.Paint = noop
+
+                vgui("DPanel", function(p)
+                    p.Paint = noop
+                    p:Dock(LEFT)
+
+                    function p:Think()
+                        local pp = self:GetParent()
+                        local cw = 0
+
+                        for i, v in ipairs(pp:GetChildren()) do
+                            if v ~= self then
+                                cw = cw + v:GetWide()
+                            end
+                        end
+
+                        self:SetWide((pp:GetWide() - cw) / 2)
+                    end
+                end)
+            end)
+
+            vgui("DLabel", function(p)
+                p:Dock(BOTTOM)
+                p:SetText("Inventory")
+                p:SetColor(color_white)
+                p:SetFont('SS_Donate2')
+                p:SetContentAlignment(5)
+                p:SetTall(SS_BOTBARSUBHEIGHT)
+            end)
+        end)
+
+        --donate button
+        vgui("DButton", function(p)
+            p:Dock(RIGHT)
+            p:SetFont("SS_INCOMEFONT")
+            p:SetText("")
+            p:SetWide(420)
+
+            p.DoClick = function()
+                gui.OpenURL('https://swamp.sv/donate/')
+            end
+
+            local DollarParticlePoints = -0.2
+            local DollarParticles = {}
+
+            p.Paint = function(self, w, h)
+                SS_PaintDarkenOnHover(self, w, h)
+                local alpha = 180
+                local mousex, mousey = self:CursorPos()
+                local distscale = 250
+                alpha = math.max(distscale - (Vector(mousex, mousey, 0):Distance(Vector(w / 2, h / 2, 0))), 0) / distscale
+                DollarParticlePoints = DollarParticlePoints + (RealFrameTime() * math.max(alpha, 0.02))
+                local ytop = -20
+                local yfade = 32
+
+                while DollarParticlePoints > 0 do
+                    local sc = math.Rand(0.6, 2.4)
+
+                    table.insert(DollarParticles, {
+                        x = math.Rand(0, w),
+                        y = ytop,
+                        speed = sc * 30,
+                        scale = sc,
+                        sinmag = math.Rand(0, 20),
+                        sinfreq = math.Rand(1, 2),
+                        sinofs = math.Rand(0, 6.3),
+                        material = pointshopDollarImage
+                    })
+
+                    DollarParticlePoints = DollarParticlePoints - 0.12
+                end
+
+                for k, v in pairs(DollarParticles) do
+                    v.y = v.y + (RealFrameTime() * v.speed)
+
+                    if v.y > h + 50 then
+                        table.remove(DollarParticles, k)
+                    else
+                        surface.SetDrawColor(220, 220, 220, math.floor(255 * math.min(1, math.min(v.y - ytop, h - v.y) / yfade)))
+                        surface.SetMaterial(v.material)
+                        local iw = math.floor(8 * v.scale) * 2
+                        local ih = math.floor(8 * v.scale) * 2
+                        surface.DrawTexturedRect(math.floor((v.sinmag * math.sin(v.sinofs + (RealTime() * v.sinfreq))) + v.x - (iw / 2)), math.floor(v.y - (ih / 2)), iw, ih)
+                    end
+                end
+
+                local tc = MenuTheme_TXAlt
+                --[[if self:IsHovered() then
+                tc = Color(175,230,69)
+            end]]
+                draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, (h / 2) - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, (h / 2) + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+            end
+        end)
+    end)
+
+    --whole page contents
+    vgui("DPanel", self, function(p)
+        p:DockPadding(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+        p:Dock(FILL)
+        p.Paint = noop
+
+        --preview pane
+        -- SS_PreviewPane = vgui("DPanel", function(p)
+        --     p:SetWide(SS_RPANEWIDTH)
+        --     p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+        --     p:Dock(RIGHT)
+        --     p.Paint = SS_PaintFG
+        SS_PreviewPane = vgui("DPointShopPreview", function(p)
+            p:SetWide(SS_RPANEWIDTH)
+            p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+            p:Dock(RIGHT)
+
+            -- if you want to make the background a tile, do it in preview.lua
+            -- p:Dock(FILL)
+            SS_DescriptionPanel = vgui("DPanel", function(p)
+                p:Dock(BOTTOM)
+                p:SetTall(1)
+
+                -- p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+                -- p:DockMargin(0,0,0,32)
+                p.PerformLayout = function()
+                    SS_DescriptionPanel:InvalidateParent()
+                    SS_DescriptionPanel:SizeToChildren(false, true)
+                end
+
+                p.Paint = noop
+            end)
+        end)
+
+        -- end)
+        self.leftpane = vgui("DPanel", function(p)
+            p:Dock(FILL)
+            p.Paint = noop
+        end)
+    end)
 
     local btns = {}
     local firstCat = true
 
-    local function NewCategory(catname, icon, align)
-        local panel = vgui.Create('DPanel', self.lpane)
+    local function NewCategory(catname, icon, inv)
+        local panel = vgui.Create('DPanel', self.leftpane)
         panel:Dock(FILL)
+        panel:DockMargin(0, 0, 0, 0)
         panel.Paint = function() end
 
         if firstCat then
@@ -275,17 +358,36 @@ function PANEL:Init()
             panel:SetVisible(false)
         end
 
-        local DScrollPanel = vgui.Create('DScrollPanel', panel)
-        DScrollPanel:Dock(FILL)
-        local btn = vgui.Create("DButton", self.navbar)
-        btn:Dock(align or LEFT)
+        --add item list
+        local DScrollPanel = vgui('DScrollPanel', panel, function(p)
+            p:Dock(FILL)
+            p:DockMargin(0, 0, 0, 0)
+            p:DockPadding(0, 0, 0, 0)
+            --p.Paint = SS_PaintDirty
+            --p.VBar:DockMargin(0, 0, 0, 0)
+            p.VBar:SetWide(SS_SCROLL_WIDTH)
+            SS_SetupVBar(p.VBar)
+            p.VBar:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+
+            --the pretty layout kinda just breaks when you take away the scroll bar so let's just leave it there
+            function p.VBar:SetUp(_barsize_, _canvassize_)
+                self.BarSize = _barsize_
+                self.CanvasSize = math.max(_canvassize_ - _barsize_, 0)
+                self:SetEnabled(true)
+                self.btnGrip:SetEnabled(_canvassize_ > _barsize_)
+                self:InvalidateLayout()
+            end
+        end)
+
+        local btn = vgui.Create("DButton", inv and self.invbar or self.topbar)
+        btn:Dock(LEFT)
         btn:SetText(catname)
         btn:SetFont("SS_Category")
         btn:SetImage(icon)
 
         btn.Paint = function(pnl, w, h)
             if pnl:GetActive() then
-                surface.SetDrawColor(Color(0, 0, 0, 192))
+                surface.SetDrawColor(Color(0, 0, 0, 144))
                 surface.DrawRect(0, 0, w, h)
                 --gradient drop down?
             else
@@ -294,7 +396,7 @@ function PANEL:Init()
         end
 
         btn.UpdateColours = function(pnl)
-            pnl:SetTextColor(SS_ColorWhite)
+            pnl:SetTextColor(BrandColorWhite)
         end
 
         btn.PerformLayout = function(pnl)
@@ -352,55 +454,75 @@ function PANEL:Init()
         return DScrollPanel
     end
 
+    local padcnt = 0
+
+    local function Pad(DScrollPanel)
+        local pad = vgui.Create('DPanel', DScrollPanel)
+        pad.Paint = noop
+        pad:SetTall(SS_COMMONMARGIN)
+        pad:Dock(TOP)
+        DScrollPanel:AddItem(pad)
+    end
+
     local function NewSubCategoryTitle(DScrollPanel, txt)
-        local p2 = vgui.Create("DPanel", DScrollPanel)
-        p2:Dock(TOP)
-        p2:SetPaintBackground(true)
+        vgui("DPanel", DScrollPanel, function(p)
+            p:Dock(TOP)
+            p:DockMargin(0, 0, SS_COMMONMARGIN, 0)
+            p:SetPaintBackground(true)
+            p:SetTall(SS_SUBCATEGORY_HEIGHT)
+            p.Paint = SS_PaintFG
 
-        p2.Paint = function(p, w, h)
-            surface.SetDrawColor(SS_TileBGColor)
-            surface.DrawRect(0, 0, w, h)
-        end
+            vgui("DLabel", function(p)
+                p:SetText(txt)
+                p:SetFont('SS_SubCategory')
+                p:Dock(FILL)
+                p:SetContentAlignment(4)
+                p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+                p:SetColor(MenuTheme_TX)
 
-        p2:DockMargin(8, 8, 8, 0)
-        local p = vgui.Create("DLabel", p2)
-        p:SetText(txt)
-        p:SetFont('SS_SubCategory')
-        p:Dock(TOP)
-        local lp = 2
-        p:DockMargin(lp * 2, lp, lp, lp)
-        p:SetColor(SS_SwitchableColor)
-        p:SizeToContentsY()
-        p2:SetTall(p:GetTall() + lp * 2)
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextColor(MenuTheme_TX)
+                end
+
+                p:SizeToContentsY()
+            end)
+        end)
     end
 
     local function NewSubCategory(DScrollPanel)
         local ShopCategoryTabLayout = vgui.Create('DIconLayout', DScrollPanel)
-        ShopCategoryTabLayout:DockMargin(8, 8, 0, 0)
         ShopCategoryTabLayout:Dock(TOP)
+        ShopCategoryTabLayout:DockMargin(0, 0, 0, 0)
         ShopCategoryTabLayout:SetBorder(0)
-        ShopCategoryTabLayout:SetSpaceX(8)
-        ShopCategoryTabLayout:SetSpaceY(8)
+        ShopCategoryTabLayout:SetSpaceX(SS_COMMONMARGIN)
+        ShopCategoryTabLayout:SetSpaceY(SS_COMMONMARGIN)
         DScrollPanel:AddItem(ShopCategoryTabLayout)
 
         return ShopCategoryTabLayout
     end
 
     local function FinishCategory(DScrollPanel)
-        local pad = vgui.Create('DPanel', DScrollPanel)
-        pad.Paint = function() end
-        pad:SetTall(8)
-        pad:Dock(TOP)
-        DScrollPanel:AddItem(pad)
+        Pad(DScrollPanel)
     end
 
-    -- items
     for _, CATEGORY in ipairs(SS_Layout) do
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
+        local first = true
+        Pad(cat)
 
         for _, LAYOUT in ipairs(CATEGORY.layout) do
+            --we cap off previous ones here
+            if (first) then
+                if (#LAYOUT.products > 0) then
+                    first = false
+                end
+            else
+                Pad(cat)
+            end
+
             if LAYOUT.title then
                 NewSubCategoryTitle(cat, LAYOUT.title)
+                Pad(cat)
             end
 
             local scat = NewSubCategory(cat)
@@ -413,305 +535,431 @@ function PANEL:Init()
             end
         end
 
-        FinishCategory(cat)
+        Pad(cat)
     end
 
-    SS_InventoryPanel = NewCategory("Inventory", 'icon16/basket.png', RIGHT)
-    SS_ValidInventory = false
+    SS_AuctionPanel = NewCategory("Auctions", 'icon16/house.png')
+    SS_AuctionPanel.DesiredSearch = 1
+    Pad(SS_AuctionPanel)
 
-    function SS_InventoryPanel:Think()
-        if not SS_ValidInventory then
-            -- if #self:GetCanvas():GetChildren() > 0 then
-            local scroll2 = self:GetVBar():GetScroll()
-
-            for k, v in pairs(self:GetCanvas():GetChildren()) do
-                v:Remove()
-            end
-
-            -- return
-            -- end
-            -- print("Items reloading")
-            local itemstemp = LocalPlayer().SS_Items or {}
-
-            table.sort(itemstemp, function(a, b)
-                local i = 0
-                local ml = math.min(string.len(a.name), string.len(b.name))
-
-                while i < ml do
-                    i = i + 1
-                    local a1 = string.byte(a.name, i)
-                    local b1 = string.byte(b.name, i)
-                    if a1 ~= b1 then return a1 < b1 end
-                end
-
-                if string.len(a.name) == string.len(b.name) then return a.id < b.id end
-
-                return string.len(a.name) > string.len(b.name)
-            end)
-
-            local categorizeditems = {}
-
-            for _, item in pairs(itemstemp) do
-                local invcategory = item.invcategory or "Other"
-                categorizeditems[invcategory] = categorizeditems[invcategory] or {}
-                table.insert(categorizeditems[invcategory], item)
-            end
-
-            for _, cat in ipairs(SS_InvCategories) do
-                if categorizeditems[cat] then
-                    NewSubCategoryTitle(self, cat)
-                    local sc = NewSubCategory(self)
-
-                    for _, item in pairs(categorizeditems[cat]) do
-                        local model = vgui.Create('DPointShopItem')
-                        model:SetItem(item)
-                        model:SetSize(SS_TILESIZE, SS_TILESIZE)
-                        sc:Add(model)
-                    end
-                end
-            end
-
-            FinishCategory(self)
-            self:InvalidateLayout()
-            SS_ValidInventory = true
-
-            timer.Simple(0, function()
-                self:GetVBar():SetScroll(scroll2)
-            end)
+    -- todo: DO this for inventory?
+    function SS_AuctionPanel:VisibleThink()
+        if self.LatestSearch ~= self.DesiredSearch then
+            net.Start('SS_SearchAuctions')
+            net.WriteUInt(self.DesiredSearch, 16) --page
+            net.WriteUInt(0, 32) -- minprice
+            net.WriteUInt(0, 32) --maxprice
+            net.WriteBool(false) --mineonly
+            net.SendToServer()
+            self.LatestSearch = self.DesiredSearch
         end
     end
 
+    SS_AuctionPanel.controls = vgui("DPanel", SS_AuctionPanel, function(p)
+        p:Dock(TOP)
+        p:DockMargin(0, 0, SS_COMMONMARGIN, 0)
+        p:SetPaintBackground(true)
+        p:SetTall(SS_SUBCATEGORY_HEIGHT)
+
+        function p:Paint(w, h)
+            SS_PaintFG(self, w, h)
+            SS_AuctionPanel:VisibleThink()
+            -- Control the search. do it in paint so we arent updating when the panel isnt shown
+        end
+
+        vgui("DLabel", function(p)
+            p:SetText("Auctions (WIP)")
+            p:SetFont('SS_SubCategory')
+            p:Dock(FILL)
+            p:SetContentAlignment(4)
+            p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+            p:SetColor(MenuTheme_TX)
+
+            p.UpdateColours = function(pnl)
+                pnl:SetTextColor(MenuTheme_TX)
+            end
+
+            p:SizeToContentsY()
+        end)
+
+        p.results = vgui("DLabel", function(p)
+            p:SetText("test")
+            p:SetFont('SS_SubCategory')
+            p:Dock(RIGHT)
+            p:SetContentAlignment(4)
+            p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+            p:SetColor(MenuTheme_TX)
+
+            p.UpdateColours = function(pnl)
+                pnl:SetTextColor(MenuTheme_TX)
+            end
+
+            p:SizeToContentsY()
+        end)
+
+        vgui("DButton", function(p)
+            p:Dock(RIGHT)
+            p:SetText(">")
+            p:SetColor(MenuTheme_TX)
+            p:SetFont("SS_SubCategory")
+            p.Paint = SS_PaintDarkenOnHover
+
+            p.DoClick = function()
+                SS_AuctionPanel.DesiredSearch = SS_AuctionPanel.DesiredSearch + 1
+            end
+        end)
+
+        vgui("DButton", function(p)
+            p:Dock(RIGHT)
+            p:SetText("<")
+            p:SetColor(MenuTheme_TX)
+            p:SetFont("SS_SubCategory")
+            p.Paint = SS_PaintDarkenOnHover
+
+            p.DoClick = function()
+                SS_AuctionPanel.DesiredSearch = math.max(1, SS_AuctionPanel.DesiredSearch - 1)
+            end
+        end)
+    end)
+
+    --CONTROLS HERE...
+    Pad(SS_AuctionPanel)
+    SS_AuctionPanel.results = NewSubCategory(SS_AuctionPanel)
+
+    function SS_AuctionPanel:ReceiveSearch(items, totalitems)
+        for i, v in ipairs(SS_AuctionPanel.results:GetChildren()) do
+            v:Remove()
+        end
+
+        self.controls.results:SetText(tostring(totalitems) .. " total results")
+        self.controls.results:SizeToContents()
+        items = SS_MakeItems(SS_SAMPLE_ITEM_OWNER, items)
+
+        for _, item in pairs(items) do
+            local mine = (item.seller == LocalPlayer():SteamID64())
+            local mybid = (item.auction_bidder == LocalPlayer():SteamID64())
+            local sn = item.seller_name
+            local bn = item.bidder_name
+
+            if mine then
+                sn = sn .. " (You)"
+            end
+
+            if mybid then
+                bn = bn .. " (You)"
+            end
+
+            -- Hmm, lets override metatable keys on the item instance
+            item.primaryaction = false
+            local desc = item:GetDescription() or ""
+            desc = desc .. "\n(Item class: " .. item.class .. ")"
+            desc = desc .. "\n\nSold by " .. sn
+
+            if item.auction_bidder == "0" then
+                desc = desc .. "\nNo bidders"
+            else
+                desc = desc .. "\nHighest bidder is " .. bn .. " (" .. item.auction_price .. ")"
+            end
+
+            -- if item.seller == LocalPlayer():SteamID64() then
+            if mine then
+                if item.auction_bidder == "0" then
+                    item.actions = {
+                        cancel = {
+                            Text = function(item) return "Cancel Auction" end,
+                            OnClient = function(item)
+                                net.Start("SS_CancelAuction")
+                                net.WriteUInt(item.id, 32)
+                                net.SendToServer()
+                            end
+                        }
+                    }
+                else
+                    desc = desc .. "\n\nCan't cancel a bidded auction."
+                    item.actions = {}
+                end
+            else
+                if mybid then
+                    item.actions = {}
+                else
+                    item.actions = {
+                        bid = {
+                            Text = function(item) return "Bid (" .. tostring(item.bid_price) .. " minimum)" end,
+                            OnClient = function(item)
+                                Derma_StringRequest("Bid on this " .. item:GetName(), "Enter your bid - minimum is " .. tostring(item.bid_price), tostring(item.bid_price), function(text)
+                                    text = tonumber(text)
+
+                                    if text then
+                                        net.Start("SS_BidAuction")
+                                        net.WriteUInt(item.id, 32)
+                                        net.WriteUInt(math.max(0, text), 32)
+                                        net.SendToServer()
+                                    end
+                                end, function(text) end, "Bid", "Cancel")
+                            end
+                        }
+                    }
+                end
+            end
+
+            item.GetDescription = function() return desc end
+            local model = vgui.Create('DPointShopItem')
+            model:SetItem(item)
+            model:SetSize(SS_TILESIZE, SS_TILESIZE)
+            SS_AuctionPanel.results:Add(model)
+        end
+    end
+
+    local function inventorythink(pnl, categories)
+        pnl.Think = function(self)
+            if self.validtick ~= SS_ValidInventoryTick then
+                -- if #self:GetCanvas():GetChildren() > 0 then
+                local scroll2 = self:GetVBar():GetScroll()
+
+                for k, v in pairs(self:GetCanvas():GetChildren()) do
+                    v:Remove()
+                end
+
+                Pad(self)
+                -- TODO sort the items on recipt, then store sortedindex on them
+                local itemstemp = table.Copy(LocalPlayer().SS_Items or {}) --GetInventory())
+
+                table.sort(itemstemp, function(a, b)
+                    local ar, br = SS_GetRatingID(a.specs.rating), SS_GetRatingID(b.specs.rating)
+
+                    if ar == br then
+                        local an, bn = a:GetName(), b:GetName()
+                        local i = 0
+                        local ml = math.min(string.len(an), string.len(bn))
+
+                        while i < ml do
+                            i = i + 1
+                            local a1 = string.byte(an, i)
+                            local b1 = string.byte(bn, i)
+                            if a1 ~= b1 then return a1 < b1 end
+                        end
+
+                        if string.len(an) == string.len(bn) then return a.id < b.id end
+
+                        return string.len(an) > string.len(bn)
+                    else
+                        return ar > br
+                    end
+                end)
+
+                for k, v in pairs(SS_Items) do
+                    if v.clientside_fake then
+                        table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
+                    end
+                end
+
+                local categorizeditems = {}
+
+                for _, item in pairs(itemstemp) do
+                    local invcategory = item.invcategory or "Other"
+                    categorizeditems[invcategory] = categorizeditems[invcategory] or {}
+                    table.insert(categorizeditems[invcategory], item)
+                end
+
+                local first = true
+
+                for _, cat in ipairs(categories) do
+                    if categorizeditems[cat] and table.Count(categorizeditems[cat]) > 0 then
+                        if (first) then
+                            first = false
+                        else
+                            Pad(self)
+                        end
+
+                        NewSubCategoryTitle(self, cat)
+                        Pad(self)
+                        local sc = NewSubCategory(self)
+
+                        for _, item in pairs(categorizeditems[cat]) do
+                            local model = vgui.Create('DPointShopItem')
+                            model:SetItem(item)
+                            model:SetSize(SS_TILESIZE, SS_TILESIZE)
+                            sc:Add(model)
+                        end
+                    end
+                end
+
+                Pad(self)
+                self:InvalidateLayout()
+                self.validtick = SS_ValidInventoryTick
+
+                timer.Simple(0, function()
+                    self:GetVBar():SetScroll(scroll2)
+                end)
+            end
+        end
+    end
+
+    inventorythink(NewCategory("Weapons", 'icon16/gun.png', true), {"Weapons"})
+
+    inventorythink(NewCategory("Props", 'icon16/book.png', true), {"Props"})
+
+    SS_InventoryPanel = NewCategory("Cosmetics", 'icon16/status_online.png', true)
+
+    inventorythink(SS_InventoryPanel, {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"})
+
+    -- --title text 
+    -- vgui("DLabel", self.topbar, function(p)
+    --     p:SetText(" ← Store       Inventory →")
+    --     p:SetFont('SS_Category') --ScoreboardTitleSmall
+    --     p:SizeToContentsX()
+    --     p:DockMargin(16, 0, 16, 0)
+    --     p:SetColor(SS_ColorWhite)
+    --     p:Dock(RIGHT)
+    -- end)
+    SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
     SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent():GetParent())
     SS_CustomizerPanel:Dock(FILL)
     SS_CustomizerPanel:Close()
-    local previewpanel = vgui.Create('DPointShopPreview', self.rpane)
-    previewpanel:SetTall(SS_PREVIEWHEIGHT)
-    previewpanel:Dock(TOP)
-    SS_DescriptionPanel = vgui.Create('DPanel', self.rpane)
-    SS_DescriptionPanel:Dock(FILL)
-    SS_DescriptionPanel.Paint = function() end
-    p = vgui.Create("AvatarImage", self.botbar)
-    p:SetPlayer(LocalPlayer(), 184)
-    p:SetSize(SS_BOTBARHEIGHT - (SS_AVATARPAD * 2), SS_BOTBARHEIGHT - (SS_AVATARPAD * 2))
-    p:SetPos(SS_AVATARPAD, SS_AVATARPAD)
-    p = vgui.Create("DPanel", self.botbar)
-    p:SetWide(300)
-    p:DockMargin(SS_BOTBARHEIGHT, 0, 0, 0)
-    p:Dock(LEFT)
 
-    p.Paint = function(pnl, w, h)
-        draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', 4, (h / 2) - 13, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-        draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', 4, (h / 2) + 16, SS_ColorWhite, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-    end
+    if (IN_STEAMGROUP or 0) <= 0 then
+        p = vgui.Create("DButton", self)
+        p:SetZPos(1000)
+        p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
+        p:SetSize(360, 72 + 50)
+        p:SetWrap(true)
+        p:SetTextInset(16, 0)
+        -- p:SetFont("SS_JOINFONT")
+        -- p:SetText("Click here to join our Discord for double income!")
+        p:SetText("")
+        p:NoClipping(true)
+        local STEAMMATERIAL = Material("vgui/steamlogo.png")
 
-    local xo = p:GetWide() + SS_BOTBARHEIGHT
-    -- if IN_DISCORD~=1 then
-    p = vgui.Create("DButton", self)
-    p:SetZPos(1000)
-    p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
-    p:SetSize(230, 72 + 50)
-    p:SetWrap(true)
-    p:SetTextInset(16, 0)
-    -- p:SetFont("SS_JOINFONT")
-    -- p:SetText("Click here to join our Discord for double income!")
-    p:SetText("")
-    p:NoClipping(true)
-    local DISCORDMATERIAL = Material("vgui/discordlogo.png")
+        function p:Paint(w, h)
+            local l = (math.sin(SysTime() * 3) + 1) * 0.1
+            local c = Color(Lerp(l, 27, 255), Lerp(l, 40, 255), Lerp(l, 56, 255))
+            draw.RoundedBox(16, 0, 0, w, h - 50, c)
+            local x1, y1 = 100, 40
 
-    function p:Paint(w, h)
-        local l = (math.sin(SysTime() * 3) + 1) * 0.1
-        local c = Color(Lerp(l, 114 * 0.9, 255), Lerp(l, 137 * 0.9, 255), Lerp(l, 218 * 0.9, 255))
-        draw.RoundedBox(16, 0, 0, w, h - 50, c)
-        local x1, y1 = 100, 40
+            local triangle = {
+                {
+                    x = x1,
+                    y = y1
+                },
+                {
+                    x = x1 + 100,
+                    y = y1
+                },
+                {
+                    x = x1 + 50,
+                    y = y1 + 50
+                },
+            }
 
-        local triangle = {
-            {
-                x = x1,
-                y = y1
-            },
-            {
-                x = x1 + 100,
-                y = y1
-            },
-            {
-                x = x1 + 50,
-                y = y1 + 50
-            },
-        }
+            surface.SetDrawColor(c.r, c.g, c.b, 255)
+            draw.NoTexture()
+            surface.DrawPoly(triangle)
+            surface.SetDrawColor(255, 255, 255, 255)
+            surface.SetMaterial(STEAMMATERIAL) -- Use our cached material
+            surface.DrawTexturedRect(4, 3, 64, 64)
 
-        surface.SetDrawColor(c.r, c.g, c.b, 255)
-        draw.NoTexture()
-        surface.DrawPoly(triangle)
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(DISCORDMATERIAL) -- Use our cached material
-        surface.DrawTexturedRect(4, 6, 64, 64)
-        draw.DrawText("Join our Discord for", 'SS_JOINFONT', 70, 4)
-        draw.DrawText("Double income &\n20,000 points!", 'SS_JOINFONTBIG', 70, 22)
-    end
-
-    p.Think = function(pnl)
-        -- pnl:SetVisible(IN_DISCORD~=1)
-        if IN_DISCORD == 1 then
-            pnl:Remove()
-        end
-    end
-
-    p.DoClick = function()
-        -- if IN_DISCORD~=1 then
-        gui.OpenURL('http://swampservers.net/discord')
-    end
-
-    -- gui.OpenURL('https://steamcommunity.com/groups/swampservers')
-    -- end
-    -- end
-    PointshopDollarParticlePoints = -0.2
-    PointshopDollarParticles = {}
-    p = vgui.Create("DButton", self.botbar)
-    p:SetWide(SS_MENUWIDTH - (xo * 2))
-    p:Dock(LEFT)
-    p:SetFont("SS_INCOMEFONT")
-    p:SetText("")
-
-    p.DoClick = function()
-        gui.OpenURL('https://swampservers.net/donate/')
-    end
-
-    p.Paint = function(self, w, h)
-        SS_PaintDarkenOnHover(self, w, h)
-        local alpha = 180
-        local mousex, mousey = self:CursorPos()
-        local distscale = 250
-        alpha = math.max(distscale - (Vector(mousex, mousey, 0):Distance(Vector(w / 2, h / 2, 0))), 0) / distscale
-        PointshopDollarParticlePoints = PointshopDollarParticlePoints + (RealFrameTime() * math.max(alpha, 0.02))
-        local ytop = -20
-        local yfade = 32
-
-        while PointshopDollarParticlePoints > 0 do
-            local sc = math.Rand(0.6, 2.4)
-
-            table.insert(PointshopDollarParticles, {
-                x = math.Rand(0, w),
-                y = ytop,
-                speed = sc * 30,
-                scale = sc,
-                sinmag = math.Rand(0, 20),
-                sinfreq = math.Rand(1, 2),
-                sinofs = math.Rand(0, 6.3),
-                material = pointshopDollarImage
-            })
-
-            PointshopDollarParticlePoints = PointshopDollarParticlePoints - 0.12
-        end
-
-        for k, v in pairs(PointshopDollarParticles) do
-            v.y = v.y + (RealFrameTime() * v.speed)
-
-            if v.y > h + 50 then
-                table.remove(PointshopDollarParticles, k)
+            if self.clicked then
+                draw.DrawText("Nothing happen?\nClick again", 'SS_JOINFONT', 72, 4)
             else
-                surface.SetDrawColor(220, 220, 220, math.floor(255 * math.min(1, math.min(v.y - ytop, h - v.y) / yfade)))
-                surface.SetMaterial(v.material)
-                local iw = math.floor(8 * v.scale) * 2
-                local ih = math.floor(8 * v.scale) * 2
-                surface.DrawTexturedRect(math.floor((v.sinmag * math.sin(v.sinofs + (RealTime() * v.sinfreq))) + v.x - (iw / 2)), math.floor(v.y - (ih / 2)), iw, ih)
+                draw.DrawText("Join our Steam chat for\n2x income & 20,000 points!", 'SS_JOINFONT', 72, 4)
             end
+            -- draw.DrawText("2x income & 20,000 points!", 'SS_JOINFONTBIG', 70, 38)
         end
 
-        local tc = SS_ColorWhite
-        --[[if self:IsHovered() then
-			tc = Color(175,230,69)
-		end]]
-        draw.SimpleText('Need more points?', 'SS_Donate1', w / 2, (h / 2) - 20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        draw.SimpleText('Click here to donate!', 'SS_Donate2', w / 2, (h / 2) + 20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    end
-
-    --draw.SimpleText('Need more points?', 'SS_Donate1', w/2, (h/2)-20, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    local cont = vgui.Create("DPanel", self.botbar)
-    cont:SetWide(SS_RPANEWIDTH)
-    cont:Dock(RIGHT)
-    cont.Paint = function() end
-    -- give points button
-    p = vgui.Create('DButton', cont)
-    p:SetText("Give Points")
-    p:SetTextColor(SS_SwitchableColor)
-    p:DockMargin(12, 12, 12, 12)
-    p:Dock(BOTTOM)
-
-    p.Paint = function(panel, w, h)
-        if panel.Depressed then
-            panel:SetTextColor(SS_ColorWhite)
-            draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
-        else
-            panel:SetTextColor(SS_SwitchableColor)
-            draw.RoundedBox(4, 0, 0, w, h, SS_TileBGColor)
+        -- p.Think = function(pnl)
+        --     -- pnl:SetVisible(IN_DISCORD~=1)
+        --     if IN_STEAMGROUP > 0 then
+        --         pnl:Remove()
+        --     end
+        -- end
+        p.DoClick = function(pnl)
+            -- if IN_DISCORD~=1 then
+            -- gui.OpenURL('http://swamp.sv/discord')
+            -- if pnl.clicked then 
+            gui.OpenURL('https://steamcommunity.com/groups/swampservers')
         end
+        -- return end
+        -- local frame = vgui.Create( "DFrame" )
+        -- frame:SetTitle("")
+        -- frame:SetSize( 100,100)
+        -- frame:SetAlpha(0)
+        -- frame:Center()
+        -- frame:MakePopup()
+        -- local html = vgui.Create("DHTML", frame)
+        -- html:Dock(FILL)
+        -- html:OpenURL("https://s.team/chat/LzFgkFD4")
+        -- timer.Simple(2, function() if IsValid(frame) then frame:Remove() pnl.clicked = true end end)
     end
-
-    p.DoClick = function()
-        vgui.Create('DPointShopGivePoints')
-    end
-
-    p = vgui.Create('DButton', cont)
-
-    p.Think = function(p)
-        if LocalPlayer():IsPony() then
-            p:SetText("Customize Pony")
-        elseif LocalPlayer():GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
-            p:SetText("Customize Minecraft Skin")
-        else
-            p:SetText("Customize Playermodel")
-        end
-    end
-
-    p:SetTextColor(SS_SwitchableColor)
-    p:DockMargin(12, 12, 12, 12)
-    p:Dock(TOP)
-
-    p.Paint = function(panel, w, h)
-        if panel.Depressed then
-            panel:SetTextColor(SS_ColorWhite)
-            draw.RoundedBox(4, 0, 0, w, h, BrandColorAlternate)
-        else
-            panel:SetTextColor(SS_SwitchableColor)
-            draw.RoundedBox(4, 0, 0, w, h, SS_TileBGColor)
-        end
-    end
-
-    p.DoClick = function()
-        SS_ToggleMenu()
-
-        if LocalPlayer():IsPony() then
-            RunConsoleCommand("ppm_chared3")
-        elseif LocalPlayer():GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
-            local mderma = Derma_StringRequest("Minecraft Skin Picker", "Enter an Imgur URL to change your Minecraft skin.", "", function(text)
-                RunConsoleCommand("say", "!minecraftskin " .. text)
-            end, function() end, "Change Skin", "Cancel")
-
-            local srdx, srdy = mderma:GetSize()
-            local mdermacredits = Label("Minecraft Skins by Chev for Swamp Servers", mderma)
-            mdermacredits:Dock(BOTTOM)
-            mdermacredits:SetContentAlignment(2)
-            mderma:SetSize(srdx, srdy + 15)
-            mderma:SetIcon("icon16/user.png")
-        else
-            RunConsoleCommand("customize")
-        end
-    end
+    -- end 
 end
+
+net.Receive("SS_SearchAuctions", function(len)
+    if len == 0 then
+        if IsValid(SS_AuctionPanel) then
+            SS_AuctionPanel.LatestSearch = nil
+        end
+
+        return
+    end
+
+    local items = net.ReadTable()
+    local total = net.ReadUInt(32)
+
+    if IsValid(SS_AuctionPanel) then
+        SS_AuctionPanel:ReceiveSearch(items, total)
+    end
+end)
 
 function PANEL:Paint(w, h)
-    Derma_DrawBackgroundBlur(self)
+    --Derma_DrawBackgroundBlur(self)
+    DisableClipping(true)
+    local border = 8
+    draw.BoxShadow(-2, -2, w + 4, h + 4, border, 1)
+    DisableClipping(false)
+    SS_PaintBG(self, w, h)
 end
 
+SS_INVENTORY_POINT_OUT = -100
+
+net.Receive("SS_PointOutInventory", function()
+    SS_INVENTORY_POINT_OUT = RealTime()
+end)
+
 function PANEL:PaintOver(w, h)
+    local navbottom = self.topbar:GetTall()
+    BrandDropDownGradient(0, navbottom, w)
+    local bottom = self.botbar:GetTall()
+    BrandUpGradient(0, h - bottom, w)
+    local frogsize = 212 --208
+    local edge = 308
+    ofs = (edge / 512) * frogsize
+    surface.SetDrawColor(Color(255, 255, 255, 255))
+
+    if not froggy:IsError() then
+        surface.SetMaterial(froggy)
+        DisableClipping(true)
+        render.ClearDepth()
+        cam.IgnoreZ(true)
+        local frac = 0.8
+        surface.DrawTexturedRectUV(w - (frogsize * frac), h - ofs, (frogsize * frac), frogsize, 0, 0, frac, 1)
+        cam.IgnoreZ(false)
+        DisableClipping(false)
+    end
+
+    -- draw.SimpleText("SWAMP", "SwampShop1", w - 300, h - 82)
+    -- draw.SimpleText("SHOP", "SwampShop2", w - 270, h - 48)
     local a = math.min(5.0 - ((RealTime() - SS_INVENTORY_POINT_OUT) * 1.0), 1.0, (RealTime() - SS_INVENTORY_POINT_OUT) * 4.0)
 
     if a > 0 then
         surface.DisableClipping(true)
-        draw.SimpleText("access new items here", "DermaLarge", w - 184, -30, Color(255, 255, 255, 255 * a), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-        draw.SimpleText("↓", "SS_LargeTitle", w - 164, (math.sin(RealTime() * 6.0) * 5.0) - 20.0, Color(255, 255, 255, 255 * a), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        draw.SimpleText("access new items here", "DermaLarge", w / 2 + 5, h + 12, Color(255, 255, 255, 255 * a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        draw.SimpleText("↑", "SS_LargeTitle", w / 2 - 20, h + (math.sin(RealTime() * 6.0) * 5.0), Color(255, 255, 255, 255 * a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
         surface.DisableClipping(false)
     end
 end
 
-vgui.Register('DPointShopMenu', PANEL)
+function PANEL:OnRemove()
+    SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
+end
+
+vgui.Register('DPointShopMenu', PANEL, "EditablePanel")

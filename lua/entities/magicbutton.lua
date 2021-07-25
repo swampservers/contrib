@@ -141,8 +141,8 @@ function ENT:FindCastBox(casttrace)
 
         if (table.Count(navareas) > 0) then return trace2 end -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 255, 0, 0)) -- else -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
     else
-        -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
     end
+    -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
 end
 
 function ENT:FindCastFinal(trace, index)
@@ -448,8 +448,8 @@ local function MagicOutcomeButtonSpawn(ply)
     end
 
     if (IsValid(button)) then
-        local loc = Location.Find(button)
-        local locd = Location.GetLocationByIndex(loc or -1)
+        local loc = button:GetLocation()
+        local locd = Locations[loc]
         local locname = locd.Name
 
         if (locname == "Outside") then

@@ -209,7 +209,9 @@ if CLIENT then
     local TrustConvar = CreateClientConVar("cinema_load_all_urls", "0", true, false, "", 0, 1)
 
     TRUSTED_HOST = {
-        ["www.swampservers.net"] = true,
+        ["www.swamp.sv"] = true,
+        ["streamwat.ch"] = true,
+        ["redpilled.eu"] = true,
         ["www.dropbox.com"] = true,
         ["www.puu.sh"] = true,
         ["cdn.discordapp.com"] = true,
@@ -233,6 +235,7 @@ if CLIENT then
                     if v and not v:ShouldTrust() then
                         local host = v:Service():GetHost(v)
 
+                        -- print(host)
                         if host ~= nil then
                             TRUSTED_HOST[host] = true
                         end

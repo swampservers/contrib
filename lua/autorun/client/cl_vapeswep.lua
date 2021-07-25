@@ -111,8 +111,8 @@ function vape_interpolate_arm(ply, mult, mouth_delay)
     local b1 = ply:LookupBone("ValveBiped.Bip01_R_Upperarm")
     local b2 = ply:LookupBone("ValveBiped.Bip01_R_Forearm")
     if (not b1) or (not b2) then return end
-    ply:ManipulateBoneAngles(b1, Angle(20 * mult, -62 * mult, 10 * mult))
-    ply:ManipulateBoneAngles(b2, Angle(-5 * mult, -10 * mult, 0))
+    ply:ManipulateBoneAngles(b1, Angle(20 * mult, -62 * mult, 10 * mult), "vape")
+    ply:ManipulateBoneAngles(b2, Angle(-5 * mult, -10 * mult, 0), "vape")
 
     if mult == 1 then
         ply.vapeArmFullyUp = true

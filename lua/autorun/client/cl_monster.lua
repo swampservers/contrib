@@ -41,8 +41,8 @@ function monster_interpolate_arm(ply, mult)
     local b1 = ply:LookupBone("ValveBiped.Bip01_R_Upperarm")
     local b2 = ply:LookupBone("ValveBiped.Bip01_R_Forearm")
     if (not b1) or (not b2) then return end
-    ply:ManipulateBoneAngles(b1, Angle(20 * mult, -62 * mult, 10 * mult))
-    ply:ManipulateBoneAngles(b2, Angle(-5 * mult, -16 * mult, -50 * mult))
+    ply:ManipulateBoneAngles(b1, Angle(20 * mult, -62 * mult, 10 * mult), "monster")
+    ply:ManipulateBoneAngles(b2, Angle(-5 * mult, -16 * mult, -50 * mult), "monster")
 
     if mult == 1 then
         ply.monsterArmFullyUp = true

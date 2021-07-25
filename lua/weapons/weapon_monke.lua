@@ -32,6 +32,7 @@ SWEP.SoundsSecondary = {"monke/monkey_long1.ogg", "monke/monkey_long2.ogg"}
 
 SWEP.SoundsSecondaryLength = {5.466, 4.875}
 
+--NOMINIFY
 --i was going to use SoundDuration but it appears to be fucked
 function SWEP:CanPrimaryAttack()
     if (self:GetNextPrimaryFire() > CurTime()) then return false end
@@ -58,6 +59,7 @@ function SWEP:Reload(networked)
     if (self.BananaEatNext and self.BananaEatNext > CurTime()) then return end
     self:NetworkTaunt(3)
     local ply = self:GetOwner()
+    if (not IsValid(ply)) then return end
 
     if (SERVER) then
         ply:SetHealth(math.min(self.Owner:Health() + math.random(8, 30), self.Owner:GetMaxHealth()))
@@ -155,6 +157,7 @@ end
 function SWEP:PrimaryAttack(networked)
     self:NetworkTaunt(1)
     local ply = self:GetOwner()
+    if (not IsValid(ply)) then return end
     local soundindex = math.Round(util.SharedRandom("MonkeyPrimary" .. ply:UserID(), 1, #self.SoundsPrimary, self:GetRandomSeed()), 0)
     local sound = self.SoundsPrimary[soundindex]
     local delay = self.SoundsPrimaryLength[soundindex]
@@ -185,7 +188,7 @@ function SWEP:PrimaryAttack(networked)
     local DesiredTaunt = self:GetMonkeyTaunt()
 
     if (self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt) then
-        self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt, false)
+        ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt, false)
     end
 
     timer.Create(ply:EntIndex() .. "stopmonkeyingaround", delay + 0.1, 1, function()
@@ -207,6 +210,7 @@ end
 function SWEP:SecondaryAttack(networked)
     self:NetworkTaunt(2)
     local ply = self:GetOwner()
+    if (not IsValid(ply)) then return end
     local soundindex = math.Round(util.SharedRandom("MonkeySecondary" .. ply:UserID(), 1, #self.SoundsSecondary, self:GetRandomSeed()), 0)
     local sound = self.SoundsSecondary[soundindex]
     local delay = self.SoundsSecondaryLength[soundindex]
@@ -296,11 +300,11 @@ function SWEP:SlapChest()
 
             if (CLIENT) then
                 if (ply:LookupBone("ValveBiped.Bip01_L_Forearm")) then
-                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), ang1)
+                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), ang1, "monke")
                 end
 
                 if (ply:LookupBone("ValveBiped.Bip01_R_Forearm")) then
-                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), ang2)
+                    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), ang2, "monke")
                 end
             end
 
@@ -325,11 +329,11 @@ function SWEP:ResetChest()
 
     if (IsValid(ply)) then
         if (ply:LookupBone("ValveBiped.Bip01_L_Forearm")) then
-            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), Angle())
+            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), Angle(), "monke")
         end
 
         if (ply:LookupBone("ValveBiped.Bip01_R_Forearm")) then
-            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), Angle())
+            ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), Angle(), "monke")
         end
     end
 end

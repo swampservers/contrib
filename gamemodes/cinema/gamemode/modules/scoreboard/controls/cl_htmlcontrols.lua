@@ -23,9 +23,10 @@ function PANEL:Init()
 
     self.BackButton.DoClick = function()
         self.BackButton:SetDisabled(true)
-        self.HTML:HTMLBack()
         self.Cur = self.Cur - 1
         self.Navigating = true
+        self.HTML:OpenURL(self.History[self.Cur])
+        self.HTML._nextUrlPoll = RealTime() + .5
     end
 
     self.ForwardButton = vgui.Create("DImageButton", self)
@@ -36,9 +37,10 @@ function PANEL:Init()
 
     self.ForwardButton.DoClick = function()
         self.ForwardButton:SetDisabled(true)
-        self.HTML:HTMLForward()
         self.Cur = self.Cur + 1
         self.Navigating = true
+        self.HTML:OpenURL(self.History[self.Cur])
+        self.HTML._nextUrlPoll = RealTime() + .5
     end
 
     self.RefreshButton = vgui.Create("DImageButton", self)
@@ -62,6 +64,7 @@ function PANEL:Init()
     self.HomeButton.DoClick = function()
         self.HTML:Stop()
         self.HTML:OpenURL(self.HomeURL)
+        self.HTML._nextUrlPoll = RealTime() + .5
     end
 
     self.HomeButton.DoRightClick = function()
@@ -107,7 +110,6 @@ function PANEL:Init()
     end
 
     self:SetHeight(ButtonSize + Margins * 2)
-    self.NavStack = 0
     self.History = {}
     self.Cur = 1
     -- This is the default look, feel free to change it on your created control :)
@@ -137,8 +139,6 @@ function PANEL:SetHTML(html)
 	end]]
     self.HTML.OnURLChanged = function(panel, url)
         self.AddressBar:SetText(url)
-        self.NavStack = self.NavStack + 1
-        self:StartedLoading()
         self:UpdateHistory(url)
         local Theater = LocalPlayer():GetTheater()
 
@@ -181,14 +181,6 @@ function PANEL:UpdateHistory(url)
     self:UpdateNavButtonStatus()
 end
 
-function PANEL:FinishedLoading()
-    self.RefreshButton:SetDisabled(false)
-end
-
-function PANEL:StartedLoading()
-    self.RefreshButton:SetDisabled(true)
-end
-
 function PANEL:UpdateNavButtonStatus()
     --print( self.Cur, table.Count( self.History ) )
     self.ForwardButton:SetDisabled(self.Cur >= table.Count(self.History))
@@ -204,6 +196,8 @@ end
 
 function PANEL:Paint()
     draw.RoundedBoxEx(self.BorderSize, 0, 0, self:GetWide(), self:GetTall(), self.BackgroundColor, true, true, false, false)
+    draw.RoundedBoxEx(0, 0, self:GetTall() - 2, self:GetWide(), 2, Color(128, 128, 128, 255), false, false, false, false)
+    -- BrandBackgroundPattern(0, self:GetTall()-3, self:GetWide(), 3, 0)
 end
 
 derma.DefineControl("TheaterHTMLControls", "", PANEL, "Panel")

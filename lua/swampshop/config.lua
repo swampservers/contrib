@@ -116,8 +116,6 @@ Tail01
 Tail02
 Tail03
 ]]
-SS_InvCategories = {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"}
-
 SS_Attachments = {
     eyes = "I'm special",
     head = {"ValveBiped.Bip01_Head1", "LrigScull"},
@@ -152,7 +150,7 @@ end
 function Player:SS_BaseIncomeMultiplier()
     local cash = self:SS_GetDonation()
     local incomelevel = math.min(math.floor(math.min(cash, 2000) / 1000) + math.floor(cash / 10000) + 1, 42)
-    local mult = (((SERVER and self.IN_DISCORD or IN_DISCORD) == 1 and 3 or 1) + incomelevel) * 0.25
+    local mult = (3 + incomelevel) * 0.25
 
     if self:IsAFK() then
         mult = mult / 2
@@ -160,5 +158,98 @@ function Player:SS_BaseIncomeMultiplier()
         mult = mult * 2
     end
 
+    if ((SERVER and self.IN_STEAMGROUP or IN_STEAMGROUP) or 0) <= 0 then
+        mult = mult / 2
+    end
+
     return mult
+end
+
+SS_AUCTION_COST = 5000
+SS_AUCTION_BID_MULTIPLIER = 1.05
+SS_AUCTION_PAY_FRACTION = 0.95
+SS_AUCTION_DURATION = 5 * 24 * 3600
+SS_AUCTION_BID_DURATION = 600
+SS_AUCTION_PERPAGE = 20
+
+SS_ItemRatings = {
+    {
+        id = 1,
+        max = 0.1,
+        name = "Scuffed",
+        color = Color(100, 50, 0),
+        propnotes = "Can't be frozen, all models destroyable by light damage"
+    },
+    {
+        id = 2,
+        max = 0.25,
+        name = "Worn out",
+        color = Color(80, 80, 80),
+        propnotes = "All models destroyable by light damage"
+    },
+    {
+        id = 3,
+        max = 0.4,
+        name = "Knockoff",
+        color = Color(160, 160, 160),
+        propnotes = "Unfrozen by light damage, some models destroyable"
+    },
+    {
+        id = 4,
+        max = 0.7,
+        name = "Standard Issue",
+        color = Color(210, 210, 210),
+        propnotes = "1 heavy damage to unfreeze, some models destroyable"
+    },
+    {
+        id = 5,
+        max = 0.85,
+        name = "Upgraded",
+        color = Color(80, 220, 0),
+        propnotes = "Colorable in inventory, 1 heavy damage to unfreeze, not destroyable"
+    },
+    {
+        id = 6,
+        max = 0.95,
+        name = "Rare",
+        color = Color(0, 128, 255),
+        propnotes = "Colorable in inventory, 2 heavy damage to unfreeze, not destroyable"
+    },
+    {
+        id = 7,
+        max = 0.995,
+        name = "Epic",
+        color = Color(128, 0, 255),
+        propnotes = "Texturable in inventory, 2 heavy damage to unfreeze, not destroyable"
+    },
+    {
+        id = 8,
+        max = 1.0,
+        name = "LEGENDARY",
+        color = Color(255, 128, 0),
+        propnotes = "Can build indoors, texturable in inventory, 2 heavy damage to unfreeze, not destroyable"
+    },
+    {
+        id = 9,
+        max = 1337,
+        name = "BASED",
+        color = Color(255, 0, 0),
+        propnotes = "Texturable in inventory, not unfreezable or destroyable"
+    },
+}
+
+function SS_GetRatingID(r)
+    if r == nil then
+        return 0
+    else
+        return SS_GetRating(r).id
+    end
+end
+
+function SS_GetRating(r)
+    for i, v in ipairs(SS_ItemRatings) do
+        if v.max >= r then return v end
+    end
+
+    return SS_ItemRatings[#SS_ItemRatings]
 end

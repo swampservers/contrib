@@ -1,8 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SS_Tab("Construction", "bricks")
-SS_Heading("Tools")
 
+-- SS_Heading("Tools")
 local function CannotBuyTrash(self, ply)
     if SERVER then return CannotMakeTrash(ply) end
 end
@@ -23,10 +23,18 @@ SS_WeaponProduct({
     price = 2000
 })
 
+SS_WeaponProduct({
+    class = "weapon_trash_manager",
+    name = 'Manager',
+    description = "Use to save and load your builds!",
+    model = 'models/props_lab/clipboard.mdl',
+    price = 5000
+})
+
 SS_Product({
     class = 'trash',
     price = 0,
-    name = 'Trash',
+    name = 'Random Trash',
     description = "Spawn a random piece of junk for building stuff with",
     model = 'models/props_junk/cardboard_box001b.mdl',
     CannotBuy = CannotBuyTrash,
@@ -35,7 +43,98 @@ SS_Product({
     end
 })
 
-SS_Heading("Props")
+if SERVER then
+    util.AddNetworkString("LootBoxAnimation")
+end
+
+SS_Item({
+    class = "prop",
+    value = 5000,
+    name = "Prop",
+    description = "Haha, where did you find this one?",
+    model = 'models/maxofs2d/logo_gmod_b.mdl',
+    SellValue = function(self) return 250 * 2 ^ SS_GetRating(self.specs.rating).id end,
+    GetName = function(self) return string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
+    GetModel = function(self) return self.specs.model end,
+    OutlineColor = function(self) return SS_GetRating(self.specs.rating).color end,
+    SanitizeSpecs = function(self)
+        local specs, ch = self.specs, false
+
+        if not specs.model then
+            specs.model = GetSandboxProp()
+            ch = true
+        end
+
+        if not specs.rating then
+            specs.rating = math.random()
+            ch = true
+        end
+
+        return ch
+    end,
+    actions = {
+        spawnprop = {
+            primary = true,
+            Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
+        }
+    },
+    CanCfgColor = function(self)
+        return (SS_GetRating(self.specs.rating or 0).id >= 5) and {
+            max = 5
+        } or false
+    end,
+    CanCfgImgur = function(self) return SS_GetRating(self.specs.rating or 0).id >= 7 end,
+    GetColor = function(self)
+        if self:CanCfgColor() then return self.cfg.color end
+        local r = SS_GetRating(self.specs.rating).id
+        if r == 2 then return Vector(0.7, 0.7, 0.7) end
+        if r == 1 then return Vector(0.5, 0.3, 0.1) end
+    end,
+    configurable = {
+        color = {
+            max = 5
+        },
+        imgur = true
+    },
+    SpawnPrice = function(self) return 200 end,
+    invcategory = "Props",
+    never_equip = true
+})
+
+-- return SS_GetRating(self.specs.rating).id>=7 and 1000 or 100
+SS_Product({
+    class = 'sandbox',
+    price = 25000,
+    name = 'Sandbox Lootbox',
+    description = "A random prop that you can spawn from your inventory anytime",
+    model = 'models/Items/ammocrate_smg1.mdl',
+    CannotBuy = function(self, ply)
+        if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
+    end,
+    OnBuy = function(self, ply)
+        -- if ply.CANTSANDBOX then return end
+        local item = SS_GenerateItem(ply, "prop")
+
+        ply:SS_GiveNewItem(item, function(item)
+            local others = {}
+
+            for i = 1, 15 do
+                table.insert(others, GetSandboxProp())
+            end
+
+            net.Start("LootBoxAnimation")
+            net.WriteUInt(item.id, 32)
+            net.WriteTable(others)
+            net.Send(ply)
+
+            timer.Simple(4, function()
+                MakeTrashItem(ply, item)
+            end)
+        end, 4)
+    end
+})
+
+SS_Heading("More Props")
 
 SS_Product({
     class = 'plate1',
@@ -93,21 +192,21 @@ SS_Product({
     model = 'models/maxofs2d/hover_classic.mdl',
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_field")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeForcefield(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+        MakeTrashZone(ply, self.model)
     end
 })
 
+--     end)
+-- end)
 SS_Product({
     class = 'trashfieldlarge',
     price = 3000,
@@ -116,21 +215,21 @@ SS_Product({
     model = 'models/dav0r/hoverball.mdl',
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_field")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeForcefield(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        -- timer.Simple(0.001, function()
+        MakeTrashZone(ply, self.model)
     end
 })
 
+-- end)
+-- end)
 SS_Product({
     class = 'trashlight',
     price = 1000,
@@ -172,6 +271,24 @@ SS_Product({
 })
 
 SS_Product({
+    class = 'trashdoor',
+    price = 2000,
+    name = 'Doors',
+    description = "Can be opened",
+    model = 'models/staticprop/props_c17/door01_left.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = {}
+
+        for k, v in pairs(PropTrashDoors) do
+            table.insert(nxt, k)
+        end
+
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+SS_Product({
     class = 'trashtheater',
     price = 8000,
     name = 'Medium Theater Screen',
@@ -179,21 +296,22 @@ SS_Product({
     model = 'models/props_phx/rt_screen.mdl',
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeTrashTheater(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+        -- makeTrashTheater(ply, self.model)
+        MakeTrashZone(ply, self.model)
     end
 })
 
+--     end)
+-- end)
 SS_Product({
     class = 'trashtheatertiny',
     price = 4000,
@@ -202,18 +320,19 @@ SS_Product({
     model = "models/props_c17/tv_monitor01.mdl",
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeTrashTheater(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+        --         makeTrashTheater(ply, self.model)
+        --     end)
+        -- end)
+        MakeTrashZone(ply, self.model)
     end
 })
 
@@ -226,18 +345,19 @@ SS_Product({
     material = "tools/toolsblack",
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+        for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
             if v:GetOwnerID() == ply:SteamID() then
                 v:Remove()
             end
         end
 
         --Delay 1 tick
-        timer.Simple(0, function()
-            timer.Simple(0.001, function()
-                makeTrashTheater(ply, self.model)
-            end)
-        end)
+        -- timer.Simple(0, function()
+        --     timer.Simple(0.001, function()
+        --         makeTrashTheater(ply, self.model)
+        --     end)
+        -- end)
+        MakeTrashZone(ply, self.model)
     end
 })
 -- TODO finish this, make env_projectedtexture when in the theater
@@ -248,7 +368,7 @@ SS_Product({
 --     description = "Create your own private theater anywhere! You'll remain owner even if you walk away.",
 --     model = "models/dav0r/camera.mdl",
 --     OnBuy = function(self, ply)
---         for k, v in pairs(ents.FindByClass("prop_trash_theater")) do
+--         for k, v in pairs(ents.FindByClass("prop_trash_zone")) do
 --             if v:GetOwnerID() == ply:SteamID() then
 --                 v:Remove()
 --             end

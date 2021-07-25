@@ -5,6 +5,7 @@ DEFINE_BASECLASS("prop_trash")
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.CanChangeTrashOwner = false
 
+-- AddTrashClass("prop_trash_pillow", "models/swamponions/bodypillow.mdl")
 function ENT:OnTakeDamage(dmg)
     if dmg:GetDamageType() == DMG_ACID then
         self:SetNWBool("Hard", true)
@@ -50,40 +51,30 @@ function ENT:Use(ply)
         end
     end
 end
-
-function ENT:Draw()
-    local url, own = self:GetImgur()
-
-    if not url and self:GetHardened() then
-        url = "cogLTj5.png" -- the default texture, hacky solution
-    end
-
-    --HACK to not load on painted things
-    if url and self:GetMaterial() ~= "phoenix_storms/gear" then
-        render.MaterialOverride(ImgurMaterial({
-            id = url,
-            owner = own,
-            pos = self:GetPos(),
-            stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((self:GetOwnerID() or "") .. url)) or nil
-        }))
-    end
-
-    if self:GetHardened() then
-        -- local m = self:GetModel()
-        -- self:SetModel("models/error.mdl")
-        -- self:SetModel(m)
-        bodypillow_unjiggle(self)
-    end
-
-    BaseClass.Draw(self) --, true)
-
-    if url then
-        render.MaterialOverride()
-    end
-end
-
-function ENT:DrawOutline()
-    local r, g, b = render.GetColorModulation()
-    render.DrawWireframeBox(self:GetPos(), self:GetAngles(), self:OBBMins() + Vector(2, 2, 2), self:OBBMaxs() - Vector(2, 2, 2), Color(255 * r, 255 * g, 255 * b, 255), true)
-end
+-- function ENT:Draw()
+--     local url, own = self:GetImgur()
+--     if not url and self:GetHardened() then
+--         url = "cogLTj5.png" -- the default texture, hacky solution
+--     end
+--     --HACK to not load on painted things
+--     if url and self:GetMaterial() ~= "phoenix_storms/gear" then
+--         render.MaterialOverride(WebMaterial({
+--             id = url,
+--             owner = own,
+--             pos = self:GetPos(),
+--             nsfw="?",
+--             stretch = true,
+--             params = self:GetHardened() and HardenedPillowArgs(util.CRC((self:GetOwnerID() or "") .. url)) or nil
+--         }))
+--     end
+--     if self:GetHardened() then
+--         -- local m = self:GetModel()
+--         -- self:SetModel("models/error.mdl")
+--         -- self:SetModel(m)
+--         bodypillow_unjiggle(self)
+--     end
+--     BaseClass.Draw(self) --, true)
+--     if url then
+--         render.MaterialOverride()
+--     end
+-- end

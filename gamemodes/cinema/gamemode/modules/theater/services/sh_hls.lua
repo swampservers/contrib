@@ -46,7 +46,7 @@ if CLIENT then
                     end
 
                     if msg:StartWith("STREAMWATCHURL:") then
-                        vpanel:OpenURL("http://swampservers.net/cinema/hls.html")
+                        vpanel:OpenURL("http://swamp.sv/s/cinema/hls.html")
                         link = string.sub(msg, 16)
                         local str = string.format("th_video('%s');", string.JavascriptSafe(link))
 
@@ -99,7 +99,7 @@ if CLIENT then
             k = Video:Data()
         end
 
-        local url = "http://swampservers.net/cinema/hls.html"
+        local url = "http://swamp.sv/s/cinema/hls.html"
         panel:EnsureURL(url)
 
         --using a 2 second delay is the fastest way to load the video, sending th_video any quicker is much much slower for whatever reason

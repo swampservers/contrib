@@ -6,7 +6,7 @@
 if CLIENT then
     include('weapon_vape/cl_init.lua')
 else
-    include('weapon_vape/shared.lua')
+    include('weapon_vape/init.lua')
 end
 
 SWEP.Instructions = "LMB: Rip Fat Clouds\n (Hold and release)\nRMB & Reload: Play Sounds\n\nHelium-infused juice has a levitating effect when it enters the bloodstream."

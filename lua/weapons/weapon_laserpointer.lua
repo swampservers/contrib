@@ -24,11 +24,12 @@ SWEP.UnClickSound = Sound("Weapon_AR2.Empty")
 SWEP.DrawCrosshair = false
 SWEP.BounceWeaponIcon = false
 SWEP.LaserMask = nil --MASK_SHOT
+SWEP.DrawAmmo = false
 
 -- PlayerCanHaveLaserBeams is a hook used for this. the argument is just ply
 -- return false on this one and players won't be able to make their laser beam fully visible and lethal using right mouse
 hook.Add("PlayerCanHaveLaserBeams", "DisableBeamModeInTheaters", function(ply, wep)
-    if (Safe ~= nil and isfunction(Safe) and Safe(ply)) then return false end
+    if ply:IsProtected() then return false end
 end)
 
 if (CLIENT) then
@@ -75,7 +76,7 @@ end
 
 function SWEP:Initialize()
     ---self:SetHoldType( "pistol" )
-    self:SetHoldType("knife")
+    self:SetHoldType("slam")
 end
 
 function SWEP:SetupDataTables()
@@ -386,14 +387,14 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase)
             LaserPointer_SVBeam(ply, wep, newstart, dir3, phase + 1)
         else
             if (IsValid(tr.Entity) and tr.Entity.Health ~= nil) then
-                if (Safe == nil or (isfunction(Safe) and not Safe(tr.Entity))) then
-                    local d = DamageInfo()
-                    d:SetDamage(1)
-                    d:SetAttacker(ply)
-                    d:SetInflictor(wep)
-                    d:SetDamageType(DMG_DISSOLVE)
-                    tr.Entity:TakeDamageInfo(d)
-                end
+                -- if (Safe == nil or (isfunction(Safe) and not Safe(tr.Entity))) then
+                local d = DamageInfo()
+                d:SetDamage(1)
+                d:SetAttacker(ply)
+                d:SetInflictor(wep)
+                d:SetDamageType(DMG_DISSOLVE)
+                tr.Entity:TakeDamageInfo(d)
+                -- end
             end
         end
     end

@@ -20,7 +20,7 @@ function SS_Product(product)
     function product:OnBuy(ply)
         local function finish_buy()
             self:SS_Product_OnBuy(ply)
-            ply:Notify('Bought ', self.name, ' for ', self.price, ' points')
+            ply:Notify('Bought ', self:GetName(), ' for ', self.price, ' points')
         end
 
         if self.price > 0 then
@@ -38,29 +38,43 @@ function SS_Product(product)
         end
     end
 
+    -- product.primaryaction = {
+    --     Text = function(self, second) return second and (self.price == 0 and ">  GET  <" or ">  BUY  <") or (self.price == 0 and "FREE" or "-" .. tostring(self.price)) end
+    -- }
+    -- OnClient= function(self, second)
+    --     if second then
+    --         surface.PlaySound("UI/buttonclick.wav")
+    --         SS_BuyProduct(self.class)
+    --     end
+    -- end
+    SS_ItemOrProduct(product)
     local tab = _SS_TABADDTARGET.layout
     table.insert(tab[#tab].products, product)
     SS_Products[product.class] = product
+
+    if SS_ReloadMenu then
+        SS_ReloadMenu()
+    end
+end
+
+function SS_GenerateItem(ply, class)
+    local item = SS_MakeItem(ply, {
+        class = class,
+        id = -1,
+        specs = {},
+        cfg = {},
+        eq = true,
+    })
+
+    item:Sanitize()
+
+    return item
 end
 
 function SS_ItemProduct(item)
-    local product = item --TODO maybe only copy needed keys
+    local product = table.Copy(item) --TODO maybe only copy needed keys
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((product.price or 0) == 0 and "return" or "sell") .. " it."
-
-    function product:GenerateItem(ply)
-        local item = SS_MakeItem(ply, {
-            class = self.class,
-            id = -1,
-            cfg = {},
-            eq = true,
-        })
-
-        item:Sanitize()
-
-        return item
-    end
-
-    product.sample_item = product:GenerateItem(SS_SAMPLE_ITEM_OWNER)
+    product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.class)
 
     function product:CannotBuy(ply)
         local maxcount = (self.accessory_slot and ply:SS_AccessorySlots() * (self.perslot or 1)) or self.maxowned or 1
@@ -68,7 +82,7 @@ function SS_ItemProduct(item)
     end
 
     function product:OnBuy(ply)
-        ply:SS_GiveItem(self:GenerateItem(ply))
+        ply:SS_GiveNewItem(SS_GenerateItem(ply, self.class))
     end
 
     SS_Product(product)
@@ -78,9 +92,24 @@ function SS_WeaponProduct(product)
     product.SS_WeaponProduct_OnBuy = product.OnBuy or function() end
 
     function product:OnBuy(ply)
-        ply:Give(self.class)
+        if not ply:HasWeapon(self.class) then
+            ply:Give(self.class)
+        end
+
         ply:SelectWeapon(self.class)
         self:SS_WeaponProduct_OnBuy(ply)
+    end
+
+    function product:CannotBuy(ply)
+        if ply:HasWeapon(self.class) then
+            if SERVER then
+                ply:SelectWeapon(self.class)
+            end
+
+            return "You already have this weapon!"
+        end
+
+        return not ply:Alive() and "You're dead!"
     end
 
     SS_DeathKeepnotice(product)
@@ -88,29 +117,61 @@ function SS_WeaponProduct(product)
 end
 
 function SS_WeaponAndAmmoProduct(product)
+    -- used by buyammo system
+    function product:AmmoTypeAndAmount(wep)
+        local ammotype, ammogive = (self.ammotype or game.GetAmmoName(self.clip2 and wep:GetSecondaryAmmoType() or wep:GetPrimaryAmmoType())), (self.amount or math.max(1, (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) or 0))
+        assert(ammotype ~= nil and ammogive > 0, self.class .. " " .. ammogive .. " " .. (ammotype or "nil"))
+
+        return ammotype, ammogive
+    end
+
     function product:OnBuy(ply)
-        if not ply:HasWeapon(self.class) then
-            ply:Give(self.class)
-            local wep = ply:GetWeapon(self.class)
+        local wep, new = nil, false
 
-            if wep:Clip1() > 0 then
-                wep:SetClip1(0)
-            end
-
-            ply:SetAmmo(self.amount, self.ammotype)
+        if ply:HasWeapon(self.class) then
+            wep = ply:GetWeapon(self.class)
         else
-            ply:GiveAmmo(self.amount, self.ammotype)
+            wep = ply:Give(self.class)
+            new = true
+        end
+
+        local ammotype, ammogive = self:AmmoTypeAndAmount(wep)
+
+        if new then
+            if (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) == -1 then
+                ply:SetAmmo(ammogive, ammotype)
+            else
+                wep:SetClip1(wep:GetMaxClip1())
+                ply:SetAmmo(ammogive - wep:Clip1(), ammotype)
+            end
+        else
+            ply:GiveAmmo(ammogive, ammotype)
         end
 
         ply:SelectWeapon(self.class)
+        -- if wep:GetMaxClip1()>0 and wep:Clip1()==0 then wep:Reload() end
     end
 
+    function product:CannotBuy(ply)
+        return not ply:Alive() and "You're dead!"
+    end
+
+    -- if ply:HasWeapon(self.class) then
+    --     local wep = ply:GetWeapon(self.class)
+    --     local ammotype,ammogive = self:AmmoTypeAndAmount(wep)
+    --     local limit = self.maxammo or game.GetAmmoMax(game.GetAmmoID(ammotype)) or 0
+    --     if (limit != 0 and ply:GetAmmoCount(ammotype) >= limit) then return "You can't carry any more of this ammo" end
+    -- end
     SS_DeathKeepnotice(product)
     SS_Product(product)
 end
 
 function SS_AmmoProduct(product)
     product.class = "ammo_" .. product.ammotype .. "_" .. tostring(product.amount)
+
+    function product:CannotBuy(ply)
+        return not ply:Alive() and "You're dead!"
+    end
 
     function product:OnBuy(ply)
         ply:GiveAmmo(self.amount, self.ammotype)
@@ -130,14 +191,14 @@ function SS_UniqueModelProduct(product)
         if s then return s end
 
         for k, v in pairs(player.GetAll()) do
-            if v:GetNWString("uniqmodl") == self.name and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or (v:Nick() .. " is using this - kill them.") end
+            if v:GetNWString("uniqmodl") == self:GetName() and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or (v:Nick() .. " is using this - kill them.") end
         end
     end
 
     product.SS_UniqueModelProduct_OnBuy = product.OnBuy or function() end
 
     function product:OnBuy(ply)
-        ply:SetNWString("uniqmodl", self.name)
+        ply:SetNWString("uniqmodl", self:GetName())
         ply:SetModel(self.model)
         self:SS_UniqueModelProduct_OnBuy(ply)
     end

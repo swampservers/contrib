@@ -1,13 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-module("Location", package.seeall)
 local THEATER_NONE = 0 --default/public theater
 local THEATER_PRIVATE = 1 --private theater
 local THEATER_REPLICATED = 2 --public theater, shows on the scoreboard
 local THEATER_PRIVATEREPLICATED = 3 --private theater, shows on the scoreboard
-Debug = true
 
-Map = {
+Locations = {
     {
         Name = "Entrance",
         Min = Vector(-512, -256, -16),
@@ -323,11 +321,6 @@ Map = {
         Max = Vector(-2096, -1192, 192)
     },
     {
-        Name = "SushiTheater Basement",
-        Min = Vector(-2912, -2008, -176),
-        Max = Vector(-2096, -1100, -24)
-    },
-    {
         Name = "SushiTheater Second Floor",
         Min = Vector(-2832, -1928, 192),
         Max = Vector(-2176, -1272, 376)
@@ -383,35 +376,10 @@ Map = {
     --[[Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 512 end,
 		Min = Vector(-512,-1152-512,-128),
 		Max = Vector(512,-1152+512,192)]] -- 10 "Mobile" theaters are used by prop_trash_theater
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
-    },
-    {
-        Name = "MOBILE",
+    "mobiletheaters", {
+        Name = "SushiTheater Basement",
+        Min = Vector(-2912, -2008, -176),
+        Max = Vector(-2096, -1100, -24)
     },
     {
         Name = "Control Room",
@@ -589,7 +557,7 @@ Map = {
     },
     --after everything
     {
-        Name = "Way Outside",
+        Name = "Unknown",
         Min = Vector(-100000, -100000, -100000),
         Max = Vector(100000, 100000, 100000)
     }
@@ -598,78 +566,58 @@ Map = {
 --after everything
 --set up and index mobile theaters
 MobileLocations = {}
+local i = 1
 
-for k, v in pairs(Map) do
-    if v.Name == "MOBILE" then
-        table.insert(MobileLocations, k)
-        v.MobileLocationIndex = #MobileLocations
-        v.Name = "MobileTheater" .. tostring(v.MobileLocationIndex)
-        v.Min = Vector(-1, -1, -10001)
-        v.Max = Vector(1, 1, -10000)
+while i <= #Locations do
+    if Locations[i] == "mobiletheaters" then
+        table.remove(Locations, i)
 
-        v.Theater = {
-            Flags = 1,
-            Pos = Vector(0, 0, 0),
-            Ang = Angle(0, 0, 0),
-            Width = 32,
-            Height = 18
-        }
-    end
-end
+        for j = 0, 31 do
+            table.insert(MobileLocations, i + j)
 
-function RefreshPositions()
-    for k, v in pairs(ents.GetAll()) do
-        if v.LastLocationCoords ~= nil then
-            v.LastLocationCoords = nil
+            table.insert(Locations, i, {
+                MobileLocationIndex = #MobileLocations,
+                Name = "MobileTheater" .. tostring(#MobileLocations),
+                Min = Vector(-1, -1, -10001),
+                Max = Vector(1, 1, -10000),
+                Theater = {
+                    Flags = 1,
+                    Pos = Vector(0, 0, 0),
+                    Ang = Angle(0, 0, 0),
+                    Width = 32,
+                    Height = 18
+                }
+            })
         end
+
+        break
     end
+
+    i = i + 1
 end
 
--- returns a table of locations for the specified map, or the current map if nil
-function GetLocations()
-    return Map
+LocationByName = {}
+
+for i, v in ipairs(Locations) do
+    v.Index = i
+    LocationByName[v.Name] = v
 end
 
--- returns the location string of the index
-function GetLocationNameByIndex(iIndex)
-    local temp = Map[iIndex]
-
-    return temp and temp.Name or "Unknown"
-end
-
--- find a location by name
--- note: this can be optimized with a second data structure
-function GetLocationIndexByName(strName)
-    local locations = GetLocations()
-    if not locations then return end
-
-    for k, v in pairs(locations) do
-        if (v.Name == strName) then return k end
-    end
-end
-
--- find a location by index
-function GetLocationByIndex(iIndex)
-    return Map[iIndex]
-end
-
--- find a location by name
--- note: this can be optimized with a second data structure
-function GetLocationByName(strName)
-    local locations = GetLocations()
-    if not locations then return end
-
-    for k, v in pairs(locations) do
-        if (v.Name == strName) then return v end
+function RefreshLocations()
+    for k, v in pairs(ents.GetAll()) do
+        v.LastLocationCoords = nil
     end
 end
 
 -- returns the index of the players current location or 0 if unknown
-function Find(ply)
-    local pos = ply:GetPos()
-    if (Map == nil) then return 0 end
+function FindLocation(pos)
+    if isentity(pos) then
+        pos = pos:GetPos()
+    end
 
-    for k, v in next, Map do
+    if (Locations == nil) then return 0 end
+
+    for k, v in ipairs(Locations) do
         if (pos:InBox(v.Min, v.Max)) then
             if v.Filter then
                 if v.Filter(pos) then return k end
@@ -679,17 +627,59 @@ function Find(ply)
         end
     end
 
-    return 0
+    return #Locations
 end
 
-function GetPlayersInLocation(iIndex)
-    local players = {}
+function GetPlayersInLocation(idx)
+    local tab = {}
 
-    for _, ply in pairs(player.GetAll()) do
-        if ply:GetLocation() == iIndex then
-            table.insert(players, ply)
+    for _, ply in ipairs(Ents.player) do
+        if ply:GetLocation() == idx then
+            table.insert(tab, ply)
         end
     end
 
-    return players
+    return tab
+end
+
+local Player = FindMetaTable("Player")
+local Entity = FindMetaTable("Entity")
+
+function Player:GetLocation()
+    local set = self:GetDTInt(0)
+
+    if Locations[set] == nil then
+        print("FUCK")
+        set = #Locations
+    end
+
+    return set
+end
+
+function Entity:GetLocation()
+    assert(not self:IsPlayer())
+    local pos = self:GetPos()
+
+    if self.LastLocationCoords == nil or self.LastLocationCoords:DistToSqr(pos) > 1 then
+        self.LastLocationCoords = pos
+        self.LastLocation = FindLocation(self)
+    end
+
+    return self.LastLocation
+end
+
+function Entity:GetLocationName()
+    return self:GetLocationTable().Name or "Unknown"
+end
+
+function Entity:GetLocationTable()
+    return Locations[self:GetLocation()] or {}
+end
+
+function Entity:InTheater()
+    return self:GetLocationTable().Theater ~= nil
+end
+
+function Entity:GetTheater()
+    return theater.GetByLocation(self:GetLocation())
 end

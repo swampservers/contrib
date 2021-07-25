@@ -3,6 +3,7 @@ STEAMWS_MOUNTED = STEAMWS_MOUNTED or {}
 STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT or 0
 
 function SafeMountGMA(wsid, filename)
+    -- print("safemount")
     local badmodels = {}
 
     for mdl, mwsid in pairs(STEAMWS_REGISTRY) do
@@ -87,4 +88,32 @@ function is_model_undownloaded(mdl)
     if util.IsValidModel(mdl) then return false end
 
     return not STEAMWS_MOUNTED[STEAMWS_REGISTRY[mdl]]
+end
+
+utilBasedIsValidModel = utilBasedIsValidModel or util.IsValidModel
+local validmodels = {}
+
+local function isvalidmodel(mdl)
+    local r = validmodels[mdl]
+
+    if not r then
+        r = utilBasedIsValidModel(mdl)
+
+        if r then
+            validmodels[mdl] = true
+        end
+    end
+
+    return r
+end
+
+util.IsValidModel = isvalidmodel
+local Entity = FindMetaTable("Entity")
+local getmodel = Entity.GetModel
+
+function Entity:GetActualModel()
+    local setmodel = getmodel(self)
+    local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
+
+    return correct and setmodel or "models/error.mdl"
 end

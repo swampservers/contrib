@@ -48,7 +48,7 @@ if CLIENT then
             end
         end
 
-        local urll = "http://swampservers.net/cinema/filedata.php?file="
+        local urll = "http://swamp.sv/s/cinema/filedata.php?file="
         vpanel:OpenURL(urll .. key)
     end
 
@@ -57,7 +57,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local urll = "http://swampservers.net/cinema/file.html"
+        local urll = "http://swamp.sv/s/cinema/file.html"
         panel:EnsureURL(urll)
         local k = Video:Key()
         -- Let the webpage handle loading a video

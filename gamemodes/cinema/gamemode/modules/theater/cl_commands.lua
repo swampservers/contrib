@@ -1,7 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-CreateClientConVar("cinema_volume", 50, true, false, "", 0, 100)
+CreateClientConVar("cinema_volume", 100, true, false, "", 0, 100)
 GameVolumeConVar = CreateClientConVar("cinema_game_volume", 100, true, false, "", 0, 100)
+VoiceVolumeConVar = CreateClientConVar("cinema_voice_volume", 100, true, false, "", 0, 100)
 
 --reset it
 if GameVolumeConVar:GetInt() == 1 then
@@ -130,6 +131,28 @@ cvars.AddChangeCallback("cinema_volume", function(cmd, old, new)
         if MusicPagePanel then
             MusicPagePanel:RunJavascript("setVolume(" .. tostring(new) .. ");")
         end
+    end
+end)
+
+cvars.AddChangeCallback("cinema_voice_volume", function(cmd, old, new)
+    new = tonumber(new)
+
+    if not new then
+        return
+    elseif new < 0 then
+        RunConsoleCommand("cinema_voice_volume", 0)
+    elseif new > 100 then
+        RunConsoleCommand("cinema_voice_volume", 100)
+    else
+        for i, v in ipairs(player.GetAll()) do
+            v:SetVoiceVolumeScale(new / 100)
+        end
+    end
+end)
+
+hook.Add("OnEntityCreated", "PlayerVoiceVolume", function(ent)
+    if ent:IsPlayer() then
+        ent:SetVoiceVolumeScale(VoiceVolumeConVar:GetFloat() / 100)
     end
 end)
 

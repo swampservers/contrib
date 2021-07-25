@@ -83,7 +83,7 @@ function ReleaseVape(ply)
 
     if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass():sub(1, 11) == "weapon_vape" then
         if ply.vapeCount >= 5 then
-            local loc = Location.GetLocationNameByIndex(Location.Find(ply)):lower()
+            local loc = ply:GetLocationName():lower()
 
             if (ply:InTheater() and not (ply:GetTheater()._AllowItems)) or loc == "trump lobby" or loc == "golf" then
                 ply:PrintMessage(HUD_PRINTTALK, "[red] Take it outside, degenerate filth. ;authority;")
@@ -127,6 +127,10 @@ end)
 function SetVapeHelium(ply, helium)
     if ply.vapeHelium ~= helium then
         local grav = Lerp(helium / 100, 1, -0.15)
+
+        if ply.Obesity and ply:Obesity() > 40 then
+            grav = 1
+        end
 
         if grav < 0 and ply:OnGround() then
             ply:SetPos(ply:GetPos() + Vector(0, 0, 1))

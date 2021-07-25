@@ -122,12 +122,13 @@ function SWEP:DrawWorldModel()
     end
 
     if url then
-        render.MaterialOverride(ImgurMaterial({
+        render.MaterialOverride(WebMaterial({
             id = url,
             owner = own,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            nsfw = "?"
         }))
     end
 
@@ -156,12 +157,13 @@ function SWEP:PreDrawViewModel(vm, ply, wep)
     end
 
     if url then
-        render.MaterialOverride(ImgurMaterial({
+        render.MaterialOverride(WebMaterial({
             id = url,
             owner = own,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            nsfw = "?"
         }))
     end
 
@@ -309,7 +311,7 @@ function SWEP:PrimaryAttack()
                         net.WriteVector(bcenter)
                         net.SendPVS(bcenter)
 
-                        if (not Safe(v)) and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") and not (self.Owner.hvp and self.Owner.hvp == v.hvp) then
+                        if not v:IsProtected() and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") and not (self.Owner.hvp and self.Owner.hvp == v.hvp) then
                             if v:IsOnGround() then
                                 v:SetPos(v:GetPos() + Vector(0, 0, 2))
                             end
@@ -362,6 +364,7 @@ function SWEP:SecondaryAttack()
 
         if not CannotMakeTrash(self.Owner) then
             local e = ents.Create("prop_trash_pillow")
+            if not IsValid(e) then return end
             e:SetNWBool("Hard", self:GetHardened())
             local pos, ang = LocalToWorld(self.droppos or Vector(40, 0, 0), self.dropang or Angle(10, 240, -10), self.Owner:EyePos(), self.Owner:EyeAngles())
             local fwdv = self.Owner:EyeAngles():Forward() * 10
