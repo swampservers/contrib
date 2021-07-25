@@ -211,6 +211,7 @@ SS_WeaponAndAmmoProduct({
     description = "Allows you to control kleiners",
     price = 1000,
     ammotype = "kleinerbait",
+    amount = 10,
     model = 'models/weapons/w_bugbait.mdl',
     class = 'weapon_kleinerbait'
 })
