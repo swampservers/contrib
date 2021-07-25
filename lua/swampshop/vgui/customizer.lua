@@ -201,6 +201,8 @@ end
 --read tab is configurable
 --write tab is .cfg.
 function PANEL:AddVectorOption(section,read_tab,write_tab,writeprop,label)
+    print("Property:"..writeprop)
+    assert(writeprop != nil ,"No property for VectorOption")
     local suffix = self.WEARSUFFIX
     
     local options = read_tab
@@ -577,6 +579,21 @@ function PANEL:Open(item)
 
 end
 
+--gets a value nested into tables using a table of keys. Should be writable?
+function GetTableNested(tab, keys )
+    local val = tab
+    local sstring = ""
+    for i,v in ipairs(keys) do
+        assert(val[v] , "Nested Table Search Fail at "..sstring)
+        val = val[v]
+        sstring = sstring .. "["..tostring(v).."("..type(v)..")]"
+    end
+    print(sstring)
+    return val
+end
+
+
+BANANA = {ASS = {SHIT = {DIE = 4}}}
 
 
 function PANEL:SetupControls()
@@ -594,9 +611,6 @@ function PANEL:SetupControls()
 
     --quick little hack, if you wanna stick your diffent config types into subtables it will organize them. probably don't wanna use more than 2 per item though.
    
-    if(self.item.configurable and self.item.configurable.wear and self.item.configurable.wear.pos)then
-        self.item.configurable.wear.ang = {}
-    end
 
     for k,v in pairs(self.item.configurable)do
         local sname = "default"
@@ -607,17 +621,21 @@ function PANEL:SetupControls()
         self:AddSection(sname)
         timer.Simple(0,function()
         
-
+            PrintTable(self.item.cfg)
         if(k == "wear")then
+            self.item.cfg[k..suffix] =  self.item.cfg[k..suffix] or {}
             for k2,v2 in pairs(v)do
                 print(k2)
-                
-                if(k2 == "pos")then self:AddVectorOption(sname,self.item.configurable.wear[k2],self.item.cfg[k..suffix],k2,"Offset"..parsufname) end
+                self.item.cfg[k..suffix][k2] = self.item.cfg[k..suffix][k2] or k2 == "ang" and Angle() or k2 == "scale" and Vector(1,1,1) or Vector(0,0,0)
+                if(k2 == "pos")then 
+                    self:AddVectorOption(sname,self.item.configurable.wear[k2],self.item.cfg[k..suffix],k2,"Offset"..parsufname) 
+                    self:AddAngleOption(sname,self.item.configurable.wear["ang"],self.item.cfg[k..suffix],"ang","Rotate"..parsufname)
+                end
                 if(k2 == "scale")then self:AddVectorOption(sname,self.item.configurable.wear[k2],self.item.cfg[k..suffix],k2,"Scale"..parsufname,true) end
-                if(k2 == "ang")then self:AddAngleOption(sname,self.item.configurable.wear[k2],self.item.cfg[k..suffix],k2,"Rotate"..parsufname) end
+                
             end
         else
-            self.item.cfg[k..suffix] = self.item.cfg[k..suffix] or k == scale and Vector(1,1,1) or Vector(0,0,0)
+            self.item.cfg[k..suffix] = self.item.cfg[k..suffix] or k == "ang" and Angle() or k == "scale" and Vector(1,1,1) or Vector(0,0,0)
             if(k == "pos")then self:AddVectorOption(sname,self.item.configurable[k],self.item.cfg,k..suffix,"Offset"..parsufname) end
             if(k == "scale")then self:AddVectorOption(sname,self.item.configurable[k],self.item.cfg,k..suffix,"Scale"..parsufname,true) end
             if(k == "rotate")then self:AddAngleOption(sname,self.item.configurable[k],self.item.cfg,k..suffix,"Rotate"..parsufname) end
