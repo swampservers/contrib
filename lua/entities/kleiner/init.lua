@@ -29,7 +29,7 @@ function ENT:Initialize()
     self:SetGravity(200)
     self:SetSubMaterial(5, "models/kleiner/players_sheet")
     self:SetUseType(SIMPLE_USE)
-    self:SetBased(math.random(1, 10) == 1)
+    self:SetBased(math.random(1, 30) == 1)
     self:SetHealth(self:GetBased() and 200 or 50)
     
     if (self:GetBased()) then
