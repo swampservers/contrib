@@ -284,6 +284,7 @@ function SWEP:Think()
     if (charging) then
         if(!ply:OnGround())then
             ply:SetFOV(0, 0.5)
+            self.Weapon:SetNextSecondaryFire(CurTime() + 2)
             self:SetChargeEnd(CurTime() - 1)
             return
           end
