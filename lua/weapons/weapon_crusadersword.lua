@@ -260,11 +260,9 @@ function SWEP:SetupMove(ply,mv,cmd)
   if(self.GetChargeEnd and self:GetChargeEnd() > CurTime()) then
         mv:SetMaxClientSpeed(self.ChargeAttackVelocity * 155)
         mv:SetForwardSpeed(self.ChargeAttackVelocity * 155)
-        mv:SetVelocity(ply:GetRenderAngles():Forward() * self.ChargeAttackVelocity)
+        mv:SetVelocity(Angle(0,ply:EyeAngles().yaw,0):Forward() * self.ChargeAttackVelocity)
     end
 end
-
-
 
 function SWEP:Think()
     local delta = CurTime() - (self.LastThink or CurTime())
@@ -284,6 +282,12 @@ function SWEP:Think()
     end
 
     if (charging) then
+        if(!ply:OnGround())then
+            ply:SetFOV(0, 0.5)
+            self:SetChargeEnd(CurTime() - 1)
+            return
+          end
+        
         local tr = {}
         local trace
         tr.filter = self.SwingFilter
@@ -445,26 +449,6 @@ function SWEP:OnRemove()
     if (IsValid(self:GetOwner())) then
         self:GetOwner():SetFOV(0, 0.5)
     end
-end
-
-hook.Add("KeyPress", "keypress_crusadersword", function(ply, key)
-    if key ~= IN_JUMP then return end
-    if not IsFirstTimePredicted() then return end
-    local self = ply:GetActiveWeapon()
-    if not IsValid(self) or self:GetClass() ~= "weapon_crusadersword" then return end
-    if not self.Owner:IsOnGround() then return end --self.Owner:SetPos(self.Owner:GetPos()+Vector(0,0,1))
-    self:Jump()
-end)
-
-hook.Add("KeyRelease", "keyrelease_crusadersword", function(ply, key)
-    if key ~= IN_JUMP then return end
-end)
-
-function SWEP:Jump()
-    local ply = self:GetOwner()
-    ply:SetFOV(0, 0.5)
-    self:SetChargeEnd(CurTime() - 1)
-    self.Weapon:SetNextSecondaryFire(CurTime() + 2)
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
