@@ -68,8 +68,6 @@ end
 --
 function PLAYER:ShouldDrawLocal() 
 
-	--if ( self.TauntCam:ShouldDrawLocalPlayer( self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
-
 end
 
 --
@@ -79,14 +77,14 @@ end
 
 function PLAYER:CreateMove( cmd )
 
-	--if ( self.TauntCam:CreateMove( cmd, self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
 	local ply = self.Player 
-	if(IsLockedByTaunting(ply))then
+	if IsLockedByTaunting(ply) then
+		TAUNTING_LOCK_ANG = TAUNTING_LOCK_ANG or ply:EyeAngles()
 		cmd:SetViewAngles(TAUNTING_LOCK_ANG or Angle())
 		cmd:ClearButtons()
 		cmd:ClearMovement()
 	else
-		TAUNTING_LOCK_ANG = ply:EyeAngles()
+		TAUNTING_LOCK_ANG = nil
 	end
 end
 
@@ -95,10 +93,6 @@ end
 --
 function PLAYER:CalcView( view )
 
-	--if ( self.TauntCam:CalcView( view, self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
-
-	-- Your stuff here
- 
 end
 
 

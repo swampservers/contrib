@@ -7,7 +7,7 @@ concommand.Add("swamp_thirdperson", function()
 end)
 
 hook.Add("Think", "ThirdPersonToggler", function()
-    local isf4down = input.IsKeyDown(KEY_F4)
+    local isf4down = input.IsKeyDown(KEY_F4) or (LocalPlayer():InVehicle() and LocalPlayer():KeyDown(IN_DUCK))
 
     if isf4down and not wasf4down then
         -- if (OLDBINDSCONVAR and OLDBINDSCONVAR:GetBool()) then
@@ -18,6 +18,14 @@ hook.Add("Think", "ThirdPersonToggler", function()
     end
 
     wasf4down = isf4down
+end)
+
+--disable standard vehicle third person
+timer.Simple(0, function()
+    local VEHICLE = FindMetaTable("Vehicle")
+    function VEHICLE:GetThirdPersonMode()
+        return false
+    end
 end)
 
 function UseThirdperson()
@@ -36,83 +44,66 @@ function UseThirdperson()
 end
 
 local cwep = {
-weapon_pistol = true,
-weapon_357 = true,
-weapon_smg1 = true,
-weapon_ar2 = true,
-weapon_shotgun = true,
-weapon_crossbow = true,
-weapon_rpg = true,
-weapon_grenade = true,
+    weapon_pistol = true,
+    weapon_357 = true,
+    weapon_smg1 = true,
+    weapon_ar2 = true,
+    weapon_shotgun = true,
+    weapon_crossbow = true,
+    weapon_rpg = true,
+    weapon_grenade = true,
 }
 
 -- taunts where the feet are used
 local LockTaunts = {
-	ACT_GMOD_TAUNT_MUSCLE = true,
-	ACT_GMOD_TAUNT_DANCE = true,
-	ACT_GMOD_TAUNT_ROBOT = true,
-	ACT_GMOD_TAUNT_PERSISTENCE = true,
-	ACT_GMOD_TAUNT_LAUGH = true,
-	ACT_GMOD_TAUNT_CHEER = true
+    ACT_GMOD_TAUNT_MUSCLE = true,
+    ACT_GMOD_TAUNT_DANCE = true,
+    ACT_GMOD_TAUNT_ROBOT = true,
+    ACT_GMOD_TAUNT_PERSISTENCE = true,
+    ACT_GMOD_TAUNT_LAUGH = true,
+    ACT_GMOD_TAUNT_CHEER = true
 }
 
-
 function IsLockedByTaunting(ply)
-    if ply:IsPlayingTaunt() then
-		if(LockTaunts[ply:GetSequenceActivityName(ply:GetLayerSequence(5))])then 
-            return true
-		end
-	end
-    return false
+    return ply:IsPlayingTaunt() and LockTaunts[ply:GetSequenceActivityName(ply:GetLayerSequence(5))]
 end
 
-CreateClientConVar("swamp_thirdperson_side", "0", false, true,true)
+CreateClientConVar("swamp_thirdperson_side", "0", false, true, true)
 
 function UseThirdpersonSide()
     local ply = LocalPlayer()
-    if(ply:InVehicle())then return false end
+    if ply:InVehicle() then return false end
     if IsLockedByTaunting(ply) then return false end
-    if (math.abs(Thirdperson_ViewYaw) > 1) then return false end
-
-    if (IsValid(ply:GetActiveWeapon())) then
-        if (ply:GetActiveWeapon().DrawCrosshair) then return true end
-        if (cwep[ply:GetActiveWeapon():GetClass()]) then return true end
-    end
+    if math.abs(Thirdperson_ViewYaw) > 1 then return false end
+    if IsValid(ply:GetActiveWeapon()) then return ply:GetActiveWeapon().DrawCrosshair or cwep[ply:GetActiveWeapon():GetClass()] end
 
     return false
 end
 
 hook.Add("HUDShouldDraw", "Swamp_HideCrosshair", function(name)
-    if (name == "CHudCrosshair" and (Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0 or math.abs(Thirdperson_ViewYaw) > 1)) then return false end
+    if name == "CHudCrosshair" and (Thirdperson_Lerp > 0 and Thirdperson_LerpSide > 0 or math.abs(Thirdperson_ViewYaw) > 1) then return false end
 end)
 
-concommand.Add("+swamp_freecam", function()
-    Thirdperson_FreeRotate = true
-end)
-
-concommand.Add("-swamp_freecam", function()
-    Thirdperson_FreeRotate = nil
-end)
-
+concommand.Add("+swamp_freecam", function() end)
+concommand.Add("-swamp_freecam", function() end)
 Thirdperson_Lerp = 0
 Thirdperson_SideLerp = 0
-Thirdperson_FreeRotate = false
 Thirdperson_ViewYaw = 0
 Thirdperson_ViewPitch = 0
 
 hook.Add("InputMouseApply", "FreezeTurning", function(cmd, x, y, ang)
-    if (Thirdperson_Lerp > 0) then
-        if not input.LookupBinding("+swamp_freecam") and not input.LookupKeyBinding(MOUSE_MIDDLE) then
-            Thirdperson_FreeRotate = input.IsButtonDown(MOUSE_MIDDLE)
-            if Thirdperson_FreeRotate and not ThirdPerson_BindingHint then
-                LocalPlayerNotify("You can freely rotate your camera while in third person with middle mouse, or by binding +swamp_freecam to the key of your choice.")
-                ThirdPerson_BindingHint = true
-            end
+    if Thirdperson_Lerp > 0 then
+        local freecam_bind = input.LookupBinding("+swamp_freecam")
+        Thirdperson_FreeRotate = (freecam_bind and input.IsButtonDown(input.GetKeyCode(freecam_bind))) or (not input.LookupKeyBinding(MOUSE_MIDDLE) and input.IsButtonDown(MOUSE_MIDDLE))
+
+        if freecam_bind == nil and Thirdperson_FreeRotate and not ThirdPerson_BindingHint then
+            LocalPlayerNotify("You can freely rotate your camera while in third person with middle mouse, or by binding +swamp_freecam to the key of your choice.")
+            ThirdPerson_BindingHint = true
         end
+
         if IsLockedByTaunting(LocalPlayer()) then
             Thirdperson_FreeRotate = true
         end
-        
 
         if Thirdperson_FreeRotate then
             Thirdperson_ViewYaw = (Thirdperson_ViewYaw or 0) - x / 44
@@ -132,6 +123,7 @@ hook.Add("InputMouseApply", "FreezeTurning", function(cmd, x, y, ang)
 
         Thirdperson_ViewYaw = math.Round(Thirdperson_ViewYaw, 3)
     else
+        Thirdperson_FreeRotate = nil
         Thirdperson_ViewYaw = 0
         Thirdperson_ViewPitch = 0
     end
@@ -154,14 +146,12 @@ hook.Add("HUDPaint", "HUDPaint_ThirdPersonCrosshair", function()
             x = math.floor(x)
             y = math.floor(y)
             local ovr
-            
-            if (IsValid(wep) and wep.DoDrawCrosshair) then
+
+            if IsValid(wep) and wep.DoDrawCrosshair then
                 ovr = wep:DoDrawCrosshair(x, y)
             end
 
-
-
-            if (not ovr) then
+            if not ovr then
                 surface.SetDrawColor(col)
                 surface.DrawRect(x, y, 1, 1)
                 surface.DrawRect(x + 10, y, 1, 1)
@@ -180,25 +170,20 @@ hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
     Thirdperson_LerpSide = math.Approach(Thirdperson_LerpSide or 0, (use and UseThirdpersonSide()) and 1 or 0, FrameTime() * 4.5)
 
     if Thirdperson_Lerp > 0 then
-
-        local distance = Thirdperson_Lerp * Lerp(Thirdperson_LerpSide,100,40)
+        local distance = Thirdperson_Lerp * Lerp(Thirdperson_LerpSide, 100, 40)
         angles:RotateAroundAxis(Vector(0, 0, 1), (Thirdperson_ViewYaw or 0) * Thirdperson_Lerp)
         angles:RotateAroundAxis(angles:Right(), (Thirdperson_ViewPitch or 0) * Thirdperson_Lerp)
-
-        local offset = angles:Forward()*distance
+        local offset = angles:Forward() * distance
         local side = GetConVar("swamp_thirdperson_side"):GetBool() == true and -1 or 1
-
         offset = offset + angles:Right() * 20 * Thirdperson_LerpSide * side
         offset = offset + angles:Up() * 5 * Thirdperson_LerpSide
-        
-        
         THIRDPERSON_TRACE = trace2
 
         local trace = {
             start = pos,
             endpos = pos - offset,
-            mins = Vector(1,1,1)*-8,
-            maxs = Vector(1,1,1)*8,
+            mins = Vector(1, 1, 1) * -8,
+            maxs = Vector(1, 1, 1) * 8,
             mask = MASK_SOLID_BRUSHONLY
         }
 
@@ -206,7 +191,7 @@ hook.Add("CalcView", "MyCalcViethridpersonw", function(ply, pos, angles, fov)
         local view = {}
 
         if trace.Hit then
-            view.origin = pos - (offset * (trace.Fraction))  
+            view.origin = pos - (offset * (trace.Fraction))
         else
             view.origin = pos - (offset)
         end
