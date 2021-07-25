@@ -125,6 +125,7 @@ SS_WeaponAndAmmoProduct({
     ammotype = "peaceshot",
     amount = 2
 })
+
 SS_WeaponProduct({
     name = 'Crusader Sword',
     description = "A powerful melee weapon. Powers up after a rapid chain of kills.",
@@ -132,7 +133,6 @@ SS_WeaponProduct({
     model = 'models/aoc_weapon/w_longsword.mdl',
     class = 'weapon_crusadersword'
 })
-
 
 if SERVER then
     language = language or {}

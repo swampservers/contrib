@@ -255,12 +255,11 @@ function SWEP:PrimaryAttack()
     self:SetHitNext(CurTime() + 0.15)
 end
 
-function SWEP:SetupMove(ply,mv,cmd)
-
-  if(self.GetChargeEnd and self:GetChargeEnd() > CurTime()) then
+function SWEP:SetupMove(ply, mv, cmd)
+    if (self.GetChargeEnd and self:GetChargeEnd() > CurTime()) then
         mv:SetMaxClientSpeed(self.ChargeAttackVelocity * 155)
         mv:SetForwardSpeed(self.ChargeAttackVelocity * 155)
-        mv:SetVelocity(Angle(0,ply:EyeAngles().yaw,0):Forward() * self.ChargeAttackVelocity)
+        mv:SetVelocity(Angle(0, ply:EyeAngles().yaw, 0):Forward() * self.ChargeAttackVelocity)
     end
 end
 
@@ -282,13 +281,14 @@ function SWEP:Think()
     end
 
     if (charging) then
-        if(!ply:OnGround())then
+        if (not ply:OnGround()) then
             ply:SetFOV(0, 0.5)
             self.Weapon:SetNextSecondaryFire(CurTime() + 2)
             self:SetChargeEnd(CurTime() - 1)
+
             return
-          end
-        
+        end
+
         local tr = {}
         local trace
         tr.filter = self.SwingFilter
