@@ -54,6 +54,8 @@ SWEP.ChargeDelay = 3 --Time before charging again
 SWEP.ChargeFOV = 120 -- Camera FOV while charging
 SWEP.RenderGroup = RENDERGROUP_BOTH
 
+--NOMINIFY
+
 --NOTE: Holy mode can be set with SetHoly(true), In this mode, the blade cannot be stopped by hard surfaces, and damage won't be reduced on subsequent hits in the same slash
 SWEP.Offset = {
     Pos = {
@@ -95,6 +97,9 @@ end
 
 function SWEP:DrawWorldModelTranslucent()
     local matr = self:GetBoneMatrix(0)
+    
+    if not matr then return end
+
     local pos = matr:GetTranslation()
     local ang = matr:GetAngles()
     ang:RotateAroundAxis(ang:Right(), -95)

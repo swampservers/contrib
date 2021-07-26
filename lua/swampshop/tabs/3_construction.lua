@@ -7,6 +7,8 @@ local function CannotBuyTrash(self, ply)
     if SERVER then return CannotMakeTrash(ply) end
 end
 
+
+
 SS_WeaponProduct({
     class = "weapon_trash_tape",
     price = 0,
