@@ -33,7 +33,7 @@ end
 local PANEL = {}
 PANEL.HistoryWidth = 300
 local CloseTexture = Material("theater/close.png")
-CreateClientConVar("linuxinputfix", "0", true, false)
+CreateClientConVar("linuxinputfix", "1", true, false)
 
 function PANEL:Init()
     RequestPanel = self
@@ -79,7 +79,7 @@ function PANEL:Init()
     self.History = vgui.Create("RequestHistory", self)
     self.History:SetPaintBackgroundEnabled(false)
 	
-    if (GetConVar("linuxinputfix"):GetInt() == 1) then
+    if (system.IsLinux() and GetConVar("linuxinputfix"):GetInt() == 1) then
         self.PanelInput = vgui.Create("TextEntry", self)
         self.PanelInput:SetText("")
         self.PanelInput:SetVisible(false)
