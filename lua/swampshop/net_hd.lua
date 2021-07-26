@@ -129,18 +129,17 @@ end
 
 function net.WriteCompressedTableOverflowPartial(tab)
     local data = util.Compress(util.TableToJSON(tab))
-
     local of = false
+
     while #data > 65000 do
         of = true
-
         local t2 = {}
-        for i=1,math.floor(0.9*#tab) do
+
+        for i = 1, math.floor(0.9 * #tab) do
             table.insert(t2, tab[i])
         end
 
         tab = t2
-
         data = util.Compress(util.TableToJSON(tab))
     end
 
