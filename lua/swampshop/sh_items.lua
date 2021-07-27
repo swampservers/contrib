@@ -13,7 +13,7 @@ SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 -- convert sql loaded data, or network data, to item
 -- still needs to be sanitized on server, left out of here to deal with prop slots
 function SS_MakeItem(ply, itemdata)
-    local class = SS_Items[itemdata.class]
+    local class = SS_Items[itemdata.class] or SS_Items["unknown"]
 
     if not class then
         print("Unknown item", itemdata.class)
@@ -92,7 +92,7 @@ function SS_WeaponBlueprintItem(item)
                 if self.owner:HasWeapon(self.class) then
                     self.owner:SelectWeapon(self.class)
                 else
-                    self.owner:TryTakePoints(self:CraftingPrice(), function()
+                    self.owner:SS_TryTakePoints(self:CraftingPrice(), function()
                         self.owner:Give(self.class)
                         self.owner:SelectWeapon(self.class)
                     end)
@@ -324,6 +324,16 @@ function SS_Item(item)
 
     assert(item.value and item.value >= 0, "Price or value is needed")
 end
+
+SS_Item({
+    class = "unknown",
+    value = 0,
+    GetName = function(self) return "Unknown "..self.class end,
+    GetDescription = function(self)  return "Unknown item of class "..self.class..". It might do something on another server. All you can do here is delete it." end,
+    model = "models/error.mdl",
+    invcategory = "Upgrades",
+    never_equip = true
+})
 
 function _SS_SanitizeConfig(item)
     local cfg = item.cfg

@@ -127,11 +127,13 @@ function finishCoinFlip(fromID, toPlayer)
 
         -- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
         if heads then
-            toPlayer:SS_TakePoints(amount)
-            fromPlayer:SS_GivePoints(amount) --math.floor(amount*0.99))
+            toPlayer:SS_TryTakePoints(amount, function()
+                fromPlayer:SS_GivePoints(amount) --math.floor(amount*0.99)) 
+            end)
         else
-            fromPlayer:SS_TakePoints(amount)
-            toPlayer:SS_GivePoints(amount) --math.floor(amount*0.99))
+            fromPlayer:SS_TryTakePoints(amount, function()
+                toPlayer:SS_GivePoints(amount) --math.floor(amount*0.99))
+            end)
         end
     else
         CoinFlips[fromID] = nil

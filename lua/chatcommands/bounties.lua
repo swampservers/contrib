@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-BountyLimit = BountyLimit or {}
+-- BountyLimit = BountyLimit or {}
 
 hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     local bounty = GetPlayerBounty(ply)
@@ -28,33 +28,28 @@ end
 function AddBounty(ply, targets, amount)
     amount = amount > 0 and amount or 0
     local needed = amount * #targets
-    local total = (BountyLimit[ply:SteamID()] or 0) + needed
+    -- local total = (BountyLimit[ply:SteamID()] or 0) + needed
 
-    if ply:SS_HasPoints(needed) and total <= 10000000 then
+    ply:SS_TryTakePoints(needed, function()
+        if not IsValid(ply) then return end
+
         for k, v in ipairs(targets) do
-            if not ply:IsPlayer() or not v:IsPlayer() or type(amount) ~= "number" then
-                ServerDebug("AddBounty: invalid arguments")
-                error("AddBounty: invalid arguments")
-
-                return
-            end
-
-            local add = GetPlayerBounty(v) + amount
-            BountyLimit[ply:SteamID()] = (BountyLimit[ply:SteamID()] or 0) + amount
-            SetPlayerBounty(v, add)
-            ply:SS_TakePoints(amount)
+            if IsValid(v) then 
+            SetPlayerBounty(v, GetPlayerBounty(v) + amount) end
         end
 
         if #targets == 1 then
-            BotSayGlobal("[fbc]" .. targets[1]:Nick() .. "'s bounty is now [rainbow]" .. GetPlayerBounty(targets[1]) .. " [fbc]points")
+            if IsValid(targets[1]) then BotSayGlobal("[fbc]" .. targets[1]:Nick() .. "'s bounty is now [rainbow]" .. GetPlayerBounty(targets[1]) .. " [fbc]points") end
         else
             BotSayGlobal("[fbc]" .. ply:Nick() .. " has increased everyone's bounty by [rainbow]" .. amount .. " [fbc]points!")
         end
-    elseif ply:SS_HasPoints(needed) then
-        ply:ChatPrint("[red]You have reached your limit for today")
-    else
+    end, function()
+        if not IsValid(ply) then return end
+        
         ply:ChatPrint("[red]You don't have enough points")
-    end
+    end)
+
+     -- BountyLimit[ply:SteamID()] = (BountyLimit[ply:SteamID()] or 0) + amount
 end
 
 RegisterChatCommand({'bounty', 'setbounty'}, function(ply, arg)

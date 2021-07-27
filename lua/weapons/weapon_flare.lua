@@ -51,31 +51,32 @@ function SWEP:PrimaryAttack()
     self:EmitSound("Weapon_StunStick.Swing", nil, 60, 0.2)
 
     ply:TimerSimple(0.15, function()
-        if (IsValid(ply)) then
-            local dir = ply:GetAimVector()
-            local org = ply:GetShootPos() + dir * 20 + Vector(0, 0, -10)
-            local effectdata = EffectData()
-            effectdata:SetOrigin(org)
-            effectdata:SetNormal(dir)
-            effectdata:SetRadius(1)
-            effectdata:SetMagnitude(1)
-            effectdata:SetScale(0.1)
-            util.Effect("ElectricSpark", effectdata)
+        if not IsValid(self) then return end
+        
+        local dir = ply:GetAimVector()
+        local org = ply:GetShootPos() + dir * 20 + Vector(0, 0, -10)
+        local effectdata = EffectData()
+        effectdata:SetOrigin(org)
+        effectdata:SetNormal(dir)
+        effectdata:SetRadius(1)
+        effectdata:SetMagnitude(1)
+        effectdata:SetScale(0.1)
+        util.Effect("ElectricSpark", effectdata)
 
-            --[[ local hit = self.Owner:GetEyeTrace()
-            if (hit.HitPos or Vector(0,0,0)):Distance(self.Owner:EyePos()) > 80 then return end
-            hit = hit.Entity
-            if IsValid(hit) and hit:GetClass()=="keem" then hit:FireAttack() self:Remove() end ]]
-            --
-            if SERVER then
-                for k, v in pairs(ents.FindByClass("keem")) do
-                    if v:GetPos():Distance(self.Owner:GetPos()) < 80 then
-                        v:FireAttack()
-                        SafeRemoveEntityDelayed(self, 0.2)
-                    end
+        --[[ local hit = self.Owner:GetEyeTrace()
+        if (hit.HitPos or Vector(0,0,0)):Distance(self.Owner:EyePos()) > 80 then return end
+        hit = hit.Entity
+        if IsValid(hit) and hit:GetClass()=="keem" then hit:FireAttack() self:Remove() end ]]
+        --
+        if SERVER then
+            for k, v in pairs(ents.FindByClass("keem")) do
+                if v:GetPos():Distance(self.Owner:GetPos()) < 80 then
+                    v:FireAttack()
+                    SafeRemoveEntityDelayed(self, 0.2)
                 end
             end
         end
+    
     end)
 
     if (SERVER) then
