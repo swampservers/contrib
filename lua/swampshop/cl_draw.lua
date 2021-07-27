@@ -377,6 +377,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
         end
 
         mdl:SetParent(ent, attach_id)
+        mdl._FollowedBone = nil
     else
         local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
 
@@ -387,6 +388,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
         end
 
         mdl:FollowBone(ent, bone_id)
+        mdl._FollowedBone = bone_id
     end
 
     -- mdl:SetPredictable(true)
