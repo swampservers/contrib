@@ -83,9 +83,9 @@ function SWEP:Deploy()
         timer.Destroy(timerName)
     end
 
-    self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
-    self.Weapon:SetNextPrimaryFire(CurTime() + .25)
-    self.Weapon:SetNextSecondaryFire(CurTime() + .25)
+    self:SendWeaponAnim(ACT_VM_DRAW)
+    self:SetNextPrimaryFire(CurTime() + .25)
+    self:SetNextSecondaryFire(CurTime() + .25)
     self.ActionDelay = (CurTime() + .25)
     self.Owner.NextReload = CurTime() + 1
 
@@ -180,7 +180,7 @@ function SWEP:PrimaryAttack()
     self:EmitSound("Double_Barrel.Single")
     self:TakePrimaryAmmo(1)
     self.Owner:ViewPunch(Angle(rnda, rndb, rnda))
-    self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+    self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 end
 
 function SWEP:SecondaryAttack()
@@ -191,7 +191,7 @@ function SWEP:Reload()
     if not IsValid(self.Owner) then return end
     if not self.Owner:IsPlayer() then return end
     local maxcap = self.Primary.ClipSize
-    local spaceavail = self.Weapon:Clip1()
+    local spaceavail = self:Clip1()
     local shellz = (maxcap) - (spaceavail) + 1
     if (timer.Exists("ShotgunReload_" .. self.Owner:UniqueID())) or (self.Owner.NextReload or 0) > CurTime() or maxcap == spaceavail then return end
 
@@ -200,11 +200,11 @@ function SWEP:Reload()
         local TIMESCALE = (self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1) and 0.5 or 1
         local DLY = 2 * TIMESCALE
 
-        if self.Weapon:GetNextPrimaryFire() <= (CurTime() + DLY) then
-            self.Weapon:SetNextPrimaryFire(CurTime() + DLY) -- wait TWO seconds before you can shoot again
+        if self:GetNextPrimaryFire() <= (CurTime() + DLY) then
+            self:SetNextPrimaryFire(CurTime() + DLY) -- wait TWO seconds before you can shoot again
         end
 
-        self.Weapon:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START) -- sending start reload anim
+        self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START) -- sending start reload anim
         self.Owner:SetAnimation(PLAYER_RELOAD)
         self.Owner.NextReload = CurTime() + 1
 
@@ -219,7 +219,7 @@ function SWEP:Reload()
             timer.Create(timerName, (.5 + .05) * TIMESCALE, shellz, function()
                 if not IsValid(self) then return end
 
-                if IsValid(self.Owner) and IsValid(self.Weapon) then
+                if IsValid(self.Owner) then
                     if self.Owner:Alive() then
                         self:InsertShell()
                     end
@@ -227,12 +227,11 @@ function SWEP:Reload()
             end)
         end
     elseif self.Owner:IsNPC() then
-        self.Weapon:DefaultReload(ACT_VM_RELOAD)
+        self:DefaultReload(ACT_VM_RELOAD)
     end
 end
 
 function SWEP:InsertShell()
-    if not IsValid(self) then return end
     if not IsValid(self.Owner) then return end
     if not self.Owner:IsPlayer() then return end
     local timerName = "ShotgunReload_" .. self.Owner:UniqueID()
@@ -246,14 +245,15 @@ function SWEP:InsertShell()
             return
         end
 
-        if (self.Weapon:Clip1() >= self.Primary.ClipSize or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then
+        if (self:Clip1() >= self.Primary.ClipSize or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then
             -- if clip is full or ammo is out, then...
-            self.Weapon:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH) -- send the pump anim
+            self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH) -- send the pump anim
             timer.Destroy(timerName) -- kill the timer
-        elseif (self.Weapon:Clip1() <= self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0) then
+        elseif (self:Clip1() <= self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0) then
             self.InsertingShell = true --well, I tried!
 
             timer.Simple(.05, function()
+                if not IsValid(self) then return end
                 self:ShellAnimCaller()
             end)
 
@@ -261,7 +261,7 @@ function SWEP:InsertShell()
                 self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
             end
 
-            self.Weapon:SetClip1(self.Weapon:Clip1() + 1)
+            self:SetClip1(self:Clip1() + 1)
         end
     else
         timer.Destroy(timerName) -- kill the timer
@@ -269,5 +269,5 @@ function SWEP:InsertShell()
 end
 
 function SWEP:ShellAnimCaller()
-    self.Weapon:SendWeaponAnim(ACT_VM_RELOAD)
+    self:SendWeaponAnim(ACT_VM_RELOAD)
 end
