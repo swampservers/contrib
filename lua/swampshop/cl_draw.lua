@@ -339,9 +339,7 @@ function SS_SetMaterialToItem(item, ent, ply)
         --         SS_PostRender()
         --     end
     else
-        if col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
-            ent:SetColoredBaseMaterial(col)
-        end
+        ent:SetColoredBaseMaterial(col)
     end
 end
 
@@ -587,10 +585,17 @@ end)
 CLONEDMATERIALS = CLONEDMATERIALS or {}
 
 function Entity:SetColoredBaseMaterial(color)
-    MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
-    local sc = "c" .. tostring(color):gsub("%.", "p"):gsub(" ", "_")
     self:SetMaterial()
     self:SetSubMaterial()
+
+    -- refactor - set default materials for models and support material override in shop
+    if self:GetModel()=="models/props_crates/static_crate_40.mdl" then self:SetSkin(1) end
+
+    if color.x==1 and color.y==1 and color.z==1 then return end
+
+    MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
+    local sc = "c" .. tostring(color):gsub("%.", "p"):gsub(" ", "_")
+
     local mats = self:GetMaterials()
 
     for i, mat in ipairs(mats) do
