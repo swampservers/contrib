@@ -19,8 +19,9 @@ surface.CreateFont("SwampShop2", {
 -- Of course, I made the gamemode, so I don't have to follow my own license,
 -- but still don't advertise donations to not look like a hypocrite.
 local showdonatebutton = true
-timer.Simple(0,function()
-    showdonatebutton =GAMEMODE.FolderName~="fatkid"
+
+timer.Simple(0, function()
+    showdonatebutton = GAMEMODE.FolderName ~= "fatkid"
 end)
 
 function PANEL:Init()
@@ -301,6 +302,7 @@ function PANEL:Init()
                 end
 
                 local tc = MenuTheme_TXAlt
+
                 --[[if self:IsHovered() then
                 tc = Color(175,230,69)
             end]]

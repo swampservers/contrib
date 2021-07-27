@@ -52,7 +52,6 @@ function SWEP:PrimaryAttack()
 
     ply:TimerSimple(0.15, function()
         if not IsValid(self) then return end
-        
         local dir = ply:GetAimVector()
         local org = ply:GetShootPos() + dir * 20 + Vector(0, 0, -10)
         local effectdata = EffectData()
@@ -76,7 +75,6 @@ function SWEP:PrimaryAttack()
                 end
             end
         end
-    
     end)
 
     if (SERVER) then
