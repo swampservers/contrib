@@ -1,7 +1,10 @@
 module("gizmo", package.seeall)
+if(SERVER)then return end
+
+GIZMO_LIST = GIZMO_LIST or {}
 
 --these things are useful if you need to control something in 3d
-local Gizmo_Handle_meta = {
+GIZMO_HANDLE_META = {
     OnUpdate = function(self, delta) end,
     GetParentGizmo = function(self) return self._ParentGizmo end,
     --When you drag a gizmo how do we then translate delta mouse movement to a value change?
@@ -13,24 +16,29 @@ local Gizmo_Handle_meta = {
     IsValid = function(self) return true end,
 }
 
-Gizmo_Handle_meta.__index = Gizmo_Handle_meta
+GIZMO_HANDLE_META.__index = GIZMO_HANDLE_META
 
-local Gizmo_meta = {
+GIZMO_META = {
     AddHandle = function(self, handle)
         local ind = table.insert(self.Handles, handle)
         handle._ParentGizmo = self
         handle._HandleID = ind
     end,
+    gizmotype = "invalid gizmo",
+    __tostring = function(self)
+        return self.gizmotype or "invalid gizmo"
+    end,
     OnUpdate = function(self, value) end,
     Draw = function(self)
         local pos = self:GetPos()
         render.SetColorMaterialIgnoreZ()
-
         for _, handle in pairs(self.Handles) do
             if (IsValid(handle)) then
                 handle:Draw()
             end
         end
+
+
     end,
     Think = function(self)
         local handle = self:GetGrabbedHandle()
@@ -137,19 +145,38 @@ local Gizmo_meta = {
     Handles = {}
 }
 
-Gizmo_meta.__index = Gizmo_meta
+GIZMO_META.__index = GIZMO_META
 
-function Create()
+function Create(class)
     local self = {}
-    setmetatable(self, Gizmo_meta)
-    self.Handles = {}
+    
+    if(class)then
+        if(IsRegistered(class))then
+            self = table.Copy(GetRegistered(class))
+        else
+            ErrorNoHaltWithStack("invalid gizmo class "..class,nil )
+        end
+    end
+
 
     return self
 end
 
+function IsRegistered(class) 
+    return GIZMO_LIST[class] != nil
+end
+
+function GetRegistered(class) 
+    return GIZMO_LIST[class]
+end
+
+function Register(class,gizmo)
+    GIZMO_LIST[class] = gizmo
+end
+
 function CreateHandle()
     local self = {}
-    setmetatable(self, Gizmo_Handle_meta)
+    setmetatable(self, GIZMO_HANDLE_META)
 
     return self
 end
@@ -664,7 +691,6 @@ end
 function CreateHandleClickable(ent, color)
     local box = CreateHandle()
     box._Entity = ent
-   
     box._Color = color or Color(255, 255, 255)
 
     function box:GetEntity()
@@ -702,240 +728,26 @@ function CreateHandleClickable(ent, color)
     end
 
     function box:Test()
-        local ent = self:GetEntity()
-        if false and not IsValid(ent) then
-            local par = self:GetParentGizmo()
-            par.Handles[self._HandleID] = nil
-            return false
-        end
-
-        local par = self:GetParentGizmo()
-        local trace = par:GetTrace()
-        local vaxis = self._DragAxis
-        local mins, maxs = self:GetBounds()
-        local p, n = util.IntersectRayWithOBB(trace.start, trace.endpos - trace.start, self:GetPos(), self:GetAngles(), mins, maxs)
-        if (not p) then return false end
-
-        return true, p
-    end
-
-    function box:Draw()
-        local hit = self:Test()
-        local par = self:GetParentGizmo()
-        local ent = self:GetEntity()
-        print("box ent is now ", ent)
-        --if !IsValid(ent) then return end
-        local pos = par:GetPos()
-        local ang = par:GetAngles()
-        local mins, maxs = self:GetBounds()
-        Material("color_ignorez"):SetVector("$color", Vector(1, 1, 1))
-        Material("color_ignorez"):SetFloat("$alpha", 1)
-
-        if (IsValid(ent)) then
-            render.SetColorMaterialIgnoreZ()
-            
-            local alp = (self._Color.a / 255) * (hit and 1 or 0.3)
-            Material("color_ignorez"):SetVector("$color", self._Color:ToVector())
-            Material("color_ignorez"):SetFloat("$alpha", alp)
-            ent:SetupBones()
-            ent:DrawModel()
-
-            render.SetColorMaterialIgnoreZ()
-            render.DrawBox(self:GetPos(), self:GetAngles(), mins, maxs, Color(0,0,255,64))
-        end
-
-        Material("color_ignorez"):SetVector("$color", Vector(1, 1, 1))
-        Material("color_ignorez"):SetFloat("$alpha", 1)
     end
 
     return box
 end
 
-function MakeSelector(choices)
-    local selector = Create()
-    selector.type = "select"
+local gizmosolid = CreateMaterial( "gizmo_solid", "VertexLitGeneric", {
+    ["$basetexture"] = "color/white",
+    ["$model"] = 1,
+    ["$translucent"] = 1,
+    ["$vertexalpha"] = 1,
+    ["$vertexcolor"] = 1
+  } )
 
-    for k, ent in pairs(choices) do
-        if (not IsValid(ent)) then
-            print("bad entity", ent)
-            continue
-        end
-
-        local pick = CreateHandleClickable(ent, Color(255, 200, 100))
-        selector:AddHandle(pick)
-    end
-
-    return selector
-end
-
-function MakeTranslater(localspace)
-    local translater = Create()
-    translater.type = "translate"
-    local x_handle = CreateHandleLinearKnob(Vector(1, 0, 0), Color(255, 0, 0))
-    translater:AddHandle(x_handle)
-    local y_handle = CreateHandleLinearKnob(Vector(0, 1, 0), Color(0, 255, 0))
-    translater:AddHandle(y_handle)
-    local z_handle = CreateHandleLinearKnob(Vector(0, 0, 1), Color(0, 0, 255))
-    translater:AddHandle(z_handle)
-
-    translater.SetSnaps = function(self, snaps)
-        self._Snap = snaps
-
-        for k, v in pairs(self.Handles) do
-            v:SetSnaps(snaps)
-        end
-    end
-
-    translater._IsLocalSpace = localspace
-    translater.BasedDraw = translater.Draw
-
-    function x_handle:OnUpdate(delta)
-        if (delta == 0) then return end
-        local translater = self:GetParentGizmo()
-
-        if (translater._IsLocalSpace) then
-            translater:OnUpdate(Vector(delta, 0, 0))
-
-            return
-        end
-
-        local offset = LocalToWorld(Vector(delta, 0, 0), Angle(), Vector(), translater:GetAngles())
-        translater:OnUpdate(offset)
-    end
-
-    function y_handle:OnUpdate(delta)
-        if (delta == 0) then return end
-        local translater = self:GetParentGizmo()
-
-        if (translater._IsLocalSpace) then
-            translater:OnUpdate(Vector(0, delta, 0))
-
-            return
-        end
-
-        local offset = LocalToWorld(Vector(0, delta, 0), Angle(), Vector(), translater:GetAngles())
-        translater:OnUpdate(offset)
-    end
-
-    function z_handle:OnUpdate(delta)
-        if (delta == 0) then return end
-        local translater = self:GetParentGizmo()
-
-        if (translater._IsLocalSpace) then
-            translater:OnUpdate(Vector(0, 0, delta))
-
-            return
-        end
-
-        local offset = LocalToWorld(Vector(0, 0, delta), Angle(), Vector(), translater:GetAngles())
-        translater:OnUpdate(offset)
-    end
-
-    return translater
-end
-
-function MakeRotater(localspace)
-    local rotater = Create()
-    rotater.type = "rotate"
-    local pitch_handle = CreateHandleWheel(Vector(1, 0, 0), Color(255, 0, 0))
-    rotater:AddHandle(pitch_handle)
-    local roll_handle = CreateHandleWheel(Vector(0, 1, 0), Color(0, 255, 0))
-    rotater:AddHandle(roll_handle)
-    local yaw_handle = CreateHandleWheel(Vector(0, 0, 1), Color(0, 0, 255))
-    rotater:AddHandle(yaw_handle)
-
-    rotater.SetSnaps = function(self, snaps)
-        self._Snap = snaps
-
-        for k, v in pairs(self.Handles) do
-            v:SetSnaps(snaps)
-        end
-    end
-
-    local thick = 2
-    local ex = 1
-    rotater._IsLocalSpace = localspace
-
-    function pitch_handle:OnUpdate(delta)
-        if (delta == 0) then return end
-        local rotater = self:GetParentGizmo()
-
-        if (rotater._IsLocalSpace) then
-            rotater:OnUpdate(Angle(0, 0, delta))
-
-            return
-        end
-
-        local _, aoffset = LocalToWorld(Vector(), Angle(0, 0, delta), rotater:GetPos(), rotater:GetAngles())
-        rotater:OnUpdate(aoffset)
-    end
-
-    function roll_handle:OnUpdate(delta)
-        if (delta == 0) then return end
-        local rotater = self:GetParentGizmo()
-
-        if (rotater._IsLocalSpace) then
-            rotater:OnUpdate(Angle(delta, 0, 0))
-
-            return
-        end
-
-        local _, aoffset = LocalToWorld(Vector(), Angle(delta, 0, 0), rotater:GetPos(), rotater:GetAngles())
-        rotater:OnUpdate(aoffset)
-    end
-
-    function yaw_handle:OnUpdate(delta)
-        if (delta == 0) then return end
-        local rotater = self:GetParentGizmo()
-
-        if (rotater._IsLocalSpace) then
-            rotater:OnUpdate(Angle(0, delta, 0))
-
-            return
-        end
-
-        local _, aoffset = LocalToWorld(Vector(), Angle(0, delta, 0), rotater:GetPos(), rotater:GetAngles())
-        rotater:OnUpdate(aoffset)
-    end
-
-    return rotater
-end
-
-function MakeScaler()
-    local scaler = Create()
-    scaler.type = "scale"
-    local xs_handle = CreateHandleLinearKnob(Vector(1, 0, 0), Color(255, 0, 0), nil, Vector(2, 2, 2), CYL_MESH)
-    scaler:AddHandle(xs_handle)
-    local ys_handle = CreateHandleLinearKnob(Vector(0, 1, 0), Color(0, 255, 0), nil, Vector(2, 2, 2), CYL_MESH)
-    scaler:AddHandle(ys_handle)
-    local zs_handle = CreateHandleLinearKnob(Vector(0, 0, 1), Color(0, 0, 255), nil, Vector(2, 2, 2), CYL_MESH)
-    scaler:AddHandle(zs_handle)
-    xs_handle._RelativeToKnob = true
-    ys_handle._RelativeToKnob = true
-    zs_handle._RelativeToKnob = true
-
-    scaler.SetSnaps = function(self, snaps)
-        self._Snap = snaps
-
-        for k, v in pairs(self.Handles) do
-            v:SetSnaps(snaps)
-        end
-    end
-
-    function xs_handle:OnUpdate(delta)
-        local scale = (1 + delta / 32)
-        scaler:OnUpdate(Vector(scale, 1, 1))
-    end
-
-    function ys_handle:OnUpdate(delta)
-        local scale = (1 + delta / 32)
-        scaler:OnUpdate(Vector(1, scale, 1))
-    end
-
-    function zs_handle:OnUpdate(delta)
-        local scale = (1 + delta / 32)
-        scaler:OnUpdate(Vector(1, 1, scale))
-    end
-
-    return scaler
+local files, _ = file.Find('swampshop/gizmos/*', 'LUA')
+for k,v in pairs(files)do
+    local name = string.TrimRight(v,".lua")
+    _G.GIZMO = table.Copy(GIZMO_META)
+    --setmetatable(_G.GIZMO, table.Copy(GIZMO_META)) -- i can't figure this shit out
+    include("swampshop/gizmos/"..v)
+    Register(name,_G.GIZMO)
+    print("registered gizmo "..name)
+    _G.GIZMO = nil
 end
