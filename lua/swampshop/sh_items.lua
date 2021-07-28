@@ -13,14 +13,11 @@ SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 -- convert sql loaded data, or network data, to item
 -- still needs to be sanitized on server, left out of here to deal with prop slots
 function SS_MakeItem(ply, itemdata)
-    local class = SS_Items[itemdata.class]
-
-    if not class then
-        print("Unknown item", itemdata.class)
-
-        return
-    end
-
+    local class = SS_Items[itemdata.class] or SS_Items["unknown"]
+    -- if not class then
+    --     print("Unknown item", itemdata.class)
+    --     return
+    -- end
     assert(IsValid(ply) or ply == SS_SAMPLE_ITEM_OWNER)
     itemdata.owner = ply
     setmetatable(itemdata, class)
@@ -92,7 +89,7 @@ function SS_WeaponBlueprintItem(item)
                 if self.owner:HasWeapon(self.class) then
                     self.owner:SelectWeapon(self.class)
                 else
-                    self.owner:TryTakePoints(self:CraftingPrice(), function()
+                    self.owner:SS_TryTakePoints(self:CraftingPrice(), function()
                         self.owner:Give(self.class)
                         self.owner:SelectWeapon(self.class)
                     end)
@@ -323,6 +320,8 @@ function SS_Item(item)
         if v.primary then
             item.primaryaction = v
         end
+
+        v.id = id
     end
 
     SS_ItemOrProduct(item)

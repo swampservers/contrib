@@ -37,3 +37,28 @@ concommand.Add("serverdebug", function(ply, cmd, args)
     net.WriteString(error_str)
     net.Send(ply)
 end)
+
+local clientdebugtxt = ""
+local clientdebugtime = 0
+
+local function sendclientdebug(ply)
+    ply:SendLua([[net.Receive("PrintConsole", function() print(net.ReadString()) end)]])
+    net.Start("PrintConsole")
+    net.WriteString(clientdebugtxt)
+    net.Send(ply)
+end
+
+concommand.Add("clientdebug", function(ply, cmd, args)
+    if CurTime()-clientdebugtime > 60 then
+        file.AsyncRead("clientside_errors.txt", "MOD", function(fn, gp, status, data)
+        	if  status == FSASYNC_OK  then
+                print("READDONE", #data)
+                clientdebugtxt = data:sub(#data-1500)
+                clientdebugtime = CurTime()
+                sendclientdebug(ply)
+            end
+        end)
+    else
+        sendclientdebug(ply)
+    end
+end)

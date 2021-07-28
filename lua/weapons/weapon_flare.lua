@@ -51,6 +51,7 @@ function SWEP:PrimaryAttack()
     self:EmitSound("Weapon_StunStick.Swing", nil, 60, 0.2)
 
     ply:TimerSimple(0.15, function()
+        if not IsValid(self) then return end
         local dir = ply:GetAimVector()
         local org = ply:GetShootPos() + dir * 20 + Vector(0, 0, -10)
         local effectdata = EffectData()
@@ -62,9 +63,9 @@ function SWEP:PrimaryAttack()
         util.Effect("ElectricSpark", effectdata)
 
         --[[ local hit = self.Owner:GetEyeTrace()
-            if (hit.HitPos or Vector(0,0,0)):Distance(self.Owner:EyePos()) > 80 then return end
-            hit = hit.Entity
-            if IsValid(hit) and hit:GetClass()=="keem" then hit:FireAttack() self:Remove() end ]]
+        if (hit.HitPos or Vector(0,0,0)):Distance(self.Owner:EyePos()) > 80 then return end
+        hit = hit.Entity
+        if IsValid(hit) and hit:GetClass()=="keem" then hit:FireAttack() self:Remove() end ]]
         --
         if SERVER then
             for k, v in pairs(ents.FindByClass("keem")) do
@@ -74,11 +75,11 @@ function SWEP:PrimaryAttack()
                 end
             end
         end
-
-        if (SERVER) then
-            SuppressHostEvents()
-        end
     end)
+
+    if (SERVER) then
+        SuppressHostEvents()
+    end
 end
 
 function SWEP:SecondaryAttack()

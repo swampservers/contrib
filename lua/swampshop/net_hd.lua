@@ -127,10 +127,26 @@ function net.ReadTypeHD(typeid)
     error("net.ReadType: Couldn't read type " .. typeid)
 end
 
-function net.WriteCompressedTable(tab)
+function net.WriteCompressedTableOverflowPartial(tab)
     local data = util.Compress(util.TableToJSON(tab))
+    local of = false
+
+    while #data > 65000 do
+        of = true
+        local t2 = {}
+
+        for i = 1, math.floor(0.9 * #tab) do
+            table.insert(t2, tab[i])
+        end
+
+        tab = t2
+        data = util.Compress(util.TableToJSON(tab))
+    end
+
     net.WriteUInt(#data, 16)
     net.WriteData(data, #data)
+
+    return of
 end
 
 function net.ReadCompressedTable()

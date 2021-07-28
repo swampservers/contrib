@@ -24,7 +24,7 @@ function SS_Product(product)
         end
 
         if self.price > 0 then
-            ply:SS_TakePoints(self.price, finish_buy)
+            ply:SS_TryTakePoints(self.price, finish_buy)
         else
             finish_buy()
         end

@@ -12,16 +12,18 @@ hook.Add("Tick", "ClientForceMaterial", function()
     local cutoff = CurTime() - (0.5 + (IsValid(LocalPlayer()) and LocalPlayer():Ping() / 1000 or 1))
 
     for ent, _ in pairs(watchlist) do
-        if not IsValid(ent) or (ent.CFM_AppearTime or 0) < cutoff or not ent.CLIENTFORCEDMATERIAL then
+        if not IsValid(ent) or (ent.CFM_AppearTime or 0) < cutoff or not (ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) then
             watchlist[ent] = nil
         else
-            for idx, mat in pairs(ent.CLIENTFORCEDMATERIAL) do
+            for idx, mat in pairs(ent.CLIENTFORCEDMATERIAL or {}) do
                 if idx == -1 then
                     ent:BasedSetMaterial(mat)
                 else
                     ent:BasedSetSubMaterial(idx, mat)
                 end
             end
+
+            if  ent.CLIENTFORCEDSKIN then ent:BasedSetSkin( ent.CLIENTFORCEDSKIN ) end
         end
     end
 end)
@@ -29,21 +31,27 @@ end)
 hook.Add("NetworkEntityCreated", "ClientForceMaterial2", function(ent)
     ent.CFM_AppearTime = CurTime()
 
-    if ent.CLIENTFORCEDMATERIAL then
+    if ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN then
         watchlist[ent] = true
     end
 end)
 
 hook.Add("NotifyShouldTransmit", "ClientForceMaterial3", function(ent, trans)
     ent.CFM_AppearTime = CurTime()
-    watchlist[ent] = (ent.CLIENTFORCEDMATERIAL and trans) or nil
+    watchlist[ent] = ( (ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) and trans) or nil
 end)
 
 local Entity = FindMetaTable("Entity")
+Entity.BasedGetSkin = Entity.BasedGetSkin or Entity.GetSkin
+Entity.BasedSetSkin = Entity.BasedSetSkin or Entity.SetSkin
 Entity.BasedGetMaterial = Entity.BasedGetMaterial or Entity.GetMaterial
 Entity.BasedSetMaterial = Entity.BasedSetMaterial or Entity.SetMaterial
 Entity.BasedGetSubMaterial = Entity.BasedGetSubMaterial or Entity.GetSubMaterial
 Entity.BasedSetSubMaterial = Entity.BasedSetSubMaterial or Entity.SetSubMaterial
+
+function Entity:GetSkin()
+    return self.CLIENTFORCEDSKIN or self:BasedGetSkin()
+end
 
 function Entity:GetMaterial()
     return (self.CLIENTFORCEDMATERIAL or {})[-1] or self:BasedGetMaterial()
@@ -51,6 +59,11 @@ end
 
 function Entity:GetSubMaterial(idx)
     return (self.CLIENTFORCEDMATERIAL or {})[idx] or self:BasedGetSubMaterial(idx)
+end
+
+function Entity:SetSkin(skin)
+    self.CLIENTFORCEDSKIN = skin
+    if skin then self:BasedSetSkin(skin) end
 end
 
 function Entity:SetMaterial(mat)

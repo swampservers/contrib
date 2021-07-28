@@ -236,6 +236,17 @@ end)
 --     net.WriteTable(args or {})
 --     net.SendToServer()
 -- end
+concommand.Add("ps", function(ply, cmd, args)
+    local action, itemid = args[1], tonumber(args[2] or "")
+    if not action or not itemid then return end
+    local item = LocalPlayer():SS_FindItem(itemid)
+    if not item then return end
+    local act = item.actions[action]
+    if not act then return end
+    print('You can bind this action like this: bind <key> "ps ' .. action .. ' ' .. itemid .. '"')
+    act.OnClient(item)
+end)
+
 function SS_ItemServerAction(item_id, action_id, args)
     if not LocalPlayer():SS_FindItem(item_id) then return end
     net.Start('SS_ItemAction')

@@ -16,6 +16,15 @@ surface.CreateFont("SwampShop2", {
     size = 36
 })
 
+-- The fatkid gamemode has a no-moneymaking-allowed license
+-- Of course, I made the gamemode, so I don't have to follow my own license,
+-- but still don't advertise donations to not look like a hypocrite.
+local showdonatebutton = true
+
+timer.Simple(0, function()
+    showdonatebutton = GAMEMODE.FolderName ~= "fatkid"
+end)
+
 function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
@@ -244,6 +253,7 @@ function PANEL:Init()
             p:SetWide(420)
 
             p.DoClick = function()
+                if not showdonatebutton then return end
                 gui.OpenURL('https://swamp.sv/donate/')
             end
 
@@ -251,6 +261,7 @@ function PANEL:Init()
             local DollarParticles = {}
 
             p.Paint = function(self, w, h)
+                if not showdonatebutton then return end
                 SS_PaintDarkenOnHover(self, w, h)
                 local alpha = 180
                 local mousex, mousey = self:CursorPos()
@@ -292,11 +303,14 @@ function PANEL:Init()
                 end
 
                 local tc = MenuTheme_TXAlt
+
                 --[[if self:IsHovered() then
                 tc = Color(175,230,69)
             end]]
-                draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, (h / 2) - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-                draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, (h / 2) + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                if showdonatebutton then
+                    draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, (h / 2) - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                    draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, (h / 2) + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                end
             end
         end)
     end)

@@ -3,11 +3,11 @@
 include('shared.lua')
 
 function SWEP:Initialize()
-    if self.Owner == LocalPlayer() then
-        self.Owner:ChatPrint(string.format('[red]You have %s seconds to reach the surface before this ancient artifact disappears. Good luck.', self.IdolTimer))
-    end
 end
 
+-- if self.Owner == LocalPlayer() then
+--     self.Owner:ChatPrint(string.format('[red]You have %s seconds to reach the surface before this ancient artifact disappears. Good luck.', self.IdolTimer))
+-- end
 function SWEP:PreDrawViewModel(vm)
     vm:SetModelScale(0.1)
     render.MaterialOverride(self.Material)

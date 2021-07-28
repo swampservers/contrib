@@ -114,12 +114,38 @@ function ENT:ApplyMaterialData(data)
             owner = data.o,
             params = [[{["$color2"]="[]] .. tostring(col) .. [[]"}]]
         })
-    elseif col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
-        self:SetColoredBaseMaterial(col)
     else
-        self:SetMaterial()
+        self:SetColoredBaseMaterial(col)
     end
 end
+
+
+-- local matcache = {}
+
+-- function ENT:SetGoodSkin()
+--     self:SetMaterial()
+--     self:SetSkin(0) 
+
+--     local mdl = self:GetModel()
+--     if mdl=="models/props_crates/static_crate_40.mdl" then self:SetSkin(1) end
+--     -- local bestidx = 0
+--     -- local bestcount = 0
+
+--     -- for i=1,self:SkinCount() do
+--     --     self:SetSkin(i-1)
+
+--     --     local okcount = 0
+--     --     for j,v in ipairs(self:GetMaterials()) do
+--     --         print(i,j,v)
+--     --         if matcache[v]==nil then matcache[v]=Material(v) end
+--     --         if not matcache[v]:IsError() then okcount=okcount+1 end
+--     --     end
+        
+--     --     if okcount > bestcount then bestidx = i-1 end
+--     -- end
+
+--     -- self:SetSkin(bestidx)
+-- end
 
 function ENT:Draw()
     --     local acd = self:GetPos():DistToSqr(EyePos())

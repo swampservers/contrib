@@ -5,6 +5,8 @@ local THEATER_PRIVATE = 1 --private theater
 local THEATER_REPLICATED = 2 --public theater, shows on the scoreboard
 local THEATER_PRIVATEREPLICATED = 3 --private theater, shows on the scoreboard
 
+local WAAB = FindMetaTable("Vector").WithinAABox
+
 Locations = {
     {
         Name = "Entrance",
@@ -559,7 +561,8 @@ Locations = {
     {
         Name = "Unknown",
         Min = Vector(-100000, -100000, -100000),
-        Max = Vector(100000, 100000, 100000)
+        Max = Vector(100000, 100000, 100000),
+        Contains = function(self, point) return true end
     }
 }
 
@@ -586,7 +589,10 @@ while i <= #Locations do
                     Ang = Angle(0, 0, 0),
                     Width = 32,
                     Height = 18
-                }
+                },
+                Contains = function(self, point)
+                    return WAAB(point, self.Min, self.Max)
+                end
             })
         end
 
@@ -601,6 +607,22 @@ LocationByName = {}
 for i, v in ipairs(Locations) do
     v.Index = i
     LocationByName[v.Name] = v
+
+    if not v.Contains then
+        local min = v.Min
+        local max = v.Max
+
+        if v.Filter then
+            local filt = v.Filter
+            v.Contains = function(self, point)
+                return WAAB(point, min,max) and filt(point)
+            end
+        else
+            v.Contains = function(self, point)
+                return WAAB(point, min,max)
+            end
+        end
+    end
 end
 
 function RefreshLocations()
@@ -615,16 +637,8 @@ function FindLocation(pos)
         pos = pos:GetPos()
     end
 
-    if (Locations == nil) then return 0 end
-
     for k, v in ipairs(Locations) do
-        if (pos:InBox(v.Min, v.Max)) then
-            if v.Filter then
-                if v.Filter(pos) then return k end
-            else
-                return k
-            end
-        end
+        if v:Contains(pos) then return k end
     end
 
     return #Locations

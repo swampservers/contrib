@@ -33,6 +33,7 @@ end
 local PANEL = {}
 PANEL.HistoryWidth = 300
 local CloseTexture = Material("theater/close.png")
+CreateClientConVar("linuxinputfix", "1", true, false)
 
 function PANEL:Init()
     RequestPanel = self
@@ -78,9 +79,33 @@ function PANEL:Init()
     self.History = vgui.Create("RequestHistory", self)
     self.History:SetPaintBackgroundEnabled(false)
 
+    if (system.IsLinux() and GetConVar("linuxinputfix"):GetInt() == 1) then
+        self.PanelInput = vgui.Create("TextEntry", self)
+        self.PanelInput:SetText("")
+        self.PanelInput:SetVisible(false)
+
+        self.PanelInput.OnEnter = function()
+            TextEntryLoseFocus()
+        end
+
+        self.Browser:AddFunction("browser", "getinput", function()
+            self.PanelInput:RequestFocus()
+            self.Browser:RunJavascript("if(document.activeElement.tagName.toLowerCase()=='input')document.activeElement.value='" .. self.PanelInput:GetValue() .. "'")
+        end)
+
+        self.Browser.Paint = function(selfb, w, h)
+            selfb:SetKeyboardInputEnabled(not self.PanelInput:HasFocus())
+            selfb:RunJavascript("if(document.activeElement.tagName.toLowerCase()=='input')browser.getinput()")
+        end
+    end
+
     self.Browser.OnDocumentReady = function(panel, url)
         self.Controls.AddressBar:SetText(url)
         self.Controls.RefreshButton:SetDisabled(false)
+
+        if IsValid(self.PanelInput) then
+            self.PanelInput:SetText("")
+        end
 
         if theater.ExtractURLInfo(url) then
             self.Controls.RequestButton:SetDisabled(false)
