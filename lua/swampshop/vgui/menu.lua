@@ -8,7 +8,7 @@ surface.CreateFont("SwampShop1", {
     weight = 1000,
     size = 40
 })
- 
+
 surface.CreateFont("SwampShop2", {
     font = "averiaserif-bold",
     weight = 1000,

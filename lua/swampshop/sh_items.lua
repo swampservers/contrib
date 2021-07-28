@@ -14,13 +14,10 @@ SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 -- still needs to be sanitized on server, left out of here to deal with prop slots
 function SS_MakeItem(ply, itemdata)
     local class = SS_Items[itemdata.class] or SS_Items["unknown"]
-
     -- if not class then
     --     print("Unknown item", itemdata.class)
-
     --     return
     -- end
-
     assert(IsValid(ply) or ply == SS_SAMPLE_ITEM_OWNER)
     itemdata.owner = ply
     setmetatable(itemdata, class)
@@ -326,7 +323,6 @@ function SS_Item(item)
 
     assert(item.value and item.value >= 0, "Price or value is needed")
 end
-
 
 function _SS_SanitizeConfig(item)
     local cfg = item.cfg

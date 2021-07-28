@@ -13,23 +13,19 @@ function ENT:Initialize()
     --     })
     --     if tr.Hit then self:SetPos(tr.HitPos + self:GetAngles():Up()*4 ) end
     -- end
-
     self:SetModel(self.Model)
     self:SetModelScale(0.15)
-    self:PhysicsInitBox(Vector(-1,-1,-1)*10,Vector(1,1,1)*10)
+    self:PhysicsInitBox(Vector(-1, -1, -1) * 10, Vector(1, 1, 1) * 10)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     -- self:PhysicsInitStatic(SOLID_VPHYSICS)
     self:DrawShadow(false)
     local phys = self:GetPhysicsObject()
-
-    if IsValid(phys) then
-        -- phys:EnableMotion(false)
-    end
+    if IsValid(phys) then end -- phys:EnableMotion(false)
 
     if SERVER then
         self:SetTrigger(true)
         self:SetUseType(SIMPLE_USE)
-        self:AddEFlags( EFL_FORCE_CHECK_TRANSMIT )
+        self:AddEFlags(EFL_FORCE_CHECK_TRANSMIT)
     end
 end

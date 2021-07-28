@@ -13,7 +13,9 @@ SWEP.IdolTimer = 100 --seconds the player should have to reach the surface
 SWEP.DrawAmmo = false
 
 function SWEP:PrimaryAttack()
-    if SERVER then self:Remove() end
+    if SERVER then
+        self:Remove()
+    end
 end
 
 function SWEP:SecondaryAttack()

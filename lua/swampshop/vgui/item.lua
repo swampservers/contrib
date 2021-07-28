@@ -50,6 +50,7 @@ function PANEL:OnMousePressed(b)
         if self:IsSelected() then
             if self.item.primaryaction then
                 surface.PlaySound("UI/buttonclick.wav")
+
                 if LocalPlayer():SS_FindItem(self.item.id) then
                     RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
                 else
@@ -229,9 +230,9 @@ function PANEL:Select()
 
                     p.DoClick = function(butn)
                         surface.PlaySound("UI/buttonclick.wav")
-                        
+
                         if LocalPlayer():SS_FindItem(self.item.id) then
-                            RunConsoleCommand("ps", act.id, self.item.id) 
+                            RunConsoleCommand("ps", act.id, self.item.id)
                         else
                             act.OnClient(self.item)
                         end
