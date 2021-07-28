@@ -12,10 +12,8 @@ SWEP.IdolPrize = 100000 --prize the player gets in points for reaching the surfa
 SWEP.IdolTimer = 100 --seconds the player should have to reach the surface
 SWEP.DrawAmmo = false
 
-function SWEP:Think()
-end
-
 function SWEP:PrimaryAttack()
+    if SERVER then self:Remove() end
 end
 
 function SWEP:SecondaryAttack()

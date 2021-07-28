@@ -50,7 +50,11 @@ function PANEL:OnMousePressed(b)
         if self:IsSelected() then
             if self.item.primaryaction then
                 surface.PlaySound("UI/buttonclick.wav")
-                self.item.primaryaction.OnClient(self.item)
+                if LocalPlayer():SS_FindItem(self.item.id) then
+                    RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
+                else
+                    self.item.primaryaction.OnClient(self.item)
+                end
             else
                 print("FIX " .. self.item.class)
             end
@@ -225,7 +229,12 @@ function PANEL:Select()
 
                     p.DoClick = function(butn)
                         surface.PlaySound("UI/buttonclick.wav")
-                        act.OnClient(self.item)
+                        
+                        if LocalPlayer():SS_FindItem(self.item.id) then
+                            RunConsoleCommand("ps", act.id, self.item.id) 
+                        else
+                            act.OnClient(self.item)
+                        end
                     end
 
                     -- todo add Cannot

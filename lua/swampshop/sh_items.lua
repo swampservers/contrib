@@ -15,11 +15,11 @@ SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 function SS_MakeItem(ply, itemdata)
     local class = SS_Items[itemdata.class] or SS_Items["unknown"]
 
-    if not class then
-        print("Unknown item", itemdata.class)
+    -- if not class then
+    --     print("Unknown item", itemdata.class)
 
-        return
-    end
+    --     return
+    -- end
 
     assert(IsValid(ply) or ply == SS_SAMPLE_ITEM_OWNER)
     itemdata.owner = ply
@@ -311,6 +311,8 @@ function SS_Item(item)
         if v.primary then
             item.primaryaction = v
         end
+
+        v.id = id
     end
 
     SS_ItemOrProduct(item)
@@ -325,15 +327,6 @@ function SS_Item(item)
     assert(item.value and item.value >= 0, "Price or value is needed")
 end
 
-SS_Item({
-    class = "unknown",
-    value = 0,
-    GetName = function(self) return "Unknown " .. self.class end,
-    GetDescription = function(self) return "Unknown item of class " .. self.class .. ". It might do something on another server. All you can do here is delete it." end,
-    model = "models/error.mdl",
-    invcategory = "Upgrades",
-    never_equip = true
-})
 
 function _SS_SanitizeConfig(item)
     local cfg = item.cfg

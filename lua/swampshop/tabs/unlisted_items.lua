@@ -58,6 +58,19 @@ SS_Item({
     model = "models/error.mdl",
     material = "models/debug/debugwhite",
 })
+
+SS_Item({
+    class = "unknown",
+    value = 0,
+    GetName = function(self) return "Unknown " .. self.class end,
+    GetDescription = function(self) return "Unknown item of class " .. self.class .. ". It might do something on another server. All you can do here is delete it." end,
+    model = "models/error.mdl",
+    invcategory = "Upgrades",
+    never_equip = true 
+})
+
+
+
 -- SS_BaseItem({
 --     class = "unknown",
 --     price = 0,
