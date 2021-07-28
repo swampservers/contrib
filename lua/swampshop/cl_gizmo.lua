@@ -25,6 +25,7 @@ local Gizmo_meta = {
     Draw = function(self)
         local pos = self:GetPos()
         render.SetColorMaterialIgnoreZ()
+
         for _, handle in pairs(self.Handles) do
             if (IsValid(handle)) then
                 handle:Draw()
@@ -369,71 +370,44 @@ function CreateHandleLinearKnob(axis, color, length, size, endshape, snap)
         self._EndMesh:Draw()
         cam.PopModelMatrix()
 
-        if(self._Snap and grab)then
+        if (self._Snap and grab) then
             Material("color_ignorez"):SetVector("$color", MenuTheme_TX:ToVector())
             Material("color_ignorez"):SetFloat("$alpha", 0.2)
-        local ang = self:GetAngles()*1
-        ang:RotateAroundAxis(ang:Up(),45)
-        ang:RotateAroundAxis(ang:Right(),90)
-        
+            local ang = self:GetAngles() * 1
+            ang:RotateAroundAxis(ang:Up(), 45)
+            ang:RotateAroundAxis(ang:Right(), 90)
             local m = Matrix()
-        m:SetTranslation(par:GetPos())
-        m:Rotate(ang)
-        m:Scale(Vector(1,1,1)*self._Snap)
-        cam.PushModelMatrix(m)
-        GRID_MESH:Draw()
-        cam.PopModelMatrix()
+            m:SetTranslation(par:GetPos())
+            m:Rotate(ang)
+            m:Scale(Vector(1, 1, 1) * self._Snap)
+            cam.PushModelMatrix(m)
+            GRID_MESH:Draw()
+            cam.PopModelMatrix()
         end
-
-
-
     end
+
     --render.DrawBox(self:GetPos(), self:GetAngles(), self._BoxScale * -0.5, self._BoxScale * 0.5, ColorAlpha(self._Color, hit and 128 or 32))
     Material("color_ignorez"):SetVector("$color", Vector(1, 1, 1))
     Material("color_ignorez"):SetFloat("$alpha", 1)
+
     return knob
 end
 
 GRID_MESH = Mesh()
 local divs = 5
-mesh.Begin(GRID_MESH, MATERIAL_LINES, (divs*2+1) * 8)
+mesh.Begin(GRID_MESH, MATERIAL_LINES, (divs * 2 + 1) * 8)
 
 for i = -divs, divs do
+    local positions = {Vector(-divs, i, 0), Vector(-divs / 2, i, 0), Vector(-divs / 2, i, 0), Vector(0, i, 0), Vector(0, i, 0), Vector(divs / 2, i, 0), Vector(divs / 2, i, 0), Vector(divs, i, 0), Vector(i, -divs, 0), Vector(i, -divs / 2, 0), Vector(i, -divs / 2, 0), Vector(i, 0, 0), Vector(i, 0, 0), Vector(i, divs / 2, 0), Vector(i, divs / 2, 0), Vector(i, divs, 0),}
 
-
-    local positions = {
-        Vector(-divs, i, 0),
-        Vector(-divs/2, i, 0),
-        Vector(-divs/2, i, 0),
-        Vector(0, i, 0),
-        Vector(0, i, 0),
-        Vector(divs/2, i, 0),
-        Vector(divs/2, i, 0),
-        Vector(divs, i, 0),
-
-        
-
-        Vector(i,-divs, 0),
-        Vector(i,-divs/2, 0),
-        Vector(i,-divs/2, 0),
-
-
-        Vector(i, 0, 0),
-        Vector(i, 0, 0),
-        Vector(i,divs/2, 0),
-        Vector(i,divs/2, 0),
-
-        Vector(i,divs, 0),
-    }
-        for k,pos in pairs(positions)do
-            local alpha = 1-math.Clamp((pos:Length()/(divs)),0,1)
-
-            mesh.Color(255, 255, 255, 255*alpha)
-            mesh.Position(pos)
-            mesh.AdvanceVertex()
-        end
-
+    for k, pos in pairs(positions) do
+        local alpha = 1 - math.Clamp((pos:Length() / (divs)), 0, 1)
+        mesh.Color(255, 255, 255, 255 * alpha)
+        mesh.Position(pos)
+        mesh.AdvanceVertex()
+    end
 end
+
 mesh.End()
 
 function MakeArcMesh(radius1, radius2, angle, snap)
@@ -687,7 +661,113 @@ function CreateHandleWheel(axis, color, r_inner, r_outer, arc, snap)
     return wheel
 end
 
---//////////////////////////////////////////TESTING SHIT
+function CreateHandleClickable(ent, color)
+    local box = CreateHandle()
+    box._Entity = ent
+   
+    box._Color = color or Color(255, 255, 255)
+
+    function box:GetEntity()
+        return self._Entity
+    end
+
+    function box:GetPos()
+        local ent = self:GetEntity()
+        if not IsValid(ent) then return Vector() end
+
+        return ent:GetPos()
+    end
+
+    function box:GetAngles()
+        local ent = self:GetEntity()
+        if not IsValid(ent) then return Angle() end
+
+        return ent:GetAngles()
+    end
+
+    function box:GetBounds()
+        local ent = self:GetEntity()
+        if not IsValid(ent) then return Vector(), Vector() end
+
+        return ent:GetModelBounds()
+    end
+
+    function box:OnGrabbed()
+        local par = self:GetParentGizmo()
+        par:OnUpdate(self)
+    end
+
+    function box:GetDragOffset()
+        return 0
+    end
+
+    function box:Test()
+        local ent = self:GetEntity()
+        if false and not IsValid(ent) then
+            local par = self:GetParentGizmo()
+            par.Handles[self._HandleID] = nil
+            return false
+        end
+
+        local par = self:GetParentGizmo()
+        local trace = par:GetTrace()
+        local vaxis = self._DragAxis
+        local mins, maxs = self:GetBounds()
+        local p, n = util.IntersectRayWithOBB(trace.start, trace.endpos - trace.start, self:GetPos(), self:GetAngles(), mins, maxs)
+        if (not p) then return false end
+
+        return true, p
+    end
+
+    function box:Draw()
+        local hit = self:Test()
+        local par = self:GetParentGizmo()
+        local ent = self:GetEntity()
+        print("box ent is now ", ent)
+        --if !IsValid(ent) then return end
+        local pos = par:GetPos()
+        local ang = par:GetAngles()
+        local mins, maxs = self:GetBounds()
+        Material("color_ignorez"):SetVector("$color", Vector(1, 1, 1))
+        Material("color_ignorez"):SetFloat("$alpha", 1)
+
+        if (IsValid(ent)) then
+            render.SetColorMaterialIgnoreZ()
+            
+            local alp = (self._Color.a / 255) * (hit and 1 or 0.3)
+            Material("color_ignorez"):SetVector("$color", self._Color:ToVector())
+            Material("color_ignorez"):SetFloat("$alpha", alp)
+            ent:SetupBones()
+            ent:DrawModel()
+
+            render.SetColorMaterialIgnoreZ()
+            render.DrawBox(self:GetPos(), self:GetAngles(), mins, maxs, Color(0,0,255,64))
+        end
+
+        Material("color_ignorez"):SetVector("$color", Vector(1, 1, 1))
+        Material("color_ignorez"):SetFloat("$alpha", 1)
+    end
+
+    return box
+end
+
+function MakeSelector(choices)
+    local selector = Create()
+    selector.type = "select"
+
+    for k, ent in pairs(choices) do
+        if (not IsValid(ent)) then
+            print("bad entity", ent)
+            continue
+        end
+
+        local pick = CreateHandleClickable(ent, Color(255, 200, 100))
+        selector:AddHandle(pick)
+    end
+
+    return selector
+end
+
 function MakeTranslater(localspace)
     local translater = Create()
     translater.type = "translate"
@@ -774,7 +854,6 @@ function MakeRotater(localspace)
 
     local thick = 2
     local ex = 1
-    
     rotater._IsLocalSpace = localspace
 
     function pitch_handle:OnUpdate(delta)

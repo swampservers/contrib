@@ -2,6 +2,7 @@
 -- INSTALL: CINEMA
 include("sh_init.lua")
 include("cl_draw.lua")
+include("cl_gizmo.lua")
 include("cl_lootboxes.lua")
 include("vgui/menu.lua")
 include("vgui/panels.lua")

@@ -146,15 +146,27 @@ function SS_AccessoryItem(item)
 
     --Pass -1 for default?
     item.configurable.wear.scale = {
+        label = "Scale",
+        gizmo = "scale",
         min = Vector(0.05, 0.05, 0.05),
         max = (item.maxscale or 1) * Vector(1, 1, 1)
     }
 
     item.configurable.wear.pos = {
+        label = "Offset",
+        gizmo = "translate",
         min = Vector(-16, -16, -16),
         max = Vector(16, 16, 16)
     }
-
+    item.configurable.wear.ang = {
+        label = "Rotate",
+        gizmo = "rotate",
+    }
+    item.configurable.wear.attach = {
+        label = "Attachment",
+        choices = SS_Attachments,
+    }
+    
     item.configurable.color = {
         max = 5
     }

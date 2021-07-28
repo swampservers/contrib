@@ -2,6 +2,7 @@
 -- INSTALL: CINEMA
 local PANEL = {}
 local froggy = Material("vgui/frog.png")
+IN_STEAMGROUP = 1
 
 surface.CreateFont("SwampShop1", {
     font = "averiaserif-bold",
@@ -337,11 +338,13 @@ function PANEL:Init()
         -- end)
         self.leftpane = vgui("DPanel", function(p)
             p:Dock(FILL)
+            p:PerformLayout()
+            p.OrigWidth = p:GetWide()
             p.Paint = noop
         end)
     end)
 
-    local btns = {}
+    self.InventoryButtons = {}
     local firstCat = true
 
     local function NewCategory(catname, icon, inv)
@@ -430,13 +433,14 @@ function PANEL:Init()
                 SS_SelectedPanel:Deselect()
             end
 
-            for k, v in pairs(btns) do
+            for k, v in pairs(self.InventoryButtons) do
                 v:SetActive(false)
                 v:OnDeactivate()
             end
 
             pnl:SetActive(true)
             pnl:OnActivate()
+            SS_ShopMenu.LastCategory = catname
         end
 
         btn.OnDeactivate = function()
@@ -449,7 +453,7 @@ function PANEL:Init()
             panel:SetZPos(100)
         end
 
-        table.insert(btns, btn)
+        self.InventoryButtons[catname] = btn
 
         return DScrollPanel
     end
@@ -728,6 +732,9 @@ function PANEL:Init()
                     local ar, br = SS_GetRatingID(a.specs.rating), SS_GetRatingID(b.specs.rating)
 
                     if ar == br then
+                        if(!a.GetName or !b.GetName)then
+                        return a.id < b.id
+                        end
                         local an, bn = a:GetName(), b:GetName()
                         local i = 0
                         local ml = math.min(string.len(an), string.len(bn))
