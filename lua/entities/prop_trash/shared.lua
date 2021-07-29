@@ -209,7 +209,15 @@ else
 end
 
 function ENT:CanEdit(userid)
-    return (self:GetOwnerID() == userid) or (self:GetLocationOwner() == userid)
+    if (self:GetOwnerID() == userid) or (self:GetLocationOwner() == userid) then return true end
+    
+    local ply = player.GetBySteamID(self:GetOwnerID())
+
+    if IsValid(ply) then
+        for k,v in pairs(ply.TrashFriends) do if k:SteamID()==userid then return true end end
+    end
+
+    return false
 end
 
 function ENT:CanTape(userid)
@@ -222,5 +230,14 @@ function ENT:CanTape(userid)
 
     local lown, lcl = self:GetLocationOwner(), self:GetLocationClass()
 
-    return ((self:GetOwnerID() == userid) and (lown == nil) and ((lcl == TRASHLOC_BUILD) or (self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD))) or (lown == userid and userid ~= nil)
+    if ((self:GetOwnerID() == userid) and (lown == nil) and ((lcl == TRASHLOC_BUILD) or (self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD))) or (lown == userid and userid ~= nil) then
+        return true end
+
+    local ply = player.GetBySteamID(self:GetOwnerID())
+
+    if IsValid(ply) then
+        for k,v in pairs(ply.TrashFriends) do if k:SteamID()==userid then return true end end
+    end
+    
+    return false
 end
