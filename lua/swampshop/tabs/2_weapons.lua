@@ -244,8 +244,8 @@ SS_Item({
 SS_Product({
     class = 'csslootbox', --'csslootbox2' .. tm:lower(),
     price = 100000,
-    name = "CS:S Gun Blueprint", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
-    description = "What is Counter-Strike: Source, anyway?",
+    name = "Random Gun", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
+    description = "Contains a blueprint for a random CS:S gun.\nToo expensive? Try the \"Auctions\" tab!",
     model = 'models/Items/ammocrate_smg1.mdl',
     OnBuy = function(self, ply)
         local options = {}

@@ -39,6 +39,8 @@ function Entity:IsProtected(att)
         end
     end
 
+    if IsValid(att) and att:IsProtected() and att:GetLocation()~=self:GetLocation() then return true end
+
     return false
 end
 
