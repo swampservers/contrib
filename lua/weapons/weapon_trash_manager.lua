@@ -297,14 +297,11 @@ but you need a nearby theater/field to respawn them.]])
                     p:Reset()
                 end)
 
-
-
                 vgui("DButton", function(p)
                     p:Dock(BOTTOM)
                     p:SetText("Manage Friends")
 
                     function p:DoClick()
-
                         TRASHMANAGERWINDOW:Close()
 
                         vgui("DFrame", function(p)
@@ -313,28 +310,26 @@ but you need a nearby theater/field to respawn them.]])
                             p:Center()
                             p:MakePopup()
                             p:CloseOnEscape()
-
                             LocalPlayer().TrashFriends = LocalPlayer().TrashFriends or {}
-            
+
                             vgui("DLabel", function(p)
                                 p:Dock(TOP)
                                 p:SetText("Your friends can build in your areas.")
                             end)
 
-                            vgui( "DListView", function(p)
-                                p:Dock( FILL )
-                                p:SetMultiSelect( false )
-                                p:AddColumn( "Player" )
-                                p:AddColumn( "Friend?" ):SetFixedWidth(50)
+                            vgui("DListView", function(p)
+                                p:Dock(FILL)
+                                p:SetMultiSelect(false)
+                                p:AddColumn("Player")
+                                p:AddColumn("Friend?"):SetFixedWidth(50)
 
-                                for i,v in ipairs(player.GetAll()) do
-                                    if v~=LocalPlayer() and not v:IsBot() then
+                                for i, v in ipairs(player.GetAll()) do
+                                    if v ~= LocalPlayer() and not v:IsBot() then
                                         p:AddLine(v:Name(), LocalPlayer().TrashFriends[v] and "X" or "").player = v
                                     end
                                 end
 
-                                function p:OnRowSelected( index, pnl )
-
+                                function p:OnRowSelected(index, pnl)
                                     if IsValid(pnl.player) then
                                         LocalPlayer().TrashFriends[pnl.player] = (not LocalPlayer().TrashFriends[pnl.player]) and true or nil
                                         pnl:SetColumnText(2, LocalPlayer().TrashFriends[pnl.player] and "X" or "")
@@ -344,20 +339,14 @@ but you need a nearby theater/field to respawn them.]])
                                     net.WriteTable(LocalPlayer().TrashFriends)
                                     net.SendToServer()
                                 end
-
-
                             end)
-
                         end)
-
                     end
                 end)
 
-                
                 vgui("DHorizontalDivider", function(p)
                     p:Dock(BOTTOM)
                 end)
-
             end)
         end
     end
@@ -365,11 +354,14 @@ but you need a nearby theater/field to respawn them.]])
     self:SetNextPrimaryFire(CurTime() + 0.3)
 end
 
-net.Receive("SetTrashFriends",function(len)
+net.Receive("SetTrashFriends", function(len)
     local e = net.ReadEntity()
     if not IsValid(e) then return end
+
     if net.ReadBool() then
-        e.TrashFriends = {[LocalPlayer()]=true}
+        e.TrashFriends = {
+            [LocalPlayer()] = true
+        }
     else
         e.TrashFriends = {}
     end
