@@ -56,9 +56,10 @@ function ENT:Income()
     if p.z < -100 or p.z > 1000 or p.x < -3300 or p.x > 3300 or self:IsProtected() then return 0 end
     local inc = 1000 + self:GetOfferedPoints() / 50
 
-    for i=1,10 do
-        local k = 2000*i
-        if inc>k then
+    for i = 1, 10 do
+        local k = 2000 * i
+
+        if inc > k then
             inc = k + (inc - k) * 0.5
         end
     end
