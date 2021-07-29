@@ -211,7 +211,7 @@ function ENT:CanEdit(userid)
     local ply = player.GetBySteamID(self:GetOwnerID())
 
     if IsValid(ply) then
-        for k, v in pairs(ply.TrashFriends) do
+        for k, v in pairs(ply.TrashFriends or {}) do
             if k:SteamID() == userid then return true end
         end
     end
@@ -232,7 +232,7 @@ function ENT:CanTape(userid)
     local ply = player.GetBySteamID(self:GetOwnerID())
 
     if IsValid(ply) then
-        for k, v in pairs(ply.TrashFriends) do
+        for k, v in pairs(ply.TrashFriends or {}) do
             if k:SteamID() == userid then return true end
         end
     end
