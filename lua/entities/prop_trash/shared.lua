@@ -145,8 +145,10 @@ end
 --         self.LastLocationCoords = self:GetPos()
 --         self.LastLocationIndex = Location.Find(self)
 --     end
+
 --     return self.LastLocationIndex
 -- end
+
 function TrashLocationClass(locid)
     local ln = Locations[locid].Name
     if TrashLocationOverrides[ln] then return TrashLocationOverrides[ln] end
@@ -208,13 +210,9 @@ end
 
 function ENT:CanEdit(userid)
     if (self:GetOwnerID() == userid) or (self:GetLocationOwner() == userid) then return true end
+    
     local ply = player.GetBySteamID(self:GetOwnerID())
-
-    if IsValid(ply) then
-        for k, v in pairs(ply.TrashFriends) do
-            if k:SteamID() == userid then return true end
-        end
-    end
+    if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
 
     return false
 end
@@ -228,14 +226,13 @@ function ENT:CanTape(userid)
     end
 
     local lown, lcl = self:GetLocationOwner(), self:GetLocationClass()
-    if ((self:GetOwnerID() == userid) and (lown == nil) and ((lcl == TRASHLOC_BUILD) or (self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD))) or (lown == userid and userid ~= nil) then return true end
+
+    if ((self:GetOwnerID() == userid) and (lown == nil) and ((lcl == TRASHLOC_BUILD) or (self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD))) or (lown == userid and userid ~= nil) then
+        return true end
+
     local ply = player.GetBySteamID(self:GetOwnerID())
+    if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
 
-    if IsValid(ply) then
-        for k, v in pairs(ply.TrashFriends) do
-            if k:SteamID() == userid then return true end
-        end
-    end
-
+    
     return false
 end
