@@ -142,86 +142,141 @@ end
 SS_WeaponPerkData = {
     -- rating 1
     min = {
-        name="Scuffed", 
-        description="It's just bad (min all stats)",
-        minrating=1,
-        maxrating=1,
+        name = "Scuffed",
+        description = "It's just bad (min all stats)",
+        minrating = 1,
+        maxrating = 1,
     },
     rusted = {
-        name="Rusted", 
-        description="Gets jammed after every shot",
-        weapons={"pistol"},
-        minrating=1,
-        maxrating=1, 
+        name = "Rusted",
+        description = "Gets jammed after every shot",
+        weapons = {"pistol"},
+        minrating = 1,
+        maxrating = 1,
     },
     cracked = {
-        name="Cracked", 
-        description="Ooops! (crack on scope when zoomed)", 
-        weapons={"sniper","autosniper","gun_aug","gun_sg552"},
-        minrating=1,
-        maxrating=1,
+        name = "Cracked",
+        description = "Ooops! (crack on scope when zoomed)",
+        weapons = {"sniper", "autosniper", "gun_aug", "gun_sg552"},
+        minrating = 1,
+        maxrating = 1,
     },
-
     --rating 1-2
     lessdamage = {
-        name="Less-lethal", 
-        description="Fires less-lethal rubber bullets",
-        minrating=1,  
-        maxrating=2
+        name = "Less-lethal",
+        description = "Fires less-lethal rubber bullets",
+        minrating = 1,
+        maxrating = 2
     },
     -- rating 2-4
     compliant = {
-        name="Libtard-Compliant", 
-        description="10 round magazine, semi-auto only, and slow to reload.",
-        weapons={"ar"},
-        minrating=2,
-        minrating=4
+        name = "Libtard-Compliant",
+        description = "10 round magazine, semi-auto only, and slow to reload.",
+        weapons = {"ar"},
+        minrating = 2,
+        minrating = 4
     },
     --rating 5-6
     fullauto = {
-        name="Full-Auto", description="Black market full-auto sear installed",
-        weapons={"pistol","autosniper"},
-        minrating=5,maxrating=6
+        name = "Full-Auto",
+        description = "Black market full-auto sear installed",
+        weapons = {"pistol", "autosniper"},
+        minrating = 5,
+        maxrating = 6
     },
     lightweight = {
-        name="Lightweight", description="Easier to fire on the move",
-        minrating=5,maxrating=6
+        name = "Lightweight",
+        description = "Easier to fire on the move",
+        minrating = 5,
+        maxrating = 6
     },
     heavyweight = {
-        name="Heavyweight", description="Less recoil",minrating=5,maxrating=6},
-
+        name = "Heavyweight",
+        description = "Less recoil",
+        minrating = 5,
+        maxrating = 6
+    },
     --rating 5-7
     extended = {
-        name="Extended", description="Extended mags",
-        minrating=5,maxrating=7
+        name = "Extended",
+        description = "Extended mags",
+        minrating = 5,
+        maxrating = 7
     },
     skullpiercing = {
-        name="Skullpiercing", description="1 headshot kill",
-    
-        minrating=5,maxrating=7
+        name = "Skullpiercing",
+        description = "1 headshot kill",
+        minrating = 5,
+        maxrating = 7
     },
     highvelocity = {
-        name="High-velocity", description="Longer damage range",
-        minrating=5,maxrating=7
+        name = "High-velocity",
+        description = "Longer damage range",
+        minrating = 5,
+        maxrating = 7
     },
     slug = {
-        name="Slug", description="Fires devastating slug ammunition"
-        ,minrating=5,maxrating=7
+        name = "Slug",
+        description = "Fires devastating slug ammunition",
+        minrating = 5,
+        maxrating = 7
     },
-    
     -- rating 7-8
-    antimaterial = {name="Anti-Material", description="Does heavy damage to props (for AWP, instaremove anything)",minrating=7,maxrating=8},
-    selfloading = {name="Self-Loading", description="Semi-automatic firepower (AWP/scout)",minrating=7,maxrating=8},
-    boomstick = {name="Boomstick", description="Fires way more pellets, but in a wider cone",minrating=7,maxrating=8},
-    moredamage = {name="Armor-piercing", description="More damage",minrating=7,maxrating=8},
-    antikleiner = {name="Anti-kleiner", description="Kleiner Killer",minrating=7,maxrating=8},
-    -- antipony = {name="Anti-pony", description="Pony blaster",minrating=7,maxrating=8},
-    -- antihuman = {name="Anti-human", description="Kleiner Killer",minrating=7,maxrating=8},
-    --rating 8
-    explosiveslug = {name="Explosive Slug", description="Fires devastating slug ammunition",minrating=8,maxrating=8},
-    bottomless = {name="Bottomless", description="Never needs to be reloaded (you still have to buy ammo though!)",minrating=8,maxrating=8},
-    dragon = {name="Dragon's Breath", description="Ignites targets",minrating=8,maxrating=8},
-    max = {name="Golden", description="Worthy of Trump (max all stats)",minrating=8,maxrating=8}
+    antimaterial = {
+        name = "Anti-Material",
+        description = "Does heavy damage to props (for AWP, instaremove anything)",
+        minrating = 7,
+        maxrating = 8
+    },
+    selfloading = {
+        name = "Self-Loading",
+        description = "Semi-automatic firepower (AWP/scout)",
+        minrating = 7,
+        maxrating = 8
+    },
+    boomstick = {
+        name = "Boomstick",
+        description = "Fires way more pellets, but in a wider cone",
+        minrating = 7,
+        maxrating = 8
+    },
+    moredamage = {
+        name = "Armor-piercing",
+        description = "More damage",
+        minrating = 7,
+        maxrating = 8
+    },
+    antikleiner = {
+        name = "Anti-kleiner",
+        description = "Kleiner Killer",
+        minrating = 7,
+        maxrating = 8
+    },
+    -- antipony = {name="Anti-pony", description="Pony blaster",minrating=7,maxrating=8}, -- antihuman = {name="Anti-human", description="Kleiner Killer",minrating=7,maxrating=8}, --rating 8
+    explosiveslug = {
+        name = "Explosive Slug",
+        description = "Fires devastating slug ammunition",
+        minrating = 8,
+        maxrating = 8
+    },
+    bottomless = {
+        name = "Bottomless",
+        description = "Never needs to be reloaded (you still have to buy ammo though!)",
+        minrating = 8,
+        maxrating = 8
+    },
+    dragon = {
+        name = "Dragon's Breath",
+        description = "Ignites targets",
+        minrating = 8,
+        maxrating = 8
+    },
+    max = {
+        name = "Golden",
+        description = "Worthy of Trump (max all stats)",
+        minrating = 8,
+        maxrating = 8
+    }
 }
 
 local weaponspecs = {"rating", "roll_rof", "roll_range", "roll_accuracy", "roll_control", "roll_handling", "roll_mobility"}

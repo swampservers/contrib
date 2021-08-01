@@ -742,7 +742,6 @@ end
 -- Note: self.SpreadStand only applies when unscoped
 function SWEP:GetSpread(clientsmoothing)
     local mobilitymod = 2 ^ (self:GetMobility() - 0.5)
-
     local spread = self:GetBasedSpread() + self:MovementPenalty(clientsmoothing) * (self.SpreadMove or 0) / mobilitymod
 
     if not self:IsScoped() then
@@ -762,9 +761,9 @@ function SWEP:GetSpeedRatio()
         spd = spd * (self.ScopedSpeedRatio or 0.5)
     end
 
-    local mobilityloss = 2 * (1-self:GetMobility() )
+    local mobilityloss = 2 * (1 - self:GetMobility())
 
-    return 1-((1-spd)*mobilityloss)
+    return 1 - ((1 - spd) * mobilityloss)
 end
 
 function SWEP:SetupMove(ply, mv, cmd)

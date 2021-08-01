@@ -238,10 +238,9 @@ SS_ItemRatings = {
     },
 }
 
-for i,v in ipairs(SS_ItemRatings) do
-    v.min = (i > 1) and SS_ItemRatings[i-1].max or 0
+for i, v in ipairs(SS_ItemRatings) do
+    v.min = (i > 1) and SS_ItemRatings[i - 1].max or 0
 end
-
 
 function SS_GetRatingID(r)
     if r == nil then
