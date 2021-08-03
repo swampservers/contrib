@@ -105,7 +105,7 @@ function showRequests(ply)
         if v.target == ply then
 
             if v.challenger then
-                ply:ChatPrint("[orange](" .. index .. ") [gold]" .. string.Comma(v.points) .. "[orange] from [edgy]" .. v.challenger:Nick())
+                ply:ChatPrint("[orange](" .. index .. ") [gold]" .. string.Comma(v.points) .. "[orange] from [edgy]" .. v.challenger_name)
             end
 
             index = index + 1
@@ -118,7 +118,7 @@ function requestDuel(challenger, target, points, kills)
     local challengerDuel = findDuel(challenger)
 
     if (challengerDuel) then
-        challenger:ChatPrint("[red]You are currently in a duel with [orange]" .. challengerDuel.target:Nick() .. "[red]. You can not start multiple duels.")
+        challenger:ChatPrint("[red]You are currently in a duel with [orange]" .. challengerDuel.target_name .. "[red]. You can not start multiple duels.")
         return
     elseif (findDuel(target)) then
         challenger:ChatPrint("[red]Target is already in a duel.")
@@ -129,12 +129,14 @@ function requestDuel(challenger, target, points, kills)
     end
 
     challenger:ChatPrint("[orange]" .. target:Nick() .. " was challenged to a duel.")
-    target:ChatPrint("[orange]" .. challenger:Nick() .. " challenged you to a duel with a win condition of " .. kills .. " kills and a price of [rainbow]" .. string.Comma(points) .. " points[orange]. Say !duel accept [confirm number of points] to accept.")
+    target:ChatPrint("[orange]" .. challenger:Nick() .. " challenged you to a duel with a win condition of " .. kills .. " kills and a price of [rainbow]" .. string.Comma(points) .. " points[orange]. Say !duel accept " .. points .. " to accept.")
 
 
     table.insert(DuelRequests, {
         challenger = challenger,
         target = target,
+        challenger_name = challenger:Nick(), 
+        target_name = target:Nick(), 
         points = points,
         kills = kills,
         time = CurTime(),
@@ -146,12 +148,12 @@ timer.Create("Duel", 1, 0, function()
     for k, v in pairs(DuelRequests) do
         if ((v.time + 30) <= CurTime()) then
 
-            if (v.challenger and v.target) then
-                v.challenger:ChatPrint("[edgy]" .. v.target:Nick() .. "[orange] doesn't want to fight. Try again later.")
-                v.target:ChatPrint("[orange]You missed out on a duel with [edgy]" .. v.challenger:Nick() .. "[orange].")
-            elseif (not v.challenger and v.target) then
+            if (IsValid(v.challenger) and IsValid(v.target)) then
+                v.challenger:ChatPrint("[edgy]" .. v.target_name .. "[orange] doesn't want to fight. Try again later.")
+                v.target:ChatPrint("[orange]You missed out on a duel with [edgy]" .. v.challenger_name .. "[orange].")
+            elseif (not IsValid(v.challenger) and IsValid(v.target)) then
                 v.target:ChatPrint("[orange]You missed out on a duel.")
-            elseif (v.challenger and not v.target) then
+            elseif (IsValid(v.challenger) and not IsValid(v.target)) then
                 v.challenger:ChatPrint("[red]The player you requested a duel with has left. Try again later.")
             end
         else
@@ -162,17 +164,24 @@ timer.Create("Duel", 1, 0, function()
     DuelRequests = NewDuelRequests
     local ActiveDuelsNew = {}
     for k, v in pairs(ActiveDuels) do
-
-        if (v.challenger_points >= v.kills) then
+        if (not IsValid(v.challenger)) then
+            v.target:SS_GivePoints(v.points * 2)
+            v.target:ChatPrint("[red]Your opponent " .. v.challenger_name .. " has left the game. [green]You won [gold]" .. string.Comma(v.points) .. "[green] points.")
+            BotSayGlobal("[fbc]" .. v.target_name .. " won a duel worth [rainbow]" .. string.Comma(v.points * 2) .. " points [fbc] against [gold]" .. v.challenger_name .. "[fbc]! Final score - [green]" .. v.target_name .. ": " .. v.target_points .. " [fbc]| [edgy]" .. v.challenger_name .. ": " .. v.challenger_points)
+        elseif (not IsValid(v.target)) then
+            v.challenger:SS_GivePoints(v.points * 2)
+            v.challenger:ChatPrint("[red]Your opponent " .. v.target_name .. " has left the game. [green]You won [gold]" .. string.Comma(v.points) .. "[green] points.")
+            BotSayGlobal("[fbc]" .. v.challenger_name .. " won a duel worth [rainbow]" .. string.Comma(v.points * 2) .. " points [fbc] against [gold]" .. v.target_name .. "[fbc]! Final score - [green]" .. v.challenger_name .. ": " .. v.challenger_points .. " [fbc]| [edgy]" .. v.target_name .. ": " .. v.target_points)
+        elseif (v.challenger_points >= v.kills) then
             v.challenger:SS_GivePoints(v.points * 2)
             v.challenger:ChatPrint("[green]You won [gold]" .. string.Comma(v.points) .. "[green] points.")
             v.target:ChatPrint("[edgy]You lost [gold]" .. string.Comma(v.points) .. "[edgy] points.")
-            BotSayGlobal("[fbc]" .. v.challenger:Nick() .. " won a duel worth [rainbow]" .. string.Comma(v.points * 2) .. " points [fbc] against [gold]" .. v.target:Nick() .. "[fbc]! Final score - [green]" .. v.challenger:Nick() .. ": " .. v.challenger_points .. " [fbc]| [edgy]" .. v.target:Nick() .. ": " .. v.target_points)
+            BotSayGlobal("[fbc]" .. v.challenger_name .. " won a duel worth [rainbow]" .. string.Comma(v.points * 2) .. " points [fbc] against [gold]" .. v.target_name .. "[fbc]! Final score - [green]" .. v.challenger_name .. ": " .. v.challenger_points .. " [fbc]| [edgy]" .. v.target_name .. ": " .. v.target_points)
         elseif (v.target_points >= v.kills) then
             v.target:SS_GivePoints(v.points * 2)
             v.target:ChatPrint("[green]You won [gold]" .. string.Comma(v.points) .. "[green] points.")
             v.challenger:ChatPrint("[edgy]You lost [gold]" .. string.Comma(v.points) .. "[edgy] points.")
-            BotSayGlobal("[fbc]" .. v.target:Nick() .. " won a duel worth [rainbow]" .. string.Comma(v.points * 2) .. " points [fbc] against [gold]" .. v.challenger:Nick() .. "[fbc]! Final score - [green]" .. v.target:Nick() .. ": " .. v.target_points .. " [fbc]| [edgy]" .. v.challenger:Nick() .. ": " .. v.challenger_points)
+            BotSayGlobal("[fbc]" .. v.target_name .. " won a duel worth [rainbow]" .. string.Comma(v.points * 2) .. " points [fbc] against [gold]" .. v.challenger_name .. "[fbc]! Final score - [green]" .. v.target_name .. ": " .. v.target_points .. " [fbc]| [edgy]" .. v.challenger_name .. ": " .. v.challenger_points)
         else
             table.insert(ActiveDuelsNew, v)
         end
@@ -191,7 +200,11 @@ function checkDuelRequest(target, points)
         return
     end
 
-    if (findDuel(target)) then
+    if (not IsValid(duel.challenger)) then
+        target:ChatPrint("[red]The challenger left the game, duel was cancelled.")
+        DuelRequests[duelIndex] = nil
+        return
+    elseif (findDuel(target)) then
         target:ChatPrint("[red]You can not accept multiple duels at the same time.")
         return
     elseif (findDuel(duel.challenger)) then
@@ -209,13 +222,13 @@ function checkDuelRequest(target, points)
         return
     end
 
-    duel.challenger:ChatPrint("[orange]" .. duel.target:Nick() .. " accepted your duel request, duel will start in 20 seconds!")
-    duel.target:ChatPrint("[orange]Your duel with " .. duel.challenger:Nick() .. " will start in 20 seconds!")
+    duel.challenger:ChatPrint("[orange]" .. duel.target_name .. " accepted your duel request, duel will start in 20 seconds!")
+    duel.target:ChatPrint("[orange]Your duel with " .. duel.challenger_name .. " will start in 20 seconds!")
 
     duel.challenger:SS_TakePoints(duel.points)
     duel.target:SS_TakePoints(duel.points)
 
-    table.insert(AcceptedDuels, {challenger = duel.challenger, target = duel.target, points = duel.points, kills = duel.kills})
+    table.insert(AcceptedDuels, {challenger = duel.challenger, target = duel.target, challenger_name = duel.challenger_name, target_name = duel.target_name, points = duel.points, kills = duel.kills})
     DuelRequests[duelIndex] = nil;
 
     startCountdown(#AcceptedDuels)
@@ -224,8 +237,25 @@ end
 function startCountdown(duelIndex)
     local duel = AcceptedDuels[duelIndex]
     local time = 20
-    timer.Create( "CountdownDuel", 1, 20, function()
+    timer.Create( "CountdownDuel" .. duelIndex, 1, 20, function()
         time = time - 1
+
+        if (not IsValid(duel.challenger)) then
+            duel.target:SS_GivePoints(duel.points * 2)
+            duel.target:ChatPrint("[red]Your opponent " .. duel.challenger_name .. " has left the game. [green]You won [gold]" .. string.Comma(duel.points) .. "[green] points.")
+            BotSayGlobal("[fbc]" .. duel.target_name .. " won a duel worth [rainbow]" .. string.Comma(duel.points * 2) .. " points [fbc] against [gold]" .. duel.challenger_name .. "[fbc]. Their opponent left the game.")
+            AcceptedDuels[duelIndex] = nil
+            timer.Remove( "CountdownDuel" .. duelIndex )
+            return
+        elseif (not IsValid(duel.target)) then
+            duel.challenger:SS_GivePoints(duel.points * 2)
+            duel.challenger:ChatPrint("[red]Your opponent " .. duel.target_name .. " has left the game. [green]You won [gold]" .. string.Comma(duel.points) .. "[green] points.")
+            BotSayGlobal("[fbc]" .. duel.challenger_name .. " won a duel worth [rainbow]" .. string.Comma(duel.points * 2) .. " points [fbc] against [gold]" .. duel.target_name .. "[fbc]. Their opponent left the game.")
+            AcceptedDuels[duelIndex] = nil
+            timer.Remove( "CountdownDuel" .. duelIndex )
+            return
+        end
+
         if (time == 15) then
             duel.challenger:ChatPrint("[orange]Duel starts in 15 seconds")
             duel.target:ChatPrint("[orange]Duel starts in 15 seconds")
@@ -250,19 +280,11 @@ end
 function startDuel(duelIndex)
     local duel = AcceptedDuels[duelIndex]
 
-    if (not duel.target) then
-        AcceptedDuels[duelIndex] = nil
-        duel.challenger:ChatPrint("[red]The challenger has left, duel was cancelled.")
-    elseif (not duel.challenger) then
-        AcceptedDuels[duelIndex] = nil
-        duel.target:ChatPrint("[red]The challenged player has left, duel was cancelled.")
-    else
-        duel.target:ChatPrint("[orange]It's time to d-d-d-duel!")
-        duel.challenger:ChatPrint("[orange]It's time to d-d-d-duel!")
+    duel.target:ChatPrint("[orange]It's time to d-d-d-duel!")
+    duel.challenger:ChatPrint("[orange]It's time to d-d-d-duel!")
 
-        table.insert(ActiveDuels, {challenger = duel.challenger, target = duel.target, points = duel.points, kills = duel.kills, challenger_points = 0, target_points = 0})
-        AcceptedDuels[duelIndex] = nil
-    end
+    table.insert(ActiveDuels, {challenger = duel.challenger, target = duel.target, challenger_name = duel.challenger_name, target_name = duel.target_name, points = duel.points, kills = duel.kills, challenger_points = 0, target_points = 0})
+    AcceptedDuels[duelIndex] = nil
 end
 
 
@@ -277,14 +299,14 @@ hook.Add( "PlayerDeath", "GlobalDeathMessage", function( victim, inflictor, atta
             end
 
             if (victimDuel.challenger_points > victimDuel.target_points) then
-                victimDuel.challenger:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger:Nick() .. ": " .. victimDuel.challenger_points .. " | [edgy]" .. victimDuel.target:Nick() .. ": " .. victimDuel.target_points)
-                victimDuel.target:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger:Nick() .. ": " .. victimDuel.challenger_points .. " | [edgy]" .. victimDuel.target:Nick() .. ": " .. victimDuel.target_points)
+                victimDuel.challenger:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger_name .. ": " .. victimDuel.challenger_points .. " | [edgy]" .. victimDuel.target_name .. ": " .. victimDuel.target_points)
+                victimDuel.target:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger_name .. ": " .. victimDuel.challenger_points .. " | [edgy]" .. victimDuel.target_name .. ": " .. victimDuel.target_points)
             elseif (victimDuel.challenger_points < victimDuel.target_points) then
-                victimDuel.target:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.target:Nick() .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.challenger:Nick() .. ": " .. victimDuel.challenger_points)
-                victimDuel.challenger:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.target:Nick() .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.challenger:Nick() .. ": " .. victimDuel.challenger_points)
+                victimDuel.target:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.target_name .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.challenger_name .. ": " .. victimDuel.challenger_points)
+                victimDuel.challenger:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.target_name .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.challenger_name .. ": " .. victimDuel.challenger_points)
             else
-                victimDuel.target:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger:Nick() .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.target:Nick() .. ": " .. victimDuel.challenger_points)
-                victimDuel.challenger:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger:Nick() .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.target:Nick() .. ": " .. victimDuel.challenger_points)
+                victimDuel.target:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger_name .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.target_name .. ": " .. victimDuel.challenger_points)
+                victimDuel.challenger:ChatPrint("[orange]Duel Score - [green]" .. victimDuel.challenger_name .. ": " .. victimDuel.target_points .. " | [edgy]" .. victimDuel.target_name .. ": " .. victimDuel.challenger_points)
             end
         end
     end
