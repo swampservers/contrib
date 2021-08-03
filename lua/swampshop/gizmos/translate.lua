@@ -1,3 +1,4 @@
+local GIZMO = table.Copy(gizmo.GIZMO_META) 
     GIZMO.Icon = "swampshop/tool_move.png"
     local x_handle = gizmo.CreateHandleLinearKnob(Vector(1, 0, 0), Color(255, 0, 0))
     GIZMO:AddHandle(x_handle)
@@ -5,14 +6,6 @@
     GIZMO:AddHandle(y_handle)
     local z_handle = gizmo.CreateHandleLinearKnob(Vector(0, 0, 1), Color(0, 0, 255))
     GIZMO:AddHandle(z_handle)
-
-    GIZMO.SetSnaps = function(self, snaps)
-        self._Snap = snaps
-
-        for k, v in pairs(self.Handles) do
-            v:SetSnaps(snaps)
-        end
-    end
 
     GIZMO.BasedDraw = GIZMO.Draw
 

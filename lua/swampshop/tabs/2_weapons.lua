@@ -224,6 +224,7 @@ SS_Item({
             sort = -1,
             Text = function() return "Customize" end,
             OnClient = function(item)
+                
                 if SS_CustomizerPanel:IsVisible() then
                     SS_CustomizerPanel:Close()
                 else

@@ -417,14 +417,15 @@ for i = 1, 8 do
     local div = math.rad(i * (360 / 8))
 
     PPM.Editor3_nodes.pony_normal_body["bdetail" .. i] = {
-        name = "B" .. i,
+        name = "Detail " .. i,
         pos = Vector(math.cos(div) * 25, math.sin(div) * 25, -5),
+
         controlls = {
             {
                 name = "Detail type",
                 type = "edit_type",
                 param = "bodydetail" .. i,
-                choises = {"None", "Leg Gradient", "Lines", "Stripes", "Head Stripes", "Freckles", "Hooves (Big)", "Hooves (Small)", "Head Layer", "Hooves (Big-Round)", "Hooves (Small-Round)", "Spots", "Cow Spots", "Eyeliner", "Muzzle (Hard)", "Muzzle (Soft)", "Nose Freckles", "Socks (Primary)", "Socks (Secondary)", "Collar", "Lipstick"}
+                choises = {"None", "Leg Gradient", "Lines", "Stripes", "Head Stripes", "Freckles", "Hooves (Big)", "Hooves (Small)", "Head Layer", "Hooves (Big-Round)", "Hooves (Small-Round)", "Spots", "Cow Spots", "Eyeliner", "Muzzle (Hard)", "Muzzle (Soft)", "Nose Freckles", "Socks (Primary)", "Socks (Secondary)", "Collar", "Lipstick", "Clown Eyes", "Clown Lipstick", "Clown Nose", "Ear Gradient", "Full Body", "Lower Body"}
             },
             {
                 name = "Color",

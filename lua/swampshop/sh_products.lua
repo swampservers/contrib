@@ -33,7 +33,7 @@ function SS_Product(product)
     if product.model then
         util.PrecacheModel(product.model)
 
-        if product.workshop then
+        if product.workshop and isstring(product.workshop) then
             register_workshop_model(product.model, product.workshop)
         end
     end
@@ -65,9 +65,7 @@ function SS_GenerateItem(ply, class)
         cfg = {},
         eq = true,
     })
-
     item:Sanitize()
-
     return item
 end
 

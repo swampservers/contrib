@@ -11,6 +11,9 @@ GIZMO_HANDLE_META = {
     GetDragOffset = function(self, x, y) end,
     GetAngles = function(self) return self:GetParentGizmo():GetAngles() end,
     GetPos = function(self) return self:GetParentGizmo():GetPos() end,
+    SetSnaps = function(self, snaps)
+        knob._Snap = snaps
+    end,
     IsGrabbed = function(self) return self:GetParentGizmo():GetGrabbedHandle() == self end,
     Test = function() end,
     IsValid = function(self) return true end,
@@ -45,6 +48,7 @@ GIZMO_META = {
 
         if (IsValid(handle)) then
             local ofs = handle:GetDragOffset()
+            if (ofs == 0) then return end
             handle:OnUpdate(ofs)
         end
     end,
@@ -100,6 +104,12 @@ GIZMO_META = {
             w = ScrW(),
             h = ScrH(),
         }
+    end,
+    SetSnaps = function(self, snaps)
+        self._Snap = snaps
+        for k, v in pairs(self.Handles) do
+            v:SetSnaps(snaps)
+        end
     end,
     --sets up the gizmo to work for an object, probably a DModelPanel
     SetupForModelPanel = function(self, panel)
@@ -157,10 +167,10 @@ function Create(class)
             ErrorNoHaltWithStack("invalid gizmo class "..class,nil )
         end
     end
-
+    setmetatable(self,GIZMO_META)
 
     return self
-end
+end 
 
 function IsRegistered(class) 
     return GIZMO_LIST[class] != nil
@@ -171,6 +181,7 @@ function GetRegistered(class)
 end
 
 function Register(class,gizmo)
+    gizmo.gizmotype = class
     GIZMO_LIST[class] = gizmo
 end
 
@@ -619,6 +630,7 @@ function CreateHandleWheel(axis, color, r_inner, r_outer, arc, snap)
         local wt = (tpos - self:GetPos()):AngleEx(self:GetDragPlane():Up())
         local _, lang = WorldToLocal(Vector(), wt, Vector(), wang)
         local delta = lang.yaw
+        if(math.abs(delta) < 0.05)then delta = 0 end
 
         if (self._Snap) then
             delta = math.Round(delta / self._Snap, 0) * self._Snap
@@ -733,14 +745,8 @@ function CreateHandleClickable(ent, color)
     return box
 end
 
-local gizmosolid = CreateMaterial( "gizmo_solid", "VertexLitGeneric", {
-    ["$basetexture"] = "color/white",
-    ["$model"] = 1,
-    ["$translucent"] = 1,
-    ["$vertexalpha"] = 1,
-    ["$vertexcolor"] = 1
-  } )
 
+print("reloading gizmos")
 local files, _ = file.Find('swampshop/gizmos/*', 'LUA')
 for k,v in pairs(files)do
     local name = string.TrimRight(v,".lua")
@@ -750,4 +756,9 @@ for k,v in pairs(files)do
     Register(name,_G.GIZMO)
     print("registered gizmo "..name)
     _G.GIZMO = nil
+end
+print("finished reloading gizmos:")
+
+for k,v in pairs(GIZMO_LIST)do
+    print(k)
 end

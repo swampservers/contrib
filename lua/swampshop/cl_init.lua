@@ -4,6 +4,8 @@ include("sh_init.lua")
 include("cl_draw.lua")
 include("cl_gizmo.lua")
 include("cl_lootboxes.lua")
+
+
 include("vgui/menu.lua")
 include("vgui/panels.lua")
 include("vgui/item.lua")
@@ -11,6 +13,7 @@ include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
 include("vgui/imgur_manager.lua")
+include("vgui/texturewindow.lua")
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3
@@ -80,6 +83,7 @@ function SS_ToggleMenu()
     if not IsValid(SS_ShopMenu) then
         SS_ShopMenu = vgui.Create('DPointShopMenu')
         SS_ShopMenu:SetVisible(false)
+        SS_ShopMenu:MakePopup()
     end
 
     if SS_ShopMenu:IsVisible() then
@@ -167,6 +171,7 @@ net.Receive('SS_ShownItems', function(length)
     SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
         ply.SS_ShownItems = SS_MakeItems(ply, ply.SS_ShownItems)
         -- ply:SS_ClearCSModels() -- old
+        ply:SS_UpdateAppearance()
         ply:SS_AttachAccessories() -- new
         ply.SS_SetupPlayermodel = nil
 

@@ -327,10 +327,15 @@ function PANEL:Init()
         --     p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
         --     p:Dock(RIGHT)
         --     p.Paint = SS_PaintFG
-        SS_PreviewPane = vgui("DPointShopPreview", function(p)
+
+        SS_PreviewContainer = vgui("DPanel", function(p)
             p:SetWide(SS_RPANEWIDTH)
             p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
             p:Dock(RIGHT)
+            p.Paint = noop
+        SS_PreviewPane = vgui("DPointShopPreview", function(p)
+
+            p:Dock(FILL)
 
             -- if you want to make the background a tile, do it in preview.lua
             -- p:Dock(FILL)
@@ -348,8 +353,7 @@ function PANEL:Init()
                 p.Paint = noop
             end)
         end)
-
-        -- end)
+        end)
         self.leftpane = vgui("DPanel", function(p)
             p:Dock(FILL)
             p:PerformLayout()
@@ -471,6 +475,9 @@ function PANEL:Init()
 
         return DScrollPanel
     end
+
+    
+
 
     local padcnt = 0
 
@@ -739,10 +746,18 @@ function PANEL:Init()
                 end
 
                 Pad(self)
-                -- TODO sort the items on recipt, then store sortedindex on them
-                local itemstemp = table.Copy(LocalPlayer().SS_Items or {}) --GetInventory())
 
-                table.sort(itemstemp, function(a, b)
+                -- TODO sort the items on recipt, then store sortedindex on them
+                local plyitems = LocalPlayer().SS_Items or {}
+                local itemstemp = {}
+                for k,v in pairs(plyitems)do
+                    table.insert(itemstemp,k)
+                end
+
+
+                table.sort(itemstemp, function(ka, kb)
+                    local a, b = plyitems[ka], plyitems[kb]
+
                     local ar, br = SS_GetRatingID(a.specs.rating), SS_GetRatingID(b.specs.rating)
 
                     if ar == br then
@@ -770,16 +785,17 @@ function PANEL:Init()
 
                 for k, v in pairs(SS_Items) do
                     if v.clientside_fake then
-                        table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
+                        --table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
                     end
                 end
 
                 local categorizeditems = {}
 
-                for _, item in pairs(itemstemp) do
+                for _, itk in pairs(itemstemp) do
+                    local item = plyitems[itk]
                     local invcategory = item.invcategory or "Other"
                     categorizeditems[invcategory] = categorizeditems[invcategory] or {}
-                    table.insert(categorizeditems[invcategory], item)
+                    table.insert(categorizeditems[invcategory], itk)
                 end
 
                 local first = true
@@ -796,7 +812,8 @@ function PANEL:Init()
                         Pad(self)
                         local sc = NewSubCategory(self)
 
-                        for _, item in pairs(categorizeditems[cat]) do
+                        for _, itk in pairs(categorizeditems[cat]) do
+                            local item = plyitems[itk]
                             local model = vgui.Create('DPointShopItem')
                             model:SetItem(item)
                             model:SetSize(SS_TILESIZE, SS_TILESIZE)
@@ -834,8 +851,9 @@ function PANEL:Init()
     --     p:Dock(RIGHT)
     -- end)
     SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
-    SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent():GetParent())
-    SS_CustomizerPanel:Dock(FILL)
+    SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_PreviewContainer)
+    SS_CustomizerPanel:Dock(LEFT)
+    SS_CustomizerPanel:SetWide(SS_CUSTOMIZER_LEFTPANE)
     SS_CustomizerPanel:Close()
 
     if (IN_STEAMGROUP or 0) <= 0 then

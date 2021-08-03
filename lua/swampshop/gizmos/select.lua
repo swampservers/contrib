@@ -1,5 +1,5 @@
-
-    GIZMO._Color = Color(255, 225, 56)
+local GIZMO = table.Copy(gizmo.GIZMO_META)
+    GIZMO._Color = Color(255, 255, 255)
     GIZMO._Icon = "swampshop/tool_select.png"
     function GIZMO:Grab()
         local ent = self:Test()
@@ -32,13 +32,19 @@
         end
     end
 
-
+    local gizmosolid = CreateMaterial( "gizmo_solid", "VertexLitGeneric", {
+        ["$basetexture"] = "color/white",
+        ["$model"] = 1,
+        ["$translucent"] = 1,
+        ["$vertexalpha"] = 1,
+        ["$vertexcolor"] = 1
+      } )
     function GIZMO:Draw()
         render.SetColorModulation(1, 1, 1)
         render.SetBlend(1)
         local hitent = self:Test()
         cam.IgnoreZ(true)
-        local c = self._Color:ToVector()*4
+        local c = self._Color:ToVector()*(3.5+math.sin(CurTime()*2)*1)
         
         for k, ent in pairs(self:GetClickableEnts() or {}) do
             if not IsValid(ent) then continue end
@@ -56,10 +62,10 @@
             render.MaterialOverride(gizmosolid)
             ent:SetupBones()
             ent:DrawModel()
-
-            render.DrawBox(ent:GetPos(), ent:GetAngles(), mins,maxs, ColorAlpha(self._Color, alp*255))
+            render.DrawBox(ent:GetPos(),ent:GetAngles(),mins,maxs,self._Color)
         end
         cam.IgnoreZ(false)
         render.SetColorModulation(1, 1, 1)
         render.SetBlend(1)
     end
+    gizmo.Register("select",GIZMO)

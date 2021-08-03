@@ -35,6 +35,9 @@ SS_Item({
     bonemod = true,
     configurable = {
         scale = {
+            gizmo = "scale",
+            gizmohandler = "bone.scale",
+            label = "Scale",
             min = Vector(0.5, 0.5, 0.5),
             max = Vector(1.5, 1.5, 1.5)
         },
@@ -56,8 +59,32 @@ SS_Item({
     bonemod = true,
     configurable = {
         pos = {
+            gizmo = "translate",
+            gizmohandler = "bone.pos",
+            label = "Offset",
             min = Vector(-8, -8, -8),
             max = Vector(8, 8, 8),
+        },
+        bone = true
+    }
+})
+
+SS_Item({
+    class = "contorter",
+    price = 200000,
+    name = 'Contorter',
+    description = "twists bones unnaturally using advanced genetic modification",
+    model = 'models/Gibs/HGIBS_spine.mdl',
+    material = 'models/debug/debugwhite',
+    invcategory = "Mods",
+    maxowned = 25,
+    playermodelmod = true,
+    bonemod = true,
+    configurable = {
+        ang = {
+            gizmo = "rotate",
+            gizmohandler = "bone.ang",
+            label = "Rotate",
         },
         bone = true
     }
@@ -100,9 +127,11 @@ SS_Item({
             end
         }
     },
+
     invcategory = "Playermodels",
     never_equip = true
 })
+
 
 SS_Item({
     class = "outfitter3",

@@ -13,9 +13,10 @@ function SS_GetMaterial(nam)
 end
 
 function SS_PreRender(item)
-    if item.cfg.imgur then
+    local cfg = item.cfg
+    if cfg.imgur then
         local imat = WebMaterial({
-            id = item.cfg.imgur.url,
+            id = cfg.imgur.url,
             owner = item.owner,
             -- worksafe = true, -- pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
             stretch = true,
@@ -26,7 +27,7 @@ function SS_PreRender(item)
         render.MaterialOverride(imat)
         --render.OverrideDepthEnable(true,true)
     else
-        local mat = item.cfg.material or item.material
+        local mat = cfg.material or item.material
 
         if mat then
             render.MaterialOverride(SS_GetMaterial(mat))
@@ -35,7 +36,7 @@ function SS_PreRender(item)
         end
     end
 
-    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color
+    local col = (item.GetColor and item:GetColor()) or cfg.color or item.color
 
     if col then
         render.SetColorModulation(col.x, col.y, col.z)
@@ -54,13 +55,13 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     local m = ply:GetActualModel()
 
     if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0) ~= 0 then
-        SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
+        SS_ApplyBoneMods(ply, ply:SS_GetShownPlayermodelMods())
         SS_ApplyMaterialMods(ply, ply)
         ply.SS_SetupPlayermodel = m
     end
 
     if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
-        ply:SS_AttachAccessories(ply.SS_ShownItems)
+        ply:SS_AttachAccessories(ply:SS_GetShownAccessories())
     end
 end)
 
@@ -99,6 +100,8 @@ function SS_ApplyBoneMods(ent, mods)
     for x = 0, (ent:GetBoneCount() - 1) do
         ent:ManipulateBoneScale(x, Vector(1, 1, 1))
         ent:ManipulateBonePosition(x, Vector(0, 0, 0))
+        ent:ManipulateBoneAngles(x, Angle(0, 0, 0))
+        
     end
 
     if HumanTeamName then return end
@@ -110,17 +113,18 @@ function SS_ApplyBoneMods(ent, mods)
 
     for _, item in ipairs(mods) do
         if item.bonemod then
-            local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
+            local cfg = item.cfg
+            local bn = cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
             local x = ent:LookupBone(bn)
 
             if x then
                 if (item.configurable or {}).scale then
-                    local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
-                    AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
+                    local scn = cfg["scale" .. suffix] or Vector(1, 1, 1.5)
+                    AddScaleRecursive(ent, x, scn, cfg["scale_children" .. suffix], {})
                 end
 
                 if (item.configurable or {}).pos then
-                    local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
+                    local psn = cfg["pos" .. suffix] or Vector(10, 0, 0)
 
                     --don't allow moving the root bone
                     if ent:GetBoneParent(x) == -1 then
@@ -131,6 +135,18 @@ function SS_ApplyBoneMods(ent, mods)
                     local pso = ent:GetManipulateBonePosition(x)
                     pso = pso + psn
                     ent:ManipulateBonePosition(x, pso)
+                end
+                if (item.configurable or {}).ang then
+                    local psn = cfg["ang" .. suffix] or Angle()
+
+                    --don't allow moving the root bone
+                    if ent:GetBoneParent(x) == -1 then
+
+                    end
+
+                    local pso = ent:GetManipulateBoneAngles(x)
+                    pso = pso + psn
+                    ent:ManipulateBoneAngles(x, pso)
                 end
             end
         end
@@ -159,7 +175,7 @@ function SS_ApplyBoneMods(ent, mods)
 end
 
 function SS_ApplyMaterialMods(ent, ply)
-    local mods = ply:SS_GetActivePlayermodelMods()
+    local mods = ply:SS_GetShownPlayermodelMods()
     -- print("RESET", ent)
     ent:SetSubMaterial()
     hook.Run("SetPlayerModelMaterials", ent, ply)
@@ -167,7 +183,8 @@ function SS_ApplyMaterialMods(ent, ply)
 
     for _, item in ipairs(mods) do
         if item.materialmod then
-            local col = item.cfg.color or Vector(1, 1, 1)
+            local cfg = item.cfg
+            local col = cfg.color or Vector(1, 1, 1)
 
             -- local mat = ImgurMaterial({
             --     id = (item.cfg.imgur or {}).url or "EG84dgp.png",
@@ -178,8 +195,8 @@ function SS_ApplyMaterialMods(ent, ply)
             --     shader = "VertexLitGeneric",
             --     params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
             -- })
-            ent:SetWebSubMaterial(item.cfg.submaterial or 0, {
-                id = (item.cfg.imgur or {}).url or "EG84dgp.png",
+            ent:SetWebSubMaterial(cfg.submaterial or 0, {
+                id = (cfg.imgur or {}).url or "EG84dgp.png",
                 owner = ent,
                 -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = true,
@@ -323,11 +340,11 @@ end
 local DrawingInShop = false
 
 function SS_SetMaterialToItem(item, ent, ply)
-    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color or Vector(1, 1, 1)
-
-    if item.cfg.imgur then
+    local cfg = item.cfg 
+    local col = (item.GetColor and item:GetColor()) or cfg.color or item.color or Vector(1, 1, 1)
+    if cfg.imgur then
         ent:SetWebMaterial({
-            id = item.cfg.imgur.url,
+            id = cfg.imgur.url,
             owner = ply,
             forceload = SS_FORCE_LOAD_WEBMATERIAL,
             -- worksafe=true,
@@ -339,7 +356,9 @@ function SS_SetMaterialToItem(item, ent, ply)
         --         SS_PostRender()
         --     end
     else
-        ent:SetColoredBaseMaterial(col)
+        if col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
+            ent:SetColoredBaseMaterial(col)
+        end
     end
 end
 
@@ -443,16 +462,50 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     return mdl
 end
 
-function Player:SS_GetActivePlayermodelMods()
-    local mods = {}
-
-    for k, item in pairs(self.SS_ShownItems or {}) do
-        if item.playermodelmod then
-            table.insert(mods, item)
+function Player:SS_UpdateAppearance()
+    self.SS_ShownAccessories = {}
+    self.SS_ShownPlayerMods = {}
+    local items = self.SS_Items or {}
+    for k, item in pairs(items) do
+        if item.wear and item:ShouldShow() then
+            table.insert(self.SS_ShownAccessories, item)
         end
     end
+    for k, item in pairs(items) do
+        if item.playermodelmod and item:ShouldShow() then
+            table.insert(self.SS_ShownPlayerMods, item)
+        end
+    end
+end
 
-    return mods
+function Player:SS_GetShownAccessories(editor)
+    if(editor)then
+        local items = self.SS_Items or {}
+        local acc = {}
+        for k, item in pairs(items) do
+            if item.wear and item:ShouldShow(true) then
+                table.insert(acc, item)
+            end
+        end
+        return acc
+    end
+
+    return self.SS_ShownAccessories or {}
+end
+
+function Player:SS_GetShownPlayermodelMods(editor)
+    if(editor)then
+        local items = self.SS_Items or {}
+        local mods = {}
+        for k, item in pairs(items) do
+            if item.playermodelmod and item:ShouldShow(true) then
+                table.insert(mods, item)
+            end
+        end
+        return mods
+    end
+
+    return self.SS_ShownPlayerMods or {}
 end
 
 -- Revise if we add translucent accessories
@@ -460,7 +513,7 @@ hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
     local ply = LocalPlayer()
 
     if IsValid(ply) and ply:Alive() then
-        ply:SS_AttachAccessories(ply.SS_ShownItems)
+        ply:SS_AttachAccessories(ply:SS_GetShownAccessories())
         local d = ply:ShouldDrawLocalPlayer()
 
         for i, v in ipairs(SS_CreatedAccessories[ply] or {}) do
@@ -498,15 +551,6 @@ hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, 
     end
 end)
 
-for k, v in pairs(SS_CreatedAccessories or {}) do
-    if IsValid(k) then
-        k:SS_AttachAccessories()
-    end
-end
-
-for i, v in ipairs(player.GetAll()) do
-    v.SS_SetupPlayermodel = nil
-end
 
 SS_CreatedAccessories = {}
 SS_UpdatedAccessories = {}
@@ -538,7 +582,9 @@ function Entity:SS_AttachAccessories(items)
 
     if current then
         for i, v in ipairs(current) do
+            if(IsValid(v))then
             table.insert(recycle[v:GetModel()], v)
+            end
         end
     end
 
@@ -549,8 +595,9 @@ function Entity:SS_AttachAccessories(items)
             if item.AccessoryTransform then
                 local rmodels = recycle[item:GetModel()]
                 local mdl = SS_AttachAccessory(item, self, #rmodels > 0 and table.remove(rmodels) or nil)
-
+                
                 if mdl then
+                    mdl.id = item.id
                     table.insert(SS_CreatedAccessories[self], mdl)
                 end
             end
@@ -587,17 +634,10 @@ end)
 CLONEDMATERIALS = CLONEDMATERIALS or {}
 
 function Entity:SetColoredBaseMaterial(color)
-    self:SetMaterial()
-    self:SetSubMaterial()
-
-    -- refactor - set default materials for models and support material override in shop
-    if self:GetModel()=="models/props_crates/static_crate_40.mdl" then self:SetSkin(1) end
-
-    if color.x==1 and color.y==1 and color.z==1 then return end
-
     MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
     local sc = "c" .. tostring(color):gsub("%.", "p"):gsub(" ", "_")
-
+    self:SetMaterial()
+    self:SetSubMaterial()
     local mats = self:GetMaterials()
 
     for i, mat in ipairs(mats) do

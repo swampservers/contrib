@@ -1,4 +1,4 @@
-
+local GIZMO = table.Copy(gizmo.GIZMO_META)
 GIZMO.Icon = "swampshop/tool_rotate.png"
 local pitch_handle = gizmo.CreateHandleWheel(Vector(1, 0, 0), Color(255, 0, 0))
 GIZMO:AddHandle(pitch_handle)
@@ -7,13 +7,7 @@ GIZMO:AddHandle(roll_handle)
 local yaw_handle = gizmo.CreateHandleWheel(Vector(0, 0, 1), Color(0, 0, 255))
 GIZMO:AddHandle(yaw_handle)
 
-GIZMO.SetSnaps = function(self, snaps)
-    self._Snap = snaps
 
-    for k, v in pairs(self.Handles) do
-        v:SetSnaps(snaps)
-    end
-end
 
 local thick = 2
 local ex = 1
@@ -60,3 +54,4 @@ function yaw_handle:OnUpdate(delta)
     local _, aoffset = LocalToWorld(Vector(), Angle(0, delta, 0), rotater:GetPos(), rotater:GetAngles())
     rotater:OnUpdate(aoffset)
 end
+gizmo.Register("rotate",GIZMO)
