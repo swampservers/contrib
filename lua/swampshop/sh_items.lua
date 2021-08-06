@@ -210,14 +210,13 @@ function SS_Item(item)
 
     function item:Sanitize()
         _SS_SanitizeConfig(self)
-
+        if item.never_equip then
+            item.eq = nil
+        end
         if self.owner ~= SS_SAMPLE_ITEM_OWNER and self:CannotEquip() then
-            self.cfg.eq = false
+            self.eq = false
         end
-        if(self.eq and !self.cfg.eq)then
-            self.cfg.eq = self.eq
-        end
-        self.eq = nil
+    
 
         if self.SanitizeSpecs and self:SanitizeSpecs() then return true end
     end
@@ -227,10 +226,10 @@ function SS_Item(item)
         if self.never_equip then return "This item can't be equipped." end
 
         if self.accessory_slot then
-            local c = cfg.eq and 0 or 1 / (self.perslot or 1)
+            local c = self.eq and 0 or 1 / (self.perslot or 1)
 
             for k, v in pairs(self.owner.SS_Items) do
-                if v.cfg.eq and (SS_Items[v.class] or {}).accessory_slot then
+                if v.eq and (SS_Items[v.class] or {}).accessory_slot then
                     c = c + (1 / (SS_Items[v.class].perslot or 1))
                 end
             end
@@ -245,7 +244,7 @@ function SS_Item(item)
 
             for k, v in pairs(self.owner.SS_Items) do
                 local vcfg = v.cfg
-                if vcfg.eq and vcfg.imgur then
+                if v.eq and vcfg.imgur then
                     urls[vcfg.imgur.url] = true
                 end
             end
@@ -255,7 +254,7 @@ function SS_Item(item)
     end
 
     function item:ShouldShow(editor)
-        return self.cfg.eq 
+        return self.eq 
     end
 
     item.SellValue = item.SellValue or function(self) return math.floor(self.value * 0.8) end
@@ -282,8 +281,7 @@ function SS_Item(item)
             Text = function(item) return item.eq and "HOLSTER" or "EQUIP" end,
             Cannot = item.CannotEquip,
             OnClient = function(item)
-                local eq = (GetNestedProperty(item,{"eq"},TYPE_BOOL) )
-                SetNestedProperty(item,{"eq"}, !eq )
+                item.eq = !item.eq
             end
         }
     end
@@ -374,9 +372,6 @@ function _SS_SanitizeConfig(item,cfg)
 
     table.Empty(cfg)
 
-    if !item.never_equip then
-        cfg.eq = dirty_cfg.eq
-    end
     local function sanitize_vector(val, min, max)
         return isvector(val) and val:Clamp(min, max) or nil
     end

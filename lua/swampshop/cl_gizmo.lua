@@ -750,12 +750,12 @@ print("reloading gizmos")
 local files, _ = file.Find('swampshop/gizmos/*', 'LUA')
 for k,v in pairs(files)do
     local name = string.TrimRight(v,".lua")
-    _G.GIZMO = table.Copy(GIZMO_META)
+    --_G.GIZMO = table.Copy(GIZMO_META)
     --setmetatable(_G.GIZMO, table.Copy(GIZMO_META)) -- i can't figure this shit out
     include("swampshop/gizmos/"..v)
-    Register(name,_G.GIZMO)
-    print("registered gizmo "..name)
-    _G.GIZMO = nil
+    --Register(name,_G.GIZMO)
+    --print("registered gizmo "..name)
+    --_G.GIZMO = nil
 end
 print("finished reloading gizmos:")
 

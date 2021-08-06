@@ -379,10 +379,11 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     else
         mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
     end
-
+    mdl:SetNoDraw(true)
     mdl.item = item
     local pone = isPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
+    local orpos,orang = ent:GetPos(),ent:GetAngles()
 
     if attach == "eyes" then
         local attach_id = ent:LookupAttachment("eyes")
@@ -392,6 +393,8 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
 
             return
         end
+        local angpos = ent:GetAttachment(attach_id)
+        orpos,orang = angpos.Pos,angpos.Ang
 
         mdl:SetParent(ent, attach_id)
         mdl._FollowedBone = nil
@@ -403,12 +406,15 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
 
             return
         end
+        orpos,orang = ent:GetBonePosition(bone_id)
 
         mdl:FollowBone(ent, bone_id)
         mdl._FollowedBone = bone_id
     end
 
-    -- mdl:SetPredictable(true)
+    --mdl:SetPredictable(true)
+    --mdl:SetPredictable(true)
+    
     -- if scale ~= e.appliedscale then
     mdl.matrix = isnumber(scale) and Matrix({
         {scale, 0, 0, 0},
@@ -421,6 +427,10 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
         {0, 0, scale.z, 0},
         {0, 0, 0, 1}
     })
+    orpos,orang = LocalToWorld(translate,rotate,orpos,orang)
+
+    mdl:SetPos(orpos)
+    mdl:SetAngles(orang)
 
     -- TODO: do we need to adjust renderbounds?
     mdl:EnableMatrix("RenderMultiply", mdl.matrix)

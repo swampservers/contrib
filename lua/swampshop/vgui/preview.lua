@@ -797,8 +797,16 @@ function PANEL:DragMouseRelease()
 end
 
 function PANEL:LayoutEntity(thisEntity)
+    if (self.bAnimated) then
+        self:RunAnimation()
+    end
+
     local gzmo = self.CurrentGizmo
     local grabbing = IsValid(gzmo) and IsValid(gzmo:GetGrabbedHandle())
+    self.Entity:SetPlaybackRate(0.01)
+    for i=0,6 do
+        self.Entity:SetLayerPlaybackRate( i,0.01 )
+    end
 
     if not SS_CustomizerPanel:IsVisible() then
         for i = 0, FrameTime() * 30 do
@@ -896,7 +904,9 @@ function PANEL:GetCamFocus()
                 if attach == "eyes" then
                     local attach_id = mainent:LookupAttachment("eyes")
                     local angpos = mainent:GetAttachment(attach_id or 0)
-                    bpos,bang = angpos.Pos,angpos.Ang
+                        if(angpos)then
+                            bpos,bang = angpos.Pos,angpos.Ang
+                        end
                 else
                     local bone_id = mainent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
                     bpos,bang = mainent:GetBonePosition(bone_id or 0)
@@ -976,7 +986,7 @@ function PANEL:Paint()
     local cust = SS_CustomizerPanel
    
     if(iop)then
-        local equipped = iop.cfg and !iop.never_equip and iop.cfg.eq
+        local equipped = iop.cfg and !iop.never_equip and iop.eq
         if iop.wear and !equipped and IsValid(cust) then drawplayer = false end
         if iop.playermodel then drawplayer = false end
         if iop.playermodelmod then drawplayer = equipped end
@@ -1002,6 +1012,7 @@ function PANEL:Paint()
         SS_ApplyBoneMods(self.Entity, mods)
         SS_ApplyMaterialMods(self.Entity, LocalPlayer())
         self.Entity:SetEyeTarget(self:GetCamPos())
+
         self.Entity:DrawModel()
 
         local function GetShopAccessoryItems()
@@ -1010,7 +1021,7 @@ function PANEL:Paint()
 
             if IsValid(LocalPlayer()) then
                 for _, item in pairs(LocalPlayer():SS_GetShownAccessories(true)) do
-                    --if(!item.cfg.eq)then continue end
+                    if(!item.eq)then continue end
                     table.insert(a, item)
                 end
             end

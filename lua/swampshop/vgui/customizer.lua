@@ -710,9 +710,9 @@ function PANEL:SetupControls()
         end
 
         self:AddSection(section_name)
-        SS_PreviewPane.SelectButton:SetEnabled(item.cfg.eq)
+        SS_PreviewPane.SelectButton:SetEnabled(item.eq)
 
-        if (k == "wear" and item.cfg.eq) then
+        if (k == "wear") then
             for k2, v2 in pairs(v) do
                 if (istable(v2)) then
                     if (v2.gizmo) then
@@ -1053,7 +1053,7 @@ function PANEL:SetupControls()
         textself:InvalidateLayout(true)
 
         if not textself.RECIEVE then
-            SS_CONFIG_CHANGES[self.item.id] = util.JSONToTable(new) or {}
+            self.item.cfg = util.JSONToTable(new) or {}
             self:UpdateCfg(true) -- TODO: sanitize input like on the server
         end
     end

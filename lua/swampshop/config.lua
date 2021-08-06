@@ -117,7 +117,7 @@ Tail02
 Tail03
 ]]
 SS_Attachments = {
-    eyes = "I'm special",
+    eyes = "Face",
     head = {"ValveBiped.Bip01_Head1", "LrigScull"},
     neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
     upper_body = {"ValveBiped.Bip01_Spine4", "LrigSpine2"},
