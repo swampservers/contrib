@@ -4,7 +4,6 @@ local THEATER_NONE = 0 --default/public theater
 local THEATER_PRIVATE = 1 --private theater
 local THEATER_REPLICATED = 2 --public theater, shows on the scoreboard
 local THEATER_PRIVATEREPLICATED = 3 --private theater, shows on the scoreboard
-
 local WAAB = FindMetaTable("Vector").WithinAABox
 
 Locations = {
@@ -369,8 +368,7 @@ Locations = {
             Height = 12
         }
     },
-    "mobiletheaters",
-    {
+    "mobiletheaters", {
         Name = "The Pit",
         --Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 650 or pos.y<-1152 end,
         Min = Vector(-1263, -2656, -144),
@@ -379,7 +377,7 @@ Locations = {
     --[[Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 512 end,
 		Min = Vector(-512,-1152-512,-128),
 		Max = Vector(512,-1152+512,192)]] -- 10 "Mobile" theaters are used by prop_trash_theater
-     {
+    {
         Name = "SushiTheater Basement",
         Min = Vector(-2912, -2008, -176),
         Max = Vector(-2096, -1100, -24)
@@ -591,9 +589,7 @@ while i <= #Locations do
                     Width = 32,
                     Height = 18
                 },
-                Contains = function(self, point)
-                    return WAAB(point, self.Min, self.Max)
-                end
+                Contains = function(self, point) return WAAB(point, self.Min, self.Max) end
             })
         end
 
@@ -615,13 +611,9 @@ for i, v in ipairs(Locations) do
 
         if v.Filter then
             local filt = v.Filter
-            v.Contains = function(self, point)
-                return WAAB(point, min,max) and filt(point)
-            end
+            v.Contains = function(self, point) return WAAB(point, min, max) and filt(point) end
         else
-            v.Contains = function(self, point)
-                return WAAB(point, min,max)
-            end
+            v.Contains = function(self, point) return WAAB(point, min, max) end
         end
     end
 end
