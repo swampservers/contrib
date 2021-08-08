@@ -369,6 +369,7 @@ Locations = {
             Height = 12
         }
     },
+    "mobiletheaters",
     {
         Name = "The Pit",
         --Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 650 or pos.y<-1152 end,
@@ -378,7 +379,7 @@ Locations = {
     --[[Filter = function(pos) return Vector(0,-1152,0):Distance(Vector(pos.x,pos.y,0)) < 512 end,
 		Min = Vector(-512,-1152-512,-128),
 		Max = Vector(512,-1152+512,192)]] -- 10 "Mobile" theaters are used by prop_trash_theater
-    "mobiletheaters", {
+     {
         Name = "SushiTheater Basement",
         Min = Vector(-2912, -2008, -176),
         Max = Vector(-2096, -1100, -24)
