@@ -106,19 +106,8 @@ hook.Add("PostDrawTranslucentRenderables", "EntityUseMenu", function(d, sky, sky
 
         draw.SimpleText("Idol of Kek", "DermaLarge", 0, -80, color_white, TEXT_ALIGN_CENTER)
         local inc = USEMENUENT:Income()
-        local sup =  math.ceil( USEMENUENT:IncomeSuppression()*100)
-        draw.SimpleText(
-            inc > 0 and 
-                (
-                    sup == 100 and
-                    ("Generating " .. inc .. " points/minute") 
-                    or
-                    (inc .. " PPM - suppressed to "..sup.."% by higher level idols nearby") 
-                )
-                
-                or "Bring to an unsafe area aboveground to generate income"
-                
-                , "Trebuchet18", 0, -40, color_white, TEXT_ALIGN_CENTER)
+        local sup = math.ceil(USEMENUENT:IncomeSuppression() * 100)
+        draw.SimpleText(inc > 0 and (sup == 100 and ("Generating " .. inc .. " points/minute") or (inc .. " PPM - suppressed to " .. sup .. "% by higher level idols nearby")) or "Bring to an unsafe area aboveground to generate income", "Trebuchet18", 0, -40, color_white, TEXT_ALIGN_CENTER)
 
         local buttons = {
             {"pickup", "Pick up"},

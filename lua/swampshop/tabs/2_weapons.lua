@@ -209,14 +209,14 @@ SS_WeaponPerkData = {
     skullpiercing = {
         name = "Skullpiercing",
         description = "More damage to the head",
-        weapons = {"ar","pistol"},
+        weapons = {"ar", "pistol"},
         minrating = 5,
         maxrating = 7
     },
     slug = {
         name = "Slug",
         description = "Fires devastating slug ammunition",
-        weapons = {"shotgun","autoshotgun"},
+        weapons = {"shotgun", "autoshotgun"},
         minrating = 5,
         maxrating = 7
     },
@@ -238,7 +238,7 @@ SS_WeaponPerkData = {
     boomstick = {
         name = "Boomstick",
         description = "Fires way more pellets, but in a wider cone",
-        weapons = {"shotgun","autoshotgun"},
+        weapons = {"shotgun", "autoshotgun"},
         minrating = 7,
         maxrating = 8
     },
@@ -258,7 +258,7 @@ SS_WeaponPerkData = {
     explosiveslug = {
         name = "Explosive Slug",
         description = "Fires explosive slug ammunition",
-        weapons = {"shotgun","autoshotgun"},
+        weapons = {"shotgun", "autoshotgun"},
         minrating = 8,
         maxrating = 8
     },
@@ -282,8 +282,6 @@ SS_WeaponPerkData = {
     }
 }
 
-
-
 SS_Item({
     class = "weapon",
     value = 5000,
@@ -293,8 +291,8 @@ SS_Item({
         local d = (weapons.GetStored(self.specs.class or "") or {}).Purpose or "" --self.description
 
         if (self.specs.perk or "") ~= "" then
-            local pk =  SS_WeaponPerkData[self.specs.perk]
-            d = d .. "\nPerk: "..pk.name..": "..pk.description
+            local pk = SS_WeaponPerkData[self.specs.perk]
+            d = d .. "\nPerk: " .. pk.name .. ": " .. pk.description
         end
 
         if self.specs.trophy_winner then
@@ -309,7 +307,7 @@ SS_Item({
         local name = (weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown"
 
         if (self.specs.perk or "") ~= "" then
-            name = SS_WeaponPerkData[self.specs.perk].name .. " "..name
+            name = SS_WeaponPerkData[self.specs.perk].name .. " " .. name
         end
 
         if self.specs.trophy_tag then
@@ -331,37 +329,38 @@ SS_Item({
         end
 
         local r = SS_GetRating(self.specs.rating)
-
-        local cl =  self.specs.class or ""
+        local cl = self.specs.class or ""
         local ct = weapons.GetStored(cl) or {}
-
         local validperks = {}
-        for k,v in pairs(SS_WeaponPerkData) do
-            if v.minrating <= r.id and r.id<=v.maxrating then
-                if v.weapons==nil or v.weapons[cl] or v.weapons[ct.GunType or ""] then
-                    validperks[k]=true
+
+        for k, v in pairs(SS_WeaponPerkData) do
+            if v.minrating <= r.id and r.id <= v.maxrating then
+                if v.weapons == nil or v.weapons[cl] or v.weapons[ct.GunType or ""] then
+                    validperks[k] = true
                 end
             end
         end
 
-        if specs.perk and specs.perk~="" and validperks[specs.perk]==nil then specs.perk=nil end
+        if specs.perk and specs.perk ~= "" and validperks[specs.perk] == nil then
+            specs.perk = nil
+        end
 
         -- specs.perk=nil
-
-        if specs.perk==nil then
-
+        if specs.perk == nil then
             local r_roll = (self.specs.rating - r.min) / (r.max - r.min)
 
             -- perks at rank <= 4 are "bad"
-            if r.id <= 4 then r_roll=1-r_roll end
+            if r.id <= 4 then
+                r_roll = 1 - r_roll
+            end
 
-            if r_roll > (1 -SS_WeaponPerkChance[r.id]) then
+            if r_roll > (1 - SS_WeaponPerkChance[r.id]) then
                 specs.perk = table.Random(table.GetKeys(validperks))
             else
                 specs.perk = ""
             end
 
-            ch=true
+            ch = true
         end
 
         return ch
