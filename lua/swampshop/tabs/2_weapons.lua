@@ -165,7 +165,7 @@ SS_WeaponPerkData = {
     },
     --rating 1-2
     lessdamage = {
-        name = "Less-lethal",
+        name = "Less-Lethal",
         description = "Fires less-lethal rubber bullets",
         minrating = 1,
         maxrating = 2
@@ -182,7 +182,7 @@ SS_WeaponPerkData = {
     fullauto = {
         name = "Full-Auto",
         description = "Black market full-auto sear installed",
-        weapons = {"pistol", "autosniper"},
+        weapons = {"pistol", "autosniper", "autoshotgun"},
         minrating = 5,
         maxrating = 6
     },
@@ -243,13 +243,13 @@ SS_WeaponPerkData = {
         maxrating = 8
     },
     moredamage = {
-        name = "Armor-piercing",
+        name = "Armor-Piercing",
         description = "More damage",
         minrating = 7,
         maxrating = 8
     },
     antikleiner = {
-        name = "Anti-kleiner",
+        name = "Anti-Kleiner",
         description = "Kleiner Killer",
         minrating = 7,
         maxrating = 8
@@ -271,6 +271,13 @@ SS_WeaponPerkData = {
     dragon = {
         name = "Dragon's Breath",
         description = "Ignites targets",
+        minrating = 8,
+        maxrating = 8
+    },
+    shothose = {
+        name = "Death Machine",
+        description = "Full auto buckshot hose",
+        weapons = {"autoshotgun", "gun_mac10"},
         minrating = 8,
         maxrating = 8
     },
