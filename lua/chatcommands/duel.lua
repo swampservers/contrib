@@ -96,7 +96,7 @@ RegisterChatCommand({"duel"}, function(ply, arg)
     requestDuel(ply, target, points, kills)
 end)
 
-timer.Create("CoinFlip", 1, 0, function()
+timer.Create("DuelTimer", 1, 0, function()
     for fromID, j in pairs(DuelData) do
         local fromPlayer = player.GetBySteamID(fromID)
         local toPlayer = player.GetBySteamID(j.toID)
