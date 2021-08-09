@@ -741,14 +741,12 @@ function SWEP:GunFire()
         self.LastFireSysTime = SysTime()
     end
 
-    if self:HasPerk("alwaysjam") or (self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < (1.0 / self:GetMaxClip1()) ) then
+    if self:HasPerk("alwaysjam") or (self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < (1.0 / self:GetMaxClip1())) then
         self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
         self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
-
         self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
         self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
     end
-
     --     self.realstuff = {self:GetLastShotSpray(), self:GetLastFire(), self:GetActualLastFire()}
     -- else
     --     self:SetLastShotSpray(self.realstuff[1])
@@ -756,15 +754,10 @@ function SWEP:GunFire()
     --     self:SetActualLastFire(self.realstuff[3])
     -- end
     -- print(CurTime())
-
-
-
-
     -- if IsFirstTimePredicted() and self.Owner:SteamID() == "STEAM_0:0:38422842" then
     --     self.SPS = (self.SPS or 0) + 1
     --     -- print(engine.TickCount() - (self.LTC or 0))
     --     self.LTC = engine.TickCount()
-
     --     if math.floor(correctedcurtime) > (self.LastShotSecond or 0) then
     --         print("SPS", self.SPS)
     --         self.SPS = 0
@@ -833,7 +826,6 @@ end
 function SWEP:SetupMove(ply, mv, cmd)
     mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * self:GetSpeedRatio())
 end
-
 -- function SWEP:GetSpread(clientsmoothing)
 --     local ply = self:GetOwner()
 --     if not ply:IsValid() then return end

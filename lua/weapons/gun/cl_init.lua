@@ -43,7 +43,6 @@ end
 
 local hblurredcrosshair = Material("vgui/gradient-u")
 local vblurredcrosshair = Material("vgui/gradient-l")
-
 local crack = Material("decals/glass/shot1")
 
 function SWEP:DrawHUDBackground()
@@ -74,12 +73,11 @@ function SWEP:DrawHUDBackground()
             surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH(), ScrH())
         end
 
-
         if self:HasPerk("crackedscope") then
             surface.SetDrawColor(Color(255, 255, 255, 255))
             surface.SetMaterial(crack)
-            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH()*1.5, ScrH()*1.5)
-            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH()*1.5, ScrH()*1.5)
+            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH() * 1.5, ScrH() * 1.5)
+            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH() * 1.5, ScrH() * 1.5)
         end
 
         surface.SetDrawColor(color_black)
