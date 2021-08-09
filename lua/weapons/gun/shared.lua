@@ -645,12 +645,12 @@ function SWEP:GunFire()
                     end
                 end
 
-                if self:HasPerk("dragon") then
+                if SERVER and self:HasPerk("dragon") then
                     trace.Entity:Ignite(5)
                 end
             end
 
-            if self:HasPerk("explosiveslug") then
+            if self:HasPerk("explosive") or self:HasPerk("explosiveslug") then
                 if trace.HitPos and SERVER then
                     local p = trace.HitPos
                     local effectdata = EffectData()
@@ -660,7 +660,11 @@ function SWEP:GunFire()
 
                     timer.Simple(0, function()
                         if IsValid(self) and IsValid(self.Owner) then
-                            util.BlastDamage(self, self.Owner, p, 150, 30)
+                            if self:HasPerk("explosive") then
+                                util.BlastDamage(self, self.Owner, p, 200, 80)
+                            else
+                                util.BlastDamage(self, self.Owner, p, 150, 30)
+                            end
                         end
                     end)
                 end
@@ -737,6 +741,14 @@ function SWEP:GunFire()
         self.LastFireSysTime = SysTime()
     end
 
+    if self:HasPerk("alwaysjam") or (self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < (1.0 / self:GetMaxClip1()) ) then
+        self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
+        self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
+
+        self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+        self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+    end
+
     --     self.realstuff = {self:GetLastShotSpray(), self:GetLastFire(), self:GetActualLastFire()}
     -- else
     --     self:SetLastShotSpray(self.realstuff[1])
@@ -744,17 +756,21 @@ function SWEP:GunFire()
     --     self:SetActualLastFire(self.realstuff[3])
     -- end
     -- print(CurTime())
-    if IsFirstTimePredicted() and self.Owner:SteamID() == "STEAM_0:0:38422842" then
-        self.SPS = (self.SPS or 0) + 1
-        -- print(engine.TickCount() - (self.LTC or 0))
-        self.LTC = engine.TickCount()
 
-        if math.floor(correctedcurtime) > (self.LastShotSecond or 0) then
-            print("SPS", self.SPS)
-            self.SPS = 0
-            self.LastShotSecond = math.floor(correctedcurtime)
-        end
-    end
+
+
+
+    -- if IsFirstTimePredicted() and self.Owner:SteamID() == "STEAM_0:0:38422842" then
+    --     self.SPS = (self.SPS or 0) + 1
+    --     -- print(engine.TickCount() - (self.LTC or 0))
+    --     self.LTC = engine.TickCount()
+
+    --     if math.floor(correctedcurtime) > (self.LastShotSecond or 0) then
+    --         print("SPS", self.SPS)
+    --         self.SPS = 0
+    --         self.LastShotSecond = math.floor(correctedcurtime)
+    --     end
+    -- end
 
     return true
 end
@@ -792,6 +808,8 @@ function SWEP:GetSpread(clientsmoothing)
 
     if not self:IsScoped() then
         spread = spread + (self.SpreadUnscoped or 0)
+    elseif self:HasPerk("crackedscope") then
+        spread = spread + 0.05
     end
 
     local spray = clientsmoothing and self:GetSpray(SysTime(), self.LastFireSysTime or 0) or self:GetSpray()
@@ -815,6 +833,7 @@ end
 function SWEP:SetupMove(ply, mv, cmd)
     mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * self:GetSpeedRatio())
 end
+
 -- function SWEP:GetSpread(clientsmoothing)
 --     local ply = self:GetOwner()
 --     if not ply:IsValid() then return end

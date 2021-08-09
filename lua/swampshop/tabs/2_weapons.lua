@@ -10,6 +10,17 @@ SS_WeaponProduct({
     class = 'weapon_slitter'
 })
 
+SS_WeaponAndAmmoProduct({
+    name = 'Peacekeeper',
+    description = "Peacekeeper (Re-buy for more shots)",
+    price = 5000,
+    model = 'models/weapons/w_sawed-off.mdl',
+    class = 'weapon_peacekeeper',
+    ammotype = "peaceshot",
+    amount = 2
+})
+
+
 SS_WeaponProduct({
     name = 'Crossbow',
     description = "Kills players in one shot, and is capable of hitting distant targets. Also unfreezes props.",
@@ -18,31 +29,23 @@ SS_WeaponProduct({
     class = 'weapon_crossbow'
 })
 
-SS_WeaponAndAmmoProduct({
-    name = 'Big Frickin\' Gun',
-    description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
-    price = 20000,
-    ammotype = "doom3_bfg",
-    amount = 1,
-    model = "models/weapons/doom3/w_bfg.mdl",
-    class = 'weapon_doom3_bfg'
-})
 
-SS_WeaponProduct({
-    name = 'Submachine Gun',
-    description = "Effective at killing players at close range, and the ammo is cheap.",
-    price = 5000,
-    model = 'models/weapons/w_smg1.mdl',
-    class = 'weapon_smg1'
-})
 
-SS_WeaponProduct({
-    name = 'Sniper',
-    description = "This powerful rifle kills any player in one shot and has a scope for long distance assassinations. Also unfreezes props.",
-    price = 8000,
-    model = 'models/weapons/w_barrett_m98b.mdl',
-    class = 'weapon_sniper'
-})
+-- SS_WeaponProduct({
+--     name = 'Submachine Gun',
+--     description = "Effective at killing players at close range, and the ammo is cheap.",
+--     price = 5000,
+--     model = 'models/weapons/w_smg1.mdl',
+--     class = 'weapon_smg1'
+-- })
+
+-- SS_WeaponProduct({
+--     name = 'Sniper',
+--     description = "This powerful rifle kills any player in one shot and has a scope for long distance assassinations. Also unfreezes props.",
+--     price = 8000,
+--     model = 'models/weapons/w_barrett_m98b.mdl',
+--     class = 'weapon_sniper'
+-- })
 
 SS_WeaponProduct({
     name = '357 Magnum',
@@ -52,12 +55,22 @@ SS_WeaponProduct({
     class = 'weapon_357'
 })
 
-SS_WeaponProduct({
-    name = 'Light Machine Gun',
-    description = "Crouch for better control",
-    price = 12000,
-    model = 'models/weapons/w_mg42bu.mdl',
-    class = 'weapon_spades_lmg'
+-- SS_WeaponProduct({
+--     name = 'Light Machine Gun',
+--     description = "Crouch for better control",
+--     price = 12000,
+--     model = 'models/weapons/w_mg42bu.mdl',
+--     class = 'weapon_spades_lmg'
+-- })
+
+SS_WeaponAndAmmoProduct({
+    name = 'Big Frickin\' Gun',
+    description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
+    price = 20000,
+    ammotype = "doom3_bfg",
+    amount = 1,
+    model = "models/weapons/doom3/w_bfg.mdl",
+    class = 'weapon_doom3_bfg'
 })
 
 SS_WeaponProduct({
@@ -116,16 +129,6 @@ SS_WeaponAndAmmoProduct({
     amount = 2
 })
 
-SS_WeaponAndAmmoProduct({
-    name = 'Peacekeeper',
-    description = "Peacekeeper (Re-buy for more shots)",
-    price = 5000,
-    model = 'models/weapons/w_sawed-off.mdl',
-    class = 'weapon_peacekeeper',
-    ammotype = "peaceshot",
-    amount = 2
-})
-
 SS_WeaponProduct({
     name = 'Crusader Sword',
     description = "A powerful melee weapon. Powers up after a rapid chain of kills.",
@@ -149,16 +152,17 @@ SS_WeaponPerkData = {
         minrating = 1,
         maxrating = 1,
     },
-    rusted = {
+    alwaysjam = {
         name = "Rusted",
-        description = "Gets jammed after every shot",
-        weapons = {"pistol"},
+        description = "Has to be cycled manually",
+        -- the deploy animation for these looks like cycling a round
+        weapons = {"gun_p90","gun_fiveseven","gun_usp","gun_m4a1","gun_glock","gun_p228","gun_mp5navy","gun_ak47"},
         minrating = 1,
         maxrating = 1,
     },
-    cracked = {
+    crackedscope = {
         name = "Cracked",
-        description = "Ooops! (crack on scope when zoomed)",
+        description = "Scope is cracked - Ooops!",
         weapons = {"sniper", "autosniper", "gun_aug", "gun_sg552"},
         minrating = 1,
         maxrating = 1,
@@ -170,7 +174,21 @@ SS_WeaponPerkData = {
         minrating = 1,
         maxrating = 2
     },
-    -- rating 2-4
+    sometimesjam = {
+        name = "Dirty",
+        description = "Occasionally jams",
+        weapons = {"gun_p90","gun_fiveseven","gun_usp","gun_m4a1","gun_glock","gun_p228","gun_mp5navy","gun_ak47"},
+        minrating = 2,
+        maxrating = 3,
+    },
+
+    lowprice = {
+        name = "Chinese",
+        description = "Less accurate, but quite cheap",
+        minrating = 1,
+        maxrating = 4,
+    },
+    
     compliant = {
         name = "Libtard-Compliant",
         description = "10 round magazine, semi-auto only, and slow to reload.",
@@ -223,8 +241,7 @@ SS_WeaponPerkData = {
     -- rating 7-8
     antimaterial = {
         name = "Anti-Material",
-        description = "Does heavy damage to props (for AWP, instaremove anything)",
-        weapons = {"autosniper"},
+        description = "Can damage any prop (AWP instaremoves)",
         minrating = 7,
         maxrating = 8
     },
@@ -259,6 +276,13 @@ SS_WeaponPerkData = {
         name = "Explosive Slug",
         description = "Fires explosive slug ammunition",
         weapons = {"shotgun", "autoshotgun"},
+        minrating = 8,
+        maxrating = 8
+    },
+    explosive = {
+        name = "Hand Cannon",
+        description = "Fires 20mm high explosive rounds",
+        weapons = {"gun_awp"},
         minrating = 8,
         maxrating = 8
     },
@@ -299,7 +323,7 @@ SS_Item({
 
         if (self.specs.perk or "") ~= "" then
             local pk = SS_WeaponPerkData[self.specs.perk]
-            d = d .. "\nPerk: " .. pk.name .. ": " .. pk.description
+            d = d .. "\nPerk (WIP): " .. pk.name .. ": " .. pk.description
         end
 
         if self.specs.trophy_winner then
