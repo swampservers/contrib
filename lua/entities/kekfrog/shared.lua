@@ -31,6 +31,8 @@ function ENT:Initialize()
                 self:InWallCheck()
             end
         end)
+
+        self.lastcollect = CurTime()
     end
 
     self:SetModel("models/swamponions/kekfrog.mdl")
@@ -47,7 +49,7 @@ function ENT:Initialize()
     if SERVER then
         -- self:SetTrigger(true)
         self:SetUseType(SIMPLE_USE)
-        -- self:AddEFlags( EFL_FORCE_CHECK_TRANSMIT )
+        self:AddEFlags( EFL_FORCE_CHECK_TRANSMIT )
     end
 end
 
@@ -56,13 +58,31 @@ function ENT:Income()
     if p.z < -100 or p.z > 1000 or p.x < -3300 or p.x > 3300 or self:IsProtected() then return 0 end
     local inc = 1000 + self:GetOfferedPoints() / 50
 
-    for i = 1, 10 do
+    local i = 1
+    while true do
         local k = 2000 * i
 
         if inc > k then
             inc = k + (inc - k) * 0.5
+            i = i+1
+        else
+            break
         end
     end
 
-    return math.floor(inc)
+    return math.ceil(inc * self:IncomeSuppression())
+end
+
+function ENT:IncomeSuppression()
+    local inc = 1
+    for i,v in ipairs(Ents.kekfrog) do
+        if v~=self and v:GetOfferedPoints() >= self:GetOfferedPoints() then 
+            local d = self:GetPos():Distance(v:GetPos())
+
+            inc = inc * math.min(d/2000,1)
+        end
+    end
+
+    return inc
+
 end

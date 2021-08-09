@@ -89,6 +89,7 @@ function SWEP:DrawHUDBackground()
 end
 
 function SWEP:PrintWeaponInfo(x, y, alpha)
+    self.PrintName =self:GetNWString("PrintName", self.PrintName or "unknown")
     -- surface.SetDrawColor(255,255,255,255)
     -- surface.DrawRect(x,y, 100, 100)
     if self.specs and self.dspecs then

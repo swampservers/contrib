@@ -76,6 +76,11 @@ end
 -- SWEP.SprayExponent = 1
 -- SWEP.SprayIncrement = 0.5
 -- SWEP.SprayDecay = 0.4
+
+function SWEP:HasPerk(perk)
+    return self:GetNWString("perk")==perk
+end
+
 function SWEP:GetPrintName()
     return self:GetNWString("PrintName", self.PrintName or "unknown")
 end
@@ -568,7 +573,12 @@ function SWEP:GunFire()
 
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_PRIMARYATTACK))
     -- if self.Owner:SteamID() ~= "STEAM_0:0:38422842" then
-    self:SetClip1(self:Clip1() - 1)
+
+    if self:HasPerk("bottomless") and self.Owner:GetAmmoCount(self:GetPrimaryAmmoType()) > 0 then
+        self.Owner:RemoveAmmo(1, self:GetPrimaryAmmoType())
+    else
+        self:SetClip1(self:Clip1() - 1)
+    end
 
     -- end
     if SERVER and (ply.GetLocationName and ply:GetLocationName() == "Weapons Testing Range") then
@@ -619,6 +629,41 @@ function SWEP:GunFire()
             if trace.HitGroup == HITGROUP_LEFTLEG or trace.HitGroup == HITGROUP_RIGHTLEG then
                 scale = scale * (self.LegshotMultiplier or 1)
             end
+
+            if self:HasPerk("lessdamage") then scale=scale*0.6 end
+            if self:HasPerk("moredamage") then scale=scale*1.4 end
+
+            if IsValid(trace.Entity) then
+                if self:HasPerk("antikleiner") then
+                    if trace.Entity:GetModel()=="models/player/kleiner.mdl" then
+                        scale=scale*3.1
+                        dmginfo:SetDamageType(DMG_DISSOLVE)
+                    end
+                end
+
+                if self:HasPerk("dragon") then
+                    trace.Entity:Ignite(5)
+                end
+            end
+
+            if self:HasPerk("explosiveslug") then 
+
+                if trace.HitPos and SERVER then
+                    local p = trace.HitPos
+
+                    local effectdata = EffectData()
+                    effectdata:SetOrigin(p)
+                    effectdata:SetMagnitude(0)
+                    util.Effect("Explosion", effectdata, true, true)
+                    timer.Simple(0,function()
+                        if IsValid(self) and IsValid(self.Owner) then
+                            util.BlastDamage(self, self.Owner, p, 150, 30)
+                        end
+                    end)
+
+                end
+            end
+            
 
             dmginfo:SetDamage(math.Round(scale * self.Damage))
         end

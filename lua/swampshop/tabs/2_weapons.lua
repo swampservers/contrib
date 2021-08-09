@@ -139,10 +139,12 @@ if SERVER then
     language.GetPhrase = function(s) return s:gsub("#Cstrike_WPNHUD_", "") end
 end
 
+local weaponspecs = {"rating", "roll_rof", "roll_range", "roll_accuracy", "roll_control", "roll_handling", "roll_mobility"}
+
 SS_WeaponPerkData = {
     -- rating 1
     min = {
-        name = "Scuffed",
+        name = "Mexican",
         description = "It's just bad (min all stats)",
         minrating = 1,
         maxrating = 1,
@@ -174,7 +176,7 @@ SS_WeaponPerkData = {
         description = "10 round magazine, semi-auto only, and slow to reload.",
         weapons = {"ar"},
         minrating = 2,
-        minrating = 4
+        maxrating = 4
     },
     --rating 5-6
     fullauto = {
@@ -190,9 +192,10 @@ SS_WeaponPerkData = {
         minrating = 5,
         maxrating = 6
     },
-    heavyweight = {
-        name = "Heavyweight",
+    compensated = {
+        name = "Compensated",
         description = "Less recoil",
+        weapons = {"pistol", "autosniper", "ar", "smg"},
         minrating = 5,
         maxrating = 6
     },
@@ -205,19 +208,15 @@ SS_WeaponPerkData = {
     },
     skullpiercing = {
         name = "Skullpiercing",
-        description = "1 headshot kill",
-        minrating = 5,
-        maxrating = 7
-    },
-    highvelocity = {
-        name = "High-velocity",
-        description = "Longer damage range",
+        description = "More damage to the head",
+        weapons = {"ar","pistol"},
         minrating = 5,
         maxrating = 7
     },
     slug = {
         name = "Slug",
         description = "Fires devastating slug ammunition",
+        weapons = {"shotgun","autoshotgun"},
         minrating = 5,
         maxrating = 7
     },
@@ -225,18 +224,21 @@ SS_WeaponPerkData = {
     antimaterial = {
         name = "Anti-Material",
         description = "Does heavy damage to props (for AWP, instaremove anything)",
+        weapons = {"autosniper"},
         minrating = 7,
         maxrating = 8
     },
     selfloading = {
         name = "Self-Loading",
-        description = "Semi-automatic firepower (AWP/scout)",
+        description = "Semi-automatic firepower",
+        weapons = {"sniper"},
         minrating = 7,
         maxrating = 8
     },
     boomstick = {
         name = "Boomstick",
         description = "Fires way more pellets, but in a wider cone",
+        weapons = {"shotgun","autoshotgun"},
         minrating = 7,
         maxrating = 8
     },
@@ -255,7 +257,8 @@ SS_WeaponPerkData = {
     -- antipony = {name="Anti-pony", description="Pony blaster",minrating=7,maxrating=8}, -- antihuman = {name="Anti-human", description="Kleiner Killer",minrating=7,maxrating=8}, --rating 8
     explosiveslug = {
         name = "Explosive Slug",
-        description = "Fires devastating slug ammunition",
+        description = "Fires explosive slug ammunition",
+        weapons = {"shotgun","autoshotgun"},
         minrating = 8,
         maxrating = 8
     },
@@ -279,20 +282,24 @@ SS_WeaponPerkData = {
     }
 }
 
-local weaponspecs = {"rating", "roll_rof", "roll_range", "roll_accuracy", "roll_control", "roll_handling", "roll_mobility"}
+
 
 SS_Item({
     class = "weapon",
     value = 5000,
     name = "Weapon",
-    description = "STATS ARE WORK IN PROGRESS",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
     GetDescription = function(self)
-        local d = self.description
+        local d = (weapons.GetStored(self.specs.class or "") or {}).Purpose or "" --self.description
+
+        if (self.specs.perk or "") ~= "" then
+            local pk =  SS_WeaponPerkData[self.specs.perk]
+            d = d .. "\nPerk: "..pk.name..": "..pk.description
+        end
 
         if self.specs.trophy_winner then
             local p = player.GetBySteamID64(self.specs.trophy_winner)
-            local n = IsValid(p) and p:GetName() or self.specs.trophy_winner
+            local n = IsValid(p) and p:GetName() or util.SteamIDFrom64(self.specs.trophy_winner)
             d = d .. "\n\nGranted to " .. n .. " for their service (#" .. self.specs.trophy_rank .. ")"
         end
 
@@ -300,6 +307,10 @@ SS_Item({
     end,
     GetName = function(self)
         local name = (weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown"
+
+        if (self.specs.perk or "") ~= "" then
+            name = SS_WeaponPerkData[self.specs.perk].name .. " "..name
+        end
 
         if self.specs.trophy_tag then
             name = self.specs.trophy_tag .. " " .. name
@@ -317,6 +328,40 @@ SS_Item({
                 specs[spec] = math.random()
                 ch = true
             end
+        end
+
+        local r = SS_GetRating(self.specs.rating)
+
+        local cl =  self.specs.class or ""
+        local ct = weapons.GetStored(cl) or {}
+
+        local validperks = {}
+        for k,v in pairs(SS_WeaponPerkData) do
+            if v.minrating <= r.id and r.id<=v.maxrating then
+                if v.weapons==nil or v.weapons[cl] or v.weapons[ct.GunType or ""] then
+                    validperks[k]=true
+                end
+            end
+        end
+
+        if specs.perk and specs.perk~="" and validperks[specs.perk]==nil then specs.perk=nil end
+
+        -- specs.perk=nil
+
+        if specs.perk==nil then
+
+            local r_roll = (self.specs.rating - r.min) / (r.max - r.min)
+
+            -- perks at rank <= 4 are "bad"
+            if r.id <= 4 then r_roll=1-r_roll end
+
+            if r_roll > (1 -SS_WeaponPerkChance[r.id]) then
+                specs.perk = table.Random(table.GetKeys(validperks))
+            else
+                specs.perk = ""
+            end
+
+            ch=true
         end
 
         return ch
