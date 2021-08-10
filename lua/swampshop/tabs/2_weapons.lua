@@ -20,6 +20,7 @@ SS_WeaponAndAmmoProduct({
     amount = 2
 })
 
+
 SS_WeaponProduct({
     name = 'Crossbow',
     description = "Kills players in one shot, and is capable of hitting distant targets. Also unfreezes props.",
@@ -28,6 +29,8 @@ SS_WeaponProduct({
     class = 'weapon_crossbow'
 })
 
+
+
 -- SS_WeaponProduct({
 --     name = 'Submachine Gun',
 --     description = "Effective at killing players at close range, and the ammo is cheap.",
@@ -35,6 +38,7 @@ SS_WeaponProduct({
 --     model = 'models/weapons/w_smg1.mdl',
 --     class = 'weapon_smg1'
 -- })
+
 -- SS_WeaponProduct({
 --     name = 'Sniper',
 --     description = "This powerful rifle kills any player in one shot and has a scope for long distance assassinations. Also unfreezes props.",
@@ -42,6 +46,7 @@ SS_WeaponProduct({
 --     model = 'models/weapons/w_barrett_m98b.mdl',
 --     class = 'weapon_sniper'
 -- })
+
 SS_WeaponProduct({
     name = '357 Magnum',
     description = "This gun is convenient for shooting and removing props. It takes 2 bullets to kill a player.",
@@ -57,6 +62,7 @@ SS_WeaponProduct({
 --     model = 'models/weapons/w_mg42bu.mdl',
 --     class = 'weapon_spades_lmg'
 -- })
+
 SS_WeaponAndAmmoProduct({
     name = 'Big Frickin\' Gun',
     description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
@@ -150,7 +156,7 @@ SS_WeaponPerkData = {
         name = "Rusted",
         description = "Has to be cycled manually",
         -- the deploy animation for these looks like cycling a round
-        weapons = {"gun_p90", "gun_fiveseven", "gun_usp", "gun_m4a1", "gun_glock", "gun_p228", "gun_mp5navy", "gun_ak47"},
+        weapons = {"gun_p90","gun_fiveseven","gun_usp","gun_m4a1","gun_glock","gun_p228","gun_mp5navy","gun_ak47"},
         minrating = 1,
         maxrating = 1,
     },
@@ -171,19 +177,21 @@ SS_WeaponPerkData = {
     sometimesjam = {
         name = "Dirty",
         description = "Occasionally jams",
-        weapons = {"gun_p90", "gun_fiveseven", "gun_usp", "gun_m4a1", "gun_glock", "gun_p228", "gun_mp5navy", "gun_ak47"},
+        weapons = {"gun_p90","gun_fiveseven","gun_usp","gun_m4a1","gun_glock","gun_p228","gun_mp5navy","gun_ak47"},
         minrating = 2,
         maxrating = 3,
     },
-    lowprice = {
+
+    chinese = {
         name = "Chinese",
         description = "Less accurate, but quite cheap",
         minrating = 1,
         maxrating = 4,
     },
+    
     compliant = {
         name = "Libtard-Compliant",
-        description = "10 round magazine, semi-auto only, and slow to reload.",
+        description = "10 round magazine and semi-auto only",
         weapons = {"ar"},
         minrating = 2,
         maxrating = 4
@@ -315,12 +323,15 @@ SS_Item({
 
         if (self.specs.perk or "") ~= "" then
             local pk = SS_WeaponPerkData[self.specs.perk]
+            if pk then
             d = d .. "\nPerk (WIP): " .. pk.name .. ": " .. pk.description
+            end
         end
 
         if self.specs.trophy_winner then
             local p = player.GetBySteamID64(self.specs.trophy_winner)
             local n = IsValid(p) and p:GetName() or util.SteamIDFrom64(self.specs.trophy_winner)
+            n = self.specs.trophy_winner_name_cache or n
             d = d .. "\n\nGranted to " .. n .. " for their service (#" .. self.specs.trophy_rank .. ")"
         end
 
@@ -384,6 +395,15 @@ SS_Item({
             end
 
             ch = true
+        end
+
+        if specs.trophy_winner then
+            local p = player.GetBySteamID64(specs.trophy_winner)
+            local n = IsValid(p) and p:GetName()
+            if n and n~=specs.trophy_winner_name_cache then
+                specs.trophy_winner_name_cache = n
+                ch = true
+            end
         end
 
         return ch
