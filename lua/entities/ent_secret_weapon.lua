@@ -27,7 +27,8 @@ end
 function ENT:Use(act)
     if act:IsPlayer() then
         local w = act:GetActiveWeapon()
-        if IsValid(w) and (w.GunType=="smg" or w.GunType=="ar") then
+
+        if IsValid(w) and (w.GunType == "smg" or w.GunType == "ar") then
             act:Give("weapon_ar2")
             w:Remove()
             -- act:StripWeapon("weapon_smg1")

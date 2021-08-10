@@ -83,72 +83,74 @@ end
 -- swep can be the swep or weapons.GetTable
 function GunPerkOverrides(swep, perk)
     local t = {}
-    if perk=="crackedscope" then
-        t.SpreadBase = (swep.SpreadBase or 0)+0.05
-        t.SpreadUnscoped = math.max( (swep.SpreadUnscoped or 0)-0.05, 0)
-    elseif perk=="lessdamage" then
+
+    if perk == "crackedscope" then
+        t.SpreadBase = (swep.SpreadBase or 0) + 0.05
+        t.SpreadUnscoped = math.max((swep.SpreadUnscoped or 0) - 0.05, 0)
+    elseif perk == "lessdamage" then
         t.Damage = swep.Damage * 0.6
         t.KickUBase = (swep.KickUBase or 0) * 0.5
         t.KickLBase = (swep.KickLBase or 0) * 0.5
-    elseif perk=="chinese" then
-        t.SpreadBase = (swep.SpreadBase or 0)+0.001
-        t.SpreadUnscoped = (swep.SpreadUnscoped or 0)+0.001
-    elseif perk=="compliant" then
+    elseif perk == "chinese" then
+        t.SpreadBase = (swep.SpreadBase or 0) + 0.001
+        t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
+    elseif perk == "compliant" then
         t.Primary = {
             Ammo = swep.Primary.Ammo,
             ClipSize = 10,
             DefaultClip = 10,
             Automatic = false
         }
-    elseif perk=="compliant" then
+    elseif perk == "compliant" then
         t.Primary = {
             Ammo = swep.Primary.Ammo,
             ClipSize = swep.Primary.ClipSize,
             DefaultClip = swep.Primary.DefaultClip,
             Automatic = true
         }
-        t.CycleTime = swep.CycleTime*0.6
-    elseif perk=="lightweight" then
+
+        t.CycleTime = swep.CycleTime * 0.6
+    elseif perk == "lightweight" then
         t.SpreadMove = (swep.SpreadMove or 0) * 0.5
-    elseif perk=="compensated" then
+    elseif perk == "compensated" then
         t.KickUBase = (swep.KickUBase or 0) * 0.5
         t.KickLBase = (swep.KickLBase or 0) * 0.5
         t.KickUSpray = (swep.KickUSpray or 0) * 0.5
-    elseif perk=="extended" then
+    elseif perk == "extended" then
         local cs = math.floor(swep.Primary.ClipSize * 1.5)
+
         t.Primary = {
             Ammo = swep.Primary.Ammo,
             ClipSize = cs,
             DefaultClip = cs,
             Automatic = swep.Primary.Automatic
         }
-    elseif perk=="skullpiercing" then
+    elseif perk == "skullpiercing" then
         t.HeadshotMultiplier = 5
-    elseif perk=="slug" or perk=="explosiveslug" then
+    elseif perk == "slug" or perk == "explosiveslug" then
         t.Damage = swep.Damage * swep.NumPellets
         t.NumPellets = 1
         t.PelletSpread = 0
-        t.HalfDamageDistance = swep.HalfDamageDistance *2
-    elseif perk=="selfloading" then
-        t.CycleTime = swep.CycleTime*0.6
-    elseif perk=="boomstick" then
+        t.HalfDamageDistance = swep.HalfDamageDistance * 2
+    elseif perk == "selfloading" then
+        t.CycleTime = swep.CycleTime * 0.6
+    elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 2
         t.PelletSpread = swep.PelletSpread * 1.5
-        t.CycleTime = swep.CycleTime*1.5
-    elseif perk=="moredamage" then
+        t.CycleTime = swep.CycleTime * 1.5
+    elseif perk == "moredamage" then
         t.Damage = swep.Damage * 1.4
-        t.CycleTime = swep.CycleTime*1.1
+        t.CycleTime = swep.CycleTime * 1.1
         t.KickUBase = (swep.KickUBase or 0) * 1.2
-    elseif perk=="explosive" then
+    elseif perk == "explosive" then
         t.KickUBase = (swep.KickUBase or 0) * 2
-    elseif perk=="shothose" then
+    elseif perk == "shothose" then
         -- mac10
         if (swep.NumPellets or 1) == 1 then
             t.NumPellets = 6
             t.PelletSpread = 0.04
             t.Damage = 8
             t.HalfDamageDistance = 1024
-            
             -- t.Primary = {
             --     Ammo = swep.Primary.Ammo,
             --     ClipSize = 20,
@@ -162,9 +164,11 @@ function GunPerkOverrides(swep, perk)
                 DefaultClip = 20,
                 Automatic = true
             }
+
             t.CycleTime = 0.15
         end
     end
+
     return t
 end
 
@@ -829,14 +833,12 @@ function SWEP:GunFire()
         self.LastFireSysTime = SysTime()
     end
 
-    if self:HasPerk("alwaysjam") or (self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < (1.0 / self:GetMaxClip1()) ) then
+    if self:HasPerk("alwaysjam") or (self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < (1.0 / self:GetMaxClip1())) then
         self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
         self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
-
         self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
         self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
     end
-
     --     self.realstuff = {self:GetLastShotSpray(), self:GetLastFire(), self:GetActualLastFire()}
     -- else
     --     self:SetLastShotSpray(self.realstuff[1])
@@ -844,15 +846,10 @@ function SWEP:GunFire()
     --     self:SetActualLastFire(self.realstuff[3])
     -- end
     -- print(CurTime())
-
-
-
-
     -- if IsFirstTimePredicted() and self.Owner:SteamID() == "STEAM_0:0:38422842" then
     --     self.SPS = (self.SPS or 0) + 1
     --     -- print(engine.TickCount() - (self.LTC or 0))
     --     self.LTC = engine.TickCount()
-
     --     if math.floor(correctedcurtime) > (self.LastShotSecond or 0) then
     --         print("SPS", self.SPS)
     --         self.SPS = 0
@@ -896,8 +893,8 @@ function SWEP:GetSpread(clientsmoothing)
 
     if not self:IsScoped() then
         spread = spread + (self.SpreadUnscoped or 0)
-    -- elseif self:HasPerk("crackedscope") then
-    --     spread = spread + 0.05
+        -- elseif self:HasPerk("crackedscope") then
+        --     spread = spread + 0.05
     end
 
     local spray = clientsmoothing and self:GetSpray(SysTime(), self.LastFireSysTime or 0) or self:GetSpray()
@@ -921,7 +918,6 @@ end
 function SWEP:SetupMove(ply, mv, cmd)
     mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * self:GetSpeedRatio())
 end
-
 -- function SWEP:GetSpread(clientsmoothing)
 --     local ply = self:GetOwner()
 --     if not ply:IsValid() then return end
