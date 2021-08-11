@@ -23,7 +23,7 @@ if CLIENT then
             vpanel.data = nil
             vpanel.episode = nil
             vpanel.duration = nil
-            
+
             timer.Simple(45, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
@@ -31,7 +31,7 @@ if CLIENT then
                     callback()
                 end
             end)
-            
+
             timer.Create("9animeupdate" .. tostring(math.random(1, 100000)), 1, 45, function()
                 if IsValid(vpanel) then
                     if vpanel.phase == 0 then
@@ -49,10 +49,11 @@ if CLIENT then
                     end
                 end
             end)
-            
+
             function vpanel:ConsoleMessage(msg)
                 if msg then
                     msg = tostring(msg)
+
                     if (LocalPlayer().videoDebug) then
                         print(msg)
                     end
@@ -74,7 +75,7 @@ if CLIENT then
                         end
 
                         if (self.episode ~= nil and self.title ~= nil and self.player ~= nil) then
-                            vpanel:RunJavascript("location.href='"..self.player.."'")
+                            vpanel:RunJavascript("location.href='" .. self.player .. "'")
                             self.phase = 1
                         end
 
@@ -91,8 +92,8 @@ if CLIENT then
                         end
 
                         if (self.data ~= nil and self.duration ~= nil) then
-                            if (self.episode~="Full") then
-                                self.title = self.title.." Episode "..self.episode
+                            if (self.episode ~= "Full") then
+                                self.title = self.title .. " Episode " .. self.episode
                             end
 
                             callback({
@@ -109,8 +110,11 @@ if CLIENT then
                     end
                 end
             end
+
             vpanel:OpenURL("https://swamp.sv/video")
-            timer.Simple(.5,function() --9anime has a fit if you don't have a referrer
+
+            --9anime has a fit if you don't have a referrer
+            timer.Simple(.5, function()
                 vpanel:OpenURL(key)
             end)
         end, function()
@@ -123,9 +127,11 @@ if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         local url = "http://swamp.sv/s/cinema/file.html"
         local k = Video:Data()
+
         if string.find(k, ".m3u8") then
             url = "http://swamp.sv/s/cinema/hls.html"
         end
+
         panel:EnsureURL(url)
         -- Let the webpage handle loading a video
         local str = string.format("th_video('%s');", string.JavascriptSafe(k))
