@@ -162,7 +162,12 @@ SS_WeaponPerkData = {
         minrating = 1,
         maxrating = 1,
     },
-    --rating 1-2
+    airsoft = {
+        name = "Airsoft",
+        description = "Not a real gun",
+        minrating = 1,
+        maxrating = 3
+    },
     lessdamage = {
         name = "Less-Lethal",
         description = "Fires less-lethal rubber bullets",
@@ -173,7 +178,7 @@ SS_WeaponPerkData = {
         name = "Dirty",
         description = "Occasionally jams",
         weapons = {gun_p90=true, gun_fiveseven=true, gun_usp=true, gun_m4a1=true, gun_glock=true, gun_p228=true, gun_mp5navy=true, gun_ak47=true},
-        minrating = 2,
+        minrating = 1,
         maxrating = 3,
     },
     chinese = {
@@ -189,7 +194,6 @@ SS_WeaponPerkData = {
         minrating = 2,
         maxrating = 4
     },
-    --rating 5-6
     fullauto = {
         name = "Full-Auto",
         description = "Black market full-auto sear installed",
@@ -210,7 +214,6 @@ SS_WeaponPerkData = {
         minrating = 5,
         maxrating = 6
     },
-    --rating 5-7
     extended = {
         name = "Extended",
         description = "Extended mags",
@@ -231,7 +234,6 @@ SS_WeaponPerkData = {
         minrating = 5,
         maxrating = 7
     },
-    -- rating 7-8
     antimaterial = {
         name = "Anti-Material",
         description = "Can damage any prop (AWP instaremoves)",

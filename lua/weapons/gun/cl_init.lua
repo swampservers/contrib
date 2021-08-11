@@ -3,6 +3,8 @@ include("shared.lua")
 
 --copied from weapon_base, add self.CSMuzzleFlashScale
 function SWEP:FireAnimationEvent(pos, ang, event, options)
+    if self:HasPerk("airsoft") then return end
+
     if (not self.CSMuzzleFlashes) then return end
 
     if (event == 5001 or event == 5011 or event == 5021 or event == 5031) then

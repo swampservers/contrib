@@ -84,6 +84,10 @@ function GunPerkOverrides(swep, perk)
         t.SpreadUnscoped = (swep.SpreadUnscoped or 0)+0.001
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.8
+    elseif perk=="airsoft" then
+        t.Damage = 1
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.3
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.2
     elseif perk=="compliant" then
         t.Primary = {
             Ammo = swep.Primary.Ammo,
@@ -263,7 +267,7 @@ end
 
 function SWEP:WeaponSound(soundtype)
     local sndname = (self.SoundData or {})[soundtype] or self.ShootSound
-
+    if soundtype=="single_shot" and self:HasPerk("airsoft") then sndname = "Weapon_TMP.Single" end
     if sndname then
         self:EmitSound(sndname, nil, nil, nil, CHAN_AUTO)
     end
