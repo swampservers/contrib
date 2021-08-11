@@ -9,7 +9,6 @@ SS_WeaponProduct({
     model = 'models/weapons/w_knife_t.mdl',
     class = 'weapon_slitter'
 })
- 
 
 SS_WeaponAndAmmoProduct({
     name = 'Peacekeeper',
@@ -151,14 +150,28 @@ SS_WeaponPerkData = {
         name = "Rusted",
         description = "Has to be cycled manually",
         -- the deploy animation for these looks like cycling a round
-        weapons = {gun_p90=true, gun_fiveseven=true, gun_usp=true, gun_m4a1=true, gun_glock=true, gun_p228=true, gun_mp5navy=true, gun_ak47=true},
+        weapons = {
+            gun_p90 = true,
+            gun_fiveseven = true,
+            gun_usp = true,
+            gun_m4a1 = true,
+            gun_glock = true,
+            gun_p228 = true,
+            gun_mp5navy = true,
+            gun_ak47 = true
+        },
         minrating = 1,
         maxrating = 1,
     },
     crackedscope = {
         name = "Cracked",
         description = "Scope is cracked - Ooops!",
-        weapons = {sniper=true, autosniper=true, gun_aug=true, gun_sg552=true},
+        weapons = {
+            sniper = true,
+            autosniper = true,
+            gun_aug = true,
+            gun_sg552 = true
+        },
         minrating = 1,
         maxrating = 1,
     },
@@ -177,7 +190,16 @@ SS_WeaponPerkData = {
     sometimesjam = {
         name = "Dirty",
         description = "Occasionally jams",
-        weapons = {gun_p90=true, gun_fiveseven=true, gun_usp=true, gun_m4a1=true, gun_glock=true, gun_p228=true, gun_mp5navy=true, gun_ak47=true},
+        weapons = {
+            gun_p90 = true,
+            gun_fiveseven = true,
+            gun_usp = true,
+            gun_m4a1 = true,
+            gun_glock = true,
+            gun_p228 = true,
+            gun_mp5navy = true,
+            gun_ak47 = true
+        },
         minrating = 1,
         maxrating = 3,
     },
@@ -190,14 +212,20 @@ SS_WeaponPerkData = {
     compliant = {
         name = "Libtard-Compliant",
         description = "10 round magazine and semi-auto only",
-        weapons = {ar=true},
+        weapons = {
+            ar = true
+        },
         minrating = 2,
         maxrating = 4
     },
     fullauto = {
         name = "Full-Auto",
         description = "Black market full-auto sear installed",
-        weapons = {pistol=true, autosniper=true, autoshotgun=true},
+        weapons = {
+            pistol = true,
+            autosniper = true,
+            autoshotgun = true
+        },
         minrating = 5,
         maxrating = 6
     },
@@ -210,7 +238,12 @@ SS_WeaponPerkData = {
     compensated = {
         name = "Compensated",
         description = "Reduced recoil",
-        weapons = {pistol=true, autosniper=true, ar=true, smg=true},
+        weapons = {
+            pistol = true,
+            autosniper = true,
+            ar = true,
+            smg = true
+        },
         minrating = 5,
         maxrating = 6
     },
@@ -223,14 +256,20 @@ SS_WeaponPerkData = {
     skullpiercing = {
         name = "Skullpiercing",
         description = "More damage to the head",
-        weapons = {ar=true, pistol=true},
+        weapons = {
+            ar = true,
+            pistol = true
+        },
         minrating = 5,
         maxrating = 7
     },
     slug = {
         name = "Slug",
         description = "Fires devastating slug ammunition",
-        weapons = {shotgun=true, autoshotgun=true},
+        weapons = {
+            shotgun = true,
+            autoshotgun = true
+        },
         minrating = 5,
         maxrating = 7
     },
@@ -243,14 +282,19 @@ SS_WeaponPerkData = {
     selfloading = {
         name = "Self-Loading",
         description = "Semi-automatic firepower",
-        weapons = {sniper=true},
+        weapons = {
+            sniper = true
+        },
         minrating = 7,
         maxrating = 8
     },
     boomstick = {
         name = "Boomstick",
         description = "Fires way more pellets, but in a wider cone",
-        weapons = {shotgun=true, autoshotgun=true},
+        weapons = {
+            shotgun = true,
+            autoshotgun = true
+        },
         minrating = 7,
         maxrating = 8
     },
@@ -270,14 +314,19 @@ SS_WeaponPerkData = {
     explosiveslug = {
         name = "Explosive Slug",
         description = "Fires explosive slug ammunition",
-        weapons = {shotgun=true, autoshotgun=true},
+        weapons = {
+            shotgun = true,
+            autoshotgun = true
+        },
         minrating = 8,
         maxrating = 8
     },
     explosive = {
         name = "Hand Cannon",
         description = "Fires 20mm high explosive rounds",
-        weapons = {gun_awp=true},
+        weapons = {
+            gun_awp = true
+        },
         minrating = 8,
         maxrating = 8
     },
@@ -296,7 +345,10 @@ SS_WeaponPerkData = {
     shothose = {
         name = "Death Machine",
         description = "Full auto buckshot hose",
-        weapons = {autoshotgun=true, gun_mac10=true},
+        weapons = {
+            autoshotgun = true,
+            gun_mac10 = true
+        },
         minrating = 8,
         maxrating = 8
     },
@@ -307,7 +359,7 @@ SS_WeaponPerkData = {
         maxrating = 8
     }
 }
-  
+
 SS_Item({
     class = "weapon",
     value = 5000,
@@ -389,8 +441,9 @@ SS_Item({
 
                 if r_roll > (1 - SS_WeaponPerkChance[r.id]) then
                     specs.perk = table.Random(table.GetKeys(validperks))
+
                     -- reroll if non specific perk (todo remove this after a while)
-                    if SS_WeaponPerkData[specs.perk].weapons==nil then
+                    if SS_WeaponPerkData[specs.perk].weapons == nil then
                         specs.perk = table.Random(table.GetKeys(validperks))
                     end
                 else
@@ -418,11 +471,11 @@ SS_Item({
             Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
             primary = true,
         }
-    }, 
+    },
     SpawnPrice = function(self)
         local swep = weapons.GetStored(self.specs.class or "") or {}
         local perk = GunPerkOverrides(swep, self.specs.perk)
-    
+
         local baseprice = swep.SpawnPrice or ({
             pistol = 1000,
             heavypistol = 1500,
@@ -436,16 +489,15 @@ SS_Item({
         })[swep.GunType] or 10000
 
         local ratingmod = 1.5 ^ (self.specs.rating - 0.5)
-    
-        -- it comes with ammo, add that to the price :^)
-        return math.Round(baseprice * (perk.SpawnPriceMod or swep.SpawnPriceMod or 1) * ratingmod, -2) + SS_GunAmmoPrice(self)    
 
+        -- it comes with ammo, add that to the price :^)
+        return math.Round(baseprice * (perk.SpawnPriceMod or swep.SpawnPriceMod or 1) * ratingmod, -2) + SS_GunAmmoPrice(self)
     end,
     SellValue = function(self) return 500 * 2 ^ SS_GetRating(self.specs.rating).id end,
     invcategory = "Weapons",
     never_equip = true
-}) 
-  
+})
+
 -- also used to set ammo purchase options for non-item guns (TODO cleanup)
 GUNTYPE_BASE_REFILL_PRICE = {
     pistol = 500,
@@ -458,15 +510,15 @@ GUNTYPE_BASE_REFILL_PRICE = {
     sniper = 2500,
     lmg = 5000,
 }
- 
+
 function SS_GunAmmoPrice(item)
     local swep = weapons.GetStored(item.specs.class or "") or {}
     local perk = GunPerkOverrides(swep, item.specs.perk)
     local baseprice = swep.AmmoPrice or GUNTYPE_BASE_REFILL_PRICE[swep.GunType] or 1000
     local ratingmod = 1 --1.5 ^ (item.specs.rating - 0.5)
-    return math.Round(baseprice *  (perk.AmmoPriceMod or swep.AmmoPriceMod or 1) * ratingmod, -2) 
-end
 
+    return math.Round(baseprice * (perk.AmmoPriceMod or swep.AmmoPriceMod or 1) * ratingmod, -2)
+end
 
 --NOMINIFY
 -- for i, tm in ipairs({"CT", "TERRORIST"}) do
@@ -518,7 +570,7 @@ SS_Product({
         end)
     end
 })
-   
+
 -- end)
 -- end
 -- hook.Add("Initialize","ss css setup", function()

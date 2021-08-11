@@ -4,7 +4,6 @@ include("shared.lua")
 --copied from weapon_base, add self.CSMuzzleFlashScale
 function SWEP:FireAnimationEvent(pos, ang, event, options)
     if self:HasPerk("airsoft") then return end
-
     if (not self.CSMuzzleFlashes) then return end
 
     if (event == 5001 or event == 5011 or event == 5021 or event == 5031) then
@@ -104,6 +103,6 @@ function SWEP:PrintWeaponInfo(x, y, alpha)
     -- surface.SetDrawColor(255,255,255,255)
     -- surface.DrawRect(x,y, 100, 100)
     if self.specs and self.dspecs then
-        SS_DrawSpecInfo(self, x, y+ 50, 250, Color(255, 255, 255, 255), alpha / 255)
+        SS_DrawSpecInfo(self, x, y + 50, 250, Color(255, 255, 255, 255), alpha / 255)
     end
 end
