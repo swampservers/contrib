@@ -102,6 +102,6 @@ function SWEP:PrintWeaponInfo(x, y, alpha)
     -- surface.SetDrawColor(255,255,255,255)
     -- surface.DrawRect(x,y, 100, 100)
     if self.specs and self.dspecs then
-        SS_DrawSpecInfo(self, x, y, 200, Color(255, 255, 255, 255), alpha / 255)
+        SS_DrawSpecInfo(self, x, y+ 50, 250, Color(255, 255, 255, 255), alpha / 255)
     end
 end
