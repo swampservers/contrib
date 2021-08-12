@@ -366,6 +366,8 @@ function PANEL:Init()
     local firstCat = true
 
     local function NewCategory(catname, icon, inv)
+        local catkey = catname
+        if(inv)then catkey = catkey.."_inv" end
         local panel = vgui.Create('DPanel', self.leftpane)
         panel:Dock(FILL)
         panel:DockMargin(0, 0, 0, 0)
@@ -405,7 +407,7 @@ function PANEL:Init()
         btn:SetText(catname)
         btn:SetFont("SS_Category")
         btn:SetImage(icon)
-
+        btn.catkey = catkey
         btn.Paint = function(pnl, w, h)
             if pnl:GetActive() then
                 surface.SetDrawColor(Color(0, 0, 0, 144))
@@ -434,10 +436,28 @@ function PANEL:Init()
 
         btn.GetActive = function(pnl) return pnl.Active or false end
 
-        btn.SetActive = function(pnl, state)
-            pnl.Active = state
+        btn.OnDeactivate = function()
+            panel:SetVisible(false)
+            panel:SetZPos(-100)
         end
 
+        btn.OnActivate = function()
+            panel:SetVisible(true)
+            panel:SetZPos(100)
+        end
+        
+        btn.SetActive = function(pnl, state)
+            local oldstate = pnl.Active
+            pnl.Active = state
+            if oldstate != state then
+                if state then
+                    pnl:OnActivate()
+                else
+                    pnl:OnDeactivate()
+                end
+            end
+        end
+        
         if firstCat then
             firstCat = false
             btn:SetActive(true)
@@ -445,6 +465,10 @@ function PANEL:Init()
 
         btn.DoClick = function(pnl)
             --patch
+            local cust = SS_CustomizerPanel
+            if IsValid(cust) and cust.item then 
+            SS_ItemServerAction(cust.item.id, "configure", cust.item.cfg)
+            end
             SS_CustomizerPanel:Close()
 
             if IsValid(SS_SelectedPanel) then
@@ -452,26 +476,20 @@ function PANEL:Init()
             end
 
             for k, v in pairs(self.InventoryButtons) do
+                if(v != pnl)then
                 v:SetActive(false)
-                v:OnDeactivate()
+                --v:OnDeactivate()
+                end
             end
 
             pnl:SetActive(true)
-            pnl:OnActivate()
-            SS_ShopMenu.LastCategory = catname
+            --pnl:OnActivate()
+            SS_ShopMenu.LastCategory = pnl.catkey
         end
 
-        btn.OnDeactivate = function()
-            panel:SetVisible(false)
-            panel:SetZPos(1)
-        end
+        
 
-        btn.OnActivate = function()
-            panel:SetVisible(true)
-            panel:SetZPos(100)
-        end
-
-        self.InventoryButtons[catname] = btn
+        self.InventoryButtons[catkey] = btn
 
         return DScrollPanel
     end

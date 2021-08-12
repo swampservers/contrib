@@ -20,10 +20,10 @@ function PANEL:Close()
     self.item = nil
 
     if (SS_ShopMenu.InventoryButtons) then
-        local cat = SS_ShopMenu.InventoryButtons[SS_ShopMenu.LastCategory or "Cosmetics"]
+        local cat = SS_ShopMenu.InventoryButtons[SS_ShopMenu.LastCategory or "Cosmetics_inv"]
 
         if (cat) then
-            cat:OnActivate()
+            cat:SetActive(true)
         end
     end
 
@@ -445,7 +445,9 @@ function PANEL:Open(item)
     end
 
     self.item = item
-    self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
+    
+    self.wearsuf = LocalPlayer():IsPony() and "_p" or "_h"
+    self.wear = "wear"..self.wearsuf
     SS_PreviewPane.ControlContainer:SizeTo(-1, 32, 0.2)
     SS_PreviewPane.ControlContainer2:SizeTo(-1, 32, 0.2)
     SS_ShopMenu:MakePopup()
@@ -696,7 +698,7 @@ function PANEL:SetupControls()
         bone = LocalPlayer():GetBoneName(0),
         wear = {},
     }
-
+    
     for k, v in pairs(configtable) do
         local section_name = "default"
         local initkey = k
@@ -710,7 +712,7 @@ function PANEL:SetupControls()
         end
 
         self:AddSection(section_name)
-        SS_PreviewPane.SelectButton:SetEnabled(item.eq)
+        --SS_PreviewPane.SelectButton:SetEnabled(item.eq)
 
         if (k == "wear") then
             for k2, v2 in pairs(v) do
@@ -772,254 +774,9 @@ function PANEL:SetupControls()
     end
 
     local itmcw = self.item.configurable.wear
-    --[[[
-    if (self.item.configurable or {}).wear then
-        --LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
-
-        local pane = Container(wear_container, "Offset")
-        local translate = (self.item.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
-        XSL = SliderMaker(pane, "Forward/Backward")
-        XSL:SetMinMax(itmcw.pos.min.x, itmcw.pos.max.x)
-        XSL:SetValue(translate.x)
-        YSL = SliderMaker(pane, "Left/Right")
-        YSL:SetMinMax(itmcw.pos.min.y, itmcw.pos.max.z)
-        YSL:SetValue(translate.y)
-        ZSL = SliderMaker(pane, "Up/Down")
-        ZSL:SetMinMax(itmcw.pos.min.z, itmcw.pos.max.z)
-        ZSL:SetValue(translate.z)
-        local pane = Container(wear_container, "Angle")
-       
-        local pane = Container(wear_container, "Scale")
-        local scale = (self.item.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
-
-        if isnumber(scale) then
-            scale = Vector(scale, scale, scale)
-        end
-
-        SXSL = SliderMaker(pane, "Length")
-        SXSL:SetMinMax(itmcw.scale.min.x, itmcw.scale.max.x)
-        SXSL:SetValue(scale.x)
-        SYSL = SliderMaker(pane, "Width")
-        SYSL:SetMinMax(itmcw.scale.min.y, itmcw.scale.max.y)
-        SYSL:SetValue(scale.y)
-        SZSL = SliderMaker(pane, "Height")
-        SZSL:SetMinMax(itmcw.scale.min.z, itmcw.scale.max.z)
-        SZSL:SetValue(scale.z)
-
-        local function transformslidersupdate()
-            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
-            self.item.cfg[self.wear].pos = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
-            self.item.cfg[self.wear].ang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
-            self.item.cfg[self.wear].scale = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
-            self:UpdateCfg()
-        end
-
-        XSL.OnValueChanged = transformslidersupdate
-        YSL.OnValueChanged = transformslidersupdate
-        ZSL.OnValueChanged = transformslidersupdate
-        XRSL.OnValueChanged = transformslidersupdate
-        YRSL.OnValueChanged = transformslidersupdate
-        ZRSL.OnValueChanged = transformslidersupdate
-        SXSL.OnValueChanged = transformslidersupdate
-        SYSL.OnValueChanged = transformslidersupdate
-        SZSL.OnValueChanged = transformslidersupdate
-        SUSL = SliderMaker(pane, "Scale")
-        SUSL:SetMinMax(math.max(itmcw.scale.min.x, itmcw.scale.min.y, itmcw.scale.min.z), math.min(itmcw.scale.max.x, itmcw.scale.max.y, itmcw.scale.max.z))
-
-        SUSL.OnValueChanged = function(self)
-            SXSL:SetValue(self:GetValue())
-            SYSL:SetValue(self:GetValue())
-            SZSL:SetValue(self:GetValue())
-        end
-
-        SUSL:SetVisible(false)
-        local scalebutton = vgui.Create("DButton", pane)
-        scalebutton:SetText("Use Uniform Scaling")
-        scalebutton:SetWide(160)
-        scalebutton:Dock(TOP)
-        scalebutton.Paint = SS_PaintButtonBrandHL
-
-        scalebutton.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-        end
-
-        scalebutton.DoClick = function(btn)
-            if btn.UniformMode then
-                btn.UniformMode = nil
-                btn:SetText("Use Uniform Scaling")
-                SXSL:SetVisible(true)
-                SYSL:SetVisible(true)
-                SZSL:SetVisible(true)
-                SUSL:SetVisible(false)
-            else
-                btn.UniformMode = true
-                btn:SetText("Use Independent Scaling")
-                SXSL:SetVisible(false)
-                SYSL:SetVisible(false)
-                SZSL:SetVisible(false)
-                SUSL:SetVisible(true)
-
-                local v = {SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue()}
-
-                table.sort(v, function(a, b) return a > b end)
-                SUSL:SetValue(v[2])
-            end
-        end
-
-        if scale.x == scale.y and scale.y == scale.z then
-            scalebutton:DoClick()
-        end
-    elseif (self.item.configurable or {}).bone then
-        local pane = Container(wear_container, "Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")")
-
-        local function cleanbonename(bn)
-            return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
-        end
-
-        ATTACHSELECT = vgui.Create("DComboBox", pane)
-        ATTACHSELECT:SetValue(cleanbonename(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1")))
-        ATTACHSELECT:SetTall(24)
-        ATTACHSELECT:Dock(TOP)
-        ATTACHSELECT.Paint = SS_PaintBG
-
-        ATTACHSELECT.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
-
-        for x = 0, (LocalPlayer():GetBoneCount() - 1) do
-            local bn = LocalPlayer():GetBoneName(x)
-            local cleanname = cleanbonename(bn)
-
-            if cleanname ~= "__INVALIDBONE__" then
-                ATTACHSELECT:AddChoice(cleanname, bn)
-            end
-        end
-
-        ATTACHSELECT.OnSelect = function(panel, index, word, value)
-            self.item.cfg["bone" .. suffix] = value
-            self:UpdateCfg()
-        end
-
-        --bunch of copied shit
-        --ADD SCALE CHECK HERE AAAAAA
-
-        local itmcs = self.item.configurable.scale
-
-        if itmcs then
-            local pane = Container(wear_container, "Scale")
-            local scale = self.item.cfg["scale" .. suffix] or Vector(1, 1, 1)
-
-            if isnumber(scale) then
-                scale = Vector(scale, scale, scale)
-            end
-
-            SXSL = SliderMaker(pane, "X (Along)")
-            SXSL:SetMinMax(itmcs.min.x, itmcs.max.x)
-            SXSL:SetValue(scale.x)
-            SYSL = SliderMaker(pane, "Y")
-            SYSL:SetMinMax(itmcs.min.y, itmcs.max.y)
-            SYSL:SetValue(scale.y)
-            SZSL = SliderMaker(pane, "Z")
-            SZSL:SetMinMax(itmcs.min.z, itmcs.max.z)
-            SZSL:SetValue(scale.z)
-            SXSL.OnValueChanged = transformslidersupdate
-            SYSL.OnValueChanged = transformslidersupdate
-            SZSL.OnValueChanged = transformslidersupdate
-            SUSL = SliderMaker(pane, "Scale")
-            SUSL:SetMinMax(math.max(itmcs.min.x, itmcs.min.y, itmcs.min.z), math.min(itmcs.max.x, itmcs.max.y, itmcs.max.z))
-
-            SUSL.OnValueChanged = function(self)
-                SXSL:SetValue(self:GetValue())
-                SYSL:SetValue(self:GetValue())
-                SZSL:SetValue(self:GetValue())
-            end
-
-            SUSL:SetVisible(false)
-            local scalebutton = vgui.Create("DButton", pane)
-            scalebutton:SetText("Use Uniform Scaling")
-            scalebutton:SetWide(160)
-            scalebutton.Paint = SS_PaintButtonBrandHL
-            scalebutton:Dock(TOP)
-
-            scalebutton.UpdateColours = function(pnl)
-                pnl:SetTextStyleColor(MenuTheme_TX)
-            end
-
-            scalebutton.DoClick = function(btn)
-                if btn.UniformMode then
-                    btn.UniformMode = nil
-                    btn:SetText("Use Uniform Scaling")
-                    SXSL:SetVisible(true)
-                    SYSL:SetVisible(true)
-                    SZSL:SetVisible(true)
-                    SUSL:SetVisible(false)
-                else
-                    btn.UniformMode = true
-                    btn:SetText("Use Independent Scaling")
-                    SXSL:SetVisible(false)
-                    SYSL:SetVisible(false)
-                    SZSL:SetVisible(false)
-                    SUSL:SetVisible(true)
-
-                    local v = {SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue()}
-
-                    table.sort(v, function(a, b) return a > b end)
-                    SUSL:SetValue(v[2])
-                end
-            end
-
-            if scale.x == scale.y and scale.y == scale.z then
-                scalebutton:DoClick()
-            end
-        end
-
-        --end bunch of copied shit
-        if self.item.configurable.scale_children then
-            CHILDCHECKBOX = CheckboxMaker(pane, "Scale child bones")
-            CHILDCHECKBOX:SetValue(self.item.cfg["scale_children" .. suffix] and 1 or 0)
-
-            CHILDCHECKBOX.OnChange = function(checkboxself, ch)
-                self.item.cfg["scale_children" .. suffix] = ch
-                self:UpdateCfg()
-            end
-        end
-    elseif (self.item.configurable or {}).submaterial then
-        local pane = Container(wear_container, "Skin ID")
-        ATTACHSELECT = vgui.Create("DComboBox", pane)
-
-        for x = 0, math.min(31, (#(LocalPlayer():GetMaterials()) - 1)) do
-            local matname = LocalPlayer():GetMaterials()[x + 1] or ""
-            local exp = string.Explode("/", matname)
-            local nicename = exp[#exp]
-            local sel = tonumber(self.item.cfg.submaterial or 0) == x
-            ATTACHSELECT:AddChoice(tostring(x) .. " (" .. nicename .. ")", tostring(x), sel)
-        end
-
-        ATTACHSELECT.OnSelect = function(panel, index, word, value)
-            self.item.cfg.submaterial = tonumber(value)
-            self:UpdateCfg()
-        end
-
-        ATTACHSELECT:SetWide(200)
-        ATTACHSELECT:Dock(TOP)
-        ATTACHSELECT.Paint = SS_PaintBG
-
-        ATTACHSELECT.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
-    end
-
-    
-    local limit = self.item:CanCfgColor()
-
-    if limit then
-        local colorzone = Container(appearance_container, "Appearance")
-        
-    end
-
-   ]]
+  
+    self:AddSection("default")
+    print("sex")
     local rawzone = Container(self.Sections["default"], "Raw Data")
     rawzone:SetExpanded(false)
     rawzone:OnToggle(false)

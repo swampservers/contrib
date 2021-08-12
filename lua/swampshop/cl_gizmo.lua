@@ -186,8 +186,9 @@ function Register(class,gizmo)
 end
 
 function CreateHandle()
-    local self = {}
-    setmetatable(self, GIZMO_HANDLE_META)
+    --i still kinda struggle with this?
+    local self = table.Copy(GIZMO_HANDLE_META) --{}
+    --setmetatable(self, GIZMO_HANDLE_META)
 
     return self
 end
@@ -366,13 +367,13 @@ function CreateHandleLinearKnob(axis, color, length, size, endshape, snap)
         local waxis = LocalToWorld(vaxis, Angle(), Vector(), par:GetAngles())
         waxis = FlipLocalAxis(self, waxis)
         local p, n = util.IntersectRayWithOBB(trace.start, trace.endpos - trace.start, self:GetPos(), self:GetAngles(), self._BoxScale * -0.5, self._BoxScale * 0.5)
-
+        --[[
         if (not p) then
             local wide = 0.5
             local mins, maxs = Vector(-wide, -wide, 0), Vector(wide, wide, knob._Length)
             p, n = util.IntersectRayWithOBB(trace.start, trace.endpos - trace.start, par:GetPos(), self:GetAngles(), mins, maxs)
         end
-
+        ]]
         return p ~= nil, p
     end
 
@@ -393,6 +394,7 @@ function CreateHandleLinearKnob(axis, color, length, size, endshape, snap)
         Material("color_ignorez"):SetFloat("$alpha", alp)
         render.SetColorMaterialIgnoreZ()
         local bar_l = len - (boxscale.z / 2)
+        if(vaxis != Vector())then
         local m = Matrix()
         m:SetTranslation(par:GetPos() + laxis * bar_l * 0.5)
         m:Rotate(self:GetAngles())
@@ -400,7 +402,10 @@ function CreateHandleLinearKnob(axis, color, length, size, endshape, snap)
         cam.PushModelMatrix(m)
         CYL_MESH:Draw()
         cam.PopModelMatrix()
+        end
+
         local m = Matrix()
+
         m:SetTranslation(self:GetPos())
         m:Rotate(self:GetAngles())
         m:Scale(boxscale * scale)

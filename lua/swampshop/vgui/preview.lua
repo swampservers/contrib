@@ -156,13 +156,14 @@ function PANEL:Init()
         SS_ItemServerAction(cust.item.id, "configure", cust.item.cfg)
         SS_CustomizerPanel:Close()  
     end
-
+    --[[
     self.SaveButton = self:AddButton("icon16/disk.png", "Save Changes", false,true)
     self.SaveButton.Static = true
     self.SaveButton.DoClick = function()
         surface.PlaySound("UI/buttonclick.wav")
         SS_ItemServerAction(SS_CustomizerPanel.item.id, "configure", SS_CustomizerPanel.item.cfg)
     end
+    
     self.SaveButton.Think = function(pnl)
         local cust = SS_CustomizerPanel
         local needsave = cust.item and cust.item._modified
@@ -171,9 +172,9 @@ function PANEL:Init()
             pnl:SetImage(img)
         end
     end
+    ]]
 
-
-
+    --[[
     self.RevertButton = self:AddButton(nil, "Undo Changes", false,true)
     self.RevertButton.Static = true
     self.RevertButton.DoClick = function()
@@ -187,8 +188,23 @@ function PANEL:Init()
             cust:SetupControls(cust.controlzone)
         end
     end
+    ]]
+    self.RevertButton = self:AddButton(nil, "Cancel", true,true)
+    self.RevertButton.Static = true
+    self.RevertButton.DoClick = function()
+        local cust = SS_CustomizerPanel
+        surface.PlaySound("UI/buttonclick.wav")
+        if( cust.item._modified and cust.item._cachedcfg)then
+            cust.item.cfg = table.Copy(cust.item._cachedcfg)
+            cust.item._cachedcfg = nil
+            cust.item._modified = nil
+            cust:UpdateCfg()
+ 
+        end
+        SS_CustomizerPanel:Close()  
+    end
 
-    self.ResetButton = self:AddButton(nil, "Reset Item", false,true)
+    self.ResetButton = self:AddButton(nil, "Clear Changes", false,true)
     self.ResetButton.Static = true
     self.ResetButton.DoClick = function()
         local cust = SS_CustomizerPanel
@@ -200,9 +216,11 @@ function PANEL:Init()
 
     
     self.SetupSnaps = function()
+        --[[
         if (IsValid(self.SnapsButton)) then
             self.SnapsButton:Remove()
         end
+
 
         local cgizmo = self.CurrentGizmo
         if (not IsValid(cgizmo)) then return end
@@ -268,6 +286,7 @@ function PANEL:Init()
                 end
             end
         end
+        ]]
     end
 end
 
@@ -441,7 +460,7 @@ PANEL.SetupGizmo["wear.pos"] = function(self)
         local cust = SS_CustomizerPanel
         local item = cust.item 
         
-        local nestkeys = {"wear_h", "pos"}
+        local nestkeys = self.propkeys
 
         local cur = GetNestedProperty(item, nestkeys,TYPE_VECTOR)
         if(!isvector(cur))then cur = Vector() end
@@ -583,8 +602,12 @@ PANEL.SetupGizmo["bone.pos"] = function(self)
     function cgizmo:GetBoneInfo()
         local ent = self:GetEnt()
         local item = SS_GetEditedItem()
-        local suf = "_h"
-    
+        local cust = SS_CustomizerPanel
+        local suf = cust.wearsuf or "_h"
+        
+        
+
+        
         local nestkeys = self.propkeys
         local nestkeys2 = table.Copy(nestkeys)
         nestkeys2[#nestkeys2] = "bone"..suf
@@ -630,7 +653,7 @@ PANEL.SetupGizmo["bone.pos"] = function(self)
         local nestkeys = self.propkeys
         local cur = GetNestedProperty(cust.item, nestkeys,TYPE_VECTOR) 
         --if(!isvector(cur))then cur = Vector() end
-        self._GrabbedHandleOffset = self._GrabbedHandleOffset + value
+        --self._GrabbedHandleOffset = self._GrabbedHandleOffset + value
         cur = cur + value
         SetNestedProperty(cust.item, nestkeys, cur)
     end
@@ -651,7 +674,8 @@ PANEL.SetupGizmo["bone.ang"] = function(self)
     function cgizmo:GetBoneInfo()
         local ent = self:GetEnt()
         local item = SS_GetEditedItem()
-        local suf = "_h"
+        local cust = SS_CustomizerPanel
+        local suf = cust.wearsuf or "_h"
     
         local nestkeys = self.propkeys
         local nestkeys2 = table.Copy(nestkeys)
@@ -711,7 +735,8 @@ PANEL.SetupGizmo["bone.scale"] = function(self)
     function cgizmo:GetBoneInfo()
         local ent = self:GetEnt()
         local item = SS_GetEditedItem()
-        local suf = "_h"
+        local cust = SS_CustomizerPanel
+        local suf = cust.wearsuf or "_h"
         local nestkeys = self.propkeys
         local nestkeys2 = table.Copy(nestkeys)
         nestkeys2[#nestkeys2] = "bone"..suf
@@ -926,8 +951,6 @@ function PANEL:GetCamFocus()
 
     pos = pos + (self.ViewOffset or Vector())
     
-    
-
     return pos
 end
 
@@ -992,7 +1015,7 @@ function PANEL:Paint()
    
     if(iop)then
         local equipped = iop.cfg and !iop.never_equip and iop.eq
-        if iop.wear and !equipped and IsValid(cust) then drawplayer = false end
+        --if iop.wear and !equipped and IsValid(cust) then drawplayer = false end
         if iop.playermodel then drawplayer = false end
         if iop.playermodelmod then drawplayer = equipped end
     end
@@ -1089,13 +1112,16 @@ function PANEL:Paint()
     -- if in editor, draw our gizmos
     local cust = SS_CustomizerPanel
     local gzmo = self.CurrentGizmo
+
+    if  IsValid(cust) and IsValid(gzmo) and  cust.item then
+        gzmo:Draw()
+    end
+
     if IsValid(cust) and iop then
         render.SetColorModulation(1, 1, 1)
         render.SetBlend(1)
 
-        if (IsValid(gzmo) and cust and cust.item) then
-            gzmo:Draw()
-        end
+        
         --while right clicking, draw the axis so the user knows where the camera will orbit around
         if self.Pressed and self.PressButton == MOUSE_RIGHT then
             local cent = self:GetCamFocus()

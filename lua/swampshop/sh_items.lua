@@ -280,9 +280,11 @@ function SS_Item(item)
             primary = true,
             Text = function(item) return item.eq and "HOLSTER" or "EQUIP" end,
             Cannot = item.CannotEquip,
+            --[[
             OnClient = function(item)
                 item.eq = !item.eq
             end
+            ]]
         }
     end
 

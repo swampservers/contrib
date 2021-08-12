@@ -473,13 +473,14 @@ function PANEL:PaintOver(w, h)
                 self.fademodel = true
             end
         end
+        --[[
         if(item._modified)then
             self.icon2 = warningmark
             if(self.hovered)then
                 draw.SimpleText("Unsaved Changes", "SS_ProductName", self:GetWide() /2 , 11, Color(255,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
-
         end
+        ]]
         self.barheight = 20
         self.textfont = "SS_ProductName"
         self.text = self.item:GetName()

@@ -92,6 +92,7 @@ local function loadFile(filePath, environmentVars)
 end
 
 local function refreshFolder(subDir)
+    print("refreshing",subDir)
     local fileNames, folders = file.Find(subDir .. "/*", "MOD")
 
     for _, fileName in ipairs(fileNames) do
@@ -101,7 +102,7 @@ local function refreshFolder(subDir)
 
         if (fileTimes[filePath] or fTime) == fTime then
             fileTimes[filePath] = fTime
-            continue
+            --continue
         end
 
         local wasFoundDuringLookup = false
@@ -127,6 +128,14 @@ local function refreshFolder(subDir)
         refreshFolder(subDir .. "/" .. folder)
     end
 end
+
+concommand.Add("dev_refreshdir", function(_, _, args)
+    local folderpath = args[1]
+    if not DEVTOOLS_ENABLED or not folderpath then return end
+    print("Attempting to force refresh folder " .. folderpath)
+    refreshFolder(folderpath)
+end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
+
 
 concommand.Add("dev", function()
     if not allowed[LocalPlayer():SteamID()] then
