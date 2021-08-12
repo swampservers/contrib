@@ -128,16 +128,11 @@ function PS:SendModifications(item_id, modifications)
 		net.WriteTable(modifications)
 	net.SendToServer()
 end ]]
-
-
-
 -- function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
 --     calls = calls or 50
 --     local ply = pi == -1 and LocalPlayer() or Entity(pi)
-
 --     if IsValid(ply) then
 --         ply[prop] = val
-
 --         if callback then
 --             callback(ply)
 --         end
@@ -151,12 +146,11 @@ end ]]
 --         end
 --     end
 -- end
-
 local function OnPlayerLoad(pi, callback, ready_check, calls)
     calls = calls or 50
     local ply = pi == -1 and LocalPlayer() or Entity(pi)
 
-    if IsValid(ply) and (ready_check==nil or ready_check(ply)) then
+    if IsValid(ply) and (ready_check == nil or ready_check(ply)) then
         callback(ply)
     else
         if calls < 1 then
@@ -171,7 +165,7 @@ end
 
 local function postupdate(ply, shown)
     if shown then
-        ply:SS_AttachAccessories() 
+        ply:SS_AttachAccessories()
         ply.SS_SetupPlayermodel = nil
 
         if ply == LocalPlayer() then
@@ -180,7 +174,6 @@ local function postupdate(ply, shown)
     else
         SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
     end
-
 end
 
 local function setitems(pi, shown, items)
@@ -191,7 +184,6 @@ local function setitems(pi, shown, items)
     end)
 end
 
-
 net.Receive('SS_Items', function(length)
     setitems(-1, false, net.ReadCompressedTable())
 end)
@@ -201,8 +193,12 @@ net.Receive('SS_ShownItems', function(length)
 end)
 
 local function removeitemid(tab, id)
-    for i,v in ipairs(tab) do
-        if v.id==id then table.remove(tab, i) return end
+    for i, v in ipairs(tab) do
+        if v.id == id then
+            table.remove(tab, i)
+
+            return
+        end
     end
 end
 
@@ -213,9 +209,7 @@ local function updateitem(pi, shown, item)
         removeitemid(tab, item.id)
         table.insert(tab, item)
         postupdate(ply, shown)
-    end, function(ply)
-        return shown and ply.SS_ShownItems or ply.SS_Items
-    end)
+    end, function(ply) return shown and ply.SS_ShownItems or ply.SS_Items end)
 end
 
 net.Receive('SS_UpdateItem', function(length)
@@ -230,9 +224,7 @@ local function deleteitem(pi, shown, id)
     OnPlayerLoad(pi, function(ply)
         removeitemid(shown and ply.SS_ShownItems or ply.SS_Items, id)
         postupdate(ply, shown)
-    end, function(ply)
-        return shown and ply.SS_ShownItems or ply.SS_Items
-    end)
+    end, function(ply) return shown and ply.SS_ShownItems or ply.SS_Items end)
 end
 
 net.Receive('SS_DeleteItem', function(length)
@@ -243,15 +235,21 @@ net.Receive('SS_DeleteShownItem', function(length)
     deleteitem(net.ReadUInt(8), true, net.ReadUInt(32))
 end)
 
-
 net.Receive('SS_Pts', function(length)
     local pts = net.ReadUInt(32)
-    OnPlayerLoad(-1, function(ply) ply.SS_Points=pts end)
+
+    OnPlayerLoad(-1, function(ply)
+        ply.SS_Points = pts
+    end)
 end)
 
 net.Receive('SS_Row', function(length)
-    local pts,don = net.ReadUInt(32),net.ReadUInt(32)
-    OnPlayerLoad(-1, function(ply) ply.SS_Points=pts ply.SS_Donation = don end)
+    local pts, don = net.ReadUInt(32), net.ReadUInt(32)
+
+    OnPlayerLoad(-1, function(ply)
+        ply.SS_Points = pts
+        ply.SS_Donation = don
+    end)
 end)
 
 function SS_BuyProduct(id)

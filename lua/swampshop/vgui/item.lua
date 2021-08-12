@@ -534,7 +534,7 @@ function PANEL:PaintOver(w, h)
         surface.DrawRect(0, self:GetTall() - self.barheight, self:GetWide(), self.barheight)
     end
 
-    if self.textfont=="SS_ProductName" then
+    if self.textfont == "SS_ProductName" then
         draw.WrappedText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - 1, self:GetWide(), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
     else
         draw.SimpleText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - (self.barheight / 2), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)

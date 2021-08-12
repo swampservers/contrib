@@ -91,7 +91,7 @@ function GunPerkOverrides(swep, perk)
         t.Damage = 1
         t.HeadshotMultiplier = 1
         t.KickUBase = 0 --.01 
-        t.KickLBase = 0 
+        t.KickLBase = 0
         t.KickUSpray = 0
         t.KickLSpray = 0
         t.SprayIncrement = 0
@@ -807,13 +807,16 @@ function SWEP:GunFire()
 
             if IsValid(trace.Entity) and trace.Entity:IsPlayer() then
                 local impact = dmginfo:GetDamage() * 0.15
-                if self:HasPerk("highimpact") then impact = impact*5 end
+
+                if self:HasPerk("highimpact") then
+                    impact = impact * 5
+                end
+
                 local angle = trace.Entity:GetViewPunchAngles()
                 angle.x = angle.x - impact
-                angle.y = angle.y + (math.random()-0.5) * impact
+                angle.y = angle.y + (math.random() - 0.5) * impact
                 trace.Entity:SetViewPunchAngles(angle)
             end
-
         end
     })
 
@@ -892,17 +895,17 @@ function SWEP:GunFire()
     end
 
     if SERVER and self:HasPerk("unstable") and math.random() < (1 / self:GetMaxClip1()) then
-
         local p = self:GetPos()
         local effectdata = EffectData()
         effectdata:SetOrigin(p)
         effectdata:SetMagnitude(0)
         util.Effect("Explosion", effectdata, true, true)
-
         util.BlastDamage(self, self.Owner, p, 150, 80)
 
         timer.Simple(0, function()
-            if IsValid(self) then self:Remove() end
+            if IsValid(self) then
+                self:Remove()
+            end
         end)
     end
     --     self.realstuff = {self:GetLastShotSpray(), self:GetLastFire(), self:GetActualLastFire()}

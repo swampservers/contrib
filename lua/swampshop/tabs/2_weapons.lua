@@ -162,7 +162,7 @@ SS_WeaponPerkData = {
         },
         minrating = 1,
         maxrating = 1,
-    }, 
+    },
     crackedscope = {
         name = "Cracked",
         description = "Scope is cracked - Ooops!",

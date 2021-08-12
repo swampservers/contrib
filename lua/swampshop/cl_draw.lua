@@ -589,13 +589,13 @@ function Entity:SetColoredBaseMaterial(color)
     self:SetSubMaterial()
 
     -- refactor - set default materials for models and support material override in shop
-    if self:GetModel()=="models/props_crates/static_crate_40.mdl" then self:SetSkin(1) end
+    if self:GetModel() == "models/props_crates/static_crate_40.mdl" then
+        self:SetSkin(1)
+    end
 
-    if color.x==1 and color.y==1 and color.z==1 then return end
-
+    if color.x == 1 and color.y == 1 and color.z == 1 then return end
     MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
     local sc = "c" .. tostring(color):gsub("%.", "p"):gsub(" ", "_")
-
     local mats = self:GetMaterials()
 
     for i, mat in ipairs(mats) do
