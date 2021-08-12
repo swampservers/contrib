@@ -120,6 +120,8 @@ function PANEL:Init()
 
 
     self.Controls = {}
+
+    --[[
     self.SelectButton = self:AddButton("swampshop/tool_select.png", "Select")
     self.SelectButton.Static = true
 
@@ -130,6 +132,7 @@ function PANEL:Init()
         self.CurrentGizmo = gzmo
         self:SetupSnaps()
     end
+    ]]
 
 
     self.CameraButton = self:AddButton("icon16/shading.png", "Camera", true)
@@ -144,12 +147,14 @@ function PANEL:Init()
     self.CameraButton:SetImage(SS_EDITOR_ALIGNZ and "swampshop/view_lock.png" or "swampshop/view_tilt.png")
 
 
-    self.BackButton = self:AddButton(nil, "Back", true,true)
+    self.BackButton = self:AddButton(nil, "Done", true,true)
     self.BackButton.Static = true
 
     self.BackButton.DoClick = function()
         surface.PlaySound("UI/buttonclick.wav")
-        SS_CustomizerPanel:Close()
+        local cust = SS_CustomizerPanel
+        SS_ItemServerAction(cust.item.id, "configure", cust.item.cfg)
+        SS_CustomizerPanel:Close()  
     end
 
     self.SaveButton = self:AddButton("icon16/disk.png", "Save Changes", false,true)
