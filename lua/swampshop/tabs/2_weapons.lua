@@ -141,36 +141,142 @@ end
 
 SS_WeaponPerkData = {
     -- rating 1
-    min = {"Scuffed", "It's just bad (min all stats)"},
-    rusted = {"Rusted", "Gets jammed after every shot"},
-    cracked = {"Cracked", "Ooops! (crack on scope when zoomed)"},
+    min = {
+        name = "Scuffed",
+        description = "It's just bad (min all stats)",
+        minrating = 1,
+        maxrating = 1,
+    },
+    rusted = {
+        name = "Rusted",
+        description = "Gets jammed after every shot",
+        weapons = {"pistol"},
+        minrating = 1,
+        maxrating = 1,
+    },
+    cracked = {
+        name = "Cracked",
+        description = "Ooops! (crack on scope when zoomed)",
+        weapons = {"sniper", "autosniper", "gun_aug", "gun_sg552"},
+        minrating = 1,
+        maxrating = 1,
+    },
     --rating 1-2
-    lessdamage = {"Less-lethal", "Fires less-lethal rubber bullets"},
+    lessdamage = {
+        name = "Less-lethal",
+        description = "Fires less-lethal rubber bullets",
+        minrating = 1,
+        maxrating = 2
+    },
     -- rating 2-4
-    compliant = {"Libtard-Compliant", "10 round magazine, semi-auto only, and slow to reload."},
+    compliant = {
+        name = "Libtard-Compliant",
+        description = "10 round magazine, semi-auto only, and slow to reload.",
+        weapons = {"ar"},
+        minrating = 2,
+        minrating = 4
+    },
     --rating 5-6
-    fullauto = {"Full-Auto", "Black market full-auto sear installed"},
-    lightweight = {"Lightweight", "Easier to fire on the move"},
-    heavyweight = {"Heavyweight", "Less recoil"},
+    fullauto = {
+        name = "Full-Auto",
+        description = "Black market full-auto sear installed",
+        weapons = {"pistol", "autosniper"},
+        minrating = 5,
+        maxrating = 6
+    },
+    lightweight = {
+        name = "Lightweight",
+        description = "Easier to fire on the move",
+        minrating = 5,
+        maxrating = 6
+    },
+    heavyweight = {
+        name = "Heavyweight",
+        description = "Less recoil",
+        minrating = 5,
+        maxrating = 6
+    },
     --rating 5-7
-    extended = {"Extended", "Extended mags"},
-    skullpiercing = {"Skullpiercing", "1 headshot kill"},
-    highvelocity = {"High-velocity", "Longer damage range"},
-    -- rating 5-7
-    slug = {"Slug", "Fires devastating slug ammunition"},
+    extended = {
+        name = "Extended",
+        description = "Extended mags",
+        minrating = 5,
+        maxrating = 7
+    },
+    skullpiercing = {
+        name = "Skullpiercing",
+        description = "1 headshot kill",
+        minrating = 5,
+        maxrating = 7
+    },
+    highvelocity = {
+        name = "High-velocity",
+        description = "Longer damage range",
+        minrating = 5,
+        maxrating = 7
+    },
+    slug = {
+        name = "Slug",
+        description = "Fires devastating slug ammunition",
+        minrating = 5,
+        maxrating = 7
+    },
     -- rating 7-8
-    antimaterial = {"Anti-Material", "Does heavy damage to props (for AWP, instaremove anything)"},
-    selfloading = {"Self-Loading", "Semi-automatic firepower (AWP/scout)"},
-    boomstick = {"Boomstick", "Fires way more pellets, but in a wider cone"},
-    moredamage = {"Armor-piercing", "More damage"},
-    antikleiner = {},
-    antipony = {},
-    antihuman = {},
-    --rating 8
-    explosiveslug = {"Explosive Slug", "Fires devastating slug ammunition"},
-    bottomless = {"Bottomless", "Never needs to be reloaded (you still have to buy ammo though!)"},
-    dragon = {"Dragon's Breath", "Ignites targets"},
-    max = {"Golden", "Worthy of Trump (max all stats)"}
+    antimaterial = {
+        name = "Anti-Material",
+        description = "Does heavy damage to props (for AWP, instaremove anything)",
+        minrating = 7,
+        maxrating = 8
+    },
+    selfloading = {
+        name = "Self-Loading",
+        description = "Semi-automatic firepower (AWP/scout)",
+        minrating = 7,
+        maxrating = 8
+    },
+    boomstick = {
+        name = "Boomstick",
+        description = "Fires way more pellets, but in a wider cone",
+        minrating = 7,
+        maxrating = 8
+    },
+    moredamage = {
+        name = "Armor-piercing",
+        description = "More damage",
+        minrating = 7,
+        maxrating = 8
+    },
+    antikleiner = {
+        name = "Anti-kleiner",
+        description = "Kleiner Killer",
+        minrating = 7,
+        maxrating = 8
+    },
+    -- antipony = {name="Anti-pony", description="Pony blaster",minrating=7,maxrating=8}, -- antihuman = {name="Anti-human", description="Kleiner Killer",minrating=7,maxrating=8}, --rating 8
+    explosiveslug = {
+        name = "Explosive Slug",
+        description = "Fires devastating slug ammunition",
+        minrating = 8,
+        maxrating = 8
+    },
+    bottomless = {
+        name = "Bottomless",
+        description = "Never needs to be reloaded (you still have to buy ammo though!)",
+        minrating = 8,
+        maxrating = 8
+    },
+    dragon = {
+        name = "Dragon's Breath",
+        description = "Ignites targets",
+        minrating = 8,
+        maxrating = 8
+    },
+    max = {
+        name = "Golden",
+        description = "Worthy of Trump (max all stats)",
+        minrating = 8,
+        maxrating = 8
+    }
 }
 
 local weaponspecs = {"rating", "roll_rof", "roll_range", "roll_accuracy", "roll_control", "roll_handling", "roll_mobility"}
@@ -256,8 +362,8 @@ SS_Item({
 SS_Product({
     class = 'csslootbox', --'csslootbox2' .. tm:lower(),
     price = 100000,
-    name = "CS:S Gun Blueprint", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
-    description = "What is Counter-Strike: Source, anyway?",
+    name = "Random Gun", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
+    description = "Contains a blueprint for a random CS:S gun.\nToo expensive? Try the \"Auctions\" tab!",
     model = 'models/Items/ammocrate_smg1.mdl',
     OnBuy = function(self, ply)
         local options = {}
