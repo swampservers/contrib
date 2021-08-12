@@ -543,7 +543,7 @@ function Entity:SS_AttachAccessories(items)
     if items then
         SS_CreatedAccessories[self] = {}
 
-        for i, item in ipairs(items) do
+        for k, item in pairs(items) do
             if item.AccessoryTransform then
                 local rmodels = recycle[item:GetModel()]
                 local mdl = SS_AttachAccessory(item, self, #rmodels > 0 and table.remove(rmodels) or nil)

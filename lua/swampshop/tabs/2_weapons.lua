@@ -162,7 +162,7 @@ SS_WeaponPerkData = {
         },
         minrating = 1,
         maxrating = 1,
-    },
+    }, 
     crackedscope = {
         name = "Cracked",
         description = "Scope is cracked - Ooops!",
@@ -203,6 +203,18 @@ SS_WeaponPerkData = {
         minrating = 1,
         maxrating = 3,
     },
+    unstable = {
+        name = "Unstable",
+        description = "May explode when fired",
+        minrating = 1,
+        maxrating = 3,
+    },
+    smoothbore = {
+        name = "Smoothbore",
+        description = "Not very accurate",
+        minrating = 1,
+        maxrating = 3,
+    },
     chinese = {
         name = "Chinese",
         description = "Less accurate, but quite cheap",
@@ -217,6 +229,12 @@ SS_WeaponPerkData = {
         },
         minrating = 2,
         maxrating = 4
+    },
+    highimpact = {
+        name = "High Impact",
+        description = "Heavy bullets that hit hard (more camera punch to target)",
+        minrating = 4,
+        maxrating = 6
     },
     fullauto = {
         name = "Full-Auto",

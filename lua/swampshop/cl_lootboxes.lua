@@ -231,7 +231,7 @@ function LootBoxAnimation(itemid, othermdls)
                         if not IsValid(p) then return end
 
                         if arg[1] then
-                            for i, v in ipairs(LocalPlayer().SS_Items) do
+                            for k, v in pairs(LocalPlayer().SS_Items) do
                                 if v.id == itemid then
                                     the_item = v
                                 end

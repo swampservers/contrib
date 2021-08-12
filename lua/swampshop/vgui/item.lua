@@ -462,7 +462,7 @@ function PANEL:PaintOver(w, h)
             local leqc = 0
             local totalc = 0
 
-            for k, otheritem in ipairs(LocalPlayer().SS_Items or {}) do
+            for k, otheritem in pairs(LocalPlayer().SS_Items or {}) do
                 if self.item:GetName() == otheritem:GetName() then
                     totalc = totalc + 1
 
@@ -534,7 +534,11 @@ function PANEL:PaintOver(w, h)
         surface.DrawRect(0, self:GetTall() - self.barheight, self:GetWide(), self.barheight)
     end
 
-    draw.SimpleText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - (self.barheight / 2), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    if self.textfont=="SS_ProductName" then
+        draw.WrappedText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - 1, self:GetWide(), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+    else
+        draw.SimpleText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - (self.barheight / 2), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
 
     if self.item and self.item.auction_end_t then
         local sex = math.max(self.item.auction_end_t - os.time(), 0)

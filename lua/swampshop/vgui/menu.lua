@@ -805,6 +805,10 @@ function PANEL:Init()
                 timer.Simple(0, function()
                     self:GetVBar():SetScroll(scroll2)
                 end)
+
+                timer.Simple(0.1, function()
+                    self:GetVBar():SetScroll(scroll2)
+                end)
             end
         end
     end

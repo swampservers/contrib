@@ -80,13 +80,21 @@ function GunPerkOverrides(swep, perk)
         t.KickLBase = (swep.KickLBase or 0) * 0.5
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.5
+    elseif perk == "smoothbore" then
+        t.SpreadBase = (swep.SpreadBase or 0) + 0.02
     elseif perk == "chinese" then
-        t.SpreadBase = (swep.SpreadBase or 0) + 0.001
+        t.SpreadBase = (swep.SpreadBase or 0) + 0.005
         t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.8
     elseif perk == "airsoft" then
         t.Damage = 1
+        t.HeadshotMultiplier = 1
+        t.KickUBase = 0 --.01 
+        t.KickLBase = 0 
+        t.KickUSpray = 0
+        t.KickLSpray = 0
+        t.SprayIncrement = 0
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.3
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.2
     elseif perk == "compliant" then
@@ -104,7 +112,7 @@ function GunPerkOverrides(swep, perk)
             Automatic = true
         }
 
-        t.CycleTime = swep.CycleTime * 0.6
+        t.CycleTime = swep.CycleTime * 0.8
     elseif perk == "lightweight" then
         t.SpreadMove = (swep.SpreadMove or 0) * 0.5
         t.MobilityExponent = 0.6 --should make you walk faster
@@ -139,10 +147,10 @@ function GunPerkOverrides(swep, perk)
         t.CycleTime = swep.CycleTime * 1.5
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
     elseif perk == "moredamage" then
-        t.Damage = swep.Damage * 1.4
+        t.Damage = swep.Damage * 1.2
         t.CycleTime = swep.CycleTime * 1.1
         t.KickUBase = (swep.KickUBase or 0) * 1.2
-        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.5
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.4
     elseif perk == "explosive" then
         t.KickUBase = (swep.KickUBase or 0) * 2
     elseif perk == "shothose" then
@@ -796,6 +804,16 @@ function SWEP:GunFire()
             end
 
             dmginfo:SetDamage(math.Round(scale * self.Damage))
+
+            if IsValid(trace.Entity) and trace.Entity:IsPlayer() then
+                local impact = dmginfo:GetDamage() * 0.15
+                if self:HasPerk("highimpact") then impact = impact*5 end
+                local angle = trace.Entity:GetViewPunchAngles()
+                angle.x = angle.x - impact
+                angle.y = angle.y + (math.random()-0.5) * impact
+                trace.Entity:SetViewPunchAngles(angle)
+            end
+
         end
     })
 
@@ -871,6 +889,21 @@ function SWEP:GunFire()
         self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
         self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
         self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+    end
+
+    if SERVER and self:HasPerk("unstable") and math.random() < (1 / self:GetMaxClip1()) then
+
+        local p = self:GetPos()
+        local effectdata = EffectData()
+        effectdata:SetOrigin(p)
+        effectdata:SetMagnitude(0)
+        util.Effect("Explosion", effectdata, true, true)
+
+        util.BlastDamage(self, self.Owner, p, 150, 80)
+
+        timer.Simple(0, function()
+            if IsValid(self) then self:Remove() end
+        end)
     end
     --     self.realstuff = {self:GetLastShotSpray(), self:GetLastFire(), self:GetActualLastFire()}
     -- else
