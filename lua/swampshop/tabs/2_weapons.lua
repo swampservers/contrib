@@ -233,13 +233,6 @@ SS_Item({
             end
         }
     },
-    configurable = {
-        color = {
-            label = "Color",
-            max = 15,
-        },
-        imgur = {label = "Pattern"}
-    },
     SpawnPrice = function(self)
         return ({
             pistol = 2000,
