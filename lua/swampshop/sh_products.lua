@@ -33,7 +33,7 @@ function SS_Product(product)
     if product.model then
         util.PrecacheModel(product.model)
 
-        if product.workshop and isstring(product.workshop) then
+        if product.workshop then
             register_workshop_model(product.model, product.workshop)
         end
     end

@@ -50,11 +50,12 @@ local GIZMO = table.Copy(gizmo.GIZMO_META)
             if not IsValid(ent) then continue end
             ent:SetupBones()
             local mins, maxs = ent:GetModelBounds()
-            local mat = ent:GetWorldTransformMatrix()
+            local mat = ent:GetBoneMatrix(0)
             if(mat)then
             mins = mins * mat:GetScale()
             maxs = maxs * mat:GetScale()
             end
+            
             local alp = (self._Color.a / 255) * (hitent == ent and 0.6 or 0.2)
             render.SetColorMaterialIgnoreZ()
             render.SetColorModulation(c.x,c.y,c.z)

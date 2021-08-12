@@ -426,7 +426,7 @@ function PANEL:PaintOver(w, h)
     self.icon2 = nil
     self.icontext = nil
     self.BGColor = SS_TileBGColor
-
+    local item = self.item
     if self.product then
         self.barheight = self.barheight or 0
         local cannot = ProtectedCall(self.product:CannotBuy(LocalPlayer()))
@@ -465,15 +465,15 @@ function PANEL:PaintOver(w, h)
 
         self.textcolor = MenuTheme_TXAlt
     else
-        local config = self.item.cfg
-        if config.eq then
+        local config = item.cfg
+        if item.eq then
             self.icon = visiblemark
         else
-            if not self.item.never_equip then
+            if not item.never_equip then
                 self.fademodel = true
             end
         end
-        if(self.item._modified)then
+        if(item._modified)then
             self.icon2 = warningmark
             if(self.hovered)then
                 draw.SimpleText("Unsaved Changes", "SS_ProductName", self:GetWide() /2 , 11, Color(255,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)

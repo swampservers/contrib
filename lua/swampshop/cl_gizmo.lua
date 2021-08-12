@@ -41,7 +41,7 @@ GIZMO_META = {
             end
         end
 
-
+        render.MaterialOverride()
     end,
     Think = function(self)
         local handle = self:GetGrabbedHandle()

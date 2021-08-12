@@ -654,7 +654,7 @@ PANEL.SetupGizmo["bone.ang"] = function(self)
         local bone = GetNestedProperty(item, nestkeys2,TYPE_STRING)
         bone = isstring(bone) and ent:LookupBone(bone)
 
-        local bonepar = ent:GetBoneParent(bone)
+        local bonepar = ent:GetBoneParent(bone) or 0
         
 
         return item,bone,bonepar
@@ -1006,7 +1006,7 @@ function PANEL:Paint()
     end
 
     if drawplayer then
-        
+        render.MaterialOverride()
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
         local mods = LocalPlayer():SS_GetShownPlayermodelMods(true)
         SS_ApplyBoneMods(self.Entity, mods)
@@ -1073,13 +1073,13 @@ function PANEL:Paint()
             SS_PreRender(iop)
         end
     end
-        
+    --[[
     if(SS_MAT_DRAWOVER and IsValid(SS_HoverCSModel))then
         render.MaterialOverride(SS_MAT_DRAWOVER)
 
         SS_HoverCSModel:DrawModel()
     end    
-
+    ]]
 
     -- if in editor, draw our gizmos
     local cust = SS_CustomizerPanel
@@ -1117,31 +1117,9 @@ function PANEL:PaintOver(w, h)
     -- surface.SetDrawColor(255,0,0,255)
     -- surface.DrawRect(0,h-10,w,10)
     local ply = LocalPlayer()
-    local cfs = SS_CONFIG_CHANGES
-    local infostring = "Unsaved Changes:\n"
-    for k,it in pairs(cfs)do
-        local item = ply:SS_FindItem(k)
-        infostring = infostring .. item:GetName()..":\n"
 
-        for ind,chg in pairs(it)do
-        infostring = infostring .. ind .. " = "..tostring(chg).."\n"
-        end
-        infostring = infostring.."\n"
-    end
 
-    if(infostring)then
-        
-        surface.SetFont( "Default" )
-	    surface.SetTextColor( 255, 0, 0 )
-        local y = 32 + SS_COMMONMARGIN
-        for k,v in pairs(string.Explode("\n",infostring))do
-            
-	    surface.SetTextPos( SS_COMMONMARGIN, y ) 
-	    surface.DrawText( v )
-        surface.SetTextColor( 255, 255, 255 )
-        y = y + 16
-        end
-    end
+
 
     local cust = SS_CustomizerPanel
     local custopen = IsValid(cust) and cust.item

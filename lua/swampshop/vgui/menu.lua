@@ -748,7 +748,7 @@ function PANEL:Init()
                 Pad(self)
 
                 -- TODO sort the items on recipt, then store sortedindex on them
-                local plyitems = LocalPlayer().SS_Items or {}
+                local plyitems = table.Copy(LocalPlayer().SS_Items) or {}
                 local itemstemp = {}
                 for k,v in pairs(plyitems)do
                     table.insert(itemstemp,k)
