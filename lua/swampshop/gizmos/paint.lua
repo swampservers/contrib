@@ -1,4 +1,4 @@
-
+--[[
 function point_inside_poly(x,y,poly)
 	-- poly is like { {x1,y1},{x2,y2} .. {xn,yn}}
 	-- x,y is the point
@@ -223,3 +223,4 @@ function GIZMO:Draw()
 end
 
 gizmo.Register("paint", GIZMO)
+]]
