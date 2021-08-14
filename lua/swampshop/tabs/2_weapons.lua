@@ -10,6 +10,16 @@ SS_WeaponProduct({
     class = 'weapon_slitter'
 })
 
+SS_WeaponAndAmmoProduct({
+    name = 'Peacekeeper',
+    description = "Peacekeeper (Re-buy for more shots)",
+    price = 5000,
+    model = 'models/weapons/w_sawed-off.mdl',
+    class = 'weapon_peacekeeper',
+    ammotype = "peaceshot",
+    amount = 2
+})
+
 SS_WeaponProduct({
     name = 'Crossbow',
     description = "Kills players in one shot, and is capable of hitting distant targets. Also unfreezes props.",
@@ -18,32 +28,20 @@ SS_WeaponProduct({
     class = 'weapon_crossbow'
 })
 
-SS_WeaponAndAmmoProduct({
-    name = 'Big Frickin\' Gun',
-    description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
-    price = 20000,
-    ammotype = "doom3_bfg",
-    amount = 1,
-    model = "models/weapons/doom3/w_bfg.mdl",
-    class = 'weapon_doom3_bfg'
-})
-
-SS_WeaponProduct({
-    name = 'Submachine Gun',
-    description = "Effective at killing players at close range, and the ammo is cheap.",
-    price = 5000,
-    model = 'models/weapons/w_smg1.mdl',
-    class = 'weapon_smg1'
-})
-
-SS_WeaponProduct({
-    name = 'Sniper',
-    description = "This powerful rifle kills any player in one shot and has a scope for long distance assassinations. Also unfreezes props.",
-    price = 8000,
-    model = 'models/weapons/w_barrett_m98b.mdl',
-    class = 'weapon_sniper'
-})
-
+-- SS_WeaponProduct({
+--     name = 'Submachine Gun',
+--     description = "Effective at killing players at close range, and the ammo is cheap.",
+--     price = 5000,
+--     model = 'models/weapons/w_smg1.mdl',
+--     class = 'weapon_smg1'
+-- })
+-- SS_WeaponProduct({
+--     name = 'Sniper',
+--     description = "This powerful rifle kills any player in one shot and has a scope for long distance assassinations. Also unfreezes props.",
+--     price = 8000,
+--     model = 'models/weapons/w_barrett_m98b.mdl',
+--     class = 'weapon_sniper'
+-- })
 SS_WeaponProduct({
     name = '357 Magnum',
     description = "This gun is convenient for shooting and removing props. It takes 2 bullets to kill a player.",
@@ -52,12 +50,21 @@ SS_WeaponProduct({
     class = 'weapon_357'
 })
 
-SS_WeaponProduct({
-    name = 'Light Machine Gun',
-    description = "Crouch for better control",
-    price = 12000,
-    model = 'models/weapons/w_mg42bu.mdl',
-    class = 'weapon_spades_lmg'
+-- SS_WeaponProduct({
+--     name = 'Light Machine Gun',
+--     description = "Crouch for better control",
+--     price = 12000,
+--     model = 'models/weapons/w_mg42bu.mdl',
+--     class = 'weapon_spades_lmg'
+-- })
+SS_WeaponAndAmmoProduct({
+    name = 'Big Frickin\' Gun',
+    description = "Fires a slow-moving ball, deadly of plasma which kills players in a huge radius.",
+    price = 20000,
+    ammotype = "doom3_bfg",
+    amount = 1,
+    model = "models/weapons/doom3/w_bfg.mdl",
+    class = 'weapon_doom3_bfg'
 })
 
 SS_WeaponProduct({
@@ -116,16 +123,6 @@ SS_WeaponAndAmmoProduct({
     amount = 2
 })
 
-SS_WeaponAndAmmoProduct({
-    name = 'Peacekeeper',
-    description = "Peacekeeper (Re-buy for more shots)",
-    price = 5000,
-    model = 'models/weapons/w_sawed-off.mdl',
-    class = 'weapon_peacekeeper',
-    ammotype = "peaceshot",
-    amount = 2
-})
-
 SS_WeaponProduct({
     name = 'Crusader Sword',
     description = "A powerful melee weapon. Powers up after a rapid chain of kills.",
@@ -139,48 +136,114 @@ if SERVER then
     language.GetPhrase = function(s) return s:gsub("#Cstrike_WPNHUD_", "") end
 end
 
+local weaponspecs = {"rating", "roll_rof", "roll_range", "roll_accuracy", "roll_control", "roll_handling", "roll_mobility"}
+
 SS_WeaponPerkData = {
     -- rating 1
     min = {
-        name = "Scuffed",
+        name = "Mexican",
         description = "It's just bad (min all stats)",
         minrating = 1,
         maxrating = 1,
     },
-    rusted = {
+    alwaysjam = {
         name = "Rusted",
-        description = "Gets jammed after every shot",
-        weapons = {"pistol"},
+        description = "Has to be cycled manually",
+        -- the deploy animation for these looks like cycling a round
+        weapons = {
+            gun_p90 = true,
+            gun_fiveseven = true,
+            gun_usp = true,
+            gun_m4a1 = true,
+            gun_glock = true,
+            gun_p228 = true,
+            gun_mp5navy = true,
+            gun_ak47 = true
+        },
         minrating = 1,
         maxrating = 1,
     },
-    cracked = {
+    crackedscope = {
         name = "Cracked",
-        description = "Ooops! (crack on scope when zoomed)",
-        weapons = {"sniper", "autosniper", "gun_aug", "gun_sg552"},
+        description = "Scope is cracked - Ooops!",
+        weapons = {
+            sniper = true,
+            autosniper = true,
+            gun_aug = true,
+            gun_sg552 = true
+        },
         minrating = 1,
         maxrating = 1,
     },
-    --rating 1-2
+    airsoft = {
+        name = "Airsoft",
+        description = "Not a real gun",
+        minrating = 1,
+        maxrating = 3
+    },
     lessdamage = {
-        name = "Less-lethal",
+        name = "Less-Lethal",
         description = "Fires less-lethal rubber bullets",
         minrating = 1,
         maxrating = 2
     },
-    -- rating 2-4
+    sometimesjam = {
+        name = "Dirty",
+        description = "Occasionally jams",
+        weapons = {
+            gun_p90 = true,
+            gun_fiveseven = true,
+            gun_usp = true,
+            gun_m4a1 = true,
+            gun_glock = true,
+            gun_p228 = true,
+            gun_mp5navy = true,
+            gun_ak47 = true
+        },
+        minrating = 1,
+        maxrating = 3,
+    },
+    unstable = {
+        name = "Unstable",
+        description = "May explode when fired",
+        minrating = 1,
+        maxrating = 3,
+    },
+    smoothbore = {
+        name = "Smoothbore",
+        description = "Not very accurate",
+        minrating = 1,
+        maxrating = 3,
+    },
+    chinese = {
+        name = "Chinese",
+        description = "Less accurate, but quite cheap",
+        minrating = 1,
+        maxrating = 4,
+    },
     compliant = {
         name = "Libtard-Compliant",
-        description = "10 round magazine, semi-auto only, and slow to reload.",
-        weapons = {"ar"},
+        description = "10 round magazine and semi-auto only",
+        weapons = {
+            ar = true
+        },
         minrating = 2,
-        minrating = 4
+        maxrating = 4
     },
-    --rating 5-6
+    highimpact = {
+        name = "High Impact",
+        description = "Heavy bullets that hit hard (more camera punch to target)",
+        minrating = 4,
+        maxrating = 6
+    },
     fullauto = {
         name = "Full-Auto",
         description = "Black market full-auto sear installed",
-        weapons = {"pistol", "autosniper"},
+        weapons = {
+            pistol = true,
+            autosniper = true,
+            autoshotgun = true
+        },
         minrating = 5,
         maxrating = 6
     },
@@ -190,13 +253,18 @@ SS_WeaponPerkData = {
         minrating = 5,
         maxrating = 6
     },
-    heavyweight = {
-        name = "Heavyweight",
-        description = "Less recoil",
+    compensated = {
+        name = "Compensated",
+        description = "Reduced recoil",
+        weapons = {
+            pistol = true,
+            autosniper = true,
+            ar = true,
+            smg = true
+        },
         minrating = 5,
         maxrating = 6
     },
-    --rating 5-7
     extended = {
         name = "Extended",
         description = "Extended mags",
@@ -205,49 +273,57 @@ SS_WeaponPerkData = {
     },
     skullpiercing = {
         name = "Skullpiercing",
-        description = "1 headshot kill",
-        minrating = 5,
-        maxrating = 7
-    },
-    highvelocity = {
-        name = "High-velocity",
-        description = "Longer damage range",
+        description = "More damage to the head",
+        weapons = {
+            ar = true,
+            pistol = true
+        },
         minrating = 5,
         maxrating = 7
     },
     slug = {
         name = "Slug",
         description = "Fires devastating slug ammunition",
+        weapons = {
+            shotgun = true,
+            autoshotgun = true
+        },
         minrating = 5,
         maxrating = 7
     },
-    -- rating 7-8
     antimaterial = {
         name = "Anti-Material",
-        description = "Does heavy damage to props (for AWP, instaremove anything)",
+        description = "Can damage any prop (AWP instaremoves)",
         minrating = 7,
         maxrating = 8
     },
     selfloading = {
         name = "Self-Loading",
-        description = "Semi-automatic firepower (AWP/scout)",
+        description = "Semi-automatic firepower",
+        weapons = {
+            sniper = true
+        },
         minrating = 7,
         maxrating = 8
     },
     boomstick = {
         name = "Boomstick",
         description = "Fires way more pellets, but in a wider cone",
+        weapons = {
+            shotgun = true,
+            autoshotgun = true
+        },
         minrating = 7,
         maxrating = 8
     },
     moredamage = {
-        name = "Armor-piercing",
+        name = "Armor-Piercing",
         description = "More damage",
         minrating = 7,
         maxrating = 8
     },
     antikleiner = {
-        name = "Anti-kleiner",
+        name = "Anti-Kleiner",
         description = "Kleiner Killer",
         minrating = 7,
         maxrating = 8
@@ -255,7 +331,20 @@ SS_WeaponPerkData = {
     -- antipony = {name="Anti-pony", description="Pony blaster",minrating=7,maxrating=8}, -- antihuman = {name="Anti-human", description="Kleiner Killer",minrating=7,maxrating=8}, --rating 8
     explosiveslug = {
         name = "Explosive Slug",
-        description = "Fires devastating slug ammunition",
+        description = "Fires explosive slug ammunition",
+        weapons = {
+            shotgun = true,
+            autoshotgun = true
+        },
+        minrating = 8,
+        maxrating = 8
+    },
+    explosive = {
+        name = "Hand Cannon",
+        description = "Fires 20mm high explosive rounds",
+        weapons = {
+            gun_awp = true
+        },
         minrating = 8,
         maxrating = 8
     },
@@ -271,6 +360,16 @@ SS_WeaponPerkData = {
         minrating = 8,
         maxrating = 8
     },
+    shothose = {
+        name = "Death Machine",
+        description = "Full auto buckshot hose",
+        weapons = {
+            autoshotgun = true,
+            gun_mac10 = true
+        },
+        minrating = 8,
+        maxrating = 8
+    },
     max = {
         name = "Golden",
         description = "Worthy of Trump (max all stats)",
@@ -279,20 +378,26 @@ SS_WeaponPerkData = {
     }
 }
 
-local weaponspecs = {"rating", "roll_rof", "roll_range", "roll_accuracy", "roll_control", "roll_handling", "roll_mobility"}
-
 SS_Item({
     class = "weapon",
     value = 5000,
     name = "Weapon",
-    description = "STATS ARE WORK IN PROGRESS",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
     GetDescription = function(self)
-        local d = self.description
+        local d = (weapons.GetStored(self.specs.class or "") or {}).Purpose or "" --self.description
+
+        if (self.specs.perk or "") ~= "" then
+            local pk = SS_WeaponPerkData[self.specs.perk]
+
+            if pk then
+                d = d .. "\nPerk: " .. pk.name .. ": " .. pk.description
+            end
+        end
 
         if self.specs.trophy_winner then
             local p = player.GetBySteamID64(self.specs.trophy_winner)
-            local n = IsValid(p) and p:GetName() or self.specs.trophy_winner
+            local n = IsValid(p) and p:GetName() or util.SteamIDFrom64(self.specs.trophy_winner)
+            n = self.specs.trophy_winner_name_cache or n
             d = d .. "\n\nGranted to " .. n .. " for their service (#" .. self.specs.trophy_rank .. ")"
         end
 
@@ -300,6 +405,10 @@ SS_Item({
     end,
     GetName = function(self)
         local name = (weapons.GetStored(self.specs.class or "") or {}).PrintName or "Unknown"
+
+        if (self.specs.perk or "") ~= "" then
+            name = SS_WeaponPerkData[self.specs.perk].name .. " " .. name
+        end
 
         if self.specs.trophy_tag then
             name = self.specs.trophy_tag .. " " .. name
@@ -315,6 +424,60 @@ SS_Item({
         for i, spec in ipairs(weaponspecs) do
             if not specs[spec] then
                 specs[spec] = math.random()
+                ch = true
+            end
+        end
+
+        local r = SS_GetRating(self.specs.rating)
+        local cl = self.specs.class
+
+        -- class may not be set yet, dont choose a perk til it is
+        if cl then
+            local ct = weapons.GetStored(cl) or {}
+            local validperks = {}
+
+            for k, v in pairs(SS_WeaponPerkData) do
+                if v.minrating <= r.id and r.id <= v.maxrating then
+                    if v.weapons == nil or v.weapons[cl] or v.weapons[ct.GunType or ""] then
+                        validperks[k] = true
+                    end
+                end
+            end
+
+            if specs.perk and specs.perk ~= "" and validperks[specs.perk] == nil then
+                specs.perk = nil
+            end
+
+            -- specs.perk=nil
+            if specs.perk == nil then
+                local r_roll = (self.specs.rating - r.min) / (r.max - r.min)
+
+                -- perks at rank <= 4 are "bad"
+                if r.id <= 4 then
+                    r_roll = 1 - r_roll
+                end
+
+                if r_roll > (1 - SS_WeaponPerkChance[r.id]) then
+                    specs.perk = table.Random(table.GetKeys(validperks))
+
+                    -- reroll if non specific perk (todo remove this after a while)
+                    if SS_WeaponPerkData[specs.perk].weapons == nil then
+                        specs.perk = table.Random(table.GetKeys(validperks))
+                    end
+                else
+                    specs.perk = ""
+                end
+
+                ch = true
+            end
+        end
+
+        if specs.trophy_winner then
+            local p = player.GetBySteamID64(specs.trophy_winner)
+            local n = IsValid(p) and p:GetName()
+
+            if n and n ~= specs.trophy_winner_name_cache then
+                specs.trophy_winner_name_cache = n
                 ch = true
             end
         end
@@ -340,22 +503,52 @@ SS_Item({
         }
     },
     SpawnPrice = function(self)
-        return ({
-            pistol = 2000,
-            heavypistol = 2500,
-            smg = 4000,
-            shotgun = 3000,
-            autoshotgun = 4000,
-            ar = 4000,
-            autosniper = 6000,
-            sniper = 5000,
-            lmg = 8000,
-        })[(weapons.GetStored(self.specs.class or "") or {}).GunType] or 9999
+        local swep = weapons.GetStored(self.specs.class or "") or {}
+        local perk = GunPerkOverrides(swep, self.specs.perk)
+
+        local baseprice = swep.SpawnPrice or ({
+            pistol = 1000,
+            heavypistol = 1500,
+            smg = 2000,
+            shotgun = 2000,
+            autoshotgun = 3000,
+            ar = 3000,
+            autosniper = 4000,
+            sniper = 4000,
+            lmg = 3000,
+        })[swep.GunType] or 10000
+
+        local ratingmod = 1.5 ^ (self.specs.rating - 0.5)
+
+        -- it comes with ammo, add that to the price :^)
+        return math.Round(baseprice * (perk.SpawnPriceMod or swep.SpawnPriceMod or 1) * ratingmod, -2) + SS_GunAmmoPrice(self)
     end,
     SellValue = function(self) return 500 * 2 ^ SS_GetRating(self.specs.rating).id end,
     invcategory = "Weapons",
     never_equip = true
 })
+
+-- also used to set ammo purchase options for non-item guns (TODO cleanup)
+GUNTYPE_BASE_REFILL_PRICE = {
+    pistol = 500,
+    heavypistol = 500,
+    smg = 1500,
+    shotgun = 1500,
+    autoshotgun = 1500,
+    ar = 2000,
+    autosniper = 2500,
+    sniper = 2500,
+    lmg = 5000,
+}
+
+function SS_GunAmmoPrice(item)
+    local swep = weapons.GetStored(item.specs.class or "") or {}
+    local perk = GunPerkOverrides(swep, item.specs.perk)
+    local baseprice = swep.AmmoPrice or GUNTYPE_BASE_REFILL_PRICE[swep.GunType] or 1000
+    local ratingmod = 1 --1.5 ^ (item.specs.rating - 0.5)
+
+    return math.Round(baseprice * (perk.AmmoPriceMod or swep.AmmoPriceMod or 1) * ratingmod, -2)
+end
 
 --NOMINIFY
 -- for i, tm in ipairs({"CT", "TERRORIST"}) do
@@ -401,13 +594,8 @@ SS_Product({
             local w = chosen.ClassName
 
             timer.Simple(5, function()
-                if ply:HasWeapon(w) then
-                    ply:StripWeapon(w)
-                end
-
-                ply:Give(w)
-                ply:GetWeapon(w):SetClip1(ply:GetWeapon(w):GetMaxClip1())
-                ply:SelectWeapon(w)
+                if not IsValid(ply) then return end
+                GiveWeaponItem(ply, item)
             end)
         end)
     end
@@ -473,3 +661,4 @@ SS_Heading("To buy ammo, press Undo (default Z)")
 --     ammotype = "lmg",
 --     amount = 100
 -- })
+-- asdf

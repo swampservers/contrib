@@ -65,7 +65,7 @@ function SS_PlayermodelItem(item)
     --gets called just before this object changes state
     item.OnChangeEquip = function(self, ply, eq)
         if eq then
-            for k, v in ipairs(ply.SS_ShownItems) do
+            for k, v in pairs(ply.SS_ShownItems) do
                 -- todo: change this to sanitizing all items, local item last?
                 if v.PlayerSetModel and v.eq then
                     v.actions.equip.OnServer(ply, v)

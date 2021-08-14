@@ -35,7 +35,7 @@ function Player:SS_HasPoints(points)
 end
 
 function Player:SS_FindItem(item_id)
-    for k, v in ipairs(self.SS_Items or {}) do
+    for k, v in pairs(self.SS_Items or {}) do
         if v.id == item_id then
             assert(v.owner == self)
 
@@ -53,7 +53,7 @@ end
 function Player:SS_CountItem(item_class)
     local c = 0
 
-    for k, v in ipairs(self.SS_Items or {}) do
+    for k, v in pairs(self.SS_Items or {}) do
         if v.class == item_class then
             c = c + 1
         end
@@ -66,7 +66,7 @@ function Player:SS_AccessorySlots()
     local c = 1
     local cfound = {}
 
-    for k, v in ipairs(self.SS_Items or {}) do
+    for k, v in pairs(self.SS_Items or {}) do
         if v.class:StartWith("accslot_") and not cfound[v.class] then
             cfound[v.class] = true
             c = c + 1

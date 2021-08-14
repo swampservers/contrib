@@ -3,6 +3,7 @@ include("shared.lua")
 
 --copied from weapon_base, add self.CSMuzzleFlashScale
 function SWEP:FireAnimationEvent(pos, ang, event, options)
+    if self:HasPerk("airsoft") then return end
     if (not self.CSMuzzleFlashes) then return end
 
     if (event == 5001 or event == 5011 or event == 5021 or event == 5031) then
@@ -43,6 +44,7 @@ end
 
 local hblurredcrosshair = Material("vgui/gradient-u")
 local vblurredcrosshair = Material("vgui/gradient-l")
+local crack = Material("decals/glass/shot1")
 
 function SWEP:DrawHUDBackground()
     --and (self.GunType=="sniper" or self.GunType=="autosniper") then
@@ -72,6 +74,13 @@ function SWEP:DrawHUDBackground()
             surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH(), ScrH())
         end
 
+        if self:HasPerk("crackedscope") then
+            surface.SetDrawColor(Color(255, 255, 255, 255))
+            surface.SetMaterial(crack)
+            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH() * 1.5, ScrH() * 1.5)
+            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH() * 1.5, ScrH() * 1.5)
+        end
+
         surface.SetDrawColor(color_black)
 
         if not self.ScopeArcTexture:IsError() then
@@ -89,9 +98,11 @@ function SWEP:DrawHUDBackground()
 end
 
 function SWEP:PrintWeaponInfo(x, y, alpha)
+    self.PrintName = self:GetNWString("PrintName", self.PrintName or "unknown")
+
     -- surface.SetDrawColor(255,255,255,255)
     -- surface.DrawRect(x,y, 100, 100)
     if self.specs and self.dspecs then
-        SS_DrawSpecInfo(self, x, y, 200, Color(255, 255, 255, 255), alpha / 255)
+        SS_DrawSpecInfo(self, x, y + 50, 250, Color(255, 255, 255, 255), alpha / 255)
     end
 end

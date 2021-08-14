@@ -26,9 +26,12 @@ end
 
 function ENT:Use(act)
     if act:IsPlayer() then
-        if act:HasWeapon("weapon_smg1") then
+        local w = act:GetActiveWeapon()
+
+        if IsValid(w) and (w.GunType == "smg" or w.GunType == "ar") then
             act:Give("weapon_ar2")
-            act:StripWeapon("weapon_smg1")
+            w:Remove()
+            -- act:StripWeapon("weapon_smg1")
         elseif act:HasWeapon("weapon_ar2") then
             act:SetAmmo(60, "AR2")
             act:SendLua([[surface.PlaySound('items/ammo_pickup.wav')]])

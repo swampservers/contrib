@@ -44,21 +44,6 @@ SWEP.SpraySaturation = 2
 -- handled by deploy
 SWEP.m_WeaponDeploySpeed = 1000
 
--- Works on server too 
-hook.Add("EntityNetworkedVarChanged", "SetNetworkedProperty", function(ent, name, oldval, newval)
-    if name:StartWith("NP_") then
-        timer.Simple(0, function()
-            if not IsValid(ent) then return end
-
-            if isstring(newval) and name:EndsWith("_json") then
-                ent[name:sub(4, -6)] = util.JSONToTable(newval)
-            else
-                ent[name:sub(4)] = newval
-            end
-        end)
-    end
-end)
-
 function SWEP:Standingness()
     local cur = self.Owner:GetCurrentViewOffset()
     local stand = self.Owner:GetViewOffset()
@@ -76,26 +61,145 @@ end
 -- SWEP.SprayExponent = 1
 -- SWEP.SprayIncrement = 0.5
 -- SWEP.SprayDecay = 0.4
-function SWEP:GetPrintName()
-    return self:GetNWString("PrintName", self.PrintName or "unknown")
+function SWEP:HasPerk(perk)
+    return self.perk == perk --self:GetNW2String("perk") == perk
 end
 
+-- swep can be the swep or weapons.GetTable
+function GunPerkOverrides(swep, perk)
+    local t = {}
+
+    if perk == "min" then
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
+    elseif perk == "crackedscope" then
+        t.SpreadBase = (swep.SpreadBase or 0) + 0.05
+        t.SpreadUnscoped = math.max((swep.SpreadUnscoped or 0) - 0.05, 0)
+    elseif perk == "lessdamage" then
+        t.Damage = swep.Damage * 0.6
+        t.KickUBase = (swep.KickUBase or 0) * 0.5
+        t.KickLBase = (swep.KickLBase or 0) * 0.5
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.5
+    elseif perk == "smoothbore" then
+        t.SpreadBase = (swep.SpreadBase or 0) + 0.02
+    elseif perk == "chinese" then
+        t.SpreadBase = (swep.SpreadBase or 0) + 0.005
+        t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.8
+    elseif perk == "airsoft" then
+        t.Damage = 1
+        t.HeadshotMultiplier = 1
+        t.KickUBase = 0 --.01 
+        t.KickLBase = 0
+        t.KickUSpray = 0
+        t.KickLSpray = 0
+        t.SprayIncrement = 0
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.3
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.2
+    elseif perk == "compliant" then
+        t.Primary = {
+            Ammo = swep.Primary.Ammo,
+            ClipSize = 10,
+            DefaultClip = 10,
+            Automatic = false
+        }
+    elseif perk == "fullauto" then
+        t.Primary = {
+            Ammo = swep.Primary.Ammo,
+            ClipSize = swep.Primary.ClipSize,
+            DefaultClip = swep.Primary.DefaultClip,
+            Automatic = true
+        }
+
+        t.CycleTime = swep.CycleTime * 0.8
+    elseif perk == "lightweight" then
+        t.SpreadMove = (swep.SpreadMove or 0) * 0.5
+        t.MobilityExponent = 0.6 --should make you walk faster
+    elseif perk == "compensated" then
+        t.KickUBase = (swep.KickUBase or 0) * 0.5
+        t.KickLBase = (swep.KickLBase or 0) * 0.5
+        t.KickUSpray = (swep.KickUSpray or 0) * 0.5
+    elseif perk == "extended" then
+        local cs = math.Round(swep.Primary.ClipSize * 18 / 15) + 2
+
+        t.Primary = {
+            Ammo = swep.Primary.Ammo,
+            ClipSize = cs,
+            DefaultClip = cs,
+            Automatic = swep.Primary.Automatic
+        }
+
+        t.HandlingMod = 0.8
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * (cs / swep.Primary.ClipSize)
+    elseif perk == "skullpiercing" then
+        t.HeadshotMultiplier = 5
+    elseif perk == "slug" or perk == "explosiveslug" then
+        t.Damage = swep.Damage * swep.NumPellets
+        t.NumPellets = 1
+        t.PelletSpread = 0
+        t.HalfDamageDistance = swep.HalfDamageDistance * 2
+    elseif perk == "selfloading" then
+        t.CycleTime = swep.CycleTime * 0.6
+    elseif perk == "boomstick" then
+        t.NumPellets = swep.NumPellets * 2
+        t.PelletSpread = swep.PelletSpread * 1.5
+        t.CycleTime = swep.CycleTime * 1.5
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
+    elseif perk == "moredamage" then
+        t.Damage = swep.Damage * 1.2
+        t.CycleTime = swep.CycleTime * 1.1
+        t.KickUBase = (swep.KickUBase or 0) * 1.2
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.4
+    elseif perk == "explosive" then
+        t.KickUBase = (swep.KickUBase or 0) * 2
+    elseif perk == "shothose" then
+        -- mac10
+        if (swep.NumPellets or 1) == 1 then
+            t.NumPellets = 6
+            t.PelletSpread = 0.04
+            t.Damage = 8
+            t.HalfDamageDistance = 1024
+            -- t.Primary = {
+            --     Ammo = swep.Primary.Ammo,
+            --     ClipSize = 20,
+            --     DefaultClip = 20,
+            --     Automatic = true
+            -- }
+        else
+            t.Primary = {
+                Ammo = swep.Primary.Ammo,
+                ClipSize = 20,
+                DefaultClip = 20,
+                Automatic = true
+            }
+
+            t.CycleTime = 0.15
+        end
+    end
+
+    return t
+end
+
+-- function SWEP:GetPrintName()
+--     return self:GetNW2String("PrintName", self.PrintName or "unknown")
+-- end
 function SWEP:GetInterval()
-    return self.CycleTime / self:GetNWFloat("rof", 1)
+    return self.CycleTime / (self.nwspecs.rof or 1)
 end
 
 function SWEP:GetControl()
-    return self:GetNWFloat("control", 1)
+    return self.nwspecs.control or 1
 end
 
 -- reload and deploy speed
 function SWEP:GetHandling()
-    return self:GetNWFloat("handling", 1)
+    return (self.nwspecs.handling or 1) * (self.HandlingMod or 1)
 end
 
 -- movespeed and moving spread
 function SWEP:GetMobility()
-    return self:GetNWFloat("mobility", 1)
+    return (self.nwspecs.mobility or 1)
 end
 
 function CalculateRolledSpread(accuracy_roll, spreadbase)
@@ -106,7 +210,7 @@ end
 
 function SWEP:GetBasedSpread()
     -- return ((self.SpreadBase or 0) / self:GetNWFloat("accuracy", 1)) + self:GetNWFloat("extraspread", 0)
-    return CalculateRolledSpread(self:GetNWFloat("accuracy", 0.5), self.SpreadBase or 0)
+    return CalculateRolledSpread(self.nwspecs.accuracy or 0.5, self.SpreadBase or 0)
 end
 
 function SWEP:GetSpray(curtime, firetime)
@@ -176,6 +280,10 @@ end
 function SWEP:WeaponSound(soundtype)
     local sndname = (self.SoundData or {})[soundtype] or self.ShootSound
 
+    if soundtype == "single_shot" and self:HasPerk("airsoft") then
+        sndname = "Weapon_TMP.Single"
+    end
+
     if sndname then
         self:EmitSound(sndname, nil, nil, nil, CHAN_AUTO)
     end
@@ -239,6 +347,40 @@ function SWEP:Initialize()
     -- self:SetWeaponType(self.WeaponTypeToString[self.WeaponType])
     self:SetLastFire(CurTime())
     self:SetActualLastFire(CurTime())
+    self.nwspecs = {}
+
+    if CLIENT then
+        self:SetupNWData()
+    else
+        timer.Simple(0, function()
+            if IsValid(self) then
+                self:SetupNWData()
+                self:SetClip1(self.Primary.ClipSize)
+            end
+        end)
+    end
+end
+
+function SWEP:SetupNWData()
+    if self.perk then
+        ErrorNoHalt("RESETTING PERK")
+    end
+
+    for k, v in pairs(GunPerkOverrides(self, self:GetNW2String("perk"))) do
+        self[k] = v
+    end
+
+    self.perk = self:GetNW2String("perk")
+    self.PrintName = self:GetNW2String("PrintName", self.PrintName)
+    self.specs = util.JSONToTable(self:GetNW2String("specs_json", "{}")) or {}
+    self.dspecs = util.JSONToTable(self:GetNW2String("dspecs_json", "{}")) or {}
+
+    for i, v in ipairs(self.dspecs) do
+        if istable(v) then
+            self.nwspecs[v[1]] = v[2]
+            -- wep:SetNWFloat(v[1], v[2])
+        end
+    end
 end
 
 function SWEP:SetupDataTables()
@@ -567,8 +709,13 @@ function SWEP:GunFire()
     end
 
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_PRIMARYATTACK))
+
     -- if self.Owner:SteamID() ~= "STEAM_0:0:38422842" then
-    self:SetClip1(self:Clip1() - 1)
+    if self:HasPerk("bottomless") and self.Owner:GetAmmoCount(self:GetPrimaryAmmoType()) > 0 then
+        self.Owner:RemoveAmmo(1, self:GetPrimaryAmmoType())
+    else
+        self:SetClip1(self:Clip1() - 1)
+    end
 
     -- end
     if SERVER and (ply.GetLocationName and ply:GetLocationName() == "Weapons Testing Range") then
@@ -592,7 +739,7 @@ function SWEP:GunFire()
     dir:Normalize()
     -- self:PenetrateBullet(dir, ply:GetShootPos(), self.Range, self.Penetration, self.Damage, self.RangeModifier) --, self:GetPenetrationFromBullet())
     -- flCurrentDistance = flCurrentDistance or 0
-    local hdd = self.HalfDamageDistance * self:GetNWFloat("range", 1)
+    local hdd = self.HalfDamageDistance * (self.nwspecs.range or 1)
     local dist = hdd * 4
 
     self:GetOwner():FireBullets({
@@ -620,7 +767,56 @@ function SWEP:GunFire()
                 scale = scale * (self.LegshotMultiplier or 1)
             end
 
+            -- if self:HasPerk("max") then
+            --     dmginfo:SetDamageType(DMG_DISSOLVE)
+            -- end
+            if IsValid(trace.Entity) then
+                if self:HasPerk("antikleiner") then
+                    if trace.Entity:GetModel() == "models/player/kleiner.mdl" then
+                        scale = scale * 3.1
+                        dmginfo:SetDamageType(DMG_DISSOLVE)
+                    end
+                end
+
+                if SERVER and self:HasPerk("dragon") and (trace.Entity:IsPlayer() and not trace.Entity:InVehicle()) then
+                    trace.Entity:Ignite(5)
+                end
+            end
+
+            if self:HasPerk("explosive") or self:HasPerk("explosiveslug") then
+                if trace.HitPos and SERVER then
+                    local p = trace.HitPos
+                    local effectdata = EffectData()
+                    effectdata:SetOrigin(p)
+                    effectdata:SetMagnitude(0)
+                    util.Effect("Explosion", effectdata, true, true)
+
+                    timer.Simple(0, function()
+                        if IsValid(self) and IsValid(self.Owner) then
+                            if self:HasPerk("explosive") then
+                                util.BlastDamage(self, self.Owner, p, 200, 80)
+                            else
+                                util.BlastDamage(self, self.Owner, p, 150, 30)
+                            end
+                        end
+                    end)
+                end
+            end
+
             dmginfo:SetDamage(math.Round(scale * self.Damage))
+
+            if IsValid(trace.Entity) and trace.Entity:IsPlayer() then
+                local impact = dmginfo:GetDamage() * 0.15
+
+                if self:HasPerk("highimpact") then
+                    impact = impact * 5
+                end
+
+                local angle = trace.Entity:GetViewPunchAngles()
+                angle.x = angle.x - impact
+                angle.y = angle.y + (math.random() - 0.5) * impact
+                trace.Entity:SetViewPunchAngles(angle)
+            end
         end
     })
 
@@ -691,6 +887,27 @@ function SWEP:GunFire()
         self.LastFireSysTime = SysTime()
     end
 
+    if self:HasPerk("alwaysjam") or (self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < (1.0 / self:GetMaxClip1())) then
+        self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
+        self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
+        self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+        self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+    end
+
+    if SERVER and self:HasPerk("unstable") and math.random() < (1 / self:GetMaxClip1()) then
+        local p = self:GetPos()
+        local effectdata = EffectData()
+        effectdata:SetOrigin(p)
+        effectdata:SetMagnitude(0)
+        util.Effect("Explosion", effectdata, true, true)
+        util.BlastDamage(self, self.Owner, p, 150, 80)
+
+        timer.Simple(0, function()
+            if IsValid(self) then
+                self:Remove()
+            end
+        end)
+    end
     --     self.realstuff = {self:GetLastShotSpray(), self:GetLastFire(), self:GetActualLastFire()}
     -- else
     --     self:SetLastShotSpray(self.realstuff[1])
@@ -698,17 +915,16 @@ function SWEP:GunFire()
     --     self:SetActualLastFire(self.realstuff[3])
     -- end
     -- print(CurTime())
-    if IsFirstTimePredicted() and self.Owner:SteamID() == "STEAM_0:0:38422842" then
-        self.SPS = (self.SPS or 0) + 1
-        -- print(engine.TickCount() - (self.LTC or 0))
-        self.LTC = engine.TickCount()
-
-        if math.floor(correctedcurtime) > (self.LastShotSecond or 0) then
-            print("SPS", self.SPS)
-            self.SPS = 0
-            self.LastShotSecond = math.floor(correctedcurtime)
-        end
-    end
+    -- if IsFirstTimePredicted() and self.Owner:SteamID() == "STEAM_0:0:38422842" then
+    --     self.SPS = (self.SPS or 0) + 1
+    --     -- print(engine.TickCount() - (self.LTC or 0))
+    --     self.LTC = engine.TickCount()
+    --     if math.floor(correctedcurtime) > (self.LastShotSecond or 0) then
+    --         print("SPS", self.SPS)
+    --         self.SPS = 0
+    --         self.LastShotSecond = math.floor(correctedcurtime)
+    --     end
+    -- end
 
     return true
 end
@@ -746,6 +962,8 @@ function SWEP:GetSpread(clientsmoothing)
 
     if not self:IsScoped() then
         spread = spread + (self.SpreadUnscoped or 0)
+        -- elseif self:HasPerk("crackedscope") then
+        --     spread = spread + 0.05
     end
 
     local spray = clientsmoothing and self:GetSpray(SysTime(), self.LastFireSysTime or 0) or self:GetSpray()
@@ -761,7 +979,7 @@ function SWEP:GetSpeedRatio()
         spd = spd * (self.ScopedSpeedRatio or 0.5)
     end
 
-    local mobilityloss = 2 * (1 - self:GetMobility())
+    local mobilityloss = 2 * (1 - (self:GetMobility() ^ (self.MobilityExponent or 1)))
 
     return 1 - ((1 - spd) * mobilityloss)
 end

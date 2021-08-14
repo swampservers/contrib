@@ -133,61 +133,127 @@ function PS:SendModifications(item_id, modifications)
 		net.WriteTable(modifications)
 	net.SendToServer()
 end ]]
-function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
+-- function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
+--     calls = calls or 50
+--     local ply = pi == -1 and LocalPlayer() or Entity(pi)
+--     if IsValid(ply) then
+--         ply[prop] = val
+--         if callback then
+--             callback(ply)
+--         end
+--     else
+--         if calls < 1 then
+--             print("ERROR loading " .. prop .. " for " .. tostring(pi))
+--         else
+--             timer.Simple(0.5, function()
+--                 SetLoadingPlayerProperty(pi, prop, val, callback, calls - 1)
+--             end)
+--         end
+--     end
+-- end
+local function OnPlayerLoad(pi, callback, ready_check, calls)
     calls = calls or 50
     local ply = pi == -1 and LocalPlayer() or Entity(pi)
 
-    if IsValid(ply) then
-        ply[prop] = val
-
-        if callback then
-            callback(ply)
-        end
+    if IsValid(ply) and (ready_check == nil or ready_check(ply)) then
+        callback(ply)
     else
         if calls < 1 then
-            print("ERROR loading " .. prop .. " for " .. tostring(pi))
+            print("Load timed out for " .. tostring(pi))
         else
             timer.Simple(0.5, function()
-                SetLoadingPlayerProperty(pi, prop, val, callback, calls - 1)
+                OnPlayerLoad(pi, callback, ready_check, calls - 1)
             end)
         end
     end
 end
 
-net.Receive('SS_Items', function(length)
-    -- local items = net.ReadTableHD()
-    local items = net.ReadCompressedTable()
-
-    SetLoadingPlayerProperty(-1, "SS_Items", items, function(ply)
-        ply.SS_Items = SS_MakeItems(ply, ply.SS_Items)
-        SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
-    end)
-end)
-
-net.Receive('SS_ShownItems', function(length)
-    local pi = net.ReadUInt(8)
-    local items = net.ReadTableHD()
-
-    SetLoadingPlayerProperty(pi, "SS_ShownItems", items, function(ply)
-        ply.SS_ShownItems = SS_MakeItems(ply, ply.SS_ShownItems)
-        -- ply:SS_ClearCSModels() -- old
-        ply:SS_UpdateAppearance()
-        ply:SS_AttachAccessories() -- new
+local function postupdate(ply, shown)
+    if shown then
+        ply:SS_AttachAccessories()
         ply.SS_SetupPlayermodel = nil
 
         if ply == LocalPlayer() then
             SS_RefreshShopAccessories()
         end
+    else
+        SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
+    end
+end
+
+local function setitems(pi, shown, items)
+    OnPlayerLoad(pi, function(ply)
+        items = SS_MakeItems(ply, items)
+        ply[shown and "SS_ShownItems" or "SS_Items"] = SS_MakeItems(ply, items)
+        postupdate(ply, shown)
     end)
+end
+
+net.Receive('SS_Items', function(length)
+    setitems(-1, false, net.ReadCompressedTable())
+end)
+
+net.Receive('SS_ShownItems', function(length)
+    setitems(net.ReadUInt(8), true, net.ReadTableHD())
+end)
+
+local function removeitemid(tab, id)
+    for i, v in ipairs(tab) do
+        if v.id == id then
+            table.remove(tab, i)
+            return
+        end
+    end
+end
+
+local function updateitem(pi, shown, item)
+    OnPlayerLoad(pi, function(ply)
+        item = SS_MakeItem(ply, item)
+        local tab = shown and ply.SS_ShownItems or ply.SS_Items
+        removeitemid(tab, item.id)
+        table.insert(tab, item)
+        postupdate(ply, shown)
+    end, function(ply) return shown and ply.SS_ShownItems or ply.SS_Items end)
+end
+
+net.Receive('SS_UpdateItem', function(length)
+    updateitem(-1, false, net.ReadTableHD())
+end)
+
+net.Receive('SS_UpdateShownItem', function(length)
+    updateitem(net.ReadUInt(8), true, net.ReadTableHD())
+end)
+
+local function deleteitem(pi, shown, id)
+    OnPlayerLoad(pi, function(ply)
+        removeitemid(shown and ply.SS_ShownItems or ply.SS_Items, id)
+        postupdate(ply, shown)
+    end, function(ply) return shown and ply.SS_ShownItems or ply.SS_Items end)
+end
+
+net.Receive('SS_DeleteItem', function(length)
+    deleteitem(-1, false, net.ReadUInt(32))
+end)
+
+net.Receive('SS_DeleteShownItem', function(length)
+    deleteitem(net.ReadUInt(8), true, net.ReadUInt(32))
 end)
 
 net.Receive('SS_Pts', function(length)
-    SetLoadingPlayerProperty(-1, "SS_Points", net.ReadUInt(32))
+    local pts = net.ReadUInt(32)
+
+    OnPlayerLoad(-1, function(ply)
+        ply.SS_Points = pts
+    end)
 end)
 
 net.Receive('SS_Row', function(length)
-    SetLoadingPlayerProperty(-1, "SS_Points", net.ReadUInt(32))
-    SetLoadingPlayerProperty(-1, "SS_Donation", net.ReadUInt(32))
+    local pts, don = net.ReadUInt(32), net.ReadUInt(32)
+
+    OnPlayerLoad(-1, function(ply)
+        ply.SS_Points = pts
+        ply.SS_Donation = don
+    end)
 end)
 
 function SS_BuyProduct(id)
