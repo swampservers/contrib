@@ -488,18 +488,6 @@ SS_Item({
         spawnweapon = {
             Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
             primary = true,
-        },
-        configure = {
-            sort = -1,
-            Text = function() return "Customize" end,
-            OnClient = function(item)
-                
-                if SS_CustomizerPanel:IsVisible() then
-                    SS_CustomizerPanel:Close()
-                else
-                    SS_CustomizerPanel:Open(item)
-                end
-            end
         }
     },
     SpawnPrice = function(self)

@@ -1036,7 +1036,7 @@ function PANEL:Paint()
     if drawplayer then
         render.MaterialOverride()
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-        local mods = LocalPlayer():SS_GetShownPlayermodelMods(true)
+        local mods = LocalPlayer():SS_GetActivePlayermodelMods(true)
         SS_ApplyBoneMods(self.Entity, mods)
         SS_ApplyMaterialMods(self.Entity, LocalPlayer())
         self.Entity:SetEyeTarget(self:GetCamPos())

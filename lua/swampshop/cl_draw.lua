@@ -55,13 +55,13 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     local m = ply:GetActualModel()
 
     if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0) ~= 0 then
-        SS_ApplyBoneMods(ply, ply:SS_GetShownPlayermodelMods())
+        SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
         SS_ApplyMaterialMods(ply, ply)
         ply.SS_SetupPlayermodel = m
     end
 
     if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
-        ply:SS_AttachAccessories(ply:SS_GetShownAccessories())
+        ply:SS_AttachAccessories(ply.SS_ShownItems)
     end
 end)
 
@@ -175,7 +175,7 @@ function SS_ApplyBoneMods(ent, mods)
 end
 
 function SS_ApplyMaterialMods(ent, ply)
-    local mods = ply:SS_GetShownPlayermodelMods()
+    local mods = ply:SS_GetActivePlayermodelMods()
     -- print("RESET", ent)
     ent:SetSubMaterial()
     hook.Run("SetPlayerModelMaterials", ent, ply)
@@ -503,7 +503,9 @@ function Player:SS_GetShownAccessories(editor)
     return self.SS_ShownAccessories or {}
 end
 
-function Player:SS_GetShownPlayermodelMods(editor)
+function Player:SS_GetActivePlayermodelMods(editor)
+    --[[
+        --force local recompute
     if(editor)then
         local items = self.SS_Items or {}
         local mods = {}
@@ -514,7 +516,7 @@ function Player:SS_GetShownPlayermodelMods(editor)
         end
         return mods
     end
-
+    ]]
     return self.SS_ShownPlayerMods or {}
 end
 
@@ -523,7 +525,7 @@ hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
     local ply = LocalPlayer()
 
     if IsValid(ply) and ply:Alive() then
-        ply:SS_AttachAccessories(ply:SS_GetShownAccessories())
+        ply:SS_AttachAccessories(ply.SS_ShownItems)
         local d = ply:ShouldDrawLocalPlayer()
 
         for i, v in ipairs(SS_CreatedAccessories[ply] or {}) do

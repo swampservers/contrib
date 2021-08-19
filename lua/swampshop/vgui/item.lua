@@ -95,7 +95,7 @@ function PANEL:Select()
     if IsValid(SS_SelectedPanel) then
         SS_SelectedPanel:Deselect()
     end
-
+    SS_SELLCONFIRMID = nil
     SS_SelectedPanel = self
 
     -- SS_HoverData = self.data
