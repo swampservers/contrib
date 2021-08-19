@@ -48,9 +48,9 @@ function PANEL:AddChoiceProperty(choices, keys, config, label)
         local x, y = pnl:LocalToScreen(0, h)
         surface.PlaySound("UI/buttonclick.wav")
         local menu = DermaMenu()
-
+        local inn = cust.wearsuf == "_p" and 2 or 1
+        
         for k, v in pairs(choices) do
-            local inn = 1
             local dval = v
 
             if (istable(v)) then
@@ -967,7 +967,7 @@ function PANEL:GetCamPos()
 
     dist = dist * (1 + ((-self.ZoomOffset or 0) / 10))
 
-    if SS_GetSelectedItem() and SS_GetSelectedItem().playermodelmod then
+    if SS_HoverIOP and SS_HoverIOP.playermodelmod then
         dist = dist + 25
     end
 
@@ -1089,7 +1089,7 @@ function PANEL:Paint()
 
     else
         --draw single item
-        if SS_GetSelectedItem() then
+        if SS_HoverIOP then
             SS_PreRender(iop)
         end
 
@@ -1097,7 +1097,7 @@ function PANEL:Paint()
         self:SetCamPos(self:GetCamPos() * 2)
         self.Entity:DrawModel()
 
-        if SS_GetSelectedItem() then
+        if SS_HoverIOP then
             SS_PreRender(iop)
         end
     end
@@ -1153,7 +1153,7 @@ function PANEL:PaintOver(w, h)
 
 
     local cust = SS_CustomizerPanel
-    local custopen = IsValid(cust) and cust.item
+    local custopen = false --IsValid(cust) and cust.item
     if SS_HoverIOP and not custopen then
         SS_DrawIOPInfo(SS_HoverIOP, 0, h, w, MenuTheme_TX, 1)
     end

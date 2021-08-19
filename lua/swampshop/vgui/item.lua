@@ -81,14 +81,9 @@ function PANEL:OnCursorExited()
     end
 end
 
-function SS_GetSelectedItem()
-    local items = LocalPlayer().SS_Items
-    return items[SS_HoveredItemID]
-end
+SS_GetSelectedItem = nil
 
-function SS_SetSelectedItem(item)
-    SS_HoveredItemID = item and item.id
-end
+SS_SetSelectedItem = nil
 
 function SS_GetEditedItem()
     return IsValid(SS_CustomizerPanel) and SS_CustomizerPanel.item
@@ -105,21 +100,20 @@ function PANEL:Select()
 
     -- SS_HoverData = self.data
     -- SS_HoverCfg = (self.item or {}).cfg
-
-    SS_HoveredItemID = (self.item or {}).id
+    SS_HoverItem = self.item
     if self.product then
         if self.product.sample_item then
-            --SS_HoverItem = self.product.sample_item
+            SS_HoverItem = self.product.sample_item
             SS_HoverProduct = nil
         else
-            --SS_HoverItem = nil
+            SS_HoverItem = nil
             SS_HoverProduct = self.product
         end
     else
-        SS_HoveredItemID = self.item.id
+        SS_HoverItem = self.item
     end
 
-    SS_HoverIOP = SS_GetSelectedItem() or SS_HoverProduct
+    SS_HoverIOP = SS_HoverItem or SS_HoverProduct
 
     -- local p = vgui.Create("DLabel", SS_DescriptionPanel)
     -- p:SetFont("SS_DESCTITLEFONT")
@@ -270,7 +264,7 @@ function PANEL:Deselect()
     if not self:IsSelected() then return end
     SS_SelectedPanel = nil
     SS_HoverProduct = nil
-    SS_SetSelectedItem(nil)
+    SS_HoverItem = nil
     SS_HoverIOP = nil
 
     if IsValid(SS_HoverCSModel) then
