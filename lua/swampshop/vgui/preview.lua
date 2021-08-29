@@ -236,13 +236,19 @@ function PANEL:Paint()
         local function GetShopAccessoryItems()
             local a = {}
 
-            if SS_HoverItem then
-                table.insert(a, SS_HoverItem)
+            local hoveritem = SS_HoverItem
+
+            -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
+            if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then hoveritem = SS_CustomizerPanel.item end
+
+            if hoveritem then
+                table.insert(a, hoveritem)
             end
 
             if IsValid(LocalPlayer()) then
                 for _, item in ipairs(LocalPlayer().SS_ShownItems or {}) do
-                    if SS_HoverItem == nil or SS_HoverItem.id ~= item.id then
+                    -- prefer hoveritem because it has the updated config, shownitems are worn on the server
+                    if hoveritem == nil or hoveritem.id ~= item.id then
                         table.insert(a, item)
                     end
                 end
