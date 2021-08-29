@@ -216,7 +216,7 @@ end
 
 function ENT:CanTape(userid)
     if self:GetRating() == 1 then return false end
-    if self.CannotTape and self:CannotTape(userid) then return false end
+    if self:CannotTape(userid) then return false end
     
     if HumanTeamName ~= nil then return self:CanEdit(userid) end
 
@@ -230,4 +230,9 @@ function ENT:CanTape(userid)
     if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
 
     return false
+end
+
+-- dont make an infinite loop when you implement this
+function ENT:CannotTape(userid)
+    return
 end
