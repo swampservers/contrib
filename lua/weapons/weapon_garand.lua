@@ -73,14 +73,6 @@ game.AddAmmoType({
     maxsplash = 5
 })
 
-sound.Add({
-    name = "DOD_Garand.Fire",
-    channel = CHAN_STATIC,
-    volume = 0.9,
-    level = 70,
-    sound = {"dod_garand/scar20_01.wav", "dod_garand/scar20_02.wav", "dod_garand/scar20_03.wav"}
-})
-
 function SWEP:SprintMod()
     return ((math.cos(((self.SprintNess or 0) + 1) * math.pi) + 1) * 0.5)
 end

@@ -7,7 +7,7 @@ SWEP.HoldType = "ar2"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "w")
 --
-SWEP.WorldModel = "models/weapons/w_rif_m4a1.mdl"
+SWEP.WorldModel = "models/weapons/w_rif_m4a1_silencer.mdl"
 SWEP.ViewModel = "models/weapons/cstrike/c_rif_m4a1.mdl"
 SWEP.ShootSound = "Weapon_M4A1.Single"
 SWEP.CSMuzzleFlashes = true

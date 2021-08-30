@@ -7,7 +7,7 @@ SWEP.HoldType = "pistol"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "a")
 --
-SWEP.WorldModel = "models/weapons/w_pist_usp.mdl"
+SWEP.WorldModel = "models/weapons/w_pist_usp_silencer.mdl"
 SWEP.ViewModel = "models/weapons/cstrike/c_pist_usp.mdl"
 SWEP.ShootSound = "Weapon_USP.Single"
 SWEP.CSMuzzleFlashes = true

@@ -7,9 +7,9 @@ SWEP.HoldType = "shotgun"
 SWEP.Slot = 0
 killicon.AddAlias( "gun_spas12", "weapon_shotgun" )
 --
-SWEP.WorldModel = "models/weapons/w_shot_m3super90.mdl"
-SWEP.ViewModel = "models/weapons/cstrike/c_shot_m3super90.mdl"
-SWEP.ShootSound = "Weapon_M3.Single"
+SWEP.WorldModel = "models/weapons/w_shotgun.mdl"
+SWEP.ViewModel = "models/weapons/v_shotgun.mdl"
+SWEP.ShootSound = "Weapon_Shotgun.Single" --Double
 SWEP.CSMuzzleFlashes = true
 SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.30

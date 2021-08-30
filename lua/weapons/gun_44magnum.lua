@@ -7,9 +7,9 @@ SWEP.HoldType = "revolver"
 SWEP.Slot = 0
 killicon.AddAlias( "gun_44magnum", "weapon_357" )
 --
-SWEP.WorldModel = "models/weapons/w_pist_deagle.mdl"
-SWEP.ViewModel = "models/weapons/cstrike/c_pist_deagle.mdl"
-SWEP.ShootSound = "Weapon_DEagle.Single"
+SWEP.WorldModel = "models/weapons/w_357.mdl"
+SWEP.ViewModel = "models/weapons/v_357.mdl"
+SWEP.ShootSound = "Weapon_357.Single"
 SWEP.CSMuzzleFlashes = true
 SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.20

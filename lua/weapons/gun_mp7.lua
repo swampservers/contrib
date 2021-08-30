@@ -7,9 +7,9 @@ SWEP.HoldType = "smg"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "x")
 --
-SWEP.WorldModel = "models/weapons/w_smg_mp5.mdl"
-SWEP.ViewModel = "models/weapons/cstrike/c_smg_mp5.mdl"
-SWEP.ShootSound = "Weapon_MP5Navy.Single"
+SWEP.WorldModel = "models/weapons/w_smg1.mdl"
+SWEP.ViewModel = "models/weapons/v_smg1.mdl"
+SWEP.ShootSound = "Weapon_SMG1.Single"
 SWEP.CSMuzzleFlashes = true
 SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.10

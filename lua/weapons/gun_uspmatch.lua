@@ -7,9 +7,9 @@ SWEP.HoldType = "pistol"
 SWEP.Slot = 0
 killicon.AddAlias( "gun_uspmatch", "weapon_pistol" )
 --
-SWEP.WorldModel = "models/weapons/w_pist_usp.mdl"
-SWEP.ViewModel = "models/weapons/cstrike/c_pist_usp.mdl"
-SWEP.ShootSound = "Weapon_USP.Single"
+SWEP.WorldModel = "models/weapons/w_pistol.mdl"
+SWEP.ViewModel = "models/weapons/v_pistol.mdl"
+SWEP.ShootSound = "Weapon_Pistol.Single"
 SWEP.CSMuzzleFlashes = true
 SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.00

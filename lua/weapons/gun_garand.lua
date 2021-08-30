@@ -7,9 +7,18 @@ SWEP.HoldType = "ar2"
 SWEP.Slot = 0
 -- CSKillIcon(SWEP, "o")
 --
-SWEP.WorldModel = "models/weapons/w_snip_sg550.mdl"
-SWEP.ViewModel = "models/weapons/cstrike/c_snip_sg550.mdl"
-SWEP.ShootSound = "Weapon_SG550.Single"
+SWEP.WorldModel = "models/weapons/w_garand.mdl"
+SWEP.ViewModel = "models/weapons/c_dod_garand.mdl"
+
+sound.Add({
+    name = "DOD_Garand.Fire",
+    channel = CHAN_STATIC,
+    volume = 0.9,
+    level = 70,
+    sound = {"dod_garand/scar20_01.wav", "dod_garand/scar20_02.wav", "dod_garand/scar20_03.wav"}
+})
+
+SWEP.ShootSound = "DOD_Garand.Fire"
 SWEP.CSMuzzleFlashes = true
 SWEP.CSMuzzleX = true
 SWEP.CSMuzzleFlashScale = 1.60
@@ -30,7 +39,7 @@ SWEP.SprayExponent = 3
 
 ComputeSpray(SWEP, {
     TapFireInterval = 0.5,
-    ShotsTo90Spray = 15
+    ShotsTo90Spray = 10
 })
 
 --
