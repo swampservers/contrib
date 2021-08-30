@@ -5,7 +5,7 @@ SWEP.PrintName = ".44 Magnum"
 SWEP.Purpose = "Powerful handgun"
 SWEP.HoldType = "revolver"
 SWEP.Slot = 0
-killicon.AddAlias( "gun_44magnum", "weapon_357" )
+killicon.AddAlias("gun_44magnum", "weapon_357")
 --
 SWEP.WorldModel = "models/weapons/w_357.mdl"
 SWEP.ViewModel = "models/weapons/v_357.mdl"

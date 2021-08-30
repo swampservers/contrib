@@ -41,7 +41,6 @@ SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
 SWEP.AmmoPriceMod = 2
-
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}
