@@ -2,10 +2,10 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "smg"
 SWEP.PrintName = "MP7"
-SWEP.Purpose = "Accurate SMG"
+SWEP.Purpose = "Controllable SMG"
 SWEP.HoldType = "smg"
 SWEP.Slot = 0
-CSKillIcon(SWEP, "x")
+if CLIENT then killicon.AddAlias("gun_mp7", "weapon_smg1") end
 --
 SWEP.WorldModel = "models/weapons/w_smg1.mdl"
 SWEP.ViewModel = "models/weapons/v_smg1.mdl"
@@ -15,21 +15,21 @@ SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.10
 --
 SWEP.Primary.Ammo = "BULLET_PLAYER_9MM"
-SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 30
+SWEP.Primary.ClipSize = 40
+SWEP.Primary.DefaultClip = 40
 SWEP.Primary.Automatic = true
-SWEP.Damage = 29
+SWEP.Damage = 26
 SWEP.CycleTime = 0.075
 SWEP.HalfDamageDistance = 4096
 --
-SWEP.SpreadBase = 0.008
-SWEP.SpreadMove = 0.015
-SWEP.Spray = 0.05
+SWEP.SpreadBase = 0.012
+SWEP.SpreadMove = 0.008
+SWEP.Spray = 0.045
 SWEP.SprayExponent = 3.5
 
 ComputeSpray(SWEP, {
     TapFireInterval = 0.3,
-    ShotsTo90Spray = 16
+    ShotsTo90Spray = 20
 })
 
 --

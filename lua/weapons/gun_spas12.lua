@@ -2,14 +2,14 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "shotgun"
 SWEP.PrintName = "SPAS-12"
-SWEP.Purpose = "Powerful shotgun."
+SWEP.Purpose = "Powerful semi-automatic shotgun."
 SWEP.HoldType = "shotgun"
 SWEP.Slot = 0
-killicon.AddAlias("gun_spas12", "weapon_shotgun")
+if CLIENT then killicon.AddAlias("gun_spas12", "weapon_shotgun") end
 --
 SWEP.WorldModel = "models/weapons/w_shotgun.mdl"
 SWEP.ViewModel = "models/weapons/v_shotgun.mdl"
-SWEP.ShootSound = "Weapon_Shotgun.Single" --Double
+SWEP.ShootSound = "Weapon_Shotgun.Double"
 SWEP.CSMuzzleFlashes = true
 SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.30
@@ -19,28 +19,28 @@ SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
 SWEP.Damage = 15
-SWEP.CycleTime = 0.88
+SWEP.CycleTime = 0.26
 SWEP.HalfDamageDistance = 1024
 --
-SWEP.SpreadBase = 0.005
+SWEP.SpreadBase = 0.006
 SWEP.SpreadMove = 0.02
 SWEP.Spray = 0.12
 SWEP.SprayExponent = 2
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 1.2,
-    ShotsTo90Spray = 3
+    TapFireInterval = 0.7,
+    ShotsTo90Spray = 5
 })
 
 --
-SWEP.NumPellets = 12
-SWEP.PelletSpread = 0.03
+SWEP.NumPellets = 10
+SWEP.PelletSpread = 0.04
 SWEP.UseShellReload = true
-SWEP.KickUBase = 5
-SWEP.KickUSpray = 0
-SWEP.KickLBase = 0
-SWEP.KickLSpray = 1
-SWEP.MoveSpeed = 220 / 250
+SWEP.KickUBase = 2.5
+SWEP.KickUSpray = 1.5
+SWEP.KickLBase = 0.2
+SWEP.KickLSpray = 0.3
+SWEP.MoveSpeed = 230 / 250
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"220"

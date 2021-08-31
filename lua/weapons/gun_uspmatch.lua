@@ -2,10 +2,10 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "pistol"
 SWEP.PrintName = "USP Match"
-SWEP.Purpose = "Long range pistol"
+SWEP.Purpose = "Controllable pistol"
 SWEP.HoldType = "pistol"
 SWEP.Slot = 0
-killicon.AddAlias("gun_uspmatch", "weapon_pistol")
+if CLIENT then killicon.AddAlias("gun_uspmatch", "weapon_pistol") end
 --
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 SWEP.ViewModel = "models/weapons/v_pistol.mdl"
@@ -15,21 +15,21 @@ SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.00
 --
 SWEP.Primary.Ammo = "BULLET_PLAYER_45ACP"
-SWEP.Primary.ClipSize = 12
-SWEP.Primary.DefaultClip = 12
+SWEP.Primary.ClipSize = 18
+SWEP.Primary.DefaultClip = 18
 SWEP.Primary.Automatic = false
 SWEP.Damage = 29
 SWEP.CycleTime = 0.14
-SWEP.HalfDamageDistance = 4096
+SWEP.HalfDamageDistance = 2048
 --
-SWEP.SpreadBase = 0.006
-SWEP.SpreadMove = 0.014
+SWEP.SpreadBase = 0.008
+SWEP.SpreadMove = 0.01
 SWEP.Spray = 0.05
-SWEP.SprayExponent = 2.5
+SWEP.SprayExponent = 3
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 0.35,
-    ShotsTo90Spray = 7
+    TapFireInterval = 0.3,
+    ShotsTo90Spray = 14
 })
 
 --

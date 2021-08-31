@@ -2,10 +2,10 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "heavypistol"
 SWEP.PrintName = ".44 Magnum"
-SWEP.Purpose = "Powerful handgun"
+SWEP.Purpose = "Powerful, long range handgun. Can remove props." 
 SWEP.HoldType = "revolver"
 SWEP.Slot = 0
-killicon.AddAlias("gun_44magnum", "weapon_357")
+if CLIENT then killicon.AddAlias("gun_44magnum", "weapon_357") end
 --
 SWEP.WorldModel = "models/weapons/w_357.mdl"
 SWEP.ViewModel = "models/weapons/v_357.mdl"
@@ -15,17 +15,17 @@ SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.20
 --
 SWEP.Primary.Ammo = "BULLET_PLAYER_50AE"
-SWEP.Primary.ClipSize = 7
-SWEP.Primary.DefaultClip = 7
+SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 6
 SWEP.Primary.Automatic = false
-SWEP.Damage = 56
-SWEP.CycleTime = 0.2
-SWEP.HalfDamageDistance = 4096
+SWEP.Damage = 66
+SWEP.CycleTime = 0.3
+SWEP.HalfDamageDistance = 8192
 --
-SWEP.SpreadBase = 0.004
-SWEP.SpreadMove = 0.02
+SWEP.SpreadBase = 0.002
+SWEP.SpreadMove = 0.012
 SWEP.Spray = 0.1
-SWEP.SprayExponent = 2
+SWEP.SprayExponent = 3
 
 ComputeSpray(SWEP, {
     TapFireInterval = 1,
