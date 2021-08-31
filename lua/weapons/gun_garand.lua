@@ -55,11 +55,11 @@ SWEP.AmmoPriceMod = 0.5
 function SWEP:GunFire()
     local basedfire = BaseClass.GunFire(self)
 
-    if basedfire and self:Clip1()==0 then 
+    if basedfire and self:Clip1() == 0 then
         -- timer.Simple(0.01, function()
-            if IsValid(self) and IsValid(self.Owner) then
-                self.Owner:EmitSound("dod_garand/garand_clipding.wav")
-            end
+        if IsValid(self) and IsValid(self.Owner) then
+            self.Owner:EmitSound("dod_garand/garand_clipding.wav")
+        end
         -- end)
     end
 

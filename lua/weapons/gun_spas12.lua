@@ -5,7 +5,11 @@ SWEP.PrintName = "SPAS-12"
 SWEP.Purpose = "Powerful semi-automatic shotgun."
 SWEP.HoldType = "shotgun"
 SWEP.Slot = 0
-if CLIENT then killicon.AddAlias("gun_spas12", "weapon_shotgun") end
+
+if CLIENT then
+    killicon.AddAlias("gun_spas12", "weapon_shotgun")
+end
+
 --
 SWEP.WorldModel = "models/weapons/w_shotgun.mdl"
 SWEP.ViewModel = "models/weapons/v_shotgun.mdl"

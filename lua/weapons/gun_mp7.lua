@@ -5,7 +5,11 @@ SWEP.PrintName = "MP7"
 SWEP.Purpose = "Controllable SMG"
 SWEP.HoldType = "smg"
 SWEP.Slot = 0
-if CLIENT then killicon.AddAlias("gun_mp7", "weapon_smg1") end
+
+if CLIENT then
+    killicon.AddAlias("gun_mp7", "weapon_smg1")
+end
+
 --
 SWEP.WorldModel = "models/weapons/w_smg1.mdl"
 SWEP.ViewModel = "models/weapons/v_smg1.mdl"

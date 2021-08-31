@@ -2,7 +2,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "heavypistol"
 SWEP.PrintName = "Desert Eagle"
-SWEP.Purpose = "Powerful handgun. Can remove props." 
+SWEP.Purpose = "Powerful handgun. Can remove props."
 SWEP.HoldType = "revolver"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "f")

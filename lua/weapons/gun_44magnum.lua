@@ -2,10 +2,14 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "heavypistol"
 SWEP.PrintName = ".44 Magnum"
-SWEP.Purpose = "Powerful, long range handgun. Can remove props." 
+SWEP.Purpose = "Powerful, long range handgun. Can remove props."
 SWEP.HoldType = "revolver"
 SWEP.Slot = 0
-if CLIENT then killicon.AddAlias("gun_44magnum", "weapon_357") end
+
+if CLIENT then
+    killicon.AddAlias("gun_44magnum", "weapon_357")
+end
+
 --
 SWEP.WorldModel = "models/weapons/w_357.mdl"
 SWEP.ViewModel = "models/weapons/v_357.mdl"

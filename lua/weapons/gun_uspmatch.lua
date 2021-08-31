@@ -5,7 +5,11 @@ SWEP.PrintName = "USP Match"
 SWEP.Purpose = "Controllable pistol"
 SWEP.HoldType = "pistol"
 SWEP.Slot = 0
-if CLIENT then killicon.AddAlias("gun_uspmatch", "weapon_pistol") end
+
+if CLIENT then
+    killicon.AddAlias("gun_uspmatch", "weapon_pistol")
+end
+
 --
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 SWEP.ViewModel = "models/weapons/v_pistol.mdl"

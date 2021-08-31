@@ -46,5 +46,5 @@ function SWEP:TranslateViewModelActivity(act)
         [ACT_VM_PRIMARYATTACK] = ACT_VM_PRIMARYATTACK_SILENCED,
         [ACT_VM_DRAW] = ACT_VM_DRAW_SILENCED,
         [ACT_VM_IDLE] = ACT_VM_IDLE_SILENCED,
-    })[ act] or act
+    })[act] or act
 end
