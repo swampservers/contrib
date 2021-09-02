@@ -209,11 +209,12 @@ function PANEL:Paint()
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
         local mods = LocalPlayer():SS_GetActivePlayermodelMods()
-
         local hoveritem = SS_HoverItem
 
         -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
-        if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then hoveritem = SS_CustomizerPanel.item end
+        if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then
+            hoveritem = SS_CustomizerPanel.item
+        end
 
         if hoveritem and hoveritem.playermodelmod then
             -- local add = true
@@ -240,11 +241,12 @@ function PANEL:Paint()
     if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
         local function GetShopAccessoryItems()
             local a = {}
-
             local hoveritem = SS_HoverItem
 
             -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
-            if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then hoveritem = SS_CustomizerPanel.item end
+            if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then
+                hoveritem = SS_CustomizerPanel.item
+            end
 
             if hoveritem then
                 table.insert(a, hoveritem)
