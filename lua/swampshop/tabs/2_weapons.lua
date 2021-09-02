@@ -511,7 +511,7 @@ SS_Item({
         -- it comes with ammo, add that to the price :^)
         return math.Round(baseprice * (perk.SpawnPriceMod or swep.SpawnPriceMod or 1) * ratingmod, -2) + SS_GunAmmoPrice(self)
     end,
-    SellValue = function(self) return 500 * 2 ^ SS_GetRating(self.specs.rating).id end,
+    SellValue = function(self) return 1000 * 2 ^ SS_GetRating(self.specs.rating).id end,
     invcategory = "Weapons",
     never_equip = true
 })

@@ -141,6 +141,7 @@ function GunPerkOverrides(swep, perk)
         t.HalfDamageDistance = swep.HalfDamageDistance * 2
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
+        t.UnscopeOnShoot = false
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 2
         t.PelletSpread = swep.PelletSpread * 1.5
