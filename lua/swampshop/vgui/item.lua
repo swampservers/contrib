@@ -315,6 +315,7 @@ function PANEL:Setup()
 
     DModelPanel.Paint = function(dmp, w, h)
         local mdl = self.iop:GetModel()
+
         if dmp.modelapplied ~= mdl then
             -- might be a workshop model, will be an error till user clicks it and it appears in the preview
             -- todo: use placeholder
@@ -389,7 +390,7 @@ function PANEL:Think()
 end
 
 -- TODO: make the background be part of the item/product, and show it in the preview
-local blueprint = Material( "gui/dupe_bg.png" ) 
+local blueprint = Material("gui/dupe_bg.png")
 
 --NOMINIFY
 function PANEL:Paint(w, h)
@@ -397,7 +398,7 @@ function PANEL:Paint(w, h)
 
     if self.iop.class == "sandbox" or self.iop.class == "csslootbox" then
         local shade = 200
-        surface.SetDrawColor(shade,shade,shade, 255)
+        surface.SetDrawColor(shade, shade, shade, 255)
         surface.SetMaterial(blueprint)
         surface.DrawTexturedRect(0, 0, w, h)
     end
@@ -497,14 +498,13 @@ function PANEL:PaintOver(w, h)
                 self.barheight = 30
                 self.textfont = "SS_Price"
                 self.text = self.item.primaryaction and self.item.primaryaction.Text(self.item) or "FIXME"
-
                 surface.SetFont(self.textfont)
-                local tw,th = surface.GetTextSize(self.text)
+                local tw, th = surface.GetTextSize(self.text)
+
                 if tw > w then
                     self.textfont = "SS_PriceSmaller"
                     self.barheight = th
                 end
-
             end
         elseif labelview then
             self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
@@ -521,12 +521,10 @@ function PANEL:PaintOver(w, h)
     --         shader = "UnlitGeneric",
     --         params = [[{["$translucent"]=1}]]
     --     })
-
     --     surface.SetDrawColor(255, 255, 255, 255)
     --     surface.SetMaterial(m)
     --     surface.DrawTexturedRect(0, 0, w, h)
     -- end
-
     if self.iop.OutlineColor then
         local c = self.iop:OutlineColor()
 

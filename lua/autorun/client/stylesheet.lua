@@ -60,7 +60,6 @@ ReloadStyle()
 -- cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
 --     ReloadStyle(tobool(new))
 -- end)
-
 cvars.AddChangeCallback("ps_themecolor", function(cvar, old, new)
     ReloadStyle(nil, tonumber(new))
 end)
@@ -566,7 +565,7 @@ surface.CreateFont("SS_PriceSmaller", {
     size = 27,
     weight = 900,
     antialias = true,
-}) 
+})
 
 surface.CreateFont("SS_CategoryGroup", {
     font = "Lato",

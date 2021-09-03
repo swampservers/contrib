@@ -322,7 +322,7 @@ function SS_Item(item)
     item.__index = item
     SS_Items[item.class] = item
 
-    if item.price then 
+    if item.price then
         SS_ItemProduct(item)
     end
 end

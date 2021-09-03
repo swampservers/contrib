@@ -217,15 +217,17 @@ end
 function ENT:CanTape(userid)
     if self:GetRating() == 1 then return false end
     if self:CannotTape(userid) then return false end
-
     -- If the obbcenter intersects the world, dont allow
     local center = self:LocalToWorld(self:OBBCenter())
+
     if util.TraceLine({
-        start=center,
-        endpos = center + Vector(0,0,1),
+        start = center,
+        endpos = center + Vector(0, 0, 1),
         mask = MASK_NPCWORLDSTATIC
-    }).StartSolid then return false end
-    
+    }).StartSolid then
+        return false
+    end
+
     if HumanTeamName ~= nil then return self:CanEdit(userid) end
 
     for k, v in ipairs(TrashNoFreezeNodes) do
@@ -233,7 +235,6 @@ function ENT:CanTape(userid)
     end
 
     local lown, lcl = self:GetLocationOwner(), self:GetLocationClass()
-
     if ((self:GetOwnerID() == userid) and (lown == nil) and ((lcl == TRASHLOC_BUILD) or (self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD))) or (lown == userid and userid ~= nil) then return true end
     local ply = player.GetBySteamID(self:GetOwnerID())
     if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end

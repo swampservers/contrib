@@ -87,15 +87,12 @@ function PANEL:Init()
                 -- p2.Paint = SS_PaintDarkenOnHover
                 -- -- p:SetSize(SS_NAVBARHEIGHT / 2, SS_NAVBARHEIGHT)
                 -- p2:SetTooltip("Toggle dark mode/light mode")
-
                 -- -- p:Dock(RIGHT)
                 -- p2.DoClick = function()
                 --     GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
                 -- end
-
                 -- menu:AddPanel(p2)
                 -- p2:SetSize(24, 24)
-
                 for k, v in pairs(BrandColors) do
                     local ColorChoice = vgui.Create("DButton", menu)
                     ColorChoice:SetText("")

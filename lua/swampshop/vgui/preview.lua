@@ -112,7 +112,7 @@ function PANEL:LayoutEntity(thisEntity)
 end
 
 function PANEL:Paint()
-    local ply = LocalPlayer()    
+    local ply = LocalPlayer()
     local mdl = ply:GetModel()
 
     if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
@@ -121,10 +121,7 @@ function PANEL:Paint()
 
     require_workshop_model(mdl)
     self:SetModelCaching(mdl)
-
     if not IsValid(self.Entity) then return end
-
-
     render.SetColorModulation(1, 1, 1) --WTF
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
@@ -323,7 +320,10 @@ function PANEL:SetModelCaching(sm)
         local ang = IsValid(self.Entity) and self.Entity:GetAngles()
         self.ModelName = sm
         self:SetModel(sm)
-        if ang then self.Entity:SetAngles(ang) end
+
+        if ang then
+            self.Entity:SetAngles(ang)
+        end
         -- if isPonyModel(sm) then
         --     self.Entity.isEditorPony = true
         --     PPM.editor3_pony = self.Entity
