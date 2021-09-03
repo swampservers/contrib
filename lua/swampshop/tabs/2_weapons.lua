@@ -381,8 +381,6 @@ SS_WeaponPerkData = {
 SS_Item({
     class = "weapon",
     value = 5000,
-    name = "Weapon",
-    model = 'models/maxofs2d/logo_gmod_b.mdl',
     GetDescription = function(self)
         local d = (weapons.GetStored(self.specs.class or "") or {}).Purpose or "" --self.description
 
@@ -543,23 +541,28 @@ end
 SS_Product({
     class = 'csslootbox', --'csslootbox2' .. tm:lower(),
     price = 100000,
-    name = "Random Gun", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
-    description = "Contains a blueprint for a random CS:S gun.\nToo expensive? Try the \"Auctions\" tab!",
+    name = "Gun Blueprint", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
+    description = "Contains a blueprint for a random gun.\nToo expensive? Try the \"Auctions\" tab!",
     model = 'models/Items/ammocrate_smg1.mdl',
-    OnBuy = function(self, ply)
-        local options = {}
 
+    Options = function(self)
+        local options = {}
         for k, v in ipairs(weapons.GetList()) do
             if v.GunType then
-                -- if v._WeaponInfo.Team == tm then
-                --     table.insert(options, v)
-                --     table.insert(options, v)
-                -- end
-                -- if v._WeaponInfo.Team == "ANY" then
                 table.insert(options, v)
-                -- end
             end
         end
+        return options
+    end,
+
+    GetModel = function(self)
+        local options = self:Options()
+        return options[ (math.floor(SysTime()*2.5) % #options) + 1].WorldModel
+    end,
+
+
+    OnBuy = function(self, ply)
+        local options = self:Options()
 
         local others = {}
 
