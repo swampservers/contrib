@@ -315,7 +315,6 @@ function PANEL:Setup()
 
     DModelPanel.Paint = function(dmp, w, h)
         local mdl = self.iop:GetModel()
-
         if dmp.modelapplied ~= mdl then
             -- might be a workshop model, will be an error till user clicks it and it appears in the preview
             -- todo: use placeholder
@@ -390,16 +389,37 @@ function PANEL:Think()
 end
 
 -- TODO: make the background be part of the item/product, and show it in the preview
-local blueprint = Material("gui/dupe_bg.png")
+local blueprint = Material( "gui/dupe_bg.png" ) 
+
+-- local orangeprint = CreateMaterial("orangeprint"..CurTime(),"g_colourmodify",{
+-- 	[ "$pp_colour_addr" ] = 0.0,
+-- 	[ "$pp_colour_addg" ] = 0.0,
+-- 	[ "$pp_colour_addb" ] = 0,
+-- 	[ "$pp_colour_brightness" ] = 0,
+-- 	[ "$pp_colour_contrast" ] = 0.8,
+-- 	[ "$pp_colour_colour" ] = -1,
+-- 	[ "$pp_colour_mulr" ] = 0,
+-- 	[ "$pp_colour_mulg" ] = 0,
+-- 	[ "$pp_colour_mulb" ] = 0
+-- })
+
+-- orangeprint:SetTexture("$fbtexture",blueprint:GetTexture("$basetexture"))
+
 
 --NOMINIFY
 function PANEL:Paint(w, h)
     SS_PaintFG(self, w, h)
 
-    if self.iop.class == "sandbox" or self.iop.class == "csslootbox" then
-        local shade = 200
-        surface.SetDrawColor(shade, shade, shade, 255)
+    if self.iop.background then
+
         surface.SetMaterial(blueprint)
+        -- surface.SetDrawColor(shade,shade,shade, 255)
+        surface.SetDrawColor(160,120,128, 255)
+        if not (self.iop.class=="prop" or self.iop.class=="sandbox") then
+            -- surface.SetMaterial(orangeprint)
+            surface.SetDrawColor(120,150,128,140, 255)
+        end
+        
         surface.DrawTexturedRect(0, 0, w, h)
     end
 
@@ -498,13 +518,14 @@ function PANEL:PaintOver(w, h)
                 self.barheight = 30
                 self.textfont = "SS_Price"
                 self.text = self.item.primaryaction and self.item.primaryaction.Text(self.item) or "FIXME"
-                surface.SetFont(self.textfont)
-                local tw, th = surface.GetTextSize(self.text)
 
+                surface.SetFont(self.textfont)
+                local tw,th = surface.GetTextSize(self.text)
                 if tw > w then
                     self.textfont = "SS_PriceSmaller"
                     self.barheight = th
                 end
+
             end
         elseif labelview then
             self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
@@ -521,10 +542,12 @@ function PANEL:PaintOver(w, h)
     --         shader = "UnlitGeneric",
     --         params = [[{["$translucent"]=1}]]
     --     })
+
     --     surface.SetDrawColor(255, 255, 255, 255)
     --     surface.SetMaterial(m)
     --     surface.DrawTexturedRect(0, 0, w, h)
     -- end
+
     if self.iop.OutlineColor then
         local c = self.iop:OutlineColor()
 

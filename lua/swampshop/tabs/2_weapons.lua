@@ -380,6 +380,7 @@ SS_WeaponPerkData = {
 
 SS_Item({
     class = "weapon",
+    background = true,
     value = 5000,
     GetDescription = function(self)
         local d = (weapons.GetStored(self.specs.class or "") or {}).Purpose or "" --self.description
@@ -539,29 +540,32 @@ end
 --NOMINIFY
 -- for i, tm in ipairs({"CT", "TERRORIST"}) do
 SS_Product({
-    class = 'csslootbox', --'csslootbox2' .. tm:lower(),
+    class = 'csslootbox',
+    background = true,
     price = 100000,
     name = "Gun Blueprint", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
     description = "Contains a blueprint for a random gun.\nToo expensive? Try the \"Auctions\" tab!",
     model = 'models/Items/ammocrate_smg1.mdl',
+
     Options = function(self)
         local options = {}
-
         for k, v in ipairs(weapons.GetList()) do
             if v.GunType then
                 table.insert(options, v)
             end
         end
-
         return options
     end,
+
     GetModel = function(self)
         local options = self:Options()
-
-        return options[(math.floor(SysTime() * 2.5) % #options) + 1].WorldModel
+        return options[ (math.floor(SysTime()*2.5) % #options) + 1].WorldModel
     end,
+
+
     OnBuy = function(self, ply)
         local options = self:Options()
+
         local others = {}
 
         for i = 1, 15 do
