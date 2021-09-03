@@ -806,7 +806,7 @@ function SWEP:GunFire()
 
             dmginfo:SetDamage(math.Round(scale * self.Damage))
 
-            if IsValid(trace.Entity) and trace.Entity:IsPlayer() then
+            if IsValid(trace.Entity) and trace.Entity:IsPlayer() and not trace.Entity:InVehicle() then
                 local impact = dmginfo:GetDamage() * 0.15
 
                 if self:HasPerk("highimpact") then

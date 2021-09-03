@@ -23,6 +23,8 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 
+TRASH_MANAGER_BASE_LOAD_PRICE = 5000
+
 function SWEP:Initialize()
     self:SetHoldType("slam")
 end
@@ -257,7 +259,7 @@ but you need a nearby theater/field to respawn them.]])
                                 end)
 
                                 vgui("DButton", function(p)
-                                    local price = 0
+                                    local price = TRASH_MANAGER_BASE_LOAD_PRICE
 
                                     for k, v in pairs(d) do
                                         price = price + items[v.id]:SpawnPrice()
@@ -385,7 +387,7 @@ function SWEP:GetDeleteEntities()
     local cleanups = {}
 
     for i, v in ipairs(ents.GetAll()) do
-        if v:GetTrashClass() and v:GetLocationOwner() == id and v:GetPos():Distance(self.Owner:GetPos()) <= TRASH_MANAGER_LOAD_RANGE then
+        if v:GetTrashClass() and v:GetTrashClass()~="prop_trash_zone" and v:GetLocationOwner() == id and v:GetPos():Distance(self.Owner:GetPos()) <= TRASH_MANAGER_LOAD_RANGE then
             table.insert(cleanups, v)
         end
     end
