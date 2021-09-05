@@ -63,6 +63,7 @@ concommand.Add("snow", function()
     Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$color", Vector(0.6, 0.6, 0.7))
     Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
 end)
+
 --[[
     Material("swamponions/ground/concretefloor016a"):SetString("$surfaceprop","snow")
     Material("CONCRETE/CONCRETEFLOOR023A"):SetString("$surfaceprop","snow")
@@ -89,33 +90,20 @@ end)
     end
 end)
 ]]
-
-
 concommand.Add("shine", function()
-    local mat = Material( ("swamponions/carpet/rhallcarpet"):upper() )
-
+    local mat = Material(("swamponions/carpet/rhallcarpet"):upper())
     -- mat = Material( "models/swamponions/joker_statue/shirt") 
-
-
     mat:SetInt("$phong", 1)
-
     mat:SetFloat("$phongexponent", 10)
-
     mat:SetFloat("$phongboost", 100)
-
     mat:SetTexture("$basetexture", "dev/reflectivity_10b") --swamponions/carpet/squares")
     mat:SetTexture("$bumpmap", "dev/flat_normal")
-
-    mat:SetVector("$phongfresnelranges", Vector(0,0.5,1))
-
+    mat:SetVector("$phongfresnelranges", Vector(0, 0.5, 1))
     mat:Recompute()
-
-    print("OK",mat:GetTexture("$basetexture"))
-	
-
-	-- $bumpmap				[texture]
-	-- $phongexponent			5			// either/or
-	-- $phongexponenttexture	[texture]	// either/or
-	-- $phongboost				1.0
-	-- $phongfresnelranges		"[0 0.5 1]"
+    print("OK", mat:GetTexture("$basetexture"))
 end)
+-- $bumpmap				[texture]
+-- $phongexponent			5			// either/or
+-- $phongexponenttexture	[texture]	// either/or
+-- $phongboost				1.0
+-- $phongfresnelranges		"[0 0.5 1]"
