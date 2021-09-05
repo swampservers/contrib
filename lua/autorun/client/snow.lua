@@ -89,3 +89,33 @@ end)
     end
 end)
 ]]
+
+
+concommand.Add("shine", function()
+    local mat = Material( ("swamponions/carpet/rhallcarpet"):upper() )
+
+    -- mat = Material( "models/swamponions/joker_statue/shirt") 
+
+
+    mat:SetInt("$phong", 1)
+
+    mat:SetFloat("$phongexponent", 10)
+
+    mat:SetFloat("$phongboost", 100)
+
+    mat:SetTexture("$basetexture", "dev/reflectivity_10b") --swamponions/carpet/squares")
+    mat:SetTexture("$bumpmap", "dev/flat_normal")
+
+    mat:SetVector("$phongfresnelranges", Vector(0,0.5,1))
+
+    mat:Recompute()
+
+    print("OK",mat:GetTexture("$basetexture"))
+	
+
+	-- $bumpmap				[texture]
+	-- $phongexponent			5			// either/or
+	-- $phongexponenttexture	[texture]	// either/or
+	-- $phongboost				1.0
+	-- $phongfresnelranges		"[0 0.5 1]"
+end)
