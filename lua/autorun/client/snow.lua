@@ -63,6 +63,7 @@ concommand.Add("snow", function()
     Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$color", Vector(0.6, 0.6, 0.7))
     Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
 end)
+
 --[[
     Material("swamponions/ground/concretefloor016a"):SetString("$surfaceprop","snow")
     Material("CONCRETE/CONCRETEFLOOR023A"):SetString("$surfaceprop","snow")
@@ -89,80 +90,51 @@ end)
     end
 end)
 ]]
-
-
 concommand.Add("shine", function()
-
     local surfs = game.GetWorld():GetBrushSurfaces()
-
     local mats = {}
 
-    for i,surf in ipairs(surfs) do
+    for i, surf in ipairs(surfs) do
         local mat = surf:GetMaterial()
-
         if mat:GetShader():lower() ~= "lightmappedgeneric" then continue end
-
         if mats[mat:GetName()] then continue end
         mats[mat:GetName()] = mat
-
         print(mat:GetName())
-
         -- local mat = Material( ("swamponions/carpet/rhallcarpet"):upper() )
-
         -- mat = Material( "models/swamponions/joker_statue/shirt") 
-
-
         -- mat:SetInt("$phong", 1)
-
         -- mat:SetFloat("$phongexponent", 10)
-
         -- mat:SetFloat("$phongboost", 100)
-
-        
-
         -- mat:SetVector("$phongfresnelranges", Vector(0,0.5,1))
-
         -- mat:SetTexture("$basetexture", "dev/reflectivity_90b") --swamponions/carpet/squares")
         -- "hlmv/cubemap"
         mat:SetTexture("$envmap", "environment maps/d1_trainstation_05") --"swamponions/cm_d")
         mat:SetTexture("$bumpmap", "dev/flat_normal")
-
         -- 0 is fresnel 1 is no fresnel
-        mat:SetFloat("$fresnelreflection",0.1)
-        mat:SetFloat("$envmaplightscale",10)
-        mat:SetFloat("$envmapsaturation",0 )
-        
-
+        mat:SetFloat("$fresnelreflection", 0.1)
+        mat:SetFloat("$envmaplightscale", 10)
+        mat:SetFloat("$envmapsaturation", 0)
         -- mat:SetVector("$envmaptint", Vector(1,1,1)*0.2) --0.2)
-
         mat:Recompute()
-
     end
 
     print("OK", table.Count(mats)) --,mat:GetTexture("$basetexture"))
 
-    hook.Add("Think","reflectivity",function()
+    hook.Add("Think", "reflectivity", function()
         if IsValid(LocalPlayer()) then
-            local l = render.ComputeLighting(LocalPlayer():GetPos() + Vector(0,0,8), Vector(0,0,1))
-
-            local i = math.min(1, (l.x + l.y + l.z)/3)
-
+            local l = render.ComputeLighting(LocalPlayer():GetPos() + Vector(0, 0, 8), Vector(0, 0, 1))
+            local i = math.min(1, (l.x + l.y + l.z) / 3)
             i = math.sqrt(i)
             print(i)
 
-            for k,mat in pairs(mats) do
-                mat:SetVector("$envmaptint", Vector(1,1,1)*0.2*i) 
-
+            for k, mat in pairs(mats) do
+                mat:SetVector("$envmaptint", Vector(1, 1, 1) * 0.2 * i)
             end
-
         end
-    
     end)
-	
-
-	-- $bumpmap				[texture]
-	-- $phongexponent			5			// either/or
-	-- $phongexponenttexture	[texture]	// either/or
-	-- $phongboost				1.0
-	-- $phongfresnelranges		"[0 0.5 1]"
 end)
+-- $bumpmap				[texture]
+-- $phongexponent			5			// either/or
+-- $phongexponenttexture	[texture]	// either/or
+-- $phongboost				1.0
+-- $phongfresnelranges		"[0 0.5 1]"
