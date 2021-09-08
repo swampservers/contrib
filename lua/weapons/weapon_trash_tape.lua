@@ -163,19 +163,17 @@ if CLIENT then
             tr.filter = self.Owner
             tr.mask = MASK_SHOT
             local trace = util.TraceLine(tr)
-
             PropTrashLookedAt = nil
             PropTrashLookedAtPos = nil
             WorldLookedAtPos = nil
 
             if trace.Hit then
-
                 --:GetClass():StartWith("prop_trash") then
                 if trace.Entity:GetTrashClass() then
                     PropTrashLookedAt = trace.Entity
-                    PropTrashLookedAtPos = trace.HitPos    
+                    PropTrashLookedAtPos = trace.HitPos
                 elseif trace.Entity:IsWorld() then
-                    WorldLookedAtPos = trace.HitPos  
+                    WorldLookedAtPos = trace.HitPos
                 end
             end
         end
