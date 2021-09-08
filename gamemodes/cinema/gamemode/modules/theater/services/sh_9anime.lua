@@ -3,6 +3,7 @@
 local SERVICE = {}
 SERVICE.Name = "9Anime"
 SERVICE.NeedsCodecs = true
+SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
     if (string.match(url.encoded, "9anime.to/watch/(.+)")) then return url.encoded end
@@ -14,7 +15,7 @@ if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         EmbeddedCheckCodecs(function()
             vpanel = vgui.Create("DHTML")
-            vpanel:SetSize(100, 100)
+            vpanel:SetSize(1000, 800)
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
             vpanel.phase = 0
@@ -36,14 +37,15 @@ if CLIENT then
                 if IsValid(vpanel) then
                     if vpanel.phase == 0 then
                         vpanel:RunJavascript("x=document.getElementsByClassName('tabs servers notab')[0].children;for(i=0;i<x.length;i++)if(x[i].innerText=='Vidstream')x[i].click();")
-                        vpanel:RunJavascript("x=document.getElementsByClassName('episodes')[0].children;for(i=0;i<x.length;i++)if(x[i].children[0].className=='active')console.log('EPISODE:'+x[i].children[0].text);")
+                        vpanel:RunJavascript("x=document.getElementsByClassName('play')[0];if(x){x.dispatchEvent(new Event('mousedown'));x.click();}")
+                        vpanel:RunJavascript("x=document.getElementsByClassName('episodes')[0].children;for(i=0;i<x.length;i++)if(x[i].children[0].className=='active'){console.log('EPISODE:'+x[i].children[0].text);x[i].children[0].click();}")
                         vpanel:RunJavascript("x=document.getElementsByTagName('h2');for(i=0;i<x.length;i++)if(x[i].attributes.itemprop.value=='name')console.log('TITLE:'+x[i].textContent);")
                         vpanel:RunJavascript("x=document.getElementsByTagName('iframe');for(i=0;i<x.length;i++)if(x[i].parentElement.id=='player')console.log('PLAYER:'+x[i].src);")
 
                         return
                     elseif vpanel.phase == 1 then
                         vpanel:RunJavascript("if(typeof jwplayer==='function'){var jwp=jwplayer('player');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());}")
-                        vpanel:RunJavascript("xmlHttp=new XMLHttpRequest();xmlHttp.open('GET','https://vidstream.pro/info/'+window.location.href.substring(window.location.href.lastIndexOf('/')+1)+'?skey='+window.skey,false);xmlHttp.send(null);console.log('URL:'+JSON.parse(xmlHttp.responseText).media.sources[0].file);")
+                        vpanel:RunJavascript("xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/info/'+window.location.href.substring(window.location.href.lastIndexOf('/')+1)+'?skey='+window.skey,false);xmlHttp.send(null);console.log('URL:'+JSON.parse(xmlHttp.responseText).media.sources[0].file);")
 
                         return
                     end
