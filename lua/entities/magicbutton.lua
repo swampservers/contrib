@@ -468,7 +468,7 @@ local function MagicOutcomeButtonSpawn(ply)
             locname = locname .. " (" .. nearestname .. ")"
         end
 
-        return "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location:[white]" .. (locname or "Somewhere stupid")
+        return "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location: [white]" .. (locname or "Somewhere stupid")
     end
 end
 
