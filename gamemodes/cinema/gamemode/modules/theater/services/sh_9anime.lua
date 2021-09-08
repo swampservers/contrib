@@ -3,6 +3,7 @@
 local SERVICE = {}
 SERVICE.Name = "9Anime"
 SERVICE.NeedsCodecs = true
+SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
     if (string.match(url.encoded, "9anime.to/watch/(.+)")) then return url.encoded end
