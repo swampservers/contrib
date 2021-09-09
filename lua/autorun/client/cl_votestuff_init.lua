@@ -18,40 +18,43 @@ surface.CreateFont( "Anwser-font", {
 	extended = true,
 })
 
-netstream.Hook('TaskVotes::sendTasks', function(time, tasks)
+net.Receive("tv::SendTasks", function( len )
+		local time = net.ReadUInt(16);
+		local tasks = net.ReadTable()
 		local sw, sh = ScrW(), ScrH();
-		TASKS = tasks;
 
 		LocalPlayer():AddPlayerOption( "MakeNewVote", 
 		time, 
 		function(num)
-				if TASKS.answers[num] then
-					netstream.Start('TaskVotes::SendAnAnwser', TASKS[num]);
+				if tasks.answers[num] then
+
+					net.Start("tv::SendAnswer")
+						net.WriteString( tasks.answers[num] )
+					net.SendToServer()
+
 					surface.PlaySound("buttons/button15.wav")
 				end;
-
-				TASKS = nil;
 				return true;
 		end, 
 		function() 
-			local timeLeft = timer.RepsLeft("TimerForVote");
 			local lFont = "Question-font"
 			local aFont = "Anwser-font"
+			local time = string.FormattedTime(timer.RepsLeft("TimerForVote"), "%02i:%02i" );
 			draw.RoundedBox(0, sw * 0.01, sh * 0.2, sw * (300 / 1920), sh * (400 / 1080), Color(60, 60, 60, 255))
-			draw.SimpleText("Time left: " .. RFormatTime(timeLeft), lFont, sw * 0.1, sh * 0.2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			draw.SimpleText("Time left: " .. time, lFont, sw * 0.1, sh * 0.2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 
-			local qTable = BetterWrapText(TASKS.question, sw * 0.15, lFont);
-			local i = 1;
-			while (i <= #qTable) do
-				local str = qTable[i];
-				str = str:gsub(filterPattern, "");
-				draw.SimpleText(str, lFont, sw * 0.085, sh * (0.23 + i * 0.014), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				i = i + 1;
-			end;
+			tasks.question = tasks.question:gsub(filterPattern, "");
+			draw.WrappedText(
+				tasks.question, 
+				lFont, 
+				sw * 0.085, 
+				sh * 0.26, 
+				sw * 0.13, 
+				color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, false)
 
 			local i = 1;
-			while (i <= #TASKS.answers) do
-					local ans = TASKS.answers[i];
+			while (i <= #tasks.answers) do
+					local ans = tasks.answers[i];
 					ans = ans:gsub(filterPattern, "")
 					draw.RoundedBox(0, sw * 0.012, sh * (0.4 + i * 0.033), sw * (290 / 1920), sh * (30 / 1080), Color(80, 80, 80, 255))
 					draw.SimpleText(i .. ": " .. ans, aFont, sw * 0.085, sh * (0.4 + i * 0.034), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
@@ -67,11 +70,4 @@ netstream.Hook('TaskVotes::sendTasks', function(time, tasks)
 				LocalPlayer():AddPlayerOption( "MakeNewVote", 0, function(num) end, function() end);
 			end;
 		end);
-end);
-
-netstream.Hook('TaskVotes::notify', function(r, amount)
-		chat.AddText(
-			r && Color(150, 255, 150) || Color(255, 100, 100), 
-			r && "You're won! Have your ".. amount .." points!" || "Your anwser is wrong."			
-		);
-end);
+end)
