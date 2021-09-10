@@ -32,19 +32,9 @@ end)
 
 function ENT:Initialize()
     -- default light thing
-    local mn = table.remove(string.Explode("/", self:GetModel())):lower()
+    local special = self:GetSpecialModelData()
 
-    if mn:find("light") or mn:find("lamp") or mn:find("lantern") then
-        PropTrashLightData[self:GetModel()] = {
-            untaped = false,
-            size = 300,
-            brightness = 2,
-            style = 0,
-            pos = Vector(0, 0, 0)
-        }
-    end
-
-    self.MyLightData = PropTrashLightData[self:GetModel()]
+    self.MyLightData = special.class == "light" and special.data or nil
     TRASH_LIGHTS[self] = self.MyLightData
     self:ApplyMaterialData(self:GetMaterialData())
     -- local col = self:GetUnboundedColor()
@@ -210,24 +200,45 @@ timer.Create("TrashLights", 0.1, 0, function()
         local p = e:LocalToWorld(l.pos)
         local d = ep:DistToSqr(p)
 
-        if (l.untaped or e:GetTaped()) and d < maxd2 and not FrustrumCull(f, p, 250) then
+        local b = e:GetNWFloat("bright",0)
+
+        -- (l.untaped or e:GetTaped()) instead of b>0
+        if b>0 and d < maxd2 and not FrustrumCull(f, p, 250) then
             table.insert(candidates, {
                 e = e,
                 l = l,
                 p = p,
-                d = d
+                d = d,
+                b=b
             })
+        else
+            if e.lightmade then
+                local dlight = DynamicLight(e:EntIndex())
+                if dlight then
+                    dlight.r = 0
+                    dlight.g = 0
+                    dlight.b = 0
+                    dlight.brightness = 0
+                    dlight.Size = 0
+                    dlight.Decay = 1
+                    dlight.DieTime = CurTime() + 0.01
+                end
+            end
         end
+
+        e.lightmade = false
     end
 
     -- print("Candidates", #candidates)
+    -- TOPK sort?
     table.SortByMember(candidates, "d", true)
 
     for i, v in ipairs(candidates) do
         if i > targetcount and v.d > mind2 then break end -- print("break", i-1)
         local e, l, p = v.e, v.l, v.p
+        e.lightmade = true
         local dlight = DynamicLight(e:EntIndex())
-        local c = (e.lightcolor or Vector(1, 1, 1)) * 255
+        local c = (e.lightcolor or Vector(1, 1, 1)) * 255 * v.b
 
         if dlight then
             dlight.pos = p
@@ -253,6 +264,20 @@ timer.Create("TrashLights", 0.1, 0, function()
         end
     end
 end)
+
+-- TODO merge this shit with zone
+hook.Add("PreDrawTranslucentRenderables", "TrashHoverDraw", function()
+    if IsValid(PropTrashLookedAt) and PropTrashLookedAt:GetSpecialModelData().class == "gate" then
+
+        -- render.CullMode(MATERIAL_CULLMODE_CW)
+        render.SetColorMaterial()
+        local col = Color(255, 160, 80, 60)
+        local min, max = unpack(PropTrashLookedAt:GetSpecialModelData().data.inputarea )
+        render.DrawBox(PropTrashLookedAt:GetPos(), PropTrashLookedAt:GetAngles(), min, max, col, false)
+        -- render.CullMode(MATERIAL_CULLMODE_CCW)
+    end
+end)
+
 
 hook.Add("PreDrawHalos", "TrashHalos", function()
     if not IsValid(LocalPlayer()) then return end

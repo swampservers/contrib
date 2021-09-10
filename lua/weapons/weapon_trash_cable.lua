@@ -6,7 +6,7 @@ SWEP.ViewModelFOV = 85
 SWEP.Slot = 5
 SWEP.SlotPos = 0
 SWEP.Purpose = "Build things"
-SWEP.Instructions = "Primary: Make cables (hold and release)"
+SWEP.Instructions = "Primary: Make cables (click and drag)\nSecondary: Remove cables"
 SWEP.AdminSpawnable = false
 SWEP.ViewModel = "models/weapons/c_toolgun.mdl"
 SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
@@ -24,73 +24,87 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 CABLE_MAX_LENGTH = 100
 
+-- models/props_c17/pulleywheels_small01.mdl
+
 function SWEP:Initialize()
     self:SetHoldType("pistol")
 end
 
-local trashcabledata = nil
+local trashcablestartdata = nil
 
 function SWEP:PrimaryAttack()
-    self:SetNextPrimaryFire(CurTime() + 0.3)
-    if not IsFirstTimePredicted() then return end
+    if not (CLIENT and IsFirstTimePredicted()) then return end
 
-    if CLIENT then
-        if IsValid(PropTrashLookedAt) then
-            trashcabledata = {PropTrashLookedAt, PropTrashLookedAt:WorldToLocal(PropTrashLookedAtPos)}
-        end
+    if IsValid(PropTrashLookedAt) then
+        trashcablestartdata = {PropTrashLookedAt, PropTrashLookedAt:WorldToLocal(PropTrashLookedAtPos), true}
     end
-    -- if CLIENT then
-    --     if PropTrashLookedAt then
-    --         net.Start("TrashAction")
-    --         net.WriteTable({
-    --             ent = PropTrashLookedAt,
-    --             act = TRASHACT_TAPE,
-    --             hitpos = PropTrashLookedAtPos
-    --         })
-    --         net.SendToServer()
-    --     end
-    -- end
 end
 
+
+function SWEP:SecondaryAttack()
+    if not (CLIENT and IsFirstTimePredicted()) then return end
+
+    if IsValid(PropTrashLookedAt) then
+        trashcablestartdata = {PropTrashLookedAt, PropTrashLookedAt:WorldToLocal(PropTrashLookedAtPos), false}
+    end
+end
+
+
 if CLIENT then
+    -- TODO: make taping (including to world)? like this
     hook.Add("KeyRelease", "FinishTrashCable", function(ply, key)
-        if key == IN_ATTACK then
-            if trashcabledata and IsValid(trashcabledata[1]) then
+        if key == IN_ATTACK or key == IN_ATTACK2 then
+            if trashcablestartdata and IsValid(trashcablestartdata[1]) then
                 if IsValid(PropTrashLookedAt) or WorldLookedAtPos then
                     net.Start("TrashAction")
 
                     net.WriteTable({
-                        ent = trashcabledata[1],
-                        entpos = trashcabledata[2],
+                        ent = trashcablestartdata[1],
+                        entpos = trashcablestartdata[2],
                         ent2 = PropTrashLookedAt or game.GetWorld(),
                         ent2pos = WorldLookedAtPos or PropTrashLookedAt:WorldToLocal(PropTrashLookedAtPos),
-                        act = "cable"
+                        act = trashcablestartdata[3] and "cable" or "disconnect"
                     })
 
                     net.SendToServer()
                 end
             end
 
-            trashcabledata = nil
+            trashcablestartdata = nil
         end
     end)
 
     local beem = Material("effects/tool_tracer")
 
+    -- trails/physbeam
+    -- trails/tube
+    -- trails/electric
+    -- trails/plasma
+    -- trails/laser
+    -- trails/lol
+
+    -- cable/redlaser
+    -- cable/cable2
+    -- cable/rope
+    -- cable/blue_elec
+    -- cable/xbeam
+    -- cable/physbeam
+    -- cable/hydra
+
     hook.Add("PostDrawTranslucentRenderables", "TrashCablePreview", function(d, s, s3)
         if d or s3 then return end
 
-        if trashcabledata and IsValid(trashcabledata[1]) then
+        if trashcablestartdata and IsValid(trashcablestartdata[1]) then
             render.SetMaterial(beem)
-            local p1, p2 = trashcabledata[1]:LocalToWorld(trashcabledata[2]), PropTrashLookedAtPos or WorldLookedAtPos or (EyePos() + EyeAngles():Forward() * 80)
-            local c = Color(255, 255, 255)
+            local p1, p2 = trashcablestartdata[1]:LocalToWorld(trashcablestartdata[2]), PropTrashLookedAtPos or WorldLookedAtPos or (EyePos() + EyeAngles():Forward() * 80)
+            local c = trashcablestartdata[3] and Color(255, 255, 255) or Color(255, 255, 0)
 
-            if trashcabledata[1] ~= PropTrashLookedAt and (PropTrashLookedAtPos or WorldLookedAtPos) then
-                c = Color(0, 255, 0)
+            if trashcablestartdata[1] ~= PropTrashLookedAt and (PropTrashLookedAtPos or WorldLookedAtPos) then
+                c = trashcablestartdata[3] and Color(0, 255, 0) or Color(255, 0, 0)
             end
 
             if p1:Distance(p2) > CABLE_MAX_LENGTH then
-                c = Color(255, 55, 0)
+                c = trashcablestartdata[3] and Color(255, 55, 0) or Color(255, 255, 0)
             end
 
             local r = 0 --math.random()
@@ -99,21 +113,10 @@ if CLIENT then
     end)
 end
 
-function SWEP:SecondaryAttack()
-    net.Start("TrashAction")
-
-    net.WriteTable({
-        ent = PropTrashLookedAt,
-        act = "uncable"
-    })
-
-    net.SendToServer()
-end
-
 function SWEP:Reload()
 end
 
 function SWEP:DrawHUD()
-    surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
-    surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
+    -- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
+    -- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
 end

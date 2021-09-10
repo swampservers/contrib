@@ -139,6 +139,72 @@ SS_Product({
     end
 })
 
+SS_Heading("Gadgets (WIP)")
+
+SS_WeaponProduct({
+    class = "weapon_trash_cable",
+    price = 10000,
+    name = 'Cable Tool',
+    description = "Use this to wire props together!",
+    model = 'models/weapons/w_toolgun.mdl'
+})
+
+
+
+SS_Product({
+    class = 'trashlight',
+    price = 1000,
+    name = 'Lights',
+    description = "Lights up while taped or powered",
+    model = 'models/maxofs2d/light_tubular.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = GetSpecialTrashModelsByClass("light")
+
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+SS_Product({
+    class = 'trashbutton',
+    price = 5000,
+    name = 'Buttons',
+    description = "The source of power",
+    model = 'models/maxofs2d/button_01.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = GetSpecialTrashModelsByClass("button")
+
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+SS_Product({
+    class = 'trashdoor',
+    price = 2000,
+    name = 'Doors',
+    description = "Can be opened",
+    model = 'models/staticprop/props_c17/door01_left.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = GetSpecialTrashModelsByClass("door")
+
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+SS_Product({
+    class = 'trashinverter',
+    price = 1000,
+    name = 'Inverter',
+    description = "What does this do?",
+    model = 'models/maxofs2d/lamp_flashlight.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        e = makeTrash(ply, "models/maxofs2d/lamp_flashlight.mdl")
+    end
+})
+
 SS_Heading("More Props")
 
 SS_Product({
@@ -235,25 +301,6 @@ SS_Product({
 
 -- end)
 -- end)
-SS_Product({
-    class = 'trashlight',
-    price = 1000,
-    name = 'Lights',
-    description = "Lights up while taped",
-    model = 'models/maxofs2d/light_tubular.mdl',
-    CannotBuy = CannotBuyTrash,
-    OnBuy = function(self, ply)
-        local nxt = {}
-
-        for k, v in pairs(trashlist) do
-            if PropTrashLightData[v] then
-                table.insert(nxt, v)
-            end
-        end
-
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
-    end
-})
 
 SS_Product({
     class = 'trashseat',
@@ -275,23 +322,6 @@ SS_Product({
     end
 })
 
-SS_Product({
-    class = 'trashdoor',
-    price = 2000,
-    name = 'Doors',
-    description = "Can be opened",
-    model = 'models/staticprop/props_c17/door01_left.mdl',
-    CannotBuy = CannotBuyTrash,
-    OnBuy = function(self, ply)
-        local nxt = {}
-
-        for k, v in pairs(PropTrashDoors) do
-            table.insert(nxt, k)
-        end
-
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
-    end
-})
 
 SS_Product({
     class = 'trashtheater',
