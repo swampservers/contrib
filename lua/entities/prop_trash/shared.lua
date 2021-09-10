@@ -16,49 +16,52 @@ function Entity:GetTrashClass()
 end
 
 PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
--- stuff here
-
+    -- stuff here
     ["models/props_interiors/furniture_lamp01a.mdl"] = {
         class = "light",
         data = {
-        untaped = false,
-        size = 500,
-        brightness = 2,
-        style = 0,
-        pos = Vector(0, 0, 27)}
+            untaped = false,
+            size = 500,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 27)
+        }
     },
     ["models/maxofs2d/light_tubular.mdl"] = {
         class = "light",
         data = {
-        untaped = false,
-        size = 300,
-        brightness = 2,
-        style = -1,
-        pos = Vector(0, 0, 0)}
+            untaped = false,
+            size = 300,
+            brightness = 2,
+            style = -1,
+            pos = Vector(0, 0, 0)
+        }
     },
     ["models/light/cagedlight.mdl"] = {
         class = "light",
         data = {
-        untaped = false,
-        size = 300,
-        brightness = 2,
-        style = 0,
-        pos = Vector(0, 0, 0)}
+            untaped = false,
+            size = 300,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 0)
+        }
     },
     ["models/brian/flare.mdl"] = {
         class = "light",
         data = {
-        untaped = true,
-        size = 300,
-        brightness = 2,
-        style = 6,
-        pos = Vector(0, 0, 8)}
+            untaped = true,
+            size = 300,
+            brightness = 2,
+            style = 6,
+            pos = Vector(0, 0, 8)
+        }
     },
     ["models/maxofs2d/lamp_flashlight.mdl"] = {
         class = "gate",
         data = {
-            func="inverter",
-            inputarea = {Vector(-22,-10,-10),Vector(-2,10,10)}
+            func = "inverter",
+            inputarea = {Vector(-22, -10, -10), Vector(-2, 10, 10)}
         }
     }
 })
@@ -66,20 +69,22 @@ PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
 -- hopefully this isnt a bottleneck, if it is we need a cache (which is subject to new models being added)
 function GetSpecialTrashModelsByClass(class)
     local t = {}
-    for k,v in pairs(PropTrashSpecialModels) do
-        if v.class==class then
+
+    for k, v in pairs(PropTrashSpecialModels) do
+        if v.class == class then
             table.insert(t, k)
         end
     end
+
     return t
 end
 
 function TrashSpecialModelData(m)
     local d = PropTrashSpecialModels[m]
+
     if not d then
         -- TODO: automatic class computation here, and save it
         d = {}
-        
         local mn = table.remove(string.Explode("/", m)):lower()
 
         if mn:find("light") or mn:find("lamp") or mn:find("lantern") then
@@ -100,10 +105,11 @@ function TrashSpecialModelData(m)
                 class = "balloon"
             }
         end
-
         -- empty tables are not saved yet
+
         return PropTrashSpecialModels[m] or {}
     end
+
     return d
 end
 
@@ -111,10 +117,7 @@ function ENT:GetSpecialModelData()
     return TrashSpecialModelData(self:GetModel())
 end
 
-
-
 function ENT:ElectricalInputVector()
-
 end
 
 if CLIENT then
