@@ -95,6 +95,12 @@ function TrashSpecialModelData(m)
             }
         end
 
+        if mn:find("balloon") then
+            PropTrashSpecialModels[m] = {
+                class = "balloon"
+            }
+        end
+
         -- empty tables are not saved yet
         return PropTrashSpecialModels[m] or {}
     end

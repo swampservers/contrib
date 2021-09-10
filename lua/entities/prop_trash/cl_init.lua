@@ -215,11 +215,11 @@ timer.Create("TrashLights", 0.1, 0, function()
             if e.lightmade then
                 local dlight = DynamicLight(e:EntIndex())
                 if dlight then
-                    dlight.r = 0
-                    dlight.g = 0
-                    dlight.b = 0
-                    dlight.brightness = 0
-                    dlight.Size = 0
+                    dlight.r = 1
+                    dlight.g = 1
+                    dlight.b = 1
+                    dlight.brightness = 0.01
+                    dlight.Size = 0.01
                     dlight.Decay = 1
                     dlight.DieTime = CurTime() + 0.01
                 end
