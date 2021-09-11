@@ -32,7 +32,6 @@ SS_AccessoryItem({
     }
 })
 
-
 SS_AccessoryItem({
     class = "clownshoe",
     price = 50000,

@@ -225,13 +225,12 @@ function SS_Item(item)
     function item:ShouldShow()
         return self.eq
     end
-    
 
     if not item.SellValue then
         -- naming it "price" triggers making a product for it below, should probably always call it price and have a special key for unlisted items
         local value = item.value or item.price
         assert(value and value >= 0, "Price or value is needed")
-        item.SellValue = function(self) return math.floor( (self.specs.value or value) * 0.8) end
+        item.SellValue = function(self) return math.floor((self.specs.value or value) * 0.8) end
     end
 
     -- item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
