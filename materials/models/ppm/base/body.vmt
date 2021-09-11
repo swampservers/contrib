@@ -11,7 +11,7 @@
 	"$phongalbedotint" "1"
 	"$phongtint" "[1 .95 .95]"
 	"$phongfresnelranges"	"[0.5 6 10]"
-	$lightwarptexture "models/ppm/base/lightwarp"
+
 	$rimlight               1
 	$rimlightexponent       2
 	$rimlightboost          1
