@@ -381,25 +381,31 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     else
         mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
     end
-    mdl:SetNoDraw(true)
+
     mdl.item = item
     local pone = isPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
-    local orpos,orang = ent:GetPos(),ent:GetAngles()
 
     if attach == "eyes" then
         local attach_id = ent:LookupAttachment("eyes")
+        local head_bone_id = ent:LookupBone(SS_Attachments["head"][pone and 2 or 1])
 
-        if attach_id < 1 then
+        local attach_angpos = ent:GetAttachment(attach_id)
+        local bpos, bang = ent:GetBonePosition(head_bone_id)
+
+        if attach_id < 1 or not head_bone_id or not attach_angpos then
             mdl:Remove()
 
             return
         end
-        local angpos = ent:GetAttachment(attach_id)
-        orpos,orang = angpos.Pos,angpos.Ang
 
-        mdl:SetParent(ent, attach_id)
-        mdl._FollowedBone = nil
+        translate, rotate = LocalToWorld(translate, rotate, attach_angpos.Pos, attach_angpos.Ang)
+        translate, rotate = WorldToLocal(translate, rotate, bpos, bang)
+        mdl._FollowedBone = head_bone_id
+        mdl:FollowBone(ent, head_bone_id)
+
+        -- This has issues with detaching when sitting
+        -- mdl:SetParent(ent, attach_id)
     else
         local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
 
@@ -408,15 +414,11 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
 
             return
         end
-        orpos,orang = ent:GetBonePosition(bone_id)
-
-        mdl:FollowBone(ent, bone_id)
         mdl._FollowedBone = bone_id
+        mdl:FollowBone(ent, bone_id)
     end
 
-    --mdl:SetPredictable(true)
-    --mdl:SetPredictable(true)
-    
+    -- mdl:SetPredictable(true)
     -- if scale ~= e.appliedscale then
     mdl.matrix = isnumber(scale) and Matrix({
         {scale, 0, 0, 0},
@@ -429,18 +431,18 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
         {0, 0, scale.z, 0},
         {0, 0, 0, 1}
     })
-    orpos,orang = LocalToWorld(translate,rotate,orpos,orang)
-
-    mdl:SetPos(orpos)
-    mdl:SetAngles(orang)
 
     -- TODO: do we need to adjust renderbounds?
     mdl:EnableMatrix("RenderMultiply", mdl.matrix)
     -- e.appliedscale = scale
     -- end
+
+
+
     --this likes to change itself
     mdl:SetLocalPos(translate)
     mdl:SetLocalAngles(rotate)
+
     -- if item.cfg.imgur then
     --     local imat = ImgurMaterial({
     --         id = item.cfg.imgur.url,

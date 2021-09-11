@@ -403,25 +403,40 @@ PANEL.SetupGizmo["wear.pos"] = function(self)
 
         if (IsValid(ent)) then
             local par, att = ent:GetParent(), ent:GetParentAttachment()
-            local bone = ent._FollowedBone
+
+            
+
+            local cust = SS_CustomizerPanel
+            local suf = cust.wearsuf or "_h"
+            local pone = suf == "_p"
+            local nestkeys = self.propkeys
+
+            local boneval = GetNestedProperty(cust.item, {nestkeys[1],"attach"},TYPE_STRING) or "eyes"
+            local bonename = SS_GetBoneFromAttachName(boneval,cust.wearsuf == "_p")
+            
+            local bone = par:LookupBone(bonename)
             local bpos, bang
 
-            if (bone) then
+            if bone then
                 local mat = par:GetBoneMatrix(bone)
 
                 if (mat) then
                     bpos, bang = mat:GetTranslation(), mat:GetAngles()
                 end
-            end
 
-            if (att) then
-                local angpos = par:GetAttachment(att)
-
-                if (angpos) then
-                    bpos = angpos.Pos
-                    bang = angpos.Ang
+                if boneval == "eyes" then
+                    if (att) then
+                        local angpos = par:GetAttachment(par:LookupAttachment("eyes"))
+        
+                        if (angpos) then
+                            bpos = angpos.Pos
+                            bang = angpos.Ang
+                        end
+                    end
                 end
             end
+
+
 
             local ang = bang
 
