@@ -1111,13 +1111,13 @@ function PANEL:Paint()
             SS_PreRender(iop)
         end
     end
-    --[[
-    if(SS_MAT_DRAWOVER and IsValid(SS_HoverCSModel))then
+    
+    if(IsValid(SS_TextureDownloadWindow) and SS_MAT_DRAWOVER and IsValid(SS_HoverCSModel))then
         render.MaterialOverride(SS_MAT_DRAWOVER)
 
         SS_HoverCSModel:DrawModel()
     end    
-    ]]
+   
 
     -- if in editor, draw our gizmos
     local cust = SS_CustomizerPanel

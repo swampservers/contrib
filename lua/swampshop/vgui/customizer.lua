@@ -900,6 +900,7 @@ function ImageGetterPanel()
 
     if mat then
         local Frame = vgui.Create("DFrame")
+        SS_TextureDownloadWindow = Frame
         Frame:SetSize(tw + 10, th + 30 + 24)
         Frame:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN + 24, SS_COMMONMARGIN, SS_COMMONMARGIN)
         Frame:Center()
