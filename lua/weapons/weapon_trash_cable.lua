@@ -8,8 +8,8 @@ SWEP.SlotPos = 0
 SWEP.Purpose = "Build things"
 SWEP.Instructions = "Primary: Make cables (click and drag)\nSecondary: Remove cables"
 SWEP.AdminSpawnable = false
-SWEP.ViewModel = "models/weapons/c_toolgun.mdl"
-SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
+SWEP.ViewModel = "models/props_c17/pulleywheels_small01.mdl"
+SWEP.WorldModel = "models/props_c17/pulleywheels_small01.mdl"
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom = false
 SWEP.Primary.ClipSize = -1
@@ -27,7 +27,7 @@ CABLE_MAX_LENGTH = 100
 -- models/props_c17/pulleywheels_small01.mdl
 
 function SWEP:Initialize()
-    self:SetHoldType("pistol")
+    self:SetHoldType("slam")
 end
 
 local trashcablestartdata = nil
@@ -119,4 +119,64 @@ end
 function SWEP:DrawHUD()
     -- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
     -- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
+end
+
+
+function SWEP:DrawWorldModel()
+    local ply = self:GetOwner()
+    self:SetModelScale(0.8)
+
+    if (IsValid(ply)) then
+        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+        local bon = ply:LookupBone(bn) or 0
+        local opos = self:GetPos()
+        local oang = self:GetAngles()
+        local bp, ba = ply:GetBonePosition(bon)
+
+        if (bp) then
+            opos = bp
+        end
+
+        if (ba) then
+            oang = ba
+        end
+
+        if ply:IsPony() then
+            opos = opos + oang:Forward() * 9.5
+            opos = opos + oang:Up() * 3.6
+            opos = opos + oang:Right() * -3.7
+            oang:RotateAroundAxis(oang:Right(), 180)
+            oang:RotateAroundAxis(oang:Up(), -90)
+        else
+            opos = opos + oang:Right() * 7
+            opos = opos + oang:Forward() * 2
+            opos = opos + oang:Up() * 1
+            -- oang:RotateAroundAxis(oang:Up(), 90)
+            oang:RotateAroundAxis(oang:Right(), 180)
+            oang:RotateAroundAxis(oang:Forward(), -90)
+            -- oang:RotateAroundAxis(oang:Forward(), -90)
+        end
+
+        self:SetupBones()
+        local mrt = self:GetBoneMatrix(0)
+
+        if (mrt) then
+            mrt:SetTranslation(opos)
+            mrt:SetAngles(oang)
+            mrt:Scale(Vector(1,1,1)*0.8)
+            self:SetBoneMatrix(0, mrt)
+        end
+    end
+
+    self:DrawModel()
+end
+
+function SWEP:GetViewModelPosition(pos, ang)
+    pos = pos + ang:Right() * 10
+    pos = pos + ang:Up() * -15
+    pos = pos + ang:Forward() * 25
+    ang:RotateAroundAxis(ang:Up(), 110)
+    ang:RotateAroundAxis(ang:Forward(), -60)
+
+    return pos, ang
 end

@@ -146,7 +146,7 @@ SS_WeaponProduct({
     price = 10000,
     name = 'Cable Tool',
     description = "Use this to wire props together!",
-    model = 'models/weapons/w_toolgun.mdl'
+    model = 'models/props_c17/pulleywheels_small01.mdl'
 })
 
 
