@@ -13,8 +13,10 @@ function SS_GetMaterial(nam)
 end
 
 function SS_PreRender(item)
-    local cfg = item.cfg
+    local cfg = item.cfg or {}
+
     if cfg.imgur then
+
         local imat = WebMaterial({
             id = cfg.imgur.url,
             owner = item.owner,

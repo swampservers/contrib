@@ -1017,14 +1017,17 @@ function PANEL:Paint()
     local ply = LocalPlayer()
     local mdl = ply:GetModel()
     local isplayer = true
-    local drawplayer = true
+    local drawplayer = true --draw the object with the player or by itself
     local hide_accessory --hide accessories if not drawing single product?
     local iop = SS_HoverIOP
     local cust = SS_CustomizerPanel
    
+
     if(iop)then
         local equipped = iop.cfg and !iop.never_equip and iop.eq
-        --if iop.wear and !equipped and IsValid(cust) then drawplayer = false end
+        if iop.wear and !equipped and IsValid(cust) and cust.item != iop then drawplayer = false end
+
+        if !iop.wear then drawplayer = false end
         if iop.playermodel then drawplayer = false end
         if iop.playermodelmod then drawplayer = equipped end
     end
