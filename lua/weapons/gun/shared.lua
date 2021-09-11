@@ -141,6 +141,7 @@ function GunPerkOverrides(swep, perk)
         t.HalfDamageDistance = swep.HalfDamageDistance * 2
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
+        t.UnscopeOnShoot = false
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 2
         t.PelletSpread = swep.PelletSpread * 1.5
@@ -805,7 +806,7 @@ function SWEP:GunFire()
 
             dmginfo:SetDamage(math.Round(scale * self.Damage))
 
-            if IsValid(trace.Entity) and trace.Entity:IsPlayer() then
+            if IsValid(trace.Entity) and trace.Entity:IsPlayer() and not trace.Entity:InVehicle() then
                 local impact = dmginfo:GetDamage() * 0.15
 
                 if self:HasPerk("highimpact") then

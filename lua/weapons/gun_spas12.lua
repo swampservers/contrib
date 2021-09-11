@@ -1,89 +1,90 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 DEFINE_BASECLASS("gun")
-SWEP.GunType = "autoshotgun"
-SWEP.PrintName = "XM1014"
-SWEP.Purpose = "Accurate semi-automatic shotgun."
+SWEP.GunType = "shotgun"
+SWEP.PrintName = "SPAS-12"
+SWEP.Purpose = "Powerful semi-automatic shotgun."
 SWEP.HoldType = "shotgun"
 SWEP.Slot = 0
-CSKillIcon(SWEP, "]")
+
+if CLIENT then
+    killicon.AddAlias("gun_spas12", "weapon_shotgun")
+end
+
 --
-SWEP.WorldModel = "models/weapons/w_shot_xm1014.mdl"
-SWEP.ViewModel = "models/weapons/cstrike/c_shot_xm1014.mdl"
-SWEP.ShootSound = "Weapon_XM1014.Single"
+SWEP.WorldModel = "models/weapons/w_shotgun.mdl"
+SWEP.ViewModel = "models/weapons/v_shotgun.mdl"
+SWEP.ShootSound = "Weapon_Shotgun.Double"
 SWEP.CSMuzzleFlashes = true
 SWEP.CSMuzzleX = false
 SWEP.CSMuzzleFlashScale = 1.30
 --
 SWEP.Primary.Ammo = "BULLET_PLAYER_BUCKSHOT"
-SWEP.Primary.ClipSize = 7
-SWEP.Primary.DefaultClip = 7
+SWEP.Primary.ClipSize = 8
+SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
 SWEP.Damage = 15
-SWEP.CycleTime = 0.22
+SWEP.CycleTime = 0.26
 SWEP.HalfDamageDistance = 1024
 --
 SWEP.SpreadBase = 0.006
 SWEP.SpreadMove = 0.02
-SWEP.Spray = 0.1
+SWEP.Spray = 0.12
 SWEP.SprayExponent = 2
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 0.6,
-    ShotsTo90Spray = 6
+    TapFireInterval = 0.7,
+    ShotsTo90Spray = 5
 })
 
 --
-SWEP.NumPellets = 8
-SWEP.PelletSpread = 0.025
+SWEP.NumPellets = 10
+SWEP.PelletSpread = 0.04
 SWEP.UseShellReload = true
-SWEP.KickUBase = 1.5
+SWEP.KickUBase = 2.5
 SWEP.KickUSpray = 1.5
 SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
 SWEP.MoveSpeed = 230 / 250
--- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
--- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
--- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
--- 	"MaxPlayerSpeed" 		"240"
--- 	"WeaponType" 			"Shotgun"
+-- 	"MaxPlayerSpeed" 		"220"
+-- 	"WeaponType"			"Shotgun"
 -- 	"FullAuto"				1
--- 	"WeaponPrice"			"3000"
+-- 	"WeaponPrice"			"1700"
 -- 	"WeaponArmorRatio"		"1.0"
--- 	"CrosshairMinDistance"		"9"
--- 	"CrosshairDeltaDistance"	"4"
+-- 	"CrosshairMinDistance"		"8"
+-- 	"CrosshairDeltaDistance"	"6"
 -- 	"Team"				"ANY"
 -- 	"BuiltRightHanded"		"0"
--- 	"PlayerAnimationExtension"	"xm1014"
+-- 	"PlayerAnimationExtension" 	"m3s90"
 -- 	"MuzzleFlashScale"		"1.3"
 -- 	"CanEquipWithShield"		"0"
 -- 	// Weapon characteristics:
 -- 	"Penetration"			"1"
--- 	"Damage"			"22"
+-- 	"Damage"			"26"
 -- 	"Range"				"3000"
 -- 	"RangeModifier"			"0.70"
--- 	"Bullets"			"6"
--- 	"CycleTime"			"0.25"
+-- 	"Bullets"			"9"
+-- 	"CycleTime"			"0.88"
 -- 	// New accuracy model parameters
 -- 	"Spread"					0.04000
 -- 	"InaccuracyCrouch"			0.00750
 -- 	"InaccuracyStand"			0.01000
--- 	"InaccuracyJump"			0.41176
--- 	"InaccuracyLand"			0.08235
--- 	"InaccuracyLadder"			0.07721
--- 	"InaccuracyFire"			0.03644
--- 	"InaccuracyMove"			0.03544
--- 	"RecoveryTimeCrouch"		0.32894
--- 	"RecoveryTimeStand"			0.46052
+-- 	"InaccuracyJump"			0.42000
+-- 	"InaccuracyLand"			0.08400
+-- 	"InaccuracyLadder"			0.07875
+-- 	"InaccuracyFire"			0.04164
+-- 	"InaccuracyMove"			0.04320
+-- 	"RecoveryTimeCrouch"		0.29605
+-- 	"RecoveryTimeStand"			0.41447
 -- 	// Weapon data is loaded by both the Game and Client DLLs.
--- 	"printname"			"#Cstrike_WPNHUD_xm1014"
--- 	"viewmodel"			"models/weapons/v_shot_xm1014.mdl"
--- 	"playermodel"			"models/weapons/w_shot_xm1014.mdl"
+-- 	"printname"			"#Cstrike_WPNHUD_m3"
+-- 	"viewmodel"			"models/weapons/v_shot_m3super90.mdl"
+-- 	"playermodel"			"models/weapons/w_shot_m3super90.mdl"
 -- 	"anim_prefix"			"anim"
 -- 	"bucket"			"0"
 -- 	"bucket_position"		"0"
--- 	"clip_size"			"7"
+-- 	"clip_size"			"8"
 -- 	"primary_ammo"			"BULLET_PLAYER_BUCKSHOT"
 -- 	"secondary_ammo"		"None"
 -- 	"weight"			"20"
@@ -93,7 +94,7 @@ SWEP.MoveSpeed = 230 / 250
 -- 	{
 -- 		//"reload"			"Default.Reload"
 -- 		//"empty"				"Default.ClipEmpty_Rifle"
--- 		"single_shot"			"Weapon_XM1014.Single"
+-- 		"single_shot"		"Weapon_M3.Single"
 -- 		special3			Default.Zoom
 -- 	}
 -- 	// Weapon Sprite data is loaded by the Client DLL.
@@ -102,12 +103,12 @@ SWEP.MoveSpeed = 230 / 250
 -- 		"weapon"
 -- 		{
 -- 				"font"		"CSweaponsSmall"
--- 				"character"	"]"
+-- 				"character"	"K"
 -- 		}
 -- 		"weapon_s"
 -- 		{
 -- 				"font"		"CSweapons"
--- 				"character"	"]"
+-- 				"character"	"K"
 -- 		}
 -- 		"ammo"
 -- 		{
@@ -135,37 +136,35 @@ SWEP.MoveSpeed = 230 / 250
 -- 	{
 -- 		Viewmodel
 -- 		{
--- 			Mins	"-13 -3 -11"
--- 			Maxs	"29 10 0"
+-- 			Mins	"-13 -3 -13"
+-- 			Maxs	"26 10 -3"
 -- 		}
 -- 		World
 -- 		{
--- 			Mins	"-4 -8 -4"
--- 			Maxs	"30 8 6"
+-- 			Mins	"-9 -8 -5"
+-- 			Maxs	"28 9 9"
 -- 		}
 -- 	}
 -- }]])
 -- function SWEP:PrimaryAttack()
---     -- local pPlayer = self.Owner
---     -- if not IsValid(pPlayer) then return end
---     -- if pPlayer:WaterLevel() == 3 then
---     --     self:PlayEmptySound()
---     --     self:SetNextPrimaryFire(CurTime() + 0.15)
---     --     return
---     -- end
+--     local pPlayer = self.Owner
+--     if not IsValid(pPlayer) then return end
 --     if self:GetNextPrimaryFire() > CurTime() then return end
---     self:GunFire(self:BuildSpread())
---     self:SetSpecialReload(0)
--- end
--- function SWEP:GunFire(spread)
---     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
---     if self:GetOwner():GetAbsVelocity():Length2D() > 5 then
---         self:KickBack(0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7)
---     elseif not self:GetOwner():OnGround() then
---         self:KickBack(0.9, 0.45, 0.35, 0.04, 5.25, 3.5, 4)
---     elseif self:GetOwner():Crouching() then
---         self:KickBack(0.275, 0.2, 0.125, 0.02, 3, 1, 9)
---     else
---         self:KickBack(0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8)
+--     if pPlayer:WaterLevel() == 3 then
+--         self:PlayEmptySound()
+--         self:SetNextPrimaryFire(CurTime() + 0.2)
+--         return false
 --     end
+--     local spread = self:BuildSpread()
+--     if not self:BaseGunFire(spread, self.CycleTime, true) then return end
+--     self:SetSpecialReload(0)
+--     local angle = pPlayer:GetViewPunchAngles()
+--     -- Update punch angles.
+--     if not pPlayer:OnGround() then
+--         angle.x = angle.x - util.SharedRandom("M3PunchAngleGround", 4, 6)
+--     else
+--         angle.x = angle.x - util.SharedRandom("M3PunchAngle", 8, 11)
+--     end
+--     pPlayer:SetViewPunchAngles(angle)
+--     return true
 -- end

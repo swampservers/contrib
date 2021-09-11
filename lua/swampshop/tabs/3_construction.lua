@@ -49,6 +49,7 @@ end
 
 SS_Item({
     class = "prop",
+    background = true,
     value = 5000,
     name = "Prop",
     description = "Haha, where did you find this one?",
@@ -101,15 +102,19 @@ SS_Item({
     never_equip = true
 })
 
+-- props={} for i=1,50 do table.insert(props,GetSandboxProp()) end net.Start("RunLuaLong") net.WriteString("SetClipboardText([[ "..util.TableToJSON(props).." ]])") net.Send(ME())
+local previews = {"models/props_c17/cashregister01a.mdl", "models/props_junk/garbage_plasticbottle001a.mdl", "models/maxofs2d/lamp_projector.mdl", "models/props_lab/kennel_physics.mdl", "models/maxofs2d/hover_rings.mdl", "models/props_lab/walllight001a.mdl", "models/Items/BoxBuckshot.mdl", "models/mechanics/solid_steel/i_beam_4.mdl", "models/props_c17/FurnitureChair001a.mdl", "models/maxofs2d/companion_doll.mdl", "models/props/de_tides/patio_chair2r.mdl", "models/props_wasteland/light_spotlight01_lamp.mdl", "models/staticprop/props_c17/furniturefridge001a.mdl", "models/props_junk/TrafficCone001a.mdl", "models/mechanics/roboticslarge/a1.mdl", "models/xqm/Rails/slope_down_15.mdl", "models/combine_room/combine_wire002.mdl", "models/staticprop/props_junk/wood_pallet001a.mdl", "models/props_c17/BriefCase001a.mdl", "models/props_doors/door03_slotted_left.mdl", "models/staticprop/props_c17/furnituretable003a.mdl", "models/props_trainstation/TrackSign08.mdl", "models/props_c17/fence01b.mdl", "models/xqm/hydcontrolbox.mdl", "models/props_phx/rt_screen.mdl", "models/props_phx/wheels/wooden_wheel1.mdl", "models/Gibs/Fast_Zombie_Torso.mdl", "models/xqm/box2s.mdl", "models/props_wasteland/light_spotlight01_base.mdl", "models/Gibs/HGIBS_rib.mdl", "models/props_mlpprops/canterlotdresser2.mdl", "models/mechanics/wheels/wheel_smooth2.mdl", "models/props_c17/FurnitureSink001a.mdl", "models/props_junk/TrashDumpster01a.mdl", "models/hunter/blocks/cube05x1x05.mdl", "models/props_trainstation/trainstation_ornament002.mdl", "models/hunter/blocks/cube05x105x05.mdl", "models/props_c17/FurnitureShelf001a.mdl", "models/props_c17/FurnitureChair001a.mdl", "models/props_c17/cashregister01a.mdl", "models/props_junk/meathook001a.mdl", "models/xqm/Rails/straight_1.mdl", "models/props_docks/channelmarker_gib01.mdl", "models/mechanics/robotics/b1.mdl", "models/maxofs2d/button_slider.mdl", "models/nova/jeep_seat.mdl", "models/props_combine/health_charger001.mdl", "models/props_trainstation/trashcan_indoor001a.mdl", "models/swamponions/bigburger.mdl", "models/Mechanics/gears2/gear_18t3.mdl", "models/props_c17/lampShade001a.mdl", "models/props_c17/gravestone002a.mdl", "models/hunter/tubes/tube2x2x025c.mdl", "models/props_interiors/Furniture_chair01a.mdl", "models/props_c17/furnitureboiler001a.mdl", "models/props_wasteland/panel_leverHandle001a.mdl", "models/xeon133/racewheel/race-wheel-35.mdl", "models/props_phx/games/chess/white_bishop.mdl", "models/props_phx/misc/potato_launcher_cap.mdl", "models/props_c17/FurnitureTable003a.mdl", "models/mechanics/robotics/f1.mdl", "models/xqm/jetenginemedium.mdl", "models/Items/BoxBuckshot.mdl", "models/staticprop/props_phx/ww2bomb2.mdl", "models/props_lab/tpplugholder_single.mdl", "models/staticprop/props_canal/boat001b_chunk01.mdl", "models/combine_room/combine_wire002.mdl", "models/props_junk/propane_tank001a.mdl", "models/props_junk/gascan001a.mdl", "models/props_combine/breendesk.mdl", "models/props_lab/tpplugholder.mdl", "models/xqm/panel2x2.mdl", "models/props_c17/pulleywheels_large01.mdl", "models/swamponions/theater_seats/seat2.mdl", "models/xeon133/slider/slider_12x12x24.mdl", "models/props_wasteland/kitchen_stove001a.mdl", "models/food/burger.mdl", "models/xqm/panel180.mdl", "models/mechanics/wheels/bmwl.mdl", "models/xqm/quad2.mdl", "models/props_trainstation/TrackSign01.mdl", "models/xqm/quad3.mdl", "models/props_wasteland/controlroom_filecabinet002a.mdl", "models/Gibs/wood_gib01c.mdl", "models/phxtended/tri2x1.mdl", "models/hunter/blocks/cube05x1x05.mdl", "models/props_lab/box01b.mdl", "models/alts/props/sportzone/locker/waterfd2.mdl", "models/maxofs2d/button_05.mdl", "models/props_phx/construct/metal_plate_curve.mdl", "models/staticprop/weapons/w_mp40.mdl", "models/props_lab/tpplugholder_single.mdl", "models/props_junk/metalgascan.mdl", "models/props_lab/powerbox01a.mdl", "models/mechanics/robotics/b2.mdl", "models/balloons/balloon_classicheart.mdl", "models/props_c17/metalladder002b.mdl", "models/props_interiors/Radiator01a.mdl", "models/props_lab/reciever01d.mdl", "models/Gibs/helicopter_brokenpiece_02.mdl"}
+
 -- return SS_GetRating(self.specs.rating).id>=7 and 1000 or 100
 SS_Product({
     class = 'sandbox',
+    background = true,
     price = 25000,
-    name = 'Sandbox Lootbox',
+    name = 'Prop Blueprint',
     description = "A random prop that you can spawn from your inventory anytime",
-    model = 'models/Items/ammocrate_smg1.mdl',
+    GetModel = function(self) return previews[(math.floor(SysTime() * 2.5) % #previews) + 1] end,
     CannotBuy = function(self, ply)
-        if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
+        -- if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
     end,
     OnBuy = function(self, ply)
         -- if ply.CANTSANDBOX then return end
@@ -131,6 +136,67 @@ SS_Product({
                 MakeTrashItem(ply, item)
             end)
         end, 4)
+    end
+})
+
+SS_Heading("Gadgets (WIP)")
+
+SS_WeaponProduct({
+    class = "weapon_trash_cable",
+    price = 10000,
+    name = 'Cable Tool',
+    description = "Use this to wire props together!",
+    model = 'models/props_c17/pulleywheels_small01.mdl'
+})
+
+SS_Product({
+    class = 'trashlight',
+    price = 1000,
+    name = 'Lights',
+    description = "Lights up while taped or powered",
+    model = 'models/maxofs2d/light_tubular.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = GetSpecialTrashModelsByClass("light")
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+SS_Product({
+    class = 'trashbutton',
+    price = 5000,
+    name = 'Buttons',
+    description = "The source of power",
+    model = 'models/maxofs2d/button_01.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = GetSpecialTrashModelsByClass("button")
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+SS_Product({
+    class = 'trashdoor',
+    price = 2000,
+    name = 'Doors',
+    description = "Can be opened",
+    model = 'models/staticprop/props_c17/door01_left.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        local nxt = GetSpecialTrashModelsByClass("door")
+        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+    end
+})
+
+SS_Product({
+    class = 'trashinverter',
+    price = 1000,
+    name = 'Inverter',
+    description = "What does this do?",
+    model = 'models/maxofs2d/lamp_flashlight.mdl',
+    CannotBuy = CannotBuyTrash,
+    OnBuy = function(self, ply)
+        e = makeTrash(ply, "models/maxofs2d/lamp_flashlight.mdl")
     end
 })
 
@@ -231,26 +297,6 @@ SS_Product({
 -- end)
 -- end)
 SS_Product({
-    class = 'trashlight',
-    price = 1000,
-    name = 'Lights',
-    description = "Lights up while taped",
-    model = 'models/maxofs2d/light_tubular.mdl',
-    CannotBuy = CannotBuyTrash,
-    OnBuy = function(self, ply)
-        local nxt = {}
-
-        for k, v in pairs(trashlist) do
-            if PropTrashLightData[v] then
-                table.insert(nxt, v)
-            end
-        end
-
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
-    end
-})
-
-SS_Product({
     class = 'trashseat',
     price = 2000,
     name = 'Chairs',
@@ -264,24 +310,6 @@ SS_Product({
             if ChairOffsets[v] then
                 table.insert(nxt, v)
             end
-        end
-
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
-    end
-})
-
-SS_Product({
-    class = 'trashdoor',
-    price = 2000,
-    name = 'Doors',
-    description = "Can be opened",
-    model = 'models/staticprop/props_c17/door01_left.mdl',
-    CannotBuy = CannotBuyTrash,
-    OnBuy = function(self, ply)
-        local nxt = {}
-
-        for k, v in pairs(PropTrashDoors) do
-            table.insert(nxt, k)
         end
 
         e = makeTrash(ply, nxt[math.random(1, #nxt)])

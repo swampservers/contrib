@@ -2,7 +2,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "sniper"
 SWEP.PrintName = "Scout"
-SWEP.Purpose = "Lightweight sniper rifle."
+SWEP.Purpose = "Lightweight sniper rifle. Can remove props."
 SWEP.HoldType = "ar2"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "n")
@@ -48,8 +48,6 @@ SWEP.MoveSpeed = 1
 --
 SWEP.SpawnPriceMod = 0.7
 SWEP.AmmoPriceMod = 0.6
-
-
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"260"

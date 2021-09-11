@@ -391,7 +391,7 @@ function PLAYER:SetPlayer(ply)
         end):SetIcon("icon16/coins.png")
 
         menu:AddOption("Request Teleport To", function()
-            RunConsoleCommand("say_team", "/tp " .. self.Player:Nick())
+            RunConsoleCommand("say", "/tp " .. self.Player:Nick())
         end):SetIcon("icon16/world.png")
 
         if (LocalPlayer():IsStaff()) then

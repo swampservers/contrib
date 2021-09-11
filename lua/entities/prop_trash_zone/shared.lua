@@ -196,7 +196,7 @@ end
 
 function ENT:CannotTape(userid)
     -- self:GetPos():Distance(Vector(0, -1152, 0)) > 900 and 
-    local basederror = BaseClass.CannotTape(self, userid)
+    local basederror = BaseClass.CannotTape and BaseClass.CannotTape(self, userid)
     if basederror then return basederror end
     local badcount = -1
     local mn, mx = self:GetBounds()

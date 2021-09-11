@@ -11,7 +11,7 @@ BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104
 
 BrandColors = {Color(104, 28, 25), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
 
-CreateClientConVar("ps_darkmode", "0", true)
+-- CreateClientConVar("ps_darkmode", "1", true)
 CreateClientConVar("ps_themecolor", "1", true)
 
 local function SearchUpdateColors(pnl)
@@ -25,7 +25,7 @@ local function SearchUpdateColors(pnl)
 end
 
 function ReloadStyle(darkmode, color)
-    darkmode = darkmode or GetConVar("ps_darkmode"):GetBool()
+    darkmode = true --darkmode or GetConVar("ps_darkmode"):GetBool()
     color = color or GetConVar("ps_themecolor"):GetInt()
     MenuTheme_Brand = BrandColors[color] or BrandColors[1]
     -- local h, s, v = ColorToHSV(MenuTheme_Brand)
@@ -57,10 +57,9 @@ end
 
 ReloadStyle()
 
-cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
-    ReloadStyle(tobool(new))
-end)
-
+-- cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
+--     ReloadStyle(tobool(new))
+-- end)
 cvars.AddChangeCallback("ps_themecolor", function(cvar, old, new)
     ReloadStyle(nil, tonumber(new))
 end)
@@ -561,7 +560,14 @@ surface.CreateFont('SS_ProductName', {
 -- weight = 1000,
 surface.CreateFont("SS_Price", {
     font = "Righteous",
-    size = 31,
+    size = 32,
+    weight = 900,
+    antialias = true,
+})
+
+surface.CreateFont("SS_PriceSmaller", {
+    font = "Righteous",
+    size = 27,
     weight = 900,
     antialias = true,
 })

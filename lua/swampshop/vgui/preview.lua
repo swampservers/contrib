@@ -990,7 +990,16 @@ function PANEL:Paint()
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
     local w, h = self:GetSize()
-    cam.Start3D(self:GetCamPos(), self:GetLookAng(), self:GetFOV(), x, y, w, h, 5, 4096)
+
+    local hextent = h
+    
+    -- make space for the statbars
+    if SS_HoverIOP and SS_HoverIOP.class == "weapon" then
+        hextent = 0.6 * hextent
+    end
+
+    cam.Start3D(self:GetCamPos(), self:GetLookAng(), self:GetFOV(), x, y, w, hextent, 5, 4096)
+
     cam.IgnoreZ(true)
     render.SuppressEngineLighting(true)
     render.SetLightingOrigin(self.Entity:GetPos())
@@ -1045,6 +1054,7 @@ function PANEL:Paint()
 
         local function GetShopAccessoryItems()
             local a = {}
+            local hoveritem = SS_HoverItem
 
 
             if IsValid(LocalPlayer()) then
@@ -1161,8 +1171,13 @@ end
 
 function PANEL:SetModelCaching(sm)
     if sm ~= self.ModelName then
+        local ang = IsValid(self.Entity) and self.Entity:GetAngles()
         self.ModelName = sm
         self:SetModel(sm)
+
+        if ang then
+            self.Entity:SetAngles(ang)
+        end
         -- if isPonyModel(sm) then
         --     self.Entity.isEditorPony = true
         --     PPM.editor3_pony = self.Entity

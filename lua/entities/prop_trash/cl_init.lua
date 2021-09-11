@@ -32,19 +32,8 @@ end)
 
 function ENT:Initialize()
     -- default light thing
-    local mn = table.remove(string.Explode("/", self:GetModel())):lower()
-
-    if mn:find("light") or mn:find("lamp") or mn:find("lantern") then
-        PropTrashLightData[self:GetModel()] = {
-            untaped = false,
-            size = 300,
-            brightness = 2,
-            style = 0,
-            pos = Vector(0, 0, 0)
-        }
-    end
-
-    self.MyLightData = PropTrashLightData[self:GetModel()]
+    local special = self:GetSpecialModelData()
+    self.MyLightData = special.class == "light" and special.data or nil
     TRASH_LIGHTS[self] = self.MyLightData
     self:ApplyMaterialData(self:GetMaterialData())
     -- local col = self:GetUnboundedColor()
@@ -119,34 +108,26 @@ function ENT:ApplyMaterialData(data)
     end
 end
 
-
 -- local matcache = {}
-
 -- function ENT:SetGoodSkin()
 --     self:SetMaterial()
 --     self:SetSkin(0) 
-
 --     local mdl = self:GetModel()
 --     if mdl=="models/props_crates/static_crate_40.mdl" then self:SetSkin(1) end
 --     -- local bestidx = 0
 --     -- local bestcount = 0
-
 --     -- for i=1,self:SkinCount() do
 --     --     self:SetSkin(i-1)
-
 --     --     local okcount = 0
 --     --     for j,v in ipairs(self:GetMaterials()) do
 --     --         print(i,j,v)
 --     --         if matcache[v]==nil then matcache[v]=Material(v) end
 --     --         if not matcache[v]:IsError() then okcount=okcount+1 end
 --     --     end
-        
 --     --     if okcount > bestcount then bestidx = i-1 end
 --     -- end
-
 --     -- self:SetSkin(bestidx)
 -- end
-
 function ENT:Draw()
     --     local acd = self:GetPos():DistToSqr(EyePos())
     --     local acr = AutoCullBase() * (self:GetModelRadius() or 1)
@@ -209,25 +190,46 @@ timer.Create("TrashLights", 0.1, 0, function()
 
         local p = e:LocalToWorld(l.pos)
         local d = ep:DistToSqr(p)
+        local b = e:GetNWFloat("bright", 0)
 
-        if (l.untaped or e:GetTaped()) and d < maxd2 and not FrustrumCull(f, p, 250) then
+        -- (l.untaped or e:GetTaped()) instead of b>0
+        if b > 0 and d < maxd2 and not FrustrumCull(f, p, 250) then
             table.insert(candidates, {
                 e = e,
                 l = l,
                 p = p,
-                d = d
+                d = d,
+                b = b
             })
+        else
+            if e.lightmade then
+                local dlight = DynamicLight(e:EntIndex())
+
+                if dlight then
+                    dlight.r = 1
+                    dlight.g = 1
+                    dlight.b = 1
+                    dlight.brightness = 0.01
+                    dlight.Size = 0.01
+                    dlight.Decay = 1
+                    dlight.DieTime = CurTime() + 0.01
+                end
+            end
         end
+
+        e.lightmade = false
     end
 
     -- print("Candidates", #candidates)
+    -- TOPK sort?
     table.SortByMember(candidates, "d", true)
 
     for i, v in ipairs(candidates) do
         if i > targetcount and v.d > mind2 then break end -- print("break", i-1)
         local e, l, p = v.e, v.l, v.p
+        e.lightmade = true
         local dlight = DynamicLight(e:EntIndex())
-        local c = (e.lightcolor or Vector(1, 1, 1)) * 255
+        local c = (e.lightcolor or Vector(1, 1, 1)) * 255 * v.b
 
         if dlight then
             dlight.pos = p
@@ -251,6 +253,18 @@ timer.Create("TrashLights", 0.1, 0, function()
             dlight.Decay = 1
             dlight.DieTime = CurTime() + 0.3
         end
+    end
+end)
+
+-- TODO merge this shit with zone
+hook.Add("PreDrawTranslucentRenderables", "TrashHoverDraw", function()
+    if IsValid(PropTrashLookedAt) and PropTrashLookedAt:GetSpecialModelData().class == "gate" then
+        -- render.CullMode(MATERIAL_CULLMODE_CW)
+        render.SetColorMaterial()
+        local col = Color(255, 160, 80, 60)
+        local min, max = unpack(PropTrashLookedAt:GetSpecialModelData().data.inputarea)
+        render.DrawBox(PropTrashLookedAt:GetPos(), PropTrashLookedAt:GetAngles(), min, max, col, false)
+        -- render.CullMode(MATERIAL_CULLMODE_CCW)
     end
 end)
 

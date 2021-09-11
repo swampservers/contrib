@@ -301,7 +301,6 @@ end
 
 function PANEL:Setup()
     local DModelPanel = vgui.Create('DModelPanel', self)
-    DModelPanel.model2set = self.iop:GetModel()
     DModelPanel:Dock(FILL)
 
     function DModelPanel:LayoutEntity(ent)
@@ -325,11 +324,13 @@ function PANEL:Setup()
     end
 
     DModelPanel.Paint = function(dmp, w, h)
-        if dmp.model2set then
+        local mdl = self.iop:GetModel()
+
+        if dmp.modelapplied ~= mdl then
             -- might be a workshop model, will be an error till user clicks it and it appears in the preview
             -- todo: use placeholder
-            dmp:SetModel(dmp.model2set)
-            dmp.model2set = nil
+            dmp:SetModel(mdl)
+            dmp.modelapplied = mdl
         end
 
         if is_model_undownloaded(dmp:GetModel()) then
@@ -400,9 +401,37 @@ function PANEL:Think()
     end
 end
 
+-- TODO: make the background be part of the item/product, and show it in the preview
+local blueprint = Material("gui/dupe_bg.png")
+
+-- local orangeprint = CreateMaterial("orangeprint"..CurTime(),"g_colourmodify",{
+-- 	[ "$pp_colour_addr" ] = 0.0,
+-- 	[ "$pp_colour_addg" ] = 0.0,
+-- 	[ "$pp_colour_addb" ] = 0,
+-- 	[ "$pp_colour_brightness" ] = 0,
+-- 	[ "$pp_colour_contrast" ] = 0.8,
+-- 	[ "$pp_colour_colour" ] = -1,
+-- 	[ "$pp_colour_mulr" ] = 0,
+-- 	[ "$pp_colour_mulg" ] = 0,
+-- 	[ "$pp_colour_mulb" ] = 0
+-- })
+-- orangeprint:SetTexture("$fbtexture",blueprint:GetTexture("$basetexture"))
 --NOMINIFY
 function PANEL:Paint(w, h)
     SS_PaintFG(self, w, h)
+
+    if self.iop.background then
+        surface.SetMaterial(blueprint)
+        -- surface.SetDrawColor(shade,shade,shade, 255)
+        surface.SetDrawColor(160, 120, 128, 255)
+
+        if not (self.iop.class == "prop" or self.iop.class == "sandbox") then
+            -- surface.SetMaterial(orangeprint)
+            surface.SetDrawColor(120, 150, 128, 140, 255)
+        end
+
+        surface.DrawTexturedRect(0, 0, w, h)
+    end
 
     if (self:IsSelected()) then
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_Brand, 100))
@@ -429,12 +458,12 @@ function PANEL:PaintOver(w, h)
             self.fademodel = true
 
             if cannot == SS_CANNOTBUY_AFFORD then
-                self.barcolor = Color(112, 0, 0, 160)
+                self.barcolor = Color(100, 20, 20, 255) --Color(112, 0, 0, 160)
             else
-                self.barcolor = Color(72, 72, 72, 160)
+                self.barcolor = Color(72, 72, 72, 255) --Color(72, 72, 72, 160)
             end
         else
-            self.barcolor = Color(0, 112, 0, 200)
+            self.barcolor = Color(20, 100, 20, 255) --Color(0, 112, 0, 160)
         end
 
         local c = self.product.sample_item and LocalPlayer():SS_CountItem(self.product.sample_item.class) or 0
@@ -508,6 +537,13 @@ function PANEL:PaintOver(w, h)
                 self.barheight = 30
                 self.textfont = "SS_Price"
                 self.text = self.item.primaryaction and self.item.primaryaction.Text(self.item) or "FIXME"
+                surface.SetFont(self.textfont)
+                local tw, th = surface.GetTextSize(self.text)
+
+                if tw > w then
+                    self.textfont = "SS_PriceSmaller"
+                    self.barheight = th
+                end
             end
         elseif labelview then
             self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
@@ -518,18 +554,16 @@ function PANEL:PaintOver(w, h)
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(self:IsSelected() and MenuTheme_Brand or MenuTheme_FG, 64))
     end
 
-    if self.iop.class == "sandbox" or self.iop.class == "csslootbox" then
-        local m = WebMaterial({
-            id = "nrLaHIZ.png",
-            shader = "UnlitGeneric",
-            params = [[{["$translucent"]=1}]]
-        })
-
-        surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(m)
-        surface.DrawTexturedRect(0, 0, w, h)
-    end
-
+    -- if self.iop.class == "sandbox" or self.iop.class == "csslootbox" then
+    --     local m = WebMaterial({
+    --         id = "nrLaHIZ.png",
+    --         shader = "UnlitGeneric",
+    --         params = [[{["$translucent"]=1}]]
+    --     })
+    --     surface.SetDrawColor(255, 255, 255, 255)
+    --     surface.SetMaterial(m)
+    --     surface.DrawTexturedRect(0, 0, w, h)
+    -- end
     if self.iop.OutlineColor then
         local c = self.iop:OutlineColor()
 

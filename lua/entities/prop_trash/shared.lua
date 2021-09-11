@@ -15,6 +15,111 @@ function Entity:GetTrashClass()
     end
 end
 
+PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
+    -- stuff here
+    ["models/props_interiors/furniture_lamp01a.mdl"] = {
+        class = "light",
+        data = {
+            untaped = false,
+            size = 500,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 27)
+        }
+    },
+    ["models/maxofs2d/light_tubular.mdl"] = {
+        class = "light",
+        data = {
+            untaped = false,
+            size = 300,
+            brightness = 2,
+            style = -1,
+            pos = Vector(0, 0, 0)
+        }
+    },
+    ["models/light/cagedlight.mdl"] = {
+        class = "light",
+        data = {
+            untaped = false,
+            size = 300,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 0)
+        }
+    },
+    ["models/brian/flare.mdl"] = {
+        class = "light",
+        data = {
+            untaped = true,
+            size = 300,
+            brightness = 2,
+            style = 6,
+            pos = Vector(0, 0, 8)
+        }
+    },
+    ["models/maxofs2d/lamp_flashlight.mdl"] = {
+        class = "gate",
+        data = {
+            func = "inverter",
+            inputarea = {Vector(-22, -10, -10), Vector(-2, 10, 10)}
+        }
+    }
+})
+
+-- hopefully this isnt a bottleneck, if it is we need a cache (which is subject to new models being added)
+function GetSpecialTrashModelsByClass(class)
+    local t = {}
+
+    for k, v in pairs(PropTrashSpecialModels) do
+        if v.class == class then
+            table.insert(t, k)
+        end
+    end
+
+    return t
+end
+
+function TrashSpecialModelData(m)
+    local d = PropTrashSpecialModels[m]
+
+    if not d then
+        -- TODO: automatic class computation here, and save it
+        d = {}
+        local mn = table.remove(string.Explode("/", m)):lower()
+
+        if mn:find("light") or mn:find("lamp") or mn:find("lantern") then
+            PropTrashSpecialModels[m] = {
+                class = "light",
+                data = {
+                    untaped = false,
+                    size = 300,
+                    brightness = 2,
+                    style = 0,
+                    pos = Vector(0, 0, 0)
+                }
+            }
+        end
+
+        if mn:find("balloon") then
+            PropTrashSpecialModels[m] = {
+                class = "balloon"
+            }
+        end
+        -- empty tables are not saved yet
+
+        return PropTrashSpecialModels[m] or {}
+    end
+
+    return d
+end
+
+function ENT:GetSpecialModelData()
+    return TrashSpecialModelData(self:GetModel())
+end
+
+function ENT:ElectricalInputVector()
+end
+
 if CLIENT then
     -- hook.Add("OnEntityCreated","CreatedTrashProp",function(ent)
     --     -- if ent:GetClass()=="prop_physics" then print("TC1", ent:GetTrashClass(),  ent:GetModel()) end
@@ -65,41 +170,6 @@ else
         copyentitytable(self, tc)
     end
 end
-
-PropTrashLightData = PropTrashLightData or {
-    ["models/props_interiors/furniture_lamp01a.mdl"] = {
-        untaped = false,
-        size = 500,
-        brightness = 2,
-        style = 0,
-        pos = Vector(0, 0, 27)
-    },
-    ["models/maxofs2d/light_tubular.mdl"] = {
-        untaped = false,
-        size = 300,
-        brightness = 2,
-        style = -1,
-        pos = Vector(0, 0, 0)
-    },
-    ["models/light/cagedlight.mdl"] = {
-        untaped = false,
-        size = 300,
-        brightness = 2,
-        style = 0,
-        pos = Vector(0, 0, 0)
-    },
-    ["models/brian/flare.mdl"] = {
-        untaped = true,
-        size = 300,
-        brightness = 2,
-        style = 6,
-        pos = Vector(0, 0, 8)
-    }
-}
-
-PropTrashDoors = {
-    ["models/staticprop/props_c17/door01_left.mdl"] = true
-}
 
 function ENT:SetupDataTables()
     -- Use instead of Health so we can monitor it
@@ -216,6 +286,18 @@ end
 
 function ENT:CanTape(userid)
     if self:GetRating() == 1 then return false end
+    if self:CannotTape(userid) then return false end
+    -- If the obbcenter intersects the world, dont allow
+    local center = self:LocalToWorld(self:OBBCenter())
+
+    if util.TraceLine({
+        start = center,
+        endpos = center + Vector(0, 0, 1),
+        mask = MASK_NPCWORLDSTATIC
+    }).StartSolid then
+        return false
+    end
+
     if HumanTeamName ~= nil then return self:CanEdit(userid) end
 
     for k, v in ipairs(TrashNoFreezeNodes) do
@@ -228,4 +310,9 @@ function ENT:CanTape(userid)
     if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
 
     return false
+end
+
+-- dont make an infinite loop when you implement this
+function ENT:CannotTape(userid)
+    return
 end

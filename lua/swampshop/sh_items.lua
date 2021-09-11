@@ -257,7 +257,13 @@ function SS_Item(item)
         return self.eq 
     end
 
-    item.SellValue = item.SellValue or function(self) return math.floor(self.value * 0.8) end
+    if not item.SellValue then
+        -- naming it "price" triggers making a product for it below, should probably always call it price and have a special key for unlisted items
+        local value = item.value or item.price
+        assert(value and value >= 0, "Price or value is needed")
+        item.SellValue = function(self) return math.floor((self.specs.value or value) * 0.8) end
+    end
+
     -- item.HoverText = item.HoverText or function(self, second) return second and (self.eq and "HOLSTER" or "EQUIP") or nil end
     -- item.HoverClick = item.HoverClick or function(self, second)
     --     if second then
@@ -353,11 +359,8 @@ function SS_Item(item)
     SS_Items[item.class] = item
 
     if item.price then
-        item.value = item.value or item.price
         SS_ItemProduct(item)
     end
-
-    assert(item.value and item.value >= 0, "Price or value is needed")
 end
 
 

@@ -689,7 +689,7 @@ function Entity:SetColoredBaseMaterial(color)
                 matname = "!" .. mat2:GetName()
             end
 
-            mat2:SetVector("$color2", color * mat2:GetVector("$color2"))
+            mat2:SetVector("$color2", color * (mat2:GetVector("$color2") or Vector(1, 1, 1)))
             CLONEDMATERIALS[clonekey] = matname
         end
 

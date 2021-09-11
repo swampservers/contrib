@@ -380,9 +380,8 @@ SS_WeaponPerkData = {
 
 SS_Item({
     class = "weapon",
+    background = true,
     value = 5000,
-    name = "Weapon",
-    model = 'models/maxofs2d/logo_gmod_b.mdl',
     GetDescription = function(self)
         local d = (weapons.GetStored(self.specs.class or "") or {}).Purpose or "" --self.description
 
@@ -511,7 +510,7 @@ SS_Item({
         -- it comes with ammo, add that to the price :^)
         return math.Round(baseprice * (perk.SpawnPriceMod or swep.SpawnPriceMod or 1) * ratingmod, -2) + SS_GunAmmoPrice(self)
     end,
-    SellValue = function(self) return 500 * 2 ^ SS_GetRating(self.specs.rating).id end,
+    SellValue = function(self) return 1000 * 2 ^ SS_GetRating(self.specs.rating).id end,
     invcategory = "Weapons",
     never_equip = true
 })
@@ -541,26 +540,30 @@ end
 --NOMINIFY
 -- for i, tm in ipairs({"CT", "TERRORIST"}) do
 SS_Product({
-    class = 'csslootbox', --'csslootbox2' .. tm:lower(),
+    class = 'csslootbox',
+    background = true,
     price = 100000,
-    name = "Random Gun", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
-    description = "Contains a blueprint for a random CS:S gun.\nToo expensive? Try the \"Auctions\" tab!",
+    name = "Gun Blueprint", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
+    description = "Contains a blueprint for a random gun.\nToo expensive? Try the \"Auctions\" tab!",
     model = 'models/Items/ammocrate_smg1.mdl',
-    OnBuy = function(self, ply)
+    Options = function(self)
         local options = {}
 
         for k, v in ipairs(weapons.GetList()) do
             if v.GunType then
-                -- if v._WeaponInfo.Team == tm then
-                --     table.insert(options, v)
-                --     table.insert(options, v)
-                -- end
-                -- if v._WeaponInfo.Team == "ANY" then
                 table.insert(options, v)
-                -- end
             end
         end
 
+        return options
+    end,
+    GetModel = function(self)
+        local options = self:Options()
+
+        return options[(math.floor(SysTime() * 2.5) % #options) + 1].WorldModel
+    end,
+    OnBuy = function(self, ply)
+        local options = self:Options()
         local others = {}
 
         for i = 1, 15 do

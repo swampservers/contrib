@@ -48,7 +48,7 @@ function VapeUpdate(ply, vapeID)
 
         --hallucinogenic vape
         if vapeID == 5 then
-            ply:SendLua("vapeHallucinogen=(vapeHallucinogen or 0)+3")
+            ply:SendLua("vapeHallucinogen=(vapeHallucinogen or 0)+2")
         end
     end
 
