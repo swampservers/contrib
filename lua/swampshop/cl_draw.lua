@@ -367,14 +367,23 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
 
     if attach == "eyes" then
         local attach_id = ent:LookupAttachment("eyes")
+        local head_bone_id = ent:LookupBone(SS_Attachments["head"][pone and 2 or 1])
 
-        if attach_id < 1 then
+        local attach_angpos = ent:GetAttachment(attach_id)
+        local bpos, bang = ent:GetBonePosition(head_bone_id)
+
+        if attach_id < 1 or not head_bone_id or not attach_angpos then
             mdl:Remove()
 
             return
         end
 
-        mdl:SetParent(ent, attach_id)
+        translate, rotate = LocalToWorld(translate, rotate, attach_angpos.Pos, attach_angpos.Ang)
+        translate, rotate = WorldToLocal(translate, rotate, bpos, bang)
+        mdl:FollowBone(ent, head_bone_id)
+
+        -- This has issues with detaching when sitting
+        -- mdl:SetParent(ent, attach_id)
     else
         local bone_id = ent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
 
@@ -405,9 +414,13 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     mdl:EnableMatrix("RenderMultiply", mdl.matrix)
     -- e.appliedscale = scale
     -- end
+
+
+
     --this likes to change itself
     mdl:SetLocalPos(translate)
     mdl:SetLocalAngles(rotate)
+
     -- if item.cfg.imgur then
     --     local imat = ImgurMaterial({
     --         id = item.cfg.imgur.url,
