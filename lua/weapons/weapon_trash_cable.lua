@@ -25,7 +25,6 @@ SWEP.Secondary.Ammo = "none"
 CABLE_MAX_LENGTH = 100
 
 -- models/props_c17/pulleywheels_small01.mdl
-
 function SWEP:Initialize()
     self:SetHoldType("slam")
 end
@@ -40,7 +39,6 @@ function SWEP:PrimaryAttack()
     end
 end
 
-
 function SWEP:SecondaryAttack()
     if not (CLIENT and IsFirstTimePredicted()) then return end
 
@@ -48,7 +46,6 @@ function SWEP:SecondaryAttack()
         trashcablestartdata = {PropTrashLookedAt, PropTrashLookedAt:WorldToLocal(PropTrashLookedAtPos), false}
     end
 end
-
 
 if CLIENT then
     -- TODO: make taping (including to world)? like this
@@ -82,7 +79,6 @@ if CLIENT then
     -- trails/plasma
     -- trails/laser
     -- trails/lol
-
     -- cable/redlaser
     -- cable/cable2
     -- cable/rope
@@ -90,7 +86,6 @@ if CLIENT then
     -- cable/xbeam
     -- cable/physbeam
     -- cable/hydra
-
     hook.Add("PostDrawTranslucentRenderables", "TrashCablePreview", function(d, s, s3)
         if d or s3 then return end
 
@@ -117,11 +112,10 @@ function SWEP:Reload()
 end
 
 function SWEP:DrawHUD()
-    -- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
-    -- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
 end
 
-
+-- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
+-- surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
     self:SetModelScale(0.8)
@@ -163,7 +157,7 @@ function SWEP:DrawWorldModel()
         if (mrt) then
             mrt:SetTranslation(opos)
             mrt:SetAngles(oang)
-            mrt:Scale(Vector(1,1,1)*0.8)
+            mrt:Scale(Vector(1, 1, 1) * 0.8)
             self:SetBoneMatrix(0, mrt)
         end
     end

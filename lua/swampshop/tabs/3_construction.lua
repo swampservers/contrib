@@ -149,8 +149,6 @@ SS_WeaponProduct({
     model = 'models/props_c17/pulleywheels_small01.mdl'
 })
 
-
-
 SS_Product({
     class = 'trashlight',
     price = 1000,
@@ -160,7 +158,6 @@ SS_Product({
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         local nxt = GetSpecialTrashModelsByClass("light")
-
         e = makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
@@ -174,7 +171,6 @@ SS_Product({
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         local nxt = GetSpecialTrashModelsByClass("button")
-
         e = makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
@@ -188,7 +184,6 @@ SS_Product({
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         local nxt = GetSpecialTrashModelsByClass("door")
-
         e = makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
@@ -301,7 +296,6 @@ SS_Product({
 
 -- end)
 -- end)
-
 SS_Product({
     class = 'trashseat',
     price = 2000,
@@ -321,7 +315,6 @@ SS_Product({
         e = makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
-
 
 SS_Product({
     class = 'trashtheater',
