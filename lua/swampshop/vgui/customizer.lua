@@ -543,17 +543,15 @@ local function checktype(dat, typeid)
 end
 
 --if we can help it, this function should never return nil
+--This function attempts to return a reasonable default value for its properties. This will look for item.wear etc. Used when no .cfg value is present
+
 function GetNestedDefault(item, keys, typeid)
-    print("///////////////////////////////////")
-    print("///////////////////////////////////")
-    print("///////////////////////////////////")
-    print("///////////////////////////////////")
-    print("///////////////////////////////////")
+
     
     local keys = table.Copy(keys)
     local itemdef = SS_Items[item.class]
     local use_configurable = true
-    print("pre",table.concat(keys,"."))
+
     if (keys[1] == "wear_h") then
         --check item.wear
         keys[1] = "wear"
@@ -566,7 +564,7 @@ function GetNestedDefault(item, keys, typeid)
         table.insert(keys, 2, "pony")
         use_configurable = false
     end
-    
+
     local base = itemdef
 
     if (use_configurable) then
@@ -582,29 +580,22 @@ function GetNestedDefault(item, keys, typeid)
         keys[#keys] = ttable[keys[#keys]] or keys[#keys]
     end
 
-    print("post",table.concat(keys,"."))
 
     local val = base
 
     for i, v in ipairs(keys) do
         val = val[v]
     end
-    
-    if(!checktype(val, typeid))then
-        print("checktype failure! on property " ..table.concat(keys,".") .. " Expected ",typeid,"got",TypeID(val))
-    end
 
     if (val and checktype(val, typeid)) then
-        print("using wear value,",table.concat(keys,"."))
-
         return val
     end
-
-    print("using autistic fallback value. bad coder lul")
-
+    --if all else fails, use a bullshit fallback value, per type
     return typedef(typeid)
 end
 
+
+--returns the matching value in item.configurable when you look up a .cfg key
 function GetNestedInfo(item, keys)
     local base = item.configurable
     local val = base
@@ -613,16 +604,10 @@ function GetNestedInfo(item, keys)
         val = val[v]
     end
 
-    print("reading item metadata:")
-    if(istable(val))then
-    PrintTable(val)
-    else
-        print(val)
-    end
-
     return val
 end
 
+--attempts to get the current property value of an items config key. This will return the default value if none is present.
 function GetNestedProperty(item, keys, typeid)
     local config = table.Copy(item.cfg)
 
@@ -776,7 +761,7 @@ function PANEL:SetupControls()
     local itmcw = self.item.configurable.wear
   
     self:AddSection("default")
-    print("sex")
+
     local rawzone = Container(self.Sections["default"], "Raw Data")
     rawzone:SetExpanded(false)
     rawzone:OnToggle(false)

@@ -344,26 +344,6 @@ end
 
 PANEL.SetupGizmo = {}
 
-PANEL.SetupGizmo["paint"] = function(self)
-    local cgizmo = gizmo.Create("paint")
-    cgizmo:SetupForModelPanel(self)
-    local panel = self
-
-    function cgizmo:GetEnt()
-        return SS_HoverCSModel
-    end
-    function cgizmo:GetClickableEnts(value)
-
-    end
-
-    function cgizmo:OnUpdate(value)
-
-    end
-
-    return cgizmo
-end
-
-
 PANEL.SetupGizmo["select"] = function(self)
     local cgizmo = gizmo.Create("select")
     cgizmo:SetupForModelPanel(self)
@@ -1021,11 +1001,12 @@ function PANEL:Paint()
     local hide_accessory --hide accessories if not drawing single product?
     local iop = SS_HoverIOP
     local cust = SS_CustomizerPanel
-   
+    local custopen = IsValid(cust) and cust.item
 
     if(iop)then
+        
         local equipped = iop.cfg and !iop.never_equip and iop.eq
-        if iop.wear and !equipped and IsValid(cust) and cust.item != iop then drawplayer = false end
+        if iop.wear and !equipped and !custopen then drawplayer = false end
 
         if !iop.wear then drawplayer = false end
         if iop.playermodel then drawplayer = false end
@@ -1065,6 +1046,9 @@ function PANEL:Paint()
                     if(!item.eq)then continue end
                     table.insert(a, item)
                 end
+            end
+            if(custopen and cust.item)then
+                table.insert(a,cust.item)
             end
 
             return a
