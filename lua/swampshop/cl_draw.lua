@@ -143,7 +143,7 @@ function SS_ApplyBoneMods(ent, mods)
 
                     --don't allow moving the root bone
                     if ent:GetBoneParent(x) == -1 then
-
+                        continue
                     end
 
                     local pso = ent:GetManipulateBoneAngles(x)

@@ -194,13 +194,6 @@ function SS_AccessoryItem(item)
     SS_Item(item)
 end
 
-if(CLIENT)then
-concommand.Add("repairitems",function(ply,cmd,args)
-    local ply = LocalPlayer()
-    local items = ply.SS_Items
-    ply.SS_Items = SS_MakeItems(ply, ply.SS_Items)
-end)
-end
 
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
@@ -286,11 +279,6 @@ function SS_Item(item)
             primary = true,
             Text = function(item) return item.eq and "HOLSTER" or "EQUIP" end,
             Cannot = item.CannotEquip,
-            --[[
-            OnClient = function(item)
-                item.eq = !item.eq
-            end
-            ]]
         }
     end
 
