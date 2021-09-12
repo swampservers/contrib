@@ -370,13 +370,14 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
         local head_bone_id = ent:LookupBone(SS_Attachments["head"][pone and 2 or 1])
 
         local attach_angpos = ent:GetAttachment(attach_id)
-        local bpos, bang = ent:GetBonePosition(head_bone_id)
 
         if attach_id < 1 or not head_bone_id or not attach_angpos then
             mdl:Remove()
 
             return
         end
+
+        local bpos, bang = ent:GetBonePosition(head_bone_id)
 
         translate, rotate = LocalToWorld(translate, rotate, attach_angpos.Pos, attach_angpos.Ang)
         translate, rotate = WorldToLocal(translate, rotate, bpos, bang)
