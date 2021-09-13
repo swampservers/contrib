@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
---[[
+
 
 local rt_drawover = GetRenderTargetEx( "ss_mat_drawover"..math.Round(CurTime()), 512, 512, RT_SIZE_LITERAL, MATERIAL_RT_DEPTH_NONE, 0, 0, IMAGE_FORMAT_DEFAULT )
 
@@ -20,8 +20,6 @@ mat_drawover:Recompute()
 
 SS_MAT_DRAWOVER = mat_drawover
 SS_TEX_DRAWOVER = rt_drawover
-]]
-
 
 
 SS_REQUESTED_TEX = nil
@@ -162,21 +160,24 @@ function PANEL:Paint(w, h)
 end
 
 function PANEL:PaintOver()
---[[
+
     if (SS_TEX_DRAWOVER and input.IsMouseDown(MOUSE_LEFT)) then
         local col = HSVToColor(180+math.NormalizeAngle(CurTime()*360),1,1)
         local x, y = self:ScreenToLocal(gui.MouseX(), gui.MouseY())
+        render.ClearRenderTarget(SS_TEX_DRAWOVER, Color(255,255,255,1) )
+
         render.PushRenderTarget(SS_TEX_DRAWOVER)
         render.OverrideAlphaWriteEnable(true, true)
+        local size = 16
         cam.Start2D()
 		surface.SetDrawColor( col )
-		surface.DrawRect( x-16, y-16, 32, 32 )
+		surface.DrawRect( x-(size/2), y-(size/2), size, size )
 	    cam.End2D()
 
         render.OverrideAlphaWriteEnable(false, true)
         render.PopRenderTarget()
     end
-    ]]
+
 end
 
 function PANEL:Init()
