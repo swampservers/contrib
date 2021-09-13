@@ -14,6 +14,7 @@ include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
 include("vgui/imgur_manager.lua")
 include("vgui/texturewindow.lua")
+include("vgui/tip.lua")
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3
