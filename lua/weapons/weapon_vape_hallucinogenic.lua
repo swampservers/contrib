@@ -74,7 +74,7 @@ if CLIENT then
             eyeang.p = eyeang.p + FrameTime() * math.sin(SysTime() * 0.6) * drift
             eyeang.y = eyeang.y + FrameTime() * math.sin(SysTime() * 0.5) * drift * 2
             LocalPlayer():SetEyeAngles(eyeang)
-            local coloralpha = alpha ^ 0.5
+            local coloralpha = alpha ^ 0.33
             local distortalpha = math.min(1, ((alpha * 1.1) ^ 3))
             DrawMotionBlur(0.05, alpha, 0)
             DrawSelfRefract(distortalpha * 0.04)
@@ -85,8 +85,6 @@ if CLIENT then
             DrawColorModify(tab)
         end
     end)
-
-    render.GetScreenEffectTexture(1)
 
     timer.Create("HallucinogenicVapeCounter", 1, 0, function()
         if (vapeHallucinogen or 0) > 0 then

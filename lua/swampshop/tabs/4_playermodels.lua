@@ -2,7 +2,7 @@
 -- INSTALL: CINEMA
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
-
+ 
 SS_Item({
     class = "skinner",
     price = 1000000,

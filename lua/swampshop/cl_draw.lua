@@ -391,7 +391,6 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     if attach == "eyes" then
         local attach_id = ent:LookupAttachment("eyes")
         local head_bone_id = ent:LookupBone(SS_Attachments["head"][pone and 2 or 1])
-
         local attach_angpos = ent:GetAttachment(attach_id)
 
         if attach_id < 1 or not head_bone_id or not attach_angpos then
@@ -400,12 +399,10 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
             return
         end
 
-      
-        local bpos, bang = ent:GetBonePosition(head_bone_id)
 
+        local bpos, bang = ent:GetBonePosition(head_bone_id)
         translate, rotate = LocalToWorld(translate, rotate, attach_angpos.Pos, attach_angpos.Ang)
         translate, rotate = WorldToLocal(translate, rotate, bpos, bang)
-        mdl._FollowedBone = head_bone_id
         mdl:FollowBone(ent, head_bone_id)
 
         -- This has issues with detaching when sitting
