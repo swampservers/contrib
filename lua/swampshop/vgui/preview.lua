@@ -25,6 +25,7 @@ SNAPS_MEMORY = SNAPS_MEMORY or {}
 
 function PANEL:ClearProperties()
     self.CurrentGizmo = nil
+    self.CurrentGizmoID = nil
     if (IsValid(self.ControlContainer)) then
         for _, v in pairs(self.ControlContainer:GetChildren()) do
             if (not v.Static) then
@@ -69,6 +70,8 @@ function PANEL:AddChoiceProperty(choices, keys, config, label)
 end
 
 function PANEL:AddGizmoProperty(type, keys, config, label)
+
+    
     local gtype = keys[#keys]
 
     if (keys[1] == "wear_p") then
@@ -86,18 +89,40 @@ function PANEL:AddGizmoProperty(type, keys, config, label)
     local key = table.concat(keys, ".")
     self.Controls[key] = self:AddButton(icons[type] or "icon16/shading.png", label)
 
+    -- show a hint about using gizmos, the first time a gizmo is spawned onto the top panel
+    if(!self.ControlContainer.Helped)then
+        self.ControlContainer.Helped = true
+        SwampMenuTip(self.Controls[key],"gizmos_intro","Click these buttons to move your item around in 3D!")
+    end
+
+
     if (config.sort) then
         self.Controls[key]:SetZPos(config.sort)
     end
 
     self.Controls[key].DoClick = function(pnl)
+        if(self.CurrentGizmoID == key)then
+            surface.PlaySound("UI/buttonclick.wav")
+            pnl.Gizmo = nil
+            self.CurrentGizmo = nil
+            self.CurrentGizmoID = nil
+            return
+        end
+
+
+
         surface.PlaySound("UI/buttonclick.wav")
         local gzmo = self.SetupGizmo[gtype](self)
         gzmo.propkeys = keys
+        self.CurrentGizmoID = key
         self.CurrentGizmo = gzmo
         self:SetupSnaps()
         pnl.Gizmo = gzmo
+
+
     end
+
+    
 end
 
 function PANEL:Init()
@@ -117,8 +142,7 @@ function PANEL:Init()
     self.ControlContainer2:SetTall(0)
     self.ControlContainer2:SetZPos(500)
     self.ControlContainer2.Paint = noop --SS_PaintFG
-
-
+    
     self.Controls = {}
 
     --[[

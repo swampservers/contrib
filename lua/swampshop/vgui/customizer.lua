@@ -666,7 +666,7 @@ function PANEL:SetupControls()
     self.Sections = {}
     --quick little hack, if you wanna stick your diffent config types into subtables it will organize them. probably don't wanna use more than 2 per item though.
     SS_PreviewPane:ClearProperties()
-
+    SS_PreviewPane.CurrentGizmoID = nil
     local function cleanbonename(bn)
         return bn:Replace("ValveBiped.Bip01_", ""):Replace("L_", "Left "):Replace("R_", "Right "):Replace("Lrig", ""):Replace("_LEG_", "")
     end
@@ -698,7 +698,7 @@ function PANEL:SetupControls()
 
         self:AddSection(section_name)
         --SS_PreviewPane.SelectButton:SetEnabled(item.eq)
-
+        
         if (k == "wear") then
             for k2, v2 in pairs(v) do
                 if (istable(v2)) then
@@ -867,6 +867,10 @@ function ImageHistoryPanel(button, textentry)
 end
 
 function ImageGetterPanel()
+    if(IsValid(SS_TextureDownloadWindow))then
+        SS_TextureDownloadWindow:Remove()
+    end
+
     local mat
     local mdl = IsValid(SS_HoverCSModel) and SS_HoverCSModel or LocalPlayer()
 
