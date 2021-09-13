@@ -145,7 +145,8 @@ SS_BoneTranslate = {
 }
 
 function SS_GetBoneFromAttachName(attn,pony)
-
+    attn = attn or "eyes"
+    if(attn == "")then attn = "eyes" end
     local key = pony and 2 or 1
     return SS_BoneTranslate[attn][key]
 end

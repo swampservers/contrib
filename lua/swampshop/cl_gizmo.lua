@@ -12,7 +12,7 @@ GIZMO_HANDLE_META = {
     GetAngles = function(self) return self:GetParentGizmo():GetAngles() end,
     GetPos = function(self) return self:GetParentGizmo():GetPos() end,
     SetSnaps = function(self, snaps)
-        knob._Snap = snaps
+        self._Snap = snaps
     end,
     IsGrabbed = function(self) return self:GetParentGizmo():GetGrabbedHandle() == self end,
     Test = function() end,
@@ -187,10 +187,10 @@ end
 
 function CreateHandle()
     --i still kinda struggle with this?
-    local self = table.Copy(GIZMO_HANDLE_META) --{}
-    --setmetatable(self, GIZMO_HANDLE_META)
+    local handle = table.Copy(GIZMO_HANDLE_META) --{}
+    --setmetatable(handle, GIZMO_HANDLE_META)
 
-    return self
+    return handle
 end
 
 local radius_inner = 8
@@ -300,7 +300,7 @@ end
 
 mesh.End()
 
-function CreateHandleLinearKnob(axis, color, length, size, endshape, snap)
+function CreateHandleLinearKnob(axis, color, length, size, endshape)
     local knob = CreateHandle()
     knob._DragAxis = axis
     knob._Color = color
@@ -321,8 +321,6 @@ function CreateHandleLinearKnob(axis, color, length, size, endshape, snap)
     knob.SetSnaps = function(self, snaps)
         knob._Snap = snaps
     end
-
-    knob:SetSnaps(snap)
 
     knob.GetAngles = function(self, noflip)
         local par = self:GetParentGizmo()

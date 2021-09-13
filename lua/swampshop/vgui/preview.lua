@@ -116,9 +116,8 @@ function PANEL:AddGizmoProperty(type, keys, config, label)
         gzmo.propkeys = keys
         self.CurrentGizmoID = key
         self.CurrentGizmo = gzmo
-        self:SetupSnaps()
-        pnl.Gizmo = gzmo
-
+        
+        pnl.Gizmo = self.CurrentGizmo
 
     end
 
@@ -145,18 +144,6 @@ function PANEL:Init()
     
     self.Controls = {}
 
-    --[[
-    self.SelectButton = self:AddButton("swampshop/tool_select.png", "Select")
-    self.SelectButton.Static = true
-
-    self.SelectButton.DoClick = function(pnl)
-        surface.PlaySound("UI/buttonclick.wav")
-        local gzmo = self.SetupGizmo.select(self)
-        pnl.Gizmo = gzmo
-        self.CurrentGizmo = gzmo
-        self:SetupSnaps()
-    end
-    ]]
 
 
     self.CameraButton = self:AddButton("icon16/shading.png", "Camera", true)
@@ -180,39 +167,7 @@ function PANEL:Init()
         SS_ItemServerAction(cust.item.id, "configure", cust.item.cfg)
         SS_CustomizerPanel:Close()  
     end
-    --[[
-    self.SaveButton = self:AddButton("icon16/disk.png", "Save Changes", false,true)
-    self.SaveButton.Static = true
-    self.SaveButton.DoClick = function()
-        surface.PlaySound("UI/buttonclick.wav")
-        SS_ItemServerAction(SS_CustomizerPanel.item.id, "configure", SS_CustomizerPanel.item.cfg)
-    end
     
-    self.SaveButton.Think = function(pnl)
-        local cust = SS_CustomizerPanel
-        local needsave = cust.item and cust.item._modified
-        local img = needsave and "icon16/exclamation.png" or "icon16/disk.png"
-        if(pnl:GetImage() != img)then
-            pnl:SetImage(img)
-        end
-    end
-    ]]
-
-    --[[
-    self.RevertButton = self:AddButton(nil, "Undo Changes", false,true)
-    self.RevertButton.Static = true
-    self.RevertButton.DoClick = function()
-        local cust = SS_CustomizerPanel
-        surface.PlaySound("UI/buttonclick.wav")
-        if( cust.item._modified and cust.item._cachedcfg)then
-            cust.item.cfg = table.Copy(cust.item._cachedcfg)
-            cust.item._cachedcfg = nil
-            cust.item._modified = nil
-            cust:UpdateCfg()
-            cust:SetupControls(cust.controlzone)
-        end
-    end
-    ]]
     self.RevertButton = self:AddButton(nil, "Cancel", true,true)
     self.RevertButton.Static = true
     self.RevertButton.DoClick = function()
@@ -238,80 +193,6 @@ function PANEL:Init()
         cust:SetupControls(cust.controlzone)
     end
 
-    
-    self.SetupSnaps = function()
-        --[[
-        if (IsValid(self.SnapsButton)) then
-            self.SnapsButton:Remove()
-        end
-
-
-        local cgizmo = self.CurrentGizmo
-        if (not IsValid(cgizmo)) then return end
-        local name = cgizmo.gizmotype
-        local snaptable = SnapSettings[name]
-
-        if (snaptable) then
-            self.SnapsButton = self:AddButton("icon16/shading.png", "Snaps", true)
-
-            self.SnapsButton.PaintOver = function(self)
-                local cgizmo = self.CurrentGizmo
-
-                if (IsValid(cgizmo)) then
-                    local name = cgizmo.gizmotype
-                    local snaptable = SnapSettings[name]
-
-                    if (snaptable) then
-                        local snapv = SNAPS_MEMORY[name]
-
-                        if (snapv) then
-                            local w, h = self:GetSize()
-                            draw.SimpleText(snapv, "DermaDefault", w / 2 + 1, h / 2 + 1, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                            draw.SimpleText(snapv, "DermaDefault", w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                        end
-                    end
-                end
-            end
-
-            cgizmo:SetSnaps(SNAPS_MEMORY[name])
-
-            local img = {
-                translate = "swampshop/snaps_move.png",
-                rotate = "swampshop/snaps_rotate.png",
-            }
-
-            if (IsValid(self.SnapsButton)) then
-                self.SnapsButton:SetImage(img[name] or "icon16/shading.png")
-
-                self.SnapsButton.DoClick = function()
-                    if (not IsValid(cgizmo)) then return end
-                    local name = cgizmo.gizmotype
-                    local snaptable = SnapSettings[name]
-                    surface.PlaySound("UI/buttonclick.wav")
-
-                    if (snaptable) then
-                        local menu = DermaMenu()
-
-                        for k, snap in pairs(snaptable) do
-                            if (snap == 0) then
-                                snap = nil
-                            end
-
-                            menu:AddOption(snap or "Off", function()
-                                surface.PlaySound("UI/buttonclick.wav")
-                                cgizmo:SetSnaps(snap)
-                                print("Snaps!" ,snap)
-                                SNAPS_MEMORY[name] = snap
-                            end)
-                        end
-
-                        menu:Open()
-                    end
-                end
-            end
-        end
-        ]]
-    end
 end
 
 function PANEL:AddButton(icon, propname, right,bottom)
