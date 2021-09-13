@@ -386,9 +386,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     local pone = isPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 
-    mdl._FollowedBone = 0
-    mdl:FollowBone(nil,0)
-    mdl:RemoveEffects(EF_FOLLOWBONE)
+    
 
     if attach == "eyes" then
         local attach_id = ent:LookupAttachment("eyes")
@@ -605,7 +603,10 @@ function Entity:SS_AttachAccessories(items)
     if current then
         for i, v in ipairs(current) do
             if(IsValid(v))then
-            table.insert(recycle[v:GetModel()], v)
+                v._FollowedBone = 0
+                v:FollowBone(nil,0)
+                v:RemoveEffects(EF_FOLLOWBONE)
+                table.insert(recycle[v:GetModel()], v)
             end
         end
     end
