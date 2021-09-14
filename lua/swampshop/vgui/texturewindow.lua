@@ -1,31 +1,27 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+local rt_drawover
+local mat_drawover
 
+hook.Add("Initialize", "SS_TextureWindow_PrepareDrawover", function()
+    rt_drawover = GetRenderTargetEx("ss_mat_drawover" .. math.Round(CurTime()), 512, 512, RT_SIZE_LITERAL, MATERIAL_RT_DEPTH_NONE, 0, 0, IMAGE_FORMAT_DEFAULT)
+    mat_drawover = CreateMaterial("ss_mat_drawover" .. math.Round(CurTime()), "UnlitGeneric", {
+        ["$basetexture"] = rt_drawover,
+        ["$translucent"] = 1,
+    })
 
-local rt_drawover = GetRenderTargetEx( "ss_mat_drawover"..math.Round(CurTime()), 512, 512, RT_SIZE_LITERAL, MATERIAL_RT_DEPTH_NONE, 0, 0, IMAGE_FORMAT_DEFAULT )
-
-local mat_drawover = CreateMaterial("ss_mat_drawover"..math.Round(CurTime()), "UnlitGeneric", {
-    ["$basetexture"] = rt_drawover,
-    ["$translucent"] = 1,
-})
-mat_drawover:SetTexture("$basetexture",rt_drawover)
-mat_drawover:SetInt("$translucent",1)
-mat_drawover:SetInt("$alphatest",0)
-mat_drawover:SetInt("$additive",0)
-
-mat_drawover:SetInt("$vertexcolor",1)
-mat_drawover:SetInt("$vertexalpha",1)
-
-mat_drawover:Recompute()
-
-SS_MAT_DRAWOVER = mat_drawover
-SS_TEX_DRAWOVER = rt_drawover
-
-
-SS_REQUESTED_TEX = nil
-SS_REQUESTED_TEX_CALLBACK = nil
-
-
+    mat_drawover:SetTexture("$basetexture", rt_drawover)
+    mat_drawover:SetInt("$translucent", 1)
+    mat_drawover:SetInt("$alphatest", 0)
+    mat_drawover:SetInt("$additive", 0)
+    mat_drawover:SetInt("$vertexcolor", 1)
+    mat_drawover:SetInt("$vertexalpha", 1)
+    mat_drawover:Recompute()
+    SS_MAT_DRAWOVER = mat_drawover
+    SS_TEX_DRAWOVER = rt_drawover
+    SS_REQUESTED_TEX = nil
+    SS_REQUESTED_TEX_CALLBACK = nil
+end)
 
 function TexDownloadHook()
     if (SS_REQUESTED_TEX and not SS_REQUESTED_TEX:IsError()) then
@@ -99,7 +95,6 @@ function SS_DownloadTexture(mat, callback)
     end)
 end
 
-
 --------------------------------------------------------------------
 local PANEL = {}
 
@@ -113,13 +108,11 @@ end
 
 function PANEL:ClearDrawover()
     render.PushRenderTarget(SS_TEX_DRAWOVER)
-render.Clear(0, 0, 0, 0, false, flase)
-render.PopRenderTarget()
-
+    render.Clear(0, 0, 0, 0, false, flase)
+    render.PopRenderTarget()
 end
 
 function PANEL:Paint(w, h)
-
     local mat
 
     if IsValid(SS_HoverCSModel) then
@@ -147,34 +140,32 @@ function PANEL:Paint(w, h)
         surface.SetMaterial(mat_inst)
         surface.DrawTexturedRect(0, 0, w, h)
         render.OverrideAlphaWriteEnable(true, true)
+
         if (SS_MAT_DRAWOVER) then
             surface.SetDrawColor(Color(255, 255, 255, 255))
             surface.SetMaterial(SS_MAT_DRAWOVER)
             surface.DrawTexturedRect(0, 0, w, h)
         end
+
         render.OverrideAlphaWriteEnable(false)
     end
 end
 
 function PANEL:PaintOver()
-
     if (SS_TEX_DRAWOVER and input.IsMouseDown(MOUSE_LEFT)) then
-        local col = HSVToColor(180+math.NormalizeAngle(CurTime()*360),1,1)
+        local col = HSVToColor(180 + math.NormalizeAngle(CurTime() * 360), 1, 1)
         local x, y = self:ScreenToLocal(gui.MouseX(), gui.MouseY())
-        render.ClearRenderTarget(SS_TEX_DRAWOVER, Color(255,255,255,1) )
-
+        render.ClearRenderTarget(SS_TEX_DRAWOVER, Color(255, 255, 255, 1))
         render.PushRenderTarget(SS_TEX_DRAWOVER)
         render.OverrideAlphaWriteEnable(true, true)
         local size = 16
         cam.Start2D()
-		surface.SetDrawColor( col )
-		surface.DrawRect( x-(size/2), y-(size/2), size, size )
-	    cam.End2D()
-
+        surface.SetDrawColor(col)
+        surface.DrawRect(x - (size / 2), y - (size / 2), size, size)
+        cam.End2D()
         render.OverrideAlphaWriteEnable(false, true)
         render.PopRenderTarget()
     end
-
 end
 
 function PANEL:Init()
