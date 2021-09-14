@@ -99,10 +99,7 @@ function SS_DownloadTexture(mat, callback)
     end)
 end
 
-render.PushRenderTarget(SS_TEX_DRAWOVER)
-render.Clear(0, 0, 0, 0, false, flase)
-render.PopRenderTarget()
-render.ClearRenderTarget( SS_TEX_DRAWOVER, Color(0,0,0,0))
+
 --------------------------------------------------------------------
 local PANEL = {}
 

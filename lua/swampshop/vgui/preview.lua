@@ -201,7 +201,7 @@ function PANEL:AddButton(icon, propname, right,bottom)
     button:Dock(right and RIGHT or LEFT)
     button:SetWide(96)
     button:SetText(propname .. (icon and "  " or ""))
-    if(icon)then
+    if icon then
     button:SetImage(icon)
     button:SetStretchToFit(false)
     

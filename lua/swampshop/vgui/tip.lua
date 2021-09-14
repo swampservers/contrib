@@ -138,13 +138,10 @@ end
 vgui.Register('SwampMenuTip', PANEL, 'DPanel')
 
 function SwampMenuTipChecked(identifier)
-    if(true)then return false end
-
     return LocalPlayer():GetPData("swampmenutip_"..identifier,false)
 end
 
 function SetSwampMenuTipChecked(identifier,checked)
-
      LocalPlayer():SetPData("swampmenutip_"..identifier,checked)
 end
 
