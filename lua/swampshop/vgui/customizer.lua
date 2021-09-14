@@ -23,6 +23,13 @@ function PANEL:Close()
         local cat = SS_ShopMenu.InventoryButtons[SS_ShopMenu.LastCategory or "Cosmetics_inv"]
 
         if (cat) then
+            for k, v in pairs(SS_ShopMenu.InventoryButtons) do
+                if (v ~= pnl) then
+                    v:SetActive(false)
+                    --v:OnDeactivate()
+                end
+            end
+
             cat:SetActive(true)
         end
     end
@@ -173,79 +180,62 @@ function PANEL:AddSection(name)
     return self.Sections[name]
 end
 
-local function Container(parent, label,noncollapse)
-
-
-
+local function Container(parent, label, noncollapse)
     local pane = vgui.Create(noncollapse and "DPanel" or "DCollapsibleCategory", parent)
     pane:Dock(TOP)
     pane:SetTall(256)
     pane:DockMargin(0, 0, 0, 0)
     pane:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-
-
-
-
     pane.BasedPerformLayout = pane.PerformLayout
     pane.Paint = SS_PaintFG
 
     pane.PerformLayout = function(pnl)
         pnl:SizeToChildren(false, true)
-        --pnl:InvalidateParent(true)
 
-        if(IsValid(pnl:GetParent()) and IsValid(pnl:GetParent():GetParent()) and IsValid(pnl:GetParent():GetParent().VBar))then
-        pnl:DockMargin(0, 0, pnl:GetParent():GetParent().VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
+        --pnl:InvalidateParent(true)
+        if (IsValid(pnl:GetParent()) and IsValid(pnl:GetParent():GetParent()) and IsValid(pnl:GetParent():GetParent().VBar)) then
+            pnl:DockMargin(0, 0, pnl:GetParent():GetParent().VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
         end
+
         pnl:BasedPerformLayout(pnl:GetWide(), pnl:GetTall())
     end
 
     pane.Paint = function(pnl, w, h)
         SS_PaintFG(pnl, w, h)
-        if(IsValid(pnl.Header))then
+
+        if (IsValid(pnl.Header)) then
             local y = pnl.Header:GetTall()
             surface.SetDrawColor(MenuTheme_BG)
             surface.DrawRect(2, y, w - 4, 1)
         end
     end
 
+    if (not noncollapse) then
+        pane:SetLabel(label)
+        pane.Header:SetFont("SS_DESCINSTFONT")
+        pane.Header:SetContentAlignment(8)
+        pane.Header:SetTall(28)
 
-    
+        pane.Header.UpdateColours = function(pnl)
+            pnl:SetTextColor(MenuTheme_TX)
+        end
 
-    
+        pane:SetExpanded(true)
+        pane:SetKeyboardInputEnabled(true)
+        local ExpandArrow = vgui.Create("DLabel", pane.Header)
+        ExpandArrow:Dock(RIGHT)
+        ExpandArrow:SetContentAlignment(9)
+        ExpandArrow:SetFont('marlett')
+        ExpandArrow:SetText("5")
 
-    
+        ExpandArrow.UpdateColours = function(pnl)
+            pnl:SetTextColor(MenuTheme_TX)
+        end
 
-    if(!noncollapse)then
-    pane:SetLabel(label)
-    
-    pane.Header:SetFont("SS_DESCINSTFONT")
-    pane.Header:SetContentAlignment(8)
-    pane.Header:SetTall(28)
-
-    pane.Header.UpdateColours = function(pnl)
-        pnl:SetTextColor(MenuTheme_TX)
+        function pane:OnToggle(expanded)
+            ExpandArrow:SetText(expanded and "5" or '6')
+        end
     end
-
-    pane:SetExpanded(true)
-    pane:SetKeyboardInputEnabled(true)
-
-    local ExpandArrow = vgui.Create("DLabel", pane.Header)
-    ExpandArrow:Dock(RIGHT)
-    ExpandArrow:SetContentAlignment(9)
-    ExpandArrow:SetFont('marlett')
-    ExpandArrow:SetText("5")
-
-
-    ExpandArrow.UpdateColours = function(pnl)
-        pnl:SetTextColor(MenuTheme_TX)
-    end
-
-    function pane:OnToggle(expanded)
-        ExpandArrow:SetText(expanded and "5" or '6')
-    end
-
-    end
-
     --[[
     local pane = vgui.Create("Panel", parent)
     pane:DockMargin(0, 0, 0, 0)
@@ -288,7 +278,7 @@ function PANEL:AddColorOption(section, keys, label)
     local suffix = self.WEARSUFFIX
     local options = GetNestedInfo(item, keys)
     local pane = self:AddContainer(section, label)
-    local cv = GetNestedProperty(item, keys,TYPE_VECTOR)
+    local cv = GetNestedProperty(item, keys, TYPE_VECTOR)
 
     if (not isvector(cv)) then
         cv = Vector(1, 1, 1)
@@ -380,7 +370,7 @@ function PANEL:AddImgurOption(section, keys, label)
     texturebar:SetPaintBackground(false)
     texturebar:SetUpdateOnType(true)
     texturebar:SetTextColor(MenuTheme_TX)
-    local cur = GetNestedProperty(item, keys,TYPE_TABLE)
+    local cur = GetNestedProperty(item, keys, TYPE_TABLE)
     texturebar:SetText(cur and cur.url or "")
 
     texturebar.UpdateColours = function(pnl)
@@ -422,7 +412,7 @@ function PANEL:AddChoiceOption(section, keys, label, choices)
     cnt:SetTall(24)
     cnt.Paint = noop
     ATTACHSELECT = vgui.Create("DComboBox", cnt)
-    ATTACHSELECT:SetValue(GetNestedProperty(item,keys,TYPE_STRING))
+    ATTACHSELECT:SetValue(GetNestedProperty(item, keys, TYPE_STRING))
 
     for k, v in pairs(choices) do
         ATTACHSELECT:AddChoice(k)
@@ -445,9 +435,8 @@ function PANEL:Open(item)
     end
 
     self.item = item
-    
     self.wearsuf = LocalPlayer():IsPony() and "_p" or "_h"
-    self.wear = "wear"..self.wearsuf
+    self.wear = "wear" .. self.wearsuf
     SS_PreviewPane.ControlContainer:SizeTo(-1, 32, 0.2)
     SS_PreviewPane.ControlContainer2:SizeTo(-1, 32, 0.2)
     SS_ShopMenu:MakePopup()
@@ -494,10 +483,6 @@ function PANEL:Open(item)
                 p:Dock(TOP)
             end)
         end)
-
-    
-
-
     end)
     --[[
             vgui("DLabel", function(p)
@@ -516,9 +501,6 @@ function PANEL:Open(item)
             end)
             ]]
     --bottom panel
-
-
-
 end
 
 --gets a value nested into tables using a table of keys. Should be writable?
@@ -544,10 +526,7 @@ end
 
 --if we can help it, this function should never return nil
 --This function attempts to return a reasonable default value for its properties. This will look for item.wear etc. Used when no .cfg value is present
-
 function GetNestedDefault(item, keys, typeid)
-
-    
     local keys = table.Copy(keys)
     local itemdef = SS_Items[item.class]
     local use_configurable = true
@@ -572,14 +551,14 @@ function GetNestedDefault(item, keys, typeid)
     end
 
     --check "wear" table on item, translate some keys
-    if(!use_configurable)then
+    if (not use_configurable) then
         local ttable = {
             pos = "translate",
             ang = "rotate",
         }
+
         keys[#keys] = ttable[keys[#keys]] or keys[#keys]
     end
-
 
     local val = base
 
@@ -587,13 +566,11 @@ function GetNestedDefault(item, keys, typeid)
         val = val[v]
     end
 
-    if (val and checktype(val, typeid)) then
-        return val
-    end
+    if (val and checktype(val, typeid)) then return val end
     --if all else fails, use a bullshit fallback value, per type
+
     return typedef(typeid)
 end
-
 
 --returns the matching value in item.configurable when you look up a .cfg key
 function GetNestedInfo(item, keys)
@@ -612,12 +589,12 @@ function GetNestedProperty(item, keys, typeid)
     local config = table.Copy(item.cfg)
 
     if (config ~= nil) then
-
         for i, v in ipairs(keys) do
             if (keys[i + 1] == nil) then continue end
             config[v] = config[v] or {}
             config = config[v]
         end
+
         local nv = keys[#keys]
         if (config[nv] ~= nil and checktype(config[nv], typeid)) then return config[nv] end
     end
@@ -625,17 +602,15 @@ function GetNestedProperty(item, keys, typeid)
     return GetNestedDefault(item, keys, typeid)
 end
 
-
 --it's probably a good idea to run every change to the items through one function
 function SetNestedProperty(item, keys, value)
     local config = item.cfg
-    local oldvalue = GetNestedProperty(item,keys)
+    local oldvalue = GetNestedProperty(item, keys)
 
-    if(!item._cachedcfg)then
+    if (not item._cachedcfg) then
         item._cachedcfg = table.Copy(item.cfg)
         item._modified = true
     end
-
 
     for i, v in ipairs(keys) do
         if (keys[i + 1] == nil) then continue end --if this is the last key, leave it previous
@@ -645,10 +620,7 @@ function SetNestedProperty(item, keys, value)
     end
 
     --print("changing",table.concat(keys,"."),"from",istable(oldvalue) and table.concat(oldvalue,",") or oldvalue,"to",istable(value) and table.concat(value,",") or value)
-
-    
     config[keys[#keys]] = value
-    
     SS_RefreshShopAccessories()
     SS_CustomizerPanel:UpdateCfg()
 end
@@ -667,6 +639,7 @@ function PANEL:SetupControls()
     --quick little hack, if you wanna stick your diffent config types into subtables it will organize them. probably don't wanna use more than 2 per item though.
     SS_PreviewPane:ClearProperties()
     SS_PreviewPane.CurrentGizmoID = nil
+
     local function cleanbonename(bn)
         return bn:Replace("ValveBiped.Bip01_", ""):Replace("L_", "Left "):Replace("R_", "Right "):Replace("Lrig", ""):Replace("_LEG_", "")
     end
@@ -683,7 +656,7 @@ function PANEL:SetupControls()
         bone = LocalPlayer():GetBoneName(0),
         wear = {},
     }
-    
+
     for k, v in pairs(configtable) do
         local section_name = "default"
         local initkey = k
@@ -697,8 +670,8 @@ function PANEL:SetupControls()
         end
 
         self:AddSection(section_name)
+
         --SS_PreviewPane.SelectButton:SetEnabled(item.eq)
-        
         if (k == "wear") then
             for k2, v2 in pairs(v) do
                 if (istable(v2)) then
@@ -759,9 +732,7 @@ function PANEL:SetupControls()
     end
 
     local itmcw = self.item.configurable.wear
-  
     self:AddSection("default")
-
     local rawzone = Container(self.Sections["default"], "Raw Data")
     rawzone:SetExpanded(false)
     rawzone:OnToggle(false)
@@ -805,9 +776,6 @@ function PANEL:SetupControls()
     self:UpdateCfg()
 end
 
-
-
-
 concommand.Add("CleanUp", function()
     for k, v in pairs(vgui.GetWorldPanel():GetChildren()) do
         if (v:GetName() == "SwampChat") then continue end
@@ -826,12 +794,10 @@ function ImageHistoryPanel(button, textentry)
 
     local sz = 512
     local Menu = DermaMenu()
-    local container = Container(nil, "Saved Textures",true)
+    local container = Container(nil, "Saved Textures", true)
     container.Paint = noop
     container:SetSize(512, 512)
     Menu:AddPanel(container)
-
-
     local textures = vgui.Create("DImgurManager", container)
     textures:SetTextEntry(textentry)
     textures:Dock(TOP)
@@ -851,8 +817,6 @@ function ImageHistoryPanel(button, textentry)
     textures:Load()
     local img = SS_CustomizerPanel.TextureBar:GetText()
     textures.AddField:SetText(img)
-
-
     local x, y = button:LocalToScreen(button:GetWide() + SS_COMMONMARGIN, 0)
     Menu:Open(x, y)
     Menu.BaseLayout = Menu.PerformLayout
@@ -867,7 +831,7 @@ function ImageHistoryPanel(button, textentry)
 end
 
 function ImageGetterPanel()
-    if(IsValid(SS_TextureDownloadWindow))then
+    if (IsValid(SS_TextureDownloadWindow)) then
         SS_TextureDownloadWindow:Remove()
     end
 
@@ -930,8 +894,6 @@ function ImageGetterPanel()
 
         local img = vgui.Create("DPointshopTexture", Frame)
         img:Dock(FILL)
-
-        
     else
         LocalPlayerNotify("Couldn't find the material, sorry.")
     end
@@ -939,9 +901,10 @@ end
 
 function PANEL:UpdateCfg(skiptext)
     local ply = LocalPlayer()
-    if(!self.item)then return end
+    if (not self.item) then return end
     _SS_SanitizeConfig(self.item)
     SS_ShopAccessoriesClean = nil
+
     if IsValid(RAWENTRY) and not skiptext then
         RAWENTRY.RECIEVE = true
         RAWENTRY:SetValue(util.TableToJSON(self.item.cfg, true))
