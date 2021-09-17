@@ -985,11 +985,12 @@ function PANEL:Paint()
         self.Entity:SS_AttachAccessories(GetShopAccessoryItems())
         SS_FORCE_LOAD_WEBMATERIAL = nil
         local acc = SS_CreatedAccessories[self.Entity] or {}
-
+        
         
         SS_HoverCSModel = nil
         if(cust.item)then
         for k,prop in pairs(acc)do
+            
             if(prop.id == cust.item.id)then
                 SS_HoverCSModel = prop
                 break
@@ -998,6 +999,7 @@ function PANEL:Paint()
         end
 
         for _, prop in pairs(acc) do
+            prop:SetNoDraw(true)
             -- print(prop:GetMaterial())
             prop:DrawModel() --self.Entity)
         end

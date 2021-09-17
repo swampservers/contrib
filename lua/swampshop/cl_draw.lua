@@ -381,7 +381,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     else
         mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
     end
-
+    mdl:SetNoDraw(false)
     mdl.item = item
     local pone = isPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
