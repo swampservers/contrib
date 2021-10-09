@@ -140,8 +140,8 @@ DynamicLight = function(idx, elight)
     CVX_TRACKED_DLIGHTS[idx] = setmetatable({
         _data = {
             dietime = (CurTime() + 1)
-            -- traceback = debug.traceback()
         },
+        -- traceback = debug.traceback()
         _light = BASE_DYNAMIC_LIGHT(idx, elight),
     }, CVX_DLIGHT_PROXY_META)
 
