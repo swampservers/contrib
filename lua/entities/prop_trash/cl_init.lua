@@ -206,6 +206,7 @@ timer.Create("TrashLights", 0.1, 0, function()
                 local dlight = DynamicLight(e:EntIndex())
 
                 if dlight then
+                    dlight.pos = p
                     dlight.r = 1
                     dlight.g = 1
                     dlight.b = 1

@@ -140,8 +140,9 @@ DynamicLight = function(idx, elight)
     CVX_TRACKED_DLIGHTS[idx] = setmetatable({
         _data = {
             dietime = (CurTime() + 1)
+            -- traceback = debug.traceback()
         },
-        _light = BASE_DYNAMIC_LIGHT(idx, elight)
+        _light = BASE_DYNAMIC_LIGHT(idx, elight),
     }, CVX_DLIGHT_PROXY_META)
 
     return CVX_TRACKED_DLIGHTS[idx]
@@ -179,15 +180,20 @@ hook.Add("Think", "DlightCleanup", function()
 
             --Don't double count the eyeglow one
             if not IsValid(LocalPlayer()) or k ~= LocalPlayer():EntIndex() then
-                table.insert(CVX_SORTABLE_DLIGHTS, {
-                    1 / ((v.sortrgb or math.max(v.r, v.g, v.b)) * v.brightness * v.size), v.pos, {
-                        color = Vector(v.r, v.g, v.b) * 0.000015 * v.brightness * v.size,
-                        pos = v.pos,
-                        quadraticFalloff = 1,
-                        linearFalloff = 0,
-                        constantFalloff = 0,
-                    }
-                })
+                if v.pos == nil then
+                    print("WARNING nil light pos")
+                    -- print(v.traceback)
+                else
+                    table.insert(CVX_SORTABLE_DLIGHTS, {
+                        1 / ((v.sortrgb or math.max(v.r, v.g, v.b)) * v.brightness * v.size), v.pos, {
+                            color = Vector(v.r, v.g, v.b) * 0.000015 * v.brightness * v.size,
+                            pos = v.pos,
+                            quadraticFalloff = 1,
+                            linearFalloff = 0,
+                            constantFalloff = 0,
+                        }
+                    })
+                end
             end
         end
     end
