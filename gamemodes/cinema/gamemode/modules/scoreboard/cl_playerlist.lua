@@ -36,8 +36,6 @@ surface.CreateFont("ScoreboardPing", {
     weight = 200
 })
 
-afkClockMaterial = Material("icon16/time.png")
-showAFKs = false
 local PLAYERLIST = {}
 PLAYERLIST.TitleHeight = BrandTitleBarHeight
 PLAYERLIST.ServerHeight = 32
@@ -285,16 +283,14 @@ function PLAYER:Init()
             p:SetImage("countries/us.png")
         end)
 
-        if (showAFKs or LocalPlayer():IsStaff()) then
-            self.AFK = vgui("DImage", function(p)
-                p:SetSize(16, 16)
-                p:DockMargin(2, 4, 2, 4)
-                p:Dock(RIGHT)
-                p:SetImage("icon16/time.png")
-                p:SetTooltip("AFK")
-                p:CenterVertical()
-            end)
-        end
+        self.AFK = vgui("DImage", function(p)
+            p:SetSize(16, 16)
+            p:DockMargin(2, 4, 2, 4)
+            p:Dock(RIGHT)
+            p:SetImage("icon16/time.png")
+            p:SetTooltip("AFK")
+            p:CenterVertical()
+        end)
     end)
 end
 
@@ -558,10 +554,8 @@ function SERVERNAME:Update()
 
     local x, y = self:LocalCursorPos()
     local xs, ys = self:GetSize()
-    showAFKs = false
 
     if x > 0 and y > 0 and x < xs and y < ys then
-        showAFKs = true
         local count = 0
         local count2 = 0
 
