@@ -16,17 +16,11 @@ local function convertISO8601Time(duration)
         table.insert(a, part)
     end
 
-    if duration:find('M') and not (duration:find('H') or duration:find('S')) then
-        a = {0, a[1], 0}
-    end
-
-    if duration:find('H') and not duration:find('M') then
-        a = {a[1], 0, a[2]}
-    end
-
-    if duration:find('H') and not (duration:find('M') or duration:find('S')) then
-        a = {a[1], 0, 0}
-    end
+	if duration:find('H') or duration:find('M') or duration:find('S') then
+		a[1] = string.match(duration, "(%d+)H") or 0
+		a[2] = string.match(duration, "(%d+)M") or 0
+		a[3] = string.match(duration, "(%d+)S") or 0
+	end
 
     duration = 0
 
