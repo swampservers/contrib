@@ -2,7 +2,10 @@
 -- INSTALL: CINEMA
 include("sh_init.lua")
 include("cl_draw.lua")
+include("cl_gizmo.lua")
 include("cl_lootboxes.lua")
+
+
 include("vgui/menu.lua")
 include("vgui/panels.lua")
 include("vgui/item.lua")
@@ -10,6 +13,8 @@ include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")
 include("vgui/imgur_manager.lua")
+include("vgui/texturewindow.lua")
+include("vgui/tip.lua")
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3
@@ -79,6 +84,7 @@ function SS_ToggleMenu()
     if not IsValid(SS_ShopMenu) then
         SS_ShopMenu = vgui.Create('DPointShopMenu')
         SS_ShopMenu:SetVisible(false)
+        SS_ShopMenu:MakePopup()
     end
 
     if SS_ShopMenu:IsVisible() then
@@ -196,7 +202,6 @@ local function removeitemid(tab, id)
     for i, v in ipairs(tab) do
         if v.id == id then
             table.remove(tab, i)
-
             return
         end
     end

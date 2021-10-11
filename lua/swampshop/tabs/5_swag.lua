@@ -133,12 +133,12 @@ SS_AccessoryItem({
     color = Vector(1, 1, 1),
     maxscale = 2.7,
     wear = {
-        attach = "head",
+        attach = "eyes",
         scale = 1,
         translate = Vector(0, 0, 0),
         rotate = Angle(0, 0, 0),
         pony = {
-            attach = "head",
+            attach = "eyes",
             scale = 2,
             translate = Vector(0, 0, 0),
             rotate = Angle(0, 0, 0),

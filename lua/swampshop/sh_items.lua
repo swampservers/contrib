@@ -21,9 +21,9 @@ function SS_MakeItem(ply, itemdata)
     assert(IsValid(ply) or ply == SS_SAMPLE_ITEM_OWNER)
     itemdata.owner = ply
     setmetatable(itemdata, class)
-
     return itemdata
 end
+
 
 function SS_MakeItems(ply, itemdatas, skip_unknown)
     local out = {}
@@ -143,13 +143,31 @@ function SS_AccessoryItem(item)
 
     --Pass -1 for default?
     item.configurable.wear.scale = {
+        label = "Scale",
+        gizmo = "scale",
+        sort = 3,
         min = Vector(0.05, 0.05, 0.05),
         max = (item.maxscale or 1) * Vector(1, 1, 1)
     }
 
     item.configurable.wear.pos = {
+        label = "Offset",
+        gizmo = "translate",
+        sort = 1,
         min = Vector(-16, -16, -16),
         max = Vector(16, 16, 16)
+    }
+
+    item.configurable.wear.ang = {
+        label = "Rotate",
+        gizmo = "rotate",
+        sort = 2
+    }
+
+    item.configurable.wear.attach = {
+        label = "Attachment",
+        choices = SS_Attachments,
+        sort = 4
     }
 
     item.configurable.color = {
@@ -163,18 +181,19 @@ function SS_AccessoryItem(item)
     function item:AccessoryTransform(pone)
         local wear = pone and self.wear.pony or self.wear
         local wear2 = self.wear
+        
         local cfg = self.cfg[pone and "wear_p" or "wear_h"] or {}
         local attach = cfg.attach or wear.attach or wear2.attach
         local translate = cfg.pos or wear.translate or wear2.translate
         local rotate = cfg.ang or wear.rotate or wear2.rotate
         local scale = cfg.scale or wear.scale or wear2.scale
         -- isnumber(scale) and Vector(scale,scale,scale) or scale
-
         return attach, translate, rotate, scale
     end
 
     SS_Item(item)
 end
+
 
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
@@ -184,15 +203,19 @@ function SS_Item(item)
 
     function item:Sanitize()
         _SS_SanitizeConfig(self)
-
+        if item.never_equip then
+            item.eq = nil
+        end
         if self.owner ~= SS_SAMPLE_ITEM_OWNER and self:CannotEquip() then
             self.eq = false
         end
+    
 
         if self.SanitizeSpecs and self:SanitizeSpecs() then return true end
     end
 
     function item:CannotEquip()
+        local cfg = item.cfg or {}
         if self.never_equip then return "This item can't be equipped." end
 
         if self.accessory_slot then
@@ -207,14 +230,15 @@ function SS_Item(item)
             if c > self.owner:SS_AccessorySlots() then return "Buy more accessory slots (in Upgrades) to wear more items." end
         end
 
-        if self.cfg.imgur then
+        if cfg.imgur then
             local urls = {
-                [self.cfg.imgur.url] = true
+                [cfg.imgur.url] = true
             }
 
             for k, v in pairs(self.owner.SS_Items) do
-                if v.eq and v.cfg.imgur then
-                    urls[v.cfg.imgur.url] = true
+                local vcfg = v.cfg
+                if v.eq and vcfg.imgur then
+                    urls[vcfg.imgur.url] = true
                 end
             end
 
@@ -222,8 +246,8 @@ function SS_Item(item)
         end
     end
 
-    function item:ShouldShow()
-        return self.eq
+    function item:ShouldShow(editor)
+        return self.eq 
     end
 
     if not item.SellValue then
@@ -254,7 +278,7 @@ function SS_Item(item)
         item.actions.equip = {
             primary = true,
             Text = function(item) return item.eq and "HOLSTER" or "EQUIP" end,
-            Cannot = item.CannotEquip
+            Cannot = item.CannotEquip,
         }
     end
 
@@ -306,7 +330,7 @@ function SS_Item(item)
         end
 
         if SERVER then
-            v.OnServer = v.OnServer or SS_ServerActions[id]
+            v.OnServer = v.OnServer or SS_ServerActions and SS_ServerActions[id]
         end
 
         v.Cannot = v.Cannot or function() end
@@ -327,8 +351,10 @@ function SS_Item(item)
     end
 end
 
-function _SS_SanitizeConfig(item)
-    local cfg = item.cfg
+
+--second argument, include cfg out of context of an item, but still use an item as reference
+function _SS_SanitizeConfig(item,cfg)
+    cfg = cfg or item.cfg
     local itmc = item.configurable
     if not itmc then return end
     local dirty_cfg = {}
@@ -382,6 +408,11 @@ function _SS_SanitizeConfig(item)
     if itmc.pos then
         cfg.pos_h = sanitize_vector(dirty_cfg.pos_h, itmc.pos.min, itmc.pos.max)
         cfg.pos_p = sanitize_vector(dirty_cfg.pos_p, itmc.pos.min, itmc.pos.max)
+    end
+
+    if itmc.ang then
+        cfg.ang_h = dirty_cfg.ang_h
+        cfg.ang_p = dirty_cfg.ang_p
     end
 
     if itmc.bone then

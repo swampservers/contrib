@@ -110,5 +110,12 @@ PPM.m_bodydetails = {
     {Material("models/ppm/partrender/body_socks_primary.png"), "Socks primary"},
     {Material("models/ppm/partrender/body_socks_secondary.png"), "Socks secondary"},
     {Material("models/ppm/partrender/body_collar.png"), "Collar"},
-    {Material("models/ppm/partrender/body_lipstick.png"), "Lipstick"}
+    {Material("models/ppm/partrender/body_lipstick.png"), "Lipstick"},
+    {Material("models/ppm/partrender/body_eyes_clown.png"), "Clown Eyes"},
+    {Material("models/ppm/partrender/body_lipstick_clown.png"), "Clown Lipstick"},
+    {Material("models/ppm/partrender/body_nosespot.png"), "Clown Nose"},
+    {Material("models/ppm/partrender/body_eartip.png"), "Ear Gradient"},
+    {Material("models/ppm/partrender/body_fullbody.png"), "Full Body"},
+    {Material("models/ppm/partrender/body_pants.png"), "Lower Body"},
+    
 }

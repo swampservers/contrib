@@ -117,7 +117,7 @@ Tail02
 Tail03
 ]]
 SS_Attachments = {
-    eyes = "I'm special",
+    eyes = "Face",
     head = {"ValveBiped.Bip01_Head1", "LrigScull"},
     neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
     upper_body = {"ValveBiped.Bip01_Spine4", "LrigSpine2"},
@@ -129,6 +129,27 @@ SS_Attachments = {
     left_foot = {"ValveBiped.Bip01_L_Foot", "Lrig_LEG_BL_RearHoof"},
     right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
 }
+
+SS_BoneTranslate = {
+    eyes = {"ValveBiped.Bip01_Head1", "LrigScull"},
+    head = {"ValveBiped.Bip01_Head1", "LrigScull"},
+    neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
+    upper_body = {"ValveBiped.Bip01_Spine4", "LrigSpine2"},
+    lower_body = {"ValveBiped.Bip01_Spine", "LrigSpine1"},
+    left_hand = {"ValveBiped.Bip01_L_Hand", "Lrig_LEG_FL_FrontHoof"},
+    right_hand = {"ValveBiped.Bip01_R_Hand", "Lrig_LEG_FR_FrontHoof"},
+    left_shoulder = {"ValveBiped.Bip01_L_Clavicle", "Lrig_LEG_FL_Humerus"},
+    right_shoulder = {"ValveBiped.Bip01_R_Clavicle", "Lrig_LEG_FR_Humerus"},
+    left_foot = {"ValveBiped.Bip01_L_Foot", "Lrig_LEG_BL_RearHoof"},
+    right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
+}
+
+function SS_GetBoneFromAttachName(attn,pony)
+    attn = attn or "eyes"
+    if(attn == "")then attn = "eyes" end
+    local key = pony and 2 or 1
+    return SS_BoneTranslate[attn][key]
+end
 
 local NoPointAltIds = {
     ["STEAM_0:1:149372369"] = true,

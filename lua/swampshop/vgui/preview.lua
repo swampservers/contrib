@@ -3,11 +3,701 @@
 local PANEL = {}
 
 --NOMINIFY
+local SnapSettings = {
+    ["translate"] = {0, 0.5, 1, 2, 4, 8},
+    ["rotate"] = {0, 1, 2.5, 5, 10, 15, 45},
+}
+
+local icons = {
+    select = "swampshop/tool_select.png",
+    translate = "swampshop/tool_move.png",
+    rotate = "swampshop/tool_rotate.png",
+    scale = "swampshop/tool_scale.png",
+    Bone = "swampshop/bone.png",
+    Attachment = "swampshop/bone.png",
+}
+
+SNAPS_MEMORY = SNAPS_MEMORY or {}
+
+
+
+
+
+function PANEL:ClearProperties()
+    self.CurrentGizmo = nil
+    self.CurrentGizmoID = nil
+    if (IsValid(self.ControlContainer)) then
+        for _, v in pairs(self.ControlContainer:GetChildren()) do
+            if (not v.Static) then
+                v:Remove()
+            end
+        end
+    end
+end
+
+function PANEL:AddChoiceProperty(choices, keys, config, label)
+    local key = table.concat(keys, ".")
+    local cust = SS_CustomizerPanel
+    self.Controls[key] = self:AddButton(icons[type] or icons[label] or "icon16/shading.png", label, true)
+
+    if (config.sort) then
+        self.Controls[key]:SetZPos(config.sort)
+    end
+
+    self.Controls[key].DoClick = function(pnl)
+        local w, h = pnl:GetSize()
+        local x, y = pnl:LocalToScreen(0, h)
+        surface.PlaySound("UI/buttonclick.wav")
+        local menu = DermaMenu()
+        local inn = cust.wearsuf == "_p" and 2 or 1
+        
+        for k, v in pairs(choices) do
+            local dval = v
+
+            if (istable(v)) then
+                dval = v[inn]
+            end
+
+            menu:AddOption(dval, function()
+                SetNestedProperty(cust.item, keys, k)
+                surface.PlaySound("UI/buttonclick.wav")
+            end)
+        end
+
+        menu:Open(x, y)
+        pnl.Gizmo = gzmo
+    end
+end
+
+function PANEL:AddGizmoProperty(type, keys, config, label)
+
+    
+    local gtype = keys[#keys]
+
+    if (keys[1] == "wear_p") then
+        gtype = "wear." .. gtype
+    end
+
+    if (keys[1] == "wear_h") then
+        gtype = "wear." .. gtype
+    end
+
+    if (config.gizmohandler) then
+        gtype = config.gizmohandler
+    end
+
+    local key = table.concat(keys, ".")
+    self.Controls[key] = self:AddButton(icons[type] or "icon16/shading.png", label)
+
+    -- show a hint about using gizmos, the first time a gizmo is spawned onto the top panel
+    if(!self.ControlContainer.Helped)then
+        self.ControlContainer.Helped = true
+        SwampMenuTip(self.Controls[key],"gizmos_intro","Click these buttons to move your item around in 3D!")
+    end
+
+
+    if (config.sort) then
+        self.Controls[key]:SetZPos(config.sort)
+    end
+
+    self.Controls[key].DoClick = function(pnl)
+        if(self.CurrentGizmoID == key)then
+            surface.PlaySound("UI/buttonclick.wav")
+            pnl.Gizmo = nil
+            self.CurrentGizmo = nil
+            self.CurrentGizmoID = nil
+            return
+        end
+
+
+
+        surface.PlaySound("UI/buttonclick.wav")
+        local gzmo = self.SetupGizmo[gtype](self)
+        gzmo.propkeys = keys
+        self.CurrentGizmoID = key
+        self.CurrentGizmo = gzmo
+        
+        pnl.Gizmo = self.CurrentGizmo
+
+    end
+
+    
+end
+
 function PANEL:Init()
     self:SetModel(LocalPlayer():GetModel())
     self.Angles = Angle(0, 0, 0)
     self.ZoomOffset = 0
     self:SetFOV(30)
+    self.ViewAngles = Angle(15, 0, 0)
+    self.ControlContainer = self:Add("DPanel")
+    self.ControlContainer:Dock(TOP)
+    self.ControlContainer:SetTall(0)
+    self.ControlContainer:SetZPos(500)
+    self.ControlContainer.Paint = noop --SS_PaintFG
+
+    self.ControlContainer2 = self:Add("DPanel")
+    self.ControlContainer2:Dock(BOTTOM)
+    self.ControlContainer2:SetTall(0)
+    self.ControlContainer2:SetZPos(500)
+    self.ControlContainer2.Paint = noop --SS_PaintFG
+    
+    self.Controls = {}
+
+
+
+    self.CameraButton = self:AddButton("icon16/shading.png", "Camera", true)
+    self.CameraButton.Static = true
+
+    self.CameraButton.DoClick = function()
+        surface.PlaySound("UI/buttonclick.wav")
+        SS_EDITOR_ALIGNZ = not SS_EDITOR_ALIGNZ
+        self.CameraButton:SetImage(SS_EDITOR_ALIGNZ and "swampshop/view_lock.png" or "swampshop/view_tilt.png")
+    end
+
+    self.CameraButton:SetImage(SS_EDITOR_ALIGNZ and "swampshop/view_lock.png" or "swampshop/view_tilt.png")
+
+
+    self.BackButton = self:AddButton(nil, "Done", true,true)
+    self.BackButton.Static = true
+
+    self.BackButton.DoClick = function()
+        surface.PlaySound("UI/buttonclick.wav")
+        local cust = SS_CustomizerPanel
+        SS_ItemServerAction(cust.item.id, "configure", cust.item.cfg)
+        SS_CustomizerPanel:Close()  
+    end
+    
+    self.RevertButton = self:AddButton(nil, "Cancel", true,true)
+    self.RevertButton.Static = true
+    self.RevertButton.DoClick = function()
+        local cust = SS_CustomizerPanel
+        surface.PlaySound("UI/buttonclick.wav")
+        if( cust.item._modified and cust.item._cachedcfg)then
+            cust.item.cfg = table.Copy(cust.item._cachedcfg)
+            cust.item._cachedcfg = nil
+            cust.item._modified = nil
+            cust:UpdateCfg()
+ 
+        end
+        SS_CustomizerPanel:Close()  
+    end
+
+    self.ResetButton = self:AddButton(nil, "Clear Changes", false,true)
+    self.ResetButton.Static = true
+    self.ResetButton.DoClick = function()
+        local cust = SS_CustomizerPanel
+        surface.PlaySound("UI/buttonclick.wav")
+        cust.item.cfg = {}
+        cust:UpdateCfg()
+        cust:SetupControls(cust.controlzone)
+    end
+
+end
+
+function PANEL:AddButton(icon, propname, right,bottom)
+    local cont = bottom and self.ControlContainer2 or self.ControlContainer
+    local button = cont:Add(icon and "DImageButton" or "DButton")
+    button:Dock(right and RIGHT or LEFT)
+    button:SetWide(96)
+    button:SetText(propname .. (icon and "  " or ""))
+    if icon then
+    button:SetImage(icon)
+    button:SetStretchToFit(false)
+    
+    button:SetContentAlignment(6)
+    button:SetDepressImage(false)
+    end
+    button:DockMargin(right and SS_COMMONMARGIN or 0, 0, right and 0 or SS_COMMONMARGIN, 0)
+    
+
+
+    local prev = self
+
+    button.UpdateColours = function(pnl)
+        local enabled = pnl:IsEnabled()
+
+        local clr = enabled and MenuTheme_TX or ColorAlpha(MenuTheme_TX,64)
+        pnl:SetTextColor(clr)
+        pnl:SetTextStyleColor(clr)
+        if(IsValid(pnl.m_Image))then
+        pnl.m_Image:SetImageColor(clr)
+        end
+    end
+    function button:Think() 
+        button:UpdateColours()
+    end
+    function button:PerformLayout() 
+        if(IsValid(self.m_Image))then
+        self.m_Image:SizeToContents()
+        self.m_Image:Center()
+        self.m_Image:AlignLeft(SS_SMALLMARGIN)
+        end
+    end
+    button:UpdateColours()
+
+    function button:Paint(w, h)
+        local gzmo = self.Gizmo
+        local currentgizmo = prev.CurrentGizmo
+        local active = gzmo ~= nil and currentgizmo == gzmo
+        SS_DrawPanelShadow(self, w, h)
+        SS_GLOBAL_RECT(0, 0, w, h, active and MenuTheme_Brand or MenuTheme_FG)
+    end
+
+    return button
+end
+
+PANEL.SetupGizmo = {}
+
+PANEL.SetupGizmo["select"] = function(self)
+    local cgizmo = gizmo.Create("select")
+    cgizmo:SetupForModelPanel(self)
+    local panel = self
+
+    function cgizmo:GetClickableEnts(value)
+        local tab = {}
+        local acc = SS_CreatedAccessories and SS_CreatedAccessories[panel.Entity]
+
+        if (acc) then
+            tab = acc
+        end
+
+        return tab
+    end
+
+    function cgizmo:OnUpdate(value)
+        local itemstemp = table.Copy(LocalPlayer().SS_Items or {})
+        local itemid = value.id
+        local itemkey 
+        for k,v in pairs(itemstemp)do
+            if v.id == value.id then
+                itemkey = k
+                break
+            end
+        end
+
+        assert(itemkey,"Selection is invalid item id "..value.id)
+
+        if (itemid == SS_CustomizerPanel.item.id) then return end
+        surface.PlaySound("UI/buttonclick.wav")
+        SS_CustomizerPanel:Open(itemstemp[itemkey])
+    end
+
+    return cgizmo
+end
+
+PANEL.SetupGizmo["wear.pos"] = function(self)
+    local cgizmo = gizmo.Create("translate")
+    cgizmo._IsLocalSpace = true
+    cgizmo:SetupForModelPanel(self)
+
+    function cgizmo:GetPos()
+        local ent = SS_HoverCSModel
+
+        if (IsValid(ent)) then
+            local pos = ent:GetPos()
+
+            return pos
+        end
+
+        return Vector()
+    end
+
+    function cgizmo:GetAngles()
+        local ent = SS_HoverCSModel
+
+        if (IsValid(ent)) then
+            local par, att = ent:GetParent(), ent:GetParentAttachment()
+
+            
+
+            local cust = SS_CustomizerPanel
+            local suf = cust.wearsuf or "_h"
+            local pone = suf == "_p"
+            local nestkeys = self.propkeys
+
+            local boneval = GetNestedProperty(cust.item, {nestkeys[1],"attach"},TYPE_STRING) or "eyes"
+            local bonename = SS_GetBoneFromAttachName(boneval,cust.wearsuf == "_p")
+            
+            local bone = par:LookupBone(bonename)
+            local bpos, bang
+
+            if bone then
+                local mat = par:GetBoneMatrix(bone)
+
+                if (mat) then
+                    bpos, bang = mat:GetTranslation(), mat:GetAngles()
+                end
+
+                if boneval == "eyes" then
+                    if (att) then
+                        local angpos = par:GetAttachment(par:LookupAttachment("eyes"))
+        
+                        if (angpos) then
+                            bpos = angpos.Pos
+                            bang = angpos.Ang
+                        end
+                    end
+                end
+            end
+
+
+
+            local ang = bang
+
+            return ang
+        end
+
+        return Angle()
+    end
+
+    function cgizmo:GetScale()
+        return 1
+    end
+
+    function cgizmo:OnUpdate(value)
+        local ent = SS_HoverCSModel
+        local cust = SS_CustomizerPanel
+        local item = cust.item 
+        
+        local nestkeys = self.propkeys
+
+        local cur = GetNestedProperty(item, nestkeys,TYPE_VECTOR)
+        if(!isvector(cur))then cur = Vector() end
+        --self._GrabbedHandleOffset = self._GrabbedHandleOffset + value
+        cur = cur + value
+        SetNestedProperty(cust.item, nestkeys, cur)
+    end
+
+    return cgizmo
+end
+
+PANEL.SetupGizmo["wear.ang"] = function(self)
+    local cgizmo = gizmo.Create("rotate")
+    cgizmo._IsLocalSpace = true
+    cgizmo:SetupForModelPanel(self)
+    local panel = self
+
+    function cgizmo:GetPos()
+        local ent = panel.Entity
+
+        if (IsValid(SS_HoverCSModel)) then
+            ent = SS_HoverCSModel
+        end
+
+        local pos = ent:GetPos()
+
+        return pos
+    end
+
+    function cgizmo:GetAngles()
+        local ent = SS_HoverCSModel
+
+        if (IsValid(ent)) then
+            local par, att = ent:GetParent(), ent:GetParentAttachment()
+            local bone = ent._FollowedBone
+            local bpos, bang
+
+            if (bone) then
+                local mat = par:GetBoneMatrix(bone)
+
+                if (mat) then
+                    bpos, bang = mat:GetTranslation(), mat:GetAngles()
+                end
+            end
+
+            if (att) then
+                local angpos = par:GetAttachment(att)
+
+                if (angpos) then
+                    bpos = angpos.Pos or Vector()
+                    bang = angpos.Ang or Angle()
+                end
+            end
+
+            local ang = ent:GetAngles()
+
+            return ang
+        end
+
+        return Angle()
+    end
+
+    function cgizmo:GetScale()
+        return 1
+    end
+
+    function cgizmo:OnUpdate(value)
+        local ang = value
+        local cust = SS_CustomizerPanel
+        local nestkeys = self.propkeys
+        local cur = GetNestedProperty(cust.item, nestkeys,TYPE_ANGLE)
+        if(!isangle(cur))then cur = Angle() end
+        _, cur = LocalToWorld(Vector(), value, Vector(), cur)
+        
+        SetNestedProperty(cust.item, nestkeys, cur)
+    end
+
+    return cgizmo
+end
+
+PANEL.SetupGizmo["wear.scale"] = function(self)
+    local cgizmo = gizmo.Create("scale")
+    cgizmo._IsLocalSpace = true
+    cgizmo:SetupForModelPanel(self)
+
+    function cgizmo:GetPos()
+        if (IsValid(SS_HoverCSModel)) then
+            local pos = SS_HoverCSModel:GetPos()
+
+            return pos
+        end
+
+        return Vector()
+    end
+
+    function cgizmo:GetAngles()
+        if (IsValid(SS_HoverCSModel)) then
+            local ang = SS_HoverCSModel:GetAngles()
+
+            return ang
+        end
+
+        return Angle()
+    end
+
+    function cgizmo:GetScale()
+        return 1
+    end
+
+    function cgizmo:OnGrabbed()
+        local cust = SS_CustomizerPanel
+        local nestkeys = self.propkeys
+        local cur = GetNestedProperty(cust.item, nestkeys,{TYPE_VECTOR,TYPE_NUMBER})
+        --cur = isvector(cur) and cur or Vector(1,1,1) --we shouldn't need this
+        self._ScaleBasis = cur
+    end
+
+    function cgizmo:OnUpdate(value)
+        local cust = SS_CustomizerPanel
+        local nestkeys = self.propkeys
+        local cur = GetNestedProperty(cust.item, nestkeys,{TYPE_VECTOR,TYPE_NUMBER})
+        --cur = isvector(cur) and cur or Vector(1,1,1) --we shouldn't need this
+        cur = self._ScaleBasis * value
+        SetNestedProperty(cust.item, nestkeys, cur)
+    end
+
+    return cgizmo
+end
+
+PANEL.SetupGizmo["bone.pos"] = function(self)
+    local cgizmo = gizmo.Create("translate")
+    cgizmo._IsLocalSpace = true
+    cgizmo:SetupForModelPanel(self)
+    local panel = self
+    function cgizmo:GetEnt()
+        return panel.Entity
+    end
+
+    function cgizmo:GetBoneInfo()
+        local ent = self:GetEnt()
+        local item = SS_GetEditedItem()
+        local cust = SS_CustomizerPanel
+        local suf = cust.wearsuf or "_h"
+        
+        
+
+        
+        local nestkeys = self.propkeys
+        local nestkeys2 = table.Copy(nestkeys)
+        nestkeys2[#nestkeys2] = "bone"..suf
+        local bone = GetNestedProperty(item, nestkeys2,TYPE_STRING)
+        --if(!isstring(bone))then bone = 0 end
+        bone = isstring(bone) and ent:LookupBone(bone)
+
+        local bonepar = ent:GetBoneParent(bone or 0)
+        if(bonepar == -1)then bonepar = 0 end
+
+        local offset = GetNestedProperty(item, nestkeys,TYPE_VECTOR) or Vector()
+        if(!isvector(offset))then offset = Vector() end
+        
+        return item,bone,bonepar,offset
+    end
+
+    function cgizmo:GetPos()
+        local ent = self:GetEnt()
+        local item, bone,bonepar,offset = self:GetBoneInfo()
+        local bpos, bang = ent:GetBonePosition(bone or 0)
+        if (bpos) then return bpos end
+
+        return Vector()
+    end
+
+    function cgizmo:GetAngles()
+        local ent = self:GetEnt()
+        local item, bone,bonepar,offset = self:GetBoneInfo()
+        local bpos, bang = ent:GetBonePosition(bonepar or 0)
+        if (bang) then return bang end
+
+        return Angle()
+    end
+
+    function cgizmo:GetScale()
+        return 1
+    end
+
+    function cgizmo:OnUpdate(value)
+        local ent = SS_HoverCSModel
+        local cust = SS_CustomizerPanel
+        local item = cust.item
+        local nestkeys = self.propkeys
+        local cur = GetNestedProperty(cust.item, nestkeys,TYPE_VECTOR) 
+        --if(!isvector(cur))then cur = Vector() end
+        --self._GrabbedHandleOffset = self._GrabbedHandleOffset + value
+        cur = cur + value
+        SetNestedProperty(cust.item, nestkeys, cur)
+    end
+
+    return cgizmo
+end
+
+PANEL.SetupGizmo["bone.ang"] = function(self)
+    local cgizmo = gizmo.Create("rotate")
+    cgizmo._IsLocalSpace = true
+    cgizmo:SetupForModelPanel(self)
+    local panel = self
+
+    function cgizmo:GetEnt()
+        return panel.Entity
+    end
+
+    function cgizmo:GetBoneInfo()
+        local ent = self:GetEnt()
+        local item = SS_GetEditedItem()
+        local cust = SS_CustomizerPanel
+        local suf = cust.wearsuf or "_h"
+    
+        local nestkeys = self.propkeys
+        local nestkeys2 = table.Copy(nestkeys)
+        nestkeys2[#nestkeys2] = "bone"..suf
+        local bone = GetNestedProperty(item, nestkeys2,TYPE_STRING)
+        bone = isstring(bone) and ent:LookupBone(bone)
+
+        local bonepar = ent:GetBoneParent(bone) or 0
+        
+
+        return item,bone,bonepar
+    end
+
+    function cgizmo:GetPos()
+        local ent = self:GetEnt()
+        local item, bone,bonepar = self:GetBoneInfo()
+        local bpos, bang = ent:GetBonePosition(bone or 0)
+        if (bpos) then return bpos end
+
+        return Vector()
+    end
+
+    function cgizmo:GetAngles()
+        local ent = self:GetEnt()
+        local item, bone,bonepar = self:GetBoneInfo()
+        local bpos, bang = ent:GetBonePosition(bone or 0)
+        if (bang) then return bang end
+
+        return Angle()
+    end
+
+
+    function cgizmo:GetScale()
+        return 1
+    end
+
+    function cgizmo:OnUpdate(value)
+        local ang = value
+        local cust = SS_CustomizerPanel
+        local nestkeys = self.propkeys
+        local cur = GetNestedProperty(cust.item, nestkeys,TYPE_ANGLE)
+        _, cur = LocalToWorld(Vector(), value, Vector(), cur)
+        SetNestedProperty(cust.item, nestkeys, cur)
+    end
+
+    return cgizmo
+end
+
+PANEL.SetupGizmo["bone.scale"] = function(self)
+    local cgizmo = gizmo.Create("scale")
+    cgizmo._IsLocalSpace = true
+    cgizmo:SetupForModelPanel(self)
+    local panel = self
+    function cgizmo:GetEnt()
+        return panel.Entity
+    end
+    function cgizmo:GetBoneInfo()
+        local ent = self:GetEnt()
+        local item = SS_GetEditedItem()
+        local cust = SS_CustomizerPanel
+        local suf = cust.wearsuf or "_h"
+        local nestkeys = self.propkeys
+        local nestkeys2 = table.Copy(nestkeys)
+        nestkeys2[#nestkeys2] = "bone"..suf
+        local bone = GetNestedProperty(item, nestkeys2,TYPE_STRING)
+
+        bone = isstring(bone) and ent:LookupBone(bone)
+
+        return item,bone
+    end
+
+
+    function cgizmo:GetPos()
+        local ent = self:GetEnt()
+        local item, bone = self:GetBoneInfo()
+        local bpos, bang = ent:GetBonePosition(bone or 0)
+        if(bpos)then return bpos end
+        return Vector()
+    end
+
+    function cgizmo:GetAngles()
+        local ent = self:GetEnt()
+        local item, bone = self:GetBoneInfo()
+        local bpos, bang = ent:GetBonePosition(bone or 0)
+        if (bang) then return bang end
+
+        return Angle()
+    end
+
+
+    function cgizmo:GetScale()
+        return 1
+    end
+
+    function cgizmo:OnGrabbed()
+        local cust = SS_CustomizerPanel
+        local nestkeys = self.propkeys
+        local cur = GetNestedProperty(cust.item, nestkeys,TYPE_VECTOR)
+        --cur = isvector(cur) and cur or Vector(1,1,1)
+        self._ScaleBasis = cur
+    end
+
+    function cgizmo:OnUpdate(value)
+        local cust = SS_CustomizerPanel
+        local nestkeys = self.propkeys
+        local cur = GetNestedProperty(cust.item, nestkeys,TYPE_VECTOR)
+        --cur = isvector(cur) and cur or Vector(1,1,1)
+        cur = self._ScaleBasis * value
+        SetNestedProperty(cust.item, nestkeys, cur)
+    end
+
+    return cgizmo
+end
+
+hook.Add("PostDrawTranslucentRenderables", "shahaa", function()
+    if (IsValid(TESTGIZMO)) then end --TESTGIZMO:Draw()
+end)
+
+function PANEL:Think()
+    if (IsValid(self.CurrentGizmo)) then
+        self.CurrentGizmo:Think()
+    end
 end
 
 function PANEL:OnMouseWheeled(amt)
@@ -15,12 +705,23 @@ function PANEL:OnMouseWheeled(amt)
 end
 
 function PANEL:DragMousePress(btn)
+    local cust = SS_CustomizerPanel
+
+    if (IsValid(self.CurrentGizmo) and cust and cust.item) then
+        local grabbed = self.CurrentGizmo:Grab()
+        if (grabbed) then return end
+    end
+
     self.PressButton = btn
     self.PressX, self.PressY = gui.MousePos()
     self.Pressed = true
 end
 
 function PANEL:DragMouseRelease()
+    if (IsValid(self.CurrentGizmo)) then
+        self.CurrentGizmo:Release()
+    end
+
     self.Pressed = false
     self.lastPressed = RealTime()
 end
@@ -30,144 +731,175 @@ function PANEL:LayoutEntity(thisEntity)
         self:RunAnimation()
     end
 
+    local gzmo = self.CurrentGizmo
+    local grabbing = IsValid(gzmo) and IsValid(gzmo:GetGrabbedHandle())
+    self.Entity:SetPlaybackRate(0.01)
+    for i=0,6 do
+        self.Entity:SetLayerPlaybackRate( i,0.01 )
+    end
+
+    if not SS_CustomizerPanel:IsVisible() then
+        for i = 0, FrameTime() * 30 do
+            self.ViewAngles.pitch = ((self.ViewAngles.pitch - 15) / 1.05) + 15
+            self.ViewAngles.roll = self.ViewAngles.roll / 1.05
+        end
+    end
+
     if (self.Pressed) then
         local mx, my = gui.MousePos()
-
-        --self.Angles = self.Angles - Angle( ( self.PressY or my ) - my, ( self.PressX or mx ) - mx, 0 )
+        local dx, dy = (mx - (self.PressX or mx)) , (my - (self.PressY or my))
         if self.PressButton == MOUSE_LEFT then
             if SS_CustomizerPanel:IsVisible() then
-                local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
-                self.Angles:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.6)
-                self.Angles:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.6)
+                if (SS_EDITOR_ALIGNZ) then
+                    self.ViewAngles.pitch = math.Clamp(self.ViewAngles.pitch + dy * 0.6,-89,89)
+                    self.ViewAngles:RotateAroundAxis(Vector(0, 0, -1), dx * 0.6)
+                else
+                    self.ViewAngles:RotateAroundAxis(-self.ViewAngles:Right(), dy * 0.6)
+                    self.ViewAngles:RotateAroundAxis(-self.ViewAngles:Up(), dx * 0.6)
+                end
+
                 self.SPINAT = 0
             else
-                self.Angles.y = self.Angles.y + ((mx - (self.PressX or mx)) * 0.6)
+                self.ViewAngles:RotateAroundAxis(Vector(0, 0, -1), (dx) * 0.6)
             end
         end
 
         if self.PressButton == MOUSE_RIGHT then
             if SS_CustomizerPanel:IsVisible() then
-                if ValidPanel(XRSL) then
-                    if IsValid(SS_HoverCSModel) then
-                        clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
-                        clangm = Matrix()
-                        clangm:SetAngles(clang)
-                        clangm:Invert()
-                        clangi = clangm:GetAngles()
-                        cgang = SS_HoverCSModel:GetAngles()
-                        crangm = Matrix()
-                        crangm:SetAngles(cgang)
-                        crangm:Rotate(clangi)
-                        rootang = V
-                        ngang = Angle()
-                        ngang:Set(cgang)
-                        local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
-                        ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
-                        ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
-                        ngangm = Matrix()
-                        ngangm:SetAngles(ngang)
-                        crangm:Invert()
-                        nlangm = crangm * ngangm
-                        nlang = nlangm:GetAngles()
-                        XRSL:SetValue(nlang.x)
-                        YRSL:SetValue(nlang.y)
-                        ZRSL:SetValue(nlang.z)
+                
+                    self.ViewOffset = self.ViewOffset or Vector()
+                    self.ViewOffset = self.ViewOffset + self.ViewAngles:Right()*dx*0.2
+                    self.ViewOffset = self.ViewOffset + self.ViewAngles:Up()*dy*-0.2
+
+
+                    if (SS_EDITOR_ALIGNZ) then
+
+                    else
+
                     end
-                end
+
+                    self.SPINAT = 0
             end
         end
 
-        --[[ this shit isnt ready yet
-        if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(XSL) and IsValid(SS_HoverCSModel) then
-            local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
-            local attach = (SS_CustomizerPanel.item.cfg[SS_CustomizerPanel.wear] or {}).attach or (pone and (SS_CustomizerPanel.item.wear.pony or {}).attach) or SS_CustomizerPanel.item.wear.attach
-            local angpos = self.Entity:GetAttachment(self.Entity:LookupAttachment(attach))
-            local apos, aang = LocalToWorld(ofs, Angle(), angpos.Pos, angpos.Ang)
-            local camang = (self:GetLookAt() - self:GetCamPos()):Angle()
-            apos = apos + camang:Right() * (mx + (self.PressX or mx)) * 0.3
-            apos = apos + camang:Up() * (my + (self.PressY or my)) * 0.3
-            apos, aang = WorldToLocal(apos, aang, angpos.Pos, angpos.Ang)
-            XSL:SetValue(apos.x)
-            YSL:SetValue(apos.y)
-            ZSL:SetValue(apos.z)
-        end
-        ]]
+
+        input.SetCursorPos(self.PressX, self.PressY)
         self.PressX, self.PressY = gui.MousePos()
+
+        if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
+            if not SS_CustomizerPanel:IsVisible() then
+                self.SPINAT = 4
+            end
+        else
+            self.ViewAngles:RotateAroundAxis(Vector(0, 0, 1), FrameTime() * 5)
+        end
     end
 
-    if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
-        -- Uh, you have to do this or the hovered model won't follow the animation
-        self.Angles.y = self.Angles.y + 0.0001
-        thisEntity:SetAngles(self.Angles)
 
-        if not SS_CustomizerPanel:IsVisible() then
-            self.SPINAT = 4
+    if (SS_CustomizerPanel:IsVisible() and SS_EDITOR_ALIGNZ) then
+        self.ViewAngles.pitch = math.Clamp(self.ViewAngles.pitch, -80, 80)
+
+        for i = 0, FrameTime() * 30 do
+            self.ViewAngles.roll = self.ViewAngles.roll / 1.05
         end
-    else
-        self.Angles.y = math.NormalizeAngle(self.Angles.y + (RealFrameTime() * 21))
-        self.Angles.x = 0
-        self.Angles.z = 0
-        thisEntity:SetAngles(self.Angles)
     end
 end
 
-function PANEL:Paint()
-    local ply = LocalPlayer()
-    local mdl = ply:GetModel()
+function PANEL:GetCamFocus()
+    local pos = Vector(0, 0, 0)
+    local ent = self.Entity
+    local mainent = ent
+    local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
-    if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        mdl = SS_HoverIOP:GetModel()
+    if isPonyModel(self.Entity:GetModel()) then
+        PrevMins = Vector(-42, -20, -2.5)
+        PrevMaxs = Vector(38, 20, 83)
     end
 
-    require_workshop_model(mdl)
-    self:SetModelCaching(mdl)
-    if not IsValid(self.Entity) then return end
+    local center = (PrevMaxs + PrevMins) / 2
+    center = center * Vector(0, 0, 1)
+    local diam = PrevMins:Distance(PrevMaxs)
+    pos = center
+    
+    if IsValid(SS_HoverCSModel) then
+        ent = SS_HoverCSModel
+        pos =  SS_HoverCSModel:GetPos()
+        local cust = SS_CustomizerPanel
+        if(IsValid(cust))then
+            local item = cust.item
+            if(item and item.wear)then
+                local pone = isPonyModel(mainent:GetModel())
+                local attach, translate, rotate, scale = item:AccessoryTransform(pone)
+                local bpos,bang 
+                if attach == "eyes" then
+                    local attach_id = mainent:LookupAttachment("eyes")
+                    local angpos = mainent:GetAttachment(attach_id or 0)
+                        if(angpos)then
+                            bpos,bang = angpos.Pos,angpos.Ang
+                        end
+                else
+                    local bone_id = mainent:LookupBone(SS_Attachments[attach][pone and 2 or 1])
+                    bpos,bang = mainent:GetBonePosition(bone_id or 0)
+                end
+                if(bpos)then
+                    pos = bpos
+                end
+            end
+        end
+    end
+
+
+    pos = pos + (self.ViewOffset or Vector())
+    
+    return pos
+end
+
+function PANEL:GetCamPos()
+    local pos = self:GetCamFocus()
+    local ang = self:GetLookAng()
+    local ent = self.Entity
+    local dist = 150
+
+    if IsValid(SS_HoverCSModel) then
+        ent = SS_HoverCSModel
+        dist = 100
+    end
+
+    dist = dist * (1 + ((-self.ZoomOffset or 0) / 10))
+
+    if SS_HoverIOP and SS_HoverIOP.playermodelmod then
+        dist = dist + 25
+    end
+
+    pos = pos - ang:Forward() * dist
+
+    return pos
+end
+
+function PANEL:GetLookAng()
+    return self.ViewAngles
+end
+
+function PANEL:GetFOV()
+    return self.fFOV
+end
+
+function PANEL:Paint()
+    if (not IsValid(self.Entity)) then return end
     render.SetColorModulation(1, 1, 1) --WTF
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
-    local ang = self.aLookAngle
-
-    if (not ang) then
-        ang = (self.vLookatPos - self.vCamPos):Angle()
-    end
-
-    local pos = self.vCamPos
-
-    -- if SS_CustomizerPanel:IsVisible() then
-    -- TODO
-    if IsValid(SS_HoverCSModel) then
-        -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
-        local p2 = SS_HoverCSModel:GetPos()
-        pos = p2 - (ang:Forward() * 50)
-    end
-
-    if SS_HoverItem and SS_HoverItem.playermodelmod then
-        pos = pos + (ang:Forward() * 25)
-        --positions are wrong
-        --[[
-			local pone = isPonyModel(self.Entity:GetModel())
-			local suffix = pone and "_p" or "_h"
-
-			local bn = SS_HoverCfg["bone"..suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head")
-			local x = self.Entity:LookupBone(bn)
-			if x then
-				local pos2,ang2 = self.Entity:GetBonePosition(x)
-
-				pos = LerpVector(0, pos2 - (ang:Forward() * 35), pos)
-			end
-			]]
-    end
-
-    -- end
     local w, h = self:GetSize()
-    local hextent = h
 
+    local hextent = h
+    
     -- make space for the statbars
     if SS_HoverIOP and SS_HoverIOP.class == "weapon" then
         hextent = 0.6 * hextent
     end
 
-    cam.Start3D(pos + ang:Forward() * (self.ZoomOffset or 0) * 2.0, ang, self.fFOV, x, y, w, hextent, 5, 4096)
+    cam.Start3D(self:GetCamPos(), self:GetLookAng(), self:GetFOV(), x, y, w, hextent, 5, 4096)
+
     cam.IgnoreZ(true)
     render.SuppressEngineLighting(true)
     render.SetLightingOrigin(self.Entity:GetPos())
@@ -182,89 +914,61 @@ function PANEL:Paint()
         end
     end
 
+    local ply = LocalPlayer()
+    local mdl = ply:GetModel()
+    local isplayer = true
+    local drawplayer = true --draw the object with the player or by itself
+    local hide_accessory --hide accessories if not drawing single product?
+    local iop = SS_HoverIOP
+    local cust = SS_CustomizerPanel
+    local custopen = IsValid(cust) and cust.item
+
+    if(iop)then
+        
+        local equipped = iop.cfg and !iop.never_equip and iop.eq
+        if iop.wear and !equipped and !custopen then drawplayer = false end
+
+        if !iop.wear then drawplayer = false end
+        if iop.playermodel then drawplayer = false end
+        if iop.playermodelmod then drawplayer = equipped end
+    end
+
+    if !drawplayer then
+        mdl = iop:GetModel()
+    end
+
+    require_workshop_model(mdl)
+    self:SetModelCaching(mdl)
+
     if isPonyModel(self.Entity:GetModel()) then
         -- PPM.PrePonyDraw(self.Entity, true)
         -- PPM.setBodygroups(self.Entity, true)
-        -- 
         PPM_SetBodyGroups(self.Entity)
     end
 
-    if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        if SS_HoverItem then
-            SS_PreRender(SS_HoverItem)
-        end
-
-        SS_PreviewShopModel(self, SS_HoverIOP)
-        self:SetCamPos(self:GetCamPos() * 2)
-        self.Entity:DrawModel()
-
-        if SS_HoverItem then
-            SS_PreRender(SS_HoverItem)
-        end
-    else
-        local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
-
-        if isPonyModel(self.Entity:GetModel()) then
-            PrevMins = Vector(-42, -20, -2.5)
-            PrevMaxs = Vector(38, 20, 83)
-        end
-
-        local center = (PrevMaxs + PrevMins) / 2
-        local diam = PrevMins:Distance(PrevMaxs)
-        self:SetCamPos(center + (diam * Vector(0.4, 0.4, 0.1)))
-        self:SetLookAt(center)
+    if drawplayer then
+        render.MaterialOverride()
         self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-        local mods = LocalPlayer():SS_GetActivePlayermodelMods()
-        local hoveritem = SS_HoverItem
-
-        -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
-        if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then
-            hoveritem = SS_CustomizerPanel.item
-        end
-
-        if hoveritem and hoveritem.playermodelmod then
-            -- local add = true
-            for i, v in ipairs(mods) do
-                if v.id == hoveritem.id then
-                    -- add = false
-                    table.remove(mods, i)
-                    break
-                end
-            end
-
-            -- if add then
-            table.insert(mods, hoveritem) --TODO why is this different when customizing
-            -- end
-        end
-
+        local mods = LocalPlayer():SS_GetActivePlayermodelMods(true)
         SS_ApplyBoneMods(self.Entity, mods)
         SS_ApplyMaterialMods(self.Entity, LocalPlayer())
         self.Entity:SetEyeTarget(self:GetCamPos())
-        self.Entity:DrawModel()
-    end
 
-    -- print("HOVER", SS_HoverItem)
-    if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
+        self.Entity:DrawModel()
+
         local function GetShopAccessoryItems()
             local a = {}
             local hoveritem = SS_HoverItem
 
-            -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
-            if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then
-                hoveritem = SS_CustomizerPanel.item
-            end
-
-            if hoveritem then
-                table.insert(a, hoveritem)
-            end
 
             if IsValid(LocalPlayer()) then
-                for _, item in ipairs(LocalPlayer().SS_ShownItems or {}) do
-                    -- prefer hoveritem because it has the updated config, shownitems are worn on the server
-                    if hoveritem == nil or hoveritem.id ~= item.id then
-                        table.insert(a, item)
-                    end
+                for _, item in pairs(LocalPlayer():SS_GetShownAccessories(true)) do
+                    if(!item.eq)then continue end
+                    table.insert(a, item)
                 end
+            end
+            if(custopen and cust.item)then
+                table.insert(a,cust.item)
             end
 
             return a
@@ -272,41 +976,86 @@ function PANEL:Paint()
 
         if not SS_ShopAccessoriesClean then
             -- remake every frame lol
-            self.Entity:SS_AttachAccessories()
-            -- SS_ShopAccessoriesClean = true
+            --self.Entity:SS_AttachAccessories(GetShopAccessoryItems())
+            --SS_ShopAccessoriesClean = true
             -- print("REMAKE")
         end
 
         SS_FORCE_LOAD_WEBMATERIAL = true
         self.Entity:SS_AttachAccessories(GetShopAccessoryItems())
         SS_FORCE_LOAD_WEBMATERIAL = nil
-        local acc = SS_CreatedAccessories[self.Entity]
-        SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
+        local acc = SS_CreatedAccessories[self.Entity] or {}
+        
+        
+        SS_HoverCSModel = nil
+        if(cust.item)then
+        for k,prop in pairs(acc)do
+            
+            if(prop.id == cust.item.id)then
+                SS_HoverCSModel = prop
+                break
+            end
+        end
+        end
 
         for _, prop in pairs(acc) do
+            prop:SetNoDraw(true)
             -- print(prop:GetMaterial())
             prop:DrawModel() --self.Entity)
         end
+
+
+
+    else
+        --draw single item
+        if SS_HoverIOP then
+            SS_PreRender(iop)
+        end
+
+        SS_PreviewShopModel(self, iop)
+        self:SetCamPos(self:GetCamPos() * 2)
+        self.Entity:DrawModel()
+
+        if SS_HoverIOP then
+            SS_PreRender(iop)
+        end
+    end
+    
+    if(IsValid(SS_TextureDownloadWindow) and SS_MAT_DRAWOVER and IsValid(SS_HoverCSModel))then
+        render.MaterialOverride(SS_MAT_DRAWOVER)
+
+        SS_HoverCSModel:DrawModel()
+    end    
+   
+
+    -- if in editor, draw our gizmos
+    local cust = SS_CustomizerPanel
+    local gzmo = self.CurrentGizmo
+
+    if  IsValid(cust) and IsValid(gzmo) and  cust.item then
+        gzmo:Draw()
     end
 
-    -- if SS_HoverItem and SS_HoverItem.wear then
-    --     if not IsValid(SS_HoverCSModel) then
-    --         SS_HoverCSModel = SS_CreateCSModel(SS_HoverItem)
-    --     end
-    --     -- SS_HoverCSModel:DrawInShop(self.Entity)
-    -- end
-    -- ForceDrawPlayer(LocalPlayer())
-    render.SuppressEngineLighting(false)
-    cam.IgnoreZ(false)
-    cam.End3D()
+    if IsValid(cust) and iop then
+        render.SetColorModulation(1, 1, 1)
+        render.SetBlend(1)
 
-    if SS_CustomizerPanel:IsVisible() then
-        if ValidPanel(XRSL) then
-            if IsValid(SS_HoverCSModel) then
-                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        
+        --while right clicking, draw the axis so the user knows where the camera will orbit around
+        if self.Pressed and self.PressButton == MOUSE_RIGHT then
+            local cent = self:GetCamFocus()
+            local size = 16
+            for k,v in pairs({Vector(0,0,1),Vector(1,0,0),Vector(0,1,0)})do
+                local cl = v:ToColor()
+                cl.a = 64
+                render.DrawLine( cent - v*size, cent + v*size, cl,true)
             end
         end
     end
+
+    render.SuppressEngineLighting(false)
+    cam.IgnoreZ(false)
+    cam.End3D()
 end
 
 function PANEL:PaintOver(w, h)
@@ -317,7 +1066,14 @@ function PANEL:PaintOver(w, h)
     -- print(w,h)
     -- surface.SetDrawColor(255,0,0,255)
     -- surface.DrawRect(0,h-10,w,10)
-    if SS_HoverIOP then
+    local ply = LocalPlayer()
+
+
+
+
+    local cust = SS_CustomizerPanel
+    local custopen = false --IsValid(cust) and cust.item
+    if SS_HoverIOP and not custopen then
         SS_DrawIOPInfo(SS_HoverIOP, 0, h, w, MenuTheme_TX, 1)
     end
 end

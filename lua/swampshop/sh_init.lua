@@ -16,6 +16,10 @@ function SS_Initialize()
         AddCSLuaFile('swampshop/tabs/' .. name)
         include('swampshop/tabs/' .. name)
     end
+    local files, _ = file.Find('swampshop/gizmos/*', 'LUA')
+    for _, name in pairs(files) do
+        AddCSLuaFile('swampshop/gizmos/' .. name)
+    end
 end
 
 function Player:SS_GetDonation()

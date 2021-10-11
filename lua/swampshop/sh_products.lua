@@ -65,9 +65,7 @@ function SS_GenerateItem(ply, class)
         cfg = {},
         eq = true,
     })
-
     item:Sanitize()
-
     return item
 end
 

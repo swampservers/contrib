@@ -13,9 +13,12 @@ function SS_GetMaterial(nam)
 end
 
 function SS_PreRender(item)
-    if item.cfg.imgur then
+    local cfg = item.cfg or {}
+
+    if cfg.imgur then
+
         local imat = WebMaterial({
-            id = item.cfg.imgur.url,
+            id = cfg.imgur.url,
             owner = item.owner,
             -- worksafe = true, -- pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
             stretch = true,
@@ -26,7 +29,7 @@ function SS_PreRender(item)
         render.MaterialOverride(imat)
         --render.OverrideDepthEnable(true,true)
     else
-        local mat = item.cfg.material or item.material
+        local mat = cfg.material or item.material
 
         if mat then
             render.MaterialOverride(SS_GetMaterial(mat))
@@ -35,7 +38,7 @@ function SS_PreRender(item)
         end
     end
 
-    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color
+    local col = (item.GetColor and item:GetColor()) or cfg.color or item.color
 
     if col then
         render.SetColorModulation(col.x, col.y, col.z)
@@ -99,6 +102,8 @@ function SS_ApplyBoneMods(ent, mods)
     for x = 0, (ent:GetBoneCount() - 1) do
         ent:ManipulateBoneScale(x, Vector(1, 1, 1))
         ent:ManipulateBonePosition(x, Vector(0, 0, 0))
+        ent:ManipulateBoneAngles(x, Angle(0, 0, 0))
+        
     end
 
     if HumanTeamName then return end
@@ -110,17 +115,18 @@ function SS_ApplyBoneMods(ent, mods)
 
     for _, item in ipairs(mods) do
         if item.bonemod then
-            local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
+            local cfg = item.cfg
+            local bn = cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
             local x = ent:LookupBone(bn)
 
             if x then
                 if (item.configurable or {}).scale then
-                    local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
-                    AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
+                    local scn = cfg["scale" .. suffix] or Vector(1, 1, 1.5)
+                    AddScaleRecursive(ent, x, scn, cfg["scale_children" .. suffix], {})
                 end
 
                 if (item.configurable or {}).pos then
-                    local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
+                    local psn = cfg["pos" .. suffix] or Vector(10, 0, 0)
 
                     --don't allow moving the root bone
                     if ent:GetBoneParent(x) == -1 then
@@ -131,6 +137,18 @@ function SS_ApplyBoneMods(ent, mods)
                     local pso = ent:GetManipulateBonePosition(x)
                     pso = pso + psn
                     ent:ManipulateBonePosition(x, pso)
+                end
+                if (item.configurable or {}).ang then
+                    local psn = cfg["ang" .. suffix] or Angle()
+
+                    --don't allow moving the root bone
+                    if ent:GetBoneParent(x) == -1 then
+                        continue
+                    end
+
+                    local pso = ent:GetManipulateBoneAngles(x)
+                    pso = pso + psn
+                    ent:ManipulateBoneAngles(x, pso)
                 end
             end
         end
@@ -167,7 +185,8 @@ function SS_ApplyMaterialMods(ent, ply)
 
     for _, item in ipairs(mods) do
         if item.materialmod then
-            local col = item.cfg.color or Vector(1, 1, 1)
+            local cfg = item.cfg
+            local col = cfg.color or Vector(1, 1, 1)
 
             -- local mat = ImgurMaterial({
             --     id = (item.cfg.imgur or {}).url or "EG84dgp.png",
@@ -178,8 +197,8 @@ function SS_ApplyMaterialMods(ent, ply)
             --     shader = "VertexLitGeneric",
             --     params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
             -- })
-            ent:SetWebSubMaterial(item.cfg.submaterial or 0, {
-                id = (item.cfg.imgur or {}).url or "EG84dgp.png",
+            ent:SetWebSubMaterial(cfg.submaterial or 0, {
+                id = (cfg.imgur or {}).url or "EG84dgp.png",
                 owner = ent,
                 -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = true,
@@ -323,11 +342,11 @@ end
 local DrawingInShop = false
 
 function SS_SetMaterialToItem(item, ent, ply)
-    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color or Vector(1, 1, 1)
-
-    if item.cfg.imgur then
+    local cfg = item.cfg 
+    local col = (item.GetColor and item:GetColor()) or cfg.color or item.color or Vector(1, 1, 1)
+    if cfg.imgur then
         ent:SetWebMaterial({
-            id = item.cfg.imgur.url,
+            id = cfg.imgur.url,
             owner = ply,
             forceload = SS_FORCE_LOAD_WEBMATERIAL,
             -- worksafe=true,
@@ -339,7 +358,9 @@ function SS_SetMaterialToItem(item, ent, ply)
         --         SS_PostRender()
         --     end
     else
-        ent:SetColoredBaseMaterial(col)
+        if col.x ~= 1 or col.y ~= 1 or col.z ~= 1 then
+            ent:SetColoredBaseMaterial(col)
+        end
     end
 end
 
@@ -360,10 +381,12 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     else
         mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
     end
-
+    mdl:SetNoDraw(false)
     mdl.item = item
     local pone = isPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
+
+    
 
     if attach == "eyes" then
         local attach_id = ent:LookupAttachment("eyes")
@@ -376,10 +399,12 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
             return
         end
 
+
         local bpos, bang = ent:GetBonePosition(head_bone_id)
         translate, rotate = LocalToWorld(translate, rotate, attach_angpos.Pos, attach_angpos.Ang)
         translate, rotate = WorldToLocal(translate, rotate, bpos, bang)
         mdl:FollowBone(ent, head_bone_id)
+
         -- This has issues with detaching when sitting
         -- mdl:SetParent(ent, attach_id)
     else
@@ -390,7 +415,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
 
             return
         end
-
+        mdl._FollowedBone = bone_id
         mdl:FollowBone(ent, bone_id)
     end
 
@@ -412,9 +437,13 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     mdl:EnableMatrix("RenderMultiply", mdl.matrix)
     -- e.appliedscale = scale
     -- end
+
+
+
     --this likes to change itself
     mdl:SetLocalPos(translate)
     mdl:SetLocalAngles(rotate)
+
     -- if item.cfg.imgur then
     --     local imat = ImgurMaterial({
     --         id = item.cfg.imgur.url,
@@ -448,16 +477,52 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     return mdl
 end
 
-function Player:SS_GetActivePlayermodelMods()
-    local mods = {}
-
-    for k, item in pairs(self.SS_ShownItems or {}) do
-        if item.playermodelmod then
-            table.insert(mods, item)
+function Player:SS_UpdateAppearance()
+    self.SS_ShownAccessories = {}
+    self.SS_ShownPlayerMods = {}
+    local items = self.SS_Items or {}
+    for k, item in pairs(items) do
+        if item.wear and item:ShouldShow() then
+            table.insert(self.SS_ShownAccessories, item)
         end
     end
+    for k, item in pairs(items) do
+        if item.playermodelmod and item:ShouldShow() then
+            table.insert(self.SS_ShownPlayerMods, item)
+        end
+    end
+end
 
-    return mods
+function Player:SS_GetShownAccessories(editor)
+    if(editor)then
+        local items = self.SS_Items or {}
+        local acc = {}
+        for k, item in pairs(items) do
+            if item.wear and item:ShouldShow(true) then
+                table.insert(acc, item)
+            end
+        end
+        return acc
+    end
+
+    return self.SS_ShownAccessories or {}
+end
+
+function Player:SS_GetActivePlayermodelMods(editor)
+    
+        --force local recompute
+    if(editor)then
+        local items = self.SS_Items or {}
+        local mods = {}
+        for k, item in pairs(items) do
+            if item.playermodelmod and  (item:ShouldShow(true) or SS_CustomizerPanel.item == self) then
+                table.insert(mods, item)
+            end
+        end
+        return mods
+    end
+
+    return self.SS_ShownPlayerMods or {}
 end
 
 -- Revise if we add translucent accessories
@@ -503,15 +568,6 @@ hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, 
     end
 end)
 
-for k, v in pairs(SS_CreatedAccessories or {}) do
-    if IsValid(k) then
-        k:SS_AttachAccessories()
-    end
-end
-
-for i, v in ipairs(player.GetAll()) do
-    v.SS_SetupPlayermodel = nil
-end
 
 SS_CreatedAccessories = {}
 SS_UpdatedAccessories = {}
@@ -543,7 +599,12 @@ function Entity:SS_AttachAccessories(items)
 
     if current then
         for i, v in ipairs(current) do
-            table.insert(recycle[v:GetModel()], v)
+            if(IsValid(v))then
+                v._FollowedBone = 0
+                v:FollowBone(nil,0)
+                v:RemoveEffects(EF_FOLLOWBONE)
+                table.insert(recycle[v:GetModel()], v)
+            end
         end
     end
 
@@ -554,8 +615,9 @@ function Entity:SS_AttachAccessories(items)
             if item.AccessoryTransform then
                 local rmodels = recycle[item:GetModel()]
                 local mdl = SS_AttachAccessory(item, self, #rmodels > 0 and table.remove(rmodels) or nil)
-
+                
                 if mdl then
+                    mdl.id = item.id
                     table.insert(SS_CreatedAccessories[self], mdl)
                 end
             end

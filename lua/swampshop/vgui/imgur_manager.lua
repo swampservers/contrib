@@ -39,6 +39,18 @@ end
 local CONTENTPICKER = {}
 AccessorFunc(CONTENTPICKER, "m_iColumns", "Columns", FORCE_NUMBER)
 
+
+function CONTENTPICKER:SetTextEntry(textentry)
+    self._TextEntry = textentry
+    if(IsValid(self._TextEntry))then
+        self.AddField:Remove()
+        self.AddButton:Dock(LEFT)
+    end
+
+
+end
+
+
 function CONTENTPICKER:Init()
     self.Scroll = vgui.Create("DScrollPanel", self)
     self.Scroll:Dock(FILL)
@@ -65,33 +77,18 @@ function CONTENTPICKER:Init()
     self.AddButton:DockMargin(4, 4, 4, 4)
     self.AddButton:Dock(RIGHT)
     self.AddButton.Paint = SS_PaintButtonBrandHL
-    local textentry = self.AddField
+
 
     self.AddButton.DoClick = function(btn)
-        if (self.AddField:GetText() == "") then return end
-        local img = self.AddField:GetText()
+        local field = IsValid(self._TextEntry) and self._TextEntry or IsValid(self._TextEntry) and self.AddField
+        if(!IsValid(field))then return end
+        if (field:GetText() == "") then return end
+        local img = field:GetText()
 
         AsyncSanitizeImgurId(img, function(id)
-            if (id == nil) then
-                local prevtext = img .. ""
-                textentry:SetText("BAD URL")
-                textentry:SetTextColor(Color(255, 0, 0, 255))
-
-                timer.Simple(1, function()
-                    if (IsValid(textentry)) then
-                        textentry:SetTextColor(MenuTheme_TX)
-
-                        if (textentry:GetText() == "BAD URL") then
-                            textentry:SetText(prevtext)
-                        end
-                    end
-                end)
-
-                return
-            end
+            if (id == nil) then return end
 
             self:AddPermanent(id, false)
-            textentry:SetText(id)
         end)
     end
 
@@ -232,24 +229,16 @@ function CONTENTPICKER:AddPermanent(url)
 end
 
 function CONTENTPICKER:OnChoose(url)
+    local field = IsValid(self._TextEntry) and self._TextEntry or IsValid(self._TextEntry) and self.AddField
+    if(!IsValid(field))then return end
+
+    AsyncSanitizeImgurId(url, function(id)
+        if (id == nil) then return end
+        surface.PlaySound("UI/buttonclick.wav")
+        field:SetValue(id)
+    end)
+
 end
 
 vgui.Register('DImgurManager', CONTENTPICKER, 'DPanel')
 
-concommand.Add("imgurtest", function()
-    local wind = vgui.Create("DFrame")
-    wind:SetSize(512 + 10, 512 + 12)
-    wind:Center()
-    wind:SetSizable(true)
-    wind:MakePopup()
-
-    local manager = vgui("DImgurManager", wind, function(p)
-        p:Dock(FILL)
-    end)
-
-    manager:SetColumns(5)
-
-    for i = 1, 32 do
-        manager:Add(math.random(0, 1) == 1 and "yWPiba1.png" or "XNmSNPo.png", false)
-    end
-end)

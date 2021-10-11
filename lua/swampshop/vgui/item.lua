@@ -81,16 +81,26 @@ function PANEL:OnCursorExited()
     end
 end
 
+SS_GetSelectedItem = nil
+
+SS_SetSelectedItem = nil
+
+function SS_GetEditedItem()
+    return IsValid(SS_CustomizerPanel) and SS_CustomizerPanel.item
+end
+
+
+
 function PANEL:Select()
     if IsValid(SS_SelectedPanel) then
         SS_SelectedPanel:Deselect()
     end
-
+    SS_SELLCONFIRMID = nil
     SS_SelectedPanel = self
 
     -- SS_HoverData = self.data
     -- SS_HoverCfg = (self.item or {}).cfg
-    -- SS_HoverItemID = (self.item or {}).id
+    SS_HoverItem = self.item
     if self.product then
         if self.product.sample_item then
             SS_HoverItem = self.product.sample_item
@@ -199,7 +209,7 @@ function PANEL:Select()
             local orderedactions = {}
 
             for id, act in pairs(self.item.actions) do
-                if not act.primary then
+                if not act.primary or true then
                     table.insert(orderedactions, act)
                 end
             end
@@ -374,6 +384,8 @@ end
 
 local ownedcheckmark = Material("icon16/accept.png")
 local visiblemark = Material("icon16/eye.png")
+local warningmark = Material("icon16/exclamation.png")
+
 
 function PANEL:Think()
     if not self.product and self:IsSelected() then
@@ -434,9 +446,10 @@ function PANEL:PaintOver(w, h)
     self.textcolor = nil
     self.textfont = nil
     self.icon = nil
+    self.icon2 = nil
     self.icontext = nil
     self.BGColor = SS_TileBGColor
-
+    local item = self.item
     if self.product then
         self.barheight = self.barheight or 0
         local cannot = ProtectedCall(self.product:CannotBuy(LocalPlayer()))
@@ -475,14 +488,22 @@ function PANEL:PaintOver(w, h)
 
         self.textcolor = MenuTheme_TXAlt
     else
-        if self.item.eq then
+        local config = item.cfg
+        if item.eq then
             self.icon = visiblemark
         else
-            if not self.item.never_equip then
+            if not item.never_equip then
                 self.fademodel = true
             end
         end
-
+        --[[
+        if(item._modified)then
+            self.icon2 = warningmark
+            if(self.hovered)then
+                draw.SimpleText("Unsaved Changes", "SS_ProductName", self:GetWide() /2 , 11, Color(255,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
+        end
+        ]]
         self.barheight = 20
         self.textfont = "SS_ProductName"
         self.text = self.item:GetName()
@@ -561,6 +582,12 @@ function PANEL:PaintOver(w, h)
         if self.icontext then
             draw.SimpleText(self.icontext, "SS_ProductName", self:GetWide() - 22, 11, MenuTheme_TX, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
         end
+    end
+
+    if self.icon2 then
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.SetMaterial(self.icon2)
+        surface.DrawTexturedRect(4 , 4, 16, 16)
     end
 
     if self.barcolor then
