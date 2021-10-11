@@ -219,7 +219,7 @@ if CLIENT then
         end
 
         if SwampChat and ValidPanel(SwampChat.Panel) then
-            SwampChat.Panel:SetVisible(visible)
+            SwampChat.Panel:SetVisible(visible or SwampChat.IsOpen)
         end
     end)
 end

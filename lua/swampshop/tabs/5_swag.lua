@@ -1,7 +1,85 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA 
 SS_Tab("Swag", "color_swatch")
+
 SS_Heading("Accessories")
+
+
+local accessoryradius = 20
+
+SS_AccessoryItem({
+    class = 'accessory',
+    value = 25000,
+    GetName = function(self) return string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
+    GetDescription = function(self)
+        return "You can wear it\n\nBETA - Oversized props may be removed"
+    end,
+    GetModel = function(self) return self.specs.model end,
+
+    SanitizeSpecs = function(self)
+        local specs, ch = self.specs, false
+
+        if not specs.model then
+            specs.model = GetSandboxProp(accessoryradius)
+            ch = true
+        end
+
+        return ch
+    end,
+
+    color = Vector(1,1,1),
+    maxscale = 2.0,
+    wear = {
+        attach = "eyes",
+        scale = 1,
+        translate = Vector(8,0,0),
+        rotate = Angle(0,0,0),
+        pony = {
+            scale = 1,
+            translate = Vector(8,0,0),
+            rotate = Angle(0,0,0),
+        }
+    }
+})
+
+if SERVER then props={} for i=1,50 do table.insert(props,GetSandboxProp(accessoryradius)) end net.Start("RunLuaLong") net.WriteString("SetClipboardText([[ "..util.TableToJSON(props).." ]])") net.Send(ME()) end
+local previews = {
+
+    "models/props_junk/PopCan01a.mdl","models/props_lab/jar01b.mdl","models/dav0r/buttons/button.mdl","models/food/burger.mdl","models/props_junk/PopCan01a.mdl","models/maxofs2d/camera.mdl","models/swamponions/faucet.mdl","models/chev/cumjar.mdl","models/props_phx/misc/potato.mdl","models/mechanics/various/211.mdl","models/props_junk/garbage_metalcan001a.mdl","models/props_c17/TrapPropeller_Lever.mdl","models/Gibs/HGIBS_spine.mdl","models/staticprop/props_lab/box01a.mdl","models/Items/grenadeAmmo.mdl","models/staticprop/props_junk/garbage_coffeemug001a.mdl","models/props_c17/TrapPropeller_Lever.mdl","models/props_junk/PopCan01a.mdl","models/hunter/plates/plate.mdl","models/props_junk/PopCan01a.mdl","models/props_lab/reciever01d.mdl","models/staticprop/props_junk/garbage_takeoutcarton001a.mdl","models/props_phx2/garbage_metalcan001a.mdl","models/swamponions/kleinytiner.mdl","models/dav0r/buttons/button.mdl","models/swamponions/kleiner_glasses.mdl","models/staticprop/props_lab/box01a.mdl","models/chev/cumjar.mdl","models/props_wasteland/panel_leverHandle001a.mdl","models/dav0r/buttons/switch.mdl","models/food/hotdog.mdl","models/staticprop/props_junk/garbage_coffeemug001a.mdl","models/props_combine/combinecamera001.mdl","models/props_lab/huladoll.mdl","models/props_junk/PopCan01a.mdl","models/food/hotdog.mdl","models/props_wasteland/panel_leverHandle001a.mdl","models/props_phx/misc/potato.mdl","models/props_junk/PopCan01a.mdl","models/chev/cumjar.mdl","models/dav0r/thruster.mdl","models/food/hotdog.mdl","models/props_phx/misc/egg.mdl","models/props_lab/reciever01d.mdl","models/dav0r/buttons/switch.mdl","models/swamponions/kleiner_glasses.mdl","models/props_junk/garbage_takeoutcarton001a.mdl","models/staticprop/props_lab/box01a.mdl","models/props_lab/box01a.mdl","models/props_c17/TrapPropeller_Lever.mdl"
+
+}
+
+SS_Product({
+    class = 'hatbox',
+    price = 100000,
+    name = 'Random Accessory',
+    description = "A random prop that you can WEAR. No ratings - all props fully customizable.",
+    GetModel = function(self) return previews[(math.floor(SysTime() * 2.5) % #previews) + 1] end,
+    CannotBuy = function(self, ply)
+        -- if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
+    end,
+    OnBuy = function(self, ply)
+        -- if ply.CANTSANDBOX then return end
+        local item = SS_GenerateItem(ply, "accessory")
+
+        ply:SS_GiveNewItem(item, function(item)
+            local others = {}
+
+            for i = 1, 15 do
+                table.insert(others, GetSandboxProp(accessoryradius))
+            end
+
+            net.Start("LootBoxAnimation")
+            net.WriteUInt(item.id, 32)
+            net.WriteTable(others)
+            net.Send(ply)
+        end, 4)
+    end
+})
+
+
+
+
 
 SS_AccessoryItem({
     class = 'trumphatfree',

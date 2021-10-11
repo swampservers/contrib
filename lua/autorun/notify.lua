@@ -16,7 +16,7 @@ if CLIENT then
         })
     end
 
-    hook.Add("PostRenderVGUI", "HUDPaint_PSNotification", function()
+    hook.Add("HUDDrawScoreBoard", "HUDPaint_PSNotification", function()
         local t = SysTime()
         local i = 1
 
