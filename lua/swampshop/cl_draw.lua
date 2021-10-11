@@ -445,7 +445,6 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     -- else
     SS_SetMaterialToItem(item, mdl, item.owner == SS_SAMPLE_ITEM_OWNER and LocalPlayer() or item.owner)
     -- end
-
     mdl:SetPredictable(true)
 
     return mdl
