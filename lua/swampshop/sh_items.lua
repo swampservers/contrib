@@ -181,6 +181,7 @@ function SS_Item(item)
     -- change this to just one function that returns the tab above
     item.CanCfgColor = item.CanCfgColor or function(i) return (i.configurable or {}).color end
     item.CanCfgImgur = item.CanCfgImgur or function(i) return (i.configurable or {}).imgur end
+    item.ScaleLimitOffset = item.ScaleLimitOffset or function() return 1 end
 
     function item:Sanitize()
         _SS_SanitizeConfig(self)
@@ -254,7 +255,7 @@ function SS_Item(item)
         item.actions.equip = {
             primary = true,
             Text = function(item) return item.eq and "HOLSTER" or "EQUIP" end,
-            Cannot = item.CannotEquip
+            Cannot = function(item) return not item.eq and item:CannotEquip() end,
         }
     end
 
@@ -359,16 +360,25 @@ function _SS_SanitizeConfig(item)
         } or nil
     end
 
+    
+
     if itmc.wear then
         for _, wk in pairs({"wear_h", "wear_p"}) do
             local curr = istable(dirty_cfg[wk]) and dirty_cfg[wk] or {}
 
+            local scaleoffset = item:ScaleLimitOffset()
+
             local tab = {
                 pos = sanitize_vector(curr.pos, itmc.wear.pos.min, itmc.wear.pos.max),
-                scale = sanitize_vector(curr.scale, itmc.wear.scale.min, itmc.wear.scale.max),
+                scale = sanitize_vector(curr.scale, itmc.wear.scale.min*scaleoffset, itmc.wear.scale.max*scaleoffset),
                 ang = isangle(curr.ang) and Angle(math.Clamp(curr.ang.x, -180, 180), math.Clamp(curr.ang.y, -180, 180), math.Clamp(curr.ang.z, -180, 180)) or nil,
                 attach = isstring(curr.attach) and SS_Attachments[curr.attach] and curr.attach or nil,
             }
+
+            -- makes sure there is always a scale written so we dont have overside objects
+            if item.class=="accessory" then
+                tab.scale = tab.scale or Vector(scaleoffset,scaleoffset,scaleoffset)
+            end
 
             cfg[wk] = table.Count(tab) > 0 and tab or nil
         end
