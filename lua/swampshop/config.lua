@@ -116,7 +116,6 @@ Tail01
 Tail02
 Tail03
 ]]
-
 --TODO just use the bones themselves...
 SS_Attachments = {
     eyes = "I'm special",
@@ -124,40 +123,19 @@ SS_Attachments = {
     neck = {"ValveBiped.Bip01_Neck1", "LrigNeck2"},
     upper_body = {"ValveBiped.Bip01_Spine4", "LrigSpine2"},
     lower_body = {"ValveBiped.Bip01_Spine", "LrigSpine1"},
-    pelvis = {"ValveBiped.Bip01_Pelvis","LrigPelvis"},
-
+    pelvis = {"ValveBiped.Bip01_Pelvis", "LrigPelvis"},
     left_hand = {"ValveBiped.Bip01_L_Hand", "Lrig_LEG_FL_FrontHoof"},
     right_hand = {"ValveBiped.Bip01_R_Hand", "Lrig_LEG_FR_FrontHoof"},
-
-    left_forearm = {
-        "ValveBiped.Bip01_L_ForeArm","Lrig_LEG_FL_Radius"
-    },
-    right_forearm = {
-        "ValveBiped.Bip01_R_ForeArm","Lrig_LEG_FR_Radius"
-    },
-    left_upperarm = {
-        "ValveBiped.Bip01_L_UpperArm","Lrig_LEG_FL_Humerus"
-    },
-    right_upperarm = {
-        "ValveBiped.Bip01_R_UpperArm","Lrig_LEG_FR_Humerus"
-    },
-    
+    left_forearm = {"ValveBiped.Bip01_L_ForeArm", "Lrig_LEG_FL_Radius"},
+    right_forearm = {"ValveBiped.Bip01_R_ForeArm", "Lrig_LEG_FR_Radius"},
+    left_upperarm = {"ValveBiped.Bip01_L_UpperArm", "Lrig_LEG_FL_Humerus"},
+    right_upperarm = {"ValveBiped.Bip01_R_UpperArm", "Lrig_LEG_FR_Humerus"},
     left_shoulder = {"ValveBiped.Bip01_L_Clavicle", "Lrig_LEG_FL_Humerus"},
     right_shoulder = {"ValveBiped.Bip01_R_Clavicle", "Lrig_LEG_FR_Humerus"},
-
-    left_calf = {
-        "ValveBiped.Bip01_L_Calf","Lrig_LEG_BL_Tibia"
-    },
-    right_calf = {
-        "ValveBiped.Bip01_R_Calf","Lrig_LEG_BR_Tibia"
-    },
-    left_thigh = {
-        "ValveBiped.Bip01_L_Thigh","Lrig_LEG_BL_Femur"
-    },
-    right_thigh = {
-        "ValveBiped.Bip01_R_Thigh","Lrig_LEG_BR_Femur"
-    },
-
+    left_calf = {"ValveBiped.Bip01_L_Calf", "Lrig_LEG_BL_Tibia"},
+    right_calf = {"ValveBiped.Bip01_R_Calf", "Lrig_LEG_BR_Tibia"},
+    left_thigh = {"ValveBiped.Bip01_L_Thigh", "Lrig_LEG_BL_Femur"},
+    right_thigh = {"ValveBiped.Bip01_R_Thigh", "Lrig_LEG_BR_Femur"},
     left_foot = {"ValveBiped.Bip01_L_Foot", "Lrig_LEG_BL_RearHoof"},
     right_foot = {"ValveBiped.Bip01_R_Foot", "Lrig_LEG_BR_RearHoof"},
 }

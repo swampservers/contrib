@@ -384,15 +384,14 @@ function PANEL:SetupControls()
         end
 
         local scaleoffset = self.item:ScaleLimitOffset()
-
         SXSL = SliderMaker(pane, "Length")
-        SXSL:SetMinMax(itmcw.scale.min.x*scaleoffset, itmcw.scale.max.x*scaleoffset)
+        SXSL:SetMinMax(itmcw.scale.min.x * scaleoffset, itmcw.scale.max.x * scaleoffset)
         SXSL:SetValue(scale.x)
         SYSL = SliderMaker(pane, "Width")
-        SYSL:SetMinMax(itmcw.scale.min.y*scaleoffset, itmcw.scale.max.y*scaleoffset)
+        SYSL:SetMinMax(itmcw.scale.min.y * scaleoffset, itmcw.scale.max.y * scaleoffset)
         SYSL:SetValue(scale.y)
         SZSL = SliderMaker(pane, "Height")
-        SZSL:SetMinMax(itmcw.scale.min.z*scaleoffset, itmcw.scale.max.z*scaleoffset)
+        SZSL:SetMinMax(itmcw.scale.min.z * scaleoffset, itmcw.scale.max.z * scaleoffset)
         SZSL:SetValue(scale.z)
 
         local function transformslidersupdate()
@@ -413,7 +412,7 @@ function PANEL:SetupControls()
         SYSL.OnValueChanged = transformslidersupdate
         SZSL.OnValueChanged = transformslidersupdate
         SUSL = SliderMaker(pane, "Scale")
-        SUSL:SetMinMax(math.max(itmcw.scale.min.x, itmcw.scale.min.y, itmcw.scale.min.z)*scaleoffset, math.min(itmcw.scale.max.x, itmcw.scale.max.y, itmcw.scale.max.z)*scaleoffset)
+        SUSL:SetMinMax(math.max(itmcw.scale.min.x, itmcw.scale.min.y, itmcw.scale.min.z) * scaleoffset, math.min(itmcw.scale.max.x, itmcw.scale.max.y, itmcw.scale.max.z) * scaleoffset)
 
         SUSL.OnValueChanged = function(self)
             SXSL:SetValue(self:GetValue())
