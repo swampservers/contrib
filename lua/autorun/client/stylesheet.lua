@@ -361,6 +361,12 @@ function draw.GradientShadowUp(x, y, w, h, alpha)
     surface.DrawTexturedRectUV(x, y, w, h, 1, 0, 1, 1)
 end
 
+function draw.GradientShadowRight(x, y, w, h, alpha)
+    if cornerMat:IsError() then return end
+    predrawshadow(alpha)
+    surface.DrawTexturedRectUV(x, y, w, h, 1, 1, 0, 1)
+end
+
 function draw.WrappedText(text, font, x, y, w, col, xalign, yalign, prepare_only)
     surface.SetFont(font)
     surface.SetTextColor(col)
