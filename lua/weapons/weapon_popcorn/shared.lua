@@ -34,9 +34,11 @@ function SWEP:Think()
 end
 
 function SWEP:PrimaryAttack()
-    if IsFirstTimePredicted() then self.Owner:EmitSound("crisps/eat.wav", 60) end
+    if IsFirstTimePredicted() then
+        self.Owner:EmitSound("crisps/eat.wav", 60)
+    end
 
-    if SERVER then    
+    if SERVER then
         self.Owner.BiteStart = 0
         self.Owner.BitesRem = 3
         net.Start("Popcorn_Eat_Start")

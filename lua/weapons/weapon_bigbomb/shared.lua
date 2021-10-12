@@ -24,7 +24,10 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    if IsFirstTimePredicted() then self.Owner:EmitSound("npc/attack_helicopter/aheli_megabomb_siren1.wav", 80, 100, 1, CHAN_WEAPON) end
+    if IsFirstTimePredicted() then
+        self.Owner:EmitSound("npc/attack_helicopter/aheli_megabomb_siren1.wav", 80, 100, 1, CHAN_WEAPON)
+    end
+
     self.Weapon:SetNextSecondaryFire(CurTime() + 1)
 end
 
