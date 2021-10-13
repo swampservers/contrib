@@ -3,21 +3,17 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 DEFINE_BASECLASS("base_gmodentity")
-ENT.Model = Model("models/golf rack/golf rack.mdl")
+ENT.Model = Model("models/items/boxmrounds.mdl")
+ENT.RenderGroup = RENDERGROUP_BOTH
 
-function ENT:Initialize()
-    self:SetModel(self.Model)
-    self:SetMoveType(MOVETYPE_NONE)
-    self:PhysicsInitStatic(SOLID_VPHYSICS)
-    self:DrawShadow(false)
-    local phys = self:GetPhysicsObject()
 
-    if IsValid(phys) then
-        phys:EnableMotion(false)
-    end
+function ENT:SetupDataTables()
 
-    if SERVER then
-        self:SetTrigger(true)
-        self:SetUseType(SIMPLE_USE)
-    end
+	self:NetworkVar( "String", 0, "Patriots" )
+
 end
+
+-- models/items/boxmrounds.mdl
+-- models/illusion/eftcontainers/magbox.mdl
+
+

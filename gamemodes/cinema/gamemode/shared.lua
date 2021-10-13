@@ -96,7 +96,7 @@ end
 -- if (player_manager.RunClass(ply, "FinishMove", mv)) then return true end
 -- Allow physgun pickup of players ONLY ... maybe add trash and some other stuff?... dont forget PROTECTION for this
 function GM:PhysgunPickup(ply, ent)
-    if ent:IsPlayer() and ent:Alive() and not ent:IsProtected() and not ply:IsProtected() and not ent:IsFrozen() then
+    if ent:IsPlayer() and ent:Alive() and not ent:IsProtected() and not ply:IsProtected() and not ent:IsFrozen() and ent:GetMoveType() ~= MOVETYPE_NOCLIP then
         if ent.Obesity and ent:Obesity() > 40 then return end
 
         return true
