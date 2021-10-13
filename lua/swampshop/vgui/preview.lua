@@ -58,7 +58,6 @@ function PANEL:LayoutEntity(thisEntity)
                         crangm = Matrix()
                         crangm:SetAngles(cgang)
                         crangm:Rotate(clangi)
-
                         ngang = Angle()
                         ngang:Set(cgang)
                         local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
@@ -77,9 +76,7 @@ function PANEL:LayoutEntity(thisEntity)
             end
         end
 
-
         if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(XSL) and IsValid(SS_HoverCSModel) then
-
             clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
             clangm = Matrix()
             clangm:SetAngles(clang)
@@ -89,13 +86,11 @@ function PANEL:LayoutEntity(thisEntity)
             crangm = Matrix()
             crangm:SetAngles(cgang)
             crangm:Rotate(clangi)
-
             local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
             local wshift = ang:Right() * (mx - (self.PressX or mx)) - ang:Up() * (my - (self.PressY or my))
-            local vo,_ = WorldToLocal(wshift * 0.05, Angle(0,0,0), Vector(0,0,0), crangm:GetAngles())
+            local vo, _ = WorldToLocal(wshift * 0.05, Angle(0, 0, 0), Vector(0, 0, 0), crangm:GetAngles())
             local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
             local apos = ofs + vo
-            
             XSL:SetValue(apos.x)
             YSL:SetValue(apos.y)
             ZSL:SetValue(apos.z)
@@ -313,7 +308,7 @@ function PANEL:Paint()
         if ValidPanel(XRSL) then
             if IsValid(SS_HoverCSModel) then
                 draw.SimpleText("RMB + drag to rotate", "SS_DESCFONTBIG", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                draw.SimpleText("MMB + drag to move", "SS_DESCFONTBIG", self:GetWide() / 2, 14+32, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("MMB + drag to move", "SS_DESCFONTBIG", self:GetWide() / 2, 14 + 32, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
     end

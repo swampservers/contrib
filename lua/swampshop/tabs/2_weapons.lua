@@ -537,12 +537,14 @@ function SS_GunAmmoPrice(item)
     return math.Round(baseprice * (perk.AmmoPriceMod or swep.AmmoPriceMod or 1) * ratingmod, -2)
 end
 
-
-
 SS_Item({
     class = 'knifeskin',
     value = 100000,
-    GetName = function(self) return (SlitterModels[self.specs.model] or {name="unknown"}).name end,
+    GetName = function(self)
+        return (SlitterModels[self.specs.model] or {
+            name = "unknown"
+        }).name
+    end,
     GetDescription = function(self) return "WIP: A skin for the throatneck slitter. Equip to use." end,
     GetModel = function(self) return self.specs.model end,
     SanitizeSpecs = function(self)
@@ -562,9 +564,8 @@ SS_Item({
         },
         imgur = true
     },
-    invcategory="Skins"
+    invcategory = "Skins"
 })
-
 
 --NOMINIFY
 -- for i, tm in ipairs({"CT", "TERRORIST"}) do
@@ -601,7 +602,7 @@ SS_Product({
 
         local chosen = options[math.random(#options)]
         local rating
-        local item = SS_GenerateItem(ply, math.random()>0.01 and "weapon" or "knifeskin")
+        local item = SS_GenerateItem(ply, math.random() > 0.01 and "weapon" or "knifeskin")
         item.specs.class = chosen.ClassName
         item:Sanitize()
         rating = item.specs.rating

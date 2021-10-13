@@ -34,73 +34,73 @@ slitrspeed = .4
 SlitterModels = {
     ["models/weapons/w_knife_t.mdl"] = {
         name = "Throatneck Slitter",
-        pos = Vector(3,-1,3),
-        ang = Angle(0,0,180),
-        scale = Vector(1,1,1),
+        pos = Vector(3, -1, 3),
+        ang = Angle(0, 0, 180),
+        scale = Vector(1, 1, 1),
     },
     ["models/props_junk/harpoon002a.mdl"] = {
-        name="Throatneck Skewer",
-        pos = Vector(4,-1,0),
-        ang = Angle(90,0,0),
-        scale = Vector(0.7,1,1)*0.5,
+        name = "Throatneck Skewer",
+        pos = Vector(4, -1, 0),
+        ang = Angle(90, 0, 0),
+        scale = Vector(0.7, 1, 1) * 0.5,
     },
     ["models/props_c17/tools_wrench01a.mdl"] = {
-        name="Throatneck Spanner",
-        pos = Vector(4,-1,-1),
-        ang = Angle(0,180,-90),
-        scale = Vector(1,1,1)*0.9,
+        name = "Throatneck Spanner",
+        pos = Vector(4, -1, -1),
+        ang = Angle(0, 180, -90),
+        scale = Vector(1, 1, 1) * 0.9,
     },
     ["models/Gibs/wood_gib01d.mdl"] = {
-        name="Throatneck Sticker",
-        pos = Vector(3,-1,-5),
-        ang = Angle(-90,-90,0),
-        scale = Vector(1,1,1)*0.6,
+        name = "Throatneck Sticker",
+        pos = Vector(3, -1, -5),
+        ang = Angle(-90, -90, 0),
+        scale = Vector(1, 1, 1) * 0.6,
     },
     ["models/props_junk/glassbottle01a_chunk01a.mdl"] = {
-        name="Throatneck Scratcher",
-        pos = Vector(4,-1,-3),
-        ang = Angle(0,0,0),
-        scale = Vector(1,1,1)*1.5,
+        name = "Throatneck Scratcher",
+        pos = Vector(4, -1, -3),
+        ang = Angle(0, 0, 0),
+        scale = Vector(1, 1, 1) * 1.5,
     },
     ["models/props_lab/cleaver.mdl"] = {
-        name="Throatneck Cleaver",
-        pos = Vector(3.5,-1,0),
-        ang = Angle(-90,0,0),
-        scale = Vector(1,1,1)*0.6,
+        name = "Throatneck Cleaver",
+        pos = Vector(3.5, -1, 0),
+        ang = Angle(-90, 0, 0),
+        scale = Vector(1, 1, 1) * 0.6,
     }
 }
 
 --NOMINIFY
-
 function SWEP:SetupDataTables()
-	self:NetworkVar( "String", 0, "ForceModel" )
+    self:NetworkVar("String", 0, "ForceModel")
+
     -- self:NetworkVarNotify( "ForceModel", self.Deploy )
-	if SERVER then 
+    if SERVER then
         timer.Simple(0, function()
-            if IsValid(self) and IsValid(self.Owner)  then
-                for k,v in pairs(self.Owner.SS_Items or {}) do
-                    if v.class=="knifeskin" and v.eq then
+            if IsValid(self) and IsValid(self.Owner) then
+                for k, v in pairs(self.Owner.SS_Items or {}) do
+                    if v.class == "knifeskin" and v.eq then
                         self:SetForceModel(v.specs.model or "")
                         self:Deploy()
                     end
                 end
-
             end
         end)
         -- print(self.Owner)
         -- self:SetForceModel(table.Random(table.GetKeys(SlitterModels))) 
-    end     
+    end
 end
 
 -- determines the knife model; this is used so it works with viewmdoel fixer script
 function SWEP:GetViewModel()
-    return self:GetForceModel()=="" and "models/weapons/w_knife_t.mdl" or self:GetForceModel()
+    return self:GetForceModel() == "" and "models/weapons/w_knife_t.mdl" or self:GetForceModel()
 end
 
 function SWEP:Deploy()
     if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
         self.Owner:GetViewModel():SetModel(self:GetViewModel())
     end
+
     -- self:SetModel(self:GetViewModel())
     self.PrintName = SlitterModels[self:GetViewModel()].name
 end
@@ -127,15 +127,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     ang:RotateAroundAxis(r, ang2.x)
     ang:RotateAroundAxis(f, ang2.y)
     ang:RotateAroundAxis(u, ang2.z)
-
-
     local basemodelstuff = SlitterModels["models/weapons/w_knife_t.mdl"]
     local modelstuff = SlitterModels[self:GetViewModel()]
-    
-    local mp,ma = WorldToLocal(modelstuff.pos, modelstuff.ang, basemodelstuff.pos, basemodelstuff.ang)
-
-    
-    pos, ang = LocalToWorld(mp,ma, pos, ang)
+    local mp, ma = WorldToLocal(modelstuff.pos, modelstuff.ang, basemodelstuff.pos, basemodelstuff.ang)
+    pos, ang = LocalToWorld(mp, ma, pos, ang)
 
     return pos, ang
 end
@@ -143,39 +138,29 @@ end
 function SWEP:PreDrawViewModel(vm)
     local m = Matrix()
     m:SetScale(SlitterModels[self:GetViewModel()].scale)
-    vm:EnableMatrix("RenderMultiply",m)
+    vm:EnableMatrix("RenderMultiply", m)
 end
 
 function SWEP:PostDrawViewModel(vm)
     vm:DisableMatrix("RenderMultiply")
 end
 
-
-
-
 function SlitterBuildBonePositions(self, nbones)
-
 end
-
 
 function SWEP:DrawWorldModel()
     -- if self.WorldModel ~= self:GetViewModel() then 
     --     self.WorldModel=self:GetViewModel() 
     --     self:SetModel(self.WorldModel)
     -- end
-
-
     -- if not self.BBPCallback then 
     --     self.BBPCallback=true
     --     self:AddCallback( "BuildBonePositions", function( ent, numbones )
     --         SlitterBuildBonePositions( ent, numbones )
     --     end )
     -- end
-
-
     -- self:SetupBones()
     -- self:DrawModel()
-
     local ply = self:GetOwner()
 
     if (IsValid(ply)) then
@@ -207,42 +192,31 @@ function SWEP:DrawWorldModel()
             print("GEN")
             modelstuff.csmodel = ClientsideModel(self:GetViewModel())
             modelstuff.csmodel:SetNoDraw(true)
-
             local mat = Matrix()
             mat:SetTranslation(modelstuff.pos)
             mat:SetAngles(modelstuff.ang)
             mat:SetScale(modelstuff.scale)
-
             modelstuff.csmodel:EnableMatrix("RenderMultiply", mat)
         end
 
         -- opos, oang = LocalToWorld(modelstuff.pos, modelstuff.ang, opos, oang)
-
         -- print(self:GetBoneCount())
         -- self:InvalidateBoneCache()
         -- self:SetupBones()
         -- local mrt = Matrix() --self:GetBoneMatrix(0)
-
         -- if mrt then
         --     print("MRT", nbones )
-            -- mrt:SetTranslation(opos)
-            -- mrt:SetAngles(oang)
-            -- mrt:SetScale(modelstuff.scale)
-
-            modelstuff.csmodel:SetPos(opos)
-            modelstuff.csmodel:SetAngles(oang)
-
-            modelstuff.csmodel:SetupBones()
-
-            -- modelstuff.csmodel:SetBoneMatrix(0, mrt)
-
-            modelstuff.csmodel:DrawModel()
-
+        -- mrt:SetTranslation(opos)
+        -- mrt:SetAngles(oang)
+        -- mrt:SetScale(modelstuff.scale)
+        modelstuff.csmodel:SetPos(opos)
+        modelstuff.csmodel:SetAngles(oang)
+        modelstuff.csmodel:SetupBones()
+        -- modelstuff.csmodel:SetBoneMatrix(0, mrt)
+        modelstuff.csmodel:DrawModel()
         --     -- self:SetBoneMatrix(0, mrt)
         --     self:SetBonePosition(0, opos, oang)
         -- end
-
-        
     else
         self:DrawModel()
     end

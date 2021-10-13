@@ -811,7 +811,7 @@ function PANEL:Init()
         end
     end
 
-    inventorythink(NewCategory("Weapons", 'icon16/gun.png', true), {"Weapons","Skins"})
+    inventorythink(NewCategory("Weapons", 'icon16/gun.png', true), {"Weapons", "Skins"})
 
     inventorythink(NewCategory("Props", 'icon16/book.png', true), {"Props"})
 
