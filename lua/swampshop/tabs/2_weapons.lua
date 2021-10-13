@@ -537,6 +537,35 @@ function SS_GunAmmoPrice(item)
     return math.Round(baseprice * (perk.AmmoPriceMod or swep.AmmoPriceMod or 1) * ratingmod, -2)
 end
 
+
+
+SS_Item({
+    class = 'knifeskin',
+    value = 100000,
+    GetName = function(self) return (SlitterModels[self.specs.model] or {name="unknown"}).name end,
+    GetDescription = function(self) return "WIP: A skin for the throatneck slitter. Equip to use." end,
+    GetModel = function(self) return self.specs.model end,
+    SanitizeSpecs = function(self)
+        local specs, ch = self.specs, false
+
+        if not specs.model then
+            specs.model = table.Random(table.GetKeys(SlitterModels))
+            specs.rating = 0.999
+            ch = true
+        end
+
+        return ch
+    end,
+    configurable = {
+        color = {
+            max = 5
+        },
+        imgur = true
+    },
+    invcategory="Skins"
+})
+
+
 --NOMINIFY
 -- for i, tm in ipairs({"CT", "TERRORIST"}) do
 SS_Product({
@@ -544,7 +573,7 @@ SS_Product({
     background = true,
     price = 100000,
     name = "Gun Blueprint", --tm == "CT" and "Thin Blue Line Box" or "Jihad Box",
-    description = "Contains a blueprint for a random gun.\nToo expensive? Try the \"Auctions\" tab!",
+    description = "Contains a blueprint for a random gun.\nToo expensive? Try the \"Auctions\" tab!\nNew: knife skins (rare)",
     model = 'models/Items/ammocrate_smg1.mdl',
     Options = function(self)
         local options = {}
@@ -572,7 +601,7 @@ SS_Product({
 
         local chosen = options[math.random(#options)]
         local rating
-        local item = SS_GenerateItem(ply, "weapon")
+        local item = SS_GenerateItem(ply, math.random()>0.01 and "weapon" or "knifeskin")
         item.specs.class = chosen.ClassName
         item:Sanitize()
         rating = item.specs.rating

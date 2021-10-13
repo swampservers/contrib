@@ -470,6 +470,12 @@ surface.CreateFont('SS_DESCFONT', {
     weight = 700
 })
 
+surface.CreateFont('SS_DESCFONTBIG', {
+    font = 'Lato',
+    size = 24,
+    weight = 700
+})
+
 surface.CreateFont('SS_DESCINSTFONT', {
     font = 'Lato',
     size = 20

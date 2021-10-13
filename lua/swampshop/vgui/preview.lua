@@ -58,7 +58,7 @@ function PANEL:LayoutEntity(thisEntity)
                         crangm = Matrix()
                         crangm:SetAngles(cgang)
                         crangm:Rotate(clangi)
-                        rootang = V
+
                         ngang = Angle()
                         ngang:Set(cgang)
                         local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
@@ -77,21 +77,30 @@ function PANEL:LayoutEntity(thisEntity)
             end
         end
 
-        --[[ this shit isnt ready yet
+
         if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(XSL) and IsValid(SS_HoverCSModel) then
+
+            clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
+            clangm = Matrix()
+            clangm:SetAngles(clang)
+            clangm:Invert()
+            clangi = clangm:GetAngles()
+            cgang = SS_HoverCSModel:GetAngles()
+            crangm = Matrix()
+            crangm:SetAngles(cgang)
+            crangm:Rotate(clangi)
+
+            local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
+            local wshift = ang:Right() * (mx - (self.PressX or mx)) - ang:Up() * (my - (self.PressY or my))
+            local vo,_ = WorldToLocal(wshift * 0.05, Angle(0,0,0), Vector(0,0,0), crangm:GetAngles())
             local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
-            local attach = (SS_CustomizerPanel.item.cfg[SS_CustomizerPanel.wear] or {}).attach or (pone and (SS_CustomizerPanel.item.wear.pony or {}).attach) or SS_CustomizerPanel.item.wear.attach
-            local angpos = self.Entity:GetAttachment(self.Entity:LookupAttachment(attach))
-            local apos, aang = LocalToWorld(ofs, Angle(), angpos.Pos, angpos.Ang)
-            local camang = (self:GetLookAt() - self:GetCamPos()):Angle()
-            apos = apos + camang:Right() * (mx + (self.PressX or mx)) * 0.3
-            apos = apos + camang:Up() * (my + (self.PressY or my)) * 0.3
-            apos, aang = WorldToLocal(apos, aang, angpos.Pos, angpos.Ang)
+            local apos = ofs + vo
+            
             XSL:SetValue(apos.x)
             YSL:SetValue(apos.y)
             ZSL:SetValue(apos.z)
         end
-        ]]
+
         self.PressX, self.PressY = gui.MousePos()
     end
 
@@ -303,7 +312,8 @@ function PANEL:Paint()
     if SS_CustomizerPanel:IsVisible() then
         if ValidPanel(XRSL) then
             if IsValid(SS_HoverCSModel) then
-                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONT", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONTBIG", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("MMB + drag to move", "SS_DESCFONTBIG", self:GetWide() / 2, 14+32, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
     end
