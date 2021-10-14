@@ -6,189 +6,47 @@ local EntityGetModel = Entity.GetModel
 SS_MaterialCache = {}
 
 --NOMINIFY
-function SS_GetMaterial(nam)
-    SS_MaterialCache[nam] = SS_MaterialCache[nam] or Material(nam)
 
-    return SS_MaterialCache[nam]
-end
+-- function SS_PreRender(item)
+--     if item.cfg.imgur then
+--         local imat = WebMaterial({
+--             id = item.cfg.imgur.url,
+--             owner = item.owner,
+--             -- worksafe = true, -- pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
+--             stretch = true,
+--             shader = "VertexLitGeneric",
+--             params = [[{["$alphatest"]=1}]]
+--         })
 
-function SS_PreRender(item)
-    if item.cfg.imgur then
-        local imat = WebMaterial({
-            id = item.cfg.imgur.url,
-            owner = item.owner,
-            -- worksafe = true, -- pos = IsValid(item.owner) and item.owner:IsPlayer() and item.owner:GetPos(),
-            stretch = true,
-            shader = "VertexLitGeneric",
-            params = [[{["$alphatest"]=1}]]
-        })
+--         render.MaterialOverride(imat)
+--         --render.OverrideDepthEnable(true,true)
+--     else
+--         local mat = item.cfg.material or item.material
 
-        render.MaterialOverride(imat)
-        --render.OverrideDepthEnable(true,true)
-    else
-        local mat = item.cfg.material or item.material
+--         if mat then
+--             render.MaterialOverride(SS_GetMaterial(mat))
+--         else
+--             render.MaterialOverride()
+--         end
+--     end
 
-        if mat then
-            render.MaterialOverride(SS_GetMaterial(mat))
-        else
-            render.MaterialOverride()
-        end
-    end
+--     local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color
 
-    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color
+--     if col then
+--         render.SetColorModulation(col.x, col.y, col.z)
+--     end
+-- end
 
-    if col then
-        render.SetColorModulation(col.x, col.y, col.z)
-    end
-end
-
-function SS_PostRender()
-    render.SetColorModulation(1, 1, 1)
-    render.MaterialOverride()
-    --render.OverrideDepthEnable(false)
-end
-
-hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
-    if not ply:Alive() then return end
-    -- will be "false" if the model is not mounted yet
-    local m = ply:GetActualModel()
-
-    if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0) ~= 0 then
-        SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
-        SS_ApplyMaterialMods(ply, ply)
-        ply.SS_SetupPlayermodel = m
-    end
-
-    if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
-        ply:SS_AttachAccessories(ply.SS_ShownItems)
-    end
-end)
+-- function SS_PostRender()
+--     render.SetColorModulation(1, 1, 1)
+--     render.MaterialOverride()
+--     --render.OverrideDepthEnable(false)
+-- end
 
 -- hook.Add("NetworkEntityCreated","fix2",function(ent)
 --     if ent:IsPlayer() then print("NEC", ent) end
 --     ent.SS_PlayermodelModsClean=false end)
-local function AddScaleRecursive(ent, b, scn, recurse, safety)
-    if safety[b] then
-        error("BONE LOOP!")
-    end
 
-    safety[b] = true
-    local sco = ent:GetManipulateBoneScale(b)
-    sco.x = sco.x * scn.x
-    sco.y = sco.y * scn.y
-    sco.z = sco.z * scn.z
-
-    if ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
-        sco.x = math.min(sco.x, 1)
-        sco.y = math.min(sco.y, 1)
-        sco.z = math.min(sco.z, 1)
-    end
-
-    ent:ManipulateBoneScale(b, sco)
-
-    if recurse then
-        for i, v in ipairs(ent:GetChildBones(b)) do
-            AddScaleRecursive(ent, v, scn, recurse, safety)
-        end
-    end
-end
-
---only bone scale right now...
---if you do pos/angles, must do a combination override to make it work with emotes, vape arm etc
-function SS_ApplyBoneMods(ent, mods)
-    for x = 0, (ent:GetBoneCount() - 1) do
-        ent:ManipulateBoneScale(x, Vector(1, 1, 1))
-        ent:ManipulateBonePosition(x, Vector(0, 0, 0))
-    end
-
-    if HumanTeamName then return end
-    local pone = isPonyModel(ent:GetModel())
-    local suffix = pone and "_p" or "_h"
-    --if pelvis has no children, it's not ready!
-    local pelvis = ent:LookupBone(pone and "LrigPelvis" or "ValveBiped.Bip01_Pelvis")
-    if pelvis then end -- assert(#ent:GetChildBones(pelvis) > 0, ent:GetModel() ) 
-
-    for _, item in ipairs(mods) do
-        if item.bonemod then
-            local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
-            local x = ent:LookupBone(bn)
-
-            if x then
-                if (item.configurable or {}).scale then
-                    local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
-                    AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
-                end
-
-                if (item.configurable or {}).pos then
-                    local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
-
-                    --don't allow moving the root bone
-                    if ent:GetBoneParent(x) == -1 then
-                        psn.x = 0
-                        psn.y = 0
-                    end
-
-                    local pso = ent:GetManipulateBonePosition(x)
-                    pso = pso + psn
-                    ent:ManipulateBonePosition(x, pso)
-                end
-            end
-        end
-    end
-
-    --clamp the amount of stacking
-    for x = 0, (ent:GetBoneCount() - 1) do
-        local old = ent:GetManipulateBoneScale(x)
-        local mn = 0.125 --0.5*0.5*0.5
-        local mx = 3.375 --1.5*1.5*1.5
-
-        if ent.GetNetData and ent:GetNetData('OF') ~= nil then
-            mx = 1.5
-        end
-
-        old.x = math.Clamp(old.x, mn, mx)
-        old.y = math.Clamp(old.y, mn, mx)
-        old.z = math.Clamp(old.z, mn, mx)
-        ent:ManipulateBoneScale(x, old)
-        old = ent:GetManipulateBonePosition(x)
-        old.x = math.Clamp(old.x, -8, 8)
-        old.y = math.Clamp(old.y, -8, 8)
-        old.z = math.Clamp(old.z, -8, 8)
-        ent:ManipulateBonePosition(x, old)
-    end
-end
-
-function SS_ApplyMaterialMods(ent, ply)
-    local mods = ply:SS_GetActivePlayermodelMods()
-    -- print("RESET", ent)
-    ent:SetSubMaterial()
-    hook.Run("SetPlayerModelMaterials", ent, ply)
-    if HumanTeamName then return end
-
-    for _, item in ipairs(mods) do
-        if item.materialmod then
-            local col = item.cfg.color or Vector(1, 1, 1)
-
-            -- local mat = ImgurMaterial({
-            --     id = (item.cfg.imgur or {}).url or "EG84dgp.png",
-            --     owner = ent,
-            --     worksafe = true, 
-            --     pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
-            --     stretch = true,
-            --     shader = "VertexLitGeneric",
-            --     params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
-            -- })
-            ent:SetWebSubMaterial(item.cfg.submaterial or 0, {
-                id = (item.cfg.imgur or {}).url or "EG84dgp.png",
-                owner = ent,
-                -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
-                stretch = true,
-                shader = "VertexLitGeneric",
-                params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
-            })
-        end
-    end
-end
 
 -- Entity.SS_True_LookupAttachment = Entity.SS_True_LookupAttachment or Entity.LookupAttachment
 -- Entity.SS_True_LookupBone = Entity.SS_True_LookupBone or Entity.LookupBone
@@ -320,17 +178,156 @@ end
 --     end
 --     return mdl
 -- end
-local DrawingInShop = false
+-- local DrawingInShop = false
 
-function SS_SetMaterialToItem(item, ent, ply)
+
+
+function SS_GetMaterial(nam)
+    SS_MaterialCache[nam] = SS_MaterialCache[nam] or Material(nam)
+
+    return SS_MaterialCache[nam]
+end
+
+hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
+    if not ply:Alive() then return end
+    -- will be "false" if the model is not mounted yet
+    local m = ply:GetActualModel()
+
+    if ply.SS_SetupPlayermodel ~= m and ply:GetBoneContents(0) ~= 0 then
+        SS_ApplyBoneMods(ply, ply:SS_GetActivePlayermodelMods())
+        SS_ApplyMaterialMods(ply, ply)
+        ply.SS_SetupPlayermodel = m
+    end
+
+    if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
+        ply:SS_AttachAccessories(ply.SS_ShownItems)
+    end
+end)
+
+
+local function AddScaleRecursive(ent, b, scn, recurse, safety)
+    if safety[b] then
+        error("BONE LOOP!")
+    end
+
+    safety[b] = true
+    local sco = ent:GetManipulateBoneScale(b)
+    sco.x = sco.x * scn.x
+    sco.y = sco.y * scn.y
+    sco.z = sco.z * scn.z
+
+    if ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
+        sco.x = math.min(sco.x, 1)
+        sco.y = math.min(sco.y, 1)
+        sco.z = math.min(sco.z, 1)
+    end
+
+    ent:ManipulateBoneScale(b, sco)
+
+    if recurse then
+        for i, v in ipairs(ent:GetChildBones(b)) do
+            AddScaleRecursive(ent, v, scn, recurse, safety)
+        end
+    end
+end
+
+--only bone scale right now...
+--if you do pos/angles, must do a combination override to make it work with emotes, vape arm etc
+function SS_ApplyBoneMods(ent, mods)
+    for x = 0, (ent:GetBoneCount() - 1) do
+        ent:ManipulateBoneScale(x, Vector(1, 1, 1))
+        ent:ManipulateBonePosition(x, Vector(0, 0, 0))
+    end
+
+    if HumanTeamName then return end
+    local pone = isPonyModel(ent:GetModel())
+    local suffix = pone and "_p" or "_h"
+    --if pelvis has no children, it's not ready!
+    local pelvis = ent:LookupBone(pone and "LrigPelvis" or "ValveBiped.Bip01_Pelvis")
+    if pelvis then end -- assert(#ent:GetChildBones(pelvis) > 0, ent:GetModel() ) 
+
+    for _, item in ipairs(mods) do
+        if item.bonemod then
+            local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
+            local x = ent:LookupBone(bn)
+
+            if x then
+                if (item.configurable or {}).scale then
+                    local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
+                    AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
+                end
+
+                if (item.configurable or {}).pos then
+                    local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
+
+                    --don't allow moving the root bone
+                    if ent:GetBoneParent(x) == -1 then
+                        psn.x = 0
+                        psn.y = 0
+                    end
+
+                    local pso = ent:GetManipulateBonePosition(x)
+                    pso = pso + psn
+                    ent:ManipulateBonePosition(x, pso)
+                end
+            end
+        end
+    end
+
+    --clamp the amount of stacking
+    for x = 0, (ent:GetBoneCount() - 1) do
+        local old = ent:GetManipulateBoneScale(x)
+        local mn = 0.125 --0.5*0.5*0.5
+        local mx = 3.375 --1.5*1.5*1.5
+
+        if ent.GetNetData and ent:GetNetData('OF') ~= nil then
+            mx = 1.5
+        end
+
+        old.x = math.Clamp(old.x, mn, mx)
+        old.y = math.Clamp(old.y, mn, mx)
+        old.z = math.Clamp(old.z, mn, mx)
+        ent:ManipulateBoneScale(x, old)
+        old = ent:GetManipulateBonePosition(x)
+        old.x = math.Clamp(old.x, -8, 8)
+        old.y = math.Clamp(old.y, -8, 8)
+        old.z = math.Clamp(old.z, -8, 8)
+        ent:ManipulateBonePosition(x, old)
+    end
+end
+
+function SS_ApplyMaterialMods(ent, ply)
+    local mods = ply:SS_GetActivePlayermodelMods()
+    -- print("RESET", ent)
+    ent:SetSubMaterial()
+    hook.Run("SetPlayerModelMaterials", ent, ply)
+    if HumanTeamName then return end
+
+    for _, item in ipairs(mods) do
+        if item.materialmod then
+            local col = item.cfg.color or Vector(1, 1, 1)
+
+            -- todo: forceload in shop?
+            ent:SetWebSubMaterial(item.cfg.submaterial or 0, {
+                id = (item.cfg.imgur or {}).url or "EG84dgp.png",
+                owner = ent,
+                stretch = true,
+                shader = "VertexLitGeneric",
+                params = string.format('{["$color2"]="[%f %f %f]"}', col.x, col.y, col.z)
+            })
+        end
+    end
+end
+
+-- todo: change IN_SHOP to ent attribute?
+function SS_SetItemMaterialToEntity(item, ent, forceload)
     local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color or Vector(1, 1, 1)
 
     if item.cfg.imgur then
         ent:SetWebMaterial({
             id = item.cfg.imgur.url,
-            owner = ply,
-            forceload = SS_FORCE_LOAD_WEBMATERIAL,
-            -- worksafe=true,
+            owner = item.owner,
+            forceload = forceload,
             params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
         })
         --     ent.RenderOverride = function(e, fl)
@@ -344,7 +341,7 @@ function SS_SetMaterialToItem(item, ent, ply)
 end
 
 --makes a CSModel for a product or item
-function SS_AttachAccessory(item, ent, recycle_mdl)
+function SS_AttachAccessory(item, ent, recycle_mdl, forceload)
     -- local ply = item.owner == SS_SAMPLE_ITEM_OWNER and LocalPlayer() or item.owner
     -- mdl.Attach = function(e, ent)
     --     ent = ent or ply
@@ -443,7 +440,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl)
     -- if IsValid(LocalPlayer()) and LocalPlayer():GetName()=="Joker Gaming" then
     --     mdl:SetColoredBaseMaterial(Vector(1,0,0)) 
     -- else
-    SS_SetMaterialToItem(item, mdl, item.owner == SS_SAMPLE_ITEM_OWNER and LocalPlayer() or item.owner)
+    SS_SetItemMaterialToEntity(item, mdl, forceload)
     -- end
     mdl:SetPredictable(true)
 
@@ -496,7 +493,7 @@ hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, 
             end
 
             local item = mdl.item
-            SS_SetMaterialToItem(item, gib, ply)
+            SS_SetItemMaterialToEntity(item, gib)
         end
 
         -- used by pony model TODO remove
@@ -523,7 +520,7 @@ hook.Add("NetworkEntityCreated", "RefreshAccessories", function(ent)
 end)
 
 -- Note: we expect items table not to change internally when items are updated (make whole new table)
-function Entity:SS_AttachAccessories(items)
+function Entity:SS_AttachAccessories(items, forceload)
     -- print(items, rangecheck)
     SS_UpdatedAccessories[self] = true
     local m = self:GetActualModel()
@@ -555,7 +552,7 @@ function Entity:SS_AttachAccessories(items)
         for k, item in pairs(items) do
             if item.AccessoryTransform then
                 local rmodels = recycle[item:GetModel()]
-                local mdl = SS_AttachAccessory(item, self, #rmodels > 0 and table.remove(rmodels) or nil)
+                local mdl = SS_AttachAccessory(item, self, #rmodels > 0 and table.remove(rmodels) or nil, forceload)
 
                 if mdl then
                     table.insert(SS_CreatedAccessories[self], mdl)

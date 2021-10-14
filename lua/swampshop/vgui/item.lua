@@ -279,97 +279,20 @@ function PANEL:SetProduct(product)
     self.product = product
     self.item = nil
     self.iop = product
-    self:Setup()
 end
 
 function PANEL:SetItem(item)
     self.item = item
     self.product = nil
     self.iop = item
-    self:Setup()
 end
 
-function PANEL:Setup()
-    local DModelPanel = vgui.Create('DModelPanel', self)
-    DModelPanel:Dock(FILL)
-
-    function DModelPanel:LayoutEntity(ent)
-        if self:GetParent().hovered then
-            ent:SetAngles(Angle(0, ent:GetAngles().y + (RealFrameTime() * 120), 0))
-        end
-
-        SS_PreviewShopModel(self, self:GetParent().iop)
+function PANEL:LayoutEntity(ent)
+    if self.hovered then
+        ent:SetAngles(Angle(0, ent:GetAngles().y + (RealFrameTime() * 120), 0))
     end
 
-    function DModelPanel:OnMousePressed(b)
-        self:GetParent():OnMousePressed(b)
-    end
-
-    function DModelPanel:OnCursorEntered()
-        self:GetParent():OnCursorEntered()
-    end
-
-    function DModelPanel:OnCursorExited()
-        self:GetParent():OnCursorExited()
-    end
-
-    DModelPanel.Paint = function(dmp, w, h)
-        local mdl = self.iop:GetModel()
-
-        if dmp.modelapplied ~= mdl then
-            -- might be a workshop model, will be an error till user clicks it and it appears in the preview
-            -- todo: use placeholder
-            dmp:SetModel(mdl)
-            dmp.modelapplied = mdl
-        end
-
-        if is_model_undownloaded(dmp:GetModel()) then
-            draw.SimpleText("Mouse over", "DermaDefaultBold", w / 2, h / 2 - 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            draw.SimpleText("to download", "DermaDefaultBold", w / 2, h / 2 + 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-            return
-        end
-
-        if (not IsValid(dmp.Entity)) then return end
-        dmp.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-
-        if self.item or self.product.sample_item then
-            SS_PreRender(self.item or self.product.sample_item)
-        else
-            --todo: remove this?
-            local mat, col = self.product.material, self.product.color
-
-            if mat then
-                render.MaterialOverride(SS_GetMaterial(mat))
-            end
-            -- if col then
-            --     render.SetColorModulation(col.x, col.y, col.z)
-            -- end
-        end
-
-        local x, y = dmp:LocalToScreen(0, 0)
-        dmp:LayoutEntity(dmp.Entity)
-        local ang = dmp.aLookAngle or (dmp.vLookatPos - dmp.vCamPos):Angle()
-        cam.Start3D(dmp.vCamPos, ang, dmp.fFOV, x, y, w, h, 5, dmp.FarZ)
-        render.SuppressEngineLighting(true)
-        render.SetLightingOrigin(dmp.Entity:GetPos())
-        render.ResetModelLighting(dmp.colAmbientLight.r / 255, dmp.colAmbientLight.g / 255, dmp.colAmbientLight.b / 255)
-        render.SetBlend((dmp:GetAlpha() / 255) * (dmp.colColor.a / 255))
-
-        for i = 0, 6 do
-            local col = dmp.DirectionalLight[i]
-
-            if col then
-                render.SetModelLighting(i, col.r / 255, col.g / 255, col.b / 255)
-            end
-        end
-
-        dmp:DrawModel()
-        render.SuppressEngineLighting(false)
-        cam.End3D()
-        dmp.LastPaint = RealTime()
-        SS_PostRender()
-    end
+    SS_PreviewShopModel(self, self.iop)
 end
 
 local ownedcheckmark = Material("icon16/accept.png")
@@ -424,6 +347,55 @@ function PANEL:Paint(w, h)
     if (self:IsSelected()) then
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_Brand, 100))
     end
+
+
+
+    local mdl = self.iop:GetModel()
+
+    -- todo: show workshop preview panel
+    if is_model_undownloaded(mdl) then
+        draw.SimpleText("Mouse over", "DermaDefaultBold", w / 2, h / 2 - 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText("to download", "DermaDefaultBold", w / 2, h / 2 + 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+        return
+    end
+
+    if self.modelapplied ~= mdl then
+        self:SetModel(mdl)
+        self.modelapplied = mdl
+        
+        if IsValid(self.Entity) then
+            self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
+        
+            local item = self.item or self.product.sample_item
+            if item then 
+                SS_SetItemMaterialToEntity(item, self.Entity, true)
+            end
+        end
+    end
+
+    if not IsValid(self.Entity) then return end
+
+    local x, y = self:LocalToScreen(0, 0)
+    self:LayoutEntity(self.Entity)
+    local ang = self.aLookAngle or (self.vLookatPos - self.vCamPos):Angle()
+    cam.Start3D(self.vCamPos, ang, self.fFOV, x, y, w, h, 5, self.FarZ)
+    render.SuppressEngineLighting(true)
+    render.SetLightingOrigin(self.Entity:GetPos())
+    render.ResetModelLighting(self.colAmbientLight.r / 255, self.colAmbientLight.g / 255, self.colAmbientLight.b / 255)
+
+    for i = 0, 6 do
+        local col = self.DirectionalLight[i]
+
+        if col then
+            render.SetModelLighting(i, col.r / 255, col.g / 255, col.b / 255)
+        end
+    end
+
+    self:DrawModel()
+    render.SuppressEngineLighting(false)
+    cam.End3D()
+
 end
 
 function PANEL:PaintOver(w, h)
@@ -592,4 +564,4 @@ function PANEL:PaintOver(w, h)
     end
 end
 
-vgui.Register('DPointShopItem', PANEL, 'DPanel')
+vgui.Register('DPointShopItem', PANEL, 'DModelPanel')

@@ -39,6 +39,7 @@ function PLAYER:ComputeName()
     tn = StripNameAdvert(tn, "swamp.sv")
     tn = StripNameAdvert(tn, "sups.gg")
     tn = StripNameAdvert(tn, "moat.gg") --lol rip
+    tn = StripNameAdvert(tn, "velk.ca")
 
     return tn
 end

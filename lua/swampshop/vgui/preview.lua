@@ -47,8 +47,7 @@ function PANEL:LayoutEntity(thisEntity)
 
         if self.PressButton == MOUSE_RIGHT then
             if SS_CustomizerPanel:IsVisible() then
-                if ValidPanel(XRSL) then
-                    if IsValid(SS_HoverCSModel) then
+                if ValidPanel(XRSL) and IsValid(SS_HoverCSModel) then
                         clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
                         clangm = Matrix()
                         clangm:SetAngles(clang)
@@ -71,7 +70,7 @@ function PANEL:LayoutEntity(thisEntity)
                         XRSL:SetValue(nlang.x)
                         YRSL:SetValue(nlang.y)
                         ZRSL:SetValue(nlang.z)
-                    end
+                  
                 end
             end
         end
@@ -113,6 +112,9 @@ function PANEL:LayoutEntity(thisEntity)
         self.Angles.z = 0
         thisEntity:SetAngles(self.Angles)
     end
+
+
+
 end
 
 function PANEL:Paint()
@@ -124,9 +126,22 @@ function PANEL:Paint()
     end
 
     require_workshop_model(mdl)
-    self:SetModelCaching(mdl)
+
+    if mdl ~= self.ModelName then
+        local ang = IsValid(self.Entity) and self.Entity:GetAngles()
+        self.ModelName = mdl
+        self:SetModel(mdl)
+
+        if ang then
+            self.Entity:SetAngles(ang)
+        end
+
+        self.modelappearancedirty = true
+    end
+
     if not IsValid(self.Entity) then return end
-    render.SetColorModulation(1, 1, 1) --WTF
+
+    -- render.SetColorModulation(1, 1, 1) --WTF
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
     local ang = self.aLookAngle
@@ -147,22 +162,9 @@ function PANEL:Paint()
 
     if SS_HoverItem and SS_HoverItem.playermodelmod then
         pos = pos + (ang:Forward() * 25)
-        --positions are wrong
-        --[[
-			local pone = isPonyModel(self.Entity:GetModel())
-			local suffix = pone and "_p" or "_h"
-
-			local bn = SS_HoverCfg["bone"..suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head")
-			local x = self.Entity:LookupBone(bn)
-			if x then
-				local pos2,ang2 = self.Entity:GetBonePosition(x)
-
-				pos = LerpVector(0, pos2 - (ang:Forward() * 35), pos)
-			end
-			]]
+        -- TODO: focus camera on bone
     end
 
-    -- end
     local w, h = self:GetSize()
     local hextent = h
 
@@ -176,7 +178,6 @@ function PANEL:Paint()
     render.SuppressEngineLighting(true)
     render.SetLightingOrigin(self.Entity:GetPos())
     render.ResetModelLighting(self.colAmbientLight.r / 255, self.colAmbientLight.g / 255, self.colAmbientLight.b / 255)
-    render.SetBlend(self.colColor.a / 255)
 
     for i = 0, 6 do
         local col = self.DirectionalLight[i]
@@ -194,17 +195,18 @@ function PANEL:Paint()
     end
 
     if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        if SS_HoverItem then
-            SS_PreRender(SS_HoverItem)
+        if self.modelappearancedirty then
+            local item = SS_HoverItem or SS_HoverProduct.sample_item
+            if item then 
+                SS_SetItemMaterialToEntity(item, self.Entity, true)
+            end
+            self.modelappearancedirty = false
         end
 
         SS_PreviewShopModel(self, SS_HoverIOP)
         self:SetCamPos(self:GetCamPos() * 2)
         self.Entity:DrawModel()
 
-        if SS_HoverItem then
-            SS_PreRender(SS_HoverItem)
-        end
     else
         local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
@@ -281,9 +283,8 @@ function PANEL:Paint()
             -- print("REMAKE")
         end
 
-        SS_FORCE_LOAD_WEBMATERIAL = true
-        self.Entity:SS_AttachAccessories(GetShopAccessoryItems())
-        SS_FORCE_LOAD_WEBMATERIAL = nil
+        self.Entity:SS_AttachAccessories(GetShopAccessoryItems(), true)
+
         local acc = SS_CreatedAccessories[self.Entity]
         SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
 
@@ -319,28 +320,8 @@ function PANEL:PaintOver(w, h)
         _, h = SS_DescriptionPanel:GetPos()
     end
 
-    -- print(w,h)
-    -- surface.SetDrawColor(255,0,0,255)
-    -- surface.DrawRect(0,h-10,w,10)
     if SS_HoverIOP then
         SS_DrawIOPInfo(SS_HoverIOP, 0, h, w, MenuTheme_TX, 1)
-    end
-end
-
-function PANEL:SetModelCaching(sm)
-    if sm ~= self.ModelName then
-        local ang = IsValid(self.Entity) and self.Entity:GetAngles()
-        self.ModelName = sm
-        self:SetModel(sm)
-
-        if ang then
-            self.Entity:SetAngles(ang)
-        end
-        -- if isPonyModel(sm) then
-        --     self.Entity.isEditorPony = true
-        --     PPM.editor3_pony = self.Entity
-        --     PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
-        -- end
     end
 end
 
