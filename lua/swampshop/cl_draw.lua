@@ -3,7 +3,6 @@
 local Player = FindMetaTable('Player')
 local Entity = FindMetaTable('Entity')
 local EntityGetModel = Entity.GetModel
-SS_MaterialCache = {}
 
 --NOMINIFY
 -- function SS_PreRender(item)
@@ -170,11 +169,11 @@ SS_MaterialCache = {}
 --     return mdl
 -- end
 -- local DrawingInShop = false
-function SS_GetMaterial(nam)
-    SS_MaterialCache[nam] = SS_MaterialCache[nam] or Material(nam)
-
-    return SS_MaterialCache[nam]
-end
+--     ent.RenderOverride = function(e, fl)
+--         SS_PreRender(item)
+--         e:DrawModel()
+--         SS_PostRender()
+--     end
 
 hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     if not ply:Alive() then return end
@@ -317,11 +316,8 @@ function SS_SetItemMaterialToEntity(item, ent, forceload)
             forceload = forceload,
             params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
         })
-        --     ent.RenderOverride = function(e, fl)
-        --         SS_PreRender(item)
-        --         e:DrawModel()
-        --         SS_PostRender()
-        --     end
+    elseif item.material then
+        ent:SetMaterial(SS_GetColoredMaterialClone(item.material, col))
     else
         ent:SetColoredBaseMaterial(col)
     end
@@ -574,63 +570,3 @@ hook.Add("Think", "SS_CleanupAccessories", function()
 
     SS_UpdatedAccessories = {}
 end)
-
-CLONEDMATERIALS = CLONEDMATERIALS or {}
-
-function Entity:SetColoredBaseMaterial(color)
-    self:SetMaterial()
-    self:SetSubMaterial()
-
-    -- refactor - set default materials for models and support material override in shop
-    if self:GetModel() == "models/props_crates/static_crate_40.mdl" then
-        self:SetSkin(1)
-    end
-
-    if color.x == 1 and color.y == 1 and color.z == 1 then return end
-    MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
-    local sc = "c" .. tostring(color):gsub("%.", "p"):gsub(" ", "_")
-    local mats = self:GetMaterials()
-
-    for i, mat in ipairs(mats) do
-        local clonekey = sc .. "/../" .. mat
-
-        if not CLONEDMATERIALS[clonekey] then
-            -- print("MAKE", clonekey)
-            -- mat = mat:gsub("'","")
-            local mat2 = Material(clonekey)
-            local matname = mat2:GetName()
-
-            if matname == "___error" then
-                -- print("INVALID MATERIAL", mat)
-                local data = file.Read("materials/" .. mat .. ".vmt", "GAME") or "vertexlitgeneric\n{\n}"
-                local fixdata = data:Trim():lower()
-
-                if not (fixdata:StartWith("vertexlitgeneric") or fixdata:StartWith("'vertexlitgeneric") or fixdata:StartWith("\"vertexlitgeneric")) then
-                    print("WARNING, WRONG SHADER ON BAD MATERIAL")
-                    print(mat, data)
-                elseif fixdata:find("proxies") then
-                    print("WARNING, PROXIES ON BAD MATERIAL")
-                    print(mat, data)
-                end
-
-                mat2 = CreateMaterial("clonedmaterial" .. MATERIALCLONEINDEX .. "and" .. i, "vertexlitgeneric", util.KeyValuesToTable(data))
-                --     mat2 = PPM_CLONE_MATERIAL(Material(mat), mat .. sc )
-                --     print("FIXED", mat2:GetName())
-                -- mat2 = Material(mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
-                -- print(mat2:GetName(), mat.."/"..MATERIALCLONEINDEX.."/../../"..table.remove( ("/"):Explode(mat) ) )
-                matname = "!" .. mat2:GetName()
-            end
-
-            mat2:SetVector("$color2", color * (mat2:GetVector("$color2") or Vector(1, 1, 1)))
-            CLONEDMATERIALS[clonekey] = matname
-        end
-
-        self:SetSubMaterial(i - 1, CLONEDMATERIALS[clonekey])
-        -- print(i, mat)
-        -- local mi = i - 1
-        -- local mn = mat .. sc -- "coloredbase"..emi.."s"..mi
-        -- local clone = PPM_CLONE_MATERIAL(Material(mat), mn)
-        -- clone:SetVector("$color2", color)
-        -- self:SetSubMaterial(mi, "!" .. mn)
-    end
-end

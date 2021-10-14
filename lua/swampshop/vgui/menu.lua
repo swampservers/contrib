@@ -438,8 +438,8 @@ function PANEL:Init()
             --patch
             SS_CustomizerPanel:Close()
 
-            if IsValid(SS_SelectedPanel) then
-                SS_SelectedPanel:Deselect()
+            if IsValid(SS_SelectedTile) then
+                SS_SelectedTile:Deselect()
             end
 
             for k, v in pairs(btns) do

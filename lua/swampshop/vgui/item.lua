@@ -29,28 +29,31 @@ end
 function PANEL:OnMousePressed(b)
     if b ~= MOUSE_LEFT then return end
 
-    if self.product then
-        local cantbuy = self.product:CannotBuy(LocalPlayer())
-
-        if cantbuy then
-            surface.PlaySound("common/wpn_denyselect.wav")
-            LocalPlayerNotify(cantbuy)
-        else
-            if not self.prebuyclick then
-                self.prebuyclick = true
-
-                return
+    if self:IsSelected() then
+        self:Deselect()
+        
+        if self.product then
+            local cantbuy = self.product:CannotBuy(LocalPlayer())
+    
+            if cantbuy then
+                surface.PlaySound("common/wpn_denyselect.wav")
+                LocalPlayerNotify(cantbuy)
+            else
+                -- if not self.prebuyclick then
+                --     self.prebuyclick = true
+    
+                --     return
+                -- end
+    
+                -- self.prebuyclick = nil
+                surface.PlaySound("UI/buttonclick.wav")
+                SS_BuyProduct(self.product.class)
             end
-
-            self.prebuyclick = nil
-            surface.PlaySound("UI/buttonclick.wav")
-            SS_BuyProduct(self.product.class)
-        end
-    else
-        if self:IsSelected() then
+        else
+    
             if self.item.primaryaction then
                 surface.PlaySound("UI/buttonclick.wav")
-
+    
                 if LocalPlayer():SS_FindItem(self.item.id) then
                     RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
                 else
@@ -59,34 +62,47 @@ function PANEL:OnMousePressed(b)
             else
                 print("FIX " .. self.item.class)
             end
-        else
-            self:Select()
+    
         end
+
+
+    else
+        self:Select()
     end
+
+  
 end
 
 function PANEL:OnCursorEntered()
-    self.hovered = true
+    SS_HoveredTile = self
 
-    if self.product then
-        self:Select()
-    end
+    -- if self.product then
+    --     self:Select()
+    -- end
 end
 
 function PANEL:OnCursorExited()
-    self.hovered = false
+    if SS_HoveredTile == self then SS_HoveredTile = nil end
 
-    if self.product then
-        self:Deselect()
-    end
+    -- if self.product then
+    --     self:Deselect()
+    -- end
+end
+
+function PANEL:IsHovered()
+    return SS_HoveredTile == self
+end
+
+function PANEL:IsSelected()
+    return SS_SelectedTile == self
 end
 
 function PANEL:Select()
-    if IsValid(SS_SelectedPanel) then
-        SS_SelectedPanel:Deselect()
+    if IsValid(SS_SelectedTile) then
+        SS_SelectedTile:Deselect()
     end
 
-    SS_SelectedPanel = self
+    SS_SelectedTile = self
 
     -- SS_HoverData = self.data
     -- SS_HoverCfg = (self.item or {}).cfg
@@ -105,35 +121,6 @@ function PANEL:Select()
 
     SS_HoverIOP = SS_HoverItem or SS_HoverProduct
 
-    -- local p = vgui.Create("DLabel", SS_DescriptionPanel)
-    -- p:SetFont("SS_DESCTITLEFONT")
-    -- p:SetText(self.iop:GetName())
-    -- p:SetColor(MenuTheme_TX)
-    -- p:SetContentAlignment(8)
-    -- p.UpdateColours = function(pnl)
-    --     pnl:SetTextColor(MenuTheme_TX)
-    -- end
-    -- p:SetAutoStretchVertical(true)
-    -- p:Think()
-    -- p:DockMargin(0, 4, 0, 4)
-    -- p:Dock(TOP)
-    -- if self.iop.description then
-    --     p = vgui.Create("DLabel", SS_DescriptionPanel)
-    --     p:SetFont("SS_DESCFONT")
-    --     p:SetText(self.iop.description)
-    --     local long = string.len(self.iop.description) > 50
-    --     p:SetColor(MenuTheme_TX)
-    --     p:SetContentAlignment(long and 7 or 8)
-    --     p:SetWrap(long)
-    --     p:SetAutoStretchVertical(long and true or false)
-    --     p.UpdateColours = function(pnl)
-    --         pnl:SetTextColor(MenuTheme_TX)
-    --     end
-    --     p:SizeToContentsY()
-    --     p:Think()
-    --     p:DockMargin(4, 4, 4, 4)
-    --     p:Dock(TOP)
-    -- end
     if self.product then
         local ln = 4
 
@@ -252,7 +239,7 @@ end
 
 function PANEL:Deselect()
     if not self:IsSelected() then return end
-    SS_SelectedPanel = nil
+    SS_SelectedTile = nil
     SS_HoverProduct = nil
     SS_HoverItem = nil
     SS_HoverIOP = nil
@@ -272,7 +259,7 @@ function PANEL:Deselect()
 end
 
 function PANEL:IsSelected()
-    return SS_SelectedPanel == self
+    return SS_SelectedTile == self
 end
 
 function PANEL:SetProduct(product)
@@ -288,7 +275,7 @@ function PANEL:SetItem(item)
 end
 
 function PANEL:LayoutEntity(ent)
-    if self.hovered then
+    if self:IsHovered() then
         ent:SetAngles(Angle(0, ent:GetAngles().y + (RealFrameTime() * 120), 0))
     end
 
@@ -348,6 +335,8 @@ function PANEL:Paint(w, h)
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_Brand, 100))
     end
 
+
+
     local mdl = self.iop:GetModel()
 
     -- todo: show workshop preview panel
@@ -361,18 +350,19 @@ function PANEL:Paint(w, h)
     if self.modelapplied ~= mdl then
         self:SetModel(mdl)
         self.modelapplied = mdl
-
+        
         if IsValid(self.Entity) then
             self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
+        
             local item = self.item or self.product.sample_item
-
-            if item then
+            if item then 
                 SS_SetItemMaterialToEntity(item, self.Entity, true)
             end
         end
     end
 
     if not IsValid(self.Entity) then return end
+
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
     local ang = self.aLookAngle or (self.vLookatPos - self.vCamPos):Angle()
@@ -392,6 +382,7 @@ function PANEL:Paint(w, h)
     self:DrawModel()
     render.SuppressEngineLighting(false)
     cam.End3D()
+
 end
 
 function PANEL:PaintOver(w, h)
@@ -431,7 +422,7 @@ function PANEL:PaintOver(w, h)
             end
         end
 
-        if self.hovered then
+        if self:IsHovered() then
             self.barheight = 30
             self.textfont = "SS_Price"
             self.text = self.prebuyclick and (self.product.price == 0 and ">  GET  <" or ">  BUY  <") or (self.product.price == 0 and "FREE" or "-" .. tostring(self.product.price))
@@ -478,7 +469,7 @@ function PANEL:PaintOver(w, h)
 
         if self:IsSelected() then
             self.BGColor = SS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
-            local labelview = self.hovered and self.item.primaryaction --not self.item.never_equip
+            local labelview = self:IsHovered() and self.item.primaryaction --not self.item.never_equip
 
             if labelview then
                 self.barheight = 30

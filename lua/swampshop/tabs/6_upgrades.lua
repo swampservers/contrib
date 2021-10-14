@@ -3,72 +3,21 @@
 SS_Tab("Upgrades", "lock_open")
 SS_Heading("Accessory Slots")
 
-local fils = {"TrafficCone001a.mdl"}
+local prices = {0, 10000, 15000, 22000, 33000, 50000, 75000, 110000, 175000, 250000, 375000, 560000, 840000, 1000000, 1500000}
 
-if CLIENT then
-    local fils2, folds = file.Find("models/props_junk/*.mdl", "GAME")
-    fils = fils2
-end
-
-local prices = {0, 10000, 15000, 22000, 33000, 50000, 75000, 110000, 175000, 250000, 375000, 560000, 840000, 1000000,}
-
---2nd item
---6th
---10th
---14th
---[[
-
-
-{
-	0,
-	10000, --2nd item
-	15000, 
-	20000,
-	30000, 
-	40000, --6th
-	60000,
-	80000,
-	120000,
-	160000, --10th
-	240000,
-	320000,
-	480000,
-	640000, --14th
-	960000,
-}
-
-
-
-{
-	0,
-	1000, --2nd item
-	2000, 
-	4000,
-	7000, 
-	10000, --6th
-	20000,
-	40000,
-	70000,
-	100000, --10th
-	200000,
-	400000,
-	700000,
-	1000000, --14th
-	1000000,
-	1000000,
-}]]
-for n = 2, 14 do
+for n = 2, #prices do
+	local slotid = n
     SS_Item({
         class = "accslot_" .. tostring(n),
         price = prices[n],
         name = 'Accessory Slot ' .. tostring(n),
         description = "Allows equipping more accessories at once.",
-        model = 'models/props_junk/' .. fils[math.random(#fils)],
+        model = 'models/props_lab/tpplug.mdl',
         material = 'models/debug/debugwhite',
         invcategory = "Upgrades",
         never_equip = true,
         CanBuyStatus = function(itm, ply)
-            if ply:SS_AccessorySlots() < n - 1 then return SS_BUYSTATUS_PREVIOUS_SLOTS end
+            if ply:SS_AccessorySlots() < slotid - 1 then return "Buy the previous slots first." end
         end
     })
 end
