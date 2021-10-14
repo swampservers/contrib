@@ -31,29 +31,26 @@ function PANEL:OnMousePressed(b)
 
     if self:IsSelected() then
         self:Deselect()
-        
+
         if self.product then
             local cantbuy = self.product:CannotBuy(LocalPlayer())
-    
+
             if cantbuy then
                 surface.PlaySound("common/wpn_denyselect.wav")
                 LocalPlayerNotify(cantbuy)
             else
                 -- if not self.prebuyclick then
                 --     self.prebuyclick = true
-    
                 --     return
                 -- end
-    
                 -- self.prebuyclick = nil
                 surface.PlaySound("UI/buttonclick.wav")
                 SS_BuyProduct(self.product.class)
             end
         else
-    
             if self.item.primaryaction then
                 surface.PlaySound("UI/buttonclick.wav")
-    
+
                 if LocalPlayer():SS_FindItem(self.item.id) then
                     RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
                 else
@@ -62,28 +59,23 @@ function PANEL:OnMousePressed(b)
             else
                 print("FIX " .. self.item.class)
             end
-    
         end
-
-
     else
         self:Select()
     end
-
-  
 end
 
 function PANEL:OnCursorEntered()
     SS_HoveredTile = self
-
     -- if self.product then
     --     self:Select()
     -- end
 end
 
 function PANEL:OnCursorExited()
-    if SS_HoveredTile == self then SS_HoveredTile = nil end
-
+    if SS_HoveredTile == self then
+        SS_HoveredTile = nil
+    end
     -- if self.product then
     --     self:Deselect()
     -- end
@@ -335,8 +327,6 @@ function PANEL:Paint(w, h)
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_Brand, 100))
     end
 
-
-
     local mdl = self.iop:GetModel()
 
     -- todo: show workshop preview panel
@@ -350,19 +340,18 @@ function PANEL:Paint(w, h)
     if self.modelapplied ~= mdl then
         self:SetModel(mdl)
         self.modelapplied = mdl
-        
+
         if IsValid(self.Entity) then
             self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-        
             local item = self.item or self.product.sample_item
-            if item then 
+
+            if item then
                 SS_SetItemMaterialToEntity(item, self.Entity, true)
             end
         end
     end
 
     if not IsValid(self.Entity) then return end
-
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
     local ang = self.aLookAngle or (self.vLookatPos - self.vCamPos):Angle()
@@ -382,7 +371,6 @@ function PANEL:Paint(w, h)
     self:DrawModel()
     render.SuppressEngineLighting(false)
     cam.End3D()
-
 end
 
 function PANEL:PaintOver(w, h)

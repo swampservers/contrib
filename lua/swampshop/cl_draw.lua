@@ -174,7 +174,6 @@ local EntityGetModel = Entity.GetModel
 --         e:DrawModel()
 --         SS_PostRender()
 --     end
-
 hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     if not ply:Alive() then return end
     -- will be "false" if the model is not mounted yet
