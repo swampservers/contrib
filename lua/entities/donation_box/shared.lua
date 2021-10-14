@@ -4,10 +4,10 @@ AddCSLuaFile()
 ENT.Type = "anim"
 DEFINE_BASECLASS("base_gmodentity")
 ENT.Model = Model("models/items/boxmrounds.mdl")
+-- models/illusion/eftcontainers/magbox.mdl
 ENT.RenderGroup = RENDERGROUP_BOTH
 
 function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "Patriots")
+    self:NetworkVar("Bool",0,"Libtarded")
 end
--- models/items/boxmrounds.mdl
--- models/illusion/eftcontainers/magbox.mdl
