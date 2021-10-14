@@ -6,7 +6,6 @@ local EntityGetModel = Entity.GetModel
 SS_MaterialCache = {}
 
 --NOMINIFY
-
 -- function SS_PreRender(item)
 --     if item.cfg.imgur then
 --         local imat = WebMaterial({
@@ -17,37 +16,29 @@ SS_MaterialCache = {}
 --             shader = "VertexLitGeneric",
 --             params = [[{["$alphatest"]=1}]]
 --         })
-
 --         render.MaterialOverride(imat)
 --         --render.OverrideDepthEnable(true,true)
 --     else
 --         local mat = item.cfg.material or item.material
-
 --         if mat then
 --             render.MaterialOverride(SS_GetMaterial(mat))
 --         else
 --             render.MaterialOverride()
 --         end
 --     end
-
 --     local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color
-
 --     if col then
 --         render.SetColorModulation(col.x, col.y, col.z)
 --     end
 -- end
-
 -- function SS_PostRender()
 --     render.SetColorModulation(1, 1, 1)
 --     render.MaterialOverride()
 --     --render.OverrideDepthEnable(false)
 -- end
-
 -- hook.Add("NetworkEntityCreated","fix2",function(ent)
 --     if ent:IsPlayer() then print("NEC", ent) end
 --     ent.SS_PlayermodelModsClean=false end)
-
-
 -- Entity.SS_True_LookupAttachment = Entity.SS_True_LookupAttachment or Entity.LookupAttachment
 -- Entity.SS_True_LookupBone = Entity.SS_True_LookupBone or Entity.LookupBone
 -- function Entity:LookupAttachment(id)
@@ -179,9 +170,6 @@ SS_MaterialCache = {}
 --     return mdl
 -- end
 -- local DrawingInShop = false
-
-
-
 function SS_GetMaterial(nam)
     SS_MaterialCache[nam] = SS_MaterialCache[nam] or Material(nam)
 
@@ -203,7 +191,6 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
         ply:SS_AttachAccessories(ply.SS_ShownItems)
     end
 end)
-
 
 local function AddScaleRecursive(ent, b, scn, recurse, safety)
     if safety[b] then

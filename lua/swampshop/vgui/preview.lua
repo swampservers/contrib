@@ -48,29 +48,28 @@ function PANEL:LayoutEntity(thisEntity)
         if self.PressButton == MOUSE_RIGHT then
             if SS_CustomizerPanel:IsVisible() then
                 if ValidPanel(XRSL) and IsValid(SS_HoverCSModel) then
-                        clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
-                        clangm = Matrix()
-                        clangm:SetAngles(clang)
-                        clangm:Invert()
-                        clangi = clangm:GetAngles()
-                        cgang = SS_HoverCSModel:GetAngles()
-                        crangm = Matrix()
-                        crangm:SetAngles(cgang)
-                        crangm:Rotate(clangi)
-                        ngang = Angle()
-                        ngang:Set(cgang)
-                        local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
-                        ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
-                        ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
-                        ngangm = Matrix()
-                        ngangm:SetAngles(ngang)
-                        crangm:Invert()
-                        nlangm = crangm * ngangm
-                        nlang = nlangm:GetAngles()
-                        XRSL:SetValue(nlang.x)
-                        YRSL:SetValue(nlang.y)
-                        ZRSL:SetValue(nlang.z)
-                  
+                    clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
+                    clangm = Matrix()
+                    clangm:SetAngles(clang)
+                    clangm:Invert()
+                    clangi = clangm:GetAngles()
+                    cgang = SS_HoverCSModel:GetAngles()
+                    crangm = Matrix()
+                    crangm:SetAngles(cgang)
+                    crangm:Rotate(clangi)
+                    ngang = Angle()
+                    ngang:Set(cgang)
+                    local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
+                    ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
+                    ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
+                    ngangm = Matrix()
+                    ngangm:SetAngles(ngang)
+                    crangm:Invert()
+                    nlangm = crangm * ngangm
+                    nlang = nlangm:GetAngles()
+                    XRSL:SetValue(nlang.x)
+                    YRSL:SetValue(nlang.y)
+                    ZRSL:SetValue(nlang.z)
                 end
             end
         end
@@ -112,9 +111,6 @@ function PANEL:LayoutEntity(thisEntity)
         self.Angles.z = 0
         thisEntity:SetAngles(self.Angles)
     end
-
-
-
 end
 
 function PANEL:Paint()
@@ -140,7 +136,6 @@ function PANEL:Paint()
     end
 
     if not IsValid(self.Entity) then return end
-
     -- render.SetColorModulation(1, 1, 1) --WTF
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
@@ -197,16 +192,17 @@ function PANEL:Paint()
     if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
         if self.modelappearancedirty then
             local item = SS_HoverItem or SS_HoverProduct.sample_item
-            if item then 
+
+            if item then
                 SS_SetItemMaterialToEntity(item, self.Entity, true)
             end
+
             self.modelappearancedirty = false
         end
 
         SS_PreviewShopModel(self, SS_HoverIOP)
         self:SetCamPos(self:GetCamPos() * 2)
         self.Entity:DrawModel()
-
     else
         local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
@@ -284,7 +280,6 @@ function PANEL:Paint()
         end
 
         self.Entity:SS_AttachAccessories(GetShopAccessoryItems(), true)
-
         local acc = SS_CreatedAccessories[self.Entity]
         SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
 

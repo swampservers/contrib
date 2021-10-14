@@ -348,8 +348,6 @@ function PANEL:Paint(w, h)
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_Brand, 100))
     end
 
-
-
     local mdl = self.iop:GetModel()
 
     -- todo: show workshop preview panel
@@ -363,19 +361,18 @@ function PANEL:Paint(w, h)
     if self.modelapplied ~= mdl then
         self:SetModel(mdl)
         self.modelapplied = mdl
-        
+
         if IsValid(self.Entity) then
             self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-        
             local item = self.item or self.product.sample_item
-            if item then 
+
+            if item then
                 SS_SetItemMaterialToEntity(item, self.Entity, true)
             end
         end
     end
 
     if not IsValid(self.Entity) then return end
-
     local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
     local ang = self.aLookAngle or (self.vLookatPos - self.vCamPos):Angle()
@@ -395,7 +392,6 @@ function PANEL:Paint(w, h)
     self:DrawModel()
     render.SuppressEngineLighting(false)
     cam.End3D()
-
 end
 
 function PANEL:PaintOver(w, h)

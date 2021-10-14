@@ -1,7 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local PLAYER = FindMetaTable("Player")
 local ENTITY = FindMetaTable("Entity")
-
 PLAYER.TrueName = PLAYER.TrueName or PLAYER.Nick
 local specials = "[]{}()<>-|= "
 local specials2 = "["
