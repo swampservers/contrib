@@ -9,5 +9,5 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 
 function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "Patriots")
-    self:NetworkVar("Bool",0,"Libtarded")
+    self:NetworkVar("Bool", 0, "Libtarded")
 end
