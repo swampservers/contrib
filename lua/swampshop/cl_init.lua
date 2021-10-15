@@ -7,6 +7,7 @@ include("cl_lootboxes.lua")
 include("vgui/menu.lua")
 include("vgui/panels.lua")
 include("vgui/item.lua")
+-- has to come after item because of baseclass
 include("vgui/preview.lua")
 include("vgui/customizer.lua")
 include("vgui/givepoints.lua")

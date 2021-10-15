@@ -21,7 +21,7 @@ function SS_GetColoredMaterialClone(mat, color)
 
     if not SS_ClonedMaterials[clonekey] then
         MATERIALCLONEINDEX = (MATERIALCLONEINDEX or 0) + 1
-        print("MAKE", clonekey)
+        -- print("MAKE", clonekey)
         -- mat = mat:gsub("'","")
         local mat2 = Material(clonekey)
         local matname = mat2:GetName()

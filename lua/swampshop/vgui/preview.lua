@@ -4,14 +4,24 @@ local PANEL = {}
 
 --NOMINIFY
 function PANEL:Init()
-    self:SetModel(LocalPlayer():GetModel())
-    self.Angles = Angle(0, 0, 0)
-    self.ZoomOffset = 0
+    -- self:SetModel(LocalPlayer():GetModel())
+    -- self.Angles = Angle(0, 0, 0)
+    -- self.ZoomOffset = 0
     self:SetFOV(30)
 end
 
+-- returns model and if its a playermodel (false means its a prop)
+function PANEL:GetDesiredModel()
+    if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
+        return SS_HoverIOP:GetModel(), SS_HoverIOP.playermodel
+    else
+        return LocalPlayer():GetModel(), true
+    end
+end
+
+
 function PANEL:OnMouseWheeled(amt)
-    self.ZoomOffset = self.ZoomOffset + (amt > 0 and 1 or -1)
+    self.ZoomOffset = (self.ZoomOffset or 0) + (amt > 0 and -0.1 or 0.1)
 end
 
 function PANEL:DragMousePress(btn)
@@ -26,7 +36,7 @@ function PANEL:DragMouseRelease()
 end
 
 function PANEL:LayoutEntity(thisEntity)
-    if (self.bAnimated) then
+    if self.bAnimated then
         self:RunAnimation()
     end
 
@@ -35,41 +45,46 @@ function PANEL:LayoutEntity(thisEntity)
 
         --self.Angles = self.Angles - Angle( ( self.PressY or my ) - my, ( self.PressX or mx ) - mx, 0 )
         if self.PressButton == MOUSE_LEFT then
-            if SS_CustomizerPanel:IsVisible() then
-                local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
-                self.Angles:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.6)
-                self.Angles:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.6)
-                self.SPINAT = 0
-            else
-                self.Angles.y = self.Angles.y + ((mx - (self.PressX or mx)) * 0.6)
-            end
+            -- if SS_CustomizerPanel:IsVisible() then
+            --     local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
+            --     self.Angles:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.6)
+            --     self.Angles:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.6)
+            --     self.SPINAT = 0
+            -- else
+            --     self.Angles.y = self.Angles.y + ((mx - (self.PressX or mx)) * 0.6)
+            -- end
+
+            self.Pitch = math.Clamp(self.Pitch + (my - (self.PressY or my)), -90, 90)
+            self.Yaw = (self.Yaw + (mx - (self.PressX or mx))) % 360
         end
 
         if self.PressButton == MOUSE_RIGHT then
             if SS_CustomizerPanel:IsVisible() then
                 if ValidPanel(XRSL) and IsValid(SS_HoverCSModel) then
-                    clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
-                    clangm = Matrix()
-                    clangm:SetAngles(clang)
-                    clangm:Invert()
-                    clangi = clangm:GetAngles()
-                    cgang = SS_HoverCSModel:GetAngles()
-                    crangm = Matrix()
-                    crangm:SetAngles(cgang)
-                    crangm:Rotate(clangi)
-                    ngang = Angle()
-                    ngang:Set(cgang)
-                    local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
-                    ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
-                    ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
-                    ngangm = Matrix()
-                    ngangm:SetAngles(ngang)
-                    crangm:Invert()
-                    nlangm = crangm * ngangm
-                    nlang = nlangm:GetAngles()
-                    XRSL:SetValue(nlang.x)
-                    YRSL:SetValue(nlang.y)
-                    ZRSL:SetValue(nlang.z)
+                        clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
+                        clangm = Matrix()
+                        clangm:SetAngles(clang)
+                        clangm:Invert()
+                        clangi = clangm:GetAngles()
+                        cgang = SS_HoverCSModel:GetAngles()
+                        crangm = Matrix()
+                        crangm:SetAngles(cgang)
+                        crangm:Rotate(clangi)
+                        ngang = Angle()
+                        ngang:Set(cgang)
+                        -- local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
+                        local _,ang = self:GetCameraTransform()
+                        ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
+                        ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
+                        ngangm = Matrix()
+                        ngangm:SetAngles(ngang)
+                        crangm:Invert()
+                        nlangm = crangm * ngangm
+                        nlang = nlangm:GetAngles()
+                        XRSL:SetValue(nlang.x)
+                        YRSL:SetValue(nlang.y)
+                        ZRSL:SetValue(nlang.z)
+                  
                 end
             end
         end
@@ -84,7 +99,7 @@ function PANEL:LayoutEntity(thisEntity)
             crangm = Matrix()
             crangm:SetAngles(cgang)
             crangm:Rotate(clangi)
-            local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
+            local _,ang = self:GetCameraTransform()
             local wshift = ang:Right() * (mx - (self.PressX or mx)) - ang:Up() * (my - (self.PressY or my))
             local vo, _ = WorldToLocal(wshift * 0.05, Angle(0, 0, 0), Vector(0, 0, 0), crangm:GetAngles())
             local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
@@ -97,68 +112,98 @@ function PANEL:LayoutEntity(thisEntity)
         self.PressX, self.PressY = gui.MousePos()
     end
 
-    if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
-        -- Uh, you have to do this or the hovered model won't follow the animation
-        self.Angles.y = self.Angles.y + 0.0001
-        thisEntity:SetAngles(self.Angles)
+    -- if (RealTime() - (self.lastPressed or 0)) < (self.SPINAT or 0) or self.Pressed or SS_CustomizerPanel:IsVisible() then
+    --     -- Uh, you have to do this or the hovered model won't follow the animation
+    --     self.Angles.y = self.Angles.y + 0.0001
+    --     thisEntity:SetAngles(self.Angles)
 
-        if not SS_CustomizerPanel:IsVisible() then
-            self.SPINAT = 4
+    --     if not SS_CustomizerPanel:IsVisible() then
+    --         self.SPINAT = 4
+    --     end
+    -- else
+    --     self.Angles.y = math.NormalizeAngle(self.Angles.y + (RealFrameTime() * 21))
+    --     self.Angles.x = 0
+    --     self.Angles.z = 0
+    --     thisEntity:SetAngles(self.Angles)
+    -- end
+
+
+
+end
+
+function PANEL:FocalPointAndDistance()
+    local min, max = self.Entity:GetRenderBounds()
+    local center, radius = (min + max) / 2, min:Distance(max) / 2
+
+    local mdl, playermodel = self:GetDesiredModel()
+
+    if playermodel then
+        center.x = 0
+        center.y =0
+
+        if SS_HoverItem and SS_HoverItem.playermodelmod then
+            -- TODO: focus camera on bone
+        end
+
+        if IsValid(SS_HoverCSModel) then
+            -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
+            -- local p2 = SS_HoverCSModel:GetPos()
+            -- pos = p2 - (ang:Forward() * 50)
+            center = self.Entity:WorldToLocal(SS_HoverCSModel:GetPos())
         end
     else
-        self.Angles.y = math.NormalizeAngle(self.Angles.y + (RealFrameTime() * 21))
-        self.Angles.x = 0
-        self.Angles.z = 0
-        thisEntity:SetAngles(self.Angles)
+
     end
+
+    -- -- jigglebones kinda screw with centering especially when you move the player
+    
+    return center, (radius + 1)*1.5
 end
+
 
 function PANEL:Paint()
     local ply = LocalPlayer()
-    local mdl = ply:GetModel()
-
-    if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        mdl = SS_HoverIOP:GetModel()
-    end
+    local mdl, playermodel = self:GetDesiredModel()
 
     require_workshop_model(mdl)
 
-    if mdl ~= self.ModelName then
-        local ang = IsValid(self.Entity) and self.Entity:GetAngles()
-        self.ModelName = mdl
+    if mdl ~= self.appliedmodel then
         self:SetModel(mdl)
-
-        if ang then
-            self.Entity:SetAngles(ang)
+        self.appliedmodel = mdl
+        
+        if IsValid(self.Entity) and not playermodel then --SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
+            local item = SS_HoverItem or SS_HoverProduct.sample_item
+            if item then 
+                SS_SetItemMaterialToEntity(item, self.Entity, true)
+            end
         end
-
-        self.modelappearancedirty = true
     end
 
     if not IsValid(self.Entity) then return end
+
     -- render.SetColorModulation(1, 1, 1) --WTF
-    local x, y = self:LocalToScreen(0, 0)
+    -- local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
-    local ang = self.aLookAngle
+    -- local ang = self.aLookAngle
 
-    if (not ang) then
-        ang = (self.vLookatPos - self.vCamPos):Angle()
-    end
+    -- if (not ang) then
+    --     ang = (self.vLookatPos - self.vCamPos):Angle()
+    -- end
 
-    local pos = self.vCamPos
+    -- local pos = self.vCamPos
 
-    -- if SS_CustomizerPanel:IsVisible() then
-    -- TODO
-    if IsValid(SS_HoverCSModel) then
-        -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
-        local p2 = SS_HoverCSModel:GetPos()
-        pos = p2 - (ang:Forward() * 50)
-    end
+    -- -- if SS_CustomizerPanel:IsVisible() then
+    -- -- TODO
+    -- if IsValid(SS_HoverCSModel) then
+    --     -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
+    --     local p2 = SS_HoverCSModel:GetPos()
+    --     pos = p2 - (ang:Forward() * 50)
+    -- end
 
-    if SS_HoverItem and SS_HoverItem.playermodelmod then
-        pos = pos + (ang:Forward() * 25)
-        -- TODO: focus camera on bone
-    end
+    -- if SS_HoverItem and SS_HoverItem.playermodelmod then
+    --     pos = pos + (ang:Forward() * 25)
+    --     -- TODO: focus camera on bone
+    -- end
 
     local w, h = self:GetSize()
     local hextent = h
@@ -168,19 +213,10 @@ function PANEL:Paint()
         hextent = 0.6 * hextent
     end
 
-    cam.Start3D(pos + ang:Forward() * (self.ZoomOffset or 0) * 2.0, ang, self.fFOV, x, y, w, hextent, 5, 4096)
-    cam.IgnoreZ(true)
-    render.SuppressEngineLighting(true)
-    render.SetLightingOrigin(self.Entity:GetPos())
-    render.ResetModelLighting(self.colAmbientLight.r / 255, self.colAmbientLight.g / 255, self.colAmbientLight.b / 255)
-
-    for i = 0, 6 do
-        local col = self.DirectionalLight[i]
-
-        if (col) then
-            render.SetModelLighting(i, col.r / 255, col.g / 255, col.b / 255)
-        end
-    end
+    
+    self:AlignEntity()
+    
+    self:StartCamera()
 
     if isPonyModel(self.Entity:GetModel()) then
         -- PPM.PrePonyDraw(self.Entity, true)
@@ -190,19 +226,11 @@ function PANEL:Paint()
     end
 
     if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        if self.modelappearancedirty then
-            local item = SS_HoverItem or SS_HoverProduct.sample_item
 
-            if item then
-                SS_SetItemMaterialToEntity(item, self.Entity, true)
-            end
-
-            self.modelappearancedirty = false
-        end
-
-        SS_PreviewShopModel(self, SS_HoverIOP)
-        self:SetCamPos(self:GetCamPos() * 2)
+        -- SS_PreviewShopModel(self, SS_HoverIOP)
+        -- self:SetCamPos(self:GetCamPos() * 2)
         self.Entity:DrawModel()
+
     else
         local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
@@ -280,6 +308,7 @@ function PANEL:Paint()
         end
 
         self.Entity:SS_AttachAccessories(GetShopAccessoryItems(), true)
+
         local acc = SS_CreatedAccessories[self.Entity]
         SS_HoverCSModel = SS_HoverItem and SS_HoverItem.wear and acc[1] or nil
 
@@ -296,9 +325,7 @@ function PANEL:Paint()
     --     -- SS_HoverCSModel:DrawInShop(self.Entity)
     -- end
     -- ForceDrawPlayer(LocalPlayer())
-    render.SuppressEngineLighting(false)
-    cam.IgnoreZ(false)
-    cam.End3D()
+    self:EndCamera()
 
     if SS_CustomizerPanel:IsVisible() then
         if ValidPanel(XRSL) then
@@ -324,4 +351,4 @@ function SS_RefreshShopAccessories()
     SS_ShopAccessoriesClean = false
 end
 
-vgui.Register('DPointShopPreview', PANEL, 'DModelPanel')
+vgui.Register('DPointShopPreview', PANEL, 'SwampShopModelBase')

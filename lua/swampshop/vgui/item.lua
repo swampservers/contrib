@@ -1,7 +1,10 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
---Note: CAN BE PRODUCT OR ITEM
+-- Note: CAN BE PRODUCT OR ITEM
 -- TODO: why does it look down so much on the preview compared to the item?
+
+-- TODO: make camera only change pitch and zoom, object rotates only yaw (because of box lighting)
+
 function SS_PreviewShopModel(self)
     local min, max = self.Entity:GetRenderBounds()
     local center, radius = (min + max) / 2, min:Distance(max) / 2
@@ -9,15 +12,96 @@ function SS_PreviewShopModel(self)
     self:SetLookAt(self.Entity:LocalToWorld(center))
 end
 
-function SS_MouseInsidePanel(panel)
-    local x, y = panel:LocalCursorPos()
+local lastmousedown = false
+hook.Add("Think","SS_DeselectTiles",function()
+    if SS_SelectedTile then --and not self.product and self:IsSelected() then
+        local c = input.IsMouseDown(MOUSE_LEFT)
 
-    return x > 0 and y > 0 and x < panel:GetWide() and y < panel:GetTall()
-end
+        local function mouse_inside_panel(panel)
+            local x, y = panel:LocalCursorPos()
+        
+            return x > 0 and y > 0 and x < panel:GetWide() and y < panel:GetTall()
+        end
+
+        if c and not lastmousedown then
+            if not mouse_inside_panel(SS_SelectedTile) and not mouse_inside_panel(SS_PreviewPane) and not SS_CustomizerPanel:IsVisible() then
+                SS_SelectedTile:Deselect()
+            end
+        end
+
+        lastmousedown = c
+    end
+end)
 
 local PANEL = {}
 
 function PANEL:Init()
+    self.Pitch = 30
+    self.Yaw = 0
+end
+
+function PANEL:AlignEntity()
+    -- local p,d = self:FocalPointAndDistance()
+
+    self.Entity:SetPos(Vector(0,0,0))
+    self.Entity:SetAngles(Angle(0,self.Yaw,0))
+    -- self.Entity:SetPos(-self.Entity:LocalToWorld(p))
+end
+
+function PANEL:GetCameraTransform()
+    local p,d = self:FocalPointAndDistance()
+    d = d * (2 ^ (self.ZoomOffset or 0))
+    local ang = Angle(self.Pitch, 225, 0)
+
+    return self.Entity:LocalToWorld(p) + ang:Forward() * -d, ang
+end
+
+
+function PANEL:StartCamera()
+    render.SuppressEngineLighting(true)
+    render.ResetModelLighting(0.2,0.2,0.2)
+    render.SetModelLighting(BOX_TOP,1,1,1)
+    render.SetModelLighting(BOX_FRONT,1,1,1)
+
+    local pos,ang = self:GetCameraTransform()
+    local x,y = self:LocalToScreen( 0, 0 )
+    local w,h = self:GetSize()
+    cam.Start3D(pos,ang , self.fFOV, x, y, w, h, 2, 2000)
+    cam.IgnoreZ(true)
+end
+
+function PANEL:EndCamera()
+    cam.IgnoreZ(false)
+    cam.End3D()
+    render.SuppressEngineLighting(true)
+end
+
+vgui.Register('SwampShopModelBase', PANEL, 'DModelPanel')
+
+
+----------
+
+PANEL = {}
+
+function PANEL:Init()
+    self:SetFOV(60)
+end
+
+function PANEL:Think()
+    self.velocity = math.Clamp(
+        (self.velocity or 0) + FrameTime() * (self:IsHovered() and 5 or -2)
+        ,0,1
+    )
+    
+    self.Yaw = (self.Yaw + self.velocity*FrameTime()*120) % 360 
+end
+
+-- Decide a local point on the entity to look at and the default distance
+function PANEL:FocalPointAndDistance()
+    --LOCAL?
+    local min, max = self.Entity:GetRenderBounds()
+    local center, radius = (min + max) / 2, min:Distance(max) / 2
+    return center, (radius + 1)*1.8
 end
 
 function PANEL:OnRemove()
@@ -26,59 +110,12 @@ function PANEL:OnRemove()
     end
 end
 
-function PANEL:OnMousePressed(b)
-    if b ~= MOUSE_LEFT then return end
-
-    if self:IsSelected() then
-        self:Deselect()
-
-        if self.product then
-            local cantbuy = self.product:CannotBuy(LocalPlayer())
-
-            if cantbuy then
-                surface.PlaySound("common/wpn_denyselect.wav")
-                LocalPlayerNotify(cantbuy)
-            else
-                -- if not self.prebuyclick then
-                --     self.prebuyclick = true
-                --     return
-                -- end
-                -- self.prebuyclick = nil
-                surface.PlaySound("UI/buttonclick.wav")
-                SS_BuyProduct(self.product.class)
-            end
-        else
-            if self.item.primaryaction then
-                surface.PlaySound("UI/buttonclick.wav")
-
-                if LocalPlayer():SS_FindItem(self.item.id) then
-                    RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
-                else
-                    self.item.primaryaction.OnClient(self.item)
-                end
-            else
-                print("FIX " .. self.item.class)
-            end
-        end
-    else
-        self:Select()
-    end
-end
-
 function PANEL:OnCursorEntered()
     SS_HoveredTile = self
-    -- if self.product then
-    --     self:Select()
-    -- end
 end
 
 function PANEL:OnCursorExited()
-    if SS_HoveredTile == self then
-        SS_HoveredTile = nil
-    end
-    -- if self.product then
-    --     self:Deselect()
-    -- end
+    if SS_HoveredTile == self then SS_HoveredTile = nil end
 end
 
 function PANEL:IsHovered()
@@ -88,6 +125,46 @@ end
 function PANEL:IsSelected()
     return SS_SelectedTile == self
 end
+
+function PANEL:OnMousePressed(b)
+    if b ~= MOUSE_LEFT then return end
+
+    if self:IsSelected() then
+        self:Deselect()
+        
+        if self.product then
+            local cantbuy = self.product:CannotBuy(LocalPlayer())
+    
+            if cantbuy then
+                surface.PlaySound("common/wpn_denyselect.wav")
+                LocalPlayerNotify(cantbuy)
+            else
+                surface.PlaySound("UI/buttonclick.wav")
+                SS_BuyProduct(self.product.class)
+            end
+        else
+    
+            if self.item.primaryaction then
+                surface.PlaySound("UI/buttonclick.wav")
+    
+                if LocalPlayer():SS_FindItem(self.item.id) then
+                    RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
+                else
+                    self.item.primaryaction.OnClient(self.item)
+                end
+            else
+                print("FIX " .. self.item.class)
+            end
+    
+        end
+
+
+    else
+        self:Select()
+    end
+end
+
+
 
 function PANEL:Select()
     if IsValid(SS_SelectedTile) then
@@ -250,10 +327,6 @@ function PANEL:Deselect()
     end
 end
 
-function PANEL:IsSelected()
-    return SS_SelectedTile == self
-end
-
 function PANEL:SetProduct(product)
     self.product = product
     self.item = nil
@@ -266,30 +339,8 @@ function PANEL:SetItem(item)
     self.iop = item
 end
 
-function PANEL:LayoutEntity(ent)
-    if self:IsHovered() then
-        ent:SetAngles(Angle(0, ent:GetAngles().y + (RealFrameTime() * 120), 0))
-    end
-
-    SS_PreviewShopModel(self, self.iop)
-end
-
 local ownedcheckmark = Material("icon16/accept.png")
 local visiblemark = Material("icon16/eye.png")
-
-function PANEL:Think()
-    if not self.product and self:IsSelected() then
-        local c = input.IsMouseDown(MOUSE_LEFT)
-
-        if c and not self.lastc then
-            if not SS_MouseInsidePanel(self) and not SS_MouseInsidePanel(SS_PreviewPane) and not SS_CustomizerPanel:IsVisible() then
-                self:Deselect()
-            end
-        end
-
-        self.lastc = c
-    end
-end
 
 -- TODO: make the background be part of the item/product, and show it in the preview
 local blueprint = Material("gui/dupe_bg.png")
@@ -323,7 +374,7 @@ function PANEL:Paint(w, h)
         surface.DrawTexturedRect(0, 0, w, h)
     end
 
-    if (self:IsSelected()) then
+    if self:IsSelected() then
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_Brand, 100))
     end
 
@@ -333,106 +384,94 @@ function PANEL:Paint(w, h)
     if is_model_undownloaded(mdl) then
         draw.SimpleText("Mouse over", "DermaDefaultBold", w / 2, h / 2 - 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         draw.SimpleText("to download", "DermaDefaultBold", w / 2, h / 2 + 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-        return
-    end
-
-    if self.modelapplied ~= mdl then
-        self:SetModel(mdl)
-        self.modelapplied = mdl
-
-        if IsValid(self.Entity) then
-            self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-            local item = self.item or self.product.sample_item
-
-            if item then
-                SS_SetItemMaterialToEntity(item, self.Entity, true)
+    else
+        if self.modelapplied ~= mdl then
+            self:SetModel(mdl)
+            self.modelapplied = mdl
+            
+            if IsValid(self.Entity) then
+                self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
+            
+                local item = self.item or self.product.sample_item
+                if item then 
+                    SS_SetItemMaterialToEntity(item, self.Entity, true)
+                end
             end
         end
+    
+        if not IsValid(self.Entity) then return end
+    
+        self:AlignEntity()
+    
+        self:StartCamera()
+    
+        self:DrawModel()
+    
+        self:EndCamera()
     end
 
-    if not IsValid(self.Entity) then return end
-    local x, y = self:LocalToScreen(0, 0)
-    self:LayoutEntity(self.Entity)
-    local ang = self.aLookAngle or (self.vLookatPos - self.vCamPos):Angle()
-    cam.Start3D(self.vCamPos, ang, self.fFOV, x, y, w, h, 5, self.FarZ)
-    render.SuppressEngineLighting(true)
-    render.SetLightingOrigin(self.Entity:GetPos())
-    render.ResetModelLighting(self.colAmbientLight.r / 255, self.colAmbientLight.g / 255, self.colAmbientLight.b / 255)
-
-    for i = 0, 6 do
-        local col = self.DirectionalLight[i]
-
-        if col then
-            render.SetModelLighting(i, col.r / 255, col.g / 255, col.b / 255)
-        end
-    end
-
-    self:DrawModel()
-    render.SuppressEngineLighting(false)
-    cam.End3D()
 end
 
 function PANEL:PaintOver(w, h)
-    self.fademodel = false
-    self.barcolor = nil
-    self.barheight = nil
-    self.text = nil
-    self.textcolor = nil
-    self.textfont = nil
-    self.icon = nil
-    self.icontext = nil
-    self.BGColor = SS_TileBGColor
+    local fademodel = false
+    local barcolor = nil
+    local barheight = nil
+    local text = nil
+    local textcolor = nil
+    local textfont = nil
+    local icon = nil
+    local icontext = nil
+    local BGColor = SS_TileBGColor
 
     if self.product then
-        self.barheight = self.barheight or 0
+        barheight = barheight or 0
         local cannot = ProtectedCall(self.product:CannotBuy(LocalPlayer()))
 
         if cannot then
-            self.fademodel = true
+            fademodel = true
 
             if cannot == SS_CANNOTBUY_AFFORD then
-                self.barcolor = Color(100, 20, 20, 255) --Color(112, 0, 0, 160)
+                barcolor = Color(100, 20, 20, 255) --Color(112, 0, 0, 160)
             else
-                self.barcolor = Color(72, 72, 72, 255) --Color(72, 72, 72, 160)
+                barcolor = Color(72, 72, 72, 255) --Color(72, 72, 72, 160)
             end
         else
-            self.barcolor = Color(20, 100, 20, 255) --Color(0, 112, 0, 160)
+            barcolor = Color(20, 100, 20, 255) --Color(0, 112, 0, 160)
         end
 
         local c = self.product.sample_item and LocalPlayer():SS_CountItem(self.product.sample_item.class) or 0
 
         if c > 0 then
-            self.icon = ownedcheckmark
+            icon = ownedcheckmark
 
             if c > 1 then
-                self.icontext = tostring(c) .. "x"
+                icontext = tostring(c) .. "x"
             end
         end
 
         if self:IsHovered() then
-            self.barheight = 30
-            self.textfont = "SS_Price"
-            self.text = self.prebuyclick and (self.product.price == 0 and ">  GET  <" or ">  BUY  <") or (self.product.price == 0 and "FREE" or "-" .. tostring(self.product.price))
+            barheight = 30
+            textfont = "SS_Price"
+            text = self:IsSelected() and (self.product.price == 0 and ">  GET  <" or ">  BUY  <") or (self.product.price == 0 and "FREE" or "-" .. tostring(self.product.price))
         else
-            self.barheight = 20
-            self.textfont = "SS_ProductName"
-            self.text = self.product:GetName()
+            barheight = 20
+            textfont = "SS_ProductName"
+            text = self.product:GetName()
         end
 
-        self.textcolor = MenuTheme_TXAlt
+        textcolor = MenuTheme_TXAlt
     else
         if self.item.eq then
-            self.icon = visiblemark
+            icon = visiblemark
         else
             if not self.item.never_equip then
-                self.fademodel = true
+                fademodel = true
             end
         end
 
-        self.barheight = 20
-        self.textfont = "SS_ProductName"
-        self.text = self.item:GetName()
+        barheight = 20
+        textfont = "SS_ProductName"
+        text = self.item:GetName()
 
         if (self.item.auction_price or 0) == 0 then
             local leqc = 0
@@ -449,34 +488,34 @@ function PANEL:PaintOver(w, h)
             end
 
             if totalc > 1 then
-                self.text = self.text .. " (" .. tostring(leqc) .. ")"
+                text = text .. " (" .. tostring(leqc) .. ")"
             end
         end
 
-        self.textcolor = MenuTheme_TX
+        textcolor = MenuTheme_TX
 
         if self:IsSelected() then
-            self.BGColor = SS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
+            BGColor = SS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
             local labelview = self:IsHovered() and self.item.primaryaction --not self.item.never_equip
 
             if labelview then
-                self.barheight = 30
-                self.textfont = "SS_Price"
-                self.text = self.item.primaryaction and self.item.primaryaction.Text(self.item) or "FIXME"
-                surface.SetFont(self.textfont)
-                local tw, th = surface.GetTextSize(self.text)
+                barheight = 30
+                textfont = "SS_Price"
+                text = self.item.primaryaction and self.item.primaryaction.Text(self.item) or "FIXME"
+                surface.SetFont(textfont)
+                local tw, th = surface.GetTextSize(text)
 
                 if tw > w then
-                    self.textfont = "SS_PriceSmaller"
-                    self.barheight = th
+                    textfont = "SS_PriceSmaller"
+                    barheight = th
                 end
             end
         elseif labelview then
-            self.BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
+            BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
         end
     end
 
-    if self.fademodel then
+    if fademodel then
         SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(self:IsSelected() and MenuTheme_Brand or MenuTheme_FG, 64))
     end
 
@@ -500,25 +539,25 @@ function PANEL:PaintOver(w, h)
         end
     end
 
-    if self.icon then
+    if icon then
         surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(self.icon)
+        surface.SetMaterial(icon)
         surface.DrawTexturedRect(w - 20, 4, 16, 16)
 
-        if self.icontext then
-            draw.SimpleText(self.icontext, "SS_ProductName", self:GetWide() - 22, 11, MenuTheme_TX, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        if icontext then
+            draw.SimpleText(icontext, "SS_ProductName", self:GetWide() - 22, 11, MenuTheme_TX, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
         end
     end
 
-    if self.barcolor then
-        surface.SetDrawColor(self.barcolor)
-        surface.DrawRect(0, self:GetTall() - self.barheight, self:GetWide(), self.barheight)
+    if barcolor then
+        surface.SetDrawColor(barcolor)
+        surface.DrawRect(0, self:GetTall() - barheight, self:GetWide(), barheight)
     end
 
-    if self.textfont == "SS_ProductName" then
-        draw.WrappedText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - 1, self:GetWide(), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+    if textfont == "SS_ProductName" then
+        draw.WrappedText(text, textfont, self:GetWide() / 2, self:GetTall() - 1, self:GetWide(), textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
     else
-        draw.SimpleText(self.text, self.textfont, self:GetWide() / 2, self:GetTall() - (self.barheight / 2), self.textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(text, textfont, self:GetWide() / 2, self:GetTall() - (barheight / 2), textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
     if self.item and self.item.auction_end_t then
@@ -535,8 +574,8 @@ function PANEL:PaintOver(w, h)
 
         local font = "CloseCaption_Bold"
         draw.SimpleText(str, font, self:GetWide() / 2, 0, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-        draw.SimpleText(string.Comma(self.item.bid_price), font, self:GetWide() / 2, self:GetTall() - self.barheight, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+        draw.SimpleText(string.Comma(self.item.bid_price), font, self:GetWide() / 2, self:GetTall() - barheight, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
     end
 end
 
-vgui.Register('DPointShopItem', PANEL, 'DModelPanel')
+vgui.Register('DPointShopItem', PANEL, 'SwampShopModelBase')
