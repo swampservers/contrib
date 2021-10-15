@@ -2,9 +2,7 @@
 -- INSTALL: CINEMA
 -- Note: CAN BE PRODUCT OR ITEM
 -- TODO: why does it look down so much on the preview compared to the item?
-
 -- TODO: make camera only change pitch and zoom, object rotates only yaw (because of box lighting)
-
 function SS_PreviewShopModel(self)
     local min, max = self.Entity:GetRenderBounds()
     local center, radius = (min + max) / 2, min:Distance(max) / 2
@@ -13,13 +11,15 @@ function SS_PreviewShopModel(self)
 end
 
 local lastmousedown = false
-hook.Add("Think","SS_DeselectTiles",function()
-    if SS_SelectedTile then --and not self.product and self:IsSelected() then
+
+hook.Add("Think", "SS_DeselectTiles", function()
+    --and not self.product and self:IsSelected() then
+    if SS_SelectedTile then
         local c = input.IsMouseDown(MOUSE_LEFT)
 
         local function mouse_inside_panel(panel)
             local x, y = panel:LocalCursorPos()
-        
+
             return x > 0 and y > 0 and x < panel:GetWide() and y < panel:GetTall()
         end
 
@@ -42,31 +42,28 @@ end
 
 function PANEL:AlignEntity()
     -- local p,d = self:FocalPointAndDistance()
-
-    self.Entity:SetPos(Vector(0,0,0))
-    self.Entity:SetAngles(Angle(0,self.Yaw,0))
+    self.Entity:SetPos(Vector(0, 0, 0))
+    self.Entity:SetAngles(Angle(0, self.Yaw, 0))
     -- self.Entity:SetPos(-self.Entity:LocalToWorld(p))
 end
 
 function PANEL:GetCameraTransform()
-    local p,d = self:FocalPointAndDistance()
+    local p, d = self:FocalPointAndDistance()
     d = d * (2 ^ (self.ZoomOffset or 0))
     local ang = Angle(self.Pitch, 225, 0)
 
     return self.Entity:LocalToWorld(p) + ang:Forward() * -d, ang
 end
 
-
 function PANEL:StartCamera()
     render.SuppressEngineLighting(true)
-    render.ResetModelLighting(0.2,0.2,0.2)
-    render.SetModelLighting(BOX_TOP,1,1,1)
-    render.SetModelLighting(BOX_FRONT,1,1,1)
-
-    local pos,ang = self:GetCameraTransform()
-    local x,y = self:LocalToScreen( 0, 0 )
-    local w,h = self:GetSize()
-    cam.Start3D(pos,ang , self.fFOV, x, y, w, h, 2, 2000)
+    render.ResetModelLighting(0.2, 0.2, 0.2)
+    render.SetModelLighting(BOX_TOP, 1, 1, 1)
+    render.SetModelLighting(BOX_FRONT, 1, 1, 1)
+    local pos, ang = self:GetCameraTransform()
+    local x, y = self:LocalToScreen(0, 0)
+    local w, h = self:GetSize()
+    cam.Start3D(pos, ang, self.fFOV, x, y, w, h, 2, 2000)
     cam.IgnoreZ(true)
 end
 
@@ -77,10 +74,7 @@ function PANEL:EndCamera()
 end
 
 vgui.Register('SwampShopModelBase', PANEL, 'DModelPanel')
-
-
 ----------
-
 PANEL = {}
 
 function PANEL:Init()
@@ -88,12 +82,8 @@ function PANEL:Init()
 end
 
 function PANEL:Think()
-    self.velocity = math.Clamp(
-        (self.velocity or 0) + FrameTime() * (self:IsHovered() and 5 or -2)
-        ,0,1
-    )
-    
-    self.Yaw = (self.Yaw + self.velocity*FrameTime()*120) % 360 
+    self.velocity = math.Clamp((self.velocity or 0) + FrameTime() * (self:IsHovered() and 5 or -2), 0, 1)
+    self.Yaw = (self.Yaw + self.velocity * FrameTime() * 120) % 360
 end
 
 -- Decide a local point on the entity to look at and the default distance
@@ -101,7 +91,8 @@ function PANEL:FocalPointAndDistance()
     --LOCAL?
     local min, max = self.Entity:GetRenderBounds()
     local center, radius = (min + max) / 2, min:Distance(max) / 2
-    return center, (radius + 1)*1.8
+
+    return center, (radius + 1) * 1.8
 end
 
 function PANEL:OnRemove()
@@ -115,7 +106,9 @@ function PANEL:OnCursorEntered()
 end
 
 function PANEL:OnCursorExited()
-    if SS_HoveredTile == self then SS_HoveredTile = nil end
+    if SS_HoveredTile == self then
+        SS_HoveredTile = nil
+    end
 end
 
 function PANEL:IsHovered()
@@ -131,10 +124,10 @@ function PANEL:OnMousePressed(b)
 
     if self:IsSelected() then
         self:Deselect()
-        
+
         if self.product then
             local cantbuy = self.product:CannotBuy(LocalPlayer())
-    
+
             if cantbuy then
                 surface.PlaySound("common/wpn_denyselect.wav")
                 LocalPlayerNotify(cantbuy)
@@ -143,10 +136,9 @@ function PANEL:OnMousePressed(b)
                 SS_BuyProduct(self.product.class)
             end
         else
-    
             if self.item.primaryaction then
                 surface.PlaySound("UI/buttonclick.wav")
-    
+
                 if LocalPlayer():SS_FindItem(self.item.id) then
                     RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
                 else
@@ -155,16 +147,11 @@ function PANEL:OnMousePressed(b)
             else
                 print("FIX " .. self.item.class)
             end
-    
         end
-
-
     else
         self:Select()
     end
 end
-
-
 
 function PANEL:Select()
     if IsValid(SS_SelectedTile) then
@@ -341,7 +328,6 @@ end
 
 local ownedcheckmark = Material("icon16/accept.png")
 local visiblemark = Material("icon16/eye.png")
-
 -- TODO: make the background be part of the item/product, and show it in the preview
 local blueprint = Material("gui/dupe_bg.png")
 
@@ -388,28 +374,23 @@ function PANEL:Paint(w, h)
         if self.modelapplied ~= mdl then
             self:SetModel(mdl)
             self.modelapplied = mdl
-            
+
             if IsValid(self.Entity) then
                 self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-            
                 local item = self.item or self.product.sample_item
-                if item then 
+
+                if item then
                     SS_SetItemMaterialToEntity(item, self.Entity, true)
                 end
             end
         end
-    
+
         if not IsValid(self.Entity) then return end
-    
         self:AlignEntity()
-    
         self:StartCamera()
-    
         self:DrawModel()
-    
         self:EndCamera()
     end
-
 end
 
 function PANEL:PaintOver(w, h)
