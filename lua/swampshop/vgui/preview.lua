@@ -1,7 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 local PANEL = {}
-
 local pitchtarget = 15
 
 --NOMINIFY
@@ -9,26 +8,18 @@ function PANEL:Init()
     -- self:SetModel(LocalPlayer():GetModel())
     -- self.Angles = Angle(0, 0, 0)
     -- self.ZoomOffset = 0
-
     -- HORIZONTAL FOV
     self:SetFOV(45)
-
-    
     self.Pitch = pitchtarget
     self.Yaw = 0
-
     self.LastInteractionTime = 0
 end
 
 function PANEL:Think()
-
     local animate = (RealTime() - self.LastInteractionTime > 5) and not (IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible())
-
-
 
     -- self.velocity = math.Clamp((self.velocity or 0) + FrameTime() * (self:IsHovered() and 5 or -2), 0, 1)
     -- self.Yaw = (self.Yaw + self.velocity * FrameTime() * 120) % 360
-
     if animate then
         if not self.LastAnimated then
             self.StartPitch = self.Pitch
@@ -36,23 +27,20 @@ function PANEL:Think()
             self.StartTime = RealTime()
         end
 
-        local function coslerp(t,a,b)
-            t = math.Clamp(t,0,1)
-            t = (1-math.cos(t*math.pi))*0.5
-            return Lerp(t,a,b)
+        local function coslerp(t, a, b)
+            t = math.Clamp(t, 0, 1)
+            t = (1 - math.cos(t * math.pi)) * 0.5
+
+            return Lerp(t, a, b)
         end
 
-        self.Pitch = coslerp(RealTime()-self.StartTime, self.StartPitch, pitchtarget)
-        self.Yaw = coslerp(RealTime()-self.StartTime, (135 + self.StartYaw)%360, (135 + (math.sin(RealTime()*0.5) + 1) * 45)%360) - 135
-
+        self.Pitch = coslerp(RealTime() - self.StartTime, self.StartPitch, pitchtarget)
+        self.Yaw = coslerp(RealTime() - self.StartTime, (135 + self.StartYaw) % 360, (135 + (math.sin(RealTime() * 0.5) + 1) * 45) % 360) - 135
         -- self.Yaw = 
-
-
     end
 
     self.LastAnimated = animate
 end
-
 
 -- returns model and if its a playermodel (false means its a prop)
 function PANEL:GetDesiredModel()
@@ -97,7 +85,6 @@ function PANEL:LayoutEntity(thisEntity)
             -- end
             self.Pitch = math.Clamp(self.Pitch + (my - (self.PressY or my)), -90, 90)
             self.Yaw = (self.Yaw + (mx - (self.PressX or mx))) % 360
-
             self.LastInteractionTime = RealTime()
         end
 
@@ -173,56 +160,44 @@ function PANEL:FocalPointAndDistance()
 
     local function model_center_radius(ent)
         local min, max = ent:GetRenderBounds()
-        return (min + max) *0.5, min:Distance(max) *0.5
+
+        return (min + max) * 0.5, min:Distance(max) * 0.5
     end
 
-
-    
-
     if playermodel then
-
         if IsValid(SS_HoverCSModel) then
             -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
             -- local p2 = SS_HoverCSModel:GetPos()
             -- pos = p2 - (ang:Forward() * 50)
-
-            center,radius = model_center_radius(SS_HoverCSModel)
-
+            center, radius = model_center_radius(SS_HoverCSModel)
             center = self.Entity:WorldToLocal(SS_HoverCSModel:LocalToWorld(center))
 
             return center, (radius + 1) * 2
-
         end
-        
+
         if SS_HoverItem and SS_HoverItem.bonemod then
-            
             local pone = isPonyModel(self.Entity:GetModel())
             local suffix = pone and "_p" or "_h"
             local bn = SS_HoverItem.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
             local x = self.Entity:LookupBone(bn)
+
             if x then
-                local v,a = self.Entity:GetBonePosition(x)
+                local v, a = self.Entity:GetBonePosition(x)
                 local center = self.Entity:WorldToLocal(v)
 
                 return center, 60
             end
-
-            
         end
-    
-    
-        return Vector(0,0,36), 75
 
-        
+        return Vector(0, 0, 36), 75
     else
         local center, radius = model_center_radius(self.Entity)
 
         return center, (radius + 1) * 1.5
     end
-
 end
 
-function PANEL:Paint(w,h)
+function PANEL:Paint(w, h)
     local ply = LocalPlayer()
     local mdl, playermodel = self:GetDesiredModel() --TODO set the model first so theres not 1 frame flicker
     require_workshop_model(mdl)
@@ -263,8 +238,6 @@ function PANEL:Paint(w,h)
     --     pos = pos + (ang:Forward() * 25)
     --     -- TODO: focus camera on bone
     -- end
-
-
     local hextent = h
 
     -- make space for the statbars
@@ -372,7 +345,6 @@ function PANEL:Paint(w,h)
         end
     end
 
-
     self:EndCamera()
 
     if SS_CustomizerPanel:IsVisible() then
@@ -383,7 +355,6 @@ function PANEL:Paint(w,h)
             end
         end
     end
-
 
     if IsValid(SS_DescriptionPanel) then
         _, h = SS_DescriptionPanel:GetPos()
