@@ -9,7 +9,7 @@ BrandColorWhite = Color(255, 255, 255)
 BrandColorPrimary = Color(104, 28, 25)
 BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104)
 
-BrandColors = {Color(104, 28, 25), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
+BrandColors = {Color(104, 28, 25), Color(120, 60, 0), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
 
 -- CreateClientConVar("ps_darkmode", "1", true)
 CreateClientConVar("ps_themecolor", "1", true)
