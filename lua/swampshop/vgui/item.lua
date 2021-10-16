@@ -55,7 +55,7 @@ function PANEL:GetCameraTransform()
     return self.Entity:LocalToWorld(p) + ang:Forward() * -d, ang
 end
 
-function PANEL:StartCamera()
+function PANEL:StartCamera(hfraction)
     render.SuppressEngineLighting(true)
     render.ResetModelLighting(0.2, 0.2, 0.2)
     render.SetModelLighting(BOX_TOP, 1, 1, 1)
@@ -63,14 +63,14 @@ function PANEL:StartCamera()
     local pos, ang = self:GetCameraTransform()
     local x, y = self:LocalToScreen(0, 0)
     local w, h = self:GetSize()
-    cam.Start3D(pos, ang, self.fFOV, x, y, w, h, 2, 2000)
+    cam.Start3D(pos, ang, self.fFOV, x, y, w, (hfraction or 1) * h, 2, 2000)
     cam.IgnoreZ(true)
 end
 
 function PANEL:EndCamera()
     cam.IgnoreZ(false)
     cam.End3D()
-    render.SuppressEngineLighting(true)
+    render.SuppressEngineLighting(false)
 end
 
 vgui.Register('SwampShopModelBase', PANEL, 'DModelPanel')
