@@ -171,10 +171,11 @@ contribute now! the top 10 donors will have the exclusive honor of
         end)
 
         vgui("DLabel", function(p)
-            p:SetContentAlignment(2)
+            p:SetContentAlignment(5)
             p:SetColor(color_black)
-            p:SetText([[NO REFUNDS!!!!]])
-            p:SetTall(30)
+            p:SetText([[                                   NO REFUNDS!!!!
+Say /title to apply your title if you are on the leaderboard.]])
+            p:SetTall(45)
             p:Dock(TOP)
         end)
 
@@ -182,7 +183,7 @@ contribute now! the top 10 donors will have the exclusive honor of
             p:SetContentAlignment(5)
             -- p:SetColor(color_black)
             p:SetText([[(disclaimer: this is not a donation to ]] .. (libtard and "any real-world political\n" or "the real-world Donald Trump\n") .. [[        campaign - they don't accept swamp cinema points)]])
-            p:SetTall(50)
+            p:SetTall(25)
             p:Dock(TOP)
         end)
     end)

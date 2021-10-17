@@ -4,6 +4,9 @@ RegisterChatLUACommand({'help', 'motd'}, 'ShowMotd("http://steamcommunity.com/gr
 
 RegisterChatConsoleCommand({'skip', 'voteskip'}, "cinema_voteskip")
 
+
+RegisterChatLUACommand('title', "OpenTitlePicker()")
+
 RegisterChatLUACommand('thirdperson', "THIRDPERSON = !THIRDPERSON")
 RegisterChatLUACommand('virtualreality', "BOBBINGVIEW = !BOBBINGVIEW")
 

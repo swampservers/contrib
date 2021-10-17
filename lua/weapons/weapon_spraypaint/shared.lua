@@ -261,6 +261,7 @@ function SWEP:DoSound(delay)
         sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
             if (IsValid(sound)) then
                 self.SpraySound = sound
+                sound:SetVolume(CinemaGameVolumeSetting())
                 sound:SetPos(self:GetPos())
             end
         end)
