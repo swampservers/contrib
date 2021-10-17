@@ -29,6 +29,33 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
+
+
+
+if SERVER then
+    local weaponppl = {}
+    hook.Add("Tick","DisallowWeaponsInVehicle", function()
+        local nxt = {}
+        for ply,v in pairs(weaponppl) do
+            if IsValid(ply) then
+                if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass()=="weapon_bodypillow" then
+                    nxt[ply]=true
+                else
+                    ply:SetAllowWeaponsInVehicle(false)
+                end
+            end
+        end
+
+        weaponppl = nxt
+    end)
+
+    function SWEP:Deploy()
+        self.Owner:SetAllowWeaponsInVehicle(true)
+        weaponppl[self.Owner]=true
+    end
+end
+
+
 function SWEP:GetHardened()
     -- return self.Owner:SteamID() == "STEAM_0:0:38422842"
     return self:GetNWBool("Hard", false)
@@ -41,38 +68,38 @@ function SWEP:TimeScale()
 end
 
 function bodypillow_unjiggle(self)
-    if not self.Unjiggled then
-        self:AddCallback("BuildBonePositions", function(e, nb)
-            PILLOW_UNJIGGLE(e, nb)
-        end)
+    -- if not self.Unjiggled then
+    --     self:AddCallback("BuildBonePositions", function(e, nb)
+    --         PILLOW_UNJIGGLE(e, nb)
+    --     end)
 
-        self.Unjiggled = true
-    end
+    --     self.Unjiggled = true
+    -- end
 end
 
-function PILLOW_UNJIGGLE(self, nb)
-    pcall(function()
-        --or (self.wep and not self.wep:GetHardened()) 
-        if self:GetModel() ~= "models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
+-- function PILLOW_UNJIGGLE(self, nb)
+--     pcall(function()
+--         --or (self.wep and not self.wep:GetHardened()) 
+--         if self:GetModel() ~= "models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
 
-        for i = 0, nb - 1 do
-            local i2 = i < 3 and i or 2 - i
-            local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
-            local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
+--         for i = 0, nb - 1 do
+--             local i2 = i < 3 and i or 2 - i
+--             local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
+--             local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
 
-            if self:GetClass() == "prop_trash_pillow" then
-                ro, ra = self:GetPos(), self:GetAngles()
-            end
+--             if self:GetClass() == "prop_trash_pillow" then
+--                 ro, ra = self:GetPos(), self:GetAngles()
+--             end
 
-            if not ro then
-                if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
-                ro, ra = self.wep:GetViewModelPosition(self.wep.Owner:EyePos(), self.wep.Owner:EyeAngles())
-            end
+--             if not ro then
+--                 if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
+--                 ro, ra = self.wep:GetViewModelPosition(self.wep.Owner:EyePos(), self.wep.Owner:EyeAngles())
+--             end
 
-            self:SetBonePosition(i, LocalToWorld(Vector(0, 0, i2 * 10), a, ro, ra))
-        end
-    end)
-end
+--             self:SetBonePosition(i, LocalToWorld(Vector(0, 0, i2 * 10), a, ro, ra))
+--         end
+--     end)
+-- end
 
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
@@ -108,6 +135,16 @@ function SWEP:DrawWorldModel()
             oang:RotateAroundAxis(oang:Forward(), 30)
             oang:RotateAroundAxis(oang:Right(), 170)
             oang:RotateAroundAxis(oang:Up(), 60 + (self:GetNWBool('flip') and 180 or 0))
+
+            if ply:InVehicle() then
+                oang:RotateAroundAxis(oang:Forward(), -30)
+                oang:RotateAroundAxis(oang:Right(), -50)
+                oang:RotateAroundAxis(oang:Up(), -40)
+                opos = opos + oang:Forward() * 10
+                oang:RotateAroundAxis(oang:Up(), -30)
+                oang:RotateAroundAxis(oang:Forward(), 10)
+                oang:RotateAroundAxis(oang:Right(), -10)
+            end
         end
 
         self:SetRenderOrigin(opos)
@@ -180,6 +217,13 @@ end
 function SWEP:GetViewModelPosition(pos, ang)
     --local of,_ = LocalToWorld(self.Owner:GetCurrentViewOffset(),Angle(0,0,0),Vector(0,0,0),ang)
     --pos = pos - (of*0.5)
+    if self.Owner:InVehicle() then
+        local va = self.Owner:GetVehicle():GetAngles()
+        va:RotateAroundAxis(va:Up(),90)
+        print(ang, va)
+        ang = LerpAngle(0.5, va, ang)
+    end
+
     pos = pos - (self.Owner:GetCurrentViewOffset() * 0.5)
     local pf = self:Boof(true)
     local v = ang:Forward()
@@ -195,6 +239,11 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos = pos + ang:Right() * (15 - (pf * 15))
     pos = pos + ang:Up() * (10 + (pf * 6))
     pos = pos + ang:Forward() * (24 + (pf * 4))
+
+    if self.Owner:InVehicle() then
+        pos =pos- Vector(0,0,30) + ang:Right()*10 + ang:Forward()*-10
+    end
+
     ang:RotateAroundAxis(ang:Up(), self:GetNWBool('flip') and 90 or -90)
     ang:RotateAroundAxis(ang:Forward(), 0)
     ang:RotateAroundAxis(ang:Up(), ((1 - pf) * -50) + (pf * 60))
@@ -202,6 +251,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     ang:RotateAroundAxis(angu, pf * 40)
     --ang:RotateAroundAxis(ang:Forward(), pf*-40)
     --ang:RotateAroundAxis(ang:Right(), pf*80)
+
+
 
     return pos, ang
 end

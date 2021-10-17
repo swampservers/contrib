@@ -304,3 +304,12 @@ SS_Product({
         ply:Notify("This item lasts for one life!")
     end
 })
+
+SS_WeaponProduct({
+    class = "weapon_pickaxe_diamond",
+    price = 10000,
+    name = "Diamond Pickaxe",
+    description = "Be the coolest kid on the server.",
+    model = "models/staticprop/props_mining/pickaxe01.mdl",
+    material = "models/props_mining/pickaxe01_diamond"
+})

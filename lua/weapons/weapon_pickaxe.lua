@@ -37,7 +37,7 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPickaxeBlockMarker", function(de
     if IsValid(LocalPlayer()) then
         local wep = LocalPlayer():GetActiveWeapon()
 
-        if IsValid(wep) and wep:GetClass() == "weapon_pickaxe" then
+        if IsValid(wep) and wep:GetClass():StartWith("weapon_pickaxe") then
             local x, y, z = wep:GetTargetingBlock()
 
             if x then
@@ -121,7 +121,7 @@ function SWEP:PrimaryAttack()
     bullet.Distance = self.TARGETDISTANCE
     bullet.Tracer = 0
     bullet.Force = 1
-    bullet.Damage = 1
+    bullet.Damage = self:IsDiamond() and 2 or 1
 
     bullet.Callback = function(att, tr, dmginfo)
         local ent = tr.Entity
@@ -205,7 +205,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()

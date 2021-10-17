@@ -212,6 +212,8 @@ function PANEL:Paint(w, h)
 
             if item then
                 SS_SetItemMaterialToEntity(item, self.Entity, true)
+            elseif SS_HoverProduct and SS_HoverProduct.material then
+                self.Entity:SetMaterial(SS_HoverProduct.material)
             end
         end
 
