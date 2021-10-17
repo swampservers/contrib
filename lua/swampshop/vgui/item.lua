@@ -84,11 +84,8 @@ end
 function PANEL:Think()
     self.velocity = math.Clamp((self.velocity or 0) + FrameTime() * (self:IsHovered() and 5 or -2), 0, 1)
     self.Yaw = (self.Yaw + self.velocity * FrameTime() * 120) % 360
-
-    
-    self.ZoomOffsetPos = math.Clamp((self.ZoomOffsetPos or 0) + FrameTime() * (self:IsHovered() and 2 or -2), 0,1)
-
-    self.ZoomOffset = (math.cos(self.ZoomOffsetPos * math.pi)-1) * 0.1
+    self.ZoomOffsetPos = math.Clamp((self.ZoomOffsetPos or 0) + FrameTime() * (self:IsHovered() and 2 or -2), 0, 1)
+    self.ZoomOffset = (math.cos(self.ZoomOffsetPos * math.pi) - 1) * 0.1
 end
 
 -- Decide a local point on the entity to look at and the default distance
@@ -96,8 +93,6 @@ function PANEL:FocalPointAndDistance()
     --LOCAL?
     local min, max = self.Entity:GetRenderBounds()
     local center, radius = (min + max) / 2, min:Distance(max) / 2
-
-
 
     return center, (radius + 1) * 1.8
 end
