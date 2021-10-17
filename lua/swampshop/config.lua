@@ -154,7 +154,7 @@ function Player:SS_Income()
 end
 
 function Player:SS_BaseIncome()
-    return math.floor(20 + math.Clamp((self:SS_GetPoints()) / 5000, 0, 80))
+    return math.min(math.floor(50 + self:SS_GetPoints() / 2000), 200)
 end
 
 function Player:SS_BaseIncomeMultiplier()
@@ -163,9 +163,7 @@ function Player:SS_BaseIncomeMultiplier()
     local mult = (3 + incomelevel) * 0.25
 
     if self:IsAFK() then
-        mult = mult / 2
-    else
-        mult = mult * 2
+        mult = mult * 0.25
     end
 
     if ((SERVER and self.IN_STEAMGROUP or IN_STEAMGROUP) or 0) <= 0 then
