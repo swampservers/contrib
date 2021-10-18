@@ -11,9 +11,7 @@ local allowed = {
     ["STEAM_0:0:38422842"] = true, -- swamponions
     ["STEAM_0:0:26424112"] = true, -- pyroteknik
     ["STEAM_0:1:43528204"] = true, -- noz
-    ["STEAM_0:0:29598280"] = true, -- ech0
     ["STEAM_0:0:44814758"] = true, -- brian
-    ["STEAM_0:0:105777797"] = true, -- nosharp
     ["STEAM_0:1:94321246"] = true -- brittan
     
 }
