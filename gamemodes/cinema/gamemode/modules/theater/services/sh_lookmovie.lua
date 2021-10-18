@@ -16,7 +16,6 @@ end
 if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         local k = Video:Data()
-
         local url = "http://swamp.sv/s/cinema/hls.html"
         panel:EnsureURL(url)
 
