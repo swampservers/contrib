@@ -95,7 +95,7 @@ if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         local k = Video:Key()
 
-        local url = "http://swamp.sv/s/cinema/hls.html"
+        local url = "http://swamp.sv/s/cinema/file.html"
         panel:EnsureURL(url)
 
         if IsValid(panel) then
