@@ -8,19 +8,22 @@ SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
     if (util.JSONToTable(url.encoded)) then return false end
-    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") and not string.find(url.path, "%.") then return url.encoded end
+    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") then return url.encoded end
 
     return false
 end
 
 if CLIENT then
+    lookmovieCookies = lookmovieCookies or ""
+
     function SERVICE:GetVideoInfoClientside(key, callback)
         local info = {}
 
         local onFetchReceive = function(code, body, headers)
             local t = util.JSONToTable(body)
+            local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
 
-            theater.Services.base:Fetch(t["streams"]["1080p"], function(sbody)
+            theater.Services.base:Fetch(url, function(sbody)
                 local duration = 0
 
                 for k, v in ipairs(string.Split(sbody, "\n")) do
@@ -30,8 +33,8 @@ if CLIENT then
                 end
 
                 info.duration = math.ceil(duration)
-                info.data = t["streams"]["1080p"] --change to t["streams"] and load based on quality setting?
-                PrintTable(info)
+                info.data = url --change to t["streams"] and load based on quality setting?
+                if (LocalPlayer().videoDebug) then PrintTable(info) end
                 callback(info)
             end, callback)
         end
@@ -40,18 +43,19 @@ if CLIENT then
             method = "GET",
             url = key,
             headers = {
-                ["Cache-Control"] = "no-cache"
+                ["Cache-Control"] = "no-cache",
+                ["Referer"] = key,
+                ["Cookie"] = lookmovieCookies
             },
             success = function(code, body, headers)
-                local cookies = ""
-
-                for s, ss in string.gmatch(headers["Set-Cookie"], "([%w]+)=(.-);") do
-                    if (s == "PHPSESSID" or s == "csrf") then
-                        cookies = cookies .. s .. "=" .. ss .. "; "
+                if headers["Set-Cookie"] then
+                    lookmovieCookies = ""
+                    for s,ss in string.gmatch(headers["Set-Cookie"],"([%w]+)=(.-);") do
+                        if (s == "PHPSESSID" or s == "csrf") then lookmovieCookies = lookmovieCookies..s.."="..ss.."; " end
                     end
                 end
 
-                info.title = string.match(body, "title: '(.-)'") .. " (" .. string.match(body, "year: '(.-)'") .. ")"
+                info.title = string.Replace(string.match(body, "title: '(.-)',\n"), "\\'", "'") .. " (" .. string.match(body, "year: '(.-)'") .. ")"
                 info.thumb = string.match(body, "movie_poster: '(.-)'")
 
                 HTTP({
@@ -59,7 +63,8 @@ if CLIENT then
                     url = "https://lookmovie.io/api/v1/security/movie-access?id_movie=" .. string.match(body, "id_movie: (%d+)"),
                     headers = {
                         ["Cache-Control"] = "no-cache",
-                        ["Cookie"] = cookies
+                        ["Referer"] = key,
+                        ["Cookie"] = lookmovieCookies
                     },
                     success = onFetchReceive,
                     failed = callback
