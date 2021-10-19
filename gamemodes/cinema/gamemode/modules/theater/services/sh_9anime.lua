@@ -130,10 +130,6 @@ if CLIENT then
         local url = "http://swamp.sv/s/cinema/file.html"
         local k = Video:Data()
 
-        if string.find(k, ".m3u8") then
-            url = "http://swamp.sv/s/cinema/hls.html"
-        end
-
         panel:EnsureURL(url)
         -- Let the webpage handle loading a video
         local str = string.format("th_video('%s');", string.JavascriptSafe(k))

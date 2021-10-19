@@ -95,20 +95,13 @@ if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         local k = Video:Key()
 
-        if (string.len(Video:Data()) > 1 and Video:Data() ~= "true") then
-            k = Video:Data()
-        end
-
         local url = "http://swamp.sv/s/cinema/hls.html"
         panel:EnsureURL(url)
 
-        --using a 2 second delay is the fastest way to load the video, sending th_video any quicker is much much slower for whatever reason
-        timer.Simple(2, function()
-            if IsValid(panel) then
-                local str = string.format("th_video('%s',%s);", string.JavascriptSafe(k), (Video:Data() == "true"))
-                panel:QueueJavascript(str)
-            end
-        end)
+        if IsValid(panel) then
+            local str = string.format("th_video('%s');", string.JavascriptSafe(k))
+            panel:QueueJavascript(str)
+        end
     end
 end
 

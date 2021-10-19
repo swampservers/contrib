@@ -21,22 +21,35 @@ if CLIENT then
 
         local onFetchReceive = function(code, body, headers)
             local t = util.JSONToTable(body)
-            local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+            if (t == nil) then callback()
+            else
+                local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+                local subs = ""
 
-            theater.Services.base:Fetch(url, function(sbody)
-                local duration = 0
-
-                for k, v in ipairs(string.Split(sbody, "\n")) do
-                    if (v:StartWith("#EXTINF:")) then
-                        duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
+                --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
+                --[[for k,v in pairs(t["subtitles"]) do
+                    if v["language"] == "English" then
+                        subs = "https://lookmovie.io"..v["file"]
+                        break
                     end
-                end
+                end]]
 
-                info.duration = math.ceil(duration)
-                info.data = url --change to t["streams"] and load based on quality setting?
-                if (LocalPlayer().videoDebug) then PrintTable(info) end
-                callback(info)
-            end, callback)
+                info.data = util.TableToJSON({url=url,subs=subs}) --change to t["streams"] and load based on quality setting?
+
+                theater.Services.base:Fetch(url, function(sbody)
+                    local duration = 0
+
+                    for k, v in ipairs(string.Split(sbody, "\n")) do
+                        if (v:StartWith("#EXTINF:")) then
+                            duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
+                        end
+                    end
+
+                    info.duration = math.ceil(duration)
+                    if (LocalPlayer().videoDebug) then PrintTable(info) end
+                    callback(info)
+                end, callback)
+            end
         end
 
         HTTP({
@@ -75,17 +88,14 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local k = Video:Data()
-        local url = "http://swamp.sv/s/cinema/hls.html"
+        local t = util.JSONToTable(Video:Data())
+        local url = "http://swamp.sv/s/cinema/file.html"
         panel:EnsureURL(url)
 
-        --using a 2 second delay is the fastest way to load the video, sending th_video any quicker is much much slower for whatever reason
-        timer.Simple(2, function()
-            if IsValid(panel) then
-                local str = string.format("th_video('%s',%s);", string.JavascriptSafe(k), true)
-                panel:QueueJavascript(str)
-            end
-        end)
+        if IsValid(panel) then
+            local str = string.format("th_video('%s','%s');", string.JavascriptSafe(t.url), t.subs or "")
+            panel:QueueJavascript(str)
+        end
     end
 end
 
