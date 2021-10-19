@@ -21,7 +21,9 @@ if CLIENT then
 
         local onFetchReceive = function(code, body, headers)
             local t = util.JSONToTable(body)
-            if (t == nil) then callback()
+
+            if (t == nil) then
+                callback()
             else
                 local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
                 local subs = ""
@@ -33,8 +35,11 @@ if CLIENT then
                         break
                     end
                 end]]
-
-                info.data = util.TableToJSON({url=url,subs=subs}) --change to t["streams"] and load based on quality setting?
+                --change to t["streams"] and load based on quality setting?
+                info.data = util.TableToJSON({
+                    url = url,
+                    subs = subs
+                })
 
                 theater.Services.base:Fetch(url, function(sbody)
                     local duration = 0
@@ -46,7 +51,11 @@ if CLIENT then
                     end
 
                     info.duration = math.ceil(duration)
-                    if (LocalPlayer().videoDebug) then PrintTable(info) end
+
+                    if (LocalPlayer().videoDebug) then
+                        PrintTable(info)
+                    end
+
                     callback(info)
                 end, callback)
             end
@@ -63,8 +72,11 @@ if CLIENT then
             success = function(code, body, headers)
                 if headers["Set-Cookie"] then
                     lookmovieCookies = ""
-                    for s,ss in string.gmatch(headers["Set-Cookie"],"([%w]+)=(.-);") do
-                        if (s == "PHPSESSID" or s == "csrf") then lookmovieCookies = lookmovieCookies..s.."="..ss.."; " end
+
+                    for s, ss in string.gmatch(headers["Set-Cookie"], "([%w]+)=(.-);") do
+                        if (s == "PHPSESSID" or s == "csrf") then
+                            lookmovieCookies = lookmovieCookies .. s .. "=" .. ss .. "; "
+                        end
                     end
                 end
 

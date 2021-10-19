@@ -129,7 +129,6 @@ if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         local url = "http://swamp.sv/s/cinema/file.html"
         local k = Video:Data()
-
         panel:EnsureURL(url)
         -- Let the webpage handle loading a video
         local str = string.format("th_video('%s');", string.JavascriptSafe(k))
