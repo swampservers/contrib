@@ -67,13 +67,18 @@ if CLIENT then
             headers = {
                 ["Cache-Control"] = "no-cache",
                 ["Referer"] = key,
-                ["Cookie"] = (lookmovieCookies["PHPSESSID"].."; "..lookmovieCookies["csrf"].."; have_visited_internal_page=1") or ""
+                ["Cookie"] = (lookmovieCookies["PHPSESSID"] .. "; " .. lookmovieCookies["csrf"] .. "; have_visited_internal_page=1") or ""
             },
             success = function(code, body, headers)
                 if headers["Set-Cookie"] then
-                    for s,ss in string.gmatch(headers["Set-Cookie"],"([%w]+)=(.-);") do
-                        if (s == "PHPSESSID") then lookmovieCookies["PHPSESSID"] = s.."="..ss end
-                        if (s == "csrf") then lookmovieCookies["csrf"] = s.."="..ss end
+                    for s, ss in string.gmatch(headers["Set-Cookie"], "([%w]+)=(.-);") do
+                        if (s == "PHPSESSID") then
+                            lookmovieCookies["PHPSESSID"] = s .. "=" .. ss
+                        end
+
+                        if (s == "csrf") then
+                            lookmovieCookies["csrf"] = s .. "=" .. ss
+                        end
                     end
                 end
 
@@ -86,7 +91,7 @@ if CLIENT then
                     headers = {
                         ["Cache-Control"] = "no-cache",
                         ["Referer"] = key,
-                        ["Cookie"] = lookmovieCookies["PHPSESSID"].."; "..lookmovieCookies["csrf"].."; have_visited_internal_page=1"
+                        ["Cookie"] = lookmovieCookies["PHPSESSID"] .. "; " .. lookmovieCookies["csrf"] .. "; have_visited_internal_page=1"
                     },
                     success = onFetchReceive,
                     failed = callback
