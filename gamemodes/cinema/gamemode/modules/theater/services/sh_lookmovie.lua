@@ -67,7 +67,7 @@ if CLIENT then
             headers = {
                 ["Cache-Control"] = "no-cache",
                 ["Referer"] = key,
-                ["Cookie"] = (lookmovieCookies["PHPSESSID"] .. "; " .. lookmovieCookies["csrf"] .. "; have_visited_internal_page=1") or ""
+                ["Cookie"] = lookmovieCookies["PHPSESSID"] and (lookmovieCookies["PHPSESSID"].."; "..lookmovieCookies["csrf"].."; have_visited_internal_page=1") or ""
             },
             success = function(code, body, headers)
                 if headers["Set-Cookie"] then
