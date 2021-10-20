@@ -23,7 +23,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL(Video:Key() .. "/?pwd=tgclub&usr=" .. LocalPlayer():SteamID() .. "&cast=1")
+        panel:EnsureURL(Video:Key() .. "?pwd=tgclub&usr=" .. LocalPlayer():SteamID() .. "&cast=1")
 
         timer.Create("nekoupdate" .. tostring(math.random(1, 100000)), 1, 45, function()
             if IsValid(panel) then
