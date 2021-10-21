@@ -233,7 +233,7 @@ function PANEL:ConsoleMessage(msg, func)
         msg = "*js variable*"
     end
 
-    if (LocalPlayer().videoDebug and not msg:StartWith("HREF:") and isstring(msg)) then
+    if (LocalPlayer().videoDebug and isstring(msg) and not msg:StartWith("HREF:") and not msg:StartWith("T:") and not msg:StartWith("DURATIONTITLE:")) then
         print(msg)
     end
 
