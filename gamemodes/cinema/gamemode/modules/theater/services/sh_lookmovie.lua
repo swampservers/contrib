@@ -14,12 +14,15 @@ function SERVICE:GetKey(url)
 end
 
 if CLIENT then
-    lookmovieCookies = lookmovieCookies or {}
-
     function SERVICE:GetVideoInfoClientside(key, callback)
+        local vpanel = vgui.Create("DHTML")
+        vpanel:SetSize(1920, 1800)
+        vpanel:SetAlpha(0)
+        vpanel:SetMouseInputEnabled(false)
+        vpanel.response = ""
         local info = {}
 
-        local onFetchReceive = function(code, body, headers)
+        local function onFetchReceive(body)
             local t = util.JSONToTable(body)
 
             if (t == nil) then
@@ -61,50 +64,81 @@ if CLIENT then
             end
         end
 
-        HTTP({
-            method = "GET",
-            url = key,
-            headers = {
-                ["Cache-Control"] = "no-cache",
-                ["Referer"] = key,
-                ["Cookie"] = lookmovieCookies["PHPSESSID"] and (lookmovieCookies["PHPSESSID"] .. "; " .. lookmovieCookies["csrf"] .. "; have_visited_internal_page=1") or ""
-            },
-            success = function(code, body, headers)
-                if headers["Set-Cookie"] then
-                    for s, ss in string.gmatch(headers["Set-Cookie"], "([%w]+)=(.-);") do
-                        if (s == "PHPSESSID") then
-                            lookmovieCookies["PHPSESSID"] = s .. "=" .. ss
-                        end
+        timer.Simple(10, function()
+            if IsValid(vpanel) then
+                vpanel:Remove()
+                print("Failed")
+                callback()
+            end
+        end)
 
-                        if (s == "csrf") then
-                            lookmovieCookies["csrf"] = s .. "=" .. ss
-                        end
+        timer.Create("lookmovieupdate" .. tostring(math.random(1, 100000)), 1, 10, function()
+            if IsValid(vpanel) then
+                vpanel:RunJavascript("console.log('CAPTCHA:'+document.title);")
+                if (not info.title or not info.thumb) then vpanel:RunJavascript("if(window['movie_storage']){console.log('TITLE:'+window['movie_storage'].title+' ('+window['movie_storage'].year+')');console.log('THUMB:'+window['movie_storage'].movie_poster);}") end
+                if (vpanel.response == "") then vpanel:RunJavascript("if(window['movie_storage']){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET','https://lookmovie.io/api/v1/security/movie-access?id_movie='+window['movie_storage'].id_movie,false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}") end
+            end
+        end)
+		
+        function vpanel:ConsoleMessage(msg)
+            if msg then
+                msg = tostring(msg)
+
+                if (LocalPlayer().videoDebug) then
+                    print(msg)
+                end
+
+                if string.StartWith(msg, "CAPTCHA:") then
+                    if (msg:sub(9, -1) == 'Thread Defence') then
+                        self:Remove()
+                        LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]Visit lookmovie.io, fill out the captcha, and then request the movie again.")
+                        callback()
                     end
                 end
 
-                info.title = string.Replace(string.match(body, "title: '(.-)',\n"), "\\'", "'") .. " (" .. string.match(body, "year: '(.-)'") .. ")"
-                info.thumb = string.match(body, "movie_poster: '(.-)'")
+                if string.StartWith(msg, "TITLE:") and not info.title then
+                    info.title = string.Replace(msg:sub(7, -1), "\\'", "'")
+                    print("TITLE: " .. info.title)
+                end
 
-                HTTP({
-                    method = "GET",
-                    url = "https://lookmovie.io/api/v1/security/movie-access?id_movie=" .. string.match(body, "id_movie: (%d+)"),
-                    headers = {
-                        ["Cache-Control"] = "no-cache",
-                        ["Referer"] = key,
-                        ["Cookie"] = lookmovieCookies["PHPSESSID"] .. "; " .. lookmovieCookies["csrf"] .. "; have_visited_internal_page=1"
-                    },
-                    success = onFetchReceive,
-                    failed = callback
-                })
-            end,
-            failed = callback
-        })
+                if string.StartWith(msg, "THUMB:") and not info.thumb then
+                    info.thumb = msg:sub(7, -1)
+                    print("THUMB: " .. info.thumb)
+                end
+
+                if string.StartWith(msg, "JSON:") and self.response == "" then
+                    self.response = msg:sub(6, -1)
+                    print("JSON: " .. self.response)
+                end
+
+                if (self.response ~= "" and info.title and info.thumb) then
+                    print("success")
+                    self:Remove()
+                    onFetchReceive(self.response)
+                end
+            end
+        end
+
+        vpanel:OpenURL(key)
     end
 
     function SERVICE:LoadVideo(Video, panel)
         local t = util.JSONToTable(Video:Data())
         local url = "http://swamp.sv/s/cinema/file.html"
         panel:EnsureURL(url)
+
+        HTTP({
+            method = "HEAD",
+            url = t.url,
+            headers = {
+                ["Cache-Control"] = "no-cache"
+            },
+            success = function(code, body, headers)
+            end,
+            failed = function(err)
+                LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The movie link is expired, try requesting it again.")
+            end
+        })
 
         if IsValid(panel) then
             local str = string.format("th_video('%s','%s');", string.JavascriptSafe(t.url), t.subs or "")

@@ -113,6 +113,21 @@ function PANEL:Init()
             self.Controls.RequestButton:SetDisabled(true)
         end
     end
+
+    function self.Browser:Think()
+        if not self._nextUrlPoll or self._nextUrlPoll < RealTime() then
+            self:RunJavascript('console.log("HREF:"+window.location.href);')
+            self._nextUrlPoll = RealTime() + 0.25
+        end
+    end
+
+    local prevurl = ""
+    function self.Browser:ConsoleMessage(msg)
+        if isstring(msg) and msg:StartWith("HREF:") and "HREF:" .. prevurl ~= msg then
+           prevurl = msg:sub(6)
+           self.OnDocumentReady(self, prevurl)
+        end
+    end
 end
 
 function PANEL:OnClose()
