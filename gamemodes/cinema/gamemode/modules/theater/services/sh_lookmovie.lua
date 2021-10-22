@@ -75,11 +75,17 @@ if CLIENT then
         timer.Create("lookmovieupdate" .. tostring(math.random(1, 100000)), 1, 10, function()
             if IsValid(vpanel) then
                 vpanel:RunJavascript("console.log('CAPTCHA:'+document.title);")
-                if (not info.title or not info.thumb) then vpanel:RunJavascript("if(window['movie_storage']){console.log('TITLE:'+window['movie_storage'].title+' ('+window['movie_storage'].year+')');console.log('THUMB:'+window['movie_storage'].movie_poster);}") end
-                if (vpanel.response == "") then vpanel:RunJavascript("if(window['movie_storage']){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET','https://lookmovie.io/api/v1/security/movie-access?id_movie='+window['movie_storage'].id_movie,false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}") end
+
+                if (not info.title or not info.thumb) then
+                    vpanel:RunJavascript("if(window['movie_storage']){console.log('TITLE:'+window['movie_storage'].title+' ('+window['movie_storage'].year+')');console.log('THUMB:'+window['movie_storage'].movie_poster);}")
+                end
+
+                if (vpanel.response == "") then
+                    vpanel:RunJavascript("if(window['movie_storage']){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET','https://lookmovie.io/api/v1/security/movie-access?id_movie='+window['movie_storage'].id_movie,false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
+                end
             end
         end)
-		
+
         function vpanel:ConsoleMessage(msg)
             if msg then
                 msg = tostring(msg)
@@ -133,8 +139,7 @@ if CLIENT then
             headers = {
                 ["Cache-Control"] = "no-cache"
             },
-            success = function(code, body, headers)
-            end,
+            success = function(code, body, headers) end,
             failed = function(err)
                 LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The movie link is expired, try requesting it again.")
             end

@@ -122,10 +122,11 @@ function PANEL:Init()
     end
 
     local prevurl = ""
+
     function self.Browser:ConsoleMessage(msg)
         if isstring(msg) and msg:StartWith("HREF:") and "HREF:" .. prevurl ~= msg then
-           prevurl = msg:sub(6)
-           self.OnDocumentReady(self, prevurl)
+            prevurl = msg:sub(6)
+            self.OnDocumentReady(self, prevurl)
         end
     end
 end
