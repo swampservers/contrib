@@ -65,12 +65,18 @@ function SS_PlayermodelItem(item)
     --gets called just before this object changes state
     item.OnChangeEquip = function(self, ply, eq)
         if eq then
+            -- dequip other playermodels
             for k, v in pairs(ply.SS_ShownItems) do
                 -- todo: change this to sanitizing all items, local item last?
                 if v.PlayerSetModel and v.eq then
                     v.actions.equip.OnServer(ply, v)
                 end
             end
+
+            -- print(item.class, ply, "EQUIPP")
+
+            -- put this one on
+            self:PlayerSetModel(ply)
         end
     end
 

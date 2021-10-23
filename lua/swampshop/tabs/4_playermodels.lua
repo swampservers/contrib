@@ -85,6 +85,7 @@ SS_PlayermodelItem({
     end
 })
 
+
 SS_Item({
     class = "outfitter2",
     price = 2000000,
