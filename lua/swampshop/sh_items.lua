@@ -74,7 +74,6 @@ function SS_PlayermodelItem(item)
             end
 
             -- print(item.class, ply, "EQUIPP")
-
             -- put this one on
             self:PlayerSetModel(ply)
         end
