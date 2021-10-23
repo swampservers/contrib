@@ -8,19 +8,20 @@ SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
     if (util.JSONToTable(url.encoded)) then return false end
-    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") then return url.encoded end
+    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") or string.match(url.encoded, "lookmovie.io/shows/view/(.+)#") then return url.encoded end
 
     return false
 end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        local vpanel = vgui.Create("DHTML")
+        vpanel = vgui.Create("DHTML")
         vpanel:SetSize(1920, 1800)
         vpanel:SetAlpha(0)
         vpanel:SetMouseInputEnabled(false)
         vpanel.response = ""
         local info = {}
+        local isTV = string.find(key, "lookmovie.io/shows/view")
 
         local function onFetchReceive(body)
             local t = util.JSONToTable(body)
@@ -29,6 +30,9 @@ if CLIENT then
                 callback()
             else
                 local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+                if (isTV) then
+                    url = t["streams"][1080] or t["streams"][720] or t["streams"][480] or t["streams"][360]
+                end
                 local subs = ""
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
@@ -75,13 +79,14 @@ if CLIENT then
         timer.Create("lookmovieupdate" .. tostring(math.random(1, 100000)), 1, 10, function()
             if IsValid(vpanel) then
                 vpanel:RunJavascript("console.log('CAPTCHA:'+document.title);")
+                vpanel:RunJavascript("var stor = window['" .. (isTV and "show" or "movie") .. "_storage" .. "'];")
 
                 if (not info.title or not info.thumb) then
-                    vpanel:RunJavascript("if(window['movie_storage']){console.log('TITLE:'+window['movie_storage'].title+' ('+window['movie_storage'].year+')');console.log('THUMB:'+window['movie_storage'].movie_poster);}")
+                    vpanel:RunJavascript("if(stor){console.log('TITLE:'+stor.title+' ('+stor.year+')');console.log('THUMB:'+stor." .. (isTV and "poster_medium" or "movie_poster") .. ");}")
                 end
 
                 if (vpanel.response == "") then
-                    vpanel:RunJavascript("if(window['movie_storage']){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET','https://lookmovie.io/api/v1/security/movie-access?id_movie='+window['movie_storage'].id_movie,false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
+                    vpanel:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET','https://lookmovie.io/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id_" .. (isTV and "episode" or "movie") .. "=" .. (isTV and string.match(key, "#.+%-(%d+)$") .. "'" or "'+stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
                 end
             end
         end)
@@ -97,24 +102,21 @@ if CLIENT then
                 if string.StartWith(msg, "CAPTCHA:") then
                     if (msg:sub(9, -1) == 'Thread Defence') then
                         self:Remove()
-                        LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]Visit lookmovie.io, fill out the captcha, and then request the movie again.")
+                        LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]Visit lookmovie.io, fill out the captcha, and then request the " .. (isTV and "show" or "movie") .. " again.")
                         callback()
                     end
                 end
 
                 if string.StartWith(msg, "TITLE:") and not info.title then
-                    info.title = string.Replace(msg:sub(7, -1), "\\'", "'")
-                    print("TITLE: " .. info.title)
+                    info.title = string.Replace(msg:sub(7, -1), "\\'", "'") .. (isTV and (" " .. string.match(key, "#(.+)%-.+%-%d+$") .. " " .. string.match(key, "#.+%-(.+)%-%d+$")) or "")
                 end
 
                 if string.StartWith(msg, "THUMB:") and not info.thumb then
                     info.thumb = msg:sub(7, -1)
-                    print("THUMB: " .. info.thumb)
                 end
 
                 if string.StartWith(msg, "JSON:") and self.response == "" then
                     self.response = msg:sub(6, -1)
-                    print("JSON: " .. self.response)
                 end
 
                 if (self.response ~= "" and info.title and info.thumb) then
@@ -141,7 +143,7 @@ if CLIENT then
             },
             success = function(code, body, headers) end,
             failed = function(err)
-                LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The movie link is expired, try requesting it again.")
+                LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The " .. (string.find(t.url, "lookmovie.io/shows/view") and "tv show" or "movie") .. " link is expired, try requesting it again.")
             end
         })
 
