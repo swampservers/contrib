@@ -30,9 +30,11 @@ if CLIENT then
                 callback()
             else
                 local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+
                 if (isTV) then
                     url = t["streams"][1080] or t["streams"][720] or t["streams"][480] or t["streams"][360]
                 end
+
                 local subs = ""
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
