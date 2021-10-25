@@ -154,6 +154,8 @@ function GM:MenuShow()
                         local xpos = math.Clamp(mpos - (ts / 2), 0, w - ts)
                         DrawTheaterText(strSeconds, "VideoInfoMedium", xpos, h - bh, Color(255, 255, 255, 255), nil, TEXT_ALIGN_BOTTOM)
                     end
+                else
+                    GuiSeekBar:SetVisible(false)
                 end
             end
 

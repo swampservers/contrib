@@ -15,6 +15,7 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
+        if (vpanel) then vpanel:Remove() end
         vpanel = vgui.Create("DHTML")
         vpanel:SetSize(1920, 1800)
         vpanel:SetAlpha(0)
@@ -30,12 +31,11 @@ if CLIENT then
                 callback()
             else
                 local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+                local subs = ""
 
                 if (isTV) then
                     url = t["streams"][1080] or t["streams"][720] or t["streams"][480] or t["streams"][360]
                 end
-
-                local subs = ""
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
                 --[[for k,v in pairs(t["subtitles"]) do
@@ -84,7 +84,11 @@ if CLIENT then
                 vpanel:RunJavascript("var stor = window['" .. (isTV and "show" or "movie") .. "_storage" .. "'];")
 
                 if (not info.title or not info.thumb) then
-                    vpanel:RunJavascript("if(stor){console.log('TITLE:'+stor.title+' ('+stor.year+')');console.log('THUMB:'+stor." .. (isTV and "poster_medium" or "movie_poster") .. ");}")
+                    if (isTV) then
+                        vpanel:RunJavascript("if(stor){x=stor['seasons'];for(var i in x){if(x[i].id_episode==" .. string.match(key, "#.+%-(%d+)$") .. ")console.log('TITLE:'+stor.title+' ('+stor.year+') S'+x[i].season+' E'+x[i].episode+' | '+x[i].title);}console.log('THUMB:'+stor.poster_medium);}")
+                    else
+                        vpanel:RunJavascript("if(stor){console.log('TITLE:'+stor.title+' ('+stor.year+')');console.log('THUMB:'+stor.movie_poster);}")
+                    end
                 end
 
                 if (vpanel.response == "") then
@@ -104,13 +108,13 @@ if CLIENT then
                 if string.StartWith(msg, "CAPTCHA:") then
                     if (msg:sub(9, -1) == 'Thread Defence') then
                         self:Remove()
-                        LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]Visit lookmovie.io, fill out the captcha, and then request the " .. (isTV and "show" or "movie") .. " again.")
+                        chat.AddText("[red]Visit lookmovie.io, fill out the captcha, and then request the " .. (isTV and "tv show" or "movie") .. " again.")
                         callback()
                     end
                 end
 
                 if string.StartWith(msg, "TITLE:") and not info.title then
-                    info.title = string.Replace(msg:sub(7, -1), "\\'", "'") .. (isTV and (" " .. string.match(key, "#(.+)%-.+%-%d+$") .. " " .. string.match(key, "#.+%-(.+)%-%d+$")) or "")
+                    info.title = string.Replace(msg:sub(7, -1), "\\'", "'")
                 end
 
                 if string.StartWith(msg, "THUMB:") and not info.thumb then
@@ -145,7 +149,7 @@ if CLIENT then
             },
             success = function(code, body, headers) end,
             failed = function(err)
-                LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The " .. (string.find(t.url, "lookmovie.io/shows/view") and "tv show" or "movie") .. " link is expired, try requesting it again.")
+                chat.AddText("[red]The " .. (string.find(Video:Key(), "lookmovie.io/shows/view") and "tv show" or "movie") .. " link is expired, try requesting it again.")
             end
         })
 
