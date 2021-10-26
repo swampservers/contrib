@@ -18,65 +18,41 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 end
 
 function SWEP:DrawWorldModel(flags)
-    -- local ply = self:GetOwner()
-    -- self:SetModelScale(1, 0)
-    -- self:SetSubMaterial()
-    -- local matrix
-    -- local horn = false
-    -- local opos = self:GetPos()
-    -- local oang = self:GetAngles()
-    -- if IsValid(ply) then
-    --     local isPony = ply:IsPony()
-    --     local bn = isPony and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-    --     local bon = ply:LookupBone(bn) or 0
-    --     if (bon) then
-    --         local bp, ba = ply:GetBonePosition(bon)
-    --         bp = bp or self:GetPos()
-    --         ba = ba or self:GetAngles()
-    --         if bp then
-    --             opos = bp
-    --         end
-    --         if ba then
-    --             oang = ba
-    --         end
-    --         if isPony then
-    --             opos = opos + (oang:Forward() * 6.4) + (oang:Right() * -1.8) + (oang:Up() * 0)
-    --             oang:RotateAroundAxis(oang:Right(), 80)
-    --             oang:RotateAroundAxis(oang:Forward(), 12)
-    --             oang:RotateAroundAxis(oang:Up(), 20)
-    --         else
-    --             oang:RotateAroundAxis(oang:Forward(), 90)
-    --             oang:RotateAroundAxis(oang:Right(), 90)
-    --             oang:RotateAroundAxis(oang:Forward(), 90)
-    --             opos = opos + oang:Right() * 3.5
-    --             opos = opos + oang:Forward() * 2
-    --             opos = opos + oang:Up() * 0
-    --             oang:RotateAroundAxis(oang:Up(), -90)
-    --         end
-    --         if (isPony) then
-    --             if (horn) then
-    --                 opos = opos - oang:Up() * 5
-    --             else
-    --                 opos = opos + oang:Up() * 3
-    --             end
-    --         end
-    --         self:SetupBones()
-    --         matrix = self:GetBoneMatrix(0)
-    --         if matrix then
-    --             matrix:SetTranslation(opos)
-    --             matrix:SetAngles(oang)
-    --             self:SetBoneMatrix(0, matrix)
-    --         end
-    --     end
-    -- end
-    -- render.MaterialOverride()
-    -- draw.NoTexture()
-    -- local cl = self:GetDecalColor()
-    -- render.SetColorModulation(cl.x, cl.y, cl.z)
-    -- render.SetBlend(1)
-    -- self:SetBodygroup(1, 1)
+    local ply = self:GetOwner()
+
+    if (IsValid(ply)) then
+        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+        local bon = ply:LookupBone(bn) or 0
+        local opos = self:GetPos()
+        local oang = self:GetAngles()
+        local bp, ba = ply:GetBonePosition(bon)
+
+        if (bp) then
+            opos = bp
+        end
+
+        if (ba) then
+            oang = ba
+        end
+
+        if (ply:IsPony()) then
+            opos = opos + (oang:Forward() * 10) + (oang:Right() * -3) + (oang:Up() * -1.5)
+        else
+            oang:RotateAroundAxis(oang:Forward(), 180)
+            opos = opos + (oang:Forward() * 2.8) + (oang:Right() * -2.5) + (oang:Up() * -0.5)
+        end
+
+        self:SetupBones()
+        local mrt = self:GetBoneMatrix(0)
+
+        if (mrt) then
+            mrt:SetTranslation(opos)
+            mrt:SetAngles(oang)
+            self:SetBoneMatrix(0, mrt)
+        end
+    end
+
     self:DrawModel()
-    -- render.SetColorModulation(1, 1, 1)
 end
 
 function SWEP:GetViewModelPosition(epos, eang)
