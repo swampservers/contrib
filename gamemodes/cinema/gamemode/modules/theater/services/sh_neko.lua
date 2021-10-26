@@ -25,7 +25,7 @@ if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL(Video:Key() .. "?pwd=tgclub&usr=" .. LocalPlayer():SteamID() .. "&cast=1")
 
-        timer.Create("nekoupdate" .. tostring(math.random(1, 100000)), 1, 15, function()
+        timer.Create("nekoupdate" .. tostring(math.random(1, 100000)), 1, 25, function()
             if IsValid(panel) then
                 panel:RunJavascript("document.getElementsByTagName('p')[0].style.display='none';") --hides watermark
                 panel:RunJavascript("document.getElementsByTagName('video')[0].click();") --unmutes player

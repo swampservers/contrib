@@ -14,6 +14,7 @@ end
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         EmbeddedCheckCodecs(function()
+            if (vpanel) then vpanel:Remove() end
             vpanel = vgui.Create("DHTML")
             vpanel:SetSize(1000, 800)
             vpanel:SetAlpha(0)
@@ -25,7 +26,7 @@ if CLIENT then
             vpanel.episode = nil
             vpanel.duration = nil
 
-            timer.Simple(45, function()
+            timer.Simple(30, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
                     print("Failed")
@@ -33,10 +34,10 @@ if CLIENT then
                 end
             end)
 
-            timer.Create("9animeupdate" .. tostring(math.random(1, 100000)), 1, 45, function()
+            timer.Create("9animeupdate" .. tostring(math.random(1, 100000)), 1, 30, function()
                 if IsValid(vpanel) then
                     if vpanel.phase == 0 then
-                        vpanel:RunJavascript("x=document.getElementsByClassName('tabs servers notab')[0].children;for(i=0;i<x.length;i++)if(x[i].innerText=='Vidstream')x[i].click();")
+                        vpanel:RunJavascript("x=document.getElementsByClassName('tabs servers notab');if(x)x=x[0].children;for(i=x.length-1;i>=0;i--)if(x[i].innerText=='MyCloud'||x[i].innerText=='Vidstream')x[i].click();")
                         vpanel:RunJavascript("x=document.getElementsByClassName('play')[0];if(x){x.dispatchEvent(new Event('mousedown'));x.click();}")
                         vpanel:RunJavascript("x=document.getElementsByClassName('episodes')[0].children;for(i=0;i<x.length;i++)if(x[i].children[0].className=='active'){console.log('EPISODE:'+x[i].children[0].text);x[i].children[0].click();}")
                         vpanel:RunJavascript("x=document.getElementsByTagName('h2');for(i=0;i<x.length;i++)if(x[i].attributes.itemprop.value=='name')console.log('TITLE:'+x[i].textContent);")
@@ -44,8 +45,7 @@ if CLIENT then
 
                         return
                     elseif vpanel.phase == 1 then
-                        vpanel:RunJavascript("if(typeof jwplayer==='function'){var jwp=jwplayer('player');jwp.setMute(1);jwp.play();console.log('DURATION:'+jwp.getDuration());}")
-                        vpanel:RunJavascript("xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/info/'+window.location.href.substring(window.location.href.lastIndexOf('/')+1)+'?skey='+window.skey,false);xmlHttp.send(null);console.log('URL:'+JSON.parse(xmlHttp.responseText).media.sources[0].file);")
+                        vpanel:RunJavascript("xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/info/'+window.location.href.substring(window.location.href.lastIndexOf('/')+1)+'?skey='+window.skey,false);xmlHttp.send(null);x=JSON.parse(xmlHttp.responseText).media.sources;for(i in x){if(x[i].file.indexOf('#.mp4')==-1){console.log('URL:'+x[i].file);break;}}")
 
                         return
                     end
@@ -80,20 +80,26 @@ if CLIENT then
                             vpanel:RunJavascript("location.href='" .. self.player .. "'")
                             self.phase = 1
                         end
-
-                        return
                     elseif self.phase == 1 then
-                        if string.StartWith(msg, "URL:") and not self.data then
+                        if string.StartWith(msg, "URL:") then
                             self.data = msg:sub(5, -1)
                             print("URL: " .. self.data)
+							self.phase = 2
+							
+                            if string.find(self.data, ".m3u8") then
+                                cachedURL[key] = self.data
+                            end
+							
+							vpanel:OpenURL("https://swamp.sv/s/cinema/file.html")
+							timer.Simple(.5, function()
+								vpanel:QueueJavascript(string.format("th_video('%s');to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration())},100);", string.JavascriptSafe(self.data)))
+							end)
                         end
-
-                        if (msg:StartWith("DURATION:") and msg ~= "DURATION:NaN" and msg ~= "DURATION:0" and msg ~= "DURATION:undefined" and not self.duration) then
+					elseif self.phase == 2 then
+                        if (msg:StartWith("DURATION:") and msg ~= "DURATION:NaN" and msg ~= "DURATION:0" and msg ~= "DURATION:undefined") then
                             self.duration = math.ceil(tonumber(string.sub(msg, 10)))
                             print("DURATION: " .. self.duration)
-                        end
 
-                        if (self.data ~= nil and self.duration ~= nil) then
                             if (self.episode ~= "Full") then
                                 self.title = self.title .. " Episode " .. self.episode
                             end
@@ -107,17 +113,17 @@ if CLIENT then
                             self:Remove()
                             print("Success!")
                         end
-
-                        return
                     end
                 end
             end
 
-            vpanel:OpenURL("https://swamp.sv/video")
+            vpanel:OpenURL("https://9anime.to/")
 
             --9anime has a fit if you don't have a referrer
             timer.Simple(.5, function()
-                vpanel:OpenURL(key)
+				if IsValid(vpanel) then
+					vpanel:OpenURL(key)
+				end
             end)
         end, function()
             chat.AddText("You need codecs to request this. Press F2.")
@@ -126,13 +132,102 @@ if CLIENT then
         end)
     end
 
+    cachedURL = cachedURL or {}
     function SERVICE:LoadVideo(Video, panel)
         local url = "http://swamp.sv/s/cinema/file.html"
         local k = Video:Data()
+        local key = Video:Key()
         panel:EnsureURL(url)
-        -- Let the webpage handle loading a video
-        local str = string.format("th_video('%s');", string.JavascriptSafe(k))
-        panel:QueueJavascript(str)
+        cachedURL[key] = cachedURL[key] or k
+        if string.find(k, ".m3u8") then
+            HTTP({
+                method = "HEAD",
+                url = cachedURL[key],
+                headers = {
+                    ["Cache-Control"] = "no-cache"
+                },
+                success = function(code, body, headers)
+					if IsValid(panel) then
+						if code == 200 then
+							local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), LocalPlayer():GetTheater():VideoCurrentTime(true))
+							panel:QueueJavascript(str)
+						else
+							EmbeddedCheckCodecs(function()
+								if (vpanel) then vpanel:Remove() end
+								vpanel = vgui.Create("DHTML")
+								vpanel:SetSize(1000, 800)
+								vpanel:SetAlpha(0)
+								vpanel:SetMouseInputEnabled(false)
+								vpanel.phase = 0
+		
+								timer.Simple(20, function()
+									if IsValid(vpanel) then
+										vpanel:Remove()
+										print("Failed to find the video link")
+									end
+								end)
+		
+								timer.Create("9animeupdate" .. tostring(math.random(1, 100000)), 1, 20, function()
+									if IsValid(vpanel) then
+										if vpanel.phase == 0 then
+											vpanel:RunJavascript("x=document.getElementsByClassName('tabs servers notab');if(x)x=x[0].children;for(i=x.length-1;i>=0;i--)if(x[i].innerText=='MyCloud'||x[i].innerText=='Vidstream')x[i].click();")
+											vpanel:RunJavascript("x=document.getElementsByClassName('play')[0];if(x){x.dispatchEvent(new Event('mousedown'));x.click();}")
+											vpanel:RunJavascript("x=document.getElementsByTagName('iframe');for(i=0;i<x.length;i++)if(x[i].parentElement.id=='player')console.log('PLAYER:'+x[i].src);")
+		
+											return
+										elseif vpanel.phase == 1 then
+											vpanel:RunJavascript("xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/info/'+window.location.href.substring(window.location.href.lastIndexOf('/')+1)+'?skey='+window.skey,false);xmlHttp.send(null);x=JSON.parse(xmlHttp.responseText).media.sources;for(i in x){if(x[i].file.indexOf('#.mp4')==-1){console.log('URL:'+x[i].file);break;}}")
+		
+											return
+										end
+									end
+								end)
+		
+								function vpanel:ConsoleMessage(msg)
+									if msg then
+										msg = tostring(msg)
+		
+										if (LocalPlayer().videoDebug) then
+											print(msg)
+										end
+		
+										if self.phase == 0 then
+											if string.StartWith(msg, "PLAYER:") then
+												vpanel:RunJavascript("location.href='" .. msg:sub(8, -1) .. "'")
+												self.phase = 1
+											end
+										elseif self.phase == 1 then
+											if string.StartWith(msg, "URL:") then
+												cachedURL[key] = msg:sub(5, -1)
+												self:Remove()
+												local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), LocalPlayer():GetTheater():VideoCurrentTime(true))
+												panel:QueueJavascript(str)
+											end
+										end
+									end
+								end
+		
+								vpanel:OpenURL("https://9anime.to/")
+		
+								--9anime has a fit if you don't have a referrer
+								timer.Simple(.5, function()
+									if IsValid(vpanel) then
+										vpanel:OpenURL(Video:Key())
+									end
+								end)
+							end, function()
+								chat.AddText("You need codecs to view this. Press F2.")
+								return
+							end)
+						end
+					end
+                end,
+                failed = function(err) end
+            })
+        else
+            local str = string.format("th_video('%s');", string.JavascriptSafe(k))
+            panel:QueueJavascript(str)
+        end
     end
 end
 
