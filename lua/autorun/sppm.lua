@@ -200,10 +200,14 @@ if CLIENT then
             {3, Vector(0, 5, 20), Angle(0, 0, 0)},
             {4, Vector(3, 0.5, 20), Angle(0, 60, 0)},
             {5, Vector(-2, 1, 20), Angle(0, -60, 0)},
+        },
+        weapon_spraypaint = {
+            {0, Vector(7, 2, -1), Angle(2, 60, 4)}
         }
     }
 
     stock_weapon_pony_position.weapon_physgun = stock_weapon_pony_position.weapon_physcannon
+    stock_weapon_pony_position.weapon_stencilpaint = stock_weapon_pony_position.weapon_spraypaint
 
     hook.Add("OnEntityCreated", "PonyStockWeapons", function(ent)
         if stock_weapon_pony_position[ent:GetClass()] then
