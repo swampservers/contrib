@@ -8,7 +8,7 @@ SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
     if (util.JSONToTable(url.encoded)) then return false end
-    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") or string.match(url.encoded, "lookmovie.io/shows/view/(.+)#") then return url.encoded end
+    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") or string.match(url.encoded, "lmplayer.xyz/m/play/./(.+)/s") or string.match(url.encoded, "lmplayer.xyz/s/play/./(.+)/s#") then return url.encoded end
 
     return false
 end
@@ -22,7 +22,8 @@ if CLIENT then
         vpanel:SetMouseInputEnabled(false)
         vpanel.response = ""
         local info = {}
-        local isTV = string.find(key, "lookmovie.io/shows/view")
+        local isTV = string.match(key, "lmplayer.xyz/s/play/./(.+)/s#")
+        local itemid = string.match(key, "movies/view/(.+)") or string.match(key, "play/./(.+)/s")
 
         local function onFetchReceive(body)
             local t = util.JSONToTable(body)
@@ -133,7 +134,7 @@ if CLIENT then
             end
         end
 
-        vpanel:OpenURL(key)
+        vpanel:OpenURL(isTV and "https://lookmovie.io/shows/view/"..itemid or "https://lookmovie.io/movies/view/"..itemid)
     end
 
     function SERVICE:LoadVideo(Video, panel)
