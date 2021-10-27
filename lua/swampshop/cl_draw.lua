@@ -174,6 +174,7 @@ local EntityGetModel = Entity.GetModel
 --         e:DrawModel()
 --         SS_PostRender()
 --     end
+
 hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     if not ply:Alive() then return end
     -- will be "false" if the model is not mounted yet
@@ -237,18 +238,19 @@ function SS_ApplyBoneMods(ent, mods)
             local x = ent:LookupBone(bn)
 
             if x then
-                if (item.configurable or {}).scale then
+                local settings = item.GetSettings and item:GetSettings() or item.configurable -- TODO only GetSettings
+
+                if settings.scale then
                     local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
                     AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
                 end
 
-                if (item.configurable or {}).pos then
-                    local psn = item.cfg["pos" .. suffix] or Vector(10, 0, 0)
+                if settings.pos then
+                    local psn = item.cfg["pos" .. suffix] or Vector(8, 0, 0)
 
                     --don't allow moving the root bone
                     if ent:GetBoneParent(x) == -1 then
-                        psn.x = 0
-                        psn.y = 0
+                        psn = Vector(0,0,0)
                     end
 
                     local pso = ent:GetManipulateBonePosition(x)

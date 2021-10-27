@@ -62,22 +62,24 @@ function SS_PlayermodelItem(item)
         end
     end
 
+    -- TODO change this so items have "slot"s
+    
     --gets called just before this object changes state
-    item.OnChangeEquip = function(self, ply, eq)
-        if eq then
-            -- dequip other playermodels
-            for k, v in pairs(ply.SS_ShownItems) do
-                -- todo: change this to sanitizing all items, local item last?
-                if v.PlayerSetModel and v.eq then
-                    v.actions.equip.OnServer(ply, v)
-                end
-            end
+    -- item.OnChangeEquip = function(self, ply, eq)
+    --     if eq then
+    --         -- dequip other playermodels
+    --         for k, v in pairs(ply.SS_ShownItems) do
+    --             -- todo: change this to sanitizing all items, local item last?
+    --             if v.PlayerSetModel and v.eq then
+    --                 v.actions.equip.OnServer(ply, v)
+    --             end
+    --         end
 
-            -- print(item.class, ply, "EQUIPP")
-            -- put this one on
-            self:PlayerSetModel(ply)
-        end
-    end
+    --         -- print(item.class, ply, "EQUIPP")
+    --         -- put this one on
+    --         -- self:PlayerSetModel(ply)
+    --     end
+    -- end
 
     item.invcategory = "Playermodels"
     SS_Item(item)
@@ -324,6 +326,9 @@ function SS_Item(item)
         v.id = id
     end
 
+    item.GetActions = item.GetActions or function(self) return self.actions end
+    item.GetSettings = item.GetSettings or function(self) return self.configurable end
+
     SS_ItemOrProduct(item)
     item.__index = item
     SS_Items[item.class] = item
@@ -335,7 +340,7 @@ end
 
 function _SS_SanitizeConfig(item)
     local cfg = item.cfg
-    local itmc = item.configurable
+    local itmc = item.configurable --:GetSettings()
     if not itmc then return end
     local dirty_cfg = {}
 

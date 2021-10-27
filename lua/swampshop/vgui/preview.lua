@@ -363,7 +363,7 @@ function PANEL:Paint(w, h)
     end
 
     if SS_HoverIOP then
-        SS_DrawIOPInfo(SS_HoverIOP, 0, h, w, MenuTheme_TX, 1)
+        SS_DrawIOPInfo(SS_HoverIOP, 0, h-6, w, MenuTheme_TX, 1)
     end
 end
 
