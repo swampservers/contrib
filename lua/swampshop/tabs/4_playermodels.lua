@@ -63,6 +63,23 @@ SS_Item({
     }
 })
 
+-- SS_Item({
+--     class = "contorter",
+--     price = 300000,
+--     name = 'Contorter',
+--     description = "twists bones unnaturally using advanced genetic modification",
+--     model = 'models/Gibs/HGIBS_spine.mdl',
+--     material = 'models/debug/debugwhite',
+--     invcategory = "Mods",
+--     maxowned = 25,
+--     playermodelmod = true,
+--     bonemod = true,
+--     configurable = {
+--         ang = true,
+--         bone = true
+--     }
+-- })
+
 SS_Heading("Permanent")
 
 SS_PlayermodelItem({

@@ -552,18 +552,21 @@ function PANEL:Init()
 
     SS_AuctionPanel = NewCategory("Auctions", 'icon16/house.png')
     SS_AuctionPanel.DesiredSearch = 1
+    SS_AuctionPanel.DesiredCategory = "Everything"
     Pad(SS_AuctionPanel)
 
     -- todo: DO this for inventory?
     function SS_AuctionPanel:VisibleThink()
-        if self.LatestSearch ~= self.DesiredSearch then
+        if self.LatestSearch ~= self.DesiredSearch or self.LatestCategory ~= self.DesiredCategory then
             net.Start('SS_SearchAuctions')
             net.WriteUInt(self.DesiredSearch, 16) --page
             net.WriteUInt(0, 32) -- minprice
             net.WriteUInt(0, 32) --maxprice
+            net.WriteString(self.DesiredCategory)
             net.WriteBool(false) --mineonly
             net.SendToServer()
             self.LatestSearch = self.DesiredSearch
+            self.LatestCategory = self.DesiredCategory
         end
     end
 
@@ -579,8 +582,8 @@ function PANEL:Init()
             -- Control the search. do it in paint so we arent updating when the panel isnt shown
         end
 
-        vgui("DLabel", function(p)
-            p:SetText("Auctions (WIP)")
+        p.results = vgui("DLabel", function(p)
+            p:SetText("Auctions")
             p:SetFont('SS_SubCategory')
             p:Dock(FILL)
             p:SetContentAlignment(4)
@@ -594,20 +597,21 @@ function PANEL:Init()
             p:SizeToContentsY()
         end)
 
-        p.results = vgui("DLabel", function(p)
-            p:SetText("test")
-            p:SetFont('SS_SubCategory')
-            p:Dock(RIGHT)
-            p:SetContentAlignment(4)
-            p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-            p:SetColor(MenuTheme_TX)
+        -- p.results = vgui("DLabel", function(p)
+        --     p:SetText("...")
+        --     p:SetFont('SS_SubCategory')
+        --     p:SetWide(150)
+        --     p:Dock(RIGHT)
+        --     p:SetContentAlignment(6)
+        --     p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+        --     p:SetColor(MenuTheme_TX)
 
-            p.UpdateColours = function(pnl)
-                pnl:SetTextColor(MenuTheme_TX)
-            end
+        --     p.UpdateColours = function(pnl)
+        --         pnl:SetTextColor(MenuTheme_TX)
+        --     end
 
-            p:SizeToContentsY()
-        end)
+        --     p:SizeToContentsY()
+        -- end)
 
         vgui("DButton", function(p)
             p:Dock(RIGHT)
@@ -621,6 +625,24 @@ function PANEL:Init()
             end
         end)
 
+        p.pagenumber = vgui("DLabel", function(p)
+            p:SetText("1")
+            p:SetFont('SS_SubCategory')
+            p:Dock(RIGHT)
+
+            p:SetWide(30)
+            p:SetContentAlignment(5)
+            -- p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+            p:SetColor(MenuTheme_TX)
+
+            -- p.UpdateColours = function(pnl)
+            --     pnl:SetTextColor(MenuTheme_TX)
+            -- end
+
+            -- p:SizeToContentsY()
+        
+        end)
+
         vgui("DButton", function(p)
             p:Dock(RIGHT)
             p:SetText("<")
@@ -632,19 +654,42 @@ function PANEL:Init()
                 SS_AuctionPanel.DesiredSearch = math.max(1, SS_AuctionPanel.DesiredSearch - 1)
             end
         end)
+
+        vgui("DComboBox", function(p)
+            p:Dock(RIGHT)
+            p:SetWide( 150 )
+
+            p:SetSortItems(false)
+            p:SetValue( "Everything" )
+            p:AddChoice( "Accessories" )
+            p:AddChoice( "Props" )
+            p:AddChoice( "Weapons" )
+            p:AddChoice( "Misc" )
+            p:AddChoice( "Everything")
+
+            p:SetColor(MenuTheme_TX)
+            p:SetFont("SS_Donate2")
+            p.Paint = SS_PaintDarkenOnHover
+
+            p.OnSelect = function( self, index, value )
+                SS_AuctionPanel.DesiredSearch = 1
+                SS_AuctionPanel.DesiredCategory = value
+            end
+        end)
     end)
 
     --CONTROLS HERE...
     Pad(SS_AuctionPanel)
     SS_AuctionPanel.results = NewSubCategory(SS_AuctionPanel)
 
-    function SS_AuctionPanel:ReceiveSearch(items, totalitems)
+    function SS_AuctionPanel:ReceiveSearch(items, totalitems, page)
         for i, v in ipairs(SS_AuctionPanel.results:GetChildren()) do
             v:Remove()
         end
 
-        self.controls.results:SetText(tostring(totalitems) .. " total results")
-        self.controls.results:SizeToContents()
+        self.controls.results:SetText("Auctions - "..tostring(totalitems) .. " results")
+        self.controls.pagenumber:SetText(tostring(page))
+        -- self.controls.results:SizeToContents()
         items = SS_MakeItems(SS_SAMPLE_ITEM_OWNER, items)
 
         for _, item in pairs(items) do
@@ -920,9 +965,10 @@ net.Receive("SS_SearchAuctions", function(len)
 
     local items = net.ReadTable()
     local total = net.ReadUInt(32)
+    local page = net.ReadUInt(16)
 
     if IsValid(SS_AuctionPanel) then
-        SS_AuctionPanel:ReceiveSearch(items, total)
+        SS_AuctionPanel:ReceiveSearch(items, total, page)
     end
 end)
 
