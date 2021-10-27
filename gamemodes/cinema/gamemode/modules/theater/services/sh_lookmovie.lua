@@ -15,7 +15,10 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        if (vpanel) then vpanel:Remove() end
+        if (vpanel) then
+            vpanel:Remove()
+        end
+
         vpanel = vgui.Create("DHTML")
         vpanel:SetSize(1920, 1800)
         vpanel:SetAlpha(0)
@@ -134,7 +137,7 @@ if CLIENT then
             end
         end
 
-        vpanel:OpenURL(isTV and "https://lookmovie.io/shows/view/"..itemid or "https://lookmovie.io/movies/view/"..itemid)
+        vpanel:OpenURL(isTV and "https://lookmovie.io/shows/view/" .. itemid or "https://lookmovie.io/movies/view/" .. itemid)
     end
 
     function SERVICE:LoadVideo(Video, panel)
