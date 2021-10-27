@@ -174,7 +174,6 @@ local EntityGetModel = Entity.GetModel
 --         e:DrawModel()
 --         SS_PostRender()
 --     end
-
 hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     if not ply:Alive() then return end
     -- will be "false" if the model is not mounted yet
@@ -250,7 +249,7 @@ function SS_ApplyBoneMods(ent, mods)
 
                     --don't allow moving the root bone
                     if ent:GetBoneParent(x) == -1 then
-                        psn = Vector(0,0,0)
+                        psn = Vector(0, 0, 0)
                     end
 
                     local pso = ent:GetManipulateBonePosition(x)
