@@ -79,7 +79,6 @@ SS_Item({
 --         bone = true
 --     }
 -- })
-
 SS_Heading("Permanent")
 
 SS_PlayermodelItem({

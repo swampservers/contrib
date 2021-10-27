@@ -605,14 +605,11 @@ function PANEL:Init()
         --     p:SetContentAlignment(6)
         --     p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
         --     p:SetColor(MenuTheme_TX)
-
         --     p.UpdateColours = function(pnl)
         --         pnl:SetTextColor(MenuTheme_TX)
         --     end
-
         --     p:SizeToContentsY()
         -- end)
-
         vgui("DButton", function(p)
             p:Dock(RIGHT)
             p:SetText(">")
@@ -629,20 +626,16 @@ function PANEL:Init()
             p:SetText("1")
             p:SetFont('SS_SubCategory')
             p:Dock(RIGHT)
-
             p:SetWide(30)
             p:SetContentAlignment(5)
             -- p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
             p:SetColor(MenuTheme_TX)
-
-            -- p.UpdateColours = function(pnl)
-            --     pnl:SetTextColor(MenuTheme_TX)
-            -- end
-
-            -- p:SizeToContentsY()
-        
         end)
 
+        -- p.UpdateColours = function(pnl)
+        --     pnl:SetTextColor(MenuTheme_TX)
+        -- end
+        -- p:SizeToContentsY()
         vgui("DButton", function(p)
             p:Dock(RIGHT)
             p:SetText("<")
@@ -657,21 +650,19 @@ function PANEL:Init()
 
         vgui("DComboBox", function(p)
             p:Dock(RIGHT)
-            p:SetWide( 150 )
-
+            p:SetWide(150)
             p:SetSortItems(false)
-            p:SetValue( "Everything" )
-            p:AddChoice( "Accessories" )
-            p:AddChoice( "Props" )
-            p:AddChoice( "Weapons" )
-            p:AddChoice( "Misc" )
-            p:AddChoice( "Everything")
-
+            p:SetValue("Everything")
+            p:AddChoice("Accessories")
+            p:AddChoice("Props")
+            p:AddChoice("Weapons")
+            p:AddChoice("Misc")
+            p:AddChoice("Everything")
             p:SetColor(MenuTheme_TX)
             p:SetFont("SS_Donate2")
             p.Paint = SS_PaintDarkenOnHover
 
-            p.OnSelect = function( self, index, value )
+            p.OnSelect = function(self, index, value)
                 SS_AuctionPanel.DesiredSearch = 1
                 SS_AuctionPanel.DesiredCategory = value
             end
@@ -687,7 +678,7 @@ function PANEL:Init()
             v:Remove()
         end
 
-        self.controls.results:SetText("Auctions - "..tostring(totalitems) .. " results")
+        self.controls.results:SetText("Auctions - " .. tostring(totalitems) .. " results")
         self.controls.pagenumber:SetText(tostring(page))
         -- self.controls.results:SizeToContents()
         items = SS_MakeItems(SS_SAMPLE_ITEM_OWNER, items)
