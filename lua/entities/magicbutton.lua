@@ -33,16 +33,20 @@ if (SERVER) then
         end
     end)
 else
-    
     -- keep painting it so it always appears in mat_texture_list
     local buttonmat = Material("models/pyroteknik/button_diffuse")
-    hook.Add("HUDPaint","ButtonMaterialHide",function()
-            if DREWBUTTONTHISFRAME then DREWBUTTONTHISFRAME=false return end
---         surface.SetDrawColor(255,255,255,1)
+
+    hook.Add("HUDPaint", "ButtonMaterialHide", function()
+        if DREWBUTTONTHISFRAME then
+            DREWBUTTONTHISFRAME = false
+
+            return
+        end
+
+        --         surface.SetDrawColor(255,255,255,1)
         surface.SetMaterial(buttonmat)
-        surface.DrawTexturedRect(0,0,0,0)
+        surface.DrawTexturedRect(0, 0, 0, 0)
     end)
-    
 end
 
 local MAGICBUTTON_HULLSIZE = Vector(32, 32, 72) --Vector(32,32,36)
@@ -303,7 +307,6 @@ function ENT:Draw()
     --render.SuppressEngineLighting( true )
     self:DrawModel()
     render.SuppressEngineLighting(false)
-    
     DREWBUTTONTHISFRAME = true
 end
 
