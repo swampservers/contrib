@@ -249,7 +249,7 @@ function SS_ApplyBoneMods(ent, mods)
 
                     --don't allow moving the root bone
                     if ent:GetBoneParent(x) == -1 then
-                        psn = Vector(0, 0, 0)
+                        psn = Vector(0, 0, psn.z)
                     end
 
                     local pso = ent:GetManipulateBonePosition(x)
