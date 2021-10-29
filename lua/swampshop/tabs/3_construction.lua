@@ -113,9 +113,8 @@ SS_Product({
     name = 'Prop Blueprint',
     description = "A random prop that you can spawn from your inventory anytime",
     GetModel = function(self) return previews[(math.floor(SysTime() * 2.5) % #previews) + 1] end,
-    CannotBuy = function(self, ply)
-        -- if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
-    end,
+    CannotBuy = function(self, ply) end,
+    -- if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
     OnBuy = function(self, ply)
         -- if ply.CANTSANDBOX then return end
         local item = SS_GenerateItem(ply, "prop")
