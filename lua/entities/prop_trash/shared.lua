@@ -66,6 +66,16 @@ PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
     }
 })
 
+function IsModelExplosive(mdl)
+    local ModelInfo = util.GetModelInfo(mdl)
+
+    if ModelInfo and ModelInfo.ModelKeyValues then
+        local mkvs = util.KeyValuesToTable(ModelInfo.ModelKeyValues)
+
+        return ((mkvs.physgun_interactions or {}).onbreak or "") == "explode"
+    end
+end
+
 -- hopefully this isnt a bottleneck, if it is we need a cache (which is subject to new models being added)
 function GetSpecialTrashModelsByClass(class)
     local t = {}

@@ -97,7 +97,7 @@ SS_Item({
         },
         imgur = true
     },
-    SpawnPrice = function(self) return 200 end,
+    SpawnPrice = function(self) return IsModelExplosive(self.specs.model) and 5000 or 200 end,
     invcategory = "Props",
     never_equip = true
 })
