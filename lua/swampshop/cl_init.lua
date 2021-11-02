@@ -175,7 +175,7 @@ local function postupdate(ply, shown)
             SS_RefreshShopAccessories()
         end
     else
-        SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
+        SS_InventoryVersion = (SS_InventoryVersion or 0) + 1
     end
 end
 

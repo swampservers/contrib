@@ -17,15 +17,6 @@ surface.CreateFont("SwampShop2", {
     size = 36
 })
 
--- The fatkid gamemode has a no-moneymaking-allowed license
--- Of course, I made the gamemode, so I don't have to follow my own license,
--- but still don't advertise donations to not look like a hypocrite.
-local showdonatebutton = true
-
-timer.Simple(0, function()
-    showdonatebutton = GAMEMODE.FolderName ~= "fatkid"
-end)
-
 function PANEL:Init()
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
@@ -226,9 +217,17 @@ function PANEL:Init()
             p:SetFont("SS_INCOMEFONT")
             p:SetText("")
             p:SetWide(420)
+            
+            -- The fatkid gamemode has a no-moneymaking-allowed license
+            -- Of course, I made the gamemode, so I don't have to follow my own license,
+            -- but still don't advertise donations to not look like a hypocrite.
+            if GAMEMODE.FolderName == "fatkid" then
+                p.Paint = noop
+                return
+            end
 
             p.DoClick = function()
-                if not showdonatebutton then return end
+                
                 gui.OpenURL('https://swamp.sv/donate/')
             end
 
@@ -236,7 +235,7 @@ function PANEL:Init()
             local DollarParticles = {}
 
             p.Paint = function(self, w, h)
-                if not showdonatebutton then return end
+                
                 SS_PaintDarkenOnHover(self, w, h)
                 local alpha = 180
                 local mousex, mousey = self:CursorPos()
@@ -282,10 +281,10 @@ function PANEL:Init()
                 --[[if self:IsHovered() then
                 tc = Color(175,230,69)
             end]]
-                if showdonatebutton then
+                
                     draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, (h / 2) - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
                     draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, (h / 2) + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-                end
+                
             end
         end)
     end)
@@ -387,16 +386,7 @@ function PANEL:Init()
 
     SS_AuctionPanel = vgui("DSSAuctionMode", self.mainpane)
     MakeCategoryButton(SS_AuctionPanel, "Auctions", 'icon16/house.png')
-
-    local function NewInventoryCategory(txt, icon, cats)
-        local panel = vgui("DSSScrollableMode", self.mainpane)
-
-        MakeCategoryButton(panel, txt, icon, true)
-
-        inventorythink(panel, cats)
-
-        return panel
-    end
+    
 
     vgui("DSSInventoryMode", self.mainpane, function(p)
         p:SetCategories({"Weapons", "Skins"})
@@ -413,16 +403,7 @@ function PANEL:Init()
         MakeCategoryButton(p, "Cosmetics", 'icon16/status_online.png', true)
     end)
 
-    -- --title text 
-    -- vgui("DLabel", self.topbar, function(p)
-    --     p:SetText(" ← Store       Inventory →")
-    --     p:SetFont('SS_Category') --ScoreboardTitleSmall
-    --     p:SizeToContentsX()
-    --     p:DockMargin(16, 0, 16, 0)
-    --     p:SetColor(SS_ColorWhite)
-    --     p:Dock(RIGHT)
-    -- end)
-    SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
+
     SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', self.mainpane) --:GetParent())
     SS_CustomizerPanel:Dock(FILL)
     SS_CustomizerPanel:Close()
@@ -512,8 +493,6 @@ function PANEL:Paint(w, h)
     SS_PaintBG(self, w, h)
 end
 
-SS_INVENTORY_POINT_OUT = -100
-
 net.Receive("SS_PointOutInventory", function()
     SS_INVENTORY_POINT_OUT = RealTime()
 end)
@@ -541,7 +520,7 @@ function PANEL:PaintOver(w, h)
 
     -- draw.SimpleText("SWAMP", "SwampShop1", w - 300, h - 82)
     -- draw.SimpleText("SHOP", "SwampShop2", w - 270, h - 48)
-    local a = math.min(5.0 - ((RealTime() - SS_INVENTORY_POINT_OUT) * 1.0), 1.0, (RealTime() - SS_INVENTORY_POINT_OUT) * 4.0)
+    local a = math.min(5.0 - ((RealTime() - (SS_INVENTORY_POINT_OUT or -100)) * 1.0), 1.0, (RealTime() - (SS_INVENTORY_POINT_OUT or -100)) * 4.0)
 
     if a > 0 then
         surface.DisableClipping(true)
@@ -549,10 +528,6 @@ function PANEL:PaintOver(w, h)
         draw.SimpleText("↑", "SS_LargeTitle", w / 2 - 20, h + (math.sin(RealTime() * 6.0) * 5.0), Color(255, 255, 255, 255 * a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
         surface.DisableClipping(false)
     end
-end
-
-function PANEL:OnRemove()
-    SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
 end
 
 vgui.Register('DPointShopMenu', PANEL, "EditablePanel")

@@ -70,10 +70,8 @@ vgui.Register('DSSAuctionMode', {
 
         self.results = vgui("DSSTileGrid", self)
     end,
-    Paint = function(self)
-        -- Paint is used as a Think function that only runs when visible
-        -- todo: DO this for inventory?
-
+    Think = function(self)
+        -- only runs when visible
         if self.LatestSearch ~= self.DesiredSearch or self.LatestCategory ~= self.DesiredCategory then
             net.Start('SS_SearchAuctions')
             net.WriteUInt(self.DesiredSearch, 16) --page

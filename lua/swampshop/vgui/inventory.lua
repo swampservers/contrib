@@ -1,26 +1,29 @@
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 
-print("blackpeople")
-
 vgui.Register('DSSInventoryMode', {
 
     SetCategories = function(self, categories)
         self.categories = categories
-
+        self.validversion = nil
     end,
     Think = function(self)
-        if self.validtick ~= SS_ValidInventoryTick then
-            -- if #self:GetCanvas():GetChildren() > 0 then
+        -- only runs when visible
+        
+        if self.validversion ~= SS_InventoryVersion then
+            self.validversion = SS_InventoryVersion
+            
             local scroll2 = self:GetVBar():GetScroll()
 
             for k, v in pairs(self:GetCanvas():GetChildren()) do
                 v:Remove()
             end
-
-            -- Pad(self)
-            -- TODO sort the items on recipt, then store sortedindex on them
-            local itemstemp = table.Copy(LocalPlayer().SS_Items or {}) --GetInventory())
+            
+            local itemstemp = {}
+            
+            for _,item in ipairs(LocalPlayer().SS_Items or {}) do
+                table.insert(itemstemp, item)
+            end
 
             table.sort(itemstemp, function(a, b)
                 local ar, br = SS_GetRatingID(a.specs.rating), SS_GetRatingID(b.specs.rating)
@@ -75,9 +78,7 @@ vgui.Register('DSSInventoryMode', {
                 end
             end
 
-            -- Pad(self)
             self:InvalidateLayout()
-            self.validtick = SS_ValidInventoryTick
 
             timer.Simple(0, function()
                 self:GetVBar():SetScroll(scroll2)
