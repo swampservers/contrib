@@ -1,8 +1,6 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- name is because of alphabetical include sorting, baseclass has to come first
-
 local PANEL = {}
 
 function PANEL:Init()

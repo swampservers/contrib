@@ -15,7 +15,6 @@ Example below.
 ]]
 local vgui_stack = {}
 
-
 function with_vgui(parent, constructor)
     table.insert(vgui_stack, parent)
 
@@ -39,7 +38,6 @@ setmetatable(vgui, {
 
         assert(parent_or_constructor == nil or ispanel(parent_or_constructor))
         local p = vgui.Create(classname, parent_or_constructor)
-
         with_vgui(p, constructor)
 
         return p

@@ -17,7 +17,6 @@ for _, name in ipairs(files) do
     end
 end
 
-
 local Player = FindMetaTable('Player')
 
 function SS_Initialize()

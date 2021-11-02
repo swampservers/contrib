@@ -288,7 +288,6 @@ function PANEL:Init()
         end)
     end)
 
-
     --whole page contents
     self.mainpane = vgui("DPanel", self, function(p)
         p:DockPadding(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
@@ -312,7 +311,6 @@ function PANEL:Init()
                 p.Paint = noop
             end)
         end)
-
     end)
 
     local btns = {}
@@ -400,15 +398,15 @@ function PANEL:Init()
 
             p.OnDeactivate = function()
                 panel:SetVisible(false)
-                -- panel:SetZPos(1)
             end
 
+            -- panel:SetZPos(1)
             p.OnActivate = function()
                 panel:SetVisible(true)
-                -- panel:SetZPos(100)
             end
         end)
 
+        -- panel:SetZPos(100)
         table.insert(btns, btn)
 
         if firstCat then
@@ -416,7 +414,6 @@ function PANEL:Init()
             btn:SetActive(true)
             panel:SetVisible(true)
         end
-
         -- DScrollPanel:GetCanvas():DockPadding(0,SS_COMMONMARGIN,0,0)
 
         return DScrollPanel
@@ -446,7 +443,6 @@ function PANEL:Init()
                 p:SetContentAlignment(4)
                 p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
                 p:SetColor(MenuTheme_TX)
-
                 p:SizeToContentsY()
             end)
         end)
@@ -458,14 +454,13 @@ function PANEL:Init()
             p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
             p:SetBorder(0)
             p:SetSpaceX(SS_COMMONMARGIN)
-            p:SetSpaceY(SS_COMMONMARGIN)     
+            p:SetSpaceY(SS_COMMONMARGIN)
         end)
-        -- DScrollPanel:AddItem(ShopCategoryTabLayout)
     end
 
+    -- DScrollPanel:AddItem(ShopCategoryTabLayout)
     for _, CATEGORY in ipairs(SS_Layout) do
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
-
         -- for _,dock in ipairs({TOP,BOTTOM}) do
         --     vgui('DPanel', cat, function(p)
         --         p.Paint = noop
@@ -473,13 +468,10 @@ function PANEL:Init()
         --         p:Dock(dock)
         --     end)
         -- end
-
-
-
         local first = true
         Pad(cat)
-        -- Pad(cat)
 
+        -- Pad(cat)
         for _, LAYOUT in ipairs(CATEGORY.layout) do
             --we cap off previous ones here
             if (first) then
@@ -487,9 +479,9 @@ function PANEL:Init()
                     first = false
                 end
             else
-                -- Pad(cat)
             end
 
+            -- Pad(cat)
             if LAYOUT.title then
                 NewSubCategoryTitle(cat, LAYOUT.title)
                 -- Pad(cat)
@@ -547,7 +539,6 @@ function PANEL:Init()
             p:SetContentAlignment(4)
             p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
             p:SetColor(MenuTheme_TX)
-
             p:SizeToContentsY()
         end)
 
