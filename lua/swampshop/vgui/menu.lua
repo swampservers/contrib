@@ -81,18 +81,6 @@ function PANEL:Init()
                 menu:SetMinimumWidth(24)
                 menu.Paint = SS_PaintShaded
 
-                -- local p2 = vgui.Create("DImageButton", menu)
-                -- p2:SetImage("icon16/lightbulb.png")
-                -- p2:SetStretchToFit(false)
-                -- p2.Paint = SS_PaintDarkenOnHover
-                -- -- p:SetSize(SS_NAVBARHEIGHT / 2, SS_NAVBARHEIGHT)
-                -- p2:SetTooltip("Toggle dark mode/light mode")
-                -- -- p:Dock(RIGHT)
-                -- p2.DoClick = function()
-                --     GetConVar("ps_darkmode"):SetBool(not GetConVar("ps_darkmode"):GetBool())
-                -- end
-                -- menu:AddPanel(p2)
-                -- p2:SetSize(24, 24)
                 for k, v in pairs(BrandColors) do
                     local ColorChoice = vgui.Create("DButton", menu)
                     ColorChoice:SetText("")
@@ -169,18 +157,6 @@ function PANEL:Init()
                     end
                 end)
 
-                -- vgui("DButton", function(p)
-                --     p:SetFont('DermaDefault')
-                --     p:SetText('(?)')
-                --     p.Paint = SS_PaintDarkenOnHover
-                --     p:SetColor(SS_ColorWhite)
-                --     p:SetSize(20,20)
-                --     p:SetContentAlignment(5)
-                --     p.DoClick = function()
-                --         SS_ToggleMenu()
-                --         ShowMotd("https://swamp.sv/points")
-                --     end
-                -- end)
                 local givebutton = vgui('DImageButton', function(p)
                     p:SetSize(16, 16)
                     p:SetTooltip("Give Points")
@@ -312,31 +288,22 @@ function PANEL:Init()
         end)
     end)
 
+
     --whole page contents
-    vgui("DPanel", self, function(p)
+    self.mainpane = vgui("DPanel", self, function(p)
         p:DockPadding(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
         p:Dock(FILL)
         p.Paint = noop
 
-        --preview pane
-        -- SS_PreviewPane = vgui("DPanel", function(p)
-        --     p:SetWide(SS_RPANEWIDTH)
-        --     p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
-        --     p:Dock(RIGHT)
-        --     p.Paint = SS_PaintFG
         SS_PreviewPane = vgui("DPointShopPreview", function(p)
             p:SetWide(SS_RPANEWIDTH)
             p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
             p:Dock(RIGHT)
 
-            -- if you want to make the background a tile, do it in preview.lua
-            -- p:Dock(FILL)
             SS_DescriptionPanel = vgui("DPanel", function(p)
                 p:Dock(BOTTOM)
                 p:SetTall(1)
 
-                -- p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-                -- p:DockMargin(0,0,0,32)
                 p.PerformLayout = function()
                     SS_DescriptionPanel:InvalidateParent()
                     SS_DescriptionPanel:SizeToChildren(false, true)
@@ -346,29 +313,17 @@ function PANEL:Init()
             end)
         end)
 
-        -- end)
-        self.leftpane = vgui("DPanel", function(p)
-            p:Dock(FILL)
-            p.Paint = noop
-        end)
     end)
 
     local btns = {}
     local firstCat = true
 
     local function NewCategory(catname, icon, inv)
-        local panel = vgui.Create('DPanel', self.leftpane)
+        local panel = vgui.Create('DPanel', self.mainpane)
         panel:Dock(FILL)
         panel:DockMargin(0, 0, 0, 0)
-        panel.Paint = function() end
-
-        if firstCat then
-            panel:SetZPos(100)
-            panel:SetVisible(true)
-        else
-            panel:SetZPos(1)
-            panel:SetVisible(false)
-        end
+        panel.Paint = noop
+        panel:SetVisible(false)
 
         --add item list
         local DScrollPanel = vgui('DScrollPanel', panel, function(p)
@@ -381,7 +336,7 @@ function PANEL:Init()
             SS_SetupVBar(p.VBar)
             p.VBar:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
 
-            --the pretty layout kinda just breaks when you take away the scroll bar so let's just leave it there
+            -- force the scrollbar to stay there
             function p.VBar:SetUp(_barsize_, _canvassize_)
                 self.BarSize = _barsize_
                 self.CanvasSize = math.max(_canvassize_ - _barsize_, 0)
@@ -391,95 +346,95 @@ function PANEL:Init()
             end
         end)
 
-        local btn = vgui.Create("DButton", inv and self.invbar or self.topbar)
-        btn:Dock(LEFT)
-        btn:SetText(catname)
-        btn:SetFont("SS_Category")
-        btn:SetImage(icon)
+        local btn = vgui("DButton", inv and self.invbar or self.topbar, function(p)
+            p:Dock(LEFT)
+            p:SetText(catname)
+            p:SetFont("SS_Category")
+            p:SetImage(icon)
+            p:SetTextColor(BrandColorWhite)
 
-        btn.Paint = function(pnl, w, h)
-            if pnl:GetActive() then
-                surface.SetDrawColor(Color(0, 0, 0, 144))
-                surface.DrawRect(0, 0, w, h)
-                --gradient drop down?
-            else
-                SS_PaintDarkenOnHover(pnl, w, h)
+            p.Paint = function(pnl, w, h)
+                if pnl:GetActive() then
+                    surface.SetDrawColor(Color(0, 0, 0, 144))
+                    surface.DrawRect(0, 0, w, h)
+                    --gradient drop down?
+                else
+                    SS_PaintDarkenOnHover(pnl, w, h)
+                end
             end
-        end
 
-        btn.UpdateColours = function(pnl)
-            pnl:SetTextColor(BrandColorWhite)
-        end
+            p.PerformLayout = function(pnl)
+                pnl:SizeToContents()
+                pnl:SetWide(pnl:GetWide() + 24)
+                pnl:SetTall(pnl:GetParent():GetTall())
+                DLabel.PerformLayout(pnl)
+                local txt_inset = -8
+                pnl.m_Image:SetSize(16, 16)
+                pnl.m_Image:SetPos((pnl:GetWide() - 16) * 0.5, pnl:GetTall() + txt_inset - (16 + 20))
+                pnl:SetContentAlignment(2)
+                pnl:SetTextInset(0, txt_inset)
+            end
 
-        btn.PerformLayout = function(pnl)
-            pnl:SizeToContents()
-            pnl:SetWide(pnl:GetWide() + 24)
-            pnl:SetTall(pnl:GetParent():GetTall())
-            DLabel.PerformLayout(pnl)
-            local txt_inset = -8
-            pnl.m_Image:SetSize(16, 16)
-            pnl.m_Image:SetPos((pnl:GetWide() - 16) * 0.5, pnl:GetTall() + txt_inset - (16 + 20))
-            pnl:SetContentAlignment(2)
-            pnl:SetTextInset(0, txt_inset)
-        end
+            p.GetActive = function(pnl) return pnl.Active or false end
 
-        btn.GetActive = function(pnl) return pnl.Active or false end
+            p.SetActive = function(pnl, state)
+                pnl.Active = state
+            end
 
-        btn.SetActive = function(pnl, state)
-            pnl.Active = state
-        end
+            p.DoClick = function(pnl)
+                --patch
+                SS_CustomizerPanel:Close()
+
+                if IsValid(SS_SelectedTile) then
+                    SS_SelectedTile:Deselect()
+                end
+
+                for k, v in pairs(btns) do
+                    v:SetActive(false)
+                    v:OnDeactivate()
+                end
+
+                pnl:SetActive(true)
+                pnl:OnActivate()
+            end
+
+            p.OnDeactivate = function()
+                panel:SetVisible(false)
+                -- panel:SetZPos(1)
+            end
+
+            p.OnActivate = function()
+                panel:SetVisible(true)
+                -- panel:SetZPos(100)
+            end
+        end)
+
+        table.insert(btns, btn)
 
         if firstCat then
             firstCat = false
             btn:SetActive(true)
-        end
-
-        btn.DoClick = function(pnl)
-            --patch
-            SS_CustomizerPanel:Close()
-
-            if IsValid(SS_SelectedTile) then
-                SS_SelectedTile:Deselect()
-            end
-
-            for k, v in pairs(btns) do
-                v:SetActive(false)
-                v:OnDeactivate()
-            end
-
-            pnl:SetActive(true)
-            pnl:OnActivate()
-        end
-
-        btn.OnDeactivate = function()
-            panel:SetVisible(false)
-            panel:SetZPos(1)
-        end
-
-        btn.OnActivate = function()
             panel:SetVisible(true)
-            panel:SetZPos(100)
         end
 
-        table.insert(btns, btn)
+        -- DScrollPanel:GetCanvas():DockPadding(0,SS_COMMONMARGIN,0,0)
 
         return DScrollPanel
     end
-
-    local padcnt = 0
 
     local function Pad(DScrollPanel)
         local pad = vgui.Create('DPanel', DScrollPanel)
         pad.Paint = noop
         pad:SetTall(SS_COMMONMARGIN)
         pad:Dock(TOP)
-        DScrollPanel:AddItem(pad)
+        -- pad:DockMargin(0,0,0,SS_COMMONMARGIN)
+        -- DScrollPanel:AddItem(pad)
     end
 
     local function NewSubCategoryTitle(DScrollPanel, txt)
         vgui("DPanel", DScrollPanel, function(p)
             p:Dock(TOP)
-            p:DockMargin(0, 0, SS_COMMONMARGIN, 0)
+            p:DockMargin(0, 0, SS_COMMONMARGIN, SS_COMMONMARGIN)
             p:SetPaintBackground(true)
             p:SetTall(SS_SUBCATEGORY_HEIGHT)
             p.Paint = SS_PaintFG
@@ -492,35 +447,38 @@ function PANEL:Init()
                 p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
                 p:SetColor(MenuTheme_TX)
 
-                p.UpdateColours = function(pnl)
-                    pnl:SetTextColor(MenuTheme_TX)
-                end
-
                 p:SizeToContentsY()
             end)
         end)
     end
 
     local function NewSubCategory(DScrollPanel)
-        local ShopCategoryTabLayout = vgui.Create('DIconLayout', DScrollPanel)
-        ShopCategoryTabLayout:Dock(TOP)
-        ShopCategoryTabLayout:DockMargin(0, 0, 0, 0)
-        ShopCategoryTabLayout:SetBorder(0)
-        ShopCategoryTabLayout:SetSpaceX(SS_COMMONMARGIN)
-        ShopCategoryTabLayout:SetSpaceY(SS_COMMONMARGIN)
-        DScrollPanel:AddItem(ShopCategoryTabLayout)
-
-        return ShopCategoryTabLayout
-    end
-
-    local function FinishCategory(DScrollPanel)
-        Pad(DScrollPanel)
+        return vgui('DIconLayout', DScrollPanel, function(p)
+            p:Dock(TOP)
+            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+            p:SetBorder(0)
+            p:SetSpaceX(SS_COMMONMARGIN)
+            p:SetSpaceY(SS_COMMONMARGIN)     
+        end)
+        -- DScrollPanel:AddItem(ShopCategoryTabLayout)
     end
 
     for _, CATEGORY in ipairs(SS_Layout) do
         local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
+
+        -- for _,dock in ipairs({TOP,BOTTOM}) do
+        --     vgui('DPanel', cat, function(p)
+        --         p.Paint = noop
+        --         p:SetTall(SS_COMMONMARGIN)
+        --         p:Dock(dock)
+        --     end)
+        -- end
+
+
+
         local first = true
         Pad(cat)
+        -- Pad(cat)
 
         for _, LAYOUT in ipairs(CATEGORY.layout) do
             --we cap off previous ones here
@@ -529,12 +487,12 @@ function PANEL:Init()
                     first = false
                 end
             else
-                Pad(cat)
+                -- Pad(cat)
             end
 
             if LAYOUT.title then
                 NewSubCategoryTitle(cat, LAYOUT.title)
-                Pad(cat)
+                -- Pad(cat)
             end
 
             local scat = NewSubCategory(cat)
@@ -590,26 +548,9 @@ function PANEL:Init()
             p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
             p:SetColor(MenuTheme_TX)
 
-            p.UpdateColours = function(pnl)
-                pnl:SetTextColor(MenuTheme_TX)
-            end
-
             p:SizeToContentsY()
         end)
 
-        -- p.results = vgui("DLabel", function(p)
-        --     p:SetText("...")
-        --     p:SetFont('SS_SubCategory')
-        --     p:SetWide(150)
-        --     p:Dock(RIGHT)
-        --     p:SetContentAlignment(6)
-        --     p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-        --     p:SetColor(MenuTheme_TX)
-        --     p.UpdateColours = function(pnl)
-        --         pnl:SetTextColor(MenuTheme_TX)
-        --     end
-        --     p:SizeToContentsY()
-        -- end)
         vgui("DButton", function(p)
             p:Dock(RIGHT)
             p:SetText(">")
@@ -632,10 +573,6 @@ function PANEL:Init()
             p:SetColor(MenuTheme_TX)
         end)
 
-        -- p.UpdateColours = function(pnl)
-        --     pnl:SetTextColor(MenuTheme_TX)
-        -- end
-        -- p:SizeToContentsY()
         vgui("DButton", function(p)
             p:Dock(RIGHT)
             p:SetText("<")
@@ -865,7 +802,7 @@ function PANEL:Init()
     --     p:Dock(RIGHT)
     -- end)
     SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
-    SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent():GetParent())
+    SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent()) --:GetParent())
     SS_CustomizerPanel:Dock(FILL)
     SS_CustomizerPanel:Close()
 

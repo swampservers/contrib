@@ -1,4 +1,9 @@
-﻿local PANEL = {}
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
+
+-- name is because of alphabetical include sorting, baseclass has to come first
+
+local PANEL = {}
 
 function PANEL:Init()
     self.Pitch = 30
@@ -29,11 +34,11 @@ function PANEL:StartCamera(hfraction)
     local x, y = self:LocalToScreen(0, 0)
     local w, h = self:GetSize()
     cam.Start3D(pos, ang, self.fFOV, x, y, w, (hfraction or 1) * h, 2, 2000)
-    cam.IgnoreZ(true)
+    -- cam.IgnoreZ(true)
 end
 
 function PANEL:EndCamera()
-    cam.IgnoreZ(false)
+    -- cam.IgnoreZ(false)
     cam.End3D()
     render.SuppressEngineLighting(false)
 end
