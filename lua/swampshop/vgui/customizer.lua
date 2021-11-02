@@ -214,7 +214,7 @@ local function SliderMaker(parent, text)
     p:SetDecimals(2)
     p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
     p:Dock(TOP)
-    p:SetDark(not SS_DarkMode)
+    p:SetDark(false)
     p.TextArea:SetPaintBackground(false)
     p:SetTall(24)
     p.TextArea.BasedPaint = p.TextArea.Paint

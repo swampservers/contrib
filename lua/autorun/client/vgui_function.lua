@@ -15,30 +15,32 @@ Example below.
 ]]
 local vgui_stack = {}
 
-function with_vgui(parent, constructor)
-    table.insert(vgui_stack, parent)
-
-    ProtectedCall(function()
-        constructor(parent)
-    end)
-
-    table.remove(vgui_stack)
-end
-
 setmetatable(vgui, {
-    __call = function(_vgui, classname, parent_or_constructor, constructor)
+    __call = function(_vgui, classname_or_element, parent_or_constructor, constructor)
         parent_or_constructor = parent_or_constructor or function() end
 
         if isfunction(parent_or_constructor) then
             constructor = parent_or_constructor
             parent_or_constructor = vgui_stack[#vgui_stack] --nil if empty
-        else
-            assert(table.IsEmpty(vgui_stack), "Expect empty vgui stack with specified parent")
+        -- else
+        --     assert(table.IsEmpty(vgui_stack), "Expect empty vgui stack with specified parent")
         end
 
         assert(parent_or_constructor == nil or ispanel(parent_or_constructor))
-        local p = vgui.Create(classname, parent_or_constructor)
-        with_vgui(p, constructor)
+
+        assert(not (ispanel(classname_or_element) and ispanel(parent_or_constructor)), "Can't specify parent with already created element")
+
+        local p = isstring(classname_or_element) and vgui.Create(classname_or_element, parent_or_constructor) or classname_or_element
+
+        if constructor then
+            table.insert(vgui_stack, p)
+
+            ProtectedCall(function()
+                constructor(p)
+            end)
+        
+            table.remove(vgui_stack)
+        end
 
         return p
     end

@@ -3,6 +3,8 @@
 local PANEL = {}
 local froggy = Material("vgui/frog.png")
 
+--NOMINIFY
+
 surface.CreateFont("SwampShop1", {
     font = "averiaserif-bold",
     weight = 1000,
@@ -288,6 +290,53 @@ function PANEL:Init()
         end)
     end)
 
+
+    local unopened = true
+
+    local function MakeCategoryButton(cat, catname, icon, inv)
+        vgui("DButton", inv and self.invbar or self.topbar, function(p)
+            p.ModePanel = cat
+
+            p:Dock(LEFT)
+            p:SetText(catname)
+            p:SetFont("SS_Category")
+            p:SetImage(icon)
+            p:SetTextColor(BrandColorWhite)
+
+            function p:Paint( w, h)
+                if SS_ActiveMode == self.ModePanel then
+                    surface.SetDrawColor(Color(0, 0, 0, 144))
+                    surface.DrawRect(0, 0, w, h)
+                else
+                    SS_PaintDarkenOnHover(self, w, h)
+                end
+            end
+
+            function p:PerformLayout()
+                self:SizeToContents()
+                self:SetWide(self:GetWide() + 24)
+                self:SetTall(self:GetParent():GetTall())
+                DLabel.PerformLayout(self)
+                local txt_inset = -8
+                self.m_Image:SetSize(16, 16)
+                self.m_Image:SetPos((self:GetWide() - 16) * 0.5, self:GetTall() + txt_inset - (16 + 20))
+                self:SetContentAlignment(2)
+                self:SetTextInset(0, txt_inset)
+            end
+
+            function p:DoClick()
+                p.ModePanel:Open()
+            end
+        end)
+
+        if unopened then
+            unopened = false
+            cat:Open()
+        end
+    end
+
+
+
     --whole page contents
     self.mainpane = vgui("DPanel", self, function(p)
         p:DockPadding(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
@@ -313,475 +362,56 @@ function PANEL:Init()
         end)
     end)
 
-    local btns = {}
-    local firstCat = true
 
-    local function NewCategory(catname, icon, inv)
-        local panel = vgui.Create('DPanel', self.mainpane)
-        panel:Dock(FILL)
-        panel:DockMargin(0, 0, 0, 0)
-        panel.Paint = noop
-        panel:SetVisible(false)
-
-        --add item list
-        local DScrollPanel = vgui('DScrollPanel', panel, function(p)
-            p:Dock(FILL)
-            p:DockMargin(0, 0, 0, 0)
-            p:DockPadding(0, 0, 0, 0)
-            --p.Paint = SS_PaintDirty
-            --p.VBar:DockMargin(0, 0, 0, 0)
-            p.VBar:SetWide(SS_SCROLL_WIDTH)
-            SS_SetupVBar(p.VBar)
-            p.VBar:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
-
-            -- force the scrollbar to stay there
-            function p.VBar:SetUp(_barsize_, _canvassize_)
-                self.BarSize = _barsize_
-                self.CanvasSize = math.max(_canvassize_ - _barsize_, 0)
-                self:SetEnabled(true)
-                self.btnGrip:SetEnabled(_canvassize_ > _barsize_)
-                self:InvalidateLayout()
-            end
-        end)
-
-        local btn = vgui("DButton", inv and self.invbar or self.topbar, function(p)
-            p:Dock(LEFT)
-            p:SetText(catname)
-            p:SetFont("SS_Category")
-            p:SetImage(icon)
-            p:SetTextColor(BrandColorWhite)
-
-            p.Paint = function(pnl, w, h)
-                if pnl:GetActive() then
-                    surface.SetDrawColor(Color(0, 0, 0, 144))
-                    surface.DrawRect(0, 0, w, h)
-                    --gradient drop down?
-                else
-                    SS_PaintDarkenOnHover(pnl, w, h)
-                end
-            end
-
-            p.PerformLayout = function(pnl)
-                pnl:SizeToContents()
-                pnl:SetWide(pnl:GetWide() + 24)
-                pnl:SetTall(pnl:GetParent():GetTall())
-                DLabel.PerformLayout(pnl)
-                local txt_inset = -8
-                pnl.m_Image:SetSize(16, 16)
-                pnl.m_Image:SetPos((pnl:GetWide() - 16) * 0.5, pnl:GetTall() + txt_inset - (16 + 20))
-                pnl:SetContentAlignment(2)
-                pnl:SetTextInset(0, txt_inset)
-            end
-
-            p.GetActive = function(pnl) return pnl.Active or false end
-
-            p.SetActive = function(pnl, state)
-                pnl.Active = state
-            end
-
-            p.DoClick = function(pnl)
-                --patch
-                SS_CustomizerPanel:Close()
-
-                if IsValid(SS_SelectedTile) then
-                    SS_SelectedTile:Deselect()
-                end
-
-                for k, v in pairs(btns) do
-                    v:SetActive(false)
-                    v:OnDeactivate()
-                end
-
-                pnl:SetActive(true)
-                pnl:OnActivate()
-            end
-
-            p.OnDeactivate = function()
-                panel:SetVisible(false)
-            end
-
-            -- panel:SetZPos(1)
-            p.OnActivate = function()
-                panel:SetVisible(true)
-            end
-        end)
-
-        -- panel:SetZPos(100)
-        table.insert(btns, btn)
-
-        if firstCat then
-            firstCat = false
-            btn:SetActive(true)
-            panel:SetVisible(true)
-        end
-        -- DScrollPanel:GetCanvas():DockPadding(0,SS_COMMONMARGIN,0,0)
-
-        return DScrollPanel
-    end
-
-    local function Pad(DScrollPanel)
-        local pad = vgui.Create('DPanel', DScrollPanel)
-        pad.Paint = noop
-        pad:SetTall(SS_COMMONMARGIN)
-        pad:Dock(TOP)
-        -- pad:DockMargin(0,0,0,SS_COMMONMARGIN)
-        -- DScrollPanel:AddItem(pad)
-    end
-
-    local function NewSubCategoryTitle(DScrollPanel, txt)
-        vgui("DPanel", DScrollPanel, function(p)
-            p:Dock(TOP)
-            p:DockMargin(0, 0, SS_COMMONMARGIN, SS_COMMONMARGIN)
-            p:SetPaintBackground(true)
-            p:SetTall(SS_SUBCATEGORY_HEIGHT)
-            p.Paint = SS_PaintFG
-
-            vgui("DLabel", function(p)
-                p:SetText(txt)
-                p:SetFont('SS_SubCategory')
-                p:Dock(FILL)
-                p:SetContentAlignment(4)
-                p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-                p:SetColor(MenuTheme_TX)
-                p:SizeToContentsY()
-            end)
-        end)
-    end
-
-    local function NewSubCategory(DScrollPanel)
-        return vgui('DIconLayout', DScrollPanel, function(p)
-            p:Dock(TOP)
-            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-            p:SetBorder(0)
-            p:SetSpaceX(SS_COMMONMARGIN)
-            p:SetSpaceY(SS_COMMONMARGIN)
-        end)
-    end
-
-    -- DScrollPanel:AddItem(ShopCategoryTabLayout)
     for _, CATEGORY in ipairs(SS_Layout) do
-        local cat = NewCategory(CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
-        -- for _,dock in ipairs({TOP,BOTTOM}) do
-        --     vgui('DPanel', cat, function(p)
-        --         p.Paint = noop
-        --         p:SetTall(SS_COMMONMARGIN)
-        --         p:Dock(dock)
-        --     end)
-        -- end
-        local first = true
-        Pad(cat)
-
-        -- Pad(cat)
-        for _, LAYOUT in ipairs(CATEGORY.layout) do
-            --we cap off previous ones here
-            if (first) then
-                if (#LAYOUT.products > 0) then
-                    first = false
+        vgui("DSSScrollableMode", self.mainpane, function(p)
+            for _, LAYOUT in ipairs(CATEGORY.layout) do
+                if LAYOUT.title then
+                    vgui("DSSSubtitle", function(p)
+                        p:SetText(LAYOUT.title)
+                    end)
                 end
-            else
+
+                if #LAYOUT.products > 0 then
+                    vgui("DSSTileGrid", function(p)
+                        for _, product in ipairs(LAYOUT.products) do
+                            p:AddProduct(product)
+                        end
+                    end)
+                end
             end
 
-            -- Pad(cat)
-            if LAYOUT.title then
-                NewSubCategoryTitle(cat, LAYOUT.title)
-                -- Pad(cat)
-            end
-
-            local scat = NewSubCategory(cat)
-
-            for _, product in ipairs(LAYOUT.products) do
-                local model = vgui.Create('DPointShopItem')
-                model:SetProduct(product)
-                model:SetSize(SS_TILESIZE, SS_TILESIZE)
-                scat:Add(model)
-            end
-        end
-
-        Pad(cat)
+            MakeCategoryButton(p, CATEGORY.name, 'icon16/' .. CATEGORY.icon .. '.png')
+        end)
     end
 
-    SS_AuctionPanel = NewCategory("Auctions", 'icon16/house.png')
-    SS_AuctionPanel.DesiredSearch = 1
-    SS_AuctionPanel.DesiredCategory = "Everything"
-    Pad(SS_AuctionPanel)
+    SS_AuctionPanel = vgui("DSSAuctionMode", self.mainpane)
+    MakeCategoryButton(SS_AuctionPanel, "Auctions", 'icon16/house.png')
 
-    -- todo: DO this for inventory?
-    function SS_AuctionPanel:VisibleThink()
-        if self.LatestSearch ~= self.DesiredSearch or self.LatestCategory ~= self.DesiredCategory then
-            net.Start('SS_SearchAuctions')
-            net.WriteUInt(self.DesiredSearch, 16) --page
-            net.WriteUInt(0, 32) -- minprice
-            net.WriteUInt(0, 32) --maxprice
-            net.WriteString(self.DesiredCategory)
-            net.WriteBool(false) --mineonly
-            net.SendToServer()
-            self.LatestSearch = self.DesiredSearch
-            self.LatestCategory = self.DesiredCategory
-        end
+    local function NewInventoryCategory(txt, icon, cats)
+        local panel = vgui("DSSScrollableMode", self.mainpane)
+
+        MakeCategoryButton(panel, txt, icon, true)
+
+        inventorythink(panel, cats)
+
+        return panel
     end
 
-    SS_AuctionPanel.controls = vgui("DPanel", SS_AuctionPanel, function(p)
-        p:Dock(TOP)
-        p:DockMargin(0, 0, SS_COMMONMARGIN, 0)
-        p:SetPaintBackground(true)
-        p:SetTall(SS_SUBCATEGORY_HEIGHT)
-
-        function p:Paint(w, h)
-            SS_PaintFG(self, w, h)
-            SS_AuctionPanel:VisibleThink()
-            -- Control the search. do it in paint so we arent updating when the panel isnt shown
-        end
-
-        p.results = vgui("DLabel", function(p)
-            p:SetText("Auctions")
-            p:SetFont('SS_SubCategory')
-            p:Dock(FILL)
-            p:SetContentAlignment(4)
-            p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-            p:SetColor(MenuTheme_TX)
-            p:SizeToContentsY()
-        end)
-
-        vgui("DButton", function(p)
-            p:Dock(RIGHT)
-            p:SetText(">")
-            p:SetColor(MenuTheme_TX)
-            p:SetFont("SS_SubCategory")
-            p.Paint = SS_PaintDarkenOnHover
-
-            p.DoClick = function()
-                SS_AuctionPanel.DesiredSearch = SS_AuctionPanel.DesiredSearch + 1
-            end
-        end)
-
-        p.pagenumber = vgui("DLabel", function(p)
-            p:SetText("1")
-            p:SetFont('SS_SubCategory')
-            p:Dock(RIGHT)
-            p:SetWide(30)
-            p:SetContentAlignment(5)
-            -- p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
-            p:SetColor(MenuTheme_TX)
-        end)
-
-        vgui("DButton", function(p)
-            p:Dock(RIGHT)
-            p:SetText("<")
-            p:SetColor(MenuTheme_TX)
-            p:SetFont("SS_SubCategory")
-            p.Paint = SS_PaintDarkenOnHover
-
-            p.DoClick = function()
-                SS_AuctionPanel.DesiredSearch = math.max(1, SS_AuctionPanel.DesiredSearch - 1)
-            end
-        end)
-
-        vgui("DComboBox", function(p)
-            p:Dock(RIGHT)
-            p:SetWide(150)
-            p:SetSortItems(false)
-            p:SetValue("Everything")
-            p:AddChoice("Accessories")
-            p:AddChoice("Props")
-            p:AddChoice("Weapons")
-            p:AddChoice("Misc")
-            p:AddChoice("Everything")
-            p:SetColor(MenuTheme_TX)
-            p:SetFont("SS_Donate2")
-            p.Paint = SS_PaintDarkenOnHover
-
-            p.OnSelect = function(self, index, value)
-                SS_AuctionPanel.DesiredSearch = 1
-                SS_AuctionPanel.DesiredCategory = value
-            end
-        end)
+    vgui("DSSInventoryMode", self.mainpane, function(p)
+        p:SetCategories({"Weapons", "Skins"})
+        MakeCategoryButton(p, "Weapons", 'icon16/gun.png', true)
     end)
 
-    --CONTROLS HERE...
-    Pad(SS_AuctionPanel)
-    SS_AuctionPanel.results = NewSubCategory(SS_AuctionPanel)
+    vgui("DSSInventoryMode", self.mainpane, function(p)
+        p:SetCategories({"Props"})
+        MakeCategoryButton(p, "Props", 'icon16/book.png', true)
+    end)
 
-    function SS_AuctionPanel:ReceiveSearch(items, totalitems, page)
-        for i, v in ipairs(SS_AuctionPanel.results:GetChildren()) do
-            v:Remove()
-        end
-
-        self.controls.results:SetText("Auctions - " .. tostring(totalitems) .. " results")
-        self.controls.pagenumber:SetText(tostring(page))
-        -- self.controls.results:SizeToContents()
-        items = SS_MakeItems(SS_SAMPLE_ITEM_OWNER, items)
-
-        for _, item in pairs(items) do
-            local mine = (item.seller == LocalPlayer():SteamID64())
-            local mybid = (item.auction_bidder == LocalPlayer():SteamID64())
-            local sn = item.seller_name
-            local bn = item.bidder_name
-
-            if mine then
-                sn = sn .. " (You)"
-            end
-
-            if mybid then
-                bn = bn .. " (You)"
-            end
-
-            -- Hmm, lets override metatable keys on the item instance
-            item.primaryaction = false
-            local desc = item:GetDescription() or ""
-            desc = desc .. "\n(Item class: " .. item.class .. ")"
-            desc = desc .. "\n\nSold by " .. sn
-
-            if item.auction_bidder == "0" then
-                desc = desc .. "\nNo bidders"
-            else
-                desc = desc .. "\nHighest bidder is " .. bn .. " (" .. item.auction_price .. ")"
-            end
-
-            -- if item.seller == LocalPlayer():SteamID64() then
-            if mine then
-                if item.auction_bidder == "0" then
-                    item.actions = {
-                        cancel = {
-                            Text = function(item) return "Cancel Auction" end,
-                            OnClient = function(item)
-                                net.Start("SS_CancelAuction")
-                                net.WriteUInt(item.id, 32)
-                                net.SendToServer()
-                            end
-                        }
-                    }
-                else
-                    desc = desc .. "\n\nCan't cancel a bidded auction."
-                    item.actions = {}
-                end
-            else
-                if mybid then
-                    item.actions = {}
-                else
-                    item.actions = {
-                        bid = {
-                            Text = function(item) return "Bid (" .. tostring(item.bid_price) .. " minimum)" end,
-                            OnClient = function(item)
-                                Derma_StringRequest("Bid on this " .. item:GetName(), "Enter your bid - minimum is " .. tostring(item.bid_price), tostring(item.bid_price), function(text)
-                                    text = tonumber(text)
-
-                                    if text then
-                                        net.Start("SS_BidAuction")
-                                        net.WriteUInt(item.id, 32)
-                                        net.WriteUInt(math.max(0, text), 32)
-                                        net.SendToServer()
-                                    end
-                                end, function(text) end, "Bid", "Cancel")
-                            end
-                        }
-                    }
-                end
-            end
-
-            item.GetDescription = function() return desc end
-            local model = vgui.Create('DPointShopItem')
-            model:SetItem(item)
-            model:SetSize(SS_TILESIZE, SS_TILESIZE)
-            SS_AuctionPanel.results:Add(model)
-        end
-    end
-
-    local function inventorythink(pnl, categories)
-        pnl.Think = function(self)
-            if self.validtick ~= SS_ValidInventoryTick then
-                -- if #self:GetCanvas():GetChildren() > 0 then
-                local scroll2 = self:GetVBar():GetScroll()
-
-                for k, v in pairs(self:GetCanvas():GetChildren()) do
-                    v:Remove()
-                end
-
-                Pad(self)
-                -- TODO sort the items on recipt, then store sortedindex on them
-                local itemstemp = table.Copy(LocalPlayer().SS_Items or {}) --GetInventory())
-
-                table.sort(itemstemp, function(a, b)
-                    local ar, br = SS_GetRatingID(a.specs.rating), SS_GetRatingID(b.specs.rating)
-
-                    if ar == br then
-                        local an, bn = a:GetName(), b:GetName()
-                        local i = 0
-                        local ml = math.min(string.len(an), string.len(bn))
-
-                        while i < ml do
-                            i = i + 1
-                            local a1 = string.byte(an, i)
-                            local b1 = string.byte(bn, i)
-                            if a1 ~= b1 then return a1 < b1 end
-                        end
-
-                        if string.len(an) == string.len(bn) then return a.id < b.id end
-
-                        return string.len(an) > string.len(bn)
-                    else
-                        return ar > br
-                    end
-                end)
-
-                for k, v in pairs(SS_Items) do
-                    if v.clientside_fake then
-                        table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
-                    end
-                end
-
-                local categorizeditems = {}
-
-                for _, item in pairs(itemstemp) do
-                    local invcategory = item.invcategory or "Other"
-                    categorizeditems[invcategory] = categorizeditems[invcategory] or {}
-                    table.insert(categorizeditems[invcategory], item)
-                end
-
-                local first = true
-
-                for _, cat in ipairs(categories) do
-                    if categorizeditems[cat] and table.Count(categorizeditems[cat]) > 0 then
-                        if (first) then
-                            first = false
-                        else
-                            Pad(self)
-                        end
-
-                        NewSubCategoryTitle(self, cat)
-                        Pad(self)
-                        local sc = NewSubCategory(self)
-
-                        for _, item in pairs(categorizeditems[cat]) do
-                            local model = vgui.Create('DPointShopItem')
-                            model:SetItem(item)
-                            model:SetSize(SS_TILESIZE, SS_TILESIZE)
-                            sc:Add(model)
-                        end
-                    end
-                end
-
-                Pad(self)
-                self:InvalidateLayout()
-                self.validtick = SS_ValidInventoryTick
-
-                timer.Simple(0, function()
-                    self:GetVBar():SetScroll(scroll2)
-                end)
-
-                timer.Simple(0.1, function()
-                    self:GetVBar():SetScroll(scroll2)
-                end)
-            end
-        end
-    end
-
-    inventorythink(NewCategory("Weapons", 'icon16/gun.png', true), {"Weapons", "Skins"})
-
-    inventorythink(NewCategory("Props", 'icon16/book.png', true), {"Props"})
-
-    SS_InventoryPanel = NewCategory("Cosmetics", 'icon16/status_online.png', true)
-
-    inventorythink(SS_InventoryPanel, {"Playermodels", "Accessories", "Mods", "Upgrades", "Other"})
+    vgui("DSSInventoryMode", self.mainpane, function(p)
+        p:SetCategories({"Playermodels", "Accessories", "Mods", "Upgrades", "Other"})
+        MakeCategoryButton(p, "Cosmetics", 'icon16/status_online.png', true)
+    end)
 
     -- --title text 
     -- vgui("DLabel", self.topbar, function(p)
@@ -793,7 +423,7 @@ function PANEL:Init()
     --     p:Dock(RIGHT)
     -- end)
     SS_ValidInventoryTick = (SS_ValidInventoryTick or 0) + 1
-    SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', SS_InventoryPanel:GetParent():GetParent()) --:GetParent())
+    SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', self.mainpane) --:GetParent())
     SS_CustomizerPanel:Dock(FILL)
     SS_CustomizerPanel:Close()
 
@@ -872,24 +502,6 @@ function PANEL:Init()
     end
     -- end 
 end
-
-net.Receive("SS_SearchAuctions", function(len)
-    if len == 0 then
-        if IsValid(SS_AuctionPanel) then
-            SS_AuctionPanel.LatestSearch = nil
-        end
-
-        return
-    end
-
-    local items = net.ReadTable()
-    local total = net.ReadUInt(32)
-    local page = net.ReadUInt(16)
-
-    if IsValid(SS_AuctionPanel) then
-        SS_AuctionPanel:ReceiveSearch(items, total, page)
-    end
-end)
 
 function PANEL:Paint(w, h)
     --Derma_DrawBackgroundBlur(self)

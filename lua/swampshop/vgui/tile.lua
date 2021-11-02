@@ -37,6 +37,7 @@ local PANEL = {}
 
 function PANEL:Init()
     self:SetFOV(60)
+    self:SetSize(SS_TILESIZE, SS_TILESIZE)
 end
 
 function PANEL:Think()
@@ -438,7 +439,7 @@ function PANEL:PaintOver(w, h)
         textcolor = MenuTheme_TX
 
         if self:IsSelected() then
-            BGColor = SS_DarkMode and Color(53, 53, 53, 255) or Color(192, 192, 255, 255)
+            BGColor =  Color(53, 53, 53, 255) 
             local labelview = self:IsHovered() and self.item.primaryaction --not self.item.never_equip
 
             if labelview then
@@ -454,7 +455,7 @@ function PANEL:PaintOver(w, h)
                 end
             end
         elseif labelview then
-            BGColor = SS_DarkMode and Color(43, 43, 43, 255) or Color(216, 216, 248, 255)
+            BGColor = Color(43, 43, 43, 255)
         end
     end
 
@@ -521,4 +522,4 @@ function PANEL:PaintOver(w, h)
     end
 end
 
-vgui.Register('DPointShopItem', PANEL, 'SwampShopModelBase')
+vgui.Register('DSSTile', PANEL, 'SwampShopModelBase')

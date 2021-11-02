@@ -1,37 +1,50 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+
 -- name is because of alphabetical include sorting, baseclass has to come first
-local PANEL = {}
--- function PANEL:Init()
---     self.Pitch = 30
---     self.Yaw = 0
--- end
--- function PANEL:AlignEntity()
---     -- local p,d = self:FocalPointAndDistance()
---     self.Entity:SetPos(Vector(0, 0, 0))
---     self.Entity:SetAngles(Angle(0, self.Yaw, 0))
---     -- self.Entity:SetPos(-self.Entity:LocalToWorld(p))
--- end
--- function PANEL:GetCameraTransform()
---     local p, d = self:FocalPointAndDistance()
---     d = d * (2 ^ (self.ZoomOffset or 0))
---     local ang = Angle(self.Pitch, 225, 0)
---     return self.Entity:LocalToWorld(p) + ang:Forward() * -d, ang
--- end
--- function PANEL:StartCamera(hfraction)
---     render.SuppressEngineLighting(true)
---     render.ResetModelLighting(0.2, 0.2, 0.2)
---     render.SetModelLighting(BOX_TOP, 1, 1, 1)
---     render.SetModelLighting(BOX_FRONT, 1, 1, 1)
---     local pos, ang = self:GetCameraTransform()
---     local x, y = self:LocalToScreen(0, 0)
---     local w, h = self:GetSize()
---     cam.Start3D(pos, ang, self.fFOV, x, y, w, (hfraction or 1) * h, 2, 2000)
---     -- cam.IgnoreZ(true)
--- end
--- function PANEL:EndCamera()
---     -- cam.IgnoreZ(false)
---     cam.End3D()
---     render.SuppressEngineLighting(false)
--- end
-vgui.Register('SwampShopCategory', PANEL, 'DPanel')
+
+vgui.Register('DSSTileGrid', 
+{
+    Init = function(self)
+        self:SetSpaceX(SS_COMMONMARGIN)
+        self:SetSpaceY(SS_COMMONMARGIN)        
+        self:SetBorder(0)
+        self:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+        self:Dock(TOP)
+    end,
+    AddItem = function(self, item)
+        vgui('DSSTile', self, function(p)
+            p:SetItem(item)
+        end)
+    end,
+    AddProduct = function(self, product)
+        vgui('DSSTile', self, function(p)
+            p:SetProduct(product)
+        end)
+    end
+    }
+, 'DIconLayout')
+
+vgui.Register("DSSSubtitle",
+{
+    Init = function(self)
+        self:Dock(TOP)
+        self:DockMargin(0, 0, SS_COMMONMARGIN, SS_COMMONMARGIN)
+        self:SetPaintBackground(true)
+        self:SetTall(SS_SUBCATEGORY_HEIGHT)
+        self.Paint = SS_PaintFG
+
+        self.subtitle = vgui("DLabel", self, function(p)
+            p:SetText("")
+            p:SetFont('SS_SubCategory')
+            p:Dock(FILL)
+            p:SetContentAlignment(4)
+            p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+            p:SetColor(MenuTheme_TX)
+            p:SizeToContentsY()
+        end)
+    end,
+    SetText = function(self, txt)
+        self.subtitle:SetText(txt)
+    end
+},"DPanel")

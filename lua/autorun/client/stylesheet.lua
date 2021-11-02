@@ -11,57 +11,24 @@ BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104
 
 BrandColors = {Color(104, 28, 25), Color(120, 60, 0), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
 
--- CreateClientConVar("ps_darkmode", "1", true)
 CreateClientConVar("ps_themecolor", "1", true)
 
-local function SearchUpdateColors(pnl)
-    if (pnl.UpdateColours) then
-        pnl:UpdateColours(pnl:GetSkin())
-    end
-
-    for k, v in pairs(pnl:GetChildren()) do
-        SearchUpdateColors(v)
-    end
-end
-
-function ReloadStyle(darkmode, color)
-    darkmode = true --darkmode or GetConVar("ps_darkmode"):GetBool()
+function ReloadStyle(color)
     color = color or GetConVar("ps_themecolor"):GetInt()
     MenuTheme_Brand = BrandColors[color] or BrandColors[1]
-    -- local h, s, v = ColorToHSV(MenuTheme_Brand)
-    -- MenuTheme_BrandDark = HSVToColor(h, math.min(s * 1.04, 1), v * 0.96)
-    -- MenuTheme_BrandDarker = HSVToColor(h, math.min(s * 1.04, 1), v * 0.8)
     MenuTheme_BrandDarker = Color(MenuTheme_Brand.r * 0.7, MenuTheme_Brand.g * 0.7, MenuTheme_Brand.b * 0.7)
-    SS_DarkMode = darkmode
 
-    if darkmode then
-        MenuTheme_BG = BrandColorGrayDarker
-        MenuTheme_FG = BrandColorGrayDark
-        MenuTheme_MD = BrandColorGray
-        MenuTheme_TX = Color(200, 200, 200)
-        MenuTheme_TXAlt = Color(255, 255, 255)
-    else
-        MenuTheme_BG = BrandColorGrayLighter
-        MenuTheme_FG = BrandColorGrayLighterer
-        MenuTheme_MD = BrandColorGray
-        MenuTheme_TX = Color(0, 0, 0)
-        MenuTheme_TXAlt = Color(255, 255, 255)
-    end
-
-    if IsValid(SS_ShopMenu) then
-        --SS_ShopMenu:Remove()
-        --SS_ToggleMenu()
-        SearchUpdateColors(SS_ShopMenu)
-    end
+    MenuTheme_BG = BrandColorGrayDarker
+    MenuTheme_FG = BrandColorGrayDark
+    MenuTheme_MD = BrandColorGray
+    MenuTheme_TX = Color(200, 200, 200)
+    MenuTheme_TXAlt = Color(255, 255, 255)
 end
 
 ReloadStyle()
 
--- cvars.AddChangeCallback("ps_darkmode", function(cvar, old, new)
---     ReloadStyle(tobool(new))
--- end)
 cvars.AddChangeCallback("ps_themecolor", function(cvar, old, new)
-    ReloadStyle(nil, tonumber(new))
+    ReloadStyle(tonumber(new))
 end)
 
 SS_ColorWhite = Color(255, 255, 255)
