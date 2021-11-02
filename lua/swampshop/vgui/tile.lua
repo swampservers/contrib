@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 -- Note: CAN BE PRODUCT OR ITEM
+
 -- TODO: why does it look down so much on the preview compared to the item?
 -- TODO: make camera only change pitch and zoom, object rotates only yaw (because of box lighting)
 function SS_PreviewShopModel(self)
@@ -34,48 +35,6 @@ hook.Add("Think", "SS_DeselectTiles", function()
 end)
 
 local PANEL = {}
-
-function PANEL:Init()
-    self.Pitch = 30
-    self.Yaw = 0
-end
-
-function PANEL:AlignEntity()
-    -- local p,d = self:FocalPointAndDistance()
-    self.Entity:SetPos(Vector(0, 0, 0))
-    self.Entity:SetAngles(Angle(0, self.Yaw, 0))
-    -- self.Entity:SetPos(-self.Entity:LocalToWorld(p))
-end
-
-function PANEL:GetCameraTransform()
-    local p, d = self:FocalPointAndDistance()
-    d = d * (2 ^ (self.ZoomOffset or 0))
-    local ang = Angle(self.Pitch, 225, 0)
-
-    return self.Entity:LocalToWorld(p) + ang:Forward() * -d, ang
-end
-
-function PANEL:StartCamera(hfraction)
-    render.SuppressEngineLighting(true)
-    render.ResetModelLighting(0.2, 0.2, 0.2)
-    render.SetModelLighting(BOX_TOP, 1, 1, 1)
-    render.SetModelLighting(BOX_FRONT, 1, 1, 1)
-    local pos, ang = self:GetCameraTransform()
-    local x, y = self:LocalToScreen(0, 0)
-    local w, h = self:GetSize()
-    cam.Start3D(pos, ang, self.fFOV, x, y, w, (hfraction or 1) * h, 2, 2000)
-    cam.IgnoreZ(true)
-end
-
-function PANEL:EndCamera()
-    cam.IgnoreZ(false)
-    cam.End3D()
-    render.SuppressEngineLighting(false)
-end
-
-vgui.Register('SwampShopModelBase', PANEL, 'DModelPanel')
-----------
-PANEL = {}
 
 function PANEL:Init()
     self:SetFOV(60)

@@ -7,10 +7,16 @@ include("sh_layout.lua")
 include("sh_products.lua")
 include("sh_items.lua")
 
-for _, name in pairs(({file.Find('swampshop/vgui/*', 'LUA')})[1]) do
-    local f = SERVER and AddCSLuaFile or include
-    f('swampshop/vgui/' .. name)
+
+local files, _ = file.Find('swampshop/vgui/*', 'LUA')
+table.sort(files)
+for _, name in ipairs(files) do
+    AddCSLuaFile('swampshop/vgui/' .. name)
+    if CLIENT then
+        include('swampshop/vgui/' .. name)
+    end
 end
+
 
 local Player = FindMetaTable('Player')
 
@@ -18,7 +24,7 @@ function SS_Initialize()
     local files, _ = file.Find('swampshop/tabs/*', 'LUA')
     table.sort(files)
 
-    for _, name in pairs(files) do
+    for _, name in ipairs(files) do
         AddCSLuaFile('swampshop/tabs/' .. name)
         include('swampshop/tabs/' .. name)
     end
