@@ -1,30 +1,27 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- name is because of alphabetical include sorting, baseclass has to come first
-
 vgui.Register('DSSAuctionMode', {
     Init = function(self)
         SS_AuctionPanel = self
-        
         self.DesiredSearch = 1
         self.DesiredCategory = "Everything"
 
         self.controls = vgui("DSSSubtitle", self, function(p)
             p:SetText("Auctions")
-                
+
             vgui("DButton", function(p)
                 p:Dock(RIGHT)
                 p:SetText(">")
                 p:SetColor(MenuTheme_TX)
                 p:SetFont("SS_SubCategory")
                 p.Paint = SS_PaintDarkenOnHover
-    
+
                 p.DoClick = function()
                     SS_AuctionPanel.DesiredSearch = SS_AuctionPanel.DesiredSearch + 1
                 end
             end)
-    
+
             p.pagenumber = vgui("DLabel", function(p)
                 p:SetText("1")
                 p:SetFont('SS_SubCategory')
@@ -34,19 +31,19 @@ vgui.Register('DSSAuctionMode', {
                 -- p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
                 p:SetColor(MenuTheme_TX)
             end)
-    
+
             vgui("DButton", function(p)
                 p:Dock(RIGHT)
                 p:SetText("<")
                 p:SetColor(MenuTheme_TX)
                 p:SetFont("SS_SubCategory")
                 p.Paint = SS_PaintDarkenOnHover
-    
+
                 p.DoClick = function()
                     SS_AuctionPanel.DesiredSearch = math.max(1, SS_AuctionPanel.DesiredSearch - 1)
                 end
             end)
-    
+
             vgui("DComboBox", function(p)
                 p:Dock(RIGHT)
                 p:SetWide(150)
@@ -60,7 +57,7 @@ vgui.Register('DSSAuctionMode', {
                 p:SetColor(MenuTheme_TX)
                 p:SetFont("SS_Donate2")
                 p.Paint = SS_PaintDarkenOnHover
-    
+
                 p.OnSelect = function(self, index, value)
                     SS_AuctionPanel.DesiredSearch = 1
                     SS_AuctionPanel.DesiredCategory = value
@@ -165,11 +162,7 @@ vgui.Register('DSSAuctionMode', {
             SS_AuctionPanel.results:AddItem(item)
         end
     end
-
-
 }, 'DSSScrollableMode')
-
-
 
 net.Receive("SS_SearchAuctions", function(len)
     if len == 0 then

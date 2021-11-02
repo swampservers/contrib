@@ -4,7 +4,6 @@ include("sh_init.lua")
 include("cl_draw.lua")
 include("cl_materials.lua")
 include("cl_lootboxes.lua")
-
 -- include("vgui/menu.lua")
 -- include("vgui/panels.lua")
 -- -- include("vgui/item.lua")

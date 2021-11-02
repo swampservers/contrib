@@ -4,7 +4,6 @@ local PANEL = {}
 local froggy = Material("vgui/frog.png")
 
 --NOMINIFY
-
 surface.CreateFont("SwampShop1", {
     font = "averiaserif-bold",
     weight = 1000,
@@ -217,17 +216,17 @@ function PANEL:Init()
             p:SetFont("SS_INCOMEFONT")
             p:SetText("")
             p:SetWide(420)
-            
+
             -- The fatkid gamemode has a no-moneymaking-allowed license
             -- Of course, I made the gamemode, so I don't have to follow my own license,
             -- but still don't advertise donations to not look like a hypocrite.
             if GAMEMODE.FolderName == "fatkid" then
                 p.Paint = noop
+
                 return
             end
 
             p.DoClick = function()
-                
                 gui.OpenURL('https://swamp.sv/donate/')
             end
 
@@ -235,7 +234,6 @@ function PANEL:Init()
             local DollarParticles = {}
 
             p.Paint = function(self, w, h)
-                
                 SS_PaintDarkenOnHover(self, w, h)
                 local alpha = 180
                 local mousex, mousey = self:CursorPos()
@@ -277,32 +275,27 @@ function PANEL:Init()
                 end
 
                 local tc = MenuTheme_TXAlt
-
                 --[[if self:IsHovered() then
                 tc = Color(175,230,69)
             end]]
-                
-                    draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, (h / 2) - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-                    draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, (h / 2) + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-                
+                draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, (h / 2) - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, (h / 2) + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
         end)
     end)
-
 
     local unopened = true
 
     local function MakeCategoryButton(cat, catname, icon, inv)
         vgui("DButton", inv and self.invbar or self.topbar, function(p)
             p.ModePanel = cat
-
             p:Dock(LEFT)
             p:SetText(catname)
             p:SetFont("SS_Category")
             p:SetImage(icon)
             p:SetTextColor(BrandColorWhite)
 
-            function p:Paint( w, h)
+            function p:Paint(w, h)
                 if SS_ActiveMode == self.ModePanel then
                     surface.SetDrawColor(Color(0, 0, 0, 144))
                     surface.DrawRect(0, 0, w, h)
@@ -334,8 +327,6 @@ function PANEL:Init()
         end
     end
 
-
-
     --whole page contents
     self.mainpane = vgui("DPanel", self, function(p)
         p:DockPadding(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
@@ -361,7 +352,6 @@ function PANEL:Init()
         end)
     end)
 
-
     for _, CATEGORY in ipairs(SS_Layout) do
         vgui("DSSScrollableMode", self.mainpane, function(p)
             for _, LAYOUT in ipairs(CATEGORY.layout) do
@@ -386,23 +376,24 @@ function PANEL:Init()
 
     SS_AuctionPanel = vgui("DSSAuctionMode", self.mainpane)
     MakeCategoryButton(SS_AuctionPanel, "Auctions", 'icon16/house.png')
-    
 
     vgui("DSSInventoryMode", self.mainpane, function(p)
         p:SetCategories({"Weapons", "Skins"})
+
         MakeCategoryButton(p, "Weapons", 'icon16/gun.png', true)
     end)
 
     vgui("DSSInventoryMode", self.mainpane, function(p)
         p:SetCategories({"Props"})
+
         MakeCategoryButton(p, "Props", 'icon16/book.png', true)
     end)
 
     vgui("DSSInventoryMode", self.mainpane, function(p)
         p:SetCategories({"Playermodels", "Accessories", "Mods", "Upgrades", "Other"})
+
         MakeCategoryButton(p, "Cosmetics", 'icon16/status_online.png', true)
     end)
-
 
     SS_CustomizerPanel = vgui.Create('DPointShopCustomizer', self.mainpane) --:GetParent())
     SS_CustomizerPanel:Dock(FILL)

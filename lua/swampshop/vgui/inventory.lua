@@ -1,27 +1,23 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 vgui.Register('DSSInventoryMode', {
-
     SetCategories = function(self, categories)
         self.categories = categories
         self.validversion = nil
     end,
     Think = function(self)
         -- only runs when visible
-        
         if self.validversion ~= SS_InventoryVersion then
             self.validversion = SS_InventoryVersion
-            
             local scroll2 = self:GetVBar():GetScroll()
 
             for k, v in pairs(self:GetCanvas():GetChildren()) do
                 v:Remove()
             end
-            
+
             local itemstemp = {}
-            
-            for _,item in ipairs(LocalPlayer().SS_Items or {}) do
+
+            for _, item in ipairs(LocalPlayer().SS_Items or {}) do
                 table.insert(itemstemp, item)
             end
 
@@ -62,10 +58,8 @@ vgui.Register('DSSInventoryMode', {
                 table.insert(categorizeditems[invcategory], item)
             end
 
-
             for _, cat in ipairs(self.categories) do
                 if categorizeditems[cat] and table.Count(categorizeditems[cat]) > 0 then
-
                     vgui("DSSSubtitle", self, function(p)
                         p:SetText(cat)
                     end)
@@ -89,5 +83,4 @@ vgui.Register('DSSInventoryMode', {
             end)
         end
     end
-
 }, 'DSSScrollableMode')
