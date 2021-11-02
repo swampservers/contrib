@@ -6,6 +6,14 @@ include("config.lua")
 include("sh_layout.lua")
 include("sh_products.lua")
 include("sh_items.lua")
+
+
+for _, name in pairs(({file.Find('swampshop/vgui/*', 'LUA')})[1]) do
+    local f = SERVER and AddCSLuaFile or include
+    f('swampshop/vgui/' .. name)
+end
+
+
 local Player = FindMetaTable('Player')
 
 function SS_Initialize()
