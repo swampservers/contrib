@@ -1,6 +1,4 @@
-
-
-local PANEL = {}
+﻿local PANEL = {}
 
 function PANEL:Init()
     self.Pitch = 30

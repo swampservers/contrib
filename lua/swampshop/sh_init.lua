@@ -6,17 +6,16 @@ include("config.lua")
 include("sh_layout.lua")
 include("sh_products.lua")
 include("sh_items.lua")
-
-
 local files, _ = file.Find('swampshop/vgui/*', 'LUA')
 table.sort(files)
+
 for _, name in ipairs(files) do
     AddCSLuaFile('swampshop/vgui/' .. name)
+
     if CLIENT then
         include('swampshop/vgui/' .. name)
     end
 end
-
 
 local Player = FindMetaTable('Player')
 

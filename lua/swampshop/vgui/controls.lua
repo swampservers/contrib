@@ -1,1 +1,1 @@
-print("ninja")
+﻿print("ninja")
