@@ -9,8 +9,46 @@ vgui.Register('DSSCustomizerSlider',{
     Init = function(self)
 
 
+        self:SetDecimals(2)
+        self:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+        self:Dock(TOP)
+        self:SetDark(false)
+        self.TextArea:SetPaintBackground(false)
+        self:SetTall(24)
+        self.TextArea.BasedPaint = self.TextArea.Paint
+    
+        self.TextArea.Paint = function(pnl, w, h)
+            SS_PaintBG(pnl, w, h)
+            self.TextArea.BasedPaint(pnl, w, h)
+        end
+    
+        -- p.TextArea.UpdateColours = function(pnl)
+        --     pnl:SetTextColor(MenuTheme_TX)
+        -- end
+    
+        self.TextArea:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
+    
+        -- p.Label.UpdateColours = function(pnl)
+        --     pnl:SetTextColor(MenuTheme_TX)
+        -- end
+    
+        self.Slider.Knob:SetWide(6)
+    
+        self.Slider.Paint = function(pnl, w, h)
+            local y = h / 2
+            local barh = 2
+            SS_GLOBAL_RECT(0, y - barh / 2, w, barh, MenuTheme_BG)
+        end
+    
+        self.Slider.Knob.Paint = function(pnl, w, h)
+            draw.BoxShadow(0, 0, w, h, 8, 1)
+            SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_Brand)
+        end
+    end,
 
-    end
+    PerformLayout = function(self)
+            self.Label:SetWide(self:GetText()=="" and 0 or self:GetWide() / 4 )
+        end
 }, "DNumSlider")
 
 
@@ -66,53 +104,15 @@ vgui.Register('DSSCustomizerVector',
 
             --TODO: MOVE SOME OF THIS TO DSSCustomizerSlider
 
-            p.OnValueChanged = valuefunction or (function() if not self.SUPPRESSVALUECHANGED then self:OnValueChanged(self:GetValue()) end end)
+            
 
             p:SetText(text)
             p:SetMinMax(min, max)
             p:SetValue(val)
 
-            p:SetDecimals(2)
-            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-            p:Dock(TOP)
-            p:SetDark(false)
-            p.TextArea:SetPaintBackground(false)
-            p:SetTall(24)
-            p.TextArea.BasedPaint = p.TextArea.Paint
-        
-            p.TextArea.Paint = function(pnl, w, h)
-                SS_PaintBG(pnl, w, h)
-                p.TextArea.BasedPaint(pnl, w, h)
-            end
-        
-            -- p.TextArea.UpdateColours = function(pnl)
-            --     pnl:SetTextColor(MenuTheme_TX)
-            -- end
-        
-            p.TextArea:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
-        
-            -- p.Label.UpdateColours = function(pnl)
-            --     pnl:SetTextColor(MenuTheme_TX)
-            -- end
+            p.OnValueChanged = valuefunction or (function() if not self.SUPPRESSVALUECHANGED then self:OnValueChanged(self:GetValue()) end end)
 
-
-                function p:PerformLayout()
-                    self.Label:SetWide(text=="" and 0 or self:GetWide() / 4 )
-                end
-
-        
-            p.Slider.Knob:SetWide(6)
-        
-            p.Slider.Paint = function(pnl, w, h)
-                local y = h / 2
-                local barh = 2
-                SS_GLOBAL_RECT(0, y - barh / 2, w, barh, MenuTheme_BG)
-            end
-        
-            p.Slider.Knob.Paint = function(pnl, w, h)
-                draw.BoxShadow(0, 0, w, h, 8, 1)
-                SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_Brand)
-            end
+            
         end)
     end,
     GetValue = function(self)
@@ -123,10 +123,9 @@ vgui.Register('DSSCustomizerVector',
     end,
     SetValue = function(self, vec)
         if isnumber(vec) then vec=Vector(vec,vec,vec) end
-        self.SUPPRESSVALUECHANGED = true
         self.XS:SetValue(vec[1])
         self.YS:SetValue(vec[2])
-        self.SUPPRESSVALUECHANGED = nil
+        
         self.ZS:SetValue(vec[3])
     end,
     SetForPosition = function(self, min, max, default)
@@ -134,6 +133,7 @@ vgui.Register('DSSCustomizerVector',
         self.XS = self:MakeSlider("Forward/Back", min.x, max.x, default.x)
         self.YS = self:MakeSlider("Left/Right", min.y, max.y, default.y)
         self.ZS = self:MakeSlider("Up/Down", min.z, max.z, default.z)
+
     end,
     SetForAngle = function(self, default)
         self:SetText("Angle")
