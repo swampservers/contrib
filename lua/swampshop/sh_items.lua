@@ -268,11 +268,12 @@ function SS_Item(item)
             sort = -1,
             Text = function() return "Customize" end,
             OnClient = function(item)
-                if SS_CustomizerPanel:IsVisible() then
-                    SS_CustomizerPanel:Close()
-                else
-                    SS_CustomizerPanel:Open(item)
-                end
+                SS_CustomizerPanel:OpenItem(item)
+                -- if SS_CustomizerPanel:IsVisible() then
+                --     SS_CustomizerPanel:Close()
+                -- else
+                --     SS_CustomizerPanel:Open(item)
+                -- end
             end
         }
     end

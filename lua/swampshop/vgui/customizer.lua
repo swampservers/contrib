@@ -1,19 +1,214 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-local PANEL = {}
 
-function PANEL:Close()
-    if IsValid(SS_PopupPanel) and IsValid(SS_ShopMenu) then
-        SS_ShopMenu:SetParent()
-        SS_PopupPanel:Remove()
-        SS_ShopMenu:SetKeyboardInputEnabled(false)
+
+--NOMINIFY
+
+
+vgui.Register('DSSCustomizerSlider',{
+    Init = function(self)
+
+
+
+    end
+}, "DNumSlider")
+
+
+
+vgui.Register('DSSCustomizerSection', 
+{
+    Init = function(self)
+        self:DockMargin(0, 0, 0, 0)
+        self:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+        self:Dock(TOP)
+
+        self.Paint = SS_PaintFG
+    
+        self.Text = vgui("DLabel", self, function(p)
+            p:SetFont("SS_DESCINSTFONT")
+            p:SetText("")
+            p:SetTextColor(SS_SwitchableColor)
+            p:SizeToContents()
+            p:SetContentAlignment(5)
+            p:DockMargin(0, 0, 0, 0)
+            p:Dock(TOP)
+        end)
+    end,
+    SetText = function(self,txt)
+        self.Text:SetText(txt)
+    end,
+    PerformLayout = function(self)
+        self:SizeToChildren(false, true)
+    
+        if IsValid(parent) and parent:GetName() == "DScrollPanel" then
+            self:DockMargin(0, 0, parent.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
+        else
+            self:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+        end
+    end,
+},"DPanel")
+
+
+
+
+
+
+vgui.Register('DSSCustomizerVector', 
+{
+    Init = function(self)
+
+    end,
+    OnValueChanged = function(vec)
+        print("DEFAULTONVALCHANGED", vec)
+    end,
+    MakeSlider = function(self, text, min, max, val, valuefunction)
+        return vgui("DSSCustomizerSlider", self, function(p)
+
+            --TODO: MOVE SOME OF THIS TO DSSCustomizerSlider
+
+            p.OnValueChanged = valuefunction or (function() if not self.SUPPRESSVALUECHANGED then self:OnValueChanged(self:GetValue()) end end)
+
+            p:SetText(text)
+            p:SetMinMax(min, max)
+            p:SetValue(val)
+
+            p:SetDecimals(2)
+            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+            p:Dock(TOP)
+            p:SetDark(false)
+            p.TextArea:SetPaintBackground(false)
+            p:SetTall(24)
+            p.TextArea.BasedPaint = p.TextArea.Paint
+        
+            p.TextArea.Paint = function(pnl, w, h)
+                SS_PaintBG(pnl, w, h)
+                p.TextArea.BasedPaint(pnl, w, h)
+            end
+        
+            -- p.TextArea.UpdateColours = function(pnl)
+            --     pnl:SetTextColor(MenuTheme_TX)
+            -- end
+        
+            p.TextArea:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
+        
+            -- p.Label.UpdateColours = function(pnl)
+            --     pnl:SetTextColor(MenuTheme_TX)
+            -- end
+
+
+                function p:PerformLayout()
+                    self.Label:SetWide(text=="" and 0 or self:GetWide() / 4 )
+                end
+
+        
+            p.Slider.Knob:SetWide(6)
+        
+            p.Slider.Paint = function(pnl, w, h)
+                local y = h / 2
+                local barh = 2
+                SS_GLOBAL_RECT(0, y - barh / 2, w, barh, MenuTheme_BG)
+            end
+        
+            p.Slider.Knob.Paint = function(pnl, w, h)
+                draw.BoxShadow(0, 0, w, h, 8, 1)
+                SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_Brand)
+            end
+        end)
+    end,
+    GetValue = function(self)
+        return Vector(self.XS:GetValue(), self.YS:GetValue(), self.ZS:GetValue())
+    end,
+    GetValueAngle = function(self)
+        return Angle(self.XS:GetValue(), self.YS:GetValue(), self.ZS:GetValue())
+    end,
+    SetValue = function(self, vec)
+        if isnumber(vec) then vec=Vector(vec,vec,vec) end
+        self.SUPPRESSVALUECHANGED = true
+        self.XS:SetValue(vec[1])
+        self.YS:SetValue(vec[2])
+        self.SUPPRESSVALUECHANGED = nil
+        self.ZS:SetValue(vec[3])
+    end,
+    SetForPosition = function(self, min, max, default)
+        self:SetText("Offset")
+        self.XS = self:MakeSlider("Forward/Back", min.x, max.x, default.x)
+        self.YS = self:MakeSlider("Left/Right", min.y, max.y, default.y)
+        self.ZS = self:MakeSlider("Up/Down", min.z, max.z, default.z)
+    end,
+    SetForAngle = function(self, default)
+        self:SetText("Angle")
+        self.XS = self:MakeSlider("Pitch", -180, 180, default.p)
+        self.YS = self:MakeSlider("Yaw", -180, 180, default.y)
+        self.ZS = self:MakeSlider("Roll", -180, 180, default.r)
+    end,
+    SetForScale = function(self, min, max, default)
+        if isnumber(vec) then vec=Vector(vec,vec,vec) end
+
+        self:SetText("Scale")
+        self.XS = self:MakeSlider("Length", min.x, max.x, default.x)
+        self.YS = self:MakeSlider("Width", min.y, max.y, default.y)
+        self.ZS = self:MakeSlider("Height", min.z, max.z, default.z)
+
+        self.US = self:MakeSlider("", min.x, max.x, default.x, function(slider)
+            local v = slider:GetValue()
+            self:SetValue(Vector(v,v,v))
+        end)
+
+        self.US:SetVisible(false)
+
+        local scalebutton = vgui("DButton", self, function(p)
+
+            p:SetText("Use Uniform Scaling")
+            p:SetWide(160)
+            p:Dock(TOP)
+            p.Paint = SS_PaintButtonBrandHL
+    
+            p.UpdateColours = function(pnl)
+                pnl:SetTextStyleColor(MenuTheme_TX)
+            end
+    
+            p.DoClick = function(btn)
+                if self.US:IsVisible() then
+
+                    btn:SetText("Use Uniform Scaling")
+                    self.XS:SetVisible(true)
+                    self.YS:SetVisible(true)
+                    self.ZS:SetVisible(true)
+                    self.US:SetVisible(false)
+                else
+                    btn:SetText("Use Independent Scaling")
+                    self.XS:SetVisible(false)
+                    self.YS:SetVisible(false)
+                    self.ZS:SetVisible(false)
+                    self.US:SetVisible(true)
+
+                    local v = self:GetValue()
+                    self.US:SetValue( (v.x+v.y+v.z)/3)
+                end
+            end
+
+        end)
+        
+        if default.x == default.y and default.y == default.z then
+            scalebutton:DoClick()
+        end
+
     end
 
-    self:SetVisible(false)
-    -- SS_InventoryPanel:SetVisible(true)
+}, 'DSSCustomizerSection')
+
+
+local PANEL = {}
+
+PANEL.NeedsKeyboard = true
+
+function PANEL:Init()
+    SS_CustomizerPanel = self
 end
 
-function PANEL:Open(item)
+function PANEL:OpenItem(item)
+    self:OpenOver()
+
     for k, v in pairs(self:GetChildren()) do
         v:Remove()
     end
@@ -22,31 +217,10 @@ function PANEL:Open(item)
     item.applied_cfg = table.Copy(item.cfg)
     self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
 
-    if IsValid(SS_PopupPanel) then
-        SS_ShopMenu:SetParent()
-        SS_PopupPanel:Remove()
-    end
-
-    SS_ShopMenu:MakePopup()
-    --SS_PaintTileBG
     self.Paint = SS_PaintBG
-
-    --.Paint = SS_PaintGridBG
-    --.Paint = SS_PaintTileBG
-    SS_PopupPanel = vgui("DFrame", function(p)
-        p:SetPos(0, 0)
-        p:SetSize(ScrW(), ScrH())
-        p:SetDraggable(false)
-        p:ShowCloseButton(true)
-        p:SetTitle("")
-        p:RequestFocus()
-        p.Paint = function() end
-        p:SetParent(SS_PopupPanel)
-    end)
 
     self:SetVisible(true)
 
-    -- SS_InventoryPanel:SetVisible(false)
     --main panel
     vgui("DPanel", self, function(p)
         p.Paint = noop
@@ -159,13 +333,6 @@ function PANEL:Open(item)
             end)
         end)
     end)
-end
-
-local function GapMaker(parent)
-    local GAP = vgui.Create("DPanel", parent)
-    GAP:Dock(TOP)
-    GAP:SetTall(SS_COMMONMARGIN)
-    GAP.Paint = function() end
 end
 
 local function LabelMaker(parent, text, top)
@@ -313,190 +480,146 @@ function PANEL:SetupControls()
     wear_container.VBar:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
     SS_SetupVBar(wear_container.VBar)
     wear_container.VBar:SetWide(SS_SCROLL_WIDTH)
+
     local pone = LocalPlayer():IsPony()
     local suffix = pone and "_p" or "_h"
     local itmcw = self.item.configurable.wear
 
     if (self.item.configurable or {}).wear then
         --LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
-        local pane = Container(wear_container, "Attachment")
-        local cnt = vgui.Create("DPanel", pane)
-        cnt:Dock(TOP)
-        cnt:SetTall(24)
-        cnt.Paint = noop
-        ATTACHSELECT = vgui.Create("DComboBox", cnt)
-        ATTACHSELECT:SetValue((self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
 
-        for k, v in pairs(SS_Attachments) do
-            ATTACHSELECT:AddChoice(k)
-        end
 
-        ATTACHSELECT:SetTall(32)
-        ATTACHSELECT:Dock(FILL)
-        ATTACHSELECT.Paint = SS_PaintBG
+        vgui("DSSCustomizerSection", wear_container, function(p)
+            p:SetText("Attachment (" .. (pone and "pony" or "human") .. ")")
 
-        ATTACHSELECT.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
+            vgui("DPanel", function(p)
+                p:Dock(TOP)
+                p:SetTall(24)
+                p.Paint = noop
+            
+                vgui("DComboBox", function(p)
+                    p:SetValue((self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
+            
+                    for k, v in pairs(SS_Attachments) do
+                        p:AddChoice(k)
+                    end
+                    
+                    p:Dock(FILL)
+                    p.Paint = SS_PaintBG
+            
+                    p.UpdateColours = function(pnl)
+                        pnl:SetTextStyleColor(MenuTheme_TX)
+                        pnl:SetTextColor(MenuTheme_TX)
+                    end
+                end)
 
-        p = vgui.Create("DLabel", cnt)
-        p:Dock(LEFT)
-        p:SetText("Attach to")
+                vgui("DLabel", function(p)
+                    p:Dock(LEFT)
+                    p:SetText("Attach to")
+            
+                    p.UpdateColours = function(pnl)
+                        pnl:SetTextColor(MenuTheme_TX)
+                    end
+            
+                    p.OnSelect = function(panel, index, value)
+                        self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
+                        self.item.cfg[self.wear].attach = value
+                        self:UpdateCfg()
+                    end         
+                end)
 
-        p.UpdateColours = function(pnl)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
+                -- p:SizeToChildren(true,true)
+            end)
 
-        ATTACHSELECT.OnSelect = function(panel, index, value)
-            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
-            self.item.cfg[self.wear].attach = value
-            self:UpdateCfg()
-        end
+            -- p:SizeToChildren(true,true)
+        end)
 
-        local pane = Container(wear_container, "Offset")
+  
         local translate = (self.item.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
-        XSL = SliderMaker(pane, "Forward/Backward")
-        XSL:SetMinMax(itmcw.pos.min.x, itmcw.pos.max.x)
-        XSL:SetValue(translate.x)
-        YSL = SliderMaker(pane, "Left/Right")
-        YSL:SetMinMax(itmcw.pos.min.y, itmcw.pos.max.z)
-        YSL:SetValue(translate.y)
-        ZSL = SliderMaker(pane, "Up/Down")
-        ZSL:SetMinMax(itmcw.pos.min.z, itmcw.pos.max.z)
-        ZSL:SetValue(translate.z)
-        local pane = Container(wear_container, "Angle")
         local rotate = (self.item.cfg[self.wear] or {}).ang or (pone and (self.item.wear.pony or {}).rotate) or self.item.wear.rotate
-        XRSL = SliderMaker(pane, "Pitch")
-        XRSL:SetMinMax(-180, 180)
-        XRSL:SetValue(rotate.p)
-        YRSL = SliderMaker(pane, "Yaw")
-        YRSL:SetMinMax(-180, 180)
-        YRSL:SetValue(rotate.y)
-        ZRSL = SliderMaker(pane, "Roll")
-        ZRSL:SetMinMax(-180, 180)
-        ZRSL:SetValue(rotate.r)
-        local pane = Container(wear_container, "Scale")
         local scale = (self.item.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
 
-        if isnumber(scale) then
-            scale = Vector(scale, scale, scale)
-        end
+        self.Position = vgui('DSSCustomizerVector', wear_container, function(p)
+            p:SetForPosition(
+                itmcw.pos.min,
+                itmcw.pos.max,
+                translate
+            )
+        end)
 
-        local scaleoffset = self.item:ScaleLimitOffset()
-        SXSL = SliderMaker(pane, "Length")
-        SXSL:SetMinMax(itmcw.scale.min.x * scaleoffset, itmcw.scale.max.x * scaleoffset)
-        SXSL:SetValue(scale.x)
-        SYSL = SliderMaker(pane, "Width")
-        SYSL:SetMinMax(itmcw.scale.min.y * scaleoffset, itmcw.scale.max.y * scaleoffset)
-        SYSL:SetValue(scale.y)
-        SZSL = SliderMaker(pane, "Height")
-        SZSL:SetMinMax(itmcw.scale.min.z * scaleoffset, itmcw.scale.max.z * scaleoffset)
-        SZSL:SetValue(scale.z)
+        self.Angle = vgui('DSSCustomizerVector', wear_container, function(p)
+            p:SetForAngle(
+                rotate
+            )
+        end)
+
+
+        self.Scale = vgui('DSSCustomizerVector', wear_container, function(p)
+            p:SetForScale(
+                itmcw.scale.min* self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(),
+                scale
+            )
+        end)
 
         local function transformslidersupdate()
             self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
-            self.item.cfg[self.wear].pos = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
-            self.item.cfg[self.wear].ang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
-            self.item.cfg[self.wear].scale = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
+            self.item.cfg[self.wear].pos = self.Position:GetValue()
+            self.item.cfg[self.wear].ang = self.Angle:GetValueAngle()
+            self.item.cfg[self.wear].scale = self.Scale:GetValue()
             self:UpdateCfg()
         end
 
-        XSL.OnValueChanged = transformslidersupdate
-        YSL.OnValueChanged = transformslidersupdate
-        ZSL.OnValueChanged = transformslidersupdate
-        XRSL.OnValueChanged = transformslidersupdate
-        YRSL.OnValueChanged = transformslidersupdate
-        ZRSL.OnValueChanged = transformslidersupdate
-        SXSL.OnValueChanged = transformslidersupdate
-        SYSL.OnValueChanged = transformslidersupdate
-        SZSL.OnValueChanged = transformslidersupdate
-        SUSL = SliderMaker(pane, "Scale")
-        SUSL:SetMinMax(math.max(itmcw.scale.min.x, itmcw.scale.min.y, itmcw.scale.min.z) * scaleoffset, math.min(itmcw.scale.max.x, itmcw.scale.max.y, itmcw.scale.max.z) * scaleoffset)
+        self.Position.OnValueChanged = transformslidersupdate
+        self.Angle.OnValueChanged = transformslidersupdate
+        self.Scale.OnValueChanged = transformslidersupdate
 
-        SUSL.OnValueChanged = function(self)
-            SXSL:SetValue(self:GetValue())
-            SYSL:SetValue(self:GetValue())
-            SZSL:SetValue(self:GetValue())
-        end
-
-        SUSL:SetVisible(false)
-        local scalebutton = vgui.Create("DButton", pane)
-        scalebutton:SetText("Use Uniform Scaling")
-        scalebutton:SetWide(160)
-        scalebutton:Dock(TOP)
-        scalebutton.Paint = SS_PaintButtonBrandHL
-
-        scalebutton.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-        end
-
-        scalebutton.DoClick = function(btn)
-            if btn.UniformMode then
-                btn.UniformMode = nil
-                btn:SetText("Use Uniform Scaling")
-                SXSL:SetVisible(true)
-                SYSL:SetVisible(true)
-                SZSL:SetVisible(true)
-                SUSL:SetVisible(false)
-            else
-                btn.UniformMode = true
-                btn:SetText("Use Independent Scaling")
-                SXSL:SetVisible(false)
-                SYSL:SetVisible(false)
-                SZSL:SetVisible(false)
-                SUSL:SetVisible(true)
-
-                local v = {SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue()}
-
-                table.sort(v, function(a, b) return a > b end)
-                SUSL:SetValue(v[2])
-            end
-        end
-
-        if scale.x == scale.y and scale.y == scale.z then
-            scalebutton:DoClick()
-        end
     elseif (self.item.configurable or {}).bone then
-        local pane = Container(wear_container, "Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")")
 
-        local function cleanbonename(bn)
-            return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
-        end
+        vgui("DSSCustomizerSection", wear_container, function(p)
 
-        ATTACHSELECT = vgui.Create("DComboBox", pane)
-        ATTACHSELECT:SetValue(cleanbonename(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1")))
-        ATTACHSELECT:SetTall(24)
-        ATTACHSELECT:Dock(TOP)
-        ATTACHSELECT.Paint = SS_PaintBG
+            p:SetText( "Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")" )
 
-        ATTACHSELECT.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
-
-        for x = 0, (LocalPlayer():GetBoneCount() - 1) do
-            local bn = LocalPlayer():GetBoneName(x)
-            local cleanname = cleanbonename(bn)
-
-            if cleanname ~= "__INVALIDBONE__" then
-                ATTACHSELECT:AddChoice(cleanname, bn)
+            local function cleanbonename(bn)
+                return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
             end
-        end
+    
+            vgui("DComboBox", function(p)
+                p:SetValue(cleanbonename(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1")))
+                p:SetTall(24)
+                p:Dock(TOP)
+                p.Paint = SS_PaintBG
+        
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                    pnl:SetTextColor(MenuTheme_TX)
+                end
+        
+                for x = 0, (LocalPlayer():GetBoneCount() - 1) do
+                    local bn = LocalPlayer():GetBoneName(x)
+                    local cleanname = cleanbonename(bn)
+        
+                    if cleanname ~= "__INVALIDBONE__" then
+                        p:AddChoice(cleanname, bn)
+                    end
+                end
+        
+                p.OnSelect = function(panel, index, word, value)
+                    self.item.cfg["bone" .. suffix] = value
+                    self:UpdateCfg()
+                end
+            end)
+           
+        end)
 
-        ATTACHSELECT.OnSelect = function(panel, index, word, value)
-            self.item.cfg["bone" .. suffix] = value
-            self:UpdateCfg()
-        end
-
+       
         --bunch of copied shit
         local function transformslidersupdate()
             if self.item.configurable.scale then
-                self.item.cfg["scale" .. suffix] = Vector(SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue())
+                self.item.cfg["scale" .. suffix] = self.Scale:GetValue()
             end
 
             if self.item.configurable.pos then
-                self.item.cfg["pos" .. suffix] = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
+                self.item.cfg["pos" .. suffix] = self.Position:GetValue()
             end
 
             self:UpdateCfg()
@@ -505,90 +628,24 @@ function PANEL:SetupControls()
         local itmcp = self.item.configurable.pos
 
         if itmcp then
-            local pane = Container(wear_container, "Offset")
-            local translate = self.item.cfg["pos" .. suffix] or Vector(0, 0, 0)
-            XSL = SliderMaker(pane, "X (Along)")
-            XSL:SetMinMax(itmcp.min.x, itmcp.max.x)
-            XSL:SetValue(translate.x)
-            YSL = SliderMaker(pane, "Y")
-            YSL:SetMinMax(itmcp.min.y, itmcp.max.y)
-            YSL:SetValue(translate.y)
-            ZSL = SliderMaker(pane, "Z")
-            ZSL:SetMinMax(itmcp.min.z, itmcp.max.z)
-            ZSL:SetValue(translate.z)
-            XSL.OnValueChanged = transformslidersupdate
-            YSL.OnValueChanged = transformslidersupdate
-            ZSL.OnValueChanged = transformslidersupdate
+            self.Position = vgui('DSSCustomizerVector', wear_container, function(p)
+                p:SetForPosition(
+                    itmcp.min,
+                    itmcp.max,
+                    translate
+                )
+            end)
         end
 
         local itmcs = self.item.configurable.scale
 
         if itmcs then
-            local pane = Container(wear_container, "Scale")
-            local scale = self.item.cfg["scale" .. suffix] or Vector(1, 1, 1)
-
-            if isnumber(scale) then
-                scale = Vector(scale, scale, scale)
-            end
-
-            SXSL = SliderMaker(pane, "X (Along)")
-            SXSL:SetMinMax(itmcs.min.x, itmcs.max.x)
-            SXSL:SetValue(scale.x)
-            SYSL = SliderMaker(pane, "Y")
-            SYSL:SetMinMax(itmcs.min.y, itmcs.max.y)
-            SYSL:SetValue(scale.y)
-            SZSL = SliderMaker(pane, "Z")
-            SZSL:SetMinMax(itmcs.min.z, itmcs.max.z)
-            SZSL:SetValue(scale.z)
-            SXSL.OnValueChanged = transformslidersupdate
-            SYSL.OnValueChanged = transformslidersupdate
-            SZSL.OnValueChanged = transformslidersupdate
-            SUSL = SliderMaker(pane, "Scale")
-            SUSL:SetMinMax(math.max(itmcs.min.x, itmcs.min.y, itmcs.min.z), math.min(itmcs.max.x, itmcs.max.y, itmcs.max.z))
-
-            SUSL.OnValueChanged = function(self)
-                SXSL:SetValue(self:GetValue())
-                SYSL:SetValue(self:GetValue())
-                SZSL:SetValue(self:GetValue())
-            end
-
-            SUSL:SetVisible(false)
-            local scalebutton = vgui.Create("DButton", pane)
-            scalebutton:SetText("Use Uniform Scaling")
-            scalebutton:SetWide(160)
-            scalebutton.Paint = SS_PaintButtonBrandHL
-            scalebutton:Dock(TOP)
-
-            scalebutton.UpdateColours = function(pnl)
-                pnl:SetTextStyleColor(MenuTheme_TX)
-            end
-
-            scalebutton.DoClick = function(btn)
-                if btn.UniformMode then
-                    btn.UniformMode = nil
-                    btn:SetText("Use Uniform Scaling")
-                    SXSL:SetVisible(true)
-                    SYSL:SetVisible(true)
-                    SZSL:SetVisible(true)
-                    SUSL:SetVisible(false)
-                else
-                    btn.UniformMode = true
-                    btn:SetText("Use Independent Scaling")
-                    SXSL:SetVisible(false)
-                    SYSL:SetVisible(false)
-                    SZSL:SetVisible(false)
-                    SUSL:SetVisible(true)
-
-                    local v = {SXSL:GetValue(), SYSL:GetValue(), SZSL:GetValue()}
-
-                    table.sort(v, function(a, b) return a > b end)
-                    SUSL:SetValue(v[2])
-                end
-            end
-
-            if scale.x == scale.y and scale.y == scale.z then
-                scalebutton:DoClick()
-            end
+            self.Scale = vgui('DSSCustomizerVector', wear_container, function(p)
+                p:SetForScale(
+                    itmcw.scale.min* self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(),
+                    scale
+                )
+            end)
         end
 
         --end bunch of copied shit
@@ -602,31 +659,36 @@ function PANEL:SetupControls()
             end
         end
     elseif (self.item.configurable or {}).submaterial then
-        local pane = Container(wear_container, "Skin ID")
-        ATTACHSELECT = vgui.Create("DComboBox", pane)
 
-        for x = 0, math.min(31, (#(LocalPlayer():GetMaterials()) - 1)) do
-            local matname = LocalPlayer():GetMaterials()[x + 1] or ""
-            local exp = string.Explode("/", matname)
-            local nicename = exp[#exp]
-            local sel = tonumber(self.item.cfg.submaterial or 0) == x
-            ATTACHSELECT:AddChoice(tostring(x) .. " (" .. nicename .. ")", tostring(x), sel)
-        end
+        vgui("DSSCustomizerSection", wear_container, function(p)
+            p:SetText("Skin ID")
 
-        ATTACHSELECT.OnSelect = function(panel, index, word, value)
-            self.item.cfg.submaterial = tonumber(value)
-            self:UpdateCfg()
-        end
-
-        ATTACHSELECT:SetWide(200)
-        ATTACHSELECT:Dock(TOP)
-        ATTACHSELECT.Paint = SS_PaintBG
-
-        ATTACHSELECT.UpdateColours = function(pnl)
-            pnl:SetTextStyleColor(MenuTheme_TX)
-            pnl:SetTextColor(MenuTheme_TX)
-        end
+            vgui("DComboBox", function(p)
+                for x = 0, math.min(31, (#(LocalPlayer():GetMaterials()) - 1)) do
+                    local matname = LocalPlayer():GetMaterials()[x + 1] or ""
+                    local exp = string.Explode("/", matname)
+                    local nicename = exp[#exp]
+                    local sel = tonumber(self.item.cfg.submaterial or 0) == x
+                    p:AddChoice(tostring(x) .. " (" .. nicename .. ")", tostring(x), sel)
+                end
+    
+                p.OnSelect = function(panel, index, word, value)
+                    self.item.cfg.submaterial = tonumber(value)
+                    self:UpdateCfg()
+                end
+    
+                p:SetWide(200)
+                p:Dock(TOP)
+                p.Paint = SS_PaintBG
+    
+                p.UpdateColours = function(pnl)
+                    pnl:SetTextStyleColor(MenuTheme_TX)
+                    pnl:SetTextColor(MenuTheme_TX)
+                end
+            end)
+        end)
     end
+
 
     local appearance_container = vgui.Create("DScrollPanel", self.controlzone)
     appearance_container:Dock(FILL)
@@ -634,49 +696,47 @@ function PANEL:SetupControls()
     appearance_container.VBar:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
     SS_SetupVBar(appearance_container.VBar)
     appearance_container.VBar:SetWide(SS_SCROLL_WIDTH)
+
+
     local limit = self.item:CanCfgColor()
 
     if limit then
-        local colorzone = Container(appearance_container, "Appearance")
-        --[[
-    local colorzone = vgui.Create("DPanel", appearance_container)
-    colorzone.Paint = SS_PaintFG
-    colorzone:Dock(TOP)
-    colorzone:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-    colorzone:DockMargin(0,0,0,SS_COMMONMARGIN)
+        vgui("DSSCustomizerSection", appearance_container, function(p)
 
+            p:SetText("Appearance")
+
+            local cv = Vector()
+            cv:Set(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
+            local cvm = math.max(1, cv.x, cv.y, cv.z)
+            
+            
+            
+            local c1 = vgui("DColorMixer", function(p)
+                p:SetPalette(true)
+                p:SetAlphaBar(false)
+                p:SetWangs(true)
+                p:SetVector(cv / cvm)
+                p:SetTall(250)
+                p:DockMargin(0, 0, 0, 0)
+                p:Dock(TOP)
+            end)
+
+            PSBS = SliderMaker(colorzone, "Boost")
+            PSBS:SetMinMax(1, limit.max)
+            PSBS:SetValue(cvm)
+            PSBS:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
     
-    --colorzone:SetTall( SS_GetCustomizerHeight())
-    colorzone.PerformLayout = function(pnl)
-        
-        pnl:SizeToChildren(false, true)
-        pnl:InvalidateParent(true)
-        pnl:DockMargin(0, 0, appearance_container.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
-    end
-    ]]
-        local cv = Vector()
-        cv:Set(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
-        local cvm = math.max(1, cv.x, cv.y, cv.z)
-        PSCMixer = vgui.Create("DColorMixer", colorzone)
-        PSCMixer:SetPalette(true)
-        PSCMixer:SetAlphaBar(false)
-        PSCMixer:SetWangs(true)
-        PSCMixer:SetVector(cv / cvm)
-        PSCMixer:SetTall(250)
-        PSCMixer:DockMargin(0, 0, 0, 0)
-        PSCMixer:Dock(TOP)
-        PSBS = SliderMaker(colorzone, "Boost")
-        PSBS:SetMinMax(1, limit.max)
-        PSBS:SetValue(cvm)
-        PSBS:DockMargin(0, SS_COMMONMARGIN, 0, SS_COMMONMARGIN)
+            local function colorchanged()
+                self.item.cfg.color = c1:GetVector() * PSBS:GetValue()
+                self:UpdateCfg()
+            end
+    
+            c1.ValueChanged = colorchanged
+            PSBS.OnValueChanged = colorchanged
 
-        local function colorchanged()
-            self.item.cfg.color = PSCMixer:GetVector() * PSBS:GetValue()
-            self:UpdateCfg()
-        end
 
-        PSCMixer.ValueChanged = colorchanged
-        PSBS.OnValueChanged = colorchanged
+        end)
+
     end
 
     if self.item:CanCfgImgur() then
@@ -1055,4 +1115,4 @@ function PANEL:UpdateCfg(skiptext)
     end
 end
 
-vgui.Register('DPointShopCustomizer', PANEL, 'DPanel')
+vgui.Register('DSSCustomizeMode', PANEL, 'DSSMode')

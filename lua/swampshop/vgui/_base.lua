@@ -34,7 +34,7 @@ vgui.Register('DScrollPanelPaddable',
 -- MODE BASES
 
 SS_ActiveMode = SS_ActiveMode or nil
--- SS_ModeStack = SS_ModeStack or {}
+SS_ModeStack = SS_ModeStack or {}
 
 local PANEL = {
     Init = function(self)
@@ -42,25 +42,58 @@ local PANEL = {
         self:Dock(FILL)
         self:DockPadding(0, 0, 0, 0)
     end,
-
     Open = function(self)
-        if IsValid(SS_ActiveMode) then SS_ActiveMode:Close() end
-
-        --patch
-        if IsValid(SS_CustomizerPanel) then SS_CustomizerPanel:Close() end
-
-        if IsValid(SS_SelectedTile) then
-            SS_SelectedTile:Deselect()
+        while SS_ActiveMode do 
+            if IsValid(SS_ActiveMode) then
+                SS_ActiveMode:Close()
+            else
+                table.remove(SS_ModeStack)
+                SS_ActiveMode = SS_ModeStack[#SS_ModeStack]
+            end
         end
 
-        SS_ActiveMode = self
+        --patch
+        -- if IsValid(SS_CustomizerPanel) then SS_CustomizerPanel:Close() end
+        -- if IsValid(SS_SelectedTile) then
+        --     SS_SelectedTile:Deselect()
+        -- end
+
+        self:OpenOver()
+    end,
+    OpenOver = function(self)
+        if IsValid(SS_ActiveMode) then
+            SS_ActiveMode:Cover()
+        end
+
+        table.insert(SS_ModeStack, self)
+        SS_ActiveMode = SS_ModeStack[#SS_ModeStack]
+        self:Uncover()
+    end,
+    Uncover = function(self)
+
+        if self.NeedsKeyboard then
+            SS_ShopMenu:MakePopup()
+        else
+            SS_ShopMenu:KillFocus()
+            SS_ShopMenu:SetKeyboardInputEnabled(false)
+        end
+
         self:SetVisible(true)
     end,
+    Cover = function(self)
 
+        self:SetVisible(false)
+    end,
     Close = function(self)
         assert(SS_ActiveMode == self)
-        SS_ActiveMode = nil
+        table.remove(SS_ModeStack)
+        SS_ActiveMode = SS_ModeStack[#SS_ModeStack]
+
         self:SetVisible(false)
+
+        if IsValid(SS_ActiveMode) then
+            SS_ActiveMode:Uncover()
+        end
     end
 }
 

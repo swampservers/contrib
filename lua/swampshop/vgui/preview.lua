@@ -90,8 +90,8 @@ function PANEL:LayoutEntity(thisEntity)
 
         if self.PressButton == MOUSE_RIGHT then
             if SS_CustomizerPanel:IsVisible() then
-                if ValidPanel(XRSL) and IsValid(SS_HoverCSModel) then
-                    clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
+                if ValidPanel(SS_CustomizerPanel.Angle) and IsValid(SS_HoverCSModel) then
+                    clang = SS_CustomizerPanel.Angle:GetValueAngle()
                     clangm = Matrix()
                     clangm:SetAngles(clang)
                     clangm:Invert()
@@ -111,15 +111,13 @@ function PANEL:LayoutEntity(thisEntity)
                     crangm:Invert()
                     nlangm = crangm * ngangm
                     nlang = nlangm:GetAngles()
-                    XRSL:SetValue(nlang.x)
-                    YRSL:SetValue(nlang.y)
-                    ZRSL:SetValue(nlang.z)
+                    SS_CustomizerPanel.Angle:SetValue(nlang)
                 end
             end
         end
 
-        if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(XSL) and IsValid(SS_HoverCSModel) then
-            clang = Angle(XRSL:GetValue(), YRSL:GetValue(), ZRSL:GetValue())
+        if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(SS_CustomizerPanel.Position) and IsValid(SS_HoverCSModel) then
+            clang = SS_CustomizerPanel.Angle:GetValueAngle()
             clangm = Matrix()
             clangm:SetAngles(clang)
             clangm:Invert()
@@ -131,11 +129,7 @@ function PANEL:LayoutEntity(thisEntity)
             local _, ang = self:GetCameraTransform()
             local wshift = ang:Right() * (mx - (self.PressX or mx)) - ang:Up() * (my - (self.PressY or my))
             local vo, _ = WorldToLocal(wshift * 0.05, Angle(0, 0, 0), Vector(0, 0, 0), crangm:GetAngles())
-            local ofs = Vector(XSL:GetValue(), YSL:GetValue(), ZSL:GetValue())
-            local apos = ofs + vo
-            XSL:SetValue(apos.x)
-            YSL:SetValue(apos.y)
-            ZSL:SetValue(apos.z)
+            SS_CustomizerPanel.Position:SetValue(SS_CustomizerPanel.Position:GetValue() + vo)
         end
 
         self.PressX, self.PressY = gui.MousePos()

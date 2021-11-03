@@ -4,14 +4,9 @@ include("sh_init.lua")
 include("cl_draw.lua")
 include("cl_materials.lua")
 include("cl_lootboxes.lua")
--- include("vgui/menu.lua")
--- include("vgui/panels.lua")
--- -- include("vgui/item.lua")
--- -- has to come after item because of baseclass
--- include("vgui/preview.lua")
--- include("vgui/customizer.lua")
--- include("vgui/givepoints.lua")
--- include("vgui/imgur_manager.lua")
+
+--NOMINIFY
+
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3
@@ -54,10 +49,6 @@ concommand.Add("ps_togglemenu", function(ply, cmd, args)
 end)
 
 function SS_ReloadMenu()
-    if IsValid(SS_CustomizerPanel) then
-        SS_CustomizerPanel:Close()
-    end
-
     if IsValid(SS_ShopMenu) then
         SS_ShopMenu:Remove()
     end
@@ -84,9 +75,9 @@ function SS_ToggleMenu()
     end
 
     if SS_ShopMenu:IsVisible() then
-        if IsValid(SS_CustomizerPanel) then
-            SS_CustomizerPanel:Close()
-        end
+        -- if IsValid(SS_CustomizerPanel) then
+        --     SS_CustomizerPanel:Close()
+        -- end
 
         SS_ShopMenu:Hide()
         gui.EnableScreenClicker(false)
