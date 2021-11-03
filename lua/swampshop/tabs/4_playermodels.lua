@@ -3,24 +3,70 @@
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
+-- TODO: use .configurable/:GetConfigurable for commonly used elements
+-- AND add SetupCustomizer/SanitizeCfg which by default have behavior defined by GetConfigurable's return
+-- (er, make GetConfigurable always run its version of SetupCustomizer/SanitizeCfg before calling SetupCustomizer/SanitizeCfg)
+
 SS_Item({
     class = "skinner",
     price = 1000000,
     name = 'Skinner',
-    description = "attach a new skin to your body (WIP)",
+    description = "attach a new skin to your body",
     model = 'models/maxofs2d/gm_painting.mdl',
     invcategory = "Mods",
     maxowned = 5,
     playermodelmod = true,
-    materialmod = true,
-    configurable = {
-        color = {
-            max = 5
-        },
-        imgur = true,
-        submaterial = true,
-    }
+
+    SetupCustomizer = function(self, cust)
+
+        vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+            p:SetText("Skin ID")
+
+            vgui("DSSCustomizerComboBox", function(p)
+                local mats = LocalPlayer():GetMaterials()
+
+                for i = 1, math.min(31, #mats) do
+                    p:AddChoice(tostring(i) .. " (" .. table.remove(string.Explode("/", mats[i] or "")) .. ")", tostring(i-1), tonumber(self.cfg.submaterial or 0) == i-1)
+                end
+            
+                p.OnSelect = function(panel, index, word, value)
+                    self.cfg.submaterial = tonumber(value)
+                    cust:UpdateCfg()
+                end
+            end)
+        end)
+
+        vgui("DSSCustomizerColor", cust.RightColumn, function(p)
+            p:SetValue(self.cfg.color or self.color or Vector(1, 1, 1))
+
+            p.OnValueChanged = function(pnl, vec)
+                self.cfg.color = vec
+                cust:UpdateCfg()
+            end
+        end)
+
+        vgui("DSSCustomizerImgur", cust.RightColumn, function(p)
+            p:SetValue(self.cfg.imgur)
+
+            p.OnValueChanged = function(pnl, imgur)
+                self.item.cfg.imgur = imgur
+                cust:UpdateCfg()
+            end
+        end)
+
+    end,
+    SanitizeCfg = function(self, dirty)
+        self.cfg.color = SS_SanitizeColor(dirty.color)
+        self.cfg.imgur = SS_SanitizeImgur(dirty.imgur)
+        self.cfg.submaterial = isnumber(dirty.submaterial) and math.Clamp(math.floor(dirty.submaterial), 0, 31) or nil
+    end,
 })
+
+
+-- local function sanitizebone(cfg, dirty)
+--     cfg.bone_h = isstring(dirty.bone_h) and string.sub(dirty.bone_h, 1, 50) or nil
+--     cfg.bone_p = isstring(dirty.bone_p) and string.sub(dirty.bone_p, 1, 50) or nil
+-- end
 
 SS_Item({
     class = "inflater",
@@ -41,6 +87,52 @@ SS_Item({
         bone = true,
         scale_children = true
     }
+    -- defaultcfg = {
+    --     bone_h = "ValveBiped.Bip01_Head1",
+    --     bone_p = "LrigScull",
+    --     scale_h = Vector(1,1.5,1),
+    --     scale_p = Vector(1,1.5,1),
+    -- },
+    -- SetupCustomizer = function(self, cust)
+
+    --     local pone = LocalPlayer():IsPony()
+
+    --     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+    --         p:SetText("Skin ID")
+
+    --         vgui("DSSCustomizerCheckBox", function(p)
+
+    --         end)
+    --     end)
+
+    --     vgui("DSSCustomizerVectorSection", cust.LeftColumn, function(p)
+    --         p:SetForScale(0.5,1.5,self.cfg[pone and "scale_p" or "scale_h"] or self.defaultcfg[pone and "scale_p" or "scale_h"])
+            
+    --         p.OnValueChanged = function(pnl, vec)
+    --             self.cfg[pone and "scale_p" or "scale_h"] = vec
+    --             cust:UpdateCfg()
+    --         end
+    --     end)
+
+    --     vgui("DSSCustomizerImgur", cust.RightColumn, function(p)
+    --         p:SetValue(self.cfg.imgur)
+
+    --         p.OnValueChanged = function(pnl, imgur)
+    --             self.item.cfg.imgur = imgur
+    --             cust:UpdateCfg()
+    --         end
+    --     end)
+
+
+    -- end,
+    -- SanitizeCfg = function(self, dirty)
+    --     sanitizebone(self.cfg, dirty)
+    --     self.cfg.scale_h = SS_SanitizeVector(dirty.scale_h, 0.5, 1.5)
+    --     self.cfg.scale_p = SS_SanitizeVector(dirty.scale_p, 0.5, 1.5)
+    --     self.cfg.scale_children_h = dirty.scale_children_h and true or nil
+    --     self.cfg.scale_children_p = dirty.scale_children_p and true or nil
+    -- end,
+
 })
 
 SS_Item({

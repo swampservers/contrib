@@ -289,6 +289,12 @@ net.Receive("TheaterVoteSkips", function()
 end)
 
 function LoadVideo(Video)
+    -- refresh panels on service change to fix bugs
+    if CurrentVideo and Video and CurrentVideo:Type() ~= Video:Type() then
+        RemovePanels()
+    end
+
+
     CurrentVideo = Video
 
     if not Video or not Video:ShouldTrust() then

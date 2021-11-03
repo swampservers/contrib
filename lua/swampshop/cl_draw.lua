@@ -282,6 +282,7 @@ function SS_ApplyBoneMods(ent, mods)
     end
 end
 
+-- todo move this code to the item?
 function SS_ApplyMaterialMods(ent, ply)
     local mods = ply:SS_GetActivePlayermodelMods()
     -- print("RESET", ent)
@@ -290,7 +291,7 @@ function SS_ApplyMaterialMods(ent, ply)
     if HumanTeamName then return end
 
     for _, item in ipairs(mods) do
-        if item.materialmod then
+        if item.class=="skinner" then
             local col = item.cfg.color or Vector(1, 1, 1)
 
             -- todo: forceload in shop?

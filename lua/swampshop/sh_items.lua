@@ -6,6 +6,24 @@ SS_Items = SS_Items or {}
 -- this is not used as a table, it is just a unique value
 SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 
+
+function SS_SanitizeVector(val, min, max)
+    return isvector(val) and val:Clamp(min, max) or nil
+end
+
+function SS_SanitizeColor(val)
+    return SS_SanitizeVector(val, Vector(0,0,0), Vector(5,5,5))
+end
+
+function SS_SanitizeImgur(imgur)
+
+    local url = istable(imgur) and SanitizeImgurId(imgur.url)
+
+    return url and {
+            url = url
+        } or nil
+end
+
 -- SS_ITEM_META = {
 --     __index = function(t, k) return t[k] or t.cfg[k]  or t.class[k] end, --or t.spec[k]
 --     __newindex = function(t, k, v) end
@@ -188,13 +206,27 @@ function SS_Item(item)
     item.ScaleLimitOffset = item.ScaleLimitOffset or function() return 1 end
 
     function item:Sanitize()
-        _SS_SanitizeConfig(self)
+        local changed = false
 
-        if self.owner ~= SS_SAMPLE_ITEM_OWNER and self:CannotEquip() then
+        if self.SanitizeCfg then 
+            local dirty_cfg = {}
+            for k, v in pairs(self.cfg) do
+                dirty_cfg[k] = v
+            end
+            table.Empty(self.cfg)
+            changed = changed or self:SanitizeCfg(dirty_cfg) 
+        else _SS_SanitizeConfig(self) end
+
+        
+        
+
+        if self.owner ~= SS_SAMPLE_ITEM_OWNER and self.eq and self:CannotEquip() then
+            changed = true
             self.eq = false
         end
 
-        if self.SanitizeSpecs and self:SanitizeSpecs() then return true end
+        if self.SanitizeSpecs then changed=changed or self:SanitizeSpecs()  end
+        return changed
     end
 
     function item:CannotEquip()
@@ -263,7 +295,7 @@ function SS_Item(item)
         }
     end
 
-    if item.configurable then
+    if item.configurable or item.SetupCustomizer then
         item.actions.configure = {
             sort = -1,
             Text = function() return "Customize" end,
@@ -335,6 +367,7 @@ function SS_Item(item)
     end
 end
 
+--todo remove
 function _SS_SanitizeConfig(item)
     local cfg = item.cfg
     local itmc = item.configurable --:GetSettings()
@@ -347,14 +380,12 @@ function _SS_SanitizeConfig(item)
 
     table.Empty(cfg)
 
-    local function sanitize_vector(val, min, max)
-        return isvector(val) and val:Clamp(min, max) or nil
-    end
+
 
     local limits = item:CanCfgColor()
 
     if limits then
-        cfg.color = sanitize_vector(dirty_cfg.color, Vector(0, 0, 0), Vector(limits.max, limits.max, limits.max))
+        cfg.color = SS_SanitizeVector(dirty_cfg.color, Vector(0, 0, 0), Vector(limits.max, limits.max, limits.max))
     end
 
     limits = item:CanCfgImgur()
@@ -373,8 +404,8 @@ function _SS_SanitizeConfig(item)
             local scaleoffset = item:ScaleLimitOffset()
 
             local tab = {
-                pos = sanitize_vector(curr.pos, itmc.wear.pos.min, itmc.wear.pos.max),
-                scale = sanitize_vector(curr.scale, itmc.wear.scale.min * scaleoffset, itmc.wear.scale.max * scaleoffset),
+                pos = SS_SanitizeVector(curr.pos, itmc.wear.pos.min, itmc.wear.pos.max),
+                scale = SS_SanitizeVector(curr.scale, itmc.wear.scale.min * scaleoffset, itmc.wear.scale.max * scaleoffset),
                 ang = isangle(curr.ang) and Angle(math.Clamp(curr.ang.x, -180, 180), math.Clamp(curr.ang.y, -180, 180), math.Clamp(curr.ang.z, -180, 180)) or nil,
                 attach = isstring(curr.attach) and SS_Attachments[curr.attach] and curr.attach or nil,
             }
@@ -389,13 +420,13 @@ function _SS_SanitizeConfig(item)
     end
 
     if itmc.scale then
-        cfg.scale_h = sanitize_vector(dirty_cfg.scale_h, itmc.scale.min, itmc.scale.max)
-        cfg.scale_p = sanitize_vector(dirty_cfg.scale_p, itmc.scale.min, itmc.scale.max)
+        cfg.scale_h = SS_SanitizeVector(dirty_cfg.scale_h, itmc.scale.min, itmc.scale.max)
+        cfg.scale_p = SS_SanitizeVector(dirty_cfg.scale_p, itmc.scale.min, itmc.scale.max)
     end
 
     if itmc.pos then
-        cfg.pos_h = sanitize_vector(dirty_cfg.pos_h, itmc.pos.min, itmc.pos.max)
-        cfg.pos_p = sanitize_vector(dirty_cfg.pos_p, itmc.pos.min, itmc.pos.max)
+        cfg.pos_h = SS_SanitizeVector(dirty_cfg.pos_h, itmc.pos.min, itmc.pos.max)
+        cfg.pos_p = SS_SanitizeVector(dirty_cfg.pos_p, itmc.pos.min, itmc.pos.max)
     end
 
     if itmc.bone then

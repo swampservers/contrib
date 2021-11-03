@@ -405,7 +405,7 @@ function PANEL:Init()
         MakeCategoryButton(p, "Cosmetics", 'icon16/status_online.png', true)
     end)
 
-    vgui('DSSCustomizeMode', self.mainpane)
+    vgui('DSSCustomizerMode', self.mainpane)
 
     if (IN_STEAMGROUP or 0) <= 0 then
         p = vgui.Create("DButton", self)
@@ -529,4 +529,4 @@ function PANEL:PaintOver(w, h)
     end
 end
 
-vgui.Register('DPointShopMenu', PANEL, "EditablePanel")
+vgui.Register('DSSMenu', PANEL, "EditablePanel")

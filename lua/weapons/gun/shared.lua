@@ -795,9 +795,9 @@ function SWEP:GunFire()
                     timer.Simple(0, function()
                         if IsValid(self) and IsValid(self.Owner) then
                             if self:HasPerk("explosive") then
-                                util.BlastDamage(self, self.Owner, p, 200, 80)
+                                util.BlastDamage(self, self.Owner, p, 250, 70)
                             else
-                                util.BlastDamage(self, self.Owner, p, 150, 30)
+                                util.BlastDamage(self, self.Owner, p, 200, 40)
                             end
                         end
                     end)

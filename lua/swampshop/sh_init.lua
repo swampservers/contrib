@@ -9,6 +9,7 @@ include("sh_items.lua")
 local files, _ = file.Find('swampshop/vgui/*', 'LUA')
 table.sort(files)
 
+
 for _, name in ipairs(files) do
     AddCSLuaFile('swampshop/vgui/' .. name)
 

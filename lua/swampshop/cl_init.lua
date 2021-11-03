@@ -55,6 +55,13 @@ function SS_ReloadMenu()
 end
 
 concommand.Add("ps_destroymenu", function(ply, cmd, args)
+
+    for _, v in ipairs(vgui.GetWorldPanel():GetChildren()) do
+        if v:GetClassName()=="DSSMenu" then
+            v:Remove()
+        end
+    end
+
     SS_ReloadMenu()
 end)
 
@@ -70,7 +77,7 @@ end
 
 function SS_ToggleMenu()
     if not IsValid(SS_ShopMenu) then
-        SS_ShopMenu = vgui.Create('DPointShopMenu')
+        SS_ShopMenu = vgui.Create('DSSMenu')
         SS_ShopMenu:SetVisible(false)
     end
 
