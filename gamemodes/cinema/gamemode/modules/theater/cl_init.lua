@@ -227,7 +227,6 @@ net.Receive("TheaterVideo", function()
 end)
 
 --NOMINIFY
-
 net.Receive("TheaterSeek", function()
     local seconds = net.ReadFloat()
     local Video = CurrentVideo
@@ -293,7 +292,6 @@ function LoadVideo(Video)
     if CurrentVideo and Video and CurrentVideo:Type() ~= Video:Type() then
         RemovePanels()
     end
-
 
     CurrentVideo = Video
 

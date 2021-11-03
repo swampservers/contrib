@@ -4,9 +4,7 @@ include("sh_init.lua")
 include("cl_draw.lua")
 include("cl_materials.lua")
 include("cl_lootboxes.lua")
-
 --NOMINIFY
-
 local ALL_ITEMS = 1
 local OWNED_ITEMS = 2
 local UNOWNED_ITEMS = 3
@@ -55,9 +53,8 @@ function SS_ReloadMenu()
 end
 
 concommand.Add("ps_destroymenu", function(ply, cmd, args)
-
     for _, v in ipairs(vgui.GetWorldPanel():GetChildren()) do
-        if v:GetClassName()=="DSSMenu" then
+        if v:GetClassName() == "DSSMenu" then
             v:Remove()
         end
     end
@@ -85,7 +82,6 @@ function SS_ToggleMenu()
         -- if IsValid(SS_CustomizerPanel) then
         --     SS_CustomizerPanel:Close()
         -- end
-
         SS_ShopMenu:Hide()
         gui.EnableScreenClicker(false)
     else

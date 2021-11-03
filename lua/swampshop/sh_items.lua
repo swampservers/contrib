@@ -6,22 +6,20 @@ SS_Items = SS_Items or {}
 -- this is not used as a table, it is just a unique value
 SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 
-
 function SS_SanitizeVector(val, min, max)
     return isvector(val) and val:Clamp(min, max) or nil
 end
 
 function SS_SanitizeColor(val)
-    return SS_SanitizeVector(val, Vector(0,0,0), Vector(5,5,5))
+    return SS_SanitizeVector(val, Vector(0, 0, 0), Vector(5, 5, 5))
 end
 
 function SS_SanitizeImgur(imgur)
-
     local url = istable(imgur) and SanitizeImgurId(imgur.url)
 
     return url and {
-            url = url
-        } or nil
+        url = url
+    } or nil
 end
 
 -- SS_ITEM_META = {
@@ -208,24 +206,28 @@ function SS_Item(item)
     function item:Sanitize()
         local changed = false
 
-        if self.SanitizeCfg then 
+        if self.SanitizeCfg then
             local dirty_cfg = {}
+
             for k, v in pairs(self.cfg) do
                 dirty_cfg[k] = v
             end
-            table.Empty(self.cfg)
-            changed = changed or self:SanitizeCfg(dirty_cfg) 
-        else _SS_SanitizeConfig(self) end
 
-        
-        
+            table.Empty(self.cfg)
+            changed = changed or self:SanitizeCfg(dirty_cfg)
+        else
+            _SS_SanitizeConfig(self)
+        end
 
         if self.owner ~= SS_SAMPLE_ITEM_OWNER and self.eq and self:CannotEquip() then
             changed = true
             self.eq = false
         end
 
-        if self.SanitizeSpecs then changed=changed or self:SanitizeSpecs()  end
+        if self.SanitizeSpecs then
+            changed = changed or self:SanitizeSpecs()
+        end
+
         return changed
     end
 
@@ -301,13 +303,13 @@ function SS_Item(item)
             Text = function() return "Customize" end,
             OnClient = function(item)
                 SS_CustomizerPanel:OpenItem(item)
-                -- if SS_CustomizerPanel:IsVisible() then
-                --     SS_CustomizerPanel:Close()
-                -- else
-                --     SS_CustomizerPanel:Open(item)
-                -- end
             end
         }
+        -- if SS_CustomizerPanel:IsVisible() then
+        --     SS_CustomizerPanel:Close()
+        -- else
+        --     SS_CustomizerPanel:Open(item)
+        -- end
     end
 
     if not item.clientside_fake then
@@ -379,9 +381,6 @@ function _SS_SanitizeConfig(item)
     end
 
     table.Empty(cfg)
-
-
-
     local limits = item:CanCfgColor()
 
     if limits then

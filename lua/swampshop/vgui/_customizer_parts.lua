@@ -1,18 +1,14 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 -- name is because of alphabetical include sorting, baseclass has to come first
-
 --NOMINIFY
-
-vgui.Register('DSSCustomizerSection', 
-{
+vgui.Register('DSSCustomizerSection', {
     Init = function(self)
         self:DockMargin(0, 0, 0, 0)
         self:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
         self:Dock(TOP)
-
         self.Paint = SS_PaintFG
-    
+
         self.Text = vgui("DLabel", self, function(p)
             p:SetFont("SS_DESCINSTFONT")
             p:SetText("")
@@ -23,71 +19,55 @@ vgui.Register('DSSCustomizerSection',
             p:Dock(TOP)
         end)
     end,
-    SetText = function(self,txt)
+    SetText = function(self, txt)
         self.Text:SetText(txt)
     end,
     PerformLayout = function(self)
         self:SizeToChildren(false, true)
-    
+
         if IsValid(parent) and parent:GetName() == "DScrollPanel" then
             self:DockMargin(0, 0, parent.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
         else
             self:DockMargin(0, 0, 0, SS_COMMONMARGIN)
         end
     end,
-},"DPanel")
+}, "DPanel")
 
-
-vgui.Register('DSSCustomizerCheckBox',{
-    Init = function(self)
-
-        -- local function CheckboxMaker(parent, text)
-        --     local p2 = vgui.Create("Panel", parent)
-        --     p2:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
-        --     p2:Dock(TOP) --retarded wrapper
-        --     local p3 = vgui.Create("DCheckBox", p2)
-        --     --p:SetText(text)
-        --     p3:SetDark(true)
-        --     p3:SetPos(0, 2)
-        --     --p:SetTall(24)
-        --     local p = vgui.Create("DLabel", p2 or parent)
-        --     p:SetFont("SS_DESCFONT")
-        --     p:SetText(text)
-        --     p:SetTextColor(SS_SwitchableColor)
-        --     p:SetPos(24, 0)
-        --     p:SizeToContents()
-        
-        --     return p3
-        -- end
-
-    end
-
-
+vgui.Register('DSSCustomizerCheckBox', {
+    Init = function(self) end
 }, "DCheckBox")
 
-
-
-vgui.Register('DSSCustomizerComboBox',{
+-- local function CheckboxMaker(parent, text)
+--     local p2 = vgui.Create("Panel", parent)
+--     p2:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
+--     p2:Dock(TOP) --retarded wrapper
+--     local p3 = vgui.Create("DCheckBox", p2)
+--     --p:SetText(text)
+--     p3:SetDark(true)
+--     p3:SetPos(0, 2)
+--     --p:SetTall(24)
+--     local p = vgui.Create("DLabel", p2 or parent)
+--     p:SetFont("SS_DESCFONT")
+--     p:SetText(text)
+--     p:SetTextColor(SS_SwitchableColor)
+--     p:SetPos(24, 0)
+--     p:SizeToContents()
+--     return p3
+-- end
+vgui.Register('DSSCustomizerComboBox', {
     Init = function(self)
-
         self:SetWide(200)
         self:Dock(TOP)
         self.Paint = SS_PaintBG
-    
+
         self.UpdateColours = function(pnl)
             pnl:SetTextStyleColor(MenuTheme_TX)
             pnl:SetTextColor(MenuTheme_TX)
         end
-
     end
-
-
 }, "DComboBox")
 
-
-
-
-vgui.Register('DSSCustomizerSlider',{
+vgui.Register('DSSCustomizerSlider', {
     Init = function(self)
         self:SetDecimals(2)
         self:DockMargin(0, 0, 0, SS_COMMONMARGIN)
@@ -96,48 +76,44 @@ vgui.Register('DSSCustomizerSlider',{
         self.TextArea:SetPaintBackground(false)
         self:SetTall(24)
         self.TextArea.BasedPaint = self.TextArea.Paint
-    
+
         self.TextArea.Paint = function(pnl, w, h)
             SS_PaintBG(pnl, w, h)
             self.TextArea.BasedPaint(pnl, w, h)
         end
-    
+
         self.TextArea.UpdateColours = function(pnl)
             pnl:SetTextColor(MenuTheme_TX)
             pnl:SetCursorColor(MenuTheme_TX)
         end
-    
+
         self.TextArea:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
-    
+
         self.Label.UpdateColours = function(pnl)
             pnl:SetTextColor(MenuTheme_TX)
         end
 
         -- self.Label:SetContentAlignment(6)
-        self.Label:DockMargin(0,0,SS_COMMONMARGIN,0)
-    
+        self.Label:DockMargin(0, 0, SS_COMMONMARGIN, 0)
         self.Slider.Knob:SetWide(6)
-    
+
         self.Slider.Paint = function(pnl, w, h)
             local y = h / 2
             local barh = 2
             SS_GLOBAL_RECT(0, y - barh / 2, w, barh, MenuTheme_BG)
         end
-    
+
         self.Slider.Knob.Paint = function(pnl, w, h)
             draw.BoxShadow(0, 0, w, h, 8, 1)
             SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_Brand)
         end
     end,
-
     PerformLayout = function(self)
-            self.Label:SetWide(self:GetText()=="" and 8 or 80) -- self:GetWide() / 4 )
-        end
+        self.Label:SetWide(self:GetText() == "" and 8 or 80) -- self:GetWide() / 4 )
+    end
 }, "DNumSlider")
 
-
-vgui.Register('DSSCustomizerColor', 
-{
+vgui.Register('DSSCustomizerColor', {
     Init = function(self)
         self:SetText("Appearance")
 
@@ -149,7 +125,7 @@ vgui.Register('DSSCustomizerColor',
             p:DockMargin(0, 0, 0, 0)
             p:Dock(TOP)
         end)
-    
+
         self.Boost = vgui("DSSCustomizerSlider", self, function(p)
             p:SetText("Boost")
             p:SetMinMax(1, 5)
@@ -157,78 +133,67 @@ vgui.Register('DSSCustomizerColor',
             p:Dock(TOP)
         end)
 
-        self.BaseColor.ValueChanged = (function() if not self.SUPPRESSVALUECHANGED then self:OnValueChanged(self:GetValue()) end end)
+        self.BaseColor.ValueChanged = (function()
+            if not self.SUPPRESSVALUECHANGED then
+                self:OnValueChanged(self:GetValue())
+            end
+        end)
+
         self.Boost.OnValueChanged = self.BaseColor.ValueChanged
     end,
-    OnValueChanged = function(self, vec)
-        
-    end,
-    GetValue = function(self)
-        return self.BaseColor:GetVector() * self.Boost:GetValue()
-    end,
+    OnValueChanged = function(self, vec) end,
+    GetValue = function(self) return self.BaseColor:GetVector() * self.Boost:GetValue() end,
     SetValue = function(self, cv)
         local cvm = math.max(1, cv.x, cv.y, cv.z)
-        self.SUPPRESSVALUECHANGED=true
+        self.SUPPRESSVALUECHANGED = true
         self.BaseColor:SetVector(cv / cvm)
-        self.SUPPRESSVALUECHANGED=nil
+        self.SUPPRESSVALUECHANGED = nil
         self.Boost:SetValue(cvm)
     end
 }, 'DSSCustomizerSection')
 
-
-
-
-
-
-vgui.Register('DSSCustomizerImgur', 
-{
+vgui.Register('DSSCustomizerImgur', {
     Init = function(self)
         self:SetText("Custom Material")
 
         vgui("DLabel", self, function(p)
-        
             p:Dock(TOP)
             p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
             p:SetText("Upload an image to imgur.com and paste the link below. No GIFs!")
             -- p:SetWrap(true)
             p:SetContentAlignment(5)
             p:SizeToContents()
-            -- p:SetAutoStretchVertical(true)
-    
-            -- texturebarhelp.UpdateColours = function(pnl)
-            --     pnl:SetTextColor(MenuTheme_TX)
-            -- end
         end)
-    
-    
+
+        -- p:SetAutoStretchVertical(true)
+        -- texturebarhelp.UpdateColours = function(pnl)
+        --     pnl:SetTextColor(MenuTheme_TX)
+        -- end
         vgui("DPanel", self, function(p)
-        
             p:Dock(TOP)
             p.Paint = noop
-    
+
             vgui("DButton", function(p)
-            
                 p:SetText("Show Reference Material")
                 p:Dock(RIGHT)
                 p:SetWide(160)
                 p:SetTextStyleColor(MenuTheme_TX)
                 p:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
                 p.Paint = SS_PaintButtonBrandHL
-    
+
                 p.UpdateColours = function(btn)
                     btn:SetTextStyleColor(MenuTheme_TX)
                 end
-    
+
                 p.DoClick = function()
                     ImageGetterPanel()
-                end                
-            
+                end
             end)
-    
+
             vgui("DPanel", function(p)
                 p:Dock(TOP)
                 p.Paint = SS_PaintBG
-            
+
                 self.TextEntry = vgui("DTextEntry", function(p)
                     p:Dock(FILL)
                     p:SetPaintBackground(false)
@@ -237,85 +202,58 @@ vgui.Register('DSSCustomizerImgur',
                     p:SetCursorColor(MenuTheme_TX)
                     p:SetText("")
                     p:SetPlaceholderText("Example: https://imgur.com/a/3AOvcC1")
-                    
+
                     -- p.UpdateColours = function(pnl)
                     --     pnl:SetTextColor(MenuTheme_TX)
                     --     pnl:SetCursorColor(MenuTheme_TX)
                     -- end
-        
                     p.OnValueChange = function()
                         self:OnValueChanged(self:GetValue())
                     end
-                
                 end)
-                
-                -- vgui("DImageButton", function(p)
-                --     p:SetSize(16, 16)
-                --     p:SetImage("icon16/disk.png")
-                --     p:SetToolTip("Manage Saved Textures")
-                --     p:DockMargin(4, 4, 4, 4)
-                --     p:Dock(RIGHT)
-                --     p.DoClick = function(pnl)
-                --         if (IsValid(SS_CustTextureHistory)) then
-                --             SS_CustTextureHistory:Remove()
-        
-                --             return
-                --         end
-                --         ImageHistoryPanel(pnl)
-                --     end 
-                -- end)
-    
             end)
         end)
-
-
     end,
-    OnValueChanged = function(self, val)
-        
-
-    end,
+    -- vgui("DImageButton", function(p) --     p:SetSize(16, 16) --     p:SetImage("icon16/disk.png") --     p:SetToolTip("Manage Saved Textures") --     p:DockMargin(4, 4, 4, 4) --     p:Dock(RIGHT) --     p.DoClick = function(pnl) --         if (IsValid(SS_CustTextureHistory)) then --             SS_CustTextureHistory:Remove() --             return --         end --         ImageHistoryPanel(pnl) --     end  -- end)
+    OnValueChanged = function(self, val) end,
     GetValue = function(self)
         local url = self.TextEntry:GetValue()
-        return url~="" and {
+
+        return url ~= "" and {
             url = url
         } or nil
     end,
     SetValue = function(self, val)
         self.TextEntry:SetValue(istable(val) and val.url or "")
     end
-
 }, 'DSSCustomizerSection')
 
-vgui.Register('DSSCustomizerVectorSection', 
-{
-    Init = function(self)
-
-    end,
-    OnValueChanged = function(self, vec)
-        
-    end,
+vgui.Register('DSSCustomizerVectorSection', {
+    Init = function(self) end,
+    OnValueChanged = function(self, vec) end,
     MakeSlider = function(self, text, min, max, val, valuefunction)
         return vgui("DSSCustomizerSlider", self, function(p)
-
             --TODO: MOVE SOME OF THIS TO DSSCustomizerSlider
             p:SetText(text)
             p:SetMinMax(min, max)
             p:SetValue(val)
 
-            p.OnValueChanged = valuefunction or (function() if not self.SUPPRESSVALUECHANGED then self:OnValueChanged(self:GetValue()) end end)
+            p.OnValueChanged = valuefunction or (function()
+                if not self.SUPPRESSVALUECHANGED then
+                    self:OnValueChanged(self:GetValue())
+                end
+            end)
         end)
     end,
-    GetValue = function(self)
-        return Vector(self.XS:GetValue(), self.YS:GetValue(), self.ZS:GetValue())
-    end,
-    GetValueAngle = function(self)
-        return Angle(self.XS:GetValue(), self.YS:GetValue(), self.ZS:GetValue())
-    end,
+    GetValue = function(self) return Vector(self.XS:GetValue(), self.YS:GetValue(), self.ZS:GetValue()) end,
+    GetValueAngle = function(self) return Angle(self.XS:GetValue(), self.YS:GetValue(), self.ZS:GetValue()) end,
     SetValue = function(self, vec)
-        if isnumber(vec) then vec=Vector(vec,vec,vec) end
+        if isnumber(vec) then
+            vec = Vector(vec, vec, vec)
+        end
+
         self.XS:SetValue(vec[1])
         self.YS:SetValue(vec[2])
-        
         self.ZS:SetValue(vec[3])
     end,
     SetForPosition = function(self, min, max, default)
@@ -323,7 +261,6 @@ vgui.Register('DSSCustomizerVectorSection',
         self.XS = self:MakeSlider("Forward/Back", min.x, max.x, default.x)
         self.YS = self:MakeSlider("Left/Right", min.y, max.y, default.y)
         self.ZS = self:MakeSlider("Up/Down", min.z, max.z, default.z)
-
     end,
     SetForAngle = function(self, default)
         self:SetText("Angle")
@@ -332,9 +269,17 @@ vgui.Register('DSSCustomizerVectorSection',
         self.ZS = self:MakeSlider("Roll", -180, 180, default.r)
     end,
     SetForScale = function(self, min, max, default)
-        if isnumber(min) then min=Vector(min,min,min) end
-        if isnumber(max) then max=Vector(max,max,max) end
-        if isnumber(default) then default=Vector(default,default,default) end
+        if isnumber(min) then
+            min = Vector(min, min, min)
+        end
+
+        if isnumber(max) then
+            max = Vector(max, max, max)
+        end
+
+        if isnumber(default) then
+            default = Vector(default, default, default)
+        end
 
         self:SetText("Scale")
         self.XS = self:MakeSlider("Length", min.x, max.x, default.x)
@@ -343,25 +288,23 @@ vgui.Register('DSSCustomizerVectorSection',
 
         self.US = self:MakeSlider("", min.x, max.x, default.x, function(slider)
             local v = slider:GetValue()
-            self:SetValue(Vector(v,v,v))
+            self:SetValue(Vector(v, v, v))
         end)
 
         self.US:SetVisible(false)
 
         local scalebutton = vgui("DButton", self, function(p)
-
             p:SetText("Use Uniform Scaling")
             p:SetWide(160)
             p:Dock(TOP)
             p.Paint = SS_PaintButtonBrandHL
-    
+
             p.UpdateColours = function(btn)
                 btn:SetTextStyleColor(MenuTheme_TX)
             end
-    
+
             p.DoClick = function(btn)
                 if self.US:IsVisible() then
-
                     btn:SetText("Use Uniform Scaling")
                     self.XS:SetVisible(true)
                     self.YS:SetVisible(true)
@@ -373,19 +316,14 @@ vgui.Register('DSSCustomizerVectorSection',
                     self.YS:SetVisible(false)
                     self.ZS:SetVisible(false)
                     self.US:SetVisible(true)
-
                     local v = self:GetValue()
-                    self.US:SetValue( (v.x+v.y+v.z)/3)
+                    self.US:SetValue((v.x + v.y + v.z) / 3)
                 end
             end
-
         end)
-        
+
         if default.x == default.y and default.y == default.z then
             scalebutton:DoClick()
         end
-
     end
-
 }, 'DSSCustomizerSection')
-

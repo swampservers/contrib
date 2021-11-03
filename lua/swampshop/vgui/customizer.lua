@@ -1,11 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
 --NOMINIFY
-
 local PANEL = {}
-
 PANEL.NeedsKeyboard = true
 
 function PANEL:Init()
@@ -22,9 +18,7 @@ function PANEL:OpenItem(item)
     self.item = item
     item.applied_cfg = table.Copy(item.cfg)
     self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
-
     self.Paint = SS_PaintBG
-
     self:SetVisible(true)
 
     --main panel
@@ -50,10 +44,7 @@ function PANEL:OpenItem(item)
             vgui("DLabel", function(p)
                 p:SetFont("SS_LargeTitle")
                 p:SetText("βUSTOMIZER")
-
                 p:SetTextColor(MenuTheme_TX)
-
-                
                 p:SetContentAlignment(5)
                 p:SizeToContents()
                 p:DockMargin(80, 8, 0, 10)
@@ -63,11 +54,7 @@ function PANEL:OpenItem(item)
             vgui("DLabel", function(p)
                 p:SetFont("SS_DESCINSTFONT")
                 p:SetText("                                      WARNING:\nPornographic images or builds are not allowed!")
-
                 p:SetTextColor(MenuTheme_TX)
-   
-
-                
                 p:SetContentAlignment(5)
                 p:SizeToContents()
                 p:DockMargin(0, 0, 32, 0)
@@ -150,7 +137,6 @@ function PANEL:SetupControls()
     self.LeftColumn.VBar:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
     SS_SetupVBar(self.LeftColumn.VBar)
     self.LeftColumn.VBar:SetWide(SS_SCROLL_WIDTH)
-
     self.RightColumn = vgui.Create("DScrollPanel", self.controlzone)
     self.RightColumn:Dock(FILL)
     self.RightColumn:SetPadding(0)
@@ -158,92 +144,74 @@ function PANEL:SetupControls()
     SS_SetupVBar(self.RightColumn.VBar)
     self.RightColumn.VBar:SetWide(SS_SCROLL_WIDTH)
 
-
     if self.item.SetupCustomizer then
         self.item:SetupCustomizer(self)
     else
-
-
         local pone = LocalPlayer():IsPony()
         local suffix = pone and "_p" or "_h"
         local itmcw = self.item.configurable.wear
-    
+
         if (self.item.configurable or {}).wear then
             --LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
-    
-    
             vgui("DSSCustomizerSection", self.LeftColumn, function(p)
                 p:SetText("Attachment (" .. (pone and "pony" or "human") .. ")")
-    
+
                 vgui("DPanel", function(p)
                     p:Dock(TOP)
                     p:SetTall(24)
                     p.Paint = noop
-                
+
                     vgui("DComboBox", function(p)
                         p:SetValue((self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
-                
+
                         for k, v in pairs(SS_Attachments) do
                             p:AddChoice(k)
                         end
-                        
+
                         p:Dock(FILL)
                         p.Paint = SS_PaintBG
-                
+
                         p.UpdateColours = function(pnl)
                             pnl:SetTextStyleColor(MenuTheme_TX)
                             pnl:SetTextColor(MenuTheme_TX)
                         end
                     end)
-    
+
                     vgui("DLabel", function(p)
                         p:Dock(LEFT)
                         p:SetText("Attach to")
-                
+
                         p.UpdateColours = function(pnl)
                             pnl:SetTextColor(MenuTheme_TX)
                         end
-                
+
                         p.OnSelect = function(panel, index, value)
                             self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
                             self.item.cfg[self.wear].attach = value
                             self:UpdateCfg()
-                        end         
+                        end
                     end)
-    
-                    -- p:SizeToChildren(true,true)
                 end)
-    
-                -- p:SizeToChildren(true,true)
             end)
-    
-      
+
+            -- p:SizeToChildren(true,true)
+            -- p:SizeToChildren(true,true)
             local translate = (self.item.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
             local rotate = (self.item.cfg[self.wear] or {}).ang or (pone and (self.item.wear.pony or {}).rotate) or self.item.wear.rotate
             local scale = (self.item.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
-    
+
             self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                p:SetForPosition(
-                    itmcw.pos.min,
-                    itmcw.pos.max,
-                    translate
-                )
+                p:SetForPosition(itmcw.pos.min, itmcw.pos.max, translate)
             end)
-    
+
             self.Angle = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                p:SetForAngle(
-                    rotate
-                )
+                p:SetForAngle(rotate)
             end)
-    
-    
+
             self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                p:SetForScale(
-                    itmcw.scale.min* self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(),
-                    scale
-                )
+                p:SetForScale(itmcw.scale.min * self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(), scale)
             end)
-    
+
             local function transformslidersupdate()
                 self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
                 self.item.cfg[self.wear].pos = self.Position:GetValue()
@@ -251,107 +219,90 @@ function PANEL:SetupControls()
                 self.item.cfg[self.wear].scale = self.Scale:GetValue()
                 self:UpdateCfg()
             end
-    
+
             self.Position.OnValueChanged = transformslidersupdate
             self.Angle.OnValueChanged = transformslidersupdate
             self.Scale.OnValueChanged = transformslidersupdate
-    
         elseif (self.item.configurable or {}).bone then
-    
             vgui("DSSCustomizerSection", self.LeftColumn, function(p)
-    
-                p:SetText( "Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")" )
-    
+                p:SetText("Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")")
+
                 local function cleanbonename(bn)
                     return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
                 end
-        
+
                 vgui("DComboBox", function(p)
                     p:SetValue(cleanbonename(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1")))
                     p:SetTall(24)
                     p:Dock(TOP)
                     p.Paint = SS_PaintBG
-            
+
                     p.UpdateColours = function(pnl)
                         pnl:SetTextStyleColor(MenuTheme_TX)
                         pnl:SetTextColor(MenuTheme_TX)
                     end
-            
+
                     for x = 0, (LocalPlayer():GetBoneCount() - 1) do
                         local bn = LocalPlayer():GetBoneName(x)
                         local cleanname = cleanbonename(bn)
-            
+
                         if cleanname ~= "__INVALIDBONE__" then
                             p:AddChoice(cleanname, bn)
                         end
                     end
-            
+
                     p.OnSelect = function(panel, index, word, value)
                         self.item.cfg["bone" .. suffix] = value
                         self:UpdateCfg()
                     end
                 end)
-               
             end)
-    
-           
+
             --bunch of copied shit
             local function transformslidersupdate()
                 if self.item.configurable.scale then
                     self.item.cfg["scale" .. suffix] = self.Scale:GetValue()
                 end
-    
+
                 if self.item.configurable.pos then
                     self.item.cfg["pos" .. suffix] = self.Position:GetValue()
                 end
-    
+
                 self:UpdateCfg()
             end
-    
+
             local itmcp = self.item.configurable.pos
-    
+
             if itmcp then
                 self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                    p:SetForPosition(
-                        itmcp.min,
-                        itmcp.max,
-                        translate
-                    )
+                    p:SetForPosition(itmcp.min, itmcp.max, translate)
                 end)
             end
-    
+
             local itmcs = self.item.configurable.scale
-    
+
             if itmcs then
                 self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                    p:SetForScale(
-                        itmcw.scale.min* self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(),
-                        scale
-                    )
+                    p:SetForScale(itmcw.scale.min * self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(), scale)
                 end)
             end
-    
+
             --end bunch of copied shit
             if self.item.configurable.scale_children then
-    
                 vgui('DSSCustomizerCheckbox', self.LeftColumn, function(p)
                     -- "Scale child bones"
-                    
                     p:SetValue(self.item.cfg["scale_children" .. suffix] and 1 or 0)
-    
+
                     p.OnChange = function(checkboxself, ch)
                         self.item.cfg["scale_children" .. suffix] = ch
                         self:UpdateCfg()
                     end
-                
                 end)
             end
         end
-    
-    
-    
+
         local limit = self.item:CanCfgColor()
-    
+
         if limit then
             vgui("DSSCustomizerColor", self.RightColumn, function(p)
                 p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
@@ -361,11 +312,9 @@ function PANEL:SetupControls()
                     self:UpdateCfg()
                 end
             end)
-    
         end
-    
-        if self.item:CanCfgImgur() then
 
+        if self.item:CanCfgImgur() then
             vgui("DSSCustomizerImgur", self.RightColumn, function(p)
                 p:SetValue(self.item.cfg.imgur)
 
@@ -375,50 +324,44 @@ function PANEL:SetupControls()
                 end
             end)
         end
-    
     end
 
     vgui("DCollapsibleCategory", self.RightColumn, function(p)
-    
         p:Dock(TOP)
         p:SetTall(256)
         p:DockMargin(0, 0, 0, 0)
         p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
         p.BasedPerformLayout = p.PerformLayout
-    
+
         p.PerformLayout = function(pnl)
             pnl:SizeToChildren(false, true)
             pnl:InvalidateParent(true)
             pnl:DockMargin(0, 0, self.RightColumn.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
             pnl:BasedPerformLayout(pnl:GetWide(), pnl:GetTall())
         end
-    
+
         p:SetLabel("Raw Data")
         p.Header:SetFont("SS_DESCINSTFONT")
         p.Header:SetTextColor(MenuTheme_TX)
-    
         -- p.Header.UpdateColours = function(pnl)
         --     pnl:SetTextColor(MenuTheme_TX)
         -- end
-    
         p.Header:SetContentAlignment(8)
         p.Header:SetTall(26)
         p.Paint = SS_PaintFG
         p:SetExpanded(false)
         p:SetKeyboardInputEnabled(true)
-    
 
         vgui("DPanel", function(p)
             p:Dock(FILL)
             p.Paint = SS_PaintBG
-    
+
             p.PerformLayout = function(pnl)
                 pnl:SizeToChildren(false, true)
                 pnl:InvalidateParent(true)
             end
-        
+
             self.RawEntry = vgui("DTextEntry", function(p)
-        
                 p:SetMultiline(true)
                 p:DockMargin(SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN, SS_COMMONMARGIN)
                 p:SetTall(256)
@@ -428,38 +371,33 @@ function PANEL:SetupControls()
                 p:SetCursorColor(MenuTheme_TX)
                 p:SetEditable(true)
                 p:SetKeyboardInputEnabled(true)
-            
+
                 -- p.UpdateColours = function(pnl)
                 --     pnl:SetTextColor(MenuTheme_TX)
                 --     pnl:SetCursorColor(MenuTheme_TX)
                 -- end
-            
                 p.PerformLayout = function(pnl)
                     pnl:SizeToContentsY()
                     pnl:InvalidateParent(true)
                 end
-            
+
                 p.OnValueChange = function(textself, new)
                     textself:InvalidateLayout(true)
-            
+
                     if not textself.RECIEVE then
                         self.item.cfg = util.JSONToTable(new) or {}
                         self:UpdateCfg(true) -- TODO: sanitize input like on the server
                     end
                 end
-            
+
                 p:SetUpdateOnType(true)
-                --p:SetValue("unset") --(self.item.cfg.imgur or {}).url or "")
             end)
-        
         end)
-    
     end)
-   
+
+    --p:SetValue("unset") --(self.item.cfg.imgur or {}).url or "")
     self:UpdateCfg()
 end
-
-
 
 function ImageGetterPanel()
     local mat
@@ -496,18 +434,13 @@ function ImageGetterPanel()
         DLButton:SetTextColor(MenuTheme_TX)
 
         DLButton.DoClick = function()
-            
             local function DownloadTexture(mat, callback)
-                hook.Add("PostRender", "SS_TexDownload", 
-            
-                function()
+                hook.Add("PostRender", "SS_TexDownload", function()
                     if (mat and not mat:IsError()) then
-                
-                
                         local matcopy = CreateMaterial(mat:GetName() .. "copy", "UnlitGeneric", {
                             ["$basetexture"] = mat:GetString("$basetexture")
                         })
-                
+
                         local RT = GetRenderTarget(mat:GetName() .. "download", mat:Width(), mat:Height())
                         render.PushRenderTarget(RT)
                         cam.Start2D()
@@ -516,7 +449,7 @@ function ImageGetterPanel()
                         render.DrawScreenQuad()
                         cam.End2D()
                         render.SetWriteDepthToDestAlpha(false)
-                
+
                         local data = render.Capture({
                             format = "png",
                             x = 0,
@@ -525,14 +458,14 @@ function ImageGetterPanel()
                             w = ScrW(),
                             h = ScrH()
                         })
-                
+
                         render.SetWriteDepthToDestAlpha(true)
                         render.PopRenderTarget()
                         local parts = string.Explode("/", mat:GetName() or "")
                         local imagename = parts[#parts] or "temp_image"
                         local fname = imagename .. ".png"
                         file.Write(fname, data)
-                
+
                         if callback then
                             callback(fname, data)
                         end
@@ -541,12 +474,10 @@ function ImageGetterPanel()
                             callback()
                         end
                     end
-            
+
                     hook.Remove("PostRender", "SS_TexDownload")
                 end)
             end
-            
-
 
             DownloadTexture(Material(mat), function(fname, data)
                 if (fname) then
@@ -595,15 +526,11 @@ function PANEL:UpdateCfg(skiptext)
 end
 
 vgui.Register('DSSCustomizerMode', PANEL, 'DSSMode')
-
-
 -- function ImageHistoryPanel(button)
 --     if IsValid(SS_CustTextureHistory) then
 --         SS_CustTextureHistory:Remove()
-
 --         return
 --     end
-
 --     local sz = 512
 --     local Menu = DermaMenu()
 --     local container = Container(nil, "Saved Textures")
@@ -615,7 +542,6 @@ vgui.Register('DSSCustomizerMode', PANEL, 'DSSMode')
 --     textures:Dock(TOP)
 --     textures:SetTall(256)
 --     textures:SetSize(512, 512)
-
 --     Menu.Paint = function(pnl, w, h)
 --         DisableClipping(true)
 --         local border = 8
@@ -623,35 +549,28 @@ vgui.Register('DSSCustomizerMode', PANEL, 'DSSMode')
 --         DisableClipping(false)
 --         SS_PaintBG(pnl, w, h)
 --     end
-
 --     SS_CustTextureHistory = Menu
 --     textures:SetColumns(4)
 --     textures:Load()
 --     local img = SS_CustomizerPanel.TextureBar:GetText()
 --     textures.AddField:SetText(img)
-
 --     textures.OnChoose = function(pnl, img)
 --         SingleAsyncSanitizeImgurId(img, function(id)
 --             if not IsValid(pnl) then return end
-
 --             if (id) then
 --                 SS_CustomizerPanel.TextureBar:SetText(id)
 --                 textures.AddField:SetText(id)
 --             end
-
 --             SS_CustomizerPanel.item.cfg.imgur = id and {
 --                 url = id,
 --                 nsfw = false
 --             } or nil
-
 --             SS_CustomizerPanel:UpdateCfg()
 --         end)
 --     end
-
 --     local x, y = button:LocalToScreen(button:GetWide() + SS_COMMONMARGIN, 0)
 --     Menu:Open(x, y)
 --     Menu.BaseLayout = Menu.PerformLayout
-
 --     Menu.PerformLayout = function(pnl, w, h)
 --         Menu.BaseLayout(pnl, w, h)
 --         local x, y = pnl:GetPos()

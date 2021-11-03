@@ -40,7 +40,6 @@ function PANEL:Think()
     end
 
     self.LastAnimated = animate
-
 end
 
 -- returns model and if its a playermodel (false means its a prop)
@@ -345,12 +344,10 @@ function PANEL:Paint(w, h)
     self:EndCamera()
 
     if SS_CustomizerPanel:IsVisible() then
-
-            if IsValid(SS_HoverCSModel) then
-                draw.SimpleText("RMB + drag to rotate", "SS_DESCFONTBIG", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                draw.SimpleText("MMB + drag to move", "SS_DESCFONTBIG", self:GetWide() / 2, 14 + 32, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            end
-
+        if IsValid(SS_HoverCSModel) then
+            draw.SimpleText("RMB + drag to rotate", "SS_DESCFONTBIG", self:GetWide() / 2, 14, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("MMB + drag to move", "SS_DESCFONTBIG", self:GetWide() / 2, 14 + 32, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
     end
 
     if IsValid(SS_DescriptionPanel) then
