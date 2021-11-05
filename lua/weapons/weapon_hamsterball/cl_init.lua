@@ -1,4 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("shared.lua")
 SWEP.Instructions = "Primary: Drop Bomb\nSecondary: Warning Siren"
@@ -6,7 +6,6 @@ SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 
 function SWEP:Move(ply, mv)
-
     if not ply.AddedHamsterBallBoneCallback then
         ply.AddedHamsterBallBoneCallback = true
 
@@ -15,10 +14,8 @@ function SWEP:Move(ply, mv)
         end)
     end
 
-
     return true
 end
-
 
 --         -- local matrix = e:GetBoneMatrix(0):GetTranslation()
 --         -- local pos = matrix
@@ -47,18 +44,15 @@ end
 --             -- ply:SetupBones()
 --             ply:DrawModel()
 --         end
-
-
-
 function BuildHamsterBallBones(ent, nb)
     local e = ent:GetNWEntity("HamsterBall")
     if not IsValid(e) then return end
     -- local move = ent:GetBoneMatrix(0):GetTranslation()- e:GetBoneMatrix(0):GetTranslation()
     local move = e:GetNetworkOrigin() - e:GetPos()
+
     -- local move = ent:GetPos() - e:GetPos()
     -- local move = e:GetNetworkOrigin() - ent:GetPos() 
     -- print("MOVE", move)
-
     for i = 0, nb - 1 do
         local p, a = ent:GetBonePosition(i)
         ent:SetBonePosition(i, p - move, a)
