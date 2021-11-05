@@ -6,9 +6,21 @@ SERVICE.Name = "LookMovie"
 SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
+local domains = {
+    "lmplayer.xyz",
+    "contentmatserishere.com",
+    "thisistheplacetowatch.com",
+    "watchthesestuff.com",
+    "bestofworldcontent.com",
+    "wehaveallcontent.com"
+}
+
 function SERVICE:GetKey(url)
     if (util.JSONToTable(url.encoded)) then return false end
-    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") or string.match(url.encoded, "lmplayer.xyz/m/play/./(.+)/s") or string.match(url.encoded, "lmplayer.xyz/s/play/./(.+)/s#") then return url.encoded end
+    if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") or string.match(url.encoded, "lookmovie.io/shows/view/(.+)#.+%-(%d+)$") then return url.encoded end
+    for _,v in pairs(domains) do
+        if string.match(url.encoded, v .. "/m/./(.+)/s") or string.match(url.encoded, v .. "/s/./(.+)/s#") then return url.encoded end
+    end
 
     return false
 end
@@ -25,8 +37,8 @@ if CLIENT then
         vpanel:SetMouseInputEnabled(false)
         vpanel.response = ""
         local info = {}
-        local isTV = string.match(key, "lmplayer.xyz/s/play/./(.+)/s#")
-        local itemid = string.match(key, "movies/view/(.+)") or string.match(key, "play/./(.+)/s")
+        local isTV = string.match(key, "shows/view/(.+)") or string.match(key, "/s/./(.+)/s#")
+        local itemid = string.match(key, "/view/(.+)") or string.match(key, "/./(.+)/s")
 
         local function onFetchReceive(body)
             local t = util.JSONToTable(body)
