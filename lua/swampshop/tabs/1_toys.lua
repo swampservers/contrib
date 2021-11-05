@@ -135,6 +135,17 @@ SS_WeaponProduct({
 SS_Heading("Expensive Toys")
 
 SS_WeaponProduct({
+    class = "weapon_hamsterball",
+    price = 8000,
+    name = "Hamster Ball",
+    description = "They see me rollin'",
+    model = "models/props_phx/ball.mdl"
+    -- material = "models/shadertest/shader3"
+})
+
+
+
+SS_WeaponProduct({
     class = "weapon_stencilpaint",
     price = 500,
     name = "Stencil Paint",
