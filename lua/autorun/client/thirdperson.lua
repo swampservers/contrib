@@ -23,7 +23,6 @@ end)
 function UseThirdperson()
     local wc = IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass()
 
-
     return THIRDPERSON or LocalPlayer():GetActiveWeapon().AlwaysThirdPerson or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(LocalPlayer()) and not LocalPlayer():InVehicle())
 end
 

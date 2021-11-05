@@ -1,14 +1,12 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 include("shared.lua")
 SWEP.Instructions = "WASD: Move\nSpace: Jump\nCtrl: Brake\nLMB: Hamster noises"
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
-
 SWEP.AlwaysThirdPerson = true
 
 function SWEP:Move(ply, mv)
-
     if not ply.AddedHamsterBallBoneCallback then
         ply.AddedHamsterBallBoneCallback = true
 
@@ -17,10 +15,8 @@ function SWEP:Move(ply, mv)
         end)
     end
 
-
     return true
 end
-
 
 --         -- local matrix = e:GetBoneMatrix(0):GetTranslation()
 --         -- local pos = matrix
@@ -49,56 +45,47 @@ end
 --             -- ply:SetupBones()
 --             ply:DrawModel()
 --         end
-
 -- function GetHamsterBallBones(ent,nb)
 --     HAMSTERBALLPOS = ent:GetBoneMatrix(0):GetTranslation()
 -- end
-
-
 function BuildHamsterBallBones(ent, nb)
-
     local e = ent:GetNWEntity("HamsterBall")
 
     if not IsValid(e) then
-        if ent.HamsterBallScaled then 
-            ent.HamsterBallScaled=false
+        if ent.HamsterBallScaled then
+            ent.HamsterBallScaled = false
             ent:SetModelScale(1)
         end
-        return end
 
-    if not ent.HamsterBallScaled then 
-        ent.HamsterBallScaled=true
+        return
+    end
+
+    if not ent.HamsterBallScaled then
+        ent.HamsterBallScaled = true
         ent:SetModelScale(0.5)
     end
 
     -- if not e.AddedHamsterBallBoneCallback then
     --     e.AddedHamsterBallBoneCallback = true
-
     --     e:AddCallback("BuildBonePositions", function(b, nb)
     --         GetHamsterBallBones(b, nb)
     --     end)
     -- end
-
-    
     -- if not HAMSTERBALLPOS then return end
-
-
     -- local move = ent:GetBoneMatrix(0):GetTranslation()- e:GetBoneMatrix(0):GetTranslation()
-    local move = ent:GetBoneMatrix(0):GetTranslation()-e:GetPos()
+    local move = ent:GetBoneMatrix(0):GetTranslation() - e:GetPos()
+
     -- local move = e:GetNetworkOrigin() - e:GetPos()
     -- local move = ent:GetPos() - e:GetPos()
     -- local move = e:GetNetworkOrigin() - ent:GetPos() 
     -- print("MOVE", move)
-
     for i = 0, nb - 1 do
         -- local p, a = ent:GetBonePosition(i)
         -- ent:SetBonePosition(i, p - move, a)
-
         local m = ent:GetBoneMatrix(i)
         -- m:Translate(move)
-        m:SetTranslation(m:GetTranslation()-move)
+        m:SetTranslation(m:GetTranslation() - move)
         ent:SetBoneMatrix(i, m)
-
         -- ent:SetBonePosition(i, e:GetPos() + Vector(0, 0, 20), a)
     end
     -- ent:SetRenderOrigin(Vector(0,0,0))

@@ -140,11 +140,9 @@ SS_WeaponProduct({
     name = "Hamster Ball",
     description = "They see me rollin'",
     model = "models/props_phx/ball.mdl"
-    -- material = "models/shadertest/shader3"
 })
 
-
-
+-- material = "models/shadertest/shader3"
 SS_WeaponProduct({
     class = "weapon_stencilpaint",
     price = 500,
