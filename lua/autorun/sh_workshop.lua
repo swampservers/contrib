@@ -34,8 +34,8 @@ end
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
 --or: models/props_phx/gears/spur24.mdl
 function require_workshop(id)
-    -- print("ID", id)
-
+    -- print("ID", id, STEAMWS_DOWNLOAD_STARTED[id], STEAM_WORKSHOP_INFLIGHT)
+-- 
     if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT == 0 then
         STEAMWS_DOWNLOAD_STARTED[id] = true
         print("\n\n***DOWNLOADING " .. id .. "***\n\n")
@@ -43,6 +43,7 @@ function require_workshop(id)
         STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
 
         steamworks.DownloadUGC(id, function(name, file)
+            print("\n\n***CALLBACK " .. id .. "***\n\n")
             timer.Simple(0.1, function()
                 STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT - 1
             end)

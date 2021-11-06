@@ -267,9 +267,14 @@ SS_Item({
             return "UNSET OUTFIT"
     end,
     GetModel = function(self)
+        -- print("GETMODEL1")
         if CLIENT and self.cfg.model and self.cfg.wsid then
+            -- print("GETMODEL2")
+
+            -- so the callback makes the model refresh
+            register_workshop_model(self.cfg.model, self.cfg.wsid)
             -- hack: makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
-        --     require_workshop(self.cfg.wsid)
+            require_workshop(self.cfg.wsid)
             return self.cfg.model
         end
         return "models/player/skeleton.mdl"
@@ -287,31 +292,7 @@ SS_Item({
     end,
 
     SetupCustomizer = function(self, cust)
-        vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
-            p:SetText("Choose The Model, My Friend")
-
-            vgui("DTextEntry", function(p) 
-                p:Dock(TOP)
-                p:SetValue(self.cfg.wsid or "")
-                p:SetPlaceholderText( "wsid: 13376969" )
-                p:SetUpdateOnType(true)
-                p.OnValueChange = function(pnl, txt)
-                    self.cfg.wsid = txt
-                    cust:UpdateCfg()
-                end
-            end)
-
-            vgui("DTextEntry", function(p) 
-                p:Dock(TOP)
-                p:SetValue(self.cfg.model or "")
-                p:SetPlaceholderText( "path: models/thingy.mdl" )
-                p:SetUpdateOnType(true)
-                p.OnValueChange = function(pnl, txt)
-                    self.cfg.model = txt
-                    cust:UpdateCfg()
-                end
-            end)
-        end)
+       FillThisIn(self, cust)
     end,
     SanitizeCfg = function(self, dirty)
         -- lets through all strings below a length limit
@@ -320,6 +301,38 @@ SS_Item({
     end,
 
 })
+
+function FillThisIn(self,cust)
+
+    vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+        p:SetText("Choose The Model, My Friend")
+
+        vgui("DTextEntry", function(p) 
+            p:Dock(TOP)
+            p:SetValue(self.cfg.wsid or "")
+            p:SetPlaceholderText( "wsid: 13376969" )
+            p:SetUpdateOnType(true)
+            p.OnValueChange = function(pnl, txt)
+                self.cfg.wsid = txt
+                cust:UpdateCfg()
+            end
+        end)
+
+        vgui("DTextEntry", function(p) 
+            p:Dock(TOP)
+            p:SetValue(self.cfg.model or "")
+            p:SetPlaceholderText( "path: models/thingy.mdl" )
+            p:SetUpdateOnType(true)
+            p.OnValueChange = function(pnl, txt)
+                self.cfg.model = txt
+                cust:UpdateCfg()
+            end
+        end)
+    end)
+
+
+end
+
 
 if SERVER then
     hook.Add("SS_UpdateItems", "outfitterbools", function(v)
