@@ -57,11 +57,11 @@ function SS_Product(product)
     end
 end
 
-function SS_GenerateItem(ply, class)
+function SS_GenerateItem(ply, class, specs)
     local item = SS_MakeItem(ply, {
         class = class,
         id = -1,
-        specs = {},
+        specs = specs or {},
         cfg = {},
         eq = true,
     })
@@ -74,7 +74,7 @@ end
 function SS_ItemProduct(item)
     local product = table.Copy(item) --TODO maybe only copy needed keys
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " is kept forever unless you " .. ((product.price or 0) == 0 and "return" or "sell") .. " it."
-    product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.class)
+    product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.itemclass or product.class, table.Copy(product.defaultspecs or {}))
 
     function product:CannotBuy(ply)
         local maxcount = (self.accessory_slot and ply:SS_AccessorySlots() * (self.perslot or 1)) or self.maxowned or 1
@@ -82,7 +82,7 @@ function SS_ItemProduct(item)
     end
 
     function product:OnBuy(ply)
-        ply:SS_GiveNewItem(SS_GenerateItem(ply, self.class))
+        ply:SS_GiveNewItem(SS_GenerateItem(ply, self.itemclass or self.class, table.Copy(self.defaultspecs or {})))
     end
 
     SS_Product(product)

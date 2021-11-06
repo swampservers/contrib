@@ -6,7 +6,11 @@ SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.AlwaysThirdPerson = true
 
+--NOMINIFY
+
 function SWEP:Move(ply, mv)
+
+    -- bug when fullupdate happens, it causes the callback to go away but not the value set
     if not ply.AddedHamsterBallBoneCallback then
         ply.AddedHamsterBallBoneCallback = true
 
@@ -52,18 +56,18 @@ function BuildHamsterBallBones(ent, nb)
     local e = ent:GetNWEntity("HamsterBall")
 
     if not IsValid(e) then
-        if ent.HamsterBallScaled then
-            ent.HamsterBallScaled = false
-            ent:SetModelScale(1)
-        end
+        -- if ent.HamsterBallScaled then
+        --     ent.HamsterBallScaled = false
+        --     ent:SetModelScale(1)
+        -- end
 
         return
     end
 
-    if not ent.HamsterBallScaled then
-        ent.HamsterBallScaled = true
-        ent:SetModelScale(0.5)
-    end
+    -- if not ent.HamsterBallScaled then
+    --     ent.HamsterBallScaled = true
+    --     ent:SetModelScale(0.5)
+    -- end
 
     -- if not e.AddedHamsterBallBoneCallback then
     --     e.AddedHamsterBallBoneCallback = true
@@ -84,8 +88,10 @@ function BuildHamsterBallBones(ent, nb)
         -- ent:SetBonePosition(i, p - move, a)
         local m = ent:GetBoneMatrix(i)
         -- m:Translate(move)
-        m:SetTranslation(m:GetTranslation() - move)
-        ent:SetBoneMatrix(i, m)
+        if m then
+            m:SetTranslation(m:GetTranslation() - move)
+            ent:SetBoneMatrix(i, m)
+        end
         -- ent:SetBonePosition(i, e:GetPos() + Vector(0, 0, 20), a)
     end
     -- ent:SetRenderOrigin(Vector(0,0,0))

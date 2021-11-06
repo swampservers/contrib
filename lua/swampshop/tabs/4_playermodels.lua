@@ -3,9 +3,9 @@
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
--- TODO: use .configurable/:GetConfigurable for commonly used elements
--- AND add SetupCustomizer/SanitizeCfg which by default have behavior defined by GetConfigurable's return
--- (er, make GetConfigurable always run its version of SetupCustomizer/SanitizeCfg before calling SetupCustomizer/SanitizeCfg)
+-- TODO: use .settings/:GetSettings for commonly used elements
+-- AND add SetupCustomizer/SanitizeCfg which by default have behavior defined by GetSettings's return
+-- (er, make GetSettings always run its version of SetupCustomizer/SanitizeCfg before calling SetupCustomizer/SanitizeCfg)
 -- also make .cfg have a metatable, and if missing it calls item:DefaultCfg(key)
 SS_Item({
     class = "skinner",
@@ -74,7 +74,7 @@ SS_Item({
     maxowned = 25,
     playermodelmod = true,
     bonemod = true,
-    configurable = {
+    settings = {
         scale = {
             min = Vector(0.5, 0.5, 0.5),
             max = Vector(1.5, 1.5, 1.5)
@@ -130,7 +130,7 @@ SS_Item({
     maxowned = 25,
     playermodelmod = true,
     bonemod = true,
-    configurable = {
+    settings = {
         pos = {
             min = Vector(-8, -8, -8),
             max = Vector(8, 8, 8),
@@ -150,7 +150,7 @@ SS_Item({
 --     maxowned = 25,
 --     playermodelmod = true,
 --     bonemod = true,
---     configurable = {
+--     settings = {
 --         ang = true,
 --         bone = true
 --     }

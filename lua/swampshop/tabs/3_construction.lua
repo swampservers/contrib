@@ -79,19 +79,22 @@ SS_Item({
             Text = function(item) return "MAKE (-" .. tostring(item:SpawnPrice()) .. ")" end,
         }
     },
-    CanCfgColor = function(self)
-        return (SS_GetRating(self.specs.rating or 0).id >= 5) and {
-            max = 5
-        } or false
+    GetSettings = function(self)
+        return {
+            color = (SS_GetRating(self.specs.rating or 0).id >= 5) and {
+                max = 5
+            } or false,
+            imgur = SS_GetRating(self.specs.rating or 0).id >= 7
+        }
+
     end,
-    CanCfgImgur = function(self) return SS_GetRating(self.specs.rating or 0).id >= 7 end,
     GetColor = function(self)
         if self:CanCfgColor() then return self.cfg.color end
         local r = SS_GetRating(self.specs.rating).id
         if r == 2 then return Vector(0.7, 0.7, 0.7) end
         if r == 1 then return Vector(0.5, 0.3, 0.1) end
     end,
-    configurable = {
+    settings = {
         color = {
             max = 5
         },

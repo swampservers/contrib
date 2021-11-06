@@ -149,9 +149,9 @@ function PANEL:SetupControls()
     else
         local pone = LocalPlayer():IsPony()
         local suffix = pone and "_p" or "_h"
-        local itmcw = self.item.configurable.wear
+        local itmcw = self.item:GetSettings().wear
 
-        if (self.item.configurable or {}).wear then
+        if (self.item:GetSettings() or {}).wear then
             --LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
             vgui("DSSCustomizerSection", self.LeftColumn, function(p)
                 p:SetText("Attachment (" .. (pone and "pony" or "human") .. ")")
@@ -223,7 +223,7 @@ function PANEL:SetupControls()
             self.Position.OnValueChanged = transformslidersupdate
             self.Angle.OnValueChanged = transformslidersupdate
             self.Scale.OnValueChanged = transformslidersupdate
-        elseif (self.item.configurable or {}).bone then
+        elseif (self.item:GetSettings() or {}).bone then
             vgui("DSSCustomizerSection", self.LeftColumn, function(p)
                 p:SetText("Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")")
 
@@ -260,18 +260,18 @@ function PANEL:SetupControls()
 
             --bunch of copied shit
             local function transformslidersupdate()
-                if self.item.configurable.scale then
+                if self.item:GetSettings().scale then
                     self.item.cfg["scale" .. suffix] = self.Scale:GetValue()
                 end
 
-                if self.item.configurable.pos then
+                if self.item:GetSettings().pos then
                     self.item.cfg["pos" .. suffix] = self.Position:GetValue()
                 end
 
                 self:UpdateCfg()
             end
 
-            local itmcp = self.item.configurable.pos
+            local itmcp = self.item:GetSettings().pos
 
             if itmcp then
                 self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
@@ -279,7 +279,7 @@ function PANEL:SetupControls()
                 end)
             end
 
-            local itmcs = self.item.configurable.scale
+            local itmcs = self.item:GetSettings().scale
 
             if itmcs then
                 self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
@@ -288,7 +288,7 @@ function PANEL:SetupControls()
             end
 
             --end bunch of copied shit
-            if self.item.configurable.scale_children then
+            if self.item:GetSettings().scale_children then
                 vgui('DSSCustomizerCheckbox', self.LeftColumn, function(p)
                     -- "Scale child bones"
                     p:SetValue(self.item.cfg["scale_children" .. suffix] and 1 or 0)
@@ -301,7 +301,7 @@ function PANEL:SetupControls()
             end
         end
 
-        local limit = self.item:CanCfgColor()
+        local limit = self.item:GetSettings().color
 
         if limit then
             vgui("DSSCustomizerColor", self.RightColumn, function(p)
@@ -314,7 +314,7 @@ function PANEL:SetupControls()
             end)
         end
 
-        if self.item:CanCfgImgur() then
+        if self.item:GetSettings().imgur then
             vgui("DSSCustomizerImgur", self.RightColumn, function(p)
                 p:SetValue(self.item.cfg.imgur)
 

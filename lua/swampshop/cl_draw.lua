@@ -237,7 +237,7 @@ function SS_ApplyBoneMods(ent, mods)
             local x = ent:LookupBone(bn)
 
             if x then
-                local settings = item.GetSettings and item:GetSettings() or item.configurable -- TODO only GetSettings
+                local settings = item:GetSettings()
 
                 if settings.scale then
                     local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)

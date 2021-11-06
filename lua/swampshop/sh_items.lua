@@ -77,7 +77,6 @@ function SS_PlayermodelItem(item)
             self:PlayerSetModelOrig(ply)
         end
     end
-
     -- TODO change this so items have "slot"s
     --gets called just before this object changes state
     -- item.OnChangeEquip = function(self, ply, eq)
@@ -156,51 +155,9 @@ function SS_ClientsideFakeItem(item)
     SS_Item(item)
 end
 
-function SS_AccessoryItem(item)
-    assert(item.wear)
-    item.configurable = item.configurable or {}
-    item.configurable.wear = item.configurable.wear or {}
-
-    --Pass -1 for default?
-    item.configurable.wear.scale = {
-        min = Vector(0.05, 0.05, 0.05),
-        max = (item.maxscale or 1) * Vector(1, 1, 1)
-    }
-
-    item.configurable.wear.pos = {
-        min = Vector(-16, -16, -16),
-        max = Vector(16, 16, 16)
-    }
-
-    item.configurable.color = {
-        max = 5
-    }
-
-    item.configurable.imgur = true
-    item.accessory_slot = true
-    item.invcategory = "Accessories"
-
-    function item:AccessoryTransform(pone)
-        local wear = pone and self.wear.pony or self.wear
-        local wear2 = self.wear
-        local cfg = self.cfg[pone and "wear_p" or "wear_h"] or {}
-        local attach = cfg.attach or wear.attach or wear2.attach
-        local translate = cfg.pos or wear.translate or wear2.translate
-        local rotate = cfg.ang or wear.rotate or wear2.rotate
-        local scale = cfg.scale or wear.scale or wear2.scale
-        -- isnumber(scale) and Vector(scale,scale,scale) or scale
-
-        return attach, translate, rotate, scale
-    end
-
-    SS_Item(item)
-end
-
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
-    -- change this to just one function that returns the tab above
-    item.CanCfgColor = item.CanCfgColor or function(i) return (i.configurable or {}).color end
-    item.CanCfgImgur = item.CanCfgImgur or function(i) return (i.configurable or {}).imgur end
+
     item.ScaleLimitOffset = item.ScaleLimitOffset or function() return 1 end
 
     function item:Sanitize()
@@ -297,7 +254,7 @@ function SS_Item(item)
         }
     end
 
-    if item.configurable or item.SetupCustomizer then
+    if item.settings or item.SetupCustomizer then
         item.actions.configure = {
             sort = -1,
             Text = function() return "Customize" end,
@@ -359,7 +316,7 @@ function SS_Item(item)
     end
 
     item.GetActions = item.GetActions or function(self) return self.actions end
-    item.GetSettings = item.GetSettings or function(self) return self.configurable end
+    item.GetSettings = item.GetSettings or function(self) return self.settings end
     SS_ItemOrProduct(item)
     item.__index = item
     SS_Items[item.class] = item
@@ -372,7 +329,7 @@ end
 --todo remove
 function _SS_SanitizeConfig(item)
     local cfg = item.cfg
-    local itmc = item.configurable --:GetSettings()
+    local itmc = item:GetSettings()
     if not itmc then return end
     local dirty_cfg = {}
 
@@ -381,15 +338,12 @@ function _SS_SanitizeConfig(item)
     end
 
     table.Empty(cfg)
-    local limits = item:CanCfgColor()
 
-    if limits then
-        cfg.color = SS_SanitizeVector(dirty_cfg.color, Vector(0, 0, 0), Vector(limits.max, limits.max, limits.max))
+    if itmc.color then
+        cfg.color = SS_SanitizeVector(dirty_cfg.color, Vector(0, 0, 0), Vector(itmc.color.max, itmc.color.max, itmc.color.max))
     end
 
-    limits = item:CanCfgImgur()
-
-    if limits then
+    if itmc.imgur then
         local url = istable(dirty_cfg.imgur) and SanitizeImgurId(dirty_cfg.imgur.url)
 
         cfg.imgur = url and {

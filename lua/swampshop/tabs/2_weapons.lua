@@ -558,7 +558,7 @@ SS_Item({
 
         return ch
     end,
-    configurable = {
+    settings = {
         color = {
             max = 5
         },

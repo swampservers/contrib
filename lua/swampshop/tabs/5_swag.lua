@@ -4,18 +4,49 @@ SS_Tab("Swag", "color_swatch")
 SS_Heading("Accessories")
 local accessoryradius = 20
 
-SS_AccessoryItem({
+
+SS_AccessoryModels = {
+    ["models/props_halloween/jackolantern_01.mdl"] = {
+        name = "Jack-O-Lantern",
+        description = "Halloween 2021 unique",
+        wear = {
+
+            attach="eyes",
+            scale = 0.28,
+            translate = Vector(-3.45, 0, -4.9),
+            rotate = Angle(0,0,0),
+            pony = {
+
+                    attach = "lower_body",
+                    scale = 0.28,
+                    
+                    translate = Vector(0, -1.1, 0),
+                    rotate = Angle(180,0,90)
+                },  
+        }
+        
+    }
+}
+    
+
+-- (SS_AccessoryModels[self.specs.model] or {}).scaleoffset or 
+-- TODO: Mark rare items (jackolantern) in description
+SS_Item({
     class = 'accessory',
-    value = 25000,
-    GetName = function(self) return string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
-    GetDescription = function(self) return "You can wear it." end,
-    ScaleLimitOffset = function(self) return 12 / ((self.dspecs or {})[1] or 12) end,
+    GetName = function(self) return (SS_AccessoryModels[self.specs.model] or {}).name or string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
+    GetDescription = function(self) return ( (SS_AccessoryModels[self.specs.model] or {}).description or "You can wear it.") end,
+    ScaleLimitOffset = function(self) return (12 / ((self.dspecs or {})[1] or 12))  end,
     GetModel = function(self) return self.specs.model end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
         if not specs.model then
-            specs.model = SelectAccessoryModel() --GetSandboxProp(accessoryradius)
+            specs.model = specs[1] or SelectAccessoryModel() --GetSandboxProp(accessoryradius)
+            ch = true
+        end
+
+        if specs[1] then
+            specs[1] = nil
             ch = true
         end
 
@@ -23,6 +54,27 @@ SS_AccessoryItem({
     end,
     color = Vector(1, 1, 1),
     maxscale = 2.0,
+        
+    settings = {
+        wear = {
+            scale = {
+                min = Vector(0.05, 0.05, 0.05),
+                max = Vector(2,2,2)
+            },
+            pos = {
+                min = Vector(-16, -16, -16),
+                max = Vector(16, 16, 16)
+            }
+        },
+        
+        color = {
+            max = 5
+        },
+        imgur=true
+
+    },
+    accessory_slot = true,
+    invcategory = "Accessories",
     wear = {
         attach = "eyes",
         scale = 1,
@@ -33,7 +85,22 @@ SS_AccessoryItem({
             translate = Vector(8, 0, 0),
             rotate = Angle(0, 0, 0),
         }
-    }
+    },
+
+    AccessoryTransform = function(self,pone)
+        local wear2 = (SS_AccessoryModels[self.specs.model] or {}).wear or self.wear
+        local wear = pone and wear2.pony or wear2
+        local cfg = self.cfg[pone and "wear_p" or "wear_h"] or {}
+        local attach = cfg.attach or wear.attach or wear2.attach
+        local translate = cfg.pos or wear.translate or wear2.translate
+        local rotate = cfg.ang or wear.rotate or wear2.rotate
+        local scale = cfg.scale or wear.scale or wear2.scale
+        -- isnumber(scale) and Vector(scale,scale,scale) or scale
+
+        return attach, translate, rotate, scale
+    end,
+
+    SellValue = function(self) return (SS_AccessoryModels[self.specs.model] or {}).value or 25000 end
 })
 
 -- if SERVER then props={} for i=1,80 do table.insert(props,SelectAccessoryModel()) end net.Start("RunLuaLong") net.WriteString("SetClipboardText([[ "..util.TableToJSON(props).." ]])") net.Send(ME()) end
@@ -74,7 +141,33 @@ SS_Product({
     end
 })
 
-SS_AccessoryItem({
+
+
+function SS_AccessoryProduct(data)
+
+    SS_AccessoryModels[data.model] = {
+        name=data.name,
+        description=data.description,
+        value = math.floor( (data.price or data.value)*0.8 ),
+        scaleoffset=data.maxscale/2,
+        wear=data.wear
+    }
+
+    function data:SanitizeSpecs()
+        self.specs = {model=self.model}
+        self.class="accessory"
+        return true
+    end
+
+    data.defaultspecs = {model=data.model}
+    data.itemclass = "accessory"
+
+    SS_ItemProduct(data)
+end
+
+
+
+SS_AccessoryProduct({
     class = 'trumphatfree',
     price = 0,
     name = 'Unstumpable',
@@ -103,7 +196,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "clownshoe",
     price = 50000,
     name = 'Clown Shoe',
@@ -125,7 +218,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "bigburger",
     price = 100000,
     name = 'Burger',
@@ -146,7 +239,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "bicyclehelmet",
     price = 120000,
     name = 'Safety Helmet',
@@ -167,7 +260,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "buckethat",
     price = 10000,
     name = 'Bucket Head',
@@ -195,7 +288,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "combinehelmet",
     price = 150000,
     name = 'Combine Helmet',
@@ -217,7 +310,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "conehattest",
     price = 1000,
     name = 'Cone Head',
@@ -241,7 +334,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "kleinerglasses",
     price = 1000000,
     name = "Kleiner's Glasses",
@@ -262,7 +355,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "santahat",
     price = 25000,
     name = 'Christmas Hat',
@@ -290,7 +383,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "shrunkenhead",
     price = 150000,
     name = 'Conjoined Twin',
@@ -310,7 +403,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "spikecollar",
     price = 200000,
     name = 'Spike Collar',
@@ -336,7 +429,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "tinfoilhat",
     price = 40000,
     name = "InfoWarrior's Hat",
@@ -363,7 +456,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "trashhattest",
     price = 10000000,
     name = 'Party Hat',
@@ -390,7 +483,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "turtleplush",
     price = 1000,
     name = 'Turtle Plush',
@@ -416,7 +509,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "pickelhaube",
     price = 250000,
     name = 'Pickelhaube',
@@ -441,7 +534,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "horsemask",
     price = 500,
     name = 'Poverty Pony',
@@ -465,7 +558,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = 'sombrero',
     price = 30000,
     name = 'Sombrero',
@@ -485,7 +578,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = 'headcrabhat',
     price = 600000,
     name = 'Headcrab',
@@ -505,7 +598,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = 'catears',
     price = 1450,
     name = 'Cat Ears',
@@ -525,7 +618,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = 'uwumask',
     price = 50000,
     name = 'Mask',
@@ -545,7 +638,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = 'tophat',
     price = 300000,
     name = 'Top Hat',
@@ -565,7 +658,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = 'swampyhat',
     price = 25000,
     name = 'Krusty Hat',
@@ -585,7 +678,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "commandercap",
     price = 1933000,
     name = 'Commander Hat',
@@ -606,7 +699,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "woolcap",
     price = 50000,
     name = 'Wool Cap with Brim',
@@ -628,7 +721,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "gasmask",
     price = 600000,
     name = 'Gas Mask',
@@ -650,7 +743,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "ushanka",
     price = 275000,
     name = 'Ushanka',
@@ -672,7 +765,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "americanhelmet",
     price = 19450,
     name = 'WWII American Army Helmet',
@@ -694,7 +787,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "germanhelmet",
     price = 88000,
     name = 'WWII German Army Helmet',
@@ -716,7 +809,7 @@ SS_AccessoryItem({
     }
 })
 
-SS_AccessoryItem({
+SS_AccessoryProduct({
     class = "bone",
     price = 9000,
     name = 'Bone',
@@ -778,7 +871,7 @@ for k, v in pairs(primitives) do
     }
 
     if kl == "torus" then
-        itm.configurable = {
+        itm.settings = {
             wear = {
                 xs = {
                     max = 10.0
@@ -796,5 +889,5 @@ for k, v in pairs(primitives) do
         itm.perslot = 2
     end
 
-    SS_AccessoryItem(itm)
+    SS_AccessoryProduct(itm)
 end
