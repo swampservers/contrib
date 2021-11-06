@@ -86,7 +86,6 @@ SS_Item({
             } or false,
             imgur = SS_GetRating(self.specs.rating or 0).id >= 7
         }
-
     end,
     GetColor = function(self)
         if self:CanCfgColor() then return self.cfg.color end

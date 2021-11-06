@@ -77,6 +77,7 @@ function SS_PlayermodelItem(item)
             self:PlayerSetModelOrig(ply)
         end
     end
+
     -- TODO change this so items have "slot"s
     --gets called just before this object changes state
     -- item.OnChangeEquip = function(self, ply, eq)
@@ -157,7 +158,6 @@ end
 
 --ITEMS are stuff that is saved in the database
 function SS_Item(item)
-
     item.ScaleLimitOffset = item.ScaleLimitOffset or function() return 1 end
 
     function item:Sanitize()

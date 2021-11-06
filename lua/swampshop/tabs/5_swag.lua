@@ -4,38 +4,32 @@ SS_Tab("Swag", "color_swatch")
 SS_Heading("Accessories")
 local accessoryradius = 20
 
-
 SS_AccessoryModels = {
     ["models/props_halloween/jackolantern_01.mdl"] = {
         name = "Jack-O-Lantern",
         description = "Halloween 2021 unique",
         wear = {
-
-            attach="eyes",
+            attach = "eyes",
             scale = 0.28,
             translate = Vector(-3.45, 0, -4.9),
-            rotate = Angle(0,0,0),
+            rotate = Angle(0, 0, 0),
             pony = {
-
-                    attach = "lower_body",
-                    scale = 0.28,
-                    
-                    translate = Vector(0, -1.1, 0),
-                    rotate = Angle(180,0,90)
-                },  
+                attach = "lower_body",
+                scale = 0.28,
+                translate = Vector(0, -1.1, 0),
+                rotate = Angle(180, 0, 90)
+            },
         }
-        
     }
 }
-    
 
 -- (SS_AccessoryModels[self.specs.model] or {}).scaleoffset or 
 -- TODO: Mark rare items (jackolantern) in description
 SS_Item({
     class = 'accessory',
     GetName = function(self) return (SS_AccessoryModels[self.specs.model] or {}).name or string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
-    GetDescription = function(self) return ( (SS_AccessoryModels[self.specs.model] or {}).description or "You can wear it.") end,
-    ScaleLimitOffset = function(self) return (12 / ((self.dspecs or {})[1] or 12))  end,
+    GetDescription = function(self) return ((SS_AccessoryModels[self.specs.model] or {}).description or "You can wear it.") end,
+    ScaleLimitOffset = function(self) return (12 / ((self.dspecs or {})[1] or 12)) end,
     GetModel = function(self) return self.specs.model end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
@@ -54,24 +48,21 @@ SS_Item({
     end,
     color = Vector(1, 1, 1),
     maxscale = 2.0,
-        
     settings = {
         wear = {
             scale = {
                 min = Vector(0.05, 0.05, 0.05),
-                max = Vector(2,2,2)
+                max = Vector(2, 2, 2)
             },
             pos = {
                 min = Vector(-16, -16, -16),
                 max = Vector(16, 16, 16)
             }
         },
-        
         color = {
             max = 5
         },
-        imgur=true
-
+        imgur = true
     },
     accessory_slot = true,
     invcategory = "Accessories",
@@ -86,8 +77,7 @@ SS_Item({
             rotate = Angle(0, 0, 0),
         }
     },
-
-    AccessoryTransform = function(self,pone)
+    AccessoryTransform = function(self, pone)
         local wear2 = (SS_AccessoryModels[self.specs.model] or {}).wear or self.wear
         local wear = pone and wear2.pony or wear2
         local cfg = self.cfg[pone and "wear_p" or "wear_h"] or {}
@@ -95,11 +85,10 @@ SS_Item({
         local translate = cfg.pos or wear.translate or wear2.translate
         local rotate = cfg.ang or wear.rotate or wear2.rotate
         local scale = cfg.scale or wear.scale or wear2.scale
-        -- isnumber(scale) and Vector(scale,scale,scale) or scale
 
+        -- isnumber(scale) and Vector(scale,scale,scale) or scale
         return attach, translate, rotate, scale
     end,
-
     SellValue = function(self) return (SS_AccessoryModels[self.specs.model] or {}).value or 25000 end
 })
 
@@ -141,31 +130,32 @@ SS_Product({
     end
 })
 
-
-
 function SS_AccessoryProduct(data)
-
     SS_AccessoryModels[data.model] = {
-        name=data.name,
-        description=data.description,
-        value = math.floor( (data.price or data.value)*0.8 ),
-        scaleoffset=data.maxscale/2,
-        wear=data.wear
+        name = data.name,
+        description = data.description,
+        value = math.floor((data.price or data.value) * 0.8),
+        scaleoffset = data.maxscale / 2,
+        wear = data.wear
     }
 
     function data:SanitizeSpecs()
-        self.specs = {model=self.model}
-        self.class="accessory"
+        self.specs = {
+            model = self.model
+        }
+
+        self.class = "accessory"
+
         return true
     end
 
-    data.defaultspecs = {model=data.model}
-    data.itemclass = "accessory"
+    data.defaultspecs = {
+        model = data.model
+    }
 
+    data.itemclass = "accessory"
     SS_ItemProduct(data)
 end
-
-
 
 SS_AccessoryProduct({
     class = 'trumphatfree',
