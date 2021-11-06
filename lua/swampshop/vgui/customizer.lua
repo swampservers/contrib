@@ -146,120 +146,21 @@ function PANEL:SetupControls()
 
     if self.item.SetupCustomizer then
         self.item:SetupCustomizer(self)
-    else
+
+    end
+
+    
         local pone = LocalPlayer():IsPony()
         local suffix = pone and "_p" or "_h"
-        local itmcw = self.item:GetSettings().wear
+        
+        if (self.item:GetSettings() or {}).bone then
 
-        if (self.item:GetSettings() or {}).wear then
-            local attach, translate, rotate, scale = self.item:AccessoryTransform(pone)
+            vgui('DSSCustomizerBone', self.LeftColumn, function(p)
+                p:SetValue(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1"))
+                p.OnValueChanged = function(pnl, val)
 
-            --LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
-            vgui("DSSCustomizerSection", self.LeftColumn, function(p)
-                p:SetText("Attachment (" .. (pone and "pony" or "human") .. ")")
-
-                vgui("DPanel", function(p)
-                    p:Dock(TOP)
-                    p:SetTall(24)
-                    p.Paint = noop
-
-                    vgui("DComboBox", function(p)
-                        p:SetValue(attach) --(self.item.cfg[self.wear] or {}).attach or (pone and (self.item.wear.pony or {}).attach) or self.item.wear.attach)
-
-                        for k, v in pairs(SS_Attachments) do
-                            p:AddChoice(k)
-                        end
-
-                        p:Dock(FILL)
-                        p.Paint = SS_PaintBG
-
-                        p.UpdateColours = function(pnl)
-                            pnl:SetTextStyleColor(MenuTheme_TX)
-                            pnl:SetTextColor(MenuTheme_TX)
-                        end
-
-                        print("ADDONSELECT", p)
-
-                        p.OnSelect = function(panel, index, value)
-                            print("SELECT", index, value)
-                            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
-                            self.item.cfg[self.wear].attach = value
-                            self:UpdateCfg()
-                        end
-                    end)
-
-                    vgui("DLabel", function(p)
-                        p:Dock(LEFT)
-                        p:SetText("Attach to")
-
-                        p.UpdateColours = function(pnl)
-                            pnl:SetTextColor(MenuTheme_TX)
-                        end
-                    end)
-                end)
-            end)
-
-            -- p:SizeToChildren(true,true)
-            -- p:SizeToChildren(true,true)
-            -- local translate = (self.item.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
-            -- local rotate = (self.item.cfg[self.wear] or {}).ang or (pone and (self.item.wear.pony or {}).rotate) or self.item.wear.rotate
-            -- local scale = (self.item.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
-            self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                p:SetForPosition(itmcw.pos.min, itmcw.pos.max, translate)
-            end)
-
-            self.Angle = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                p:SetForAngle(rotate)
-            end)
-
-            self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                p:SetForScale(itmcw.scale.min * self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(), scale)
-            end)
-
-            local function transformslidersupdate()
-                self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
-                self.item.cfg[self.wear].pos = self.Position:GetValue()
-                self.item.cfg[self.wear].ang = self.Angle:GetValueAngle()
-                self.item.cfg[self.wear].scale = self.Scale:GetValue()
-                self:UpdateCfg()
-            end
-
-            self.Position.OnValueChanged = transformslidersupdate
-            self.Angle.OnValueChanged = transformslidersupdate
-            self.Scale.OnValueChanged = transformslidersupdate
-        elseif (self.item:GetSettings() or {}).bone then
-            vgui("DSSCustomizerSection", self.LeftColumn, function(p)
-                p:SetText("Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")")
-
-                local function cleanbonename(bn)
-                    return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
+                    self.item.cfg["bone" .. suffix] = val
                 end
-
-                vgui("DComboBox", function(p)
-                    p:SetValue(cleanbonename(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1")))
-                    p:SetTall(24)
-                    p:Dock(TOP)
-                    p.Paint = SS_PaintBG
-
-                    p.UpdateColours = function(pnl)
-                        pnl:SetTextStyleColor(MenuTheme_TX)
-                        pnl:SetTextColor(MenuTheme_TX)
-                    end
-
-                    for x = 0, (LocalPlayer():GetBoneCount() - 1) do
-                        local bn = LocalPlayer():GetBoneName(x)
-                        local cleanname = cleanbonename(bn)
-
-                        if cleanname ~= "__INVALIDBONE__" then
-                            p:AddChoice(cleanname, bn)
-                        end
-                    end
-
-                    p.OnSelect = function(panel, index, word, value)
-                        self.item.cfg["bone" .. suffix] = value
-                        self:UpdateCfg()
-                    end
-                end)
             end)
 
             --bunch of copied shit
@@ -279,15 +180,27 @@ function PANEL:SetupControls()
 
             if itmcp then
                 self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                    p:SetForPosition(itmcp.min, itmcp.max, translate)
+                    p:SetForPosition(itmcp.min, itmcp.max, self.item.cfg["pos" .. suffix] or Vector(0,0,0))
+                    p.OnValueChanged = transformslidersupdate
                 end)
             end
+
+
+            -- local itmca = self.item:GetSettings().ang
+
+            -- if itmca then
+            --     self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+            --         p:SetForAngle(itmcs.min, itmcs.scale.max, self.item.cfg["scale" .. suffix] or Vector(1,1,1))
+            --         p.OnValueChanged = transformslidersupdate
+            --     end)
+            -- end
 
             local itmcs = self.item:GetSettings().scale
 
             if itmcs then
                 self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-                    p:SetForScale(itmcw.scale.min * self.item:ScaleLimitOffset(), itmcw.scale.max * self.item:ScaleLimitOffset(), scale)
+                    p:SetForScale(itmcs.min, itmcs.max, self.item.cfg["scale" .. suffix] or Vector(1,1,1))
+                    p.OnValueChanged = transformslidersupdate
                 end)
             end
 
@@ -328,7 +241,7 @@ function PANEL:SetupControls()
                 end
             end)
         end
-    end
+ 
 
     vgui("DCollapsibleCategory", self.RightColumn, function(p)
         p:Dock(TOP)

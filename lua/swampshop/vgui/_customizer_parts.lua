@@ -327,3 +327,49 @@ vgui.Register('DSSCustomizerVectorSection', {
         end
     end
 }, 'DSSCustomizerSection')
+
+
+
+vgui.Register('DSSCustomizerBone', {
+    Init = function(self)
+
+        self:SetText("Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")")
+
+        self.ComboBox = vgui("DComboBox", self, function(p)
+            p:SetTall(24)
+            p:Dock(TOP)
+            p.Paint = SS_PaintBG
+
+            p.UpdateColours = function(pnl)
+                pnl:SetTextStyleColor(MenuTheme_TX)
+                pnl:SetTextColor(MenuTheme_TX)
+            end
+
+            for x = 0, (LocalPlayer():GetBoneCount() - 1) do
+                local bn = LocalPlayer():GetBoneName(x)
+                local cleanname = self:CleanBoneName(bn)
+
+                if cleanname ~= "__INVALIDBONE__" then
+                    p:AddChoice(cleanname, bn)
+                end
+            end
+
+            p.OnSelect = function(panel, index, word, value)
+                self:OnValueChanged(value)
+            end
+        end)
+    end,
+
+    CleanBoneName = function(self, bn)
+        return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
+    end,
+
+    OnValueChanged = function(self, val) end,
+    GetValue = function(self)
+        return self.ComboBox:GetValue()
+    end,
+    SetValue = function(self, val)
+        -- self.TextEntry:SetValue(istable(val) and val.url or "")
+        self.ComboBox:SetValue(self:CleanBoneName(val))
+    end
+}, 'DSSCustomizerSection')

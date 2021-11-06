@@ -23,13 +23,12 @@ SS_AccessoryModels = {
     }
 }
 
--- (SS_AccessoryModels[self.specs.model] or {}).scaleoffset or 
 -- TODO: Mark rare items (jackolantern) in description
 SS_Item({
     class = 'accessory',
     GetName = function(self) return (SS_AccessoryModels[self.specs.model] or {}).name or string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
     GetDescription = function(self) return ((SS_AccessoryModels[self.specs.model] or {}).description or "You can wear it.") end,
-    ScaleLimitOffset = function(self) return (12 / ((self.dspecs or {})[1] or 12)) end,
+    ScaleLimitOffset = function(self) return (SS_AccessoryModels[self.specs.model] or {}).scaleoffset or (12 / ((self.dspecs or {})[1] or 12)) end,
     GetModel = function(self) return self.specs.model end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
@@ -89,10 +88,12 @@ SS_Item({
         -- isnumber(scale) and Vector(scale,scale,scale) or scale
         return attach, translate, rotate, scale
     end,
+
     SetupCustomizer = function(item, self)
         local pone = LocalPlayer():IsPony()
         local suffix = pone and "_p" or "_h"
         local itmcw = (item:GetSettings() or {}).wear
+
         local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 
         vgui("DSSCustomizerSection", self.LeftColumn, function(p)
@@ -104,7 +105,7 @@ SS_Item({
                 p.Paint = noop
 
                 vgui("DComboBox", function(p)
-                    p:SetValue(attach)
+                    p:SetValue(attach) 
 
                     for k, v in pairs(SS_Attachments) do
                         p:AddChoice(k)
@@ -119,7 +120,6 @@ SS_Item({
                     end
 
                     print("ADDONSELECT", p)
-
                     p.OnSelect = function(panel, index, value)
                         print("SELECT", index, value)
                         item.cfg[self.wear] = item.cfg[self.wear] or {}
@@ -135,15 +135,12 @@ SS_Item({
                     p.UpdateColours = function(pnl)
                         pnl:SetTextColor(MenuTheme_TX)
                     end
+
+
                 end)
             end)
         end)
 
-        -- p:SizeToChildren(true,true)
-        -- p:SizeToChildren(true,true)
-        -- local translate = (item.cfg[self.wear] or {}).pos or (pone and (item.wear.pony or {}).translate) or item.wear.translate
-        -- local rotate = (item.cfg[self.wear] or {}).ang or (pone and (item.wear.pony or {}).rotate) or item.wear.rotate
-        -- local scale = (item.cfg[self.wear] or {}).scale or (pone and (item.wear.pony or {}).scale) or item.wear.scale
         self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
             p:SetForPosition(itmcw.pos.min, itmcw.pos.max, translate)
         end)
@@ -167,7 +164,9 @@ SS_Item({
         self.Position.OnValueChanged = transformslidersupdate
         self.Angle.OnValueChanged = transformslidersupdate
         self.Scale.OnValueChanged = transformslidersupdate
+
     end,
+
     SellValue = function(self) return (SS_AccessoryModels[self.specs.model] or {}).value or 25000 end
 })
 
@@ -214,7 +213,7 @@ function SS_AccessoryProduct(data)
         name = data.name,
         description = data.description,
         value = math.floor((data.price or data.value) * 0.8),
-        scaleoffset = data.maxscale / 2,
+        scaleoffset = data.maxscale and (data.maxscale / 2) or nil,
         wear = data.wear
     }
 
@@ -373,6 +372,28 @@ SS_AccessoryProduct({
         pony = {
             attach = "head",
             scale = 2,
+            translate = Vector(0, 0, 0),
+            rotate = Angle(0, 0, 0),
+        }
+    }
+})
+
+SS_AccessoryProduct({
+    class = "graduationhat",
+    price = 900000,
+    name = 'Graduation Cap',
+    description = "Degree: Master of Gaming",
+    model = 'models/player/items/humans/graduation_cap.mdl',
+    color = Vector(1, 1, 1),
+    maxscale=1.5,
+    wear = {
+        attach = "eyes",
+        scale = 1,
+        translate = Vector(-3, 0, -3),
+        rotate = Angle(0, 0, 0),
+        pony = {
+            attach = "eyes",
+            scale = 1,
             translate = Vector(0, 0, 0),
             rotate = Angle(0, 0, 0),
         }
@@ -768,27 +789,27 @@ SS_AccessoryProduct({
     }
 })
 
-SS_AccessoryProduct({
-    class = "woolcap",
-    price = 50000,
-    name = 'Wool Cap with Brim',
-    description = "Perfect accessory for concealing a receding hairline.",
-    model = 'models/pyroteknik/hats/woolbrim.mdl',
-    color = Vector(1, 1, 1),
-    maxscale = 3.7,
-    wear = {
-        attach = "eyes",
-        scale = 1,
-        translate = Vector(-3, 0, 0),
-        rotate = Angle(-10, 0, 0),
-        pony = {
-            attach = "eyes",
-            scale = 2,
-            translate = Vector(-8, 0, 4),
-            rotate = Angle(0, 0, 0),
-        }
-    }
-})
+-- SS_AccessoryProduct({
+--     class = "woolcap",
+--     price = 50000,
+--     name = 'Wool Cap with Brim',
+--     description = "Perfect accessory for concealing a receding hairline.",
+--     model = 'models/pyroteknik/hats/woolbrim.mdl',
+--     color = Vector(1, 1, 1),
+--     maxscale = 3.7,
+--     wear = {
+--         attach = "eyes",
+--         scale = 1,
+--         translate = Vector(-3, 0, 0),
+--         rotate = Angle(-10, 0, 0),
+--         pony = {
+--             attach = "eyes",
+--             scale = 2,
+--             translate = Vector(-8, 0, 4),
+--             rotate = Angle(0, 0, 0),
+--         }
+--     }
+-- })
 
 SS_AccessoryProduct({
     class = "gasmask",
