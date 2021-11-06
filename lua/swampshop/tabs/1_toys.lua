@@ -91,8 +91,6 @@ SS_WeaponProduct({
     model = "models/swamponions/switchbox.mdl"
 })
 
-
-
 -- models/props_combine/portalball.mdl
 SS_Product({
     class = "transmogrifier",
