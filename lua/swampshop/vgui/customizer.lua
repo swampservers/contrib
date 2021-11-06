@@ -152,7 +152,6 @@ function PANEL:SetupControls()
         local itmcw = self.item:GetSettings().wear
 
         if (self.item:GetSettings() or {}).wear then
-
             local attach, translate, rotate, scale = self.item:AccessoryTransform(pone)
 
             --LabelMaker(wearzone, "Position (" .. (pone and "pony" or "human") .. ")", true)
@@ -180,6 +179,7 @@ function PANEL:SetupControls()
                         end
 
                         print("ADDONSELECT", p)
+
                         p.OnSelect = function(panel, index, value)
                             print("SELECT", index, value)
                             self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
@@ -195,8 +195,6 @@ function PANEL:SetupControls()
                         p.UpdateColours = function(pnl)
                             pnl:SetTextColor(MenuTheme_TX)
                         end
-
-
                     end)
                 end)
             end)
@@ -206,7 +204,6 @@ function PANEL:SetupControls()
             -- local translate = (self.item.cfg[self.wear] or {}).pos or (pone and (self.item.wear.pony or {}).translate) or self.item.wear.translate
             -- local rotate = (self.item.cfg[self.wear] or {}).ang or (pone and (self.item.wear.pony or {}).rotate) or self.item.wear.rotate
             -- local scale = (self.item.cfg[self.wear] or {}).scale or (pone and (self.item.wear.pony or {}).scale) or self.item.wear.scale
-
             self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
                 p:SetForPosition(itmcw.pos.min, itmcw.pos.max, translate)
             end)

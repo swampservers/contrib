@@ -64,7 +64,6 @@ function SS_AngleGen(func)
     return ang
 end
 
-
 function SS_WeaponBlueprintItem(item)
     item.CraftingPrice = function(self) return 5000 end
 
@@ -365,12 +364,11 @@ function _SS_SanitizeConfig(item)
 end
 
 function SS_PrettyMDLName(mdl)
-
     mdl = string.sub(table.remove(string.Explode("/", mdl)), 1, -5)
-    if mdl=="" then return "ERROR" end
+    if mdl == "" then return "ERROR" end
+    local words = string.Explode("_", mdl)
 
-    local words = string.Explode("_",mdl)
-    for i,v in ipairs(words) do
+    for i, v in ipairs(words) do
         words[i] = string.upper(v[1]) .. string.lower(v:sub(2))
     end
 

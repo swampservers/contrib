@@ -329,7 +329,7 @@ function PANEL:Paint(w, h)
 
     -- todo: show workshop preview panel
     if is_model_undownloaded(mdl) then
-        if SS_SelectedTile==self then
+        if SS_SelectedTile == self then
             draw.SimpleText("Downloading...", "DermaDefaultBold", w / 2, h / 2, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         else
             draw.SimpleText("Click once", "DermaDefaultBold", w / 2, h / 2 - 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -443,7 +443,7 @@ function PANEL:PaintOver(w, h)
         textcolor = MenuTheme_TX
 
         if self:IsSelected() then
-            BGColor =  Color(53, 53, 53, 255) 
+            BGColor = Color(53, 53, 53, 255)
             local labelview = self:IsHovered() and self.item.primaryaction --not self.item.never_equip
 
             if labelview then

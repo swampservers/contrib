@@ -3,9 +3,7 @@
 SS_Tab("Toys", "star")
 SS_Heading("Free Toys")
 
-
 -- models/props_combine/portalball.mdl
-
 SS_Product({
     class = "transmogrifier",
     price = 0,
@@ -13,18 +11,14 @@ SS_Product({
     description = "It changes you into a different form... for one life.",
     model = 'models/props_combine/combine_mine01.mdl',
     CannotBuy = function(self, ply)
-        if SERVER and ply:CheckRateLimit("transmogrify",60) then return "Please wait a bit" end
+        if SERVER and ply:CheckRateLimit("transmogrify", 60) then return "Please wait a bit" end
     end,
     OnBuy = function(self, ply)
-        if ply:RateLimit("transmogrify",60) then return end --ply:Notify("Please wait a bit") 
-
+        if ply:RateLimit("transmogrify", 60) then return end --ply:Notify("Please wait a bit") 
         local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
-
         outfitter.SHNetworkOutfit(ply, m[2], tonumber(m[1]))
-
         -- ply:Notify("You have been transformed into "..SS_PrettyMDLName(m[2]))
-        ply:PrintMessage(HUD_PRINTTALK,"You have been transformed into [red]"..SS_PrettyMDLName(m[2]).." ;kleinerfortnite;")
-        
+        ply:PrintMessage(HUD_PRINTTALK, "You have been transformed into [red]" .. SS_PrettyMDLName(m[2]) .. " ;kleinerfortnite;")
         ply:SendLua("THIRDPERSON=true timer.Simple(5, function() if THIRDPERSON then chat.AddText('Press F4 to return to first person.') end end)")
     end
 })
@@ -109,7 +103,6 @@ SS_WeaponProduct({
 --     description = "Hold up this encyclopedia to block incoming bullets, just like that one youtube video.",
 --     model = "models/props_lab/bindergreen.mdl"
 -- })
-
 SS_WeaponProduct({
     class = "weapon_switch",
     price = 0,

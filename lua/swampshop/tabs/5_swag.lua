@@ -89,12 +89,10 @@ SS_Item({
         -- isnumber(scale) and Vector(scale,scale,scale) or scale
         return attach, translate, rotate, scale
     end,
-
     SetupCustomizer = function(item, self)
         local pone = LocalPlayer():IsPony()
         local suffix = pone and "_p" or "_h"
         local itmcw = (item:GetSettings() or {}).wear
-
         local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 
         vgui("DSSCustomizerSection", self.LeftColumn, function(p)
@@ -106,7 +104,7 @@ SS_Item({
                 p.Paint = noop
 
                 vgui("DComboBox", function(p)
-                    p:SetValue(attach) 
+                    p:SetValue(attach)
 
                     for k, v in pairs(SS_Attachments) do
                         p:AddChoice(k)
@@ -121,6 +119,7 @@ SS_Item({
                     end
 
                     print("ADDONSELECT", p)
+
                     p.OnSelect = function(panel, index, value)
                         print("SELECT", index, value)
                         item.cfg[self.wear] = item.cfg[self.wear] or {}
@@ -136,8 +135,6 @@ SS_Item({
                     p.UpdateColours = function(pnl)
                         pnl:SetTextColor(MenuTheme_TX)
                     end
-
-
                 end)
             end)
         end)
@@ -147,7 +144,6 @@ SS_Item({
         -- local translate = (item.cfg[self.wear] or {}).pos or (pone and (item.wear.pony or {}).translate) or item.wear.translate
         -- local rotate = (item.cfg[self.wear] or {}).ang or (pone and (item.wear.pony or {}).rotate) or item.wear.rotate
         -- local scale = (item.cfg[self.wear] or {}).scale or (pone and (item.wear.pony or {}).scale) or item.wear.scale
-
         self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
             p:SetForPosition(itmcw.pos.min, itmcw.pos.max, translate)
         end)
@@ -171,9 +167,7 @@ SS_Item({
         self.Position.OnValueChanged = transformslidersupdate
         self.Angle.OnValueChanged = transformslidersupdate
         self.Scale.OnValueChanged = transformslidersupdate
-
     end,
-
     SellValue = function(self) return (SS_AccessoryModels[self.specs.model] or {}).value or 25000 end
 })
 
