@@ -329,8 +329,12 @@ function PANEL:Paint(w, h)
 
     -- todo: show workshop preview panel
     if is_model_undownloaded(mdl) then
-        draw.SimpleText("Mouse over", "DermaDefaultBold", w / 2, h / 2 - 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        draw.SimpleText("to download", "DermaDefaultBold", w / 2, h / 2 + 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        if SS_SelectedTile==self then
+            draw.SimpleText("Downloading...", "DermaDefaultBold", w / 2, h / 2, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        else
+            draw.SimpleText("Click once", "DermaDefaultBold", w / 2, h / 2 - 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("to download", "DermaDefaultBold", w / 2, h / 2 + 8, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
     else
         if self.modelapplied ~= mdl then
             self:SetModel(mdl)

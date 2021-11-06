@@ -6,23 +6,6 @@ SS_Heading("Mods")
 
 
 
-function SS_PlayermodelItem(item)
-    item.playermodel = true
-
-    item.PlayerSetModel = item.PlayerSetModel or function(self, ply)
-        ply:SetModel(self.model)
-
-        if self.OnPlayerSetModel then
-            self:OnPlayerSetModel(ply)
-        end
-    end
-
-    item.slot = "playermodel"
-    item.invcategory = "Playermodels"
-    SS_Item(item)
-end
-
-
 
 -- TODO: use .settings/:GetSettings for commonly used elements
 -- AND add SetupCustomizer/SanitizeCfg which by default have behavior defined by GetSettings's return
@@ -176,41 +159,170 @@ SS_Item({
 --         bone = true
 --     }
 -- })
+
+
+
+SS_Heading("Models of the Day")
+
+for i=1,5 do
+    local mi = i
+    SS_Product({
+        class = 'modeloftheday'..mi,
+        price = 200000,
+        GetName = function(self)
+            local m = GetG("ModelsOfTheDay")[mi]
+            
+            return m and SS_PrettyMDLName(m[2]) or "Nothing (DONT BUY)"
+        end,
+        description = "A different playermodel will appear here every day!",
+        
+        GetModel = function(self)
+
+            local m = GetG("ModelsOfTheDay")[mi]
+
+            if m then
+                register_workshop_model(m[2], m[1])
+                return m[2]
+            end
+        
+            return "models/player/skeleton.mdl"
+        end,
+
+        OnBuy = function(self, ply)
+            local m = GetG("ModelsOfTheDay")[mi]
+            if m then
+                local item = SS_GenerateItem(ply, "playermodel", {
+                    wsid=m[1],
+                    model=m[2]
+                })
+
+                ply:SS_GiveNewItem(item)
+            end
+        end
+    })
+end
+
+
+
+
+
+
+
 SS_Heading("Permanent")
 
+
+local previews = {
+    "models/odessa.mdl",
+    "models/Combine_Strider.mdl",
+    "models/crow.mdl",
+    "models/Combine_Soldier.mdl",
+    "models/player/gasmask.mdl",
+    "models/gman_high.mdl",
+    "models/alyx.mdl",
+    "models/vortigaunt.mdl",
+    "models/antlion_guard.mdl",
+    "models/Combine_Super_Soldier.mdl",
+    "models/Items/hevsuit.mdl",
+    "models/balloons/balloon_dog.mdl",
+    "models/Combine_Scanner.mdl",
+    "models/player/kleiner.mdl",
+    "models/props_lab/huladoll.mdl",
+    "models/headcrab.mdl",
+    "models/AntLion.mdl",
+    "models/dog.mdl",
+    "models/Zombie/Fast.mdl",
+    "models/player/soldier_stripped.mdl",
+    "models/pigeon.mdl",
+    "models/Advisor.mdl",
+    "models/Lamarr.mdl",
+    "models/manhack.mdl"
+}
+
+SS_Product({
+    class = 'playerbox',
+    price = 150000,
+    name = 'Random Playermodel',
+    description = "There are a lot of possibilities.",
+    GetModel = function(self) return previews[(math.floor(SysTime() * 2.5) % #previews) + 1] end,
+    CannotBuy = function(self, ply) end,
+
+    OnBuy = function(self, ply)
+        
+        local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
+        if not m then return end
+
+        local item = SS_GenerateItem(ply, "playermodel", {
+            wsid=m[1],
+            model=m[2]
+        })
+
+        ply:SS_GiveNewItem(item, function(item)
+            local others = {}
+
+            for i = 1, 15 do
+                table.insert(others, previews[i])
+            end
+
+            net.Start("LootBoxAnimation")
+            net.WriteUInt(item.id, 32)
+            net.WriteTable(others)
+            net.Send(ply)
+        end, 4)
+    end
+})
+
+
+
+
+
+function SS_PlayermodelItem(item)
+    item.playermodel = true
+
+    item.PlayerSetModel = item.PlayerSetModel or function(self, ply)
+        ply:SetModel(self.model)
+
+        if self.OnPlayerSetModel then
+            self:OnPlayerSetModel(ply)
+        end
+    end
+
+    item.slot = "playermodel"
+    item.invcategory = "Playermodels"
+    SS_Item(item)
+end
 
 
 SS_PlayermodelItem({
     class = "playermodel",
-    price=1000000,
-    maxowned=5,
+    price=1200000,
+    maxowned=100,
     GetName = function(self)
         --fix product
         if self.specs then
             if self.specs.model then
-                return string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5)
+                return SS_PrettyMDLName(self.specs.model)
             end
 
             if self.cfg.model and self.cfg.wsid then
-                return string.sub(table.remove(string.Explode("/", self.cfg.model)), 1, -5).." (UNFINALIZED)"
+                return SS_PrettyMDLName(self.cfg.model).." (UNFINALIZED)"
             end
         end
-        return 'Workshop Outfit (WIP)'
+        return 'Any Workshop Outfit'
     end,
     GetDescription = function(self)
         if self.specs then
         if self.specs.model then
             local d = "A playermodel."
-            if self.specs.wsid then
-                d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
-            end
+            -- if self.specs.wsid then
+            --     d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
+            -- end
             return d
         end
         if self.cfg.model and self.cfg.wsid then
             return "Finalize this model to wear it.\n("..self.cfg.wsid .. "/"..self.cfg.model ..")"
         end
     end
-        return "Use any playermodel from workshop! Once the model is finalized, it can't be changed."
+        return "(WIP) Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
     GetModel = function(self)
         
@@ -220,12 +332,14 @@ SS_PlayermodelItem({
                 -- so the callback when downloaded makes the model refresh
                 register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid )
                 -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
-                require_workshop(self.specs.wsid or self.cfg.wsid )
+                if self.Owner == LocalPlayer() then
+                    require_workshop(self.specs.wsid or self.cfg.wsid )
+                end
             end
             
             return self.specs.model or self.cfg.model
         end
-        return "models/player/skeleton.mdl"
+        return "models/maxofs2d/logo_gmod_b.mdl"
     end,
     invcategory = "Playermodels",
     playermodel = true,
@@ -235,9 +349,7 @@ SS_PlayermodelItem({
             if self.specs.wsid then
                 --what to display if unloaded or whatever
                 ply:SetModel("models/player/skeleton.mdl")
-
-
-                -- print("SETTING", ply, self.specs.model, self.specs.wsid)
+                
                 outfitter.SHNetworkOutfit(ply, self.specs.model, tonumber(self.specs.wsid))
             else
                 ply:SetModel(self.specs.model)
@@ -257,59 +369,66 @@ SS_PlayermodelItem({
         end
     end,
     SanitizeCfg = function(self, dirty)
+        -- print("CFG")
         if self.specs.model == nil then
             self.cfg.wsid = tonumber(dirty.wsid) and tostring(tonumber(dirty.wsid)) or nil
             self.cfg.model = isstring(dirty.model) and dirty.model:sub(1,200):Trim() or nil
             self.cfg.finalize = dirty.finalize and true or nil
         end
     end,
+    SellValue = function(self) return 30000 end
 
 })
 
-function HeyNozFillThisIn(self,cust)
 
+function HeyNozFillThisIn(self,cust)
+ 
     if self.specs.model then
         vgui("DSSCustomizerSection", cust.RightColumn, function(p)
-
+ 
             p:SetText("Model is already finalized!")
         end)
-
+ 
         return
     end
-
+    
+    local wsidentry,modelentry
+ 
     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
-
+ 
         p:SetText("Select Model (WIP)")
-
-        vgui("DTextEntry", function(p) 
+ 
+        wsidentry = vgui("DTextEntry", function(p)
             p:Dock(TOP)
             p:SetValue(self.cfg.wsid or "")
             p:SetPlaceholderText( "Workshop ID, like: 13376969" )
             p:SetUpdateOnType(true)
             p.OnValueChange = function(pnl, txt)
+                
                 self.cfg.wsid = txt
                 cust:UpdateCfg()
             end
         end)
-
-        vgui("DTextEntry", function(p) 
+ 
+        modelentry = vgui("DTextEntry", function(p)
             p:Dock(TOP)
             p:SetValue(self.cfg.model or "")
             p:SetPlaceholderText( "Model path, like: models/player/kleiner.mdl" )
             p:SetUpdateOnType(true)
             p.OnValueChange = function(pnl, txt)
+                print("HERE", txt)
                 self.cfg.model = txt
                 cust:UpdateCfg()
             end
         end)
-
+ 
     end)
-
+ 
     vgui("DSSCustomizerSection", cust.RightColumn, function(p)
         
         p:SetText("Finalize? (check preview!)")
     
-
+ 
         vgui("DPanel", function(p)
             p:SetTall(16)
             p:Dock(TOP)
@@ -320,16 +439,55 @@ function HeyNozFillThisIn(self,cust)
                 p:SetWide(16)
                 -- p:SetText("Finalize (make sure preview looks right!)")
                 p.OnChange = function(pnl, val)
-                    print(val)
                     self.cfg.finalize = val
-
+ 
                     cust:UpdateCfg()
                 end
             end)
         end)
     end)
-
-
+ 
+    vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+ 
+        vgui("DButton", function(p)
+            p:Dock(TOP)
+            p:SetText("#open_workshop")
+            p:SetImage('icon16/folder_user.png')
+            p:DockMargin(0,4,1,8)
+            p.DoClick = function()      
+                outfitter.GUIWantChangeModel(nil,false)
+            end
+        end)
+        
+        vgui("DListView", function(p)
+            p:SetMultiSelect( false )
+            p:AddColumn( "#gameui_playermodel" )
+            p:DockMargin(0,4,0,0)
+            p:Dock(TOP)
+            p:SetTall(256)
+            p.OnRowSelected = function(pnl,n,itm)
+                local mdllist = outfitter.UIGetMDLList()
+                if mdllist then
+                    self.cfg.model = mdllist[n].Name
+                    modelentry:SetValue(self.cfg.model)
+                    self.cfg.wsid = outfitter.UIGetWSID()
+                    wsidentry:SetValue(self.cfg.wsid)
+                end
+            end
+            local old = nil
+            p.PaintOver = function(b,w,h)
+                old = old or outfitter.UIGetMDLList()
+                if old ~= outfitter.UIGetMDLList() and outfitter.UIGetMDLList() ~= nil then
+                    old = outfitter.UIGetMDLList()
+                    p:Clear()
+                    for k,v in pairs(old) do
+                        p:AddLine(v.Name)
+                    end
+                end
+            end
+        end)
+        
+    end)
 end
 
 
@@ -353,82 +511,17 @@ SS_PlayermodelItem({
     end
 })
 
-SS_Item({
-    class = "outfitter2",
-    price = 2000000,
-    name = 'Outfitter',
-    description = "Allows wearing any playermodel from workshop (under 30,000 vertices)",
-    model = 'models/maxofs2d/logo_gmod_b.mdl',
-    actions = {
-        customize = {
-            Text = function() return "Change Model" end,
-            OnClient = function()
-                RunConsoleCommand("outfitter")
-                SS_ToggleMenu()
-            end
-        }
-    },
-    invcategory = "Playermodels",
-    never_equip = true
-})
 
-SS_Item({
-    class = "outfitter3",
-    price = 8000000,
-    name = 'Outfitter+',
-    description = "Allows a higher vertex limit for outfitter models. Requires outfitter. High price is because it causes lag.",
-    model = 'models/props_phx/facepunch_logo.mdl',
-    actions = {
-        customize = {
-            Text = function() return "Change Model" end,
-            OnClient = function()
-                RunConsoleCommand("outfitter")
-                SS_ToggleMenu()
-            end
-        }
-    },
-    invcategory = "Playermodels",
-    never_equip = true
-})
-
-
-if SERVER then
-    hook.Add("SS_UpdateItems", "outfitterbools", function(v)
-        local has2, has3 = v:SS_HasItem("outfitter2"), v:SS_HasItem("outfitter3")
-
-        if v:GetNWBool("oufitr") ~= has2 then
-            v:SetNWBool("oufitr", has2)
-        end
-
-        if v:GetNWBool("oufitr+") ~= has3 then
-            v:SetNWBool("oufitr+", has3)
-        end
-    end)
-end
-
-hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return ply:GetNWBool("oufitr") end)
-
---cant find workshop plus i think it needs to be colorable
-SS_PlayermodelItem({
-    class = 'crusadermodel',
-    price = 300000,
-    name = 'Crusader',
-    model = 'models/player/crusader.mdl',
-    OnPlayerSetModel = function(self, ply)
-        ply:Give("weapon_deusvult")
-        ply:SelectWeapon("weapon_deusvult")
-    end
-})
 
 SS_PlayermodelItem({
-    class = 'jokermodel',
-    price = 180000,
-    name = 'The Joker',
-    description = "Now yuo see...",
-    model = 'models/player/bobert/aojoker.mdl',
-    workshop = '400762901',
-    OnPlayerSetModel = function(self, ply) end
+    class = 'ogremodel',
+    price = 100000,
+    name = 'Ogre',
+    description = "IT CAME FROM THE SWAMP",
+    model = 'models/player/pyroteknik/shrek.mdl',
+    workshop = '314261589'
 })
+
 
 SS_PlayermodelItem({
     class = 'minecraftmodel',
@@ -455,6 +548,29 @@ SS_PlayermodelItem({
     model = 'models/milaco/minecraft_pm/minecraft_pm.mdl'
 })
 
+--cant find workshop plus i think it needs to be colorable
+SS_PlayermodelItem({
+    class = 'crusadermodel',
+    price = 300000,
+    name = 'Crusader',
+    model = 'models/player/crusader.mdl',
+    OnPlayerSetModel = function(self, ply)
+        ply:Give("weapon_deusvult")
+        ply:SelectWeapon("weapon_deusvult")
+    end
+})
+
+SS_PlayermodelItem({
+    class = 'jokermodel',
+    price = 180000,
+    name = 'The Joker',
+    description = "Now yuo see...",
+    model = 'models/player/bobert/aojoker.mdl',
+    workshop = '400762901',
+    OnPlayerSetModel = function(self, ply) end
+})
+
+
 SS_PlayermodelItem({
     class = 'neckbeardmodel',
     price = 240000,
@@ -467,187 +583,240 @@ SS_PlayermodelItem({
     end
 })
 
-SS_PlayermodelItem({
-    class = 'ogremodel',
-    price = 100000,
-    name = 'Ogre',
-    description = "IT CAME FROM THE SWAMP",
-    model = 'models/player/pyroteknik/shrek.mdl',
-    workshop = '314261589'
+
+-- SS_Heading("Legacy")
+
+SS_Item({
+    class = "outfitter2",
+    value = 2000000,
+    SellValue = function() return 2000000 end,
+    name = 'Outfitter (LEGACY, SELL THIS)',
+    description = "Allows wearing any playermodel from workshop (under 30,000 vertices)",
+    model = 'models/maxofs2d/logo_gmod_b.mdl',
+    -- actions = {
+    --     customize = {
+    --         Text = function() return "Change Model" end,
+    --         OnClient = function()
+    --             RunConsoleCommand("outfitter")
+    --             SS_ToggleMenu()
+    --         end
+    --     }
+    -- },
+    invcategory = "Playermodels",
+    never_equip = true
 })
 
-SS_Heading("One-Life, Unique")
-
-SS_UniqueModelProduct({
-    class = 'celestia',
-    name = 'Sun Princess',
-    model = 'models/mlp/player_celestia.mdl',
-    workshop = '419173474',
-    CanBuyStatus = function(self, ply)
-        if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
-    end
+SS_Item({
+    class = "outfitter3",
+    value = 8000000,
+    SellValue = function() return 8000000 end,
+    name = 'Outfitter+ (LEGACY, SELL THIS)',
+    description = "Allows a higher vertex limit for outfitter models. Requires outfitter. High price is because it causes lag.",
+    model = 'models/props_phx/facepunch_logo.mdl',
+    -- actions = {
+    --     customize = {
+    --         Text = function() return "Change Model" end,
+    --         OnClient = function()
+    --             RunConsoleCommand("outfitter")
+    --             SS_ToggleMenu()
+    --         end
+    --     }
+    -- },
+    invcategory = "Playermodels",
+    never_equip = true
 })
 
-SS_UniqueModelProduct({
-    class = 'luna',
-    name = 'Moon Princess',
-    model = 'models/mlp/player_luna.mdl',
-    workshop = '419173474',
-    CanBuyStatus = function(self, ply)
-        if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
-    end
-})
 
-SS_UniqueModelProduct({
-    class = 'billyherrington',
-    name = 'Billy Herrington',
-    description = "Rest in peace Billy Herrington, you will be missed.",
-    model = 'models/vinrax/player/billy_herrington.mdl',
-    workshop = '1422933575',
-    OnBuy = function(self, ply)
-        if SERVER then
-            ply:Give("weapon_billyh")
-            ply:SelectWeapon("weapon_billyh")
-        end
-    end
-})
+-- if SERVER then
+--     hook.Add("SS_UpdateItems", "outfitterbools", function(v)
+--         local has2, has3 = v:SS_HasItem("outfitter2"), v:SS_HasItem("outfitter3")
 
-SS_UniqueModelProduct({
-    class = 'doomguy',
-    name = 'Doomslayer',
-    description = "They are rage, brutal, without mercy. But you. You will be worse. Rip and tear, until it is done.",
-    model = 'models/pechenko_121/doomslayer.mdl',
-    workshop = '2041292605', --This one didn't use a bin file...
-    OnBuy = function(self, ply) end
-})
+--         if v:GetNWBool("oufitr") ~= has2 then
+--             v:SetNWBool("oufitr", has2)
+--         end
 
--- SS_UniqueModelProduct({
--- 	class = 'ketchupdemon',
--- 	name = 'Mortally Challenged',
--- 	description = '"Demon" is an offensive term.',
--- 	model = 'models/momot/momot.mdl'
--- })
-SS_UniqueModelProduct({
-    class = 'fatbastard',
-    name = 'Fat Kid',
-    description = "YEAR OF FAT KID",
-    model = 'models/obese_male.mdl',
-    workshop = '2467219933'
-})
+--         if v:GetNWBool("oufitr+") ~= has3 then
+--             v:SetNWBool("oufitr+", has3)
+--         end
+--     end)
+-- end
 
-SS_UniqueModelProduct({
-    class = 'fox',
-    name = 'Furball',
-    description = "Furries are proof that God has abandoned us.",
-    model = 'models/player/ztp_nickwilde.mdl',
-    workshop = '663489035'
-})
+-- hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return ply:GetNWBool("oufitr") end)
 
-SS_UniqueModelProduct({
-    class = 'garfield',
-    name = 'Lasagna Cat',
-    description = "I gotta have a good meal.",
-    model = 'models/garfield/garfield.mdl'
-})
 
-SS_UniqueModelProduct({
-    class = 'realgarfield',
-    name = 'Real Cat',
-    description = "Garfield gets real.",
-    model = 'models/player/yevocore/garfield/garfield.mdl',
-    workshop = '905415234',
-})
 
-SS_UniqueModelProduct({
-    class = 'hitler',
-    name = 'Der Fuhrer',
-    model = 'models/minson97/hitler/hitler.mdl',
-    workshop = '1983866955',
-})
-
-SS_UniqueModelProduct({
-    class = 'kermit',
-    name = 'Frog',
-    model = 'models/player/kermit.mdl',
-    workshop = '485879458',
-})
-
-SS_UniqueModelProduct({
-    class = 'darthkermit',
-    name = 'Darth Frog',
-    model = 'models/gonzo/lordkermit/lordkermit.mdl',
-    workshop = '1408171201',
-})
+-- SS_Heading("One-Life, Unique")
 
 -- SS_UniqueModelProduct({
--- 	class = 'kim',
--- 	name = 'Rocket Man',
--- 	description = "Won't be around much longer.",
--- 	model = 'models/player/hhp227/kim_jong_un.mdl'
+--     class = 'celestia',
+--     name = 'Sun Princess',
+--     model = 'models/mlp/player_celestia.mdl',
+--     workshop = '419173474',
+--     CanBuyStatus = function(self, ply)
+--         if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
+--     end
 -- })
-SS_UniqueModelProduct({
-    class = 'minion',
-    name = 'Comedy Pill',
-    model = 'models/player/minion/minion5/minion5.mdl',
-    workshop = '518592494',
-})
 
 -- SS_UniqueModelProduct({
--- 	class = 'moonman',
--- 	name = 'Mac Tonight',
--- 	model = 'models/player/moonmankkk.mdl'
+--     class = 'luna',
+--     name = 'Moon Princess',
+--     model = 'models/mlp/player_luna.mdl',
+--     workshop = '419173474',
+--     CanBuyStatus = function(self, ply)
+--         if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
+--     end
 -- })
-SS_UniqueModelProduct({
-    class = 'nicestmeme',
-    name = 'Thanks, Lori.',
-    description = 'John, haha. Where did you find this one?',
-    model = 'models/player/pyroteknik/banana.mdl',
-    workshop = '558307075',
-})
 
-SS_UniqueModelProduct({
-    class = 'pepsiman',
-    name = 'Pepsiman',
-    description = 'DRINK!',
-    model = 'models/player/real/prawnmodels/pepsiman.mdl',
-    workshop = '1083310915',
-})
-
-SS_UniqueModelProduct({
-    class = 'rick',
-    name = 'Intellectual',
-    description = 'To be fair, you have to have a very high IQ to understand Rick and Morty.',
-    model = 'models/player/rick/rick.mdl',
-    workshop = '557711922',
-})
-
-SS_UniqueModelProduct({
-    class = 'trump',
-    name = 'God Emperor',
-    description = "Donald J. Trump is the President-for-life of the United States of America, destined savior of Kekistan, and slayer of Hillary the Crooked.",
-    model = 'models/omgwtfbbq/the_ship/characters/trump_playermodel.mdl',
-    workshop = '725320580'
-})
-
---cant find workshop for it
 -- SS_UniqueModelProduct({
---     class = 'weeaboo',
---     name = 'Weeaboo Trash',
---     description = "Anime is proof that God has abandoned us.",
---     model = 'models/tsumugi.mdl'
+--     class = 'billyherrington',
+--     name = 'Billy Herrington',
+--     description = "Rest in peace Billy Herrington, you will be missed.",
+--     model = 'models/vinrax/player/billy_herrington.mdl',
+--     workshop = '1422933575',
+--     OnBuy = function(self, ply)
+--         if SERVER then
+--             ply:Give("weapon_billyh")
+--             ply:SelectWeapon("weapon_billyh")
+--         end
+--     end
 -- })
--- TODO: make them download/mount on the server, make sure there is not a lua backdoor!
-SS_UniqueModelProduct({
-    class = 'jokerjoker',
-    name = 'Joker from JOKER',
-    description = "Joker from JOKER",
-    model = 'models/kemot44/models/joker_pm.mdl',
-    workshop = "1899345304",
-})
+
 -- SS_UniqueModelProduct({
---     class = 'sans',
---     name = 'Sans Undertale',
---     description = "haha",
---     model = 'models/sirsmurfzalot/undertale/smh.mdl',
---     workshop = "1591120487",
+--     class = 'doomguy',
+--     name = 'Doomslayer',
+--     description = "They are rage, brutal, without mercy. But you. You will be worse. Rip and tear, until it is done.",
+--     model = 'models/pechenko_121/doomslayer.mdl',
+--     workshop = '2041292605', --This one didn't use a bin file...
+--     OnBuy = function(self, ply) end
 -- })
+
+-- -- SS_UniqueModelProduct({
+-- -- 	class = 'ketchupdemon',
+-- -- 	name = 'Mortally Challenged',
+-- -- 	description = '"Demon" is an offensive term.',
+-- -- 	model = 'models/momot/momot.mdl'
+-- -- })
+-- SS_UniqueModelProduct({
+--     class = 'fatbastard',
+--     name = 'Fat Kid',
+--     description = "YEAR OF FAT KID",
+--     model = 'models/obese_male.mdl',
+--     workshop = '2467219933'
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'fox',
+--     name = 'Furball',
+--     description = "Furries are proof that God has abandoned us.",
+--     model = 'models/player/ztp_nickwilde.mdl',
+--     workshop = '663489035'
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'garfield',
+--     name = 'Lasagna Cat',
+--     description = "I gotta have a good meal.",
+--     model = 'models/garfield/garfield.mdl'
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'realgarfield',
+--     name = 'Real Cat',
+--     description = "Garfield gets real.",
+--     model = 'models/player/yevocore/garfield/garfield.mdl',
+--     workshop = '905415234',
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'hitler',
+--     name = 'Der Fuhrer',
+--     model = 'models/minson97/hitler/hitler.mdl',
+--     workshop = '1983866955',
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'kermit',
+--     name = 'Frog',
+--     model = 'models/player/kermit.mdl',
+--     workshop = '485879458',
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'darthkermit',
+--     name = 'Darth Frog',
+--     model = 'models/gonzo/lordkermit/lordkermit.mdl',
+--     workshop = '1408171201',
+-- })
+
+-- -- SS_UniqueModelProduct({
+-- -- 	class = 'kim',
+-- -- 	name = 'Rocket Man',
+-- -- 	description = "Won't be around much longer.",
+-- -- 	model = 'models/player/hhp227/kim_jong_un.mdl'
+-- -- })
+-- SS_UniqueModelProduct({
+--     class = 'minion',
+--     name = 'Comedy Pill',
+--     model = 'models/player/minion/minion5/minion5.mdl',
+--     workshop = '518592494',
+-- })
+
+-- -- SS_UniqueModelProduct({
+-- -- 	class = 'moonman',
+-- -- 	name = 'Mac Tonight',
+-- -- 	model = 'models/player/moonmankkk.mdl'
+-- -- })
+-- SS_UniqueModelProduct({
+--     class = 'nicestmeme',
+--     name = 'Thanks, Lori.',
+--     description = 'John, haha. Where did you find this one?',
+--     model = 'models/player/pyroteknik/banana.mdl',
+--     workshop = '558307075',
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'pepsiman',
+--     name = 'Pepsiman',
+--     description = 'DRINK!',
+--     model = 'models/player/real/prawnmodels/pepsiman.mdl',
+--     workshop = '1083310915',
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'rick',
+--     name = 'Intellectual',
+--     description = 'To be fair, you have to have a very high IQ to understand Rick and Morty.',
+--     model = 'models/player/rick/rick.mdl',
+--     workshop = '557711922',
+-- })
+
+-- SS_UniqueModelProduct({
+--     class = 'trump',
+--     name = 'God Emperor',
+--     description = "Donald J. Trump is the President-for-life of the United States of America, destined savior of Kekistan, and slayer of Hillary the Crooked.",
+--     model = 'models/omgwtfbbq/the_ship/characters/trump_playermodel.mdl',
+--     workshop = '725320580'
+-- })
+
+-- --cant find workshop for it
+-- -- SS_UniqueModelProduct({
+-- --     class = 'weeaboo',
+-- --     name = 'Weeaboo Trash',
+-- --     description = "Anime is proof that God has abandoned us.",
+-- --     model = 'models/tsumugi.mdl'
+-- -- })
+-- -- TODO: make them download/mount on the server, make sure there is not a lua backdoor!
+-- SS_UniqueModelProduct({
+--     class = 'jokerjoker',
+--     name = 'Joker from JOKER',
+--     description = "Joker from JOKER",
+--     model = 'models/kemot44/models/joker_pm.mdl',
+--     workshop = "1899345304",
+-- })
+-- -- SS_UniqueModelProduct({
+-- --     class = 'sans',
+-- --     name = 'Sans Undertale',
+-- --     description = "haha",
+-- --     model = 'models/sirsmurfzalot/undertale/smh.mdl',
+-- --     workshop = "1591120487",
+-- -- })

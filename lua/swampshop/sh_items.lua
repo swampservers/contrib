@@ -363,3 +363,16 @@ function _SS_SanitizeConfig(item)
         cfg.submaterial = isnumber(dirty_cfg.submaterial) and math.Clamp(math.floor(dirty_cfg.submaterial), 0, 31) or nil
     end
 end
+
+function SS_PrettyMDLName(mdl)
+
+    mdl = string.sub(table.remove(string.Explode("/", mdl)), 1, -5)
+    if mdl=="" then return "ERROR" end
+
+    local words = string.Explode("_",mdl)
+    for i,v in ipairs(words) do
+        words[i] = string.upper(v[1]) .. string.lower(v:sub(2))
+    end
+
+    return table.concat(words, " ")
+end

@@ -87,8 +87,11 @@ function require_workshop_model(mdl)
 end
 
 function is_model_undownloaded(mdl)
+    -- print(1)
     if not STEAMWS_REGISTRY[mdl] then return false end
+    -- print(2)
     if util.IsValidModel(mdl) then return false end
+    -- print(3)
 
     return not STEAMWS_MOUNTED[STEAMWS_REGISTRY[mdl]]
 end

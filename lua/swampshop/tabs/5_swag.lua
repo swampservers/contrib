@@ -89,6 +89,91 @@ SS_Item({
         -- isnumber(scale) and Vector(scale,scale,scale) or scale
         return attach, translate, rotate, scale
     end,
+
+    SetupCustomizer = function(item, self)
+        local pone = LocalPlayer():IsPony()
+        local suffix = pone and "_p" or "_h"
+        local itmcw = (item:GetSettings() or {}).wear
+
+        local attach, translate, rotate, scale = item:AccessoryTransform(pone)
+
+        vgui("DSSCustomizerSection", self.LeftColumn, function(p)
+            p:SetText("Attachment (" .. (pone and "pony" or "human") .. ")")
+
+            vgui("DPanel", function(p)
+                p:Dock(TOP)
+                p:SetTall(24)
+                p.Paint = noop
+
+                vgui("DComboBox", function(p)
+                    p:SetValue(attach) 
+
+                    for k, v in pairs(SS_Attachments) do
+                        p:AddChoice(k)
+                    end
+
+                    p:Dock(FILL)
+                    p.Paint = SS_PaintBG
+
+                    p.UpdateColours = function(pnl)
+                        pnl:SetTextStyleColor(MenuTheme_TX)
+                        pnl:SetTextColor(MenuTheme_TX)
+                    end
+
+                    print("ADDONSELECT", p)
+                    p.OnSelect = function(panel, index, value)
+                        print("SELECT", index, value)
+                        item.cfg[self.wear] = item.cfg[self.wear] or {}
+                        item.cfg[self.wear].attach = value
+                        self:UpdateCfg()
+                    end
+                end)
+
+                vgui("DLabel", function(p)
+                    p:Dock(LEFT)
+                    p:SetText("Attach to")
+
+                    p.UpdateColours = function(pnl)
+                        pnl:SetTextColor(MenuTheme_TX)
+                    end
+
+
+                end)
+            end)
+        end)
+
+        -- p:SizeToChildren(true,true)
+        -- p:SizeToChildren(true,true)
+        -- local translate = (item.cfg[self.wear] or {}).pos or (pone and (item.wear.pony or {}).translate) or item.wear.translate
+        -- local rotate = (item.cfg[self.wear] or {}).ang or (pone and (item.wear.pony or {}).rotate) or item.wear.rotate
+        -- local scale = (item.cfg[self.wear] or {}).scale or (pone and (item.wear.pony or {}).scale) or item.wear.scale
+
+        self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+            p:SetForPosition(itmcw.pos.min, itmcw.pos.max, translate)
+        end)
+
+        self.Angle = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+            p:SetForAngle(rotate)
+        end)
+
+        self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+            p:SetForScale(itmcw.scale.min * item:ScaleLimitOffset(), itmcw.scale.max * item:ScaleLimitOffset(), scale)
+        end)
+
+        local function transformslidersupdate()
+            item.cfg[self.wear] = item.cfg[self.wear] or {}
+            item.cfg[self.wear].pos = self.Position:GetValue()
+            item.cfg[self.wear].ang = self.Angle:GetValueAngle()
+            item.cfg[self.wear].scale = self.Scale:GetValue()
+            self:UpdateCfg()
+        end
+
+        self.Position.OnValueChanged = transformslidersupdate
+        self.Angle.OnValueChanged = transformslidersupdate
+        self.Scale.OnValueChanged = transformslidersupdate
+
+    end,
+
     SellValue = function(self) return (SS_AccessoryModels[self.specs.model] or {}).value or 25000 end
 })
 
