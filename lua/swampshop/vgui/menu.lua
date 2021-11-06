@@ -287,10 +287,10 @@ function PANEL:Init()
 
     local unopened = true
 
-    local function MakeCategoryButton(cat, catname, icon, inv)
+    local function MakeCategoryButton(cat, catname, icon, inv, dock)
         vgui("DButton", inv and self.invbar or self.topbar, function(p)
             p.ModePanel = cat
-            p:Dock(LEFT)
+            p:Dock(dock or LEFT)
             p:SetText(catname)
             p:SetFont("SS_Category")
             p:SetImage(icon)
@@ -397,6 +397,10 @@ function PANEL:Init()
     end)
 
     vgui('DSSCustomizerMode', self.mainpane)
+
+    vgui("DSSPlayerSettingsMode", self.mainpane, function(p)
+        MakeCategoryButton(p, "Player Settings", 'icon16/rosette.png', false, RIGHT)
+    end)
 
     if (IN_STEAMGROUP or 0) <= 0 then
         p = vgui.Create("DButton", self)

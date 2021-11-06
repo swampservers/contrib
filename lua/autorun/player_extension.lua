@@ -139,6 +139,8 @@ function isPonyModel(modelName)
     return false
 end
 
+IsPonyModel = isPonyModel
+
 function PLAYER:UsingWeapon(cls)
     local c = self:GetActiveWeapon()
 

@@ -6,21 +6,6 @@ SS_Items = SS_Items or {}
 -- this is not used as a table, it is just a unique value
 SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 
-function SS_SanitizeVector(val, min, max)
-    return isvector(val) and val:Clamp(min, max) or nil
-end
-
-function SS_SanitizeColor(val)
-    return SS_SanitizeVector(val, Vector(0, 0, 0), Vector(5, 5, 5))
-end
-
-function SS_SanitizeImgur(imgur)
-    local url = istable(imgur) and SanitizeImgurId(imgur.url)
-
-    return url and {
-        url = url
-    } or nil
-end
 
 -- SS_ITEM_META = {
 --     __index = function(t, k) return t[k] or t.cfg[k]  or t.class[k] end, --or t.spec[k]

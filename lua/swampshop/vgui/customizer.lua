@@ -152,8 +152,9 @@ function PANEL:SetupControls()
     
         local pone = LocalPlayer():IsPony()
         local suffix = pone and "_p" or "_h"
+        local settings = self.item:GetSettings() or {} 
         
-        if (self.item:GetSettings() or {}).bone then
+        if settings.bone then
 
             vgui('DSSCustomizerBone', self.LeftColumn, function(p)
                 p:SetValue(self.item.cfg["bone" .. suffix] or (pone and "Scull" or "Head1"))
@@ -165,18 +166,18 @@ function PANEL:SetupControls()
 
             --bunch of copied shit
             local function transformslidersupdate()
-                if self.item:GetSettings().scale then
+                if settings.scale then
                     self.item.cfg["scale" .. suffix] = self.Scale:GetValue()
                 end
 
-                if self.item:GetSettings().pos then
+                if settings.pos then
                     self.item.cfg["pos" .. suffix] = self.Position:GetValue()
                 end
 
                 self:UpdateCfg()
             end
 
-            local itmcp = self.item:GetSettings().pos
+            local itmcp = settings.pos
 
             if itmcp then
                 self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
@@ -186,7 +187,7 @@ function PANEL:SetupControls()
             end
 
 
-            -- local itmca = self.item:GetSettings().ang
+            -- local itmca = settings.ang
 
             -- if itmca then
             --     self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
@@ -195,7 +196,7 @@ function PANEL:SetupControls()
             --     end)
             -- end
 
-            local itmcs = self.item:GetSettings().scale
+            local itmcs = settings.scale
 
             if itmcs then
                 self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
@@ -205,7 +206,7 @@ function PANEL:SetupControls()
             end
 
             --end bunch of copied shit
-            if self.item:GetSettings().scale_children then
+            if settings.scale_children then
                 vgui('DSSCustomizerCheckbox', self.LeftColumn, function(p)
                     -- "Scale child bones"
                     p:SetValue(self.item.cfg["scale_children" .. suffix] and 1 or 0)
@@ -218,9 +219,7 @@ function PANEL:SetupControls()
             end
         end
 
-        local limit = self.item:GetSettings().color
-
-        if limit then
+        if settings.color then
             vgui("DSSCustomizerColor", self.RightColumn, function(p)
                 p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
 
@@ -231,7 +230,7 @@ function PANEL:SetupControls()
             end)
         end
 
-        if self.item:GetSettings().imgur then
+        if settings.imgur then
             vgui("DSSCustomizerImgur", self.RightColumn, function(p)
                 p:SetValue(self.item.cfg.imgur)
 
