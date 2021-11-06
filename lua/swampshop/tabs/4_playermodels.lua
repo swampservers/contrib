@@ -3,6 +3,44 @@
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
+
+
+function SS_PlayermodelItem(item)
+    item.playermodel = true
+    item.PlayerSetModelOrig = item.PlayerSetModel
+
+    item.PlayerSetModel = function(self, ply)
+        --if ply:GetModel()~=self.model then 
+        ply:SetModel(self.model)
+
+        --end
+        if self.PlayerSetModelOrig then
+            self:PlayerSetModelOrig(ply)
+        end
+    end
+
+    -- TODO change this so items have "slot"s
+    --gets called just before this object changes state
+    -- item.OnChangeEquip = function(self, ply, eq)
+    --     if eq then
+    --         -- dequip other playermodels
+    --         for k, v in pairs(ply.SS_ShownItems) do
+    --             -- todo: change this to sanitizing all items, local item last?
+    --             if v.PlayerSetModel and v.eq then
+    --                 v.actions.equip.OnServer(ply, v)
+    --             end
+    --         end
+    --         -- print(item.class, ply, "EQUIPP")
+    --         -- put this one on
+    --         -- self:PlayerSetModel(ply)
+    --     end
+    -- end
+    item.invcategory = "Playermodels"
+    SS_Item(item)
+end
+
+
+
 -- TODO: use .settings/:GetSettings for commonly used elements
 -- AND add SetupCustomizer/SanitizeCfg which by default have behavior defined by GetSettings's return
 -- (er, make GetSettings always run its version of SetupCustomizer/SanitizeCfg before calling SetupCustomizer/SanitizeCfg)
@@ -213,6 +251,74 @@ SS_Item({
     },
     invcategory = "Playermodels",
     never_equip = true
+})
+
+SS_Item({
+    class = "newfitter",
+    value=0,
+    maxowned=5,
+    GetName = function(self)
+        return 'New Outfitter'
+    end,
+    GetDescription = function(self)
+        if self.cfg.model and self.cfg.wsid then
+            return self.cfg.wsid .. "\n"..self.cfg.model 
+        end
+            return "UNSET OUTFIT"
+    end,
+    GetModel = function(self)
+        if CLIENT and self.cfg.model and self.cfg.wsid then
+            -- hack: makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
+        --     require_workshop(self.cfg.wsid)
+            return self.cfg.model
+        end
+        return "models/player/skeleton.mdl"
+    end,
+    invcategory = "Playermodels",
+    playermodel = true,
+    PlayerSetModel = function(self, ply)
+        --what to display if unloaded or whatever
+        ply:SetModel("models/player/skeleton.mdl")
+
+        if self.cfg.model and self.cfg.wsid then
+            print("SETTING", ply, self.cfg.model, self.cfg.wsid)
+            outfitter.SHNetworkOutfit(ply, self.cfg.model, tonumber(self.cfg.wsid))
+        end
+    end,
+
+    SetupCustomizer = function(self, cust)
+        vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+            p:SetText("Choose The Model, My Friend")
+
+            vgui("DTextEntry", function(p) 
+                p:Dock(TOP)
+                p:SetValue(self.cfg.wsid or "")
+                p:SetPlaceholderText( "wsid: 13376969" )
+                p:SetUpdateOnType(true)
+                p.OnValueChange = function(pnl, txt)
+                    self.cfg.wsid = txt
+                    cust:UpdateCfg()
+                end
+            end)
+
+            vgui("DTextEntry", function(p) 
+                p:Dock(TOP)
+                p:SetValue(self.cfg.model or "")
+                p:SetPlaceholderText( "path: models/thingy.mdl" )
+                p:SetUpdateOnType(true)
+                p.OnValueChange = function(pnl, txt)
+                    self.cfg.model = txt
+                    cust:UpdateCfg()
+                end
+            end)
+        end)
+    end,
+    SanitizeCfg = function(self, dirty)
+        -- lets through all strings below a length limit
+        self.cfg.wsid = isstring(dirty.wsid) and dirty.wsid:sub(1,20) or nil
+        self.cfg.model = isstring(dirty.model) and dirty.model:sub(1,200) or nil
+    end,
+
 })
 
 if SERVER then

@@ -175,6 +175,14 @@ function PANEL:SetupControls()
                             pnl:SetTextStyleColor(MenuTheme_TX)
                             pnl:SetTextColor(MenuTheme_TX)
                         end
+
+                        print("ADDONSELECT", p)
+                        p.OnSelect = function(panel, index, value)
+                            print("SELECT", index, value)
+                            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
+                            self.item.cfg[self.wear].attach = value
+                            self:UpdateCfg()
+                        end
                     end)
 
                     vgui("DLabel", function(p)
@@ -185,11 +193,7 @@ function PANEL:SetupControls()
                             pnl:SetTextColor(MenuTheme_TX)
                         end
 
-                        p.OnSelect = function(panel, index, value)
-                            self.item.cfg[self.wear] = self.item.cfg[self.wear] or {}
-                            self.item.cfg[self.wear].attach = value
-                            self:UpdateCfg()
-                        end
+
                     end)
                 end)
             end)

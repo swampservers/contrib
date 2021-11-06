@@ -64,40 +64,6 @@ function SS_AngleGen(func)
     return ang
 end
 
-function SS_PlayermodelItem(item)
-    item.playermodel = true
-    item.PlayerSetModelOrig = item.PlayerSetModel
-
-    item.PlayerSetModel = function(self, ply)
-        --if ply:GetModel()~=self.model then 
-        ply:SetModel(self.model)
-
-        --end
-        if self.PlayerSetModelOrig then
-            self:PlayerSetModelOrig(ply)
-        end
-    end
-
-    -- TODO change this so items have "slot"s
-    --gets called just before this object changes state
-    -- item.OnChangeEquip = function(self, ply, eq)
-    --     if eq then
-    --         -- dequip other playermodels
-    --         for k, v in pairs(ply.SS_ShownItems) do
-    --             -- todo: change this to sanitizing all items, local item last?
-    --             if v.PlayerSetModel and v.eq then
-    --                 v.actions.equip.OnServer(ply, v)
-    --             end
-    --         end
-    --         -- print(item.class, ply, "EQUIPP")
-    --         -- put this one on
-    --         -- self:PlayerSetModel(ply)
-    --     end
-    -- end
-    item.invcategory = "Playermodels"
-    SS_Item(item)
-end
-
 function SS_WeaponBlueprintItem(item)
     item.CraftingPrice = function(self) return 5000 end
 

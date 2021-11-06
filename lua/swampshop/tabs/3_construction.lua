@@ -86,9 +86,10 @@ SS_Item({
             } or false,
             imgur = SS_GetRating(self.specs.rating or 0).id >= 7
         }
+
     end,
     GetColor = function(self)
-        if self:CanCfgColor() then return self.cfg.color end
+        if self:GetSettings().color then return self.cfg.color end
         local r = SS_GetRating(self.specs.rating).id
         if r == 2 then return Vector(0.7, 0.7, 0.7) end
         if r == 1 then return Vector(0.5, 0.3, 0.1) end
