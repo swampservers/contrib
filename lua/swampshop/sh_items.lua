@@ -6,7 +6,6 @@ SS_Items = SS_Items or {}
 -- this is not used as a table, it is just a unique value
 SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 
-
 -- SS_ITEM_META = {
 --     __index = function(t, k) return t[k] or t.cfg[k]  or t.class[k] end, --or t.spec[k]
 --     __newindex = function(t, k, v) end
