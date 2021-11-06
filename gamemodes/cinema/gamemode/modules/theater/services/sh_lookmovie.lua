@@ -6,19 +6,13 @@ SERVICE.Name = "LookMovie"
 SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
-local domains = {
-    "lmplayer.xyz",
-    "contentmatserishere.com",
-    "thisistheplacetowatch.com",
-    "watchthesestuff.com",
-    "bestofworldcontent.com",
-    "wehaveallcontent.com"
-}
+local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com"}
 
 function SERVICE:GetKey(url)
     if (util.JSONToTable(url.encoded)) then return false end
     if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") or string.match(url.encoded, "lookmovie.io/shows/view/(.+)#.+%-(%d+)$") then return url.encoded end
-    for _,v in pairs(domains) do
+
+    for _, v in pairs(domains) do
         if string.match(url.encoded, v .. "/m/./(.+)/s") or string.match(url.encoded, v .. "/s/./(.+)/s#") then return url.encoded end
     end
 
