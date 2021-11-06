@@ -45,7 +45,7 @@ end
 -- returns model and if its a playermodel (false means its a prop)
 function PANEL:GetDesiredModel()
     if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-        return SS_HoverIOP:GetModel(), SS_HoverIOP.playermodel
+        return SS_HoverIOP:GetModel(), SS_HoverIOP.PlayerSetModel ~= nil
     else
         return LocalPlayer():GetModel(), true
     end
@@ -200,7 +200,7 @@ function PANEL:Paint(w, h)
         self:SetModel(mdl)
         self.appliedmodel = mdl
 
-        --SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
+        --SS_HoverIOP and (SS_HoverIOP.PlayerSetModel == nil) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
         if IsValid(self.Entity) and not playermodel then
             local item = SS_HoverItem or SS_HoverProduct.sample_item
 
@@ -251,7 +251,7 @@ function PANEL:Paint(w, h)
         PPM_SetBodyGroups(self.Entity)
     end
 
-    if SS_HoverIOP and (not SS_HoverIOP.playermodel) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
+    if SS_HoverIOP and (SS_HoverIOP.PlayerSetModel == nil) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
         -- SS_PreviewShopModel(self, SS_HoverIOP)
         -- self:SetCamPos(self:GetCamPos() * 2)
         self.Entity:DrawModel()
@@ -298,7 +298,7 @@ function PANEL:Paint(w, h)
     end
 
     -- print("HOVER", SS_HoverItem)
-    if SS_HoverIOP == nil or SS_HoverIOP.playermodel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
+    if SS_HoverIOP == nil or SS_HoverIOP.PlayerSetModel or SS_HoverIOP.wear or SS_HoverIOP.playermodelmod then
         local function GetShopAccessoryItems()
             local a = {}
             local hoveritem = SS_HoverItem

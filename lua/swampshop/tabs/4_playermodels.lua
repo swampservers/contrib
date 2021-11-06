@@ -5,36 +5,19 @@ SS_Heading("Mods")
 
 
 
+
 function SS_PlayermodelItem(item)
     item.playermodel = true
-    item.PlayerSetModelOrig = item.PlayerSetModel
 
-    item.PlayerSetModel = function(self, ply)
-        --if ply:GetModel()~=self.model then 
+    item.PlayerSetModel = item.PlayerSetModel or function(self, ply)
         ply:SetModel(self.model)
 
-        --end
-        if self.PlayerSetModelOrig then
-            self:PlayerSetModelOrig(ply)
+        if self.OnPlayerSetModel then
+            self:OnPlayerSetModel(ply)
         end
     end
 
-    -- TODO change this so items have "slot"s
-    --gets called just before this object changes state
-    -- item.OnChangeEquip = function(self, ply, eq)
-    --     if eq then
-    --         -- dequip other playermodels
-    --         for k, v in pairs(ply.SS_ShownItems) do
-    --             -- todo: change this to sanitizing all items, local item last?
-    --             if v.PlayerSetModel and v.eq then
-    --                 v.actions.equip.OnServer(ply, v)
-    --             end
-    --         end
-    --         -- print(item.class, ply, "EQUIPP")
-    --         -- put this one on
-    --         -- self:PlayerSetModel(ply)
-    --     end
-    -- end
+    item.slot = "playermodel"
     item.invcategory = "Playermodels"
     SS_Item(item)
 end
@@ -195,6 +178,161 @@ SS_Item({
 -- })
 SS_Heading("Permanent")
 
+
+
+SS_PlayermodelItem({
+    class = "playermodel",
+    price=1000000,
+    maxowned=5,
+    GetName = function(self)
+        --fix product
+        if self.specs then
+            if self.specs.model then
+                return string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5)
+            end
+
+            if self.cfg.model and self.cfg.wsid then
+                return string.sub(table.remove(string.Explode("/", self.cfg.model)), 1, -5).." (UNFINALIZED)"
+            end
+        end
+        return 'Workshop Outfit (WIP)'
+    end,
+    GetDescription = function(self)
+        if self.specs then
+        if self.specs.model then
+            local d = "A playermodel."
+            if self.specs.wsid then
+                d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
+            end
+            return d
+        end
+        if self.cfg.model and self.cfg.wsid then
+            return "Finalize this model to wear it.\n("..self.cfg.wsid .. "/"..self.cfg.model ..")"
+        end
+    end
+        return "Use any playermodel from workshop! Once the model is finalized, it can't be changed."
+    end,
+    GetModel = function(self)
+        
+        if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+
+            if self.specs.wsid or self.cfg.wsid then
+                -- so the callback when downloaded makes the model refresh
+                register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid )
+                -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
+                require_workshop(self.specs.wsid or self.cfg.wsid )
+            end
+            
+            return self.specs.model or self.cfg.model
+        end
+        return "models/player/skeleton.mdl"
+    end,
+    invcategory = "Playermodels",
+    playermodel = true,
+    PlayerSetModel = function(self, ply)
+        
+        if self.specs.model then
+            if self.specs.wsid then
+                --what to display if unloaded or whatever
+                ply:SetModel("models/player/skeleton.mdl")
+
+
+                -- print("SETTING", ply, self.specs.model, self.specs.wsid)
+                outfitter.SHNetworkOutfit(ply, self.specs.model, tonumber(self.specs.wsid))
+            else
+                ply:SetModel(self.specs.model)
+            end
+        end
+    end,
+    SetupCustomizer = function(self, cust)
+        HeyNozFillThisIn(self, cust)
+    end,
+    SanitizeSpecs = function(self)
+        -- print("SSPECS", self.specs.model, self.cfg.model , self.cfg.wsid , self.cfg.finalize)
+        if SERVER and not self.specs.model and self.cfg.model and self.cfg.wsid and self.cfg.finalize then
+            self.specs.model = self.cfg.model 
+            self.specs.wsid = self.cfg.wsid
+            -- print("FINALIZE PLAYERMODEL")
+            return true
+        end
+    end,
+    SanitizeCfg = function(self, dirty)
+        if self.specs.model == nil then
+            self.cfg.wsid = tonumber(dirty.wsid) and tostring(tonumber(dirty.wsid)) or nil
+            self.cfg.model = isstring(dirty.model) and dirty.model:sub(1,200):Trim() or nil
+            self.cfg.finalize = dirty.finalize and true or nil
+        end
+    end,
+
+})
+
+function HeyNozFillThisIn(self,cust)
+
+    if self.specs.model then
+        vgui("DSSCustomizerSection", cust.RightColumn, function(p)
+
+            p:SetText("Model is already finalized!")
+        end)
+
+        return
+    end
+
+    vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+
+        p:SetText("Select Model (WIP)")
+
+        vgui("DTextEntry", function(p) 
+            p:Dock(TOP)
+            p:SetValue(self.cfg.wsid or "")
+            p:SetPlaceholderText( "Workshop ID, like: 13376969" )
+            p:SetUpdateOnType(true)
+            p.OnValueChange = function(pnl, txt)
+                self.cfg.wsid = txt
+                cust:UpdateCfg()
+            end
+        end)
+
+        vgui("DTextEntry", function(p) 
+            p:Dock(TOP)
+            p:SetValue(self.cfg.model or "")
+            p:SetPlaceholderText( "Model path, like: models/player/kleiner.mdl" )
+            p:SetUpdateOnType(true)
+            p.OnValueChange = function(pnl, txt)
+                self.cfg.model = txt
+                cust:UpdateCfg()
+            end
+        end)
+
+    end)
+
+    vgui("DSSCustomizerSection", cust.RightColumn, function(p)
+        
+        p:SetText("Finalize? (check preview!)")
+    
+
+        vgui("DPanel", function(p)
+            p:SetTall(16)
+            p:Dock(TOP)
+            p.Paint = noop
+            vgui("DSSCustomizerCheckBox", function(p)
+                p:DockMargin(180,0,0,0)
+                p:Dock(LEFT)
+                p:SetWide(16)
+                -- p:SetText("Finalize (make sure preview looks right!)")
+                p.OnChange = function(pnl, val)
+                    print(val)
+                    self.cfg.finalize = val
+
+                    cust:UpdateCfg()
+                end
+            end)
+        end)
+    end)
+
+
+end
+
+
 SS_PlayermodelItem({
     class = 'ponymodel',
     price = 500000,
@@ -209,7 +347,7 @@ SS_PlayermodelItem({
             end
         }
     },
-    PlayerSetModel = function(self, ply)
+    OnPlayerSetModel = function(self, ply)
         ply:Give("weapon_squee")
         ply:SelectWeapon("weapon_squee")
     end
@@ -253,86 +391,6 @@ SS_Item({
     never_equip = true
 })
 
-SS_Item({
-    class = "newfitter",
-    value=0,
-    maxowned=5,
-    GetName = function(self)
-        return 'New Outfitter'
-    end,
-    GetDescription = function(self)
-        if self.cfg.model and self.cfg.wsid then
-            return self.cfg.wsid .. "\n"..self.cfg.model 
-        end
-            return "UNSET OUTFIT"
-    end,
-    GetModel = function(self)
-        -- print("GETMODEL1")
-        if CLIENT and self.cfg.model and self.cfg.wsid then
-            -- print("GETMODEL2")
-
-            -- so the callback makes the model refresh
-            register_workshop_model(self.cfg.model, self.cfg.wsid)
-            -- hack: makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
-            require_workshop(self.cfg.wsid)
-            return self.cfg.model
-        end
-        return "models/player/skeleton.mdl"
-    end,
-    invcategory = "Playermodels",
-    playermodel = true,
-    PlayerSetModel = function(self, ply)
-        --what to display if unloaded or whatever
-        ply:SetModel("models/player/skeleton.mdl")
-
-        if self.cfg.model and self.cfg.wsid then
-            print("SETTING", ply, self.cfg.model, self.cfg.wsid)
-            outfitter.SHNetworkOutfit(ply, self.cfg.model, tonumber(self.cfg.wsid))
-        end
-    end,
-
-    SetupCustomizer = function(self, cust)
-       FillThisIn(self, cust)
-    end,
-    SanitizeCfg = function(self, dirty)
-        -- lets through all strings below a length limit
-        self.cfg.wsid = isstring(dirty.wsid) and dirty.wsid:sub(1,20) or nil
-        self.cfg.model = isstring(dirty.model) and dirty.model:sub(1,200) or nil
-    end,
-
-})
-
-function FillThisIn(self,cust)
-
-    vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
-        p:SetText("Choose The Model, My Friend")
-
-        vgui("DTextEntry", function(p) 
-            p:Dock(TOP)
-            p:SetValue(self.cfg.wsid or "")
-            p:SetPlaceholderText( "wsid: 13376969" )
-            p:SetUpdateOnType(true)
-            p.OnValueChange = function(pnl, txt)
-                self.cfg.wsid = txt
-                cust:UpdateCfg()
-            end
-        end)
-
-        vgui("DTextEntry", function(p) 
-            p:Dock(TOP)
-            p:SetValue(self.cfg.model or "")
-            p:SetPlaceholderText( "path: models/thingy.mdl" )
-            p:SetUpdateOnType(true)
-            p.OnValueChange = function(pnl, txt)
-                self.cfg.model = txt
-                cust:UpdateCfg()
-            end
-        end)
-    end)
-
-
-end
-
 
 if SERVER then
     hook.Add("SS_UpdateItems", "outfitterbools", function(v)
@@ -356,7 +414,7 @@ SS_PlayermodelItem({
     price = 300000,
     name = 'Crusader',
     model = 'models/player/crusader.mdl',
-    PlayerSetModel = function(self, ply)
+    OnPlayerSetModel = function(self, ply)
         ply:Give("weapon_deusvult")
         ply:SelectWeapon("weapon_deusvult")
     end
@@ -369,7 +427,7 @@ SS_PlayermodelItem({
     description = "Now yuo see...",
     model = 'models/player/bobert/aojoker.mdl',
     workshop = '400762901',
-    PlayerSetModel = function(self, ply) end
+    OnPlayerSetModel = function(self, ply) end
 })
 
 SS_PlayermodelItem({
@@ -394,8 +452,7 @@ SS_PlayermodelItem({
             end
         }
     },
-    model = 'models/milaco/minecraft_pm/minecraft_pm.mdl',
-    PlayerSetModel = function(self, ply) end
+    model = 'models/milaco/minecraft_pm/minecraft_pm.mdl'
 })
 
 SS_PlayermodelItem({
@@ -404,7 +461,7 @@ SS_PlayermodelItem({
     name = 'Athiest',
     model = 'models/player/neckbeard.mdl',
     -- workshop = '853155677', -- Not using workshop because of pony editor built in neckbeard
-    PlayerSetModel = function(self, ply)
+    OnPlayerSetModel = function(self, ply)
         ply:Give("weapon_clopper")
         ply:SelectWeapon("weapon_clopper")
     end
@@ -416,8 +473,7 @@ SS_PlayermodelItem({
     name = 'Ogre',
     description = "IT CAME FROM THE SWAMP",
     model = 'models/player/pyroteknik/shrek.mdl',
-    workshop = '314261589',
-    PlayerSetModel = function(self, ply) end
+    workshop = '314261589'
 })
 
 SS_Heading("One-Life, Unique")

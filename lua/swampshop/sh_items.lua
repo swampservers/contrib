@@ -64,6 +64,7 @@ function SS_AngleGen(func)
     return ang
 end
 
+
 function SS_WeaponBlueprintItem(item)
     item.CraftingPrice = function(self) return 5000 end
 

@@ -50,6 +50,7 @@ vgui.Register('DSSAuctionMode', {
                 p:SetSortItems(false)
                 p:SetValue("Everything")
                 p:AddChoice("Accessories")
+                p:AddChoice("Playermodels")
                 p:AddChoice("Props")
                 p:AddChoice("Weapons")
                 p:AddChoice("Misc")
