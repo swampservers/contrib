@@ -360,23 +360,20 @@ SS_PlayermodelItem({
         HeyNozFillThisIn(self, cust)
     end,
     SanitizeSpecs = function(self)
-        -- print("SSPECS", self.specs.model, self.cfg.model , self.cfg.wsid , self.cfg.finalize)
         if SERVER and not self.specs.model and self.cfg.model and self.cfg.wsid and self.cfg.finalize then
             self.specs.model = self.cfg.model 
             self.specs.wsid = self.cfg.wsid
-            -- print("FINALIZE PLAYERMODEL")
             return true
         end
     end,
     SanitizeCfg = function(self, dirty)
-        -- print("CFG")
         if self.specs.model == nil then
             self.cfg.wsid = tonumber(dirty.wsid) and tostring(tonumber(dirty.wsid)) or nil
             self.cfg.model = isstring(dirty.model) and dirty.model:sub(1,200):Trim() or nil
             self.cfg.finalize = dirty.finalize and true or nil
         end
     end,
-    SellValue = function(self) return 30000 end
+    SellValue = function(self) return 25000 end
 
 })
 
@@ -389,6 +386,8 @@ function HeyNozFillThisIn(self,cust)
             p:SetText("Model is already finalized!")
         end)
  
+        -- TODO: bodygroup chooser even if model is finalized
+
         return
     end
     

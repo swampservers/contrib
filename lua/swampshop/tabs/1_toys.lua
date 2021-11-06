@@ -3,26 +3,6 @@
 SS_Tab("Toys", "star")
 SS_Heading("Free Toys")
 
--- models/props_combine/portalball.mdl
-SS_Product({
-    class = "transmogrifier",
-    price = 0,
-    name = "Transmogrifier",
-    description = "It changes you into a different form... for one life.",
-    model = 'models/props_combine/combine_mine01.mdl',
-    CannotBuy = function(self, ply)
-        if SERVER and ply:CheckRateLimit("transmogrify", 60) then return "Please wait a bit" end
-    end,
-    OnBuy = function(self, ply)
-        if ply:RateLimit("transmogrify", 60) then return end --ply:Notify("Please wait a bit") 
-        local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
-        outfitter.SHNetworkOutfit(ply, m[2], tonumber(m[1]))
-        -- ply:Notify("You have been transformed into "..SS_PrettyMDLName(m[2]))
-        ply:PrintMessage(HUD_PRINTTALK, "You have been transformed into [red]" .. SS_PrettyMDLName(m[2]) .. " ;kleinerfortnite;")
-        ply:SendLua("THIRDPERSON=true timer.Simple(5, function() if THIRDPERSON then chat.AddText('Press F4 to return to first person.') end end)")
-    end
-})
-
 SS_WeaponProduct({
     class = "weapon_flappy",
     price = 0,
@@ -111,6 +91,28 @@ SS_WeaponProduct({
     model = "models/swamponions/switchbox.mdl"
 })
 
+
+
+-- models/props_combine/portalball.mdl
+SS_Product({
+    class = "transmogrifier",
+    price = 0,
+    name = "Transmogrifier",
+    description = "It changes you into a different form... for one life.",
+    model = 'models/props_combine/combine_mine01.mdl',
+    CannotBuy = function(self, ply)
+        if SERVER and ply:CheckRateLimit("transmogrify", 60) then return "Please wait a bit" end
+    end,
+    OnBuy = function(self, ply)
+        if ply:RateLimit("transmogrify", 60) then return end --ply:Notify("Please wait a bit") 
+        local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
+        outfitter.SHNetworkOutfit(ply, m[2], tonumber(m[1]))
+        -- ply:Notify("You have been transformed into "..SS_PrettyMDLName(m[2]))
+        ply:PrintMessage(HUD_PRINTTALK, "You have been transformed into [red]" .. SS_PrettyMDLName(m[2]) .. " ;kleinerfortnite;")
+        ply:SendLua("THIRDPERSON=true timer.Simple(5, function() if THIRDPERSON then chat.AddText('Press F4 to return to first person.') end end)")
+    end
+})
+
 SS_WeaponProduct({
     class = "weapon_fidget",
     price = 0,
@@ -155,7 +157,7 @@ SS_Heading("Expensive Toys")
 
 SS_WeaponProduct({
     class = "weapon_hamsterball",
-    price = 4000,
+    price = 2000,
     name = "Hamster Ball",
     description = "They see me rollin'",
     model = "models/props_phx/ball.mdl"
