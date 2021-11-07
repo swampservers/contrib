@@ -91,6 +91,7 @@ hook.Add("PlayerModelChanged", "SetJumpPower", function(ply, mdl)
     ply:SetDefaultJumpPower()
 end)
 
+
 function PLAYER:IsAFK()
     return self:GetNWBool("afk", false)
 end
@@ -110,6 +111,8 @@ function PLAYER:StaffControlTheater()
 
     return self:GetRank() >= minn
 end
+
+
 
 function PLAYER:UsingWeapon(cls)
     local c = self:GetActiveWeapon()

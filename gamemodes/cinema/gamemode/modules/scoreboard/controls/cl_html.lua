@@ -256,7 +256,7 @@ function PANEL:ConsoleMessage(msg, func)
         return
     end
 
-    if (self.m_bAllowLua and msg:StartWith("RVIDEO:")) then
+    if msg:StartWith("RVIDEO:") then
         local strLua = msg:sub(8)
         SELF = self
         RequestVideoURL(strLua)

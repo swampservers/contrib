@@ -150,6 +150,7 @@ function SWEP:TasePlayer()
     timer.Create("ForceStopTasing" .. self.Owner:SteamID64(), self.AutoUntase, 0, function()
         if not IsValid(self) then return end
         self:UnTasePlayer()
+
         self:Remove()
     end)
 end
@@ -170,6 +171,8 @@ function SWEP:UnTasePlayer()
         --ply:UnSpectate()
         self.Rope:SetKeyValue("EndOffset", tostring(Vector(0, 0, 48)))
     end
+
+    
 end
 
 -- attach the taser wire to an entity

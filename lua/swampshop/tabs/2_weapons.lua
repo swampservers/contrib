@@ -622,15 +622,20 @@ SS_Product({
     end
 })
 
+
 SS_Panel(function(parent)
     vgui("DSSAuctionPreview", parent, function(p)
         p:SetCategory("Weapons")
     end)
 end)
 
+
 SS_Heading("To buy ammo, press Undo (default Z)")
+
 -- SS_Heading("You can get a cheaper gun blueprint in 'Auctions'")
 -- -- TODO make it show auctions here
+
+
 -- SS_Product({
 --     class = 'cssammo',
 --     price = 2000, --5000,3000

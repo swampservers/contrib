@@ -86,6 +86,7 @@ SS_Item({
             } or false,
             imgur = SS_GetRating(self.specs.rating or 0).id >= 7
         }
+
     end,
     GetColor = function(self)
         if self:GetSettings().color then return self.cfg.color end
@@ -145,6 +146,8 @@ SS_Panel(function(parent)
         p:SetCategory("Props")
     end)
 end)
+
+
 
 SS_Heading("Gadgets (WIP)")
 

@@ -146,60 +146,81 @@ function PANEL:SetupControls()
 
     if self.item.SetupCustomizer then
         self.item:SetupCustomizer(self)
+
     end
 
-    local pone = LocalPlayer():IsPony()
-    local suffix = pone and "_p" or "_h"
-    local settings = self.item:GetSettings() or {}
+    
+        local pone = LocalPlayer():IsPony()
+        local suffix = pone and "_p" or "_h"
+        local settings = self.item:GetSettings() or {} 
+        
+        -- if settings.bone then
 
-    -- if settings.bone then
-    --     --bunch of copied shit
-    --     local function transformslidersupdate()
-    --         if settings.scale then
-    --             self.item.cfg["scale" .. suffix] = self.Scale:GetValue()
-    --         end
-    --         if settings.pos then
-    --             self.item.cfg["pos" .. suffix] = self.Position:GetValue()
-    --         end
-    --         self:UpdateCfg()
-    --     end
-    --     local itmcp = settings.pos
-    --     if itmcp then
-    --         self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-    --             p:SetForPosition(itmcp.min, itmcp.max, self.item.cfg["pos" .. suffix] or Vector(0,0,0))
-    --             p.OnValueChanged = transformslidersupdate
-    --         end)
-    --     end
-    --     -- local itmca = settings.ang
-    --     -- if itmca then
-    --     --     self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
-    --     --         p:SetForAngle(itmcs.min, itmcs.scale.max, self.item.cfg["scale" .. suffix] or Vector(1,1,1))
-    --     --         p.OnValueChanged = transformslidersupdate
-    --     --     end)
-    --     -- end
-    --     --end bunch of copied shit
-    -- end
-    if settings.color then
-        vgui("DSSCustomizerColor", self.RightColumn, function(p)
-            p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
 
-            p.OnValueChanged = function(pnl, vec)
-                self.item.cfg.color = vec
-                self:UpdateCfg()
-            end
-        end)
-    end
+        --     --bunch of copied shit
+        --     local function transformslidersupdate()
+        --         if settings.scale then
+        --             self.item.cfg["scale" .. suffix] = self.Scale:GetValue()
+        --         end
 
-    if settings.imgur then
-        vgui("DSSCustomizerImgur", self.RightColumn, function(p)
-            p:SetValue(self.item.cfg.imgur)
+        --         if settings.pos then
+        --             self.item.cfg["pos" .. suffix] = self.Position:GetValue()
+        --         end
 
-            p.OnValueChanged = function(pnl, imgur)
-                self.item.cfg.imgur = imgur
-                self:UpdateCfg()
-            end
-        end)
-    end
+        --         self:UpdateCfg()
+        --     end
+
+        --     local itmcp = settings.pos
+
+        --     if itmcp then
+        --         self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+        --             p:SetForPosition(itmcp.min, itmcp.max, self.item.cfg["pos" .. suffix] or Vector(0,0,0))
+        --             p.OnValueChanged = transformslidersupdate
+        --         end)
+        --     end
+
+
+
+
+        --     -- local itmca = settings.ang
+
+        --     -- if itmca then
+        --     --     self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+        --     --         p:SetForAngle(itmcs.min, itmcs.scale.max, self.item.cfg["scale" .. suffix] or Vector(1,1,1))
+        --     --         p.OnValueChanged = transformslidersupdate
+        --     --     end)
+        --     -- end
+
+
+
+        --     --end bunch of copied shit
+
+
+
+        -- end
+
+        if settings.color then
+            vgui("DSSCustomizerColor", self.RightColumn, function(p)
+                p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
+
+                p.OnValueChanged = function(pnl, vec)
+                    self.item.cfg.color = vec
+                    self:UpdateCfg()
+                end
+            end)
+        end
+
+        if settings.imgur then
+            vgui("DSSCustomizerImgur", self.RightColumn, function(p)
+                p:SetValue(self.item.cfg.imgur)
+
+                p.OnValueChanged = function(pnl, imgur)
+                    self.item.cfg.imgur = imgur
+                    self:UpdateCfg()
+                end
+            end)
+        end
+ 
 
     vgui("DCollapsibleCategory", self.RightColumn, function(p)
         p:Dock(TOP)

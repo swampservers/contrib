@@ -128,6 +128,13 @@ function PANEL:Init()
             prevurl = msg:sub(6)
             self.OnDocumentReady(self, prevurl)
         end
+
+        if isstring(msg) and msg:StartWith("RVIDEO:") then
+            local strLua = msg:sub(8)
+            SELF = self
+            RequestVideoURL(strLua)
+            SELF = nil
+        end
     end
 end
 

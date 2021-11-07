@@ -1,7 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+
+
 vgui.Register('DSSPlayerSettingsMode', {
+
     Init = function(self)
+        
         vgui("DSSCustomizerSection", self, function(p)
             p:SetText("Title")
             local frame = p
@@ -30,8 +34,7 @@ vgui.Register('DSSPlayerSettingsMode', {
 
                 for i, v in ipairs(LocalPlayer():GetTitles()) do
                     p:AddChoice(v)
-
-                    if v == LocalPlayer():GetTitle() then
+                    if v==LocalPlayer():GetTitle() then
                         p:ChooseOption(v, 1)
                     end
                 end
@@ -53,9 +56,11 @@ vgui.Register('DSSPlayerSettingsMode', {
 
                     net.WriteString(t)
                     net.SendToServer()
+                    -- frame:Close()
                 end
             end)
         end)
+
     end
+
 }, 'DSSScrollableMode')
--- frame:Close()

@@ -23,11 +23,14 @@ SS_AccessoryModels = {
     }
 }
 
+
 SS_Panel(function(parent)
     vgui("DSSAuctionPreview", parent, function(p)
         p:SetCategory("Accessories")
     end)
 end)
+
+
 
 -- TODO: Mark rare items (jackolantern) in description
 SS_Item({
@@ -94,10 +97,12 @@ SS_Item({
         -- isnumber(scale) and Vector(scale,scale,scale) or scale
         return attach, translate, rotate, scale
     end,
+
     SetupCustomizer = function(item, self)
         local pone = LocalPlayer():IsPony()
         local suffix = pone and "_p" or "_h"
         local itmcw = (item:GetSettings() or {}).wear
+
         local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 
         vgui("DSSCustomizerSection", self.LeftColumn, function(p)
@@ -109,7 +114,7 @@ SS_Item({
                 p.Paint = noop
 
                 vgui("DComboBox", function(p)
-                    p:SetValue(attach)
+                    p:SetValue(attach) 
 
                     for k, v in pairs(SS_Attachments) do
                         p:AddChoice(k)
@@ -124,7 +129,6 @@ SS_Item({
                     end
 
                     print("ADDONSELECT", p)
-
                     p.OnSelect = function(panel, index, value)
                         print("SELECT", index, value)
                         item.cfg[self.wear] = item.cfg[self.wear] or {}
@@ -140,6 +144,8 @@ SS_Item({
                     p.UpdateColours = function(pnl)
                         pnl:SetTextColor(MenuTheme_TX)
                     end
+
+
                 end)
             end)
         end)
@@ -167,9 +173,13 @@ SS_Item({
         self.Position.OnValueChanged = transformslidersupdate
         self.Angle.OnValueChanged = transformslidersupdate
         self.Scale.OnValueChanged = transformslidersupdate
+
     end,
+
     SellValue = function(self) return (SS_AccessoryModels[self.specs.model] or {}).value or 25000 end
 })
+
+
 
 -- if SERVER then props={} for i=1,80 do table.insert(props,SelectAccessoryModel()) end net.Start("RunLuaLong") net.WriteString("SetClipboardText([[ "..util.TableToJSON(props).." ]])") net.Send(ME()) end
 -- local previews = {"models/props_junk/PopCan01a.mdl", "models/props_lab/jar01b.mdl", "models/dav0r/buttons/button.mdl", "models/food/burger.mdl", "models/props_junk/PopCan01a.mdl", "models/maxofs2d/camera.mdl", "models/swamponions/faucet.mdl", "models/chev/cumjar.mdl", "models/props_phx/misc/potato.mdl", "models/mechanics/various/211.mdl", "models/props_junk/garbage_metalcan001a.mdl", "models/props_c17/TrapPropeller_Lever.mdl", "models/Gibs/HGIBS_spine.mdl", "models/staticprop/props_lab/box01a.mdl", "models/Items/grenadeAmmo.mdl", "models/staticprop/props_junk/garbage_coffeemug001a.mdl", "models/props_c17/TrapPropeller_Lever.mdl", "models/props_junk/PopCan01a.mdl", "models/hunter/plates/plate.mdl", "models/props_junk/PopCan01a.mdl", "models/props_lab/reciever01d.mdl", "models/staticprop/props_junk/garbage_takeoutcarton001a.mdl", "models/props_phx2/garbage_metalcan001a.mdl", "models/swamponions/kleinytiner.mdl", "models/dav0r/buttons/button.mdl", "models/swamponions/kleiner_glasses.mdl", "models/staticprop/props_lab/box01a.mdl", "models/chev/cumjar.mdl", "models/props_wasteland/panel_leverHandle001a.mdl", "models/dav0r/buttons/switch.mdl", "models/food/hotdog.mdl", "models/staticprop/props_junk/garbage_coffeemug001a.mdl", "models/props_combine/combinecamera001.mdl", "models/props_lab/huladoll.mdl", "models/props_junk/PopCan01a.mdl", "models/food/hotdog.mdl", "models/props_wasteland/panel_leverHandle001a.mdl", "models/props_phx/misc/potato.mdl", "models/props_junk/PopCan01a.mdl", "models/chev/cumjar.mdl", "models/dav0r/thruster.mdl", "models/food/hotdog.mdl", "models/props_phx/misc/egg.mdl", "models/props_lab/reciever01d.mdl", "models/dav0r/buttons/switch.mdl", "models/swamponions/kleiner_glasses.mdl", "models/props_junk/garbage_takeoutcarton001a.mdl", "models/staticprop/props_lab/box01a.mdl", "models/props_lab/box01a.mdl", "models/props_c17/TrapPropeller_Lever.mdl"}
@@ -386,7 +396,7 @@ SS_AccessoryProduct({
     description = "Degree: Master of Gaming",
     model = 'models/player/items/humans/graduation_cap.mdl',
     color = Vector(1, 1, 1),
-    maxscale = 1.5,
+    maxscale=1.5,
     wear = {
         attach = "eyes",
         scale = 1,
@@ -811,6 +821,7 @@ SS_AccessoryProduct({
 --         }
 --     }
 -- })
+
 SS_AccessoryProduct({
     class = "gasmask",
     price = 600000,
