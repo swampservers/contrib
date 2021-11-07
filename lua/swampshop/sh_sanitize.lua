@@ -1,6 +1,7 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 AddCSLuaFile()
+
 
 function SS_SanitizeVector(val, min, max)
     return isvector(val) and val:Clamp(min, max) or nil

@@ -33,9 +33,41 @@ vgui.Register('DSSCustomizerSection', {
     end,
 }, "DPanel")
 
+-- goes inside a section
 vgui.Register('DSSCustomizerCheckBox', {
-    Init = function(self) end
-}, "DCheckBox")
+    Init = function(self) 
+        self:Dock(TOP)
+        self:SetTall(16)
+
+        self:DockMargin(0,SS_COMMONMARGIN,0,0)
+
+        self.Paint = noop
+
+        self.CheckBox = vgui("DCheckBox", self, function(p)
+            p:Dock(LEFT)
+            p:DockMargin(8,0,8,0)
+            p:SetWide(16)
+
+            p.OnChange=function(boxself, val)
+                self:OnValueChanged(val)
+            end
+        end)
+    
+        self.Label = vgui("DLabel", self, function(p)
+            p:Dock(FILL)
+        end)
+    end,
+    OnValueChanged = function(self, b) end,
+    SetText = function(self, txt)
+        self.Label:SetText(txt)
+    end,
+    GetValue = function(self)
+        return self.CheckBox:GetChecked()
+    end,
+    SetValue = function(self, val)
+        self.CheckBox:SetValue(val)
+    end
+}, "DPanel")
 
 -- local function CheckboxMaker(parent, text)
 --     local p2 = vgui.Create("Panel", parent)
@@ -325,6 +357,8 @@ vgui.Register('DSSCustomizerVectorSection', {
         if default.x == default.y and default.y == default.z then
             scalebutton:DoClick()
         end
+
+        -- TODO: weird ass issue with the dnumberscratch handles not being in the right place...
     end
 }, 'DSSCustomizerSection')
 
@@ -347,7 +381,7 @@ vgui.Register('DSSCustomizerBone', {
 
             for x = 0, (LocalPlayer():GetBoneCount() - 1) do
                 local bn = LocalPlayer():GetBoneName(x)
-                local cleanname = self:CleanBoneName(bn)
+                local cleanname = SS_CleanBoneName(bn)
 
                 if cleanname ~= "__INVALIDBONE__" then
                     p:AddChoice(cleanname, bn)
@@ -360,9 +394,6 @@ vgui.Register('DSSCustomizerBone', {
         end)
     end,
 
-    CleanBoneName = function(self, bn)
-        return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
-    end,
 
     OnValueChanged = function(self, val) end,
     GetValue = function(self)
@@ -370,6 +401,11 @@ vgui.Register('DSSCustomizerBone', {
     end,
     SetValue = function(self, val)
         -- self.TextEntry:SetValue(istable(val) and val.url or "")
-        self.ComboBox:SetValue(self:CleanBoneName(val))
+        self.ComboBox:SetValue(SS_CleanBoneName(val))
     end
 }, 'DSSCustomizerSection')
+
+function SS_CleanBoneName(bn)
+    if bn=="__INVALIDBONE__" then return end
+    return bn:Replace("ValveBiped.Bip01_", ""):Replace("Lrig", ""):Replace("_LEG_", "")
+end

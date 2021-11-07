@@ -23,6 +23,15 @@ SS_AccessoryModels = {
     }
 }
 
+
+SS_Panel(function(parent)
+    vgui("DSSAuctionPreview", parent, function(p)
+        p:SetCategory("Accessories")
+    end)
+end)
+
+
+
 -- TODO: Mark rare items (jackolantern) in description
 SS_Item({
     class = 'accessory',
@@ -169,6 +178,8 @@ SS_Item({
 
     SellValue = function(self) return (SS_AccessoryModels[self.specs.model] or {}).value or 25000 end
 })
+
+
 
 -- if SERVER then props={} for i=1,80 do table.insert(props,SelectAccessoryModel()) end net.Start("RunLuaLong") net.WriteString("SetClipboardText([[ "..util.TableToJSON(props).." ]])") net.Send(ME()) end
 -- local previews = {"models/props_junk/PopCan01a.mdl", "models/props_lab/jar01b.mdl", "models/dav0r/buttons/button.mdl", "models/food/burger.mdl", "models/props_junk/PopCan01a.mdl", "models/maxofs2d/camera.mdl", "models/swamponions/faucet.mdl", "models/chev/cumjar.mdl", "models/props_phx/misc/potato.mdl", "models/mechanics/various/211.mdl", "models/props_junk/garbage_metalcan001a.mdl", "models/props_c17/TrapPropeller_Lever.mdl", "models/Gibs/HGIBS_spine.mdl", "models/staticprop/props_lab/box01a.mdl", "models/Items/grenadeAmmo.mdl", "models/staticprop/props_junk/garbage_coffeemug001a.mdl", "models/props_c17/TrapPropeller_Lever.mdl", "models/props_junk/PopCan01a.mdl", "models/hunter/plates/plate.mdl", "models/props_junk/PopCan01a.mdl", "models/props_lab/reciever01d.mdl", "models/staticprop/props_junk/garbage_takeoutcarton001a.mdl", "models/props_phx2/garbage_metalcan001a.mdl", "models/swamponions/kleinytiner.mdl", "models/dav0r/buttons/button.mdl", "models/swamponions/kleiner_glasses.mdl", "models/staticprop/props_lab/box01a.mdl", "models/chev/cumjar.mdl", "models/props_wasteland/panel_leverHandle001a.mdl", "models/dav0r/buttons/switch.mdl", "models/food/hotdog.mdl", "models/staticprop/props_junk/garbage_coffeemug001a.mdl", "models/props_combine/combinecamera001.mdl", "models/props_lab/huladoll.mdl", "models/props_junk/PopCan01a.mdl", "models/food/hotdog.mdl", "models/props_wasteland/panel_leverHandle001a.mdl", "models/props_phx/misc/potato.mdl", "models/props_junk/PopCan01a.mdl", "models/chev/cumjar.mdl", "models/dav0r/thruster.mdl", "models/food/hotdog.mdl", "models/props_phx/misc/egg.mdl", "models/props_lab/reciever01d.mdl", "models/dav0r/buttons/switch.mdl", "models/swamponions/kleiner_glasses.mdl", "models/props_junk/garbage_takeoutcarton001a.mdl", "models/staticprop/props_lab/box01a.mdl", "models/props_lab/box01a.mdl", "models/props_c17/TrapPropeller_Lever.mdl"}

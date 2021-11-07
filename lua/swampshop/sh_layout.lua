@@ -29,9 +29,17 @@ function SS_Tab(name, icon)
     }
 end
 
+function SS_Panel(constructor)
+    table.insert(_SS_TABADDTARGET.layout, {
+        constructor = constructor,
+        products = {}
+    })
+end
+
 function SS_Heading(title)
     table.insert(_SS_TABADDTARGET.layout, {
         title = title,
         products = {}
     })
 end
+

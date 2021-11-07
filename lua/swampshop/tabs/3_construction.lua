@@ -141,6 +141,14 @@ SS_Product({
     end
 })
 
+SS_Panel(function(parent)
+    vgui("DSSAuctionPreview", parent, function(p)
+        p:SetCategory("Props")
+    end)
+end)
+
+
+
 SS_Heading("Gadgets (WIP)")
 
 SS_WeaponProduct({

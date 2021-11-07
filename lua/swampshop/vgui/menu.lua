@@ -51,6 +51,10 @@ function PANEL:Init()
             p.DoClick = function()
                 SS_ToggleMenu()
             end
+
+            p.DoRightClick = function()
+                RunConsoleCommand("ps_destroymenu")
+            end
         end)
 
         -- toggle theme button
@@ -368,6 +372,10 @@ function PANEL:Init()
                             p:AddProduct(product)
                         end
                     end)
+                end
+
+                if LAYOUT.constructor then
+                    LAYOUT.constructor(p)
                 end
             end
 

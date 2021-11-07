@@ -1,11 +1,50 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+
+
+-- todo make it show stuff!
+vgui.Register("DSSAuctionPreview",{
+    Init = function(self)
+        self:Dock(TOP)
+        self:DockMargin(0, 0, SS_COMMONMARGIN, SS_COMMONMARGIN)
+        self:SetText("")
+        self:SetTall(SS_SUBCATEGORY_HEIGHT)
+        self.Paint = function(p,w,h) SS_PaintFG(p,w,h) SS_PaintDarkenOnHover(p,w,h) end
+
+        self.subtitle = vgui("DLabel", self, function(p)
+            p:SetText("")
+            p:SetFont('SS_SubCategory')
+            p:Dock(FILL)
+            p:SetContentAlignment(6)
+            p:DockMargin(SS_COMMONMARGIN, 0, SS_COMMONMARGIN, 0)
+            p:SetColor(color_white) --MenuTheme_TX)
+            p:SizeToContentsY()
+        end)
+    end,
+    SetCategory = function(self, txt)
+        self.Category = txt
+        self.subtitle:SetText("★ View "..(({
+            Weapons="Gun",
+            Accessories="Accessory",
+            Props="Prop",
+            Playermodels="Playermodel"
+        })[txt] or txt).." Auctions ➤")
+    end,
+    DoClick = function(self)
+        SS_AuctionPanel.DesiredSearch = 1
+        SS_AuctionPanel.CategorySelect:SetValue(self.Category)
+        SS_AuctionPanel:Open()
+    end
+},"DButton")
+
+
+
+
 -- name is because of alphabetical include sorting, baseclass has to come first
 vgui.Register('DSSAuctionMode', {
     Init = function(self)
         SS_AuctionPanel = self
         self.DesiredSearch = 1
-        self.DesiredCategory = "Everything"
 
         self.controls = vgui("DSSSubtitle", self, function(p)
             p:SetText("Auctions")
@@ -44,7 +83,7 @@ vgui.Register('DSSAuctionMode', {
                 end
             end)
 
-            vgui("DComboBox", function(p)
+            self.CategorySelect = vgui("DComboBox", function(p)
                 p:Dock(RIGHT)
                 p:SetWide(150)
                 p:SetSortItems(false)
@@ -61,7 +100,6 @@ vgui.Register('DSSAuctionMode', {
 
                 p.OnSelect = function(self, index, value)
                     SS_AuctionPanel.DesiredSearch = 1
-                    SS_AuctionPanel.DesiredCategory = value
                 end
             end)
         end)
@@ -70,16 +108,16 @@ vgui.Register('DSSAuctionMode', {
     end,
     Think = function(self)
         -- only runs when visible
-        if self.LatestSearch ~= self.DesiredSearch or self.LatestCategory ~= self.DesiredCategory then
+        if self.LatestSearch ~= self.DesiredSearch or self.LatestCategory ~= self.CategorySelect:GetValue() then
             net.Start('SS_SearchAuctions')
             net.WriteUInt(self.DesiredSearch, 16) --page
             net.WriteUInt(0, 32) -- minprice
             net.WriteUInt(0, 32) --maxprice
-            net.WriteString(self.DesiredCategory)
+            net.WriteString(self.CategorySelect:GetValue())
             net.WriteBool(false) --mineonly
             net.SendToServer()
             self.LatestSearch = self.DesiredSearch
-            self.LatestCategory = self.DesiredCategory
+            self.LatestCategory = self.CategorySelect:GetValue()
         end
     end,
     ReceiveSearch = function(self, items, totalitems, page)

@@ -190,38 +190,16 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     end
 end)
 
-local function AddScaleRecursive(ent, b, scn, recurse, safety)
-    if safety[b] then
-        error("BONE LOOP!")
-    end
-
-    safety[b] = true
-    local sco = ent:GetManipulateBoneScale(b)
-    sco.x = sco.x * scn.x
-    sco.y = sco.y * scn.y
-    sco.z = sco.z * scn.z
-
-    if ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
-        sco.x = math.min(sco.x, 1)
-        sco.y = math.min(sco.y, 1)
-        sco.z = math.min(sco.z, 1)
-    end
-
-    ent:ManipulateBoneScale(b, sco)
-
-    if recurse then
-        for i, v in ipairs(ent:GetChildBones(b)) do
-            AddScaleRecursive(ent, v, scn, recurse, safety)
-        end
-    end
-end
 
 --only bone scale right now...
 --if you do pos/angles, must do a combination override to make it work with emotes, vape arm etc
 function SS_ApplyBoneMods(ent, mods)
+    local z1,z2,z3 = Vector(1,1,1),Vector(0,0,0),Angle(0,0,0)
     for x = 0, (ent:GetBoneCount() - 1) do
-        ent:ManipulateBoneScale(x, Vector(1, 1, 1))
-        ent:ManipulateBonePosition(x, Vector(0, 0, 0))
+        ent:ManipulateBoneScale(x, z1)
+        ent:ManipulateBonePosition(x, z2)
+        ent:ManipulateBoneAngles(x, z3)
+        ent:ManipulateBoneJiggle(x, 0)
     end
 
     if HumanTeamName then return end
@@ -232,31 +210,8 @@ function SS_ApplyBoneMods(ent, mods)
     if pelvis then end -- assert(#ent:GetChildBones(pelvis) > 0, ent:GetModel() ) 
 
     for _, item in ipairs(mods) do
-        if item.bonemod then
-            local bn = item.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
-            local x = ent:LookupBone(bn)
-
-            if x then
-                local settings = item:GetSettings()
-
-                if settings.scale then
-                    local scn = item.cfg["scale" .. suffix] or Vector(1, 1, 1.5)
-                    AddScaleRecursive(ent, x, scn, item.cfg["scale_children" .. suffix], {})
-                end
-
-                if settings.pos then
-                    local psn = item.cfg["pos" .. suffix] or Vector(8, 0, 0)
-
-                    --don't allow moving the root bone
-                    if ent:GetBoneParent(x) == -1 then
-                        psn = Vector(0, 0, psn.z)
-                    end
-
-                    local pso = ent:GetManipulateBonePosition(x)
-                    pso = pso + psn
-                    ent:ManipulateBonePosition(x, pso)
-                end
-            end
+        if item.ApplyBoneMod then
+            item:ApplyBoneMod(ent)
         end
     end
 
@@ -270,10 +225,15 @@ function SS_ApplyBoneMods(ent, mods)
             mx = 1.5
         end
 
+        if ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" then
+            mx = 1
+        end
+
         old.x = math.Clamp(old.x, mn, mx)
         old.y = math.Clamp(old.y, mn, mx)
         old.z = math.Clamp(old.z, mn, mx)
         ent:ManipulateBoneScale(x, old)
+
         old = ent:GetManipulateBonePosition(x)
         old.x = math.Clamp(old.x, -8, 8)
         old.y = math.Clamp(old.y, -8, 8)
