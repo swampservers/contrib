@@ -30,5 +30,3 @@ function Entity:PonyNoseOffsetAttach(ang)
 
     return Vector(0, 0, 0)
 end
-
-

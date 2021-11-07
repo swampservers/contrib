@@ -190,11 +190,11 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     end
 end)
 
-
 --only bone scale right now...
 --if you do pos/angles, must do a combination override to make it work with emotes, vape arm etc
 function SS_ApplyBoneMods(ent, mods)
-    local z1,z2,z3 = Vector(1,1,1),Vector(0,0,0),Angle(0,0,0)
+    local z1, z2, z3 = Vector(1, 1, 1), Vector(0, 0, 0), Angle(0, 0, 0)
+
     for x = 0, (ent:GetBoneCount() - 1) do
         ent:ManipulateBoneScale(x, z1)
         ent:ManipulateBonePosition(x, z2)
@@ -233,7 +233,6 @@ function SS_ApplyBoneMods(ent, mods)
         old.y = math.Clamp(old.y, mn, mx)
         old.z = math.Clamp(old.z, mn, mx)
         ent:ManipulateBoneScale(x, old)
-
         old = ent:GetManipulateBonePosition(x)
         old.x = math.Clamp(old.x, -8, 8)
         old.y = math.Clamp(old.y, -8, 8)
