@@ -83,6 +83,7 @@ SS_WeaponProduct({
     description = "Hold up this encyclopedia to block incoming bullets, just like that one youtube video.",
     model = "models/props_lab/bindergreen.mdl"
 })
+
 SS_WeaponProduct({
     class = "weapon_switch",
     price = 0,
@@ -110,7 +111,6 @@ SS_WeaponProduct({
 --         ply:SendLua("THIRDPERSON=true timer.Simple(5, function() if THIRDPERSON then chat.AddText('Press F4 to return to first person.') end end)")
 --     end
 -- })
-
 SS_WeaponProduct({
     class = "weapon_fidget",
     price = 0,

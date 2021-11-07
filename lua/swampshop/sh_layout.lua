@@ -42,4 +42,3 @@ function SS_Heading(title)
         products = {}
     })
 end
-

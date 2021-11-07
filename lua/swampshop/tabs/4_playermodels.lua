@@ -4,8 +4,6 @@ SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 
 --NOMINIFY
-
-
 -- TODO: use .settings/:GetSettings for commonly used elements
 -- AND add SetupCustomizer/SanitizeCfg which by default have behavior defined by GetSettings's return
 -- (er, make GetSettings always run its version of SetupCustomizer/SanitizeCfg before calling SetupCustomizer/SanitizeCfg)
@@ -62,40 +60,29 @@ SS_Item({
     end,
 })
 
-
-
-
 function SS_BoneModItem(item)
-
     item.GetBoneID = function(self, ent)
         local bn = self.cfg[ent:PMCS"bone"] or (ent:IsPony() and "LrigScull" or "ValveBiped.Bip01_Head1")
         local x = ent:LookupBone(bn)
+
         return x
     end
 
     item.bonemod = true
 
     function item:AddBoneSelector(cust)
-
         vgui('DSSCustomizerBone', cust.LeftColumn, function(p)
             p:SetValue(self.cfg[PMCS"bone"] or (LocalPlayer():IsPony() and "Scull" or "Head1"))
+
             p.OnValueChanged = function(pnl, val)
                 self.cfg[PMCS"bone"] = val
                 cust:UpdateCfg()
             end
         end)
-
     end
-
-
 
     SS_Item(item)
 end
-
-
-
-
-
 
 SS_BoneModItem({
     class = "offsetter",
@@ -109,13 +96,11 @@ SS_BoneModItem({
     playermodelmod = true,
     pos_range = Vector(8, 8, 8),
     SetupCustomizer = function(self, cust)
-
         self:AddBoneSelector(cust)
 
-
         cust.Scale = vgui('DSSCustomizerVectorSection', cust.LeftColumn, function(p)
-            
-            p:SetForPosition(-self.pos_range, self.pos_range, self.cfg[PMCS"pos"] or Vector(0,0,0))
+            p:SetForPosition(-self.pos_range, self.pos_range, self.cfg[PMCS"pos"] or Vector(0, 0, 0))
+
             p.OnValueChanged = function(p, vec)
                 self.cfg[PMCS"pos"] = vec
                 cust:UpdateCfg()
@@ -131,7 +116,6 @@ SS_BoneModItem({
     ApplyBoneMod = function(self, ent)
         local boneid = self:GetBoneID(ent)
         if not boneid then return end
-
         local psn = self.cfg[ent:PMCS"pos"] or Vector(8, 0, 0)
 
         --don't allow moving the root bone except up and down
@@ -144,7 +128,6 @@ SS_BoneModItem({
         ent:ManipulateBonePosition(boneid, pso)
     end
 })
-
 
 -- TODO make this not break with things like vape
 SS_BoneModItem({
@@ -161,9 +144,9 @@ SS_BoneModItem({
     SetupCustomizer = function(self, cust)
         self:AddBoneSelector(cust)
 
-
         cust.Angle = vgui('DSSCustomizerVectorSection', cust.LeftColumn, function(p)
-            p:SetForAngle(self.cfg[PMCS"ang"] or Angle(0,0,0))
+            p:SetForAngle(self.cfg[PMCS"ang"] or Angle(0, 0, 0))
+
             p.OnValueChanged = function(p, vec)
                 self.cfg[PMCS"ang"] = p:GetValueAngle()
                 cust:UpdateCfg()
@@ -179,21 +162,14 @@ SS_BoneModItem({
     ApplyBoneMod = function(self, ent)
         local boneid = self:GetBoneID(ent)
         if not boneid then return end
-
         local psn = self.cfg[ent:PMCS"ang"] or Angle(-40, 0, 0)
-
         --don't allow moving the root bone
-        if ent:GetBoneParent(boneid) == -1 then
-            return
-        end
-
+        if ent:GetBoneParent(boneid) == -1 then return end
         -- local pso = ent:GetManipulateBonePosition(boneid)
         -- pso = pso + psn
         ent:ManipulateBoneAngles(boneid, psn)
     end
 })
-
-
 
 SS_BoneModItem({
     class = "inflater",
@@ -205,24 +181,20 @@ SS_BoneModItem({
     invcategory = "Mods",
     maxowned = 25,
     playermodelmod = true,
-
     scale_min = Vector(0.5, 0.5, 0.5),
     scale_max = Vector(1.5, 1.5, 1.5),
     SetupCustomizer = function(self, cust)
-
         self:AddBoneSelector(cust)
 
-
         cust.Scale = vgui('DSSCustomizerVectorSection', cust.LeftColumn, function(p)
-            
             p:SetForScale(self.scale_min, self.scale_max, self.cfg[PMCS"scale"] or Vector(1.5, 1.5, 1.5))
+
             p.OnValueChanged = function(p, vec)
                 self.cfg[PMCS"scale"] = vec
                 cust:UpdateCfg()
             end
 
-
-            vgui('DSSCustomizerCheckBox',function(p)
+            vgui('DSSCustomizerCheckBox', function(p)
                 p:SetText("Scale child bones")
                 p:SetValue(self.cfg[PMCS"scale_children"] and 1 or 0)
 
@@ -232,9 +204,7 @@ SS_BoneModItem({
                 end
             end)
         end)
-        
     end,
-
     SanitizeCfg = function(self, dirty)
         ForEachPMCS(function()
             self.cfg[PMCS"bone"] = isstring(dirty[PMCS"bone"]) and string.sub(dirty[PMCS"bone"], 1, 50) or nil
@@ -242,37 +212,33 @@ SS_BoneModItem({
             self.cfg[PMCS"scale_children"] = dirty[PMCS"scale_children"] and true or nil
         end)
     end,
-
     ApplyBoneMod = function(self, ent)
         local boneid = self:GetBoneID(ent)
         if not boneid then return end
-
         local scn = self.cfg[ent:PMCS"scale"] or Vector(1.5, 1.5, 1.5)
 
         local function AddScaleRecursive(ent, b, scn, recurse, safety)
             if safety[b] then
                 error("BONE LOOP!")
             end
-        
+
             safety[b] = true
             local sco = ent:GetManipulateBoneScale(b)
             sco.x = sco.x * scn.x
             sco.y = sco.y * scn.y
             sco.z = sco.z * scn.z
-        
             ent:ManipulateBoneScale(b, sco)
-        
+
             if recurse then
                 for i, v in ipairs(ent:GetChildBones(b)) do
                     AddScaleRecursive(ent, v, scn, recurse, safety)
                 end
             end
         end
-        
+
         AddScaleRecursive(ent, boneid, scn, self.cfg[PMCS"scale_children"], {})
     end
 })
-
 
 -- TODO make it so you can pick exactly which bones it affects
 SS_BoneModItem({
@@ -287,7 +253,6 @@ SS_BoneModItem({
     playermodelmod = true,
     pos_range = Vector(8, 8, 8),
     SetupCustomizer = function(self, cust)
-
         -- vgui('DSSCustomizerBone', cust.LeftColumn, function(p)
         --     p:SetValue(self.cfg[PMCS"bone"] or (LocalPlayer():IsPony() and "Scull" or "Head1"))
         --     p.OnValueChanged = function(pnl, val)
@@ -295,8 +260,6 @@ SS_BoneModItem({
         --         cust:UpdateCfg()
         --     end
         -- end)
-
-
         -- make sure the bones dont like change or something idk
         local allthebones = {}
 
@@ -313,160 +276,124 @@ SS_BoneModItem({
         vgui('DSSCustomizerSection', cust.LeftColumn, function(p)
             p:SetText("Select Bones")
 
-
-            for i,v in ipairs(allthebones) do
+            for i, v in ipairs(allthebones) do
                 local bonename = v
                 print("checkbox", v)
-                vgui('DSSCustomizerCheckBox',function(p)
+
+                vgui('DSSCustomizerCheckBox', function(p)
                     local parentbox = p
-                    
-                    local childbox 
-                    
+                    local childbox
+
                     -- kinda goofy hack, checkbox inside checkbox
-                    childbox =vgui('DSSCustomizerCheckBox',function(p)
-                        p:DockMargin(0,0,0,0)
+                    childbox = vgui('DSSCustomizerCheckBox', function(p)
+                        p:DockMargin(0, 0, 0, 0)
                         p:Dock(RIGHT)
                         p:SetWide(100)
-
                         p:SetText("children")
-                        p:SetValue( not ( (self.cfg[PMCS"bones"] or {})[v]==false ) )
-        
+                        p:SetValue(not ((self.cfg[PMCS"bones"] or {})[v] == false))
+
                         p.OnValueChanged = function(checkboxself, ch)
                             self.cfg[PMCS"bones"] = self.cfg[PMCS"bones"] or {}
                             local v = nil
-                            if parentbox:GetValue() then v=childbox:GetValue() end
+
+                            if parentbox:GetValue() then
+                                v = childbox:GetValue()
+                            end
+
                             self.cfg[PMCS"bones"][bonename] = v
                             cust:UpdateCfg()
                         end
                     end)
 
                     p:SetText(v)
-                    p:SetValue( (self.cfg[PMCS"bones"] or {})[v] ~=nil)
-    
+                    p:SetValue((self.cfg[PMCS"bones"] or {})[v] ~= nil)
                     p.OnValueChanged = childbox.OnValueChanged
-
-
                 end)
-
             end
-
-
-
-            -- vgui("DPanel", function(p)
-            --     -- p:Dock(RIGHT)
-            --     p:SetWide(100)
-            --     p.Paint = noop
-
-            --     for i,v in ipairs(allthebones) do
-
-            --         vgui('DSSCustomizerCheckBox',function(p)
-            --             p:SetText("children")
-            --             p:SetValue(true) -- (self.cfg[PMCS"bones"] or {})[v] ~=nil)
-        
-            --             p.OnValueChanged = function(checkboxself, ch)
-            --                 -- self.cfg[PMCS"scale_children"] = ch
-            --                 cust:UpdateCfg()
-            --             end
-            --         end)
-
-            --     end
-
-            --     p.PerformLayout = function(self)
-            --         self:SizeToChildren(false, true)
-            --     end
-            
-            --     p:SetTall(1000)
-            -- end)
         end)
-
     end,
+    -- vgui("DPanel", function(p) --     -- p:Dock(RIGHT) --     p:SetWide(100) --     p.Paint = noop --     for i,v in ipairs(allthebones) do --         vgui('DSSCustomizerCheckBox',function(p) --             p:SetText("children") --             p:SetValue(true) -- (self.cfg[PMCS"bones"] or {})[v] ~=nil) --             p.OnValueChanged = function(checkboxself, ch) --                 -- self.cfg[PMCS"scale_children"] = ch --                 cust:UpdateCfg() --             end --         end) --     end --     p.PerformLayout = function(self) --         self:SizeToChildren(false, true) --     end --     p:SetTall(1000) -- end)
     SanitizeCfg = function(self, dirty)
         ForEachPMCS(function()
             -- self.cfg[PMCS"bone"] = isstring(dirty[PMCS"bone"]) and string.sub(dirty[PMCS"bone"], 1, 50) or nil
-
             local d = dirty[PMCS"bones"]
 
             if istable(d) then
                 self.cfg[PMCS"bones"] = {}
-
                 local c = 0
-                for k,v in pairs(d) do
-                    
-                    if isstring(k) and k:len()<=50 then
-                        c = c+1
-                        if c>20 then break end
-                        
-                        self.cfg[PMCS"bones"][k]=v
+
+                for k, v in pairs(d) do
+                    if isstring(k) and k:len() <= 50 then
+                        c = c + 1
+                        if c > 20 then break end
+                        self.cfg[PMCS"bones"][k] = v
                     end
                 end
-
             end
-
         end)
     end,
     ApplyBoneMod = function(self, ent)
         -- {[self.cfg[ent:PMCS"bone"]]=true} -- 
-        local bones = self.cfg[ent:PMCS"bones"] or {["LrigScull"]=true, ["ValveBiped.Bip01_Head1"]=true}
+        local bones = self.cfg[ent:PMCS"bones"] or {
+            ["LrigScull"] = true,
+            ["ValveBiped.Bip01_Head1"] = true
+        }
 
-
-        for k,v in pairs(bones) do
+        for k, v in pairs(bones) do
             local boneid = ent:LookupBone(k)
 
             --don't allow this on the root bone
             if boneid and ent:GetBoneParent(boneid) ~= -1 then
                 if v then
-
                     local function recurse(ent, b)
                         ent:ManipulateBoneJiggle(b, 1)
+
                         for i, v in ipairs(ent:GetChildBones(b)) do
                             recurse(ent, v)
                         end
                     end
-                    
-                    recurse(ent, boneid)
 
+                    recurse(ent, boneid)
                 else
                     ent:ManipulateBoneJiggle(boneid, 1)
                 end
             end
         end
-
     end
 })
 
-
 SS_Heading("Models of the Day")
 
-for i=1,5 do
+for i = 1, 5 do
     local mi = i
+
     SS_Product({
-        class = 'modeloftheday'..mi,
+        class = 'modeloftheday' .. mi,
         price = 150000,
         GetName = function(self)
             local m = GetG("ModelsOfTheDay")[mi]
-            
+
             return m and SS_PrettyMDLName(m[2]) or "Nothing (DONT BUY)"
         end,
         description = "A different playermodel will be here every day!",
-        
         GetModel = function(self)
-
             local m = GetG("ModelsOfTheDay")[mi]
 
             if m then
                 register_workshop_model(m[2], m[1])
+
                 return m[2]
             end
-        
+
             return "models/player/skeleton.mdl"
         end,
-
         OnBuy = function(self, ply)
             local m = GetG("ModelsOfTheDay")[mi]
+
             if m then
                 local item = SS_GenerateItem(ply, "playermodel", {
-                    wsid=m[1],
-                    model=m[2]
+                    wsid = m[1],
+                    model = m[2]
                 })
 
                 ply:SS_GiveNewItem(item)
@@ -475,45 +402,15 @@ for i=1,5 do
     })
 end
 
-
-
 SS_Panel(function(parent)
     vgui("DSSAuctionPreview", parent, function(p)
         p:SetCategory("Playermodels")
     end)
 end)
 
-
-
 SS_Heading("Permanent")
 
-
-local previews = {
-    "models/odessa.mdl",
-    "models/Combine_Strider.mdl",
-    "models/crow.mdl",
-    "models/Combine_Soldier.mdl",
-    "models/player/gasmask.mdl",
-    "models/gman_high.mdl",
-    "models/alyx.mdl",
-    "models/vortigaunt.mdl",
-    "models/antlion_guard.mdl",
-    "models/Combine_Super_Soldier.mdl",
-    "models/Items/hevsuit.mdl",
-    "models/balloons/balloon_dog.mdl",
-    "models/Combine_Scanner.mdl",
-    "models/player/kleiner.mdl",
-    "models/props_lab/huladoll.mdl",
-    "models/headcrab.mdl",
-    "models/AntLion.mdl",
-    "models/dog.mdl",
-    "models/Zombie/Fast.mdl",
-    "models/player/soldier_stripped.mdl",
-    "models/pigeon.mdl",
-    "models/Advisor.mdl",
-    "models/Lamarr.mdl",
-    "models/manhack.mdl"
-}
+local previews = {"models/odessa.mdl", "models/Combine_Strider.mdl", "models/crow.mdl", "models/Combine_Soldier.mdl", "models/player/gasmask.mdl", "models/gman_high.mdl", "models/alyx.mdl", "models/vortigaunt.mdl", "models/antlion_guard.mdl", "models/Combine_Super_Soldier.mdl", "models/Items/hevsuit.mdl", "models/balloons/balloon_dog.mdl", "models/Combine_Scanner.mdl", "models/player/kleiner.mdl", "models/props_lab/huladoll.mdl", "models/headcrab.mdl", "models/AntLion.mdl", "models/dog.mdl", "models/Zombie/Fast.mdl", "models/player/soldier_stripped.mdl", "models/pigeon.mdl", "models/Advisor.mdl", "models/Lamarr.mdl", "models/manhack.mdl"}
 
 SS_Product({
     class = 'playerbox',
@@ -522,15 +419,13 @@ SS_Product({
     description = "There are a lot of possibilities.",
     GetModel = function(self) return previews[(math.floor(SysTime() * 2.5) % #previews) + 1] end,
     CannotBuy = function(self, ply) end,
-
     OnBuy = function(self, ply)
-        
         local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
         if not m then return end
 
         local item = SS_GenerateItem(ply, "playermodel", {
-            wsid=m[1],
-            model=m[2]
+            wsid = m[1],
+            model = m[2]
         })
 
         ply:SS_GiveNewItem(item, function(item)
@@ -548,10 +443,6 @@ SS_Product({
     end
 })
 
-
-
-
-
 function SS_PlayermodelItem(item)
     item.playermodel = true
 
@@ -568,65 +459,58 @@ function SS_PlayermodelItem(item)
     SS_Item(item)
 end
 
-
 SS_PlayermodelItem({
     class = "playermodel",
-    price=1000000,
-    maxowned=100,
+    price = 1000000,
+    maxowned = 100,
     GetName = function(self)
         --fix product
         if self.specs then
-            if self.specs.model then
-                return SS_PrettyMDLName(self.specs.model)
-            end
-
-            if self.cfg.model and self.cfg.wsid then
-                return SS_PrettyMDLName(self.cfg.model).." (UNFINALIZED)"
-            end
+            if self.specs.model then return SS_PrettyMDLName(self.specs.model) end
+            if self.cfg.model and self.cfg.wsid then return SS_PrettyMDLName(self.cfg.model) .. " (UNFINALIZED)" end
         end
+
         return 'Any Workshop Outfit'
     end,
     GetDescription = function(self)
         if self.specs then
-        if self.specs.model then
-            local d = "A playermodel."
-            -- if self.specs.wsid then
-            --     d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
-            -- end
-            return d
+            if self.specs.model then
+                local d = "A playermodel."
+                -- if self.specs.wsid then
+                --     d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
+                -- end
+
+                return d
+            end
+
+            if self.cfg.model and self.cfg.wsid then return "Finalize this model to wear it.\n(" .. self.cfg.wsid .. "/" .. self.cfg.model .. ")" end
         end
-        if self.cfg.model and self.cfg.wsid then
-            return "Finalize this model to wear it.\n("..self.cfg.wsid .. "/"..self.cfg.model ..")"
-        end
-    end
+
         return "(WIP) Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
     GetModel = function(self)
-        
         if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
-
             if self.specs.wsid or self.cfg.wsid then
                 -- so the callback when downloaded makes the model refresh
-                register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid )
+                register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
                 -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
                 -- if self.Owner == LocalPlayer() then
                 --     require_workshop(self.specs.wsid or self.cfg.wsid )
                 -- end
             end
-            
+
             return self.specs.model or self.cfg.model
         end
+
         return "models/maxofs2d/logo_gmod_b.mdl"
     end,
     invcategory = "Playermodels",
     playermodel = true,
     PlayerSetModel = function(self, ply)
-        
         if self.specs.model then
             if self.specs.wsid then
                 --what to display if unloaded or whatever
                 ply:SetModel("models/player/skeleton.mdl")
-                
                 outfitter.SHNetworkOutfit(ply, self.specs.model, tonumber(self.specs.wsid))
             else
                 ply:SetModel(self.specs.model)
@@ -638,109 +522,104 @@ SS_PlayermodelItem({
     end,
     SanitizeSpecs = function(self)
         if SERVER and not self.specs.model and self.cfg.model and self.cfg.wsid and self.cfg.finalize then
-            self.specs.model = self.cfg.model 
+            self.specs.model = self.cfg.model
             self.specs.wsid = self.cfg.wsid
+
             return true
         end
     end,
     SanitizeCfg = function(self, dirty)
         if self.specs.model == nil then
             self.cfg.wsid = tonumber(dirty.wsid) and tostring(tonumber(dirty.wsid)) or nil
-            self.cfg.model = isstring(dirty.model) and dirty.model:sub(1,200):Trim() or nil
+            self.cfg.model = isstring(dirty.model) and dirty.model:sub(1, 200):Trim() or nil
             self.cfg.finalize = dirty.finalize and true or nil
         end
     end,
     SellValue = function(self) return 25000 end
-
 })
 
-
-function HeyNozFillThisIn(self,cust)
- 
+function HeyNozFillThisIn(self, cust)
     if self.specs.model then
         vgui("DSSCustomizerSection", cust.RightColumn, function(p)
- 
             p:SetText("Model is already finalized!")
         end)
- 
         -- TODO: bodygroup chooser even if model is finalized
 
         return
     end
-    
-    local wsidentry,modelentry
- 
+
+    local wsidentry, modelentry
+
     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
- 
         p:SetText("Select Model (WIP)")
- 
+
         wsidentry = vgui("DTextEntry", function(p)
             p:Dock(TOP)
             p:SetValue(self.cfg.wsid or "")
-            p:SetPlaceholderText( "Workshop ID, like: 13376969" )
+            p:SetPlaceholderText("Workshop ID, like: 13376969")
             p:SetUpdateOnType(true)
+
             p.OnValueChange = function(pnl, txt)
-                
                 self.cfg.wsid = txt
                 cust:UpdateCfg()
             end
         end)
- 
+
         modelentry = vgui("DTextEntry", function(p)
             p:Dock(TOP)
             p:SetValue(self.cfg.model or "")
-            p:SetPlaceholderText( "Model path, like: models/player/kleiner.mdl" )
+            p:SetPlaceholderText("Model path, like: models/player/kleiner.mdl")
             p:SetUpdateOnType(true)
+
             p.OnValueChange = function(pnl, txt)
                 print("HERE", txt)
                 self.cfg.model = txt
                 cust:UpdateCfg()
             end
         end)
- 
     end)
- 
+
     vgui("DSSCustomizerSection", cust.RightColumn, function(p)
-        
         p:SetText("Finalize?")
-    
- 
+
         vgui("DPanel", function(p)
             p:SetTall(16)
             p:Dock(TOP)
             p.Paint = noop
+
             vgui("DSSCustomizerCheckBox", function(p)
-                
                 p:SetText("Make sure the preview looks right!")
+
                 p.OnValueChanged = function(pnl, val)
                     self.cfg.finalize = val
- 
                     cust:UpdateCfg()
                 end
             end)
         end)
     end)
- 
+
     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
- 
         vgui("DButton", function(p)
             p:Dock(TOP)
             p:SetText("#open_workshop")
             p:SetImage('icon16/folder_user.png')
-            p:DockMargin(0,4,1,8)
-            p.DoClick = function()      
-                outfitter.GUIWantChangeModel(nil,false)
+            p:DockMargin(0, 4, 1, 8)
+
+            p.DoClick = function()
+                outfitter.GUIWantChangeModel(nil, false)
             end
         end)
-        
+
         vgui("DListView", function(p)
-            p:SetMultiSelect( false )
-            p:AddColumn( "#gameui_playermodel" )
-            p:DockMargin(0,4,0,0)
+            p:SetMultiSelect(false)
+            p:AddColumn("#gameui_playermodel")
+            p:DockMargin(0, 4, 0, 0)
             p:Dock(TOP)
             p:SetTall(256)
-            p.OnRowSelected = function(pnl,n,itm)
+
+            p.OnRowSelected = function(pnl, n, itm)
                 local mdllist = outfitter.UIGetMDLList()
+
                 if mdllist then
                     self.cfg.model = mdllist[n].Name
                     modelentry:SetValue(self.cfg.model)
@@ -748,22 +627,24 @@ function HeyNozFillThisIn(self,cust)
                     wsidentry:SetValue(self.cfg.wsid)
                 end
             end
+
             local old = nil
-            p.PaintOver = function(b,w,h)
+
+            p.PaintOver = function(b, w, h)
                 old = old or outfitter.UIGetMDLList()
+
                 if old ~= outfitter.UIGetMDLList() and outfitter.UIGetMDLList() ~= nil then
                     old = outfitter.UIGetMDLList()
                     p:Clear()
-                    for k,v in pairs(old) do
+
+                    for k, v in pairs(old) do
                         p:AddLine(v.Name)
                     end
                 end
             end
         end)
-        
     end)
 end
-
 
 SS_PlayermodelItem({
     class = 'ponymodel',
@@ -785,8 +666,6 @@ SS_PlayermodelItem({
     end
 })
 
-
-
 SS_PlayermodelItem({
     class = 'ogremodel',
     price = 100000,
@@ -795,7 +674,6 @@ SS_PlayermodelItem({
     model = 'models/player/pyroteknik/shrek.mdl',
     workshop = '314261589'
 })
-
 
 SS_PlayermodelItem({
     class = 'minecraftmodel',
@@ -844,7 +722,6 @@ SS_PlayermodelItem({
     OnPlayerSetModel = function(self, ply) end
 })
 
-
 SS_PlayermodelItem({
     class = 'neckbeardmodel',
     price = 240000,
@@ -857,9 +734,7 @@ SS_PlayermodelItem({
     end
 })
 
-
 -- SS_Heading("Legacy")
-
 SS_Item({
     class = "outfitter2",
     value = 2000000,
@@ -867,15 +742,7 @@ SS_Item({
     name = 'Outfitter (LEGACY, SELL THIS)',
     description = "Allows wearing any playermodel from workshop (under 30,000 vertices)",
     model = 'models/maxofs2d/logo_gmod_b.mdl',
-    -- actions = {
-    --     customize = {
-    --         Text = function() return "Change Model" end,
-    --         OnClient = function()
-    --             RunConsoleCommand("outfitter")
-    --             SS_ToggleMenu()
-    --         end
-    --     }
-    -- },
+    -- actions = { --     customize = { --         Text = function() return "Change Model" end, --         OnClient = function() --             RunConsoleCommand("outfitter") --             SS_ToggleMenu() --         end --     } -- },
     invcategory = "Playermodels",
     never_equip = true
 })
@@ -887,40 +754,23 @@ SS_Item({
     name = 'Outfitter+ (LEGACY, SELL THIS)',
     description = "Allows a higher vertex limit for outfitter models. Requires outfitter. High price is because it causes lag.",
     model = 'models/props_phx/facepunch_logo.mdl',
-    -- actions = {
-    --     customize = {
-    --         Text = function() return "Change Model" end,
-    --         OnClient = function()
-    --             RunConsoleCommand("outfitter")
-    --             SS_ToggleMenu()
-    --         end
-    --     }
-    -- },
+    -- actions = { --     customize = { --         Text = function() return "Change Model" end, --         OnClient = function() --             RunConsoleCommand("outfitter") --             SS_ToggleMenu() --         end --     } -- },
     invcategory = "Playermodels",
     never_equip = true
 })
-
-
 -- if SERVER then
 --     hook.Add("SS_UpdateItems", "outfitterbools", function(v)
 --         local has2, has3 = v:SS_HasItem("outfitter2"), v:SS_HasItem("outfitter3")
-
 --         if v:GetNWBool("oufitr") ~= has2 then
 --             v:SetNWBool("oufitr", has2)
 --         end
-
 --         if v:GetNWBool("oufitr+") ~= has3 then
 --             v:SetNWBool("oufitr+", has3)
 --         end
 --     end)
 -- end
-
 -- hook.Add("CanOutfit", "ps_outfitter", function(ply, mdl, wsid) return ply:GetNWBool("oufitr") end)
-
-
-
 -- SS_Heading("One-Life, Unique")
-
 -- SS_UniqueModelProduct({
 --     class = 'celestia',
 --     name = 'Sun Princess',
@@ -930,7 +780,6 @@ SS_Item({
 --         if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
 --     end
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'luna',
 --     name = 'Moon Princess',
@@ -940,7 +789,6 @@ SS_Item({
 --         if not ply:SS_HasItem("ponymodel") then return "You must own the ponymodel to buy this." end
 --     end
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'billyherrington',
 --     name = 'Billy Herrington',
@@ -954,7 +802,6 @@ SS_Item({
 --         end
 --     end
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'doomguy',
 --     name = 'Doomslayer',
@@ -963,7 +810,6 @@ SS_Item({
 --     workshop = '2041292605', --This one didn't use a bin file...
 --     OnBuy = function(self, ply) end
 -- })
-
 -- -- SS_UniqueModelProduct({
 -- -- 	class = 'ketchupdemon',
 -- -- 	name = 'Mortally Challenged',
@@ -977,7 +823,6 @@ SS_Item({
 --     model = 'models/obese_male.mdl',
 --     workshop = '2467219933'
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'fox',
 --     name = 'Furball',
@@ -985,14 +830,12 @@ SS_Item({
 --     model = 'models/player/ztp_nickwilde.mdl',
 --     workshop = '663489035'
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'garfield',
 --     name = 'Lasagna Cat',
 --     description = "I gotta have a good meal.",
 --     model = 'models/garfield/garfield.mdl'
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'realgarfield',
 --     name = 'Real Cat',
@@ -1000,28 +843,24 @@ SS_Item({
 --     model = 'models/player/yevocore/garfield/garfield.mdl',
 --     workshop = '905415234',
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'hitler',
 --     name = 'Der Fuhrer',
 --     model = 'models/minson97/hitler/hitler.mdl',
 --     workshop = '1983866955',
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'kermit',
 --     name = 'Frog',
 --     model = 'models/player/kermit.mdl',
 --     workshop = '485879458',
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'darthkermit',
 --     name = 'Darth Frog',
 --     model = 'models/gonzo/lordkermit/lordkermit.mdl',
 --     workshop = '1408171201',
 -- })
-
 -- -- SS_UniqueModelProduct({
 -- -- 	class = 'kim',
 -- -- 	name = 'Rocket Man',
@@ -1034,7 +873,6 @@ SS_Item({
 --     model = 'models/player/minion/minion5/minion5.mdl',
 --     workshop = '518592494',
 -- })
-
 -- -- SS_UniqueModelProduct({
 -- -- 	class = 'moonman',
 -- -- 	name = 'Mac Tonight',
@@ -1047,7 +885,6 @@ SS_Item({
 --     model = 'models/player/pyroteknik/banana.mdl',
 --     workshop = '558307075',
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'pepsiman',
 --     name = 'Pepsiman',
@@ -1055,7 +892,6 @@ SS_Item({
 --     model = 'models/player/real/prawnmodels/pepsiman.mdl',
 --     workshop = '1083310915',
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'rick',
 --     name = 'Intellectual',
@@ -1063,7 +899,6 @@ SS_Item({
 --     model = 'models/player/rick/rick.mdl',
 --     workshop = '557711922',
 -- })
-
 -- SS_UniqueModelProduct({
 --     class = 'trump',
 --     name = 'God Emperor',
@@ -1071,7 +906,6 @@ SS_Item({
 --     model = 'models/omgwtfbbq/the_ship/characters/trump_playermodel.mdl',
 --     workshop = '725320580'
 -- })
-
 -- --cant find workshop for it
 -- -- SS_UniqueModelProduct({
 -- --     class = 'weeaboo',

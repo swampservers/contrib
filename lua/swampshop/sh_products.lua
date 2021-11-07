@@ -104,8 +104,8 @@ function SS_WeaponProduct(product)
         if ply:HasWeapon(self.class) then
             if SERVER then
                 ply:SelectWeapon(self.class)
-
                 -- hack so client still sends it
+
                 return "You already have this weapon!"
             end
         end

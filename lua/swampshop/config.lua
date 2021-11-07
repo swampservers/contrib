@@ -3,22 +3,21 @@
 AddCSLuaFile()
 local Entity = FindMetaTable('Entity')
 local Player = FindMetaTable('Player')
-
 -- Player Model Class Specific
 local iteratepmcs = nil
 
 function PMCS(key)
-    if iteratepmcs then return key..iteratepmcs end
+    if iteratepmcs then return key .. iteratepmcs end
 
     return LocalPlayer():PMCS(key)
 end
 
 function Entity:PMCS(key)
-    return key..(self:IsPony() and "_p" or "_h")
+    return key .. (self:IsPony() and "_p" or "_h")
 end
 
 function ForEachPMCS(dothis)
-    for i,v in ipairs({"_p", "_h"}) do
+    for i, v in ipairs({"_p", "_h"}) do
         iteratepmcs = v
         ProtectedCall(dothis)
     end

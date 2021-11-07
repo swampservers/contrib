@@ -1,15 +1,17 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
 -- todo make it show stuff!
-vgui.Register("DSSAuctionPreview",{
+vgui.Register("DSSAuctionPreview", {
     Init = function(self)
         self:Dock(TOP)
         self:DockMargin(0, 0, SS_COMMONMARGIN, SS_COMMONMARGIN)
         self:SetText("")
         self:SetTall(SS_SUBCATEGORY_HEIGHT)
-        self.Paint = function(p,w,h) SS_PaintFG(p,w,h) SS_PaintDarkenOnHover(p,w,h) end
+
+        self.Paint = function(p, w, h)
+            SS_PaintFG(p, w, h)
+            SS_PaintDarkenOnHover(p, w, h)
+        end
 
         self.subtitle = vgui("DLabel", self, function(p)
             p:SetText("")
@@ -23,22 +25,20 @@ vgui.Register("DSSAuctionPreview",{
     end,
     SetCategory = function(self, txt)
         self.Category = txt
-        self.subtitle:SetText("★ View "..(({
-            Weapons="Gun",
-            Accessories="Accessory",
-            Props="Prop",
-            Playermodels="Playermodel"
-        })[txt] or txt).." Auctions ➤")
+
+        self.subtitle:SetText("★ View " .. (({
+            Weapons = "Gun",
+            Accessories = "Accessory",
+            Props = "Prop",
+            Playermodels = "Playermodel"
+        })[txt] or txt) .. " Auctions ➤")
     end,
     DoClick = function(self)
         SS_AuctionPanel.DesiredSearch = 1
         SS_AuctionPanel.CategorySelect:SetValue(self.Category)
         SS_AuctionPanel:Open()
     end
-},"DButton")
-
-
-
+}, "DButton")
 
 -- name is because of alphabetical include sorting, baseclass has to come first
 vgui.Register('DSSAuctionMode', {
