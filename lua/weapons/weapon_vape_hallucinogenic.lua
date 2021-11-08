@@ -87,6 +87,21 @@ if CLIENT then
     end)
 
     timer.Create("HallucinogenicVapeCounter", 1, 0, function()
+
+        local dsp = 0
+
+        if vapeHallucinogen>30 then dsp=2 
+            if vapeHallucinogen > 50 then dsp=3
+                if vapeHallucinogen > 70 then dsp=4
+                end
+            end
+        end
+
+        
+
+        if IsValid(LocalPlayer()) and LocalPlayer().dspset~=dsp then LocalPlayer():SetDSP(dsp, false) LocalPlayer().dspset=dsp end
+
+
         if (vapeHallucinogen or 0) > 0 then
             vapeHallucinogen = vapeHallucinogen - 1
         end
