@@ -509,9 +509,7 @@ SS_PlayermodelItem({
     PlayerSetModel = function(self, ply)
         if self.specs.model then
             if self.specs.wsid then
-                --what to display if unloaded or whatever
-                ply:SetModel("models/player/skeleton.mdl")
-                outfitter.SHNetworkOutfit(ply, self.specs.model, tonumber(self.specs.wsid))
+                ply:SetDisplayModel(self.specs.model, self.specs.wsid)
             else
                 ply:SetModel(self.specs.model)
             end
