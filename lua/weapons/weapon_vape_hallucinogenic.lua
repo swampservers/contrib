@@ -89,7 +89,7 @@ if CLIENT then
     timer.Create("HallucinogenicVapeCounter", 1, 0, function()
         local dsp = 0
 
-        if vapeHallucinogen > 30 then
+        if (vapeHallucinogen or 0) > 30 then
             dsp = 2
 
             if vapeHallucinogen > 50 then
