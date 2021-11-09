@@ -476,11 +476,8 @@ function Entity:SS_AttachAccessories(items, forceload)
     --     if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
     --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
     -- end
-    if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then
-        
-        return 
-    end
-    
+    if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end
+
     if not self.DELAYSECONDATTACH then
         timer.Simple(1, function()
             if IsValid(self) and self.SS_ShownItems then
@@ -492,7 +489,9 @@ function Entity:SS_AttachAccessories(items, forceload)
         end)
     end
 
-    if LocalPlayer()==self then print("H)") end
+    if LocalPlayer() == self then
+        print("H)")
+    end
 
     -- if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
