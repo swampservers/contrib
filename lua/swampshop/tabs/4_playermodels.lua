@@ -245,7 +245,7 @@ SS_BoneModItem({
     class = "jellifier",
     price = 5000000,
     name = 'Jellifier',
-    description = "expensive medical treatments which breaks down your bone structure (WIP)",
+    description = "expensive medical treatments which breaks down your bone structure",
     model = 'models/gibs/hgibs_spine.mdl',
     material = 'models/debug/debugwhite',
     invcategory = "Mods",
