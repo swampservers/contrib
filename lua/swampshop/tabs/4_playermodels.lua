@@ -48,7 +48,7 @@ SS_Item({
             p:SetValue(self.cfg.imgur)
 
             p.OnValueChanged = function(pnl, imgur)
-                self.item.cfg.imgur = imgur
+                self.cfg.imgur = imgur
                 cust:UpdateCfg()
             end
         end)

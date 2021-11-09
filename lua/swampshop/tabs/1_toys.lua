@@ -217,13 +217,13 @@ SS_WeaponProduct({
 -- 	model = 'models/weapons/w_physics.mdl',
 -- 	class = 'weapon_physgun'
 -- })
--- SS_WeaponProduct({
---     name = 'Police Taser',
---     description = "An electroshock weapon capable of paralyzing other players for up to 20 seconds.",
---     price = 400000,
---     model = 'models/weapons/cg_ocrp2/w_taser.mdl',
---     class = 'weapon_taser'
--- })
+SS_WeaponProduct({
+    name = 'Police Taser',
+    description = "An electroshock weapon capable of paralyzing other players for up to 20 seconds.",
+    price = 20000,
+    model = 'models/weapons/cg_ocrp2/w_taser.mdl',
+    class = 'weapon_taser'
+})
 SS_WeaponAndAmmoProduct({
     name = 'Laser Pointer',
     description = "Makes a funny dot. Keep away from eyes. Right click for lethal beam. Re-buy for battery refill.",
