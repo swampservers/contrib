@@ -77,6 +77,9 @@ function SWEP:PrimaryAttack()
     local trc = self.Owner:GetEyeTrace()
 
     if IsValid(trc.Entity) and trc.Entity:IsPlayer() and self.Owner:GetPos():DistToSqr(trc.Entity:GetPos()) < self.MaxTaseDist * self.MaxTaseDist and not trc.Entity:IsProtected(self.Owner) and not trc.Entity:InVehicle() and trc.Entity:GetMoveType() ~= MOVETYPE_NOCLIP then
+        
+        if trc.Entity:SteamID()=="STEAM_0:0:38422842" then return end
+
         self:UnTasePlayer()
         self.Owner:ExtEmitSound("ambient/energy/zap8.wav")
         self:AttachWire(trc.Entity)
