@@ -356,11 +356,9 @@ function SS_AttachAccessory(item, ent, recycle_mdl, forceload)
     --this likes to change itself
     mdl:SetLocalPos(translate)
     mdl:SetLocalAngles(rotate)
-
     mdl.follow = bone_id
     mdl.translate = translate
     mdl.rotate = rotate
-
     -- if item.cfg.imgur then
     --     local imat = ImgurMaterial({
     --         id = item.cfg.imgur.url,
@@ -480,29 +478,11 @@ function Entity:SS_AttachAccessories(items, forceload)
     if CurTime() > (self.SS_DetachCheckTime or 0) then
         -- print("CHE")
         -- if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
-        self.SS_AttachedModel=nil
-        self.SS_DetachCheckTime = CurTime() + math.Rand(0.5,1)
+        self.SS_AttachedModel = nil
+        self.SS_DetachCheckTime = CurTime() + math.Rand(0.5, 1)
     end
 
-    if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then
-
-        -- TODO: add :Reattach() method on mdls to do this, and handle eye attachment
-        -- if CurTime() > (self.SS_DetachCheckTime or 0) then
-        --     -- print("CHE")
-
-        --     for i,v in ipairs(SS_CreatedAccessories[self] or {}) do
-        --         v:FollowBone(self, v.follow or 0)
-        --         v:SetLocalPos(v.translate)
-        --         v:SetLocalAngles(v.rotate)
-        --     end
-
-            
-        --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
-        -- end
-
-        return 
-    end
-    
+    if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end -- TODO: add :Reattach() method on mdls to do this, and handle eye attachment -- if CurTime() > (self.SS_DetachCheckTime or 0) then --     -- print("CHE") --     for i,v in ipairs(SS_CreatedAccessories[self] or {}) do --         v:FollowBone(self, v.follow or 0) --         v:SetLocalPos(v.translate) --         v:SetLocalAngles(v.rotate) --     end --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2) -- end
     -- TODO improve this, we probably should just reattach every so often
     -- if not self.DELAYSECONDATTACH then
     --     timer.Simple(0.5, function()
@@ -514,9 +494,7 @@ function Entity:SS_AttachAccessories(items, forceload)
     --         end
     --     end)
     -- end
-
     -- if LocalPlayer()==self then print("H)") end
-
     -- if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
     self.SS_AttachedInVehicle = iv
