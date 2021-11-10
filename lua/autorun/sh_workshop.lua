@@ -1,6 +1,7 @@
 ﻿STEAMWS_DOWNLOAD_STARTED = STEAMWS_DOWNLOAD_STARTED or {}
 STEAMWS_MOUNTED = STEAMWS_MOUNTED or {}
 STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT or 0
+STEAMWS_MODELS = STEAMWS_MODELS or {}
 
 function SafeMountGMA(wsid, filename)
     -- print("safemount")
@@ -24,6 +25,9 @@ function SafeMountGMA(wsid, filename)
     end
 
     game.MountGMA(filename)
+	STEAMWS_MODELS[wsid] = {}
+	STEAMWS_MODELS[wsid].filename = filename
+	STEAMWS_MODELS[wsid].mdllist = GetPlayermodels(filename)
 
     for ent, mod in pairs(resetmodels) do
         ent:SetModel(mod[1])
@@ -87,7 +91,7 @@ function require_workshop_model(mdl)
     end
 end
 
-function is_model_undownloaded(mdl)
+function is_model_undownloaded(mdl) --implement steamworks.IsSubscribed(wsid) and file.Exists(mdl,'GAME')
     -- print(1)
     if not STEAMWS_REGISTRY[mdl] then return false end
     -- print(2)
@@ -123,4 +127,158 @@ function Entity:GetActualModel()
     local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
 
     return correct and setmodel or "models/error.mdl"
+end
+
+function FileListParseModels(files) --return list of models
+    local mdls = {}
+
+    for _, path in pairs(files) do
+        local ext = path:sub(-4):lower()
+
+        if ext == '.mdl' then
+            mdls[#mdls + 1] = {
+                Name = path,
+                path = path,
+                nogma = true
+            }
+        end
+    end
+
+    return mdls
+end
+
+function MDLIsPlayermodel(f) --requires mdlinspect.lua
+	local mdl, err, err2 = mdlinspect.Open(f)
+	if not mdl then return nil, err, err2 end
+	if mdl.version < 44 or mdl.version > 49 then return false, "bad model version" end
+	local ok, err = mdl:ParseHeader()
+	if not ok then return false, err or "hdr" end
+	if not mdl.bone_count or mdl.bone_count <= 2 then return false, "nobones" end
+
+	local imdls = mdl:IncludedModels()
+	
+	local found_anm
+	for k,v in next,imdls do
+		v = v[2]
+		
+		if v and v:find("_arms_",1,true) then
+			return false,"arms"
+		end
+		
+		if v and not v:find"%.mdl$" then
+			return false,"badinclude",v
+		end
+		if v=="models/m_anm.mdl" or v=="models/f_anm.mdl" or v=="models/z_anm.mdl" then
+			found_anm = true
+		end
+	end
+	
+	local attachments = mdl:Attachments()
+	if (not attachments or not next(attachments)) and not found_anm then
+		return false,"noattachments"
+	else
+		local found
+		for k,v in next,attachments do
+			local name = v[1]
+			if name=="eyes" or name=="anim_attachment_head" or name=="mouth" or name=="anim_attachment_RH" or name=="anim_attachment_LH" then found=true break end
+		end
+		if not found and not found_anm then
+			return false,"attachments"
+		end
+		
+	end
+
+	return true, found_anm
+end
+
+function OutfitterCheckModelSize(mdl) --vertice count and bounding box size
+    local meshes = util.GetModelMeshes(mdl) or {}
+
+	if (#meshes > 0) then-- and lastmdl ~= mdl) then --lastmdl????
+        local max = {}
+        local min = {}
+        local vcount = 0
+
+        for k, v in pairs(meshes) do
+            vcount = vcount + #(meshes[k]["verticies"])
+
+            for _, l in pairs(meshes[k]["verticies"]) do
+                local p = l.pos
+
+                if (p.x > (max.x or p.x - 1)) then
+                    max.x = p.x
+                end
+
+                if (p.y > (max.y or p.y - 1)) then
+                    max.y = p.y
+                end
+
+                if (p.z > (max.z or p.z - 1)) then
+                    max.z = p.z
+                end
+
+                if (p.x < (min.x or p.x + 1)) then
+                    min.x = p.x
+                end
+
+                if (p.y < (min.y or p.y + 1)) then
+                    min.y = p.y
+                end
+
+                if (p.z < (min.z or p.z + 1)) then
+                    min.z = p.z
+                end
+            end
+        end
+
+        local minV, maxV = Vector(min.x, min.y, min.z), Vector(max.x, max.y, max.z)
+        local dis = minV:Distance(maxV)
+
+        if vcount > 30000 and ((not IsValid(LocalPlayer())) or (not LocalPlayer():GetNWBool("oufitr+"))) then
+            --return nil, "Model has too many vertices (" .. vcount .. ">30000). Get Outfitter+ to use it anyway."
+			return false
+        elseif vcount < 30 then
+            --return nil, "Model has too few vertices (" .. vcount .. "<30)"
+			return false
+        elseif dis > 200 then
+            --return nil, "Model's boundary box is too large (" .. math.floor(dis) .. ">200)"
+			return false
+        end
+    end
+
+    return true
+end
+
+function GetPlayermodels(fpath)
+	local ok, files = game.MountGMA(fpath)
+	
+	for k,v in pairs(files) do
+		if v:Trim():sub(-4):lower()=='.vtf' then
+			local f = file.Open(v,"rb","GAME")
+			if f then
+				f:Seek(16)
+				local width = f:Read(2)
+				local height = f:Read(2)
+				width = string.byte(width,1)+string.byte(width,2)*256
+				height = string.byte(height,1)+string.byte(height,2)*256
+				
+				if width>4096 or height>4096 then
+					return nil --oversize vtfs
+				end
+			end
+		end
+	end
+	
+	--option to be more rigorous by checking every model file (vvd, mdl, phys)
+	
+	local modellist = FileListParseModels(files)
+	local mdl_list = {}
+	for k,entry in pairs(modellist) do
+		local isplr, err, err2 = MDLIsPlayermodel(entry.Name)
+		if isplr and OutfitterCheckModelSize(entry.Name) then
+			mdl_list[#mdl_list+1] = entry.Name
+		end
+	end
+	
+	return mdl_list
 end

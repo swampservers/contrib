@@ -547,6 +547,8 @@ function HeyNozFillThisIn(self, cust)
     end
 
     local wsidentry, modelentry
+	local _self = self
+	_self.wsid = nil
 
     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
         p:SetText("Select Model (WIP)")
@@ -604,7 +606,14 @@ function HeyNozFillThisIn(self, cust)
             p:DockMargin(0, 4, 1, 8)
 
             p.DoClick = function()
-                outfitter.GUIWantChangeModel(nil, false)
+				local wb = vgui.Create('workshopbrowser')
+				wb:Show()
+				function wb:GetWSID(data)
+					if tonumber(data) then
+						_self.wsid = data
+						require_workshop(data)
+					end
+				end
             end
         end)
 
@@ -616,29 +625,29 @@ function HeyNozFillThisIn(self, cust)
             p:SetTall(256)
 
             p.OnRowSelected = function(pnl, n, itm)
-                local mdllist = outfitter.UIGetMDLList()
-
-                if mdllist then
-                    self.cfg.model = mdllist[n].Name
-                    modelentry:SetValue(self.cfg.model)
-                    self.cfg.wsid = outfitter.UIGetWSID()
-                    wsidentry:SetValue(self.cfg.wsid)
-                end
+				if STEAMWS_MODELS[_self.wsid] then
+					local mdllist = STEAMWS_MODELS[_self.wsid].mdllist
+	
+					if mdllist then
+						self.cfg.model = mdllist[n]
+						modelentry:SetValue(self.cfg.model)
+						self.cfg.wsid = _self.wsid
+						wsidentry:SetValue(self.cfg.wsid)
+					end
+				end
             end
 
             local old = nil
 
             p.PaintOver = function(b, w, h)
-                old = old or outfitter.UIGetMDLList()
-
-                if old ~= outfitter.UIGetMDLList() and outfitter.UIGetMDLList() ~= nil then
-                    old = outfitter.UIGetMDLList()
-                    p:Clear()
-
-                    for k, v in pairs(old) do
-                        p:AddLine(v.Name)
-                    end
-                end
+				if STEAMWS_MODELS[_self.wsid] and old ~= _self.wsid then
+					old = _self.wsid
+					p:Clear()
+		
+					for k, v in pairs(STEAMWS_MODELS[_self.wsid].mdllist) do
+						p:AddLine(v)
+					end
+				end
             end
         end)
     end)
