@@ -25,9 +25,9 @@ function SafeMountGMA(wsid, filename)
     end
 
     game.MountGMA(filename)
-	STEAMWS_MODELS[wsid] = {}
-	STEAMWS_MODELS[wsid].filename = filename
-	STEAMWS_MODELS[wsid].mdllist = GetPlayermodels(filename)
+    STEAMWS_MODELS[wsid] = {}
+    STEAMWS_MODELS[wsid].filename = filename
+    STEAMWS_MODELS[wsid].mdllist = GetPlayermodels(filename)
 
     for ent, mod in pairs(resetmodels) do
         ent:SetModel(mod[1])
@@ -91,7 +91,8 @@ function require_workshop_model(mdl)
     end
 end
 
-function is_model_undownloaded(mdl) --implement steamworks.IsSubscribed(wsid) and file.Exists(mdl,'GAME')
+--implement steamworks.IsSubscribed(wsid) and file.Exists(mdl,'GAME')
+function is_model_undownloaded(mdl)
     -- print(1)
     if not STEAMWS_REGISTRY[mdl] then return false end
     -- print(2)
@@ -129,7 +130,8 @@ function Entity:GetActualModel()
     return correct and setmodel or "models/error.mdl"
 end
 
-function FileListParseModels(files) --return list of models
+--return list of models
+function FileListParseModels(files)
     local mdls = {}
 
     for _, path in pairs(files) do
@@ -147,54 +149,55 @@ function FileListParseModels(files) --return list of models
     return mdls
 end
 
-function MDLIsPlayermodel(f) --requires mdlinspect.lua
-	local mdl, err, err2 = mdlinspect.Open(f)
-	if not mdl then return nil, err, err2 end
-	if mdl.version < 44 or mdl.version > 49 then return false, "bad model version" end
-	local ok, err = mdl:ParseHeader()
-	if not ok then return false, err or "hdr" end
-	if not mdl.bone_count or mdl.bone_count <= 2 then return false, "nobones" end
+--requires mdlinspect.lua
+function MDLIsPlayermodel(f)
+    local mdl, err, err2 = mdlinspect.Open(f)
+    if not mdl then return nil, err, err2 end
+    if mdl.version < 44 or mdl.version > 49 then return false, "bad model version" end
+    local ok, err = mdl:ParseHeader()
+    if not ok then return false, err or "hdr" end
+    if not mdl.bone_count or mdl.bone_count <= 2 then return false, "nobones" end
+    local imdls = mdl:IncludedModels()
+    local found_anm
 
-	local imdls = mdl:IncludedModels()
-	
-	local found_anm
-	for k,v in next,imdls do
-		v = v[2]
-		
-		if v and v:find("_arms_",1,true) then
-			return false,"arms"
-		end
-		
-		if v and not v:find"%.mdl$" then
-			return false,"badinclude",v
-		end
-		if v=="models/m_anm.mdl" or v=="models/f_anm.mdl" or v=="models/z_anm.mdl" then
-			found_anm = true
-		end
-	end
-	
-	local attachments = mdl:Attachments()
-	if (not attachments or not next(attachments)) and not found_anm then
-		return false,"noattachments"
-	else
-		local found
-		for k,v in next,attachments do
-			local name = v[1]
-			if name=="eyes" or name=="anim_attachment_head" or name=="mouth" or name=="anim_attachment_RH" or name=="anim_attachment_LH" then found=true break end
-		end
-		if not found and not found_anm then
-			return false,"attachments"
-		end
-		
-	end
+    for k, v in next, imdls do
+        v = v[2]
+        if v and v:find("_arms_", 1, true) then return false, "arms" end
+        if v and not v:find"%.mdl$" then return false, "badinclude", v end
 
-	return true, found_anm
+        if v == "models/m_anm.mdl" or v == "models/f_anm.mdl" or v == "models/z_anm.mdl" then
+            found_anm = true
+        end
+    end
+
+    local attachments = mdl:Attachments()
+
+    if (not attachments or not next(attachments)) and not found_anm then
+        return false, "noattachments"
+    else
+        local found
+
+        for k, v in next, attachments do
+            local name = v[1]
+
+            if name == "eyes" or name == "anim_attachment_head" or name == "mouth" or name == "anim_attachment_RH" or name == "anim_attachment_LH" then
+                found = true
+                break
+            end
+        end
+
+        if not found and not found_anm then return false, "attachments" end
+    end
+
+    return true, found_anm
 end
 
-function OutfitterCheckModelSize(mdl) --vertice count and bounding box size
+--vertice count and bounding box size
+function OutfitterCheckModelSize(mdl)
     local meshes = util.GetModelMeshes(mdl) or {}
 
-	if (#meshes > 0) then-- and lastmdl ~= mdl) then --lastmdl????
+    -- and lastmdl ~= mdl) then --lastmdl????
+    if (#meshes > 0) then
         local max = {}
         local min = {}
         local vcount = 0
@@ -236,13 +239,13 @@ function OutfitterCheckModelSize(mdl) --vertice count and bounding box size
 
         if vcount > 30000 and ((not IsValid(LocalPlayer())) or (not LocalPlayer():GetNWBool("oufitr+"))) then
             --return nil, "Model has too many vertices (" .. vcount .. ">30000). Get Outfitter+ to use it anyway."
-			return false
+            return false
         elseif vcount < 30 then
             --return nil, "Model has too few vertices (" .. vcount .. "<30)"
-			return false
+            return false
         elseif dis > 200 then
             --return nil, "Model's boundary box is too large (" .. math.floor(dis) .. ">200)"
-			return false
+            return false
         end
     end
 
@@ -250,35 +253,34 @@ function OutfitterCheckModelSize(mdl) --vertice count and bounding box size
 end
 
 function GetPlayermodels(fpath)
-	local ok, files = game.MountGMA(fpath)
-	
-	for k,v in pairs(files) do
-		if v:Trim():sub(-4):lower()=='.vtf' then
-			local f = file.Open(v,"rb","GAME")
-			if f then
-				f:Seek(16)
-				local width = f:Read(2)
-				local height = f:Read(2)
-				width = string.byte(width,1)+string.byte(width,2)*256
-				height = string.byte(height,1)+string.byte(height,2)*256
-				
-				if width>4096 or height>4096 then
-					return nil --oversize vtfs
-				end
-			end
-		end
-	end
-	
-	--option to be more rigorous by checking every model file (vvd, mdl, phys)
-	
-	local modellist = FileListParseModels(files)
-	local mdl_list = {}
-	for k,entry in pairs(modellist) do
-		local isplr, err, err2 = MDLIsPlayermodel(entry.Name)
-		if isplr and OutfitterCheckModelSize(entry.Name) then
-			mdl_list[#mdl_list+1] = entry.Name
-		end
-	end
-	
-	return mdl_list
+    local ok, files = game.MountGMA(fpath)
+
+    for k, v in pairs(files) do
+        if v:Trim():sub(-4):lower() == '.vtf' then
+            local f = file.Open(v, "rb", "GAME")
+
+            if f then
+                f:Seek(16)
+                local width = f:Read(2)
+                local height = f:Read(2)
+                width = string.byte(width, 1) + string.byte(width, 2) * 256
+                height = string.byte(height, 1) + string.byte(height, 2) * 256
+                if width > 4096 or height > 4096 then return nil end --oversize vtfs
+            end
+        end
+    end
+
+    --option to be more rigorous by checking every model file (vvd, mdl, phys)
+    local modellist = FileListParseModels(files)
+    local mdl_list = {}
+
+    for k, entry in pairs(modellist) do
+        local isplr, err, err2 = MDLIsPlayermodel(entry.Name)
+
+        if isplr and OutfitterCheckModelSize(entry.Name) then
+            mdl_list[#mdl_list + 1] = entry.Name
+        end
+    end
+
+    return mdl_list
 end
