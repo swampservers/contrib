@@ -136,7 +136,7 @@ if CLIENT then
         end)
     end
 
-    cachedURL = {}
+    cachedURL = cachedURL or {}
 
     function SERVICE:LoadVideo(Video, panel)
         local url = "http://swamp.sv/s/cinema/file.html"
