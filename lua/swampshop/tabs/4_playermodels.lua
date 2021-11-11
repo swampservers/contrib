@@ -376,12 +376,8 @@ for i = 1, 5 do
             return m and SS_PrettyMDLName(m[2]) or "Nothing (DONT BUY)"
         end,
         description = "A different playermodel will be here every day!",
-        GetModel = function(self)
-            return (GetG("ModelsOfTheDay")[mi] or {})[2] or "models/player/skeleton.mdl"
-        end,
-        GetWorkshop = function(self)
-            return (GetG("ModelsOfTheDay")[mi] or {})[1]
-        end,
+        GetModel = function(self) return (GetG("ModelsOfTheDay")[mi] or {})[2] or "models/player/skeleton.mdl" end,
+        GetWorkshop = function(self) return (GetG("ModelsOfTheDay")[mi] or {})[1] end,
         OnBuy = function(self, ply)
             local m = GetG("ModelsOfTheDay")[mi]
 
@@ -483,25 +479,19 @@ SS_PlayermodelItem({
 
         return "(WIP) Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
-    GetModel = function(self)
-        -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
-        --     -- if self.specs.wsid or self.cfg.wsid then
-        --     --     -- so the callback when downloaded makes the model refresh
-        --     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
-        --     --     -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
-        --     --     -- if self.Owner == LocalPlayer() then
-        --     --     --     require_workshop(self.specs.wsid or self.cfg.wsid )
-        --     --     -- end
-        --     -- end
-
-        --     return 
-        -- end
-
-        return self.specs and (self.specs.model or self.cfg.model) or  "models/maxofs2d/logo_gmod_b.mdl"
-    end,
-    GetWorkshop = function(self)
-        return self.specs and (self.specs.wsid or self.cfg.wsid)
-    end,
+    GetModel = function(self) -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+--     -- if self.specs.wsid or self.cfg.wsid then
+--     --     -- so the callback when downloaded makes the model refresh
+--     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
+--     --     -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
+--     --     -- if self.Owner == LocalPlayer() then
+--     --     --     require_workshop(self.specs.wsid or self.cfg.wsid )
+--     --     -- end
+--     -- end
+--     return 
+-- end
+return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" end,
+    GetWorkshop = function(self) return self.specs and (self.specs.wsid or self.cfg.wsid) end,
     invcategory = "Playermodels",
     playermodel = true,
     PlayerSetModel = function(self, ply)
@@ -625,13 +615,12 @@ function HeyNozFillThisIn(self, cust)
 
             p.OnRowSelected = function(pnl, n, itm)
                 local models = require_playermodel_list(_self.wsid)
-                if models then
 
-                        self.cfg.model = models[n]
-                        modelentry:SetValue(self.cfg.model)
-                        self.cfg.wsid = _self.wsid
-                        wsidentry:SetValue(self.cfg.wsid)
-                  
+                if models then
+                    self.cfg.model = models[n]
+                    modelentry:SetValue(self.cfg.model)
+                    self.cfg.wsid = _self.wsid
+                    wsidentry:SetValue(self.cfg.wsid)
                 end
             end
 
@@ -639,6 +628,7 @@ function HeyNozFillThisIn(self, cust)
 
             p.PaintOver = function(b, w, h)
                 local models = require_playermodel_list(_self.wsid)
+
                 if models and old ~= _self.wsid then
                     old = _self.wsid
                     p:Clear()

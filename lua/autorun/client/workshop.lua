@@ -1,37 +1,30 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 local loadrange = CreateClientConVar("swamp_workshop", 0, true, false, "", -3, 1)
 
 function RefreshWorkshop()
     STEAMWS_FILEINFO_STARTED = {}
     STEAMWS_DOWNLOAD_STARTED = {}
-    STEAMWS_FILEINFO =  {}
-    STEAMWS_MOUNTED =  {}
+    STEAMWS_FILEINFO = {}
+    STEAMWS_MOUNTED = {}
     STEAM_WORKSHOP_INFLIGHT = 0
-
     STEAMWS_PLAYERMODELS = {}
-
     STEAMWS_REGISTRY = {}
-    
 end
 
-if not STEAMWS_DOWNLOAD_STARTED then RefreshWorkshop() end
-
+if not STEAMWS_DOWNLOAD_STARTED then
+    RefreshWorkshop()
+end
 
 -- function check_require_model(mdl, wsid)
 --     return ((wsid or "")=="" or util.IsValidModel(mdl) or STEAMWS_MOUNTED[wsid]) and true or false
 -- end
-
 function require_model(mdl, wsid, range)
-
     -- if range==nil then print(mdl, wsid) end
-
-    if (wsid or "")=="" or util.IsValidModel(mdl) then return true end
-
+    if (wsid or "") == "" or util.IsValidModel(mdl) then return true end
     STEAMWS_REGISTRY[mdl] = wsid
-
     -- will return true despite being error if the workshop is missing the model
+
     return require_workshop(wsid, range)
 end
 
@@ -40,27 +33,23 @@ end
 function require_workshop(id, range)
     -- print("ID", id, STEAMWS_DOWNLOAD_STARTED[id], STEAM_WORKSHOP_INFLIGHT)
     -- 
-    
     assert(isstring(id))
 
     if STEAMWS_FILEINFO[id] then
-
-
         if range then
             local setting = loadrange:GetInt()
-            local mb = STEAMWS_FILEINFO[id].size/1000000
+            local mb = STEAMWS_FILEINFO[id].size / 1000000
             -- print(range, mb, mb*25, setting)
-            if setting==-3 then return end
-            if setting==-2 and mb*100 > 1000 - range then return end
-            if setting==-1 and mb*40 > 1200 - range then return end
-            if setting==0 and mb*25 > 1500 - range then return end
-            if setting==1 and mb*50 > 3000 - range then return end
+            if setting == -3 then return end
+            if setting == -2 and mb * 100 > 1000 - range then return end
+            if setting == -1 and mb * 40 > 1200 - range then return end
+            if setting == 0 and mb * 25 > 1500 - range then return end
+            if setting == 1 and mb * 50 > 3000 - range then return end
         end
-
 
         if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT == 0 then
             STEAMWS_DOWNLOAD_STARTED[id] = true
-            print("\n\n***DOWNLOADING " .. id .. " OF SIZE "..STEAMWS_FILEINFO[id].size.. "***\n\n")
+            print("\n\n***DOWNLOADING " .. id .. " OF SIZE " .. STEAMWS_FILEINFO[id].size .. "***\n\n")
             local _id_ = id
             STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
 
@@ -79,6 +68,7 @@ function require_workshop(id, range)
                     -- print("MOUNTAVBE", _id_, name) 
                     -- game.MountGMA(name)
                     local succ, files = SafeMountGMA(_id_, name)
+
                     if succ then
                         STEAMWS_MOUNTED[_id_] = files
                     else
@@ -97,7 +87,8 @@ function require_workshop(id, range)
     else
         if not STEAMWS_FILEINFO_STARTED[id] then
             local _id_ = id
-            steamworks.FileInfo(id, function(info) 
+
+            steamworks.FileInfo(id, function(info)
                 STEAMWS_FILEINFO[_id_] = info
             end)
         end
@@ -105,8 +96,6 @@ function require_workshop(id, range)
 
     return STEAMWS_MOUNTED[id] and true or false
 end
-
-
 
 function SafeMountGMA(wsid, filename)
     -- print("safemount")
@@ -136,17 +125,13 @@ function SafeMountGMA(wsid, filename)
         ent:SetSequence(mod[2])
     end
 
-    return succ,files
+    return succ, files
 end
 
-
-
 -- STEAMWS_REGISTRY = STEAMWS_REGISTRY or {}
-
 -- function register_workshop_model(mdl, wsid)
 --     STEAMWS_REGISTRY[mdl] = wsid
 -- end
-
 -- function require_workshop_model(mdl)
 --     if STEAMWS_REGISTRY[mdl] then
 --         return require_workshop(STEAMWS_REGISTRY[mdl])
@@ -155,7 +140,6 @@ end
 --         return true
 --     end
 -- end
-
 --implement steamworks.IsSubscribed(wsid) and file.Exists(mdl,'GAME')
 function is_model_undownloaded(mdl)
     -- print(1)
@@ -189,11 +173,8 @@ local Entity = FindMetaTable("Entity")
 local getmodel = Entity.GetModel
 
 function Entity:GetActualModel()
-
     -- if self:IsPlayer() then
-    
     --     local dmdl, wsid = self:GetDisplayModel()
-
     --     if dmdl then
     --         register_workshop_model(dmdl, wsid)
     --         -- print(require_workshop(wsid)) 
@@ -202,60 +183,15 @@ function Entity:GetActualModel()
     --         end
     --     end
     -- end
-
-
     local setmodel = getmodel(self)
     -- local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
-
     -- return correct and setmodel or "models/error.mdl"
+
     return util.IsValidModel(setmodel) and setmodel or "models/error.mdl"
 end
 
-    hook.Add("Think", "ForceLocalPlayerModel", function() end)
-
-    hook.Add("PlayerPostThink", "ForceLocalPlayerModel", function(ply)
-
-        -- if ply ~= LocalPlayer() or not IsFirstTimePredicted() then return end
-        
-        
-        -- local dmdl, wsid = ply:GetDisplayModel()
-
-        -- if dmdl then
-        --     if require_model(dmdl, wsid) then
-                
-        -- --         -- ply:SetModel(dmdl)
-        --         if ply:GetModel() ~= dmdl then
-        --             print("SET", ply, dmdl)
-
-                    
-                    
-        --             ply:SetModel(dmdl)
-        --             -- ply:SetPredictable(false)
-
-        --             -- ply:ResetHull()
-
-        --             -- ply:SetWalkSpeed(ply:GetWalkSpeed())
-        --             -- ply:SetRunSpeed(ply:GetRunSpeed())
-
-        --             -- THIS MAKES IT WORK
-        --             ply:SetPredictable(true)
-
-                    
-        --         end
-        --     end
-        -- end 
-        -- local state = LocalPlayer():GetPredictable()
-	
-    
-
-
-        -- ply:SetPredictable(true)
-
-
-        -- print(LocalPlayer():GetModel())
-    end)
-
-
+hook.Add("Think", "ForceLocalPlayerModel", function() end)
+hook.Add("PlayerPostThink", "ForceLocalPlayerModel", function(ply) end) -- if ply ~= LocalPlayer() or not IsFirstTimePredicted() then return end -- local dmdl, wsid = ply:GetDisplayModel() -- if dmdl then --     if require_model(dmdl, wsid) then -- --         -- ply:SetModel(dmdl) --         if ply:GetModel() ~= dmdl then --             print("SET", ply, dmdl) --             ply:SetModel(dmdl) --             -- ply:SetPredictable(false) --             -- ply:ResetHull() --             -- ply:SetWalkSpeed(ply:GetWalkSpeed()) --             -- ply:SetRunSpeed(ply:GetRunSpeed()) --             -- THIS MAKES IT WORK --             ply:SetPredictable(true) --         end --     end -- end  -- local state = LocalPlayer():GetPredictable() -- ply:SetPredictable(true) -- print(LocalPlayer():GetModel())
 
 --requires mdlinspect.lua
 function MDLIsPlayermodel(f)
@@ -361,7 +297,6 @@ function OutfitterCheckModelSize(mdl)
 end
 
 function GetPlayermodels(files)
-    
     for k, v in pairs(files) do
         if v:Trim():sub(-4):lower() == '.vtf' then
             local f = file.Open(v, "rb", "GAME")
@@ -392,9 +327,6 @@ function GetPlayermodels(files)
     return mdl_list
 end
 
-
-
-
 --return list of models
 function FileListParseModels(files)
     local mdls = {}
@@ -416,8 +348,7 @@ end
 
 function require_playermodel_list(wsid)
     if not require_workshop(wsid) then return end
-
     STEAMWS_PLAYERMODELS[wsid] = STEAMWS_PLAYERMODELS[wsid] or GetPlayermodels(STEAMWS_MOUNTED[wsid])
 
-    return STEAMWS_PLAYERMODELS[wsid] 
+    return STEAMWS_PLAYERMODELS[wsid]
 end

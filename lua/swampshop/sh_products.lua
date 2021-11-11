@@ -32,12 +32,10 @@ function SS_Product(product)
 
     -- if product.model then
     --     util.PrecacheModel(product.model)
-
     --     if product.workshop then
     --         register_workshop_model(product.model, product.workshop)
     --     end
     -- end
-
     -- product.primaryaction = {
     --     Text = function(self, second) return second and (self.price == 0 and ">  GET  <" or ">  BUY  <") or (self.price == 0 and "FREE" or "-" .. tostring(self.price)) end
     -- }

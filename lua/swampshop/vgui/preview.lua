@@ -45,11 +45,10 @@ end
 -- returns model and if its a playermodel (false means its a prop)
 function PANEL:GetDesiredModel()
     if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
-
-        local m,w = SS_HoverIOP:GetModel(),SS_HoverIOP:GetWorkshop()
+        local m, w = SS_HoverIOP:GetModel(), SS_HoverIOP:GetWorkshop()
 
         if w then
-            require_model(m,w)
+            require_model(m, w)
         end
 
         return m, SS_HoverIOP.PlayerSetModel ~= nil
@@ -201,7 +200,7 @@ end
 function PANEL:Paint(w, h)
     local ply = LocalPlayer()
     local mdl, playermodel = self:GetDesiredModel() --TODO set the model first so theres not 1 frame flicker
-    
+
     if mdl ~= self.appliedmodel then
         self:SetModel(mdl)
         self.appliedmodel = mdl

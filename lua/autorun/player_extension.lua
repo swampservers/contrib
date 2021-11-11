@@ -65,41 +65,42 @@ if SERVER then
     end
 else
     hook.Add("PrePlayerDraw", "PlayerModelWSApplierChangeDetector", function(ply)
-
         local mdl = ply:GetModel()
-        local dmdl,dwsid = ply:GetDisplayModel()
+        local dmdl, dwsid = ply:GetDisplayModel()
 
-        if dmdl and (dmdl !=mdl or ply.ForceFixPlayermodel) then
+        if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
             if require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos())) then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
                 mdl = dmdl
                 -- IT MAKES THE MODEL STAY
-                ply:SetPredictable(ply==LocalPlayer())
+                ply:SetPredictable(ply == LocalPlayer())
             end
         end
-        
 
         if mdl ~= ply.PlayerModelChangedLastModel then
             ply.PlayerModelChangedLastModel = mdl
             hook.Run("PlayerModelChanged", ply, mdl)
         end
     end)
-    hook.Add("NotifyShouldTransmit","PlayerModelReset",function(ply)
+
+    hook.Add("NotifyShouldTransmit", "PlayerModelReset", function(ply)
         -- TODO: do it like materialfix.lua
-        if ply:IsPlayer() then ply.ForceFixPlayermodel=true timer.Simple(0.5,function()
-            if IsValid(ply) then ply.ForceFixPlayermodel=true end
-        end) end
-        
+        if ply:IsPlayer() then
+            ply.ForceFixPlayermodel = true
+
+            timer.Simple(0.5, function()
+                if IsValid(ply) then
+                    ply.ForceFixPlayermodel = true
+                end
+            end)
+        end
     end)
-
-
-    
 end
 
 function PLAYER:GetDisplayModel()
-    local mdl, wsid = self:GetNWString("DisplayModel",""), tostring(self:GetNWString("DisplayWSID",""))
-    if mdl~="" then return mdl,wsid end
+    local mdl, wsid = self:GetNWString("DisplayModel", ""), tostring(self:GetNWString("DisplayWSID", ""))
+    if mdl ~= "" then return mdl, wsid end
 end
 
 function PLAYER:SetDefaultJumpPower()
