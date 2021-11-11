@@ -377,15 +377,10 @@ for i = 1, 5 do
         end,
         description = "A different playermodel will be here every day!",
         GetModel = function(self)
-            local m = GetG("ModelsOfTheDay")[mi]
-
-            if m then
-                register_workshop_model(m[2], m[1])
-
-                return m[2]
-            end
-
-            return "models/player/skeleton.mdl"
+            return (GetG("ModelsOfTheDay")[mi] or {})[2] or "models/player/skeleton.mdl"
+        end,
+        GetWorkshop = function(self)
+            return (GetG("ModelsOfTheDay")[mi] or {})[1]
         end,
         OnBuy = function(self, ply)
             local m = GetG("ModelsOfTheDay")[mi]
@@ -489,27 +484,30 @@ SS_PlayermodelItem({
         return "(WIP) Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
     GetModel = function(self)
-        if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
-            if self.specs.wsid or self.cfg.wsid then
-                -- so the callback when downloaded makes the model refresh
-                register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
-                -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
-                -- if self.Owner == LocalPlayer() then
-                --     require_workshop(self.specs.wsid or self.cfg.wsid )
-                -- end
-            end
+        -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+        --     -- if self.specs.wsid or self.cfg.wsid then
+        --     --     -- so the callback when downloaded makes the model refresh
+        --     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
+        --     --     -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
+        --     --     -- if self.Owner == LocalPlayer() then
+        --     --     --     require_workshop(self.specs.wsid or self.cfg.wsid )
+        --     --     -- end
+        --     -- end
 
-            return self.specs.model or self.cfg.model
-        end
+        --     return 
+        -- end
 
-        return "models/maxofs2d/logo_gmod_b.mdl"
+        return self.specs and (self.specs.model or self.cfg.model) or  "models/maxofs2d/logo_gmod_b.mdl"
+    end,
+    GetWorkshop = function(self)
+        return self.specs and (self.specs.wsid or self.cfg.wsid)
     end,
     invcategory = "Playermodels",
     playermodel = true,
     PlayerSetModel = function(self, ply)
         if self.specs.model then
             if self.specs.wsid then
-                ply:SetDisplayModel(self.specs.model, self.specs.wsid)
+                ply:SetDisplayModel(self.specs.model, tonumber(self.specs.wsid))
             else
                 ply:SetModel(self.specs.model)
             end
@@ -610,8 +608,8 @@ function HeyNozFillThisIn(self, cust)
                 wb:Show()
 
                 function wb:GetWSID(data)
-                    if tonumber(data) then
-                        _self.wsid = data
+                    if data then
+                        _self.wsid = tostring(data)
                         require_workshop(data)
                     end
                 end
@@ -626,26 +624,26 @@ function HeyNozFillThisIn(self, cust)
             p:SetTall(256)
 
             p.OnRowSelected = function(pnl, n, itm)
-                if STEAMWS_MODELS[_self.wsid] then
-                    local mdllist = STEAMWS_MODELS[_self.wsid].mdllist
+                local models = require_playermodel_list(_self.wsid)
+                if models then
 
-                    if mdllist then
-                        self.cfg.model = mdllist[n]
+                        self.cfg.model = models[n]
                         modelentry:SetValue(self.cfg.model)
                         self.cfg.wsid = _self.wsid
                         wsidentry:SetValue(self.cfg.wsid)
-                    end
+                  
                 end
             end
 
             local old = nil
 
             p.PaintOver = function(b, w, h)
-                if STEAMWS_MODELS[_self.wsid] and old ~= _self.wsid then
+                local models = require_playermodel_list(_self.wsid)
+                if models and old ~= _self.wsid then
                     old = _self.wsid
                     p:Clear()
 
-                    for k, v in pairs(STEAMWS_MODELS[_self.wsid].mdllist) do
+                    for k, v in pairs(models) do
                         p:AddLine(v)
                     end
                 end

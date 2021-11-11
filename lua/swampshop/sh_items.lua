@@ -98,6 +98,7 @@ function SS_ItemOrProduct(iop)
 
     iop.GetDescription = iop.GetDescription or function(self) return self.description end
     iop.GetModel = iop.GetModel or function(self) return self.model end
+    iop.GetWorkshop = iop.GetWorkshop or function(self) return self.workshop end
 end
 
 function SS_ClientsideFakeItem(item)
@@ -269,7 +270,14 @@ function SS_Item(item)
     item.GetSettings = item.GetSettings or function(self) return self.settings end
     SS_ItemOrProduct(item)
     item.__index = item
-    SS_Items[item.class] = item
+
+    -- allows updating item behavior without reloading
+    if SS_Items[item.class] then
+        table.CopyFromTo(item, SS_Items[item.class])
+        item = SS_Items[item.class]
+    else
+        SS_Items[item.class] = item
+    end
 
     if item.price then
         SS_ItemProduct(item)

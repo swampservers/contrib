@@ -424,9 +424,103 @@ hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
     end
 end)
 
+local enforce_models={}
+
+
+
+-- Setting display model has to be done in this hook or it breaks!
+hook.Add("NetworkEntityCreated","ragdoll1",function(rag)
+	if rag:GetClass() == "class C_HL2MPRagdoll" then
+		local ply = rag:GetRagdollOwner()
+		if ply:IsValid() then
+			
+            local mdl,dw = ply:GetDisplayModel()
+            if not mdl then return end
+            
+            -- local mdlr = rag:GetModel()
+            -- local mdlp = pl:GetModel()
+            
+            -- local hasenforced   = mdlr==mdl
+            -- local isplyenforced = mdlp==mdl
+            -- dbgn(2,"DeathRagdollEnforce",pl,rag,mdl,hasenforced and ("ENFORCED RAG: "..tostring(mdlr)) or "" ,isplyenforced and "" or ("NOT ENFORCED PLY: "..tostring(mdlp)) )
+            
+            -- rag.enforce_model = mdl
+            -- enforce_models[rag] = 8
+            
+            rag:InvalidateBoneCache()
+            rag:SetModel(mdl)
+            rag:InvalidateBoneCache()
+            
+            rag.RenderOverride=function(rag)
+                -- if rag.enforce_model then
+                    rag:SetModel(mdl)
+                    -- if enforce_models[rag] then
+                    --     rag:InvalidateBoneCache()
+                    -- end
+                -- end
+                rag:DrawModel()
+            end
+		end
+	end
+end)
+
+
+-- hook.Add("Think","ragdoll2",function()
+    -- for rag,count in pairs(enforce_models) do
+    --     if rag:IsValid() and count>0 then
+            
+    --         enforce_models[rag] = count - 1
+        
+    --         local mdl = rag.enforce_model
+    --         if mdl then
+    --             --TODO: not having this causes crashes?
+    --             rag:InvalidateBoneCache()
+                
+    --             rag:SetModel(mdl)
+    --             rag:InvalidateBoneCache()
+
+                
+    --         end
+            
+    --     else
+    --         enforce_models[rag] = nil
+    --     end
+    -- end
+-- end)
+
+
 -- It seems like the ragdoll is created before the cleanup, so this is ok
 hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, rag)
     if IsValid(ply) and ply:IsPlayer() then
+
+
+        -- local dm,dw = ply:GetDisplayModel()
+
+        -- if dm and require_model(dm,dw,LocalPlayer():GetPos():Distance(rag:GetPos())) then
+        --     print("DM",dm)
+        --     rag:SetModel(dm)
+
+        --     hook.Add("Tick",rag,function()
+        --         print("CIK")
+        --         rag:InvalidateBoneCache()
+        --         rag:SetModel(dm)    
+        --         rag:InvalidateBoneCache() 
+        --     end)
+
+        --     -- local t1 = SysTime()
+        --     -- rag.RenderOverride = function(rag, flags)
+                
+        --     --     if SysTime()-t1 < 0.2 then
+        --     --         rag:InvalidateBoneCache()
+        --     --         rag:SetModel(dm)    
+        --     --         rag:InvalidateBoneCache()
+        --     --     end
+        --     --     rag:DrawModel()
+
+        --     -- end
+        -- end
+
+
         local counter = 0
 
         for k, mdl in pairs(SS_CreatedAccessories[ply] or {}) do
