@@ -1,9 +1,6 @@
 ﻿local PANEL = {}
 local matUp = Material("icon16/arrow_up.png")
-
 --NOMINIFY
-
-
 local maxfilesize = 60
 
 function PANEL:Init()
@@ -120,7 +117,6 @@ function PANEL:Init()
         self:LoadedURL()
     end
 
-
     browser.Think = function(self)
         if not self._nextUrlPoll or self._nextUrlPoll < RealTime() then
             self:RunJavascript('console.log("HREF:"+window.location.href);')
@@ -166,7 +162,6 @@ function PANEL:Init()
     b.Paint = function(b, w, h)
         if self.addonsize then
             if b:IsEnabled() then
-                
                 if self.addonsize < maxfilesize then
                     local x, y = b:CursorPos()
 
@@ -195,10 +190,10 @@ function PANEL:Init()
 
     b.DoClick = function(b, mc)
         -- if self.addonsize and (self.addonsize < maxfilesize) then
-            self:GetWSID(tostring(self.chosen_id))
-            self:Close()
-        -- end
+        self:GetWSID(tostring(self.chosen_id))
+        self:Close()
     end
+    -- end
 end
 
 function PANEL:LoadedURL()

@@ -16,12 +16,13 @@ if not STEAMWS_DOWNLOAD_STARTED then
     RefreshWorkshop()
 end
 
-
 local AvailableMdls = {}
+
 local function IsModelAvailable(mdl)
-    if AvailableMdls[mdl]==nil then
-        AvailableMdls[mdl] = file.Exists(mdl,'GAME')
+    if AvailableMdls[mdl] == nil then
+        AvailableMdls[mdl] = file.Exists(mdl, 'GAME')
     end
+
     return AvailableMdls[mdl]
 end
 
@@ -103,15 +104,12 @@ function require_workshop(id, range)
     return STEAMWS_MOUNTED[id] and true or false
 end
 
-
-
-
-
 function SafeMountGMA(wsid, filename)
-
     -- clear this cache
-    for k,v in pairs(AvailableMdls) do
-        if v==false then AvailableMdls[k]=nil end
+    for k, v in pairs(AvailableMdls) do
+        if v == false then
+            AvailableMdls[k] = nil
+        end
     end
 
     -- print("safemount")
@@ -163,29 +161,21 @@ end
 --     -- print(2)
 --     if util.IsValidModel(mdl) then return false end
 --     -- print(3)
-
 --     return not STEAMWS_MOUNTED[STEAMWS_REGISTRY[mdl]]
 -- end
-
 -- utilBasedIsValidModel = utilBasedIsValidModel or util.IsValidModel
 -- local validmodels = {}
-
 -- local function isvalidmodel(mdl)
 --     local r = validmodels[mdl]
-
 --     if not r then
 --         r = utilBasedIsValidModel(mdl)
-
 --         if r then
 --             validmodels[mdl] = true
 --         end
 --     end
-
 --     return r
 -- end
-
 -- util.IsValidModel = isvalidmodel
-
 local Entity = FindMetaTable("Entity")
 local getmodel = Entity.GetModel
 
@@ -203,8 +193,8 @@ function Entity:GetActualModel()
     local setmodel = getmodel(self)
     -- local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
     -- return correct and setmodel or "models/error.mdl"
-
     -- util.IsValidModel
+
     return IsModelAvailable(setmodel) and setmodel or "models/error.mdl"
 end
 
