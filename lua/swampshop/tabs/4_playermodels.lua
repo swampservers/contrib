@@ -481,7 +481,9 @@ SS_PlayermodelItem({
 
         return "Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
-    GetModel = function(self) -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+    GetModel = function(self) 
+        
+        -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
 --     -- if self.specs.wsid or self.cfg.wsid then
 --     --     -- so the callback when downloaded makes the model refresh
 --     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
@@ -492,7 +494,8 @@ SS_PlayermodelItem({
 --     -- end
 --     return 
 -- end
-return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" end,
+        return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" 
+    end,
     GetWorkshop = function(self) return self.specs and (self.specs.wsid or self.cfg.wsid) end,
     invcategory = "Playermodels",
     playermodel = true,
@@ -503,6 +506,10 @@ return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/l
             else
                 ply:SetModel(self.specs.model)
             end
+        end
+
+        if self.cfg.bodygroups then
+            ply:SetBodyGroups(self.cfg.bodygroups)
         end
     end,
     SetupCustomizer = function(self, cust)
@@ -521,6 +528,18 @@ return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/l
             self.cfg.wsid = tonumber(dirty.wsid) and tostring(tonumber(dirty.wsid)) or nil
             self.cfg.model = isstring(dirty.model) and dirty.model:sub(1, 200):Trim() or nil
             self.cfg.finalize = dirty.finalize and true or nil
+        end
+
+        if dirty.bodygroups then
+            local chars = {string.byte(dirty.bodygroups,1,math.min(dirty.bodygroups:len(),10))}
+            local ok = true
+            -- ensure all chars numeric - tonumber() wont work because of leading zeroes
+            for i,v in ipairs(chars) do 
+                if v<48 or v>57 then ok=false end
+            end
+            if ok then
+                self.cfg.bodygroups = chars
+            end
         end
     end,
     SellValue = function(self) return 25000 end
