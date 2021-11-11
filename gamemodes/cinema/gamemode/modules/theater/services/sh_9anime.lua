@@ -183,6 +183,7 @@ if CLIENT then
                                             vpanel:Remove()
                                             timer.Remove("9AnimeViewerTimer")
                                         end
+
                                         if vpanel.phase == 0 then
                                             vpanel:RunJavascript("x=document.getElementsByClassName('tabs servers notab');if(x)x=x[0].children;for(i=x.length-1;i>=0;i--)if(x[i].innerText=='MyCloud'||x[i].innerText=='Vidstream')x[i].click();")
                                             vpanel:RunJavascript("x=document.getElementsByClassName('play')[0];if(x){x.dispatchEvent(new Event('mousedown'));x.click();}")
