@@ -48,7 +48,7 @@ SS_Item({
             p:SetValue(self.cfg.imgur)
 
             p.OnValueChanged = function(pnl, imgur)
-                self.item.cfg.imgur = imgur
+                self.cfg.imgur = imgur
                 cust:UpdateCfg()
             end
         end)
@@ -245,7 +245,7 @@ SS_BoneModItem({
     class = "jellifier",
     price = 5000000,
     name = 'Jellifier',
-    description = "expensive medical treatments which breaks down your bone structure (WIP)",
+    description = "expensive medical treatments which breaks down your bone structure",
     model = 'models/gibs/hgibs_spine.mdl',
     material = 'models/debug/debugwhite',
     invcategory = "Mods",
@@ -377,15 +377,10 @@ for i = 1, 5 do
         end,
         description = "A different playermodel will be here every day!",
         GetModel = function(self)
-            local m = GetG("ModelsOfTheDay")[mi]
-
-            if m then
-                register_workshop_model(m[2], m[1])
-
-                return m[2]
-            end
-
-            return "models/player/skeleton.mdl"
+            return (GetG("ModelsOfTheDay")[mi] or {})[2] or "models/player/skeleton.mdl"
+        end,
+        GetWorkshop = function(self)
+            return (GetG("ModelsOfTheDay")[mi] or {})[1]
         end,
         OnBuy = function(self, ply)
             local m = GetG("ModelsOfTheDay")[mi]
@@ -489,20 +484,23 @@ SS_PlayermodelItem({
         return "(WIP) Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
     GetModel = function(self)
-        if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
-            if self.specs.wsid or self.cfg.wsid then
-                -- so the callback when downloaded makes the model refresh
-                register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
-                -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
-                -- if self.Owner == LocalPlayer() then
-                --     require_workshop(self.specs.wsid or self.cfg.wsid )
-                -- end
-            end
+        -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+        --     -- if self.specs.wsid or self.cfg.wsid then
+        --     --     -- so the callback when downloaded makes the model refresh
+        --     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
+        --     --     -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
+        --     --     -- if self.Owner == LocalPlayer() then
+        --     --     --     require_workshop(self.specs.wsid or self.cfg.wsid )
+        --     --     -- end
+        --     -- end
 
-            return self.specs.model or self.cfg.model
-        end
+        --     return 
+        -- end
 
-        return "models/maxofs2d/logo_gmod_b.mdl"
+        return self.specs and (self.specs.model or self.cfg.model) or  "models/maxofs2d/logo_gmod_b.mdl"
+    end,
+    GetWorkshop = function(self)
+        return self.specs and (self.specs.wsid or self.cfg.wsid)
     end,
     invcategory = "Playermodels",
     playermodel = true,
@@ -547,6 +545,8 @@ function HeyNozFillThisIn(self, cust)
     end
 
     local wsidentry, modelentry
+    local _self = self
+    _self.wsid = nil
 
     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
         p:SetText("Select Model (WIP)")
@@ -596,56 +596,61 @@ function HeyNozFillThisIn(self, cust)
         end)
     end)
 
-    -- vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
-    --     vgui("DButton", function(p)
-    --         p:Dock(TOP)
-    --         p:SetText("#open_workshop")
-    --         p:SetImage('icon16/folder_user.png')
-    --         p:DockMargin(0, 4, 1, 8)
+    vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+        vgui("DButton", function(p)
+            p:Dock(TOP)
+            p:SetText("#open_workshop")
+            p:SetImage('icon16/folder_user.png')
+            p:DockMargin(0, 4, 1, 8)
 
-    --         p.DoClick = function()
-    --             outfitter.GUIWantChangeModel(nil, false)
-    --         end
-    --     end)
+            p.DoClick = function()
+                local wb = vgui.Create('workshopbrowser')
+                wb:Show()
 
-    --     vgui("DListView", function(p)
-    --         p:SetMultiSelect(false)
-    --         p:AddColumn("#gameui_playermodel")
-    --         p:DockMargin(0, 4, 0, 0)
-    --         p:Dock(TOP)
-    --         p:SetTall(256)
+                function wb:GetWSID(data)
+                    if data then
+                        _self.wsid = tostring(data)
+                        require_workshop(data)
+                    end
+                end
+            end
+        end)
 
-    --         p.OnRowSelected = function(pnl, n, itm)
-    --             local mdllist = outfitter.UIGetMDLList()
+        vgui("DListView", function(p)
+            p:SetMultiSelect(false)
+            p:AddColumn("#gameui_playermodel")
+            p:DockMargin(0, 4, 0, 0)
+            p:Dock(TOP)
+            p:SetTall(256)
 
-    --             if mdllist then
-    --                 self.cfg.model = mdllist[n].Name
-    --                 modelentry:SetValue(self.cfg.model)
-    --                 self.cfg.wsid = outfitter.UIGetWSID()
-    --                 wsidentry:SetValue(self.cfg.wsid)
-    --             end
-    --         end
+            p.OnRowSelected = function(pnl, n, itm)
+                local models = require_playermodel_list(_self.wsid)
+                if models then
 
-    --         local old = nil
+                        self.cfg.model = models[n]
+                        modelentry:SetValue(self.cfg.model)
+                        self.cfg.wsid = _self.wsid
+                        wsidentry:SetValue(self.cfg.wsid)
+                  
+                end
+            end
 
-    --         p.PaintOver = function(b, w, h)
-    --             old = old or outfitter.UIGetMDLList()
+            local old = nil
 
-    --             if old ~= outfitter.UIGetMDLList() and outfitter.UIGetMDLList() ~= nil then
-    --                 old = outfitter.UIGetMDLList()
-    --                 p:Clear()
+            p.PaintOver = function(b, w, h)
+                local models = require_playermodel_list(_self.wsid)
+                if models and old ~= _self.wsid then
+                    old = _self.wsid
+                    p:Clear()
 
-    --                 for k, v in pairs(old) do
-    --                     p:AddLine(v.Name)
-    --                 end
-    --             end
-    --         end
-    --     end)
-    -- end)
+                    for k, v in pairs(models) do
+                        p:AddLine(v)
+                    end
+                end
+            end
+        end)
+    end)
 end
-
-
-
 
 SS_PlayermodelItem({
     class = 'ponymodel',

@@ -125,7 +125,7 @@ function SETTINGS:Create()
         self.TheaterList:AddItem(HD.Wrap)
     end
 
-    local function addDropdown(title, convar, tooltip, selections, labelsize, comboboxsize)
+    local function addDropdown(title, convar, tooltip, selections, labelsize, comboboxsize, basedvalue)
         local Wrap = vgui.Create("Panel", self)
         Wrap:DockPadding(16, 6, 16, 4)
         Wrap:SetTooltip(tooltip)
@@ -145,11 +145,10 @@ function SETTINGS:Create()
             DComboBox:AddChoice(v)
         end
 
-        -- DComboBox:AddChoice( "Extreme (LOW FPS)" )
-        DComboBox:ChooseOptionID(math.Clamp(GetConVar(convar):GetInt() + 1, 1, #selections))
+        DComboBox:ChooseOptionID(math.Clamp(GetConVar(convar):GetInt() + 1 - (basedvalue or 0), 1, #selections))
 
         DComboBox.OnSelect = function(self, index, value)
-            RunConsoleCommand(convar, tostring(index - 1))
+            RunConsoleCommand(convar, tostring( (index - 1) + (basedvalue or 0)))
         end
 
         self.TheaterList:AddItem(Wrap)
@@ -169,7 +168,13 @@ function SETTINGS:Create()
 
     addDropdown("Video quality", "cinema_quality", "Video playback quality; affects FPS.\nSettings are 256p/512p/1024p", {"Low (best FPS)", "Medium", "High"})
 
+    addDropdown("Playermodels", "swamp_workshop", "When to download playermodels?", {"Don't Download", "Small (<10mb) only", "Medium (<30mb) only", "All (<60mb) - Short range", "All (<60mb) - Long range"}, 100, 100, -2)
+
+
     addCheckbox('Dynamic theater lighting', "cinema_lightfx", 'Exclusive lighting effects (reduces fps)')
+    
+
+
     addCheckbox('Turbo button (increase FPS)', "swamp_fps_boost", "Put your gaymergear PC into overdrive")
     addLabel('Display')
     addCheckbox('Show help menu', "swamp_help", 'Show controls on the top of your screen')
@@ -181,6 +186,11 @@ function SETTINGS:Create()
     -- addLabel('Adult content (18+)')
     addCheckbox('Adult videos & sprays (F6)', "swamp_mature_content", 'Show potentially mature videos & sprays')
     -- addCheckbox('Chatbox images (toggle: F7)', "swamp_mature_chatbox", 'Show potentially mature chatbox images')
+
+
+
+
+    
     local LanguageSelect = self:NewSetting("DButton", "Chat Command List")
 
     --LanguageSelect:AlignTop( checkboxy + (checkboxs*checkboxn) - 0 )

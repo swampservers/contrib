@@ -63,37 +63,38 @@ if SERVER then
         self:StripWeapon("weapon_kekidol")
         self:TrueSetPos(pos)
     end
-end
-
-PLAYER.TrueSetModel = PLAYER.TrueSetModel or ENTITY.SetModel
-
-if SERVER then
-    function PLAYER:SetModel(mdl)
-        self:TrueSetModel(mdl)
-        hook.Run("PlayerModelChanged", self, mdl)
-
-        self:SetNWString("DisplayModel","")
-    end
-
-    function PLAYER:SetDisplayModel(mdl, wsid)
-
-        print("MAKE SURE YOU MOVE THIS")
-        --what to display if unloaded or whatever
-        self:SetModel(mdl)
-        self:SetModel("models/player/skeleton.mdl")
-        self:SetNWString("DisplayModel",mdl)
-        self:SetNWString("DisplayWSID",tostring(wsid))
-        -- self:SetModel(mdl)
-    end
 else
-    hook.Add("PrePlayerDraw", "PlayerModelChangeDetector", function(ply)
+    hook.Add("PrePlayerDraw", "PlayerModelWSApplierChangeDetector", function(ply)
+
         local mdl = ply:GetModel()
+        local dmdl,dwsid = ply:GetDisplayModel()
+
+        if dmdl and (dmdl !=mdl or ply.ForceFixPlayermodel) then
+            if require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos())) then
+                ply.ForceFixPlayermodel = nil
+                ply:SetModel(dmdl)
+                mdl = dmdl
+                -- IT MAKES THE MODEL STAY
+                ply:SetPredictable(ply==LocalPlayer())
+            end
+        end
+        
 
         if mdl ~= ply.PlayerModelChangedLastModel then
             ply.PlayerModelChangedLastModel = mdl
             hook.Run("PlayerModelChanged", ply, mdl)
         end
     end)
+    hook.Add("NotifyShouldTransmit","PlayerModelReset",function(ply)
+        -- TODO: do it like materialfix.lua
+        if ply:IsPlayer() then ply.ForceFixPlayermodel=true timer.Simple(0.5,function()
+            if IsValid(ply) then ply.ForceFixPlayermodel=true end
+        end) end
+        
+    end)
+
+
+    
 end
 
 function PLAYER:GetDisplayModel()

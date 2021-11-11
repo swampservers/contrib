@@ -356,6 +356,9 @@ function SS_AttachAccessory(item, ent, recycle_mdl, forceload)
     --this likes to change itself
     mdl:SetLocalPos(translate)
     mdl:SetLocalAngles(rotate)
+    mdl.follow = bone_id
+    mdl.translate = translate
+    mdl.rotate = rotate
     -- if item.cfg.imgur then
     --     local imat = ImgurMaterial({
     --         id = item.cfg.imgur.url,
@@ -421,9 +424,103 @@ hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
     end
 end)
 
+local enforce_models={}
+
+
+
+-- Setting display model has to be done in this hook or it breaks!
+hook.Add("NetworkEntityCreated","ragdoll1",function(rag)
+	if rag:GetClass() == "class C_HL2MPRagdoll" then
+		local ply = rag:GetRagdollOwner()
+		if ply:IsValid() then
+			
+            local mdl,dw = ply:GetDisplayModel()
+            if not mdl then return end
+            
+            -- local mdlr = rag:GetModel()
+            -- local mdlp = pl:GetModel()
+            
+            -- local hasenforced   = mdlr==mdl
+            -- local isplyenforced = mdlp==mdl
+            -- dbgn(2,"DeathRagdollEnforce",pl,rag,mdl,hasenforced and ("ENFORCED RAG: "..tostring(mdlr)) or "" ,isplyenforced and "" or ("NOT ENFORCED PLY: "..tostring(mdlp)) )
+            
+            -- rag.enforce_model = mdl
+            -- enforce_models[rag] = 8
+            
+            rag:InvalidateBoneCache()
+            rag:SetModel(mdl)
+            rag:InvalidateBoneCache()
+            
+            rag.RenderOverride=function(rag)
+                -- if rag.enforce_model then
+                    rag:SetModel(mdl)
+                    -- if enforce_models[rag] then
+                    --     rag:InvalidateBoneCache()
+                    -- end
+                -- end
+                rag:DrawModel()
+            end
+		end
+	end
+end)
+
+
+-- hook.Add("Think","ragdoll2",function()
+    -- for rag,count in pairs(enforce_models) do
+    --     if rag:IsValid() and count>0 then
+            
+    --         enforce_models[rag] = count - 1
+        
+    --         local mdl = rag.enforce_model
+    --         if mdl then
+    --             --TODO: not having this causes crashes?
+    --             rag:InvalidateBoneCache()
+                
+    --             rag:SetModel(mdl)
+    --             rag:InvalidateBoneCache()
+
+                
+    --         end
+            
+    --     else
+    --         enforce_models[rag] = nil
+    --     end
+    -- end
+-- end)
+
+
 -- It seems like the ragdoll is created before the cleanup, so this is ok
 hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, rag)
     if IsValid(ply) and ply:IsPlayer() then
+
+
+        -- local dm,dw = ply:GetDisplayModel()
+
+        -- if dm and require_model(dm,dw,LocalPlayer():GetPos():Distance(rag:GetPos())) then
+        --     print("DM",dm)
+        --     rag:SetModel(dm)
+
+        --     hook.Add("Tick",rag,function()
+        --         print("CIK")
+        --         rag:InvalidateBoneCache()
+        --         rag:SetModel(dm)    
+        --         rag:InvalidateBoneCache() 
+        --     end)
+
+        --     -- local t1 = SysTime()
+        --     -- rag.RenderOverride = function(rag, flags)
+                
+        --     --     if SysTime()-t1 < 0.2 then
+        --     --         rag:InvalidateBoneCache()
+        --     --         rag:SetModel(dm)    
+        --     --         rag:InvalidateBoneCache()
+        --     --     end
+        --     --     rag:DrawModel()
+
+        --     -- end
+        -- end
+
+
         local counter = 0
 
         for k, mdl in pairs(SS_CreatedAccessories[ply] or {}) do
@@ -470,13 +567,28 @@ function Entity:SS_AttachAccessories(items, forceload)
     -- they sometimes go NULL when in/out of vehicle
     local iv = self:IsPlayer() and self:InVehicle()
     local current = SS_CreatedAccessories[self]
+
     -- slow, havent found better way
-    -- if CurTime() > (self.SS_DetachCheckTime or 0) then
-    --     print("CHE")
-    --     if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
-    --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2)
+    if CurTime() > (self.SS_DetachCheckTime or 0) then
+        -- print("CHE")
+        -- if current and IsValid(current[1]) and not IsValid(current[1]:GetParent()) then self.SS_AttachedModel=nil print("F") end
+        self.SS_AttachedModel = nil
+        self.SS_DetachCheckTime = CurTime() + math.Rand(0.5, 1)
+    end
+
+    if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end -- TODO: add :Reattach() method on mdls to do this, and handle eye attachment -- if CurTime() > (self.SS_DetachCheckTime or 0) then --     -- print("CHE") --     for i,v in ipairs(SS_CreatedAccessories[self] or {}) do --         v:FollowBone(self, v.follow or 0) --         v:SetLocalPos(v.translate) --         v:SetLocalAngles(v.rotate) --     end --     self.SS_DetachCheckTime = CurTime() + math.Rand(1,2) -- end
+    -- TODO improve this, we probably should just reattach every so often
+    -- if not self.DELAYSECONDATTACH then
+    --     timer.Simple(0.5, function()
+    --         if IsValid(self) and self.SS_ShownItems then
+    --             self.SS_AttachedModel = nil
+    --             self.DELAYSECONDATTACH = true
+    --             self:SS_AttachAccessories(self.SS_ShownItems)
+    --             self.DELAYSECONDATTACH = false
+    --         end
+    --     end)
     -- end
-    if self.SS_AttachedModel == m and self.SS_AttachedInVehicle == iv and self.SS_AttachedItems == items then return end
+    -- if LocalPlayer()==self then print("H)") end
     -- if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
     self.SS_AttachedInVehicle = iv

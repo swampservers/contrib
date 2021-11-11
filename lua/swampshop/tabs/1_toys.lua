@@ -220,7 +220,7 @@ SS_WeaponProduct({
 SS_WeaponProduct({
     name = 'Police Taser',
     description = "An electroshock weapon capable of paralyzing other players for up to 20 seconds.",
-    price = 4000,
+    price = 20000,
     model = 'models/weapons/cg_ocrp2/w_taser.mdl',
     class = 'weapon_taser'
 })

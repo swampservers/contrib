@@ -31,3 +31,14 @@ function SWEP:SecondaryAttack()
     })
     -- shared = true
 end
+
+function SWEP:Reload()
+    if CLIENT then return end
+    if (self.Owner.NextGamerWord or 0) > CurTime() then return end
+    self.Owner.NextGamerWord = CurTime() + 60
+
+    self:ExtEmitSound("keem/fuckinggamer.ogg", {
+        speech = 0.7,
+        pitch = 190,
+    })
+end

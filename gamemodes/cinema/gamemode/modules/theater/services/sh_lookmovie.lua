@@ -32,7 +32,6 @@ if CLIENT then
         vpanel.response = ""
         local info = {}
         local isTV = string.match(key, "shows/view/(.+)") or string.match(key, "/s/./(.+)/s#")
-        local itemid = string.match(key, "/view/(.+)") or string.match(key, "/./(.+)/s")
 
         local function onFetchReceive(body)
             local t = util.JSONToTable(body)
@@ -102,7 +101,7 @@ if CLIENT then
                 end
 
                 if (vpanel.response == "") then
-                    vpanel:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET','https://lookmovie.io/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id_" .. (isTV and "episode" or "movie") .. "=" .. (isTV and string.match(key, "#.+%-(%d+)$") .. "'" or "'+stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
+                    vpanel:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id_" .. (isTV and "episode" or "movie") .. "=" .. (isTV and string.match(key, "#.+%-(%d+)$") .. "'" or "'+stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
                 end
             end
         end)
@@ -143,7 +142,7 @@ if CLIENT then
             end
         end
 
-        vpanel:OpenURL(isTV and "https://lookmovie.io/shows/view/" .. itemid or "https://lookmovie.io/movies/view/" .. itemid)
+        vpanel:OpenURL(key)
     end
 
     function SERVICE:LoadVideo(Video, panel)

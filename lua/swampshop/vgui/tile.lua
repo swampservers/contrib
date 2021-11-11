@@ -328,7 +328,7 @@ function PANEL:Paint(w, h)
     local mdl = self.iop:GetModel()
 
     -- todo: show workshop preview panel
-    if is_model_undownloaded(mdl) then
+    if not require_model(mdl, self.iop:GetWorkshop(), 2000) then
         if SS_SelectedTile == self then
             draw.SimpleText("Downloading...", "DermaDefaultBold", w / 2, h / 2, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         else
