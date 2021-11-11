@@ -475,11 +475,14 @@ SS_PlayermodelItem({
             end
 
             if self.cfg.model and self.cfg.wsid then return "Finalize this model to wear it.\n(" .. self.cfg.wsid .. "/" .. self.cfg.model .. ")" end
+
+            return "Customize this item to set your playermodel."
         end
 
-        return "(WIP) Use any playermodel from workshop! Once the model is finalized, it can't be changed."
+        return "Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
-    GetModel = function(self) --     -- if self.specs.wsid or self.cfg.wsid then
+    GetModel = function(self) -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+--     -- if self.specs.wsid or self.cfg.wsid then
 --     --     -- so the callback when downloaded makes the model refresh
 --     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
 --     --     -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
@@ -489,7 +492,7 @@ SS_PlayermodelItem({
 --     -- end
 --     return 
 -- end
-return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" end, -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" end,
     GetWorkshop = function(self) return self.specs and (self.specs.wsid or self.cfg.wsid) end,
     invcategory = "Playermodels",
     playermodel = true,
@@ -566,25 +569,6 @@ function HeyNozFillThisIn(self, cust)
         end)
     end)
 
-    vgui("DSSCustomizerSection", cust.RightColumn, function(p)
-        p:SetText("Finalize?")
-
-        vgui("DPanel", function(p)
-            p:SetTall(16)
-            p:Dock(TOP)
-            p.Paint = noop
-
-            vgui("DSSCustomizerCheckBox", function(p)
-                p:SetText("Make sure the preview looks right!")
-
-                p.OnValueChanged = function(pnl, val)
-                    self.cfg.finalize = val
-                    cust:UpdateCfg()
-                end
-            end)
-        end)
-    end)
-
     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
         vgui("DButton", function(p)
             p:Dock(TOP)
@@ -598,6 +582,10 @@ function HeyNozFillThisIn(self, cust)
 
                 function wb:GetWSID(data)
                     _self.wsid = data
+                    if IsValid(wsidentry) then
+                        wsidentry:SetValue(data)
+                        modelentry:SetValue("")
+                    end
                 end
             end
         end)
@@ -611,15 +599,15 @@ function HeyNozFillThisIn(self, cust)
 
             p.OnRowSelected = function(pnl, n, itm)
                 if _self.wsid then
-                    local models = require_playermodel_list(_self.wsid)
+                local models = require_playermodel_list(_self.wsid)
 
-                    if models then
-                        self.cfg.model = models[n]
-                        modelentry:SetValue(self.cfg.model)
-                        self.cfg.wsid = _self.wsid
-                        wsidentry:SetValue(self.cfg.wsid)
-                    end
+                if models then
+                    self.cfg.model = models[n]
+                    modelentry:SetValue(self.cfg.model)
+                    self.cfg.wsid = _self.wsid
+                    wsidentry:SetValue(self.cfg.wsid)
                 end
+            end
             end
 
             local old = nil
@@ -638,6 +626,25 @@ function HeyNozFillThisIn(self, cust)
                     end
                 end
             end
+        end)
+    end)
+
+    vgui("DSSCustomizerSection", cust.RightColumn, function(p)
+        p:SetText("Finalize?")
+
+        vgui("DPanel", function(p)
+            p:SetTall(32)
+            p:Dock(TOP)
+            p.Paint = noop
+
+            vgui("DSSCustomizerCheckBox", function(p)
+                p:SetText("Make sure the preview looks right!")
+
+                p.OnValueChanged = function(pnl, val)
+                    self.cfg.finalize = val
+                    cust:UpdateCfg()
+                end
+            end)
         end)
     end)
 end

@@ -35,6 +35,21 @@ function require_model(mdl, wsid, range)
     return require_workshop(wsid, range)
 end
 
+-- return the size in mb or nil if unknown
+function require_workshop_info(id)
+    if STEAMWS_FILEINFO[id] then
+        return STEAMWS_FILEINFO[id] --.size  / 1000000
+    elseif not STEAMWS_FILEINFO_STARTED[id] then
+        STEAMWS_FILEINFO_STARTED[id] = true
+
+        local _id_ = id
+        
+        steamworks.FileInfo(id, function(info)
+            STEAMWS_FILEINFO[_id_] = info
+        end)
+    end
+end
+
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
 --or: models/props_phx/gears/spur24.mdl
 function require_workshop(id, range)
@@ -42,64 +57,61 @@ function require_workshop(id, range)
     -- 
     assert(isstring(id))
 
-    if STEAMWS_FILEINFO[id] then
-        if range then
+    local shouldload = true
+
+    if range then
+        local info = require_workshop_info(id)
+        if info then
             local setting = loadrange:GetInt()
-            local mb = STEAMWS_FILEINFO[id].size / 1000000
-            -- print(range, mb, mb*25, setting)
-            if setting == -3 then return end
-            if setting == -2 and mb * 100 > 1000 - range then return end
-            if setting == -1 and mb * 40 > 1200 - range then return end
-            if setting == 0 and mb * 25 > 1500 - range then return end
-            if setting == 1 and mb * 50 > 3000 - range then return end
-        end
-
-        if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT == 0 then
-            STEAMWS_DOWNLOAD_STARTED[id] = true
-            print("\n\n***DOWNLOADING " .. id .. " OF SIZE " .. STEAMWS_FILEINFO[id].size .. "***\n\n")
-            local _id_ = id
-            STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
-
-            steamworks.DownloadUGC(id, function(name, file)
-                print("\n\n***CALLBACK " .. id .. "***\n\n")
-
-                timer.Simple(0.1, function()
-                    STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT - 1
-                end)
-
-                -- NOTE:
-                -- Any error models currently loaded that the mounted addon provides will be reloaded.
-                -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
-                -- That means that this cannot be used to fix missing map materials, as the map materials are loaded before you are able to call this.
-                if name then
-                    -- print("MOUNTAVBE", _id_, name) 
-                    -- game.MountGMA(name)
-                    local succ, files = SafeMountGMA(_id_, name)
-
-                    if succ then
-                        STEAMWS_MOUNTED[_id_] = files
-                    else
-                        STEAMWS_MOUNTED[_id_] = {}
-                    end
-                else
-                    print("Workshop download failed for " .. _id_)
-
-                    timer.Simple(60, function()
-                        print("Retrying for " .. _id_)
-                        STEAMWS_DOWNLOAD_STARTED[_id_] = nil
-                    end)
-                end
-            end)
-        end
-    else
-        if not STEAMWS_FILEINFO_STARTED[id] then
-            local _id_ = id
-
-            steamworks.FileInfo(id, function(info)
-                STEAMWS_FILEINFO[_id_] = info
-            end)
+            local mb = info.size / 1000000
+            if setting == -3 then shouldload=false end
+            if setting == -2 and mb * 100 > 1000 - range then shouldload=false end
+            if setting == -1 and mb * 40 > 1200 - range then shouldload=false end
+            if setting == 0 and mb * 25 > 1500 - range then shouldload=false end
+            if setting == 1 and mb * 50 > 3000 - range then shouldload=false end
+        else
+            shouldload=false
         end
     end
+
+    if shouldload and not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT == 0 then
+        STEAMWS_DOWNLOAD_STARTED[id] = true
+        print("\n\n***DOWNLOADING " .. id .. " OF SIZE " .. STEAMWS_FILEINFO[id].size .. "***\n\n")
+        local _id_ = id
+        STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
+
+        steamworks.DownloadUGC(id, function(name, file)
+            print("\n\n***CALLBACK " .. id .. "***\n\n")
+
+            timer.Simple(0.1, function()
+                STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT - 1
+            end)
+
+            -- NOTE:
+            -- Any error models currently loaded that the mounted addon provides will be reloaded.
+            -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
+            -- That means that this cannot be used to fix missing map materials, as the map materials are loaded before you are able to call this.
+            if name then
+                -- print("MOUNTAVBE", _id_, name) 
+                -- game.MountGMA(name)
+                local succ, files = SafeMountGMA(_id_, name)
+
+                if succ then
+                    STEAMWS_MOUNTED[_id_] = files
+                else
+                    STEAMWS_MOUNTED[_id_] = {}
+                end
+            else
+                print("Workshop download failed for " .. _id_)
+
+                timer.Simple(60, function()
+                    print("Retrying for " .. _id_)
+                    STEAMWS_DOWNLOAD_STARTED[_id_] = nil
+                end)
+            end
+        end)
+    end
+
 
     return STEAMWS_MOUNTED[id] and true or false
 end

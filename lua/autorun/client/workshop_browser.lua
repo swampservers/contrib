@@ -1,6 +1,9 @@
 ﻿local PANEL = {}
 local matUp = Material("icon16/arrow_up.png")
+
 --NOMINIFY
+
+
 local maxfilesize = 60
 
 function PANEL:Init()
@@ -117,6 +120,7 @@ function PANEL:Init()
         self:LoadedURL()
     end
 
+
     browser.Think = function(self)
         if not self._nextUrlPoll or self._nextUrlPoll < RealTime() then
             self:RunJavascript('console.log("HREF:"+window.location.href);')
@@ -153,54 +157,80 @@ function PANEL:Init()
     b:SetText("Select Character")
     b:SizeToContents()
     b:SetWidth(math.min(b:GetSize(), 256) + 32)
-    b:SetTall(28)
+    b:SetTall(48)
     b:SetZPos(100)
     b:SetEnabled(false)
     b:NoClipping(false)
     b:SetFont("DermaLarge")
 
     b.Paint = function(b, w, h)
-        if self.addonsize then
-            if b:IsEnabled() then
-                if self.addonsize < maxfilesize then
-                    local x, y = b:CursorPos()
+        if self.chosen_id then
+            local info = require_workshop_info( self.chosen_id)
 
-                    if (x >= 0 and y >= 0 and x <= b:GetWide() and y <= b:GetTall()) then
-                        b:SetColor(Color(200, 200, 200))
-                        surface.SetDrawColor(30, 100, 0, 100)
-                        surface.DrawRect(0, 0, w, h)
+            if info then
+                if info.size/1000000 > 60 then
+                    b:SetText("Addon is too big (>60mb)!")
+                    b:SetEnabled(false)
 
-                        return
-                    end
-
-                    b:SetColor(Color(255, 255, 255))
-                    surface.SetDrawColor(30, 255, 0, 75)
+                    surface.SetDrawColor(Color(255, 0,0))
                     surface.DrawRect(0, 0, w, h)
                 else
-                    b:SetColor(Color(255, 255, 255))
-                    surface.SetDrawColor(255, 30, 0, 75)
+                    b:SetText("Use this addon")
+                    b:SetEnabled(true)
+
+                    surface.SetDrawColor(b:IsHovered() and Color(60, 255, 60) or Color(0, 255, 0))
                     surface.DrawRect(0, 0, w, h)
                 end
+
+
+
+                return
             end
-        else
-            surface.SetDrawColor(Color(16, 16, 16))
-            surface.DrawRect(0, 0, w, h)
         end
+
+        b:SetColor(Color(255, 255, 255))
+        b:SetText("Select a playermodel...")
+        b:SetEnabled(false)
+
+        surface.SetDrawColor(Color(16, 16, 16))
+        surface.DrawRect(0, 0, w, h)
+
+
+        -- if self.addonsize then
+        --     if b:IsEnabled() then
+                
+        --         if self.addonsize < maxfilesize then
+
+
+        --             b:SetColor(Color(255, 255, 255))
+        --             surface.SetDrawColor(30, 255, 0, 75)
+        --             surface.DrawRect(0, 0, w, h)
+        --         else
+        --             b:SetColor(Color(255, 255, 255))
+        --             surface.SetDrawColor(255, 30, 0, 75)
+        --             surface.DrawRect(0, 0, w, h)
+        --         end
+        --     end
+        -- else
+        --     surface.SetDrawColor(Color(16, 16, 16))
+        --     surface.DrawRect(0, 0, w, h)
+        -- end
     end
 
     b.DoClick = function(b, mc)
         -- if self.addonsize and (self.addonsize < maxfilesize) then
-        self:GetWSID(tostring(self.chosen_id))
-        self:Close()
+        if self.chosen_id then    
+            self:GetWSID(tostring(self.chosen_id))
+            self:Close()
+        end
     end
-    -- end
 end
 
 function PANEL:LoadedURL()
     local url = self.entry:GetValue()
     local id = url:match('://steamcommunity.com/sharedfiles/filedetails/.*[%?%&]id=(%d+)') or url:match('://steamcommunity.com/workshop/filedetails/.*[%?%&]id=(%d+)')
-    self.chooseb:SetEnabled(id and true or false)
-    self.chosen_id = id and tonumber(id) or nil
+    -- self.chooseb:SetEnabled(id and true or false)
+    self.chosen_id = id
 end
 
 function PANEL:OpenURL(url)
