@@ -136,7 +136,7 @@ if CLIENT then
         end)
     end
 
-    cachedURL = cachedURL or {}
+    cachedURL = {}
 
     function SERVICE:LoadVideo(Video, panel)
         local url = "http://swamp.sv/s/cinema/file.html"
@@ -153,7 +153,7 @@ if CLIENT then
                     ["Cache-Control"] = "no-cache"
                 },
                 success = function(code, body, headers)
-                    if IsValid(panel) then
+                    if IsValid(panel) and LocalPlayer():GetTheater() then
                         if code == 200 then
                             local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), LocalPlayer():GetTheater():VideoCurrentTime(true))
                             panel:QueueJavascript(str)
@@ -161,6 +161,7 @@ if CLIENT then
                             EmbeddedCheckCodecs(function()
                                 if (vpanel) then
                                     vpanel:Remove()
+                                    timer.Remove("9AnimeViewerTimer")
                                 end
 
                                 vpanel = vgui.Create("DHTML")
@@ -169,7 +170,7 @@ if CLIENT then
                                 vpanel:SetMouseInputEnabled(false)
                                 vpanel.phase = 0
 
-                                timer.Simple(20, function()
+                                timer.Create("9AnimeViewerTimer", 20, 1, function()
                                     if IsValid(vpanel) then
                                         vpanel:Remove()
                                         print("Failed to find the video link")
@@ -178,6 +179,10 @@ if CLIENT then
 
                                 timer.Create("9animeupdate" .. tostring(math.random(1, 100000)), 1, 20, function()
                                     if IsValid(vpanel) then
+                                        if not LocalPlayer():GetTheater() then
+                                            vpanel:Remove()
+                                            timer.Remove("9AnimeViewerTimer")
+                                        end
                                         if vpanel.phase == 0 then
                                             vpanel:RunJavascript("x=document.getElementsByClassName('tabs servers notab');if(x)x=x[0].children;for(i=x.length-1;i>=0;i--)if(x[i].innerText=='MyCloud'||x[i].innerText=='Vidstream')x[i].click();")
                                             vpanel:RunJavascript("x=document.getElementsByClassName('play')[0];if(x){x.dispatchEvent(new Event('mousedown'));x.click();}")
@@ -206,7 +211,7 @@ if CLIENT then
                                                 self.phase = 1
                                             end
                                         elseif self.phase == 1 then
-                                            if string.StartWith(msg, "URL:") then
+                                            if string.StartWith(msg, "URL:") and LocalPlayer():GetTheater() then
                                                 cachedURL[key] = msg:sub(5, -1)
                                                 self:Remove()
                                                 local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), LocalPlayer():GetTheater():VideoCurrentTime(true))
