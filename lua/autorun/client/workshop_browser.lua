@@ -1,6 +1,11 @@
 ﻿local PANEL = {}
 local matUp = Material("icon16/arrow_up.png")
 
+--NOMINIFY
+
+
+local maxfilesize = 60
+
 function PANEL:Init()
     self:SetVisible(true)
     self:SetSize(ScrW() * 0.9, ScrH() * 0.8)
@@ -100,7 +105,7 @@ function PANEL:Init()
     browser:SetFocusTopLevel(true)
 
     browser:AddFunction("gmod", "wssubscribe", function()
-        self:GetWSID(self.chosen_id)
+        self:GetWSID(tostring(self.chosen_id))
         self:Close()
     end)
 
@@ -115,7 +120,6 @@ function PANEL:Init()
         self:LoadedURL()
     end
 
-    local maxfilesize = 100
 
     browser.Think = function(self)
         if not self._nextUrlPoll or self._nextUrlPoll < RealTime() then
@@ -161,24 +165,27 @@ function PANEL:Init()
 
     b.Paint = function(b, w, h)
         if self.addonsize then
-            if b:IsEnabled() and self.addonsize < 100 then
-                local x, y = b:CursorPos()
+            if b:IsEnabled() then
+                
+                if self.addonsize < maxfilesize then
+                    local x, y = b:CursorPos()
 
-                if (x >= 0 and y >= 0 and x <= b:GetWide() and y <= b:GetTall()) then
-                    b:SetColor(Color(200, 200, 200))
-                    surface.SetDrawColor(30, 100, 0, 100)
+                    if (x >= 0 and y >= 0 and x <= b:GetWide() and y <= b:GetTall()) then
+                        b:SetColor(Color(200, 200, 200))
+                        surface.SetDrawColor(30, 100, 0, 100)
+                        surface.DrawRect(0, 0, w, h)
+
+                        return
+                    end
+
+                    b:SetColor(Color(255, 255, 255))
+                    surface.SetDrawColor(30, 255, 0, 75)
                     surface.DrawRect(0, 0, w, h)
-
-                    return
+                else
+                    b:SetColor(Color(255, 255, 255))
+                    surface.SetDrawColor(255, 30, 0, 75)
+                    surface.DrawRect(0, 0, w, h)
                 end
-
-                b:SetColor(Color(255, 255, 255))
-                surface.SetDrawColor(30, 255, 0, 75)
-                surface.DrawRect(0, 0, w, h)
-            elseif b:IsEnabled() and self.addonsize > 100 then
-                b:SetColor(Color(255, 255, 255))
-                surface.SetDrawColor(255, 30, 0, 75)
-                surface.DrawRect(0, 0, w, h)
             end
         else
             surface.SetDrawColor(Color(16, 16, 16))
@@ -187,10 +194,10 @@ function PANEL:Init()
     end
 
     b.DoClick = function(b, mc)
-        if (self.addonsize < 100) then
-            self:GetWSID(self.chosen_id)
+        -- if self.addonsize and (self.addonsize < maxfilesize) then
+            self:GetWSID(tostring(self.chosen_id))
             self:Close()
-        end
+        -- end
     end
 end
 

@@ -64,9 +64,12 @@ if SERVER then
         self:TrueSetPos(pos)
     end
 else
-    hook.Add("PrePlayerDraw", "PlayerModelWSApplierChangeDetector", function(ply)
+
+    local function checkmodel(ply)
         local mdl = ply:GetModel()
         local dmdl, dwsid = ply:GetDisplayModel()
+
+        -- if ply==LocalPlayer() then print(mdl,dmdl) end
 
         if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
             if require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos())) then
@@ -82,24 +85,42 @@ else
             ply.PlayerModelChangedLastModel = mdl
             hook.Run("PlayerModelChanged", ply, mdl)
         end
-    end)
+    end
 
-    hook.Add("NotifyShouldTransmit", "PlayerModelReset", function(ply)
+    hook.Add("PrePlayerDraw", "PlayerModelWSApplierChangeDetector", checkmodel)
+    hook.Add("Tick", "LocalPlayerForceModel", function() if IsValid(LocalPlayer()) then checkmodel(LocalPlayer()) end end)
+
+
+    local function fixplayermodel(ply)
         -- TODO: do it like materialfix.lua
-        if ply:IsPlayer() then
-            ply.ForceFixPlayermodel = true
+        ply.ForceFixPlayermodel = true
 
-            timer.Simple(0.5, function()
+        for i=1,5 do
+            timer.Simple(0.1*i, function()
                 if IsValid(ply) then
                     ply.ForceFixPlayermodel = true
                 end
             end)
         end
+    end
+
+
+    hook.Add("NotifyShouldTransmit", "PlayerModelReset", function(ply)
+        if ply:IsPlayer() then fixplayermodel(ply) end
     end)
+
+    hook.Add("NetworkEntityCreated", "PlayerModelReset", function(ply)
+        if ply:IsPlayer() then fixplayermodel(ply) end
+    end)
+
+    hook.Add("EntityNetworkedVarChanged","PlayerModelReset",function(ply,name,old,new)
+        if ply:IsPlayer() and name=="DisplayModel" then fixplayermodel(ply) end
+    end)
+
 end
 
 function PLAYER:GetDisplayModel()
-    local mdl, wsid = self:GetNWString("DisplayModel", ""), tostring(self:GetNWString("DisplayWSID", ""))
+    local mdl, wsid = self:GetNW2String("DisplayModel", ""), tostring(self:GetNW2String("DisplayWSID", ""))
     if mdl ~= "" then return mdl, wsid end
 end
 

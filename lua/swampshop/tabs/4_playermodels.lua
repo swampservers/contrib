@@ -598,10 +598,7 @@ function HeyNozFillThisIn(self, cust)
                 wb:Show()
 
                 function wb:GetWSID(data)
-                    if data then
-                        _self.wsid = tostring(data)
-                        require_workshop(data)
-                    end
+                    _self.wsid = data
                 end
             end
         end)
@@ -614,6 +611,7 @@ function HeyNozFillThisIn(self, cust)
             p:SetTall(256)
 
             p.OnRowSelected = function(pnl, n, itm)
+                if _self.wsid then
                 local models = require_playermodel_list(_self.wsid)
 
                 if models then
@@ -623,18 +621,21 @@ function HeyNozFillThisIn(self, cust)
                     wsidentry:SetValue(self.cfg.wsid)
                 end
             end
+            end
 
             local old = nil
 
-            p.PaintOver = function(b, w, h)
-                local models = require_playermodel_list(_self.wsid)
+            p.Think = function(b, w, h)
+                if _self.wsid then
+                    local models = require_playermodel_list(_self.wsid)
 
-                if models and old ~= _self.wsid then
-                    old = _self.wsid
-                    p:Clear()
+                    if models and old ~= _self.wsid then
+                        old = _self.wsid
+                        p:Clear()
 
-                    for k, v in pairs(models) do
-                        p:AddLine(v)
+                        for k, v in pairs(models) do
+                            p:AddLine(v)
+                        end
                     end
                 end
             end
