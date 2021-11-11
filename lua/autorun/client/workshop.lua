@@ -328,7 +328,7 @@ function GetPlayermodels(files)
         local isplr, err, err2 = MDLIsPlayermodel(entry.Name)
 
         if isplr and OutfitterCheckModelSize(entry.Name) then
-            table.insert(entry.Name)
+            table.insert(mdl_list, entry.Name)
         end
     end
 
