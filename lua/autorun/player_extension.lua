@@ -71,6 +71,19 @@ if SERVER then
     function PLAYER:SetModel(mdl)
         self:TrueSetModel(mdl)
         hook.Run("PlayerModelChanged", self, mdl)
+
+        self:SetNWString("DisplayModel","")
+    end
+
+    function PLAYER:SetDisplayModel(mdl, wsid)
+
+        print("MAKE SURE YOU MOVE THIS")
+        --what to display if unloaded or whatever
+        self:SetModel(mdl)
+        self:SetModel("models/player/skeleton.mdl")
+        self:SetNWString("DisplayModel",mdl)
+        self:SetNWString("DisplayWSID",tostring(wsid))
+        -- self:SetModel(mdl)
     end
 else
     hook.Add("PrePlayerDraw", "PlayerModelChangeDetector", function(ply)
@@ -81,6 +94,11 @@ else
             hook.Run("PlayerModelChanged", ply, mdl)
         end
     end)
+end
+
+function PLAYER:GetDisplayModel()
+    local mdl, wsid = self:GetNWString("DisplayModel",""), tostring(self:GetNWString("DisplayWSID",""))
+    if mdl~="" then return mdl,wsid end
 end
 
 function PLAYER:SetDefaultJumpPower()

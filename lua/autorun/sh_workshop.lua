@@ -1,6 +1,10 @@
-﻿STEAMWS_DOWNLOAD_STARTED = STEAMWS_DOWNLOAD_STARTED or {}
-STEAMWS_MOUNTED = STEAMWS_MOUNTED or {}
-STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT or 0
+﻿function RefreshWorkshop()
+    STEAMWS_DOWNLOAD_STARTED = {}
+    STEAMWS_MOUNTED =  {}
+    STEAM_WORKSHOP_INFLIGHT = 0
+end
+
+if not STEAMWS_DOWNLOAD_STARTED then RefreshWorkshop() end
 
 function SafeMountGMA(wsid, filename)
     -- print("safemount")
@@ -36,6 +40,8 @@ end
 function require_workshop(id)
     -- print("ID", id, STEAMWS_DOWNLOAD_STARTED[id], STEAM_WORKSHOP_INFLIGHT)
     -- 
+    assert(isstring(id))
+
     if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT == 0 then
         STEAMWS_DOWNLOAD_STARTED[id] = true
         print("\n\n***DOWNLOADING " .. id .. "***\n\n")
@@ -119,8 +125,103 @@ local Entity = FindMetaTable("Entity")
 local getmodel = Entity.GetModel
 
 function Entity:GetActualModel()
+
+    -- if self:IsPlayer() then
+    
+    --     local dmdl, wsid = self:GetDisplayModel()
+
+    --     if dmdl then
+    --         register_workshop_model(dmdl, wsid)
+    --         -- print(require_workshop(wsid)) 
+    --         if require_workshop(wsid) then
+    --             if self:GetModel()~=dmdl then self:SetModel(dmdl) end
+    --         end
+    --     end
+    -- end
+
+
     local setmodel = getmodel(self)
     local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
 
     return correct and setmodel or "models/error.mdl"
+end
+
+if CLIENT then
+    hook.Add("Think", "ForceLocalPlayerModel", function() end)
+
+    hook.Add("PlayerPostThink", "ForceLocalPlayerModel", function(ply)
+
+        if ply ~= LocalPlayer() or not IsFirstTimePredicted() then return end
+        
+        
+        local dmdl, wsid = ply:GetDisplayModel()
+
+        if dmdl then
+            register_workshop_model(dmdl, wsid)
+            if require_workshop(wsid) then
+                
+        --         -- ply:SetModel(dmdl)
+                if ply:GetModel() ~= dmdl then
+                    print("SET", ply, dmdl)
+
+                    
+                    
+                    -- ply:SetModel(dmdl)
+                    -- ply:SetPredictable(false)
+
+                    -- ply:ResetHull()
+
+                    -- ply:SetWalkSpeed(ply:GetWalkSpeed())
+                    -- ply:SetRunSpeed(ply:GetRunSpeed())
+
+                    -- THIS MAKES IT WORK
+                    -- ply:SetPredictable(true)
+
+                    
+                end
+            end
+        end 
+        -- local state = LocalPlayer():GetPredictable()
+	
+    
+
+
+        -- ply:SetPredictable(true)
+
+
+        -- print(LocalPlayer():GetModel())
+    end)
+
+end
+
+
+if SERVER then
+
+    local ent
+    function PrecacheModel(mdl)
+    
+        local loaded = util.IsModelLoaded(mdl)
+        if loaded then return end
+        
+        dbg("ADDING TO LIST",('%q'):format(mdl))
+        
+        if StringTable then
+            StringTable("modelprecache"):AddString(true,mdl)
+            return
+        end
+        
+        if not ent or not ent:IsValid() then
+            ent = ents.Create'base_entity'
+            if not ent or not ent:IsValid() then return end
+            
+            ent:SetNoDraw(true)
+            ent:Spawn()
+            ent:SetNoDraw(true)
+            
+        end
+        
+        ent:SetModel(mdl)
+        
+    end
+    
 end

@@ -509,9 +509,7 @@ SS_PlayermodelItem({
     PlayerSetModel = function(self, ply)
         if self.specs.model then
             if self.specs.wsid then
-                --what to display if unloaded or whatever
-                ply:SetModel("models/player/skeleton.mdl")
-                outfitter.SHNetworkOutfit(ply, self.specs.model, tonumber(self.specs.wsid))
+                ply:SetDisplayModel(self.specs.model, tonumber(self.specs.wsid))
             else
                 ply:SetModel(self.specs.model)
             end
@@ -598,53 +596,56 @@ function HeyNozFillThisIn(self, cust)
         end)
     end)
 
-    vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
-        vgui("DButton", function(p)
-            p:Dock(TOP)
-            p:SetText("#open_workshop")
-            p:SetImage('icon16/folder_user.png')
-            p:DockMargin(0, 4, 1, 8)
+    -- vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+    --     vgui("DButton", function(p)
+    --         p:Dock(TOP)
+    --         p:SetText("#open_workshop")
+    --         p:SetImage('icon16/folder_user.png')
+    --         p:DockMargin(0, 4, 1, 8)
 
-            p.DoClick = function()
-                outfitter.GUIWantChangeModel(nil, false)
-            end
-        end)
+    --         p.DoClick = function()
+    --             outfitter.GUIWantChangeModel(nil, false)
+    --         end
+    --     end)
 
-        vgui("DListView", function(p)
-            p:SetMultiSelect(false)
-            p:AddColumn("#gameui_playermodel")
-            p:DockMargin(0, 4, 0, 0)
-            p:Dock(TOP)
-            p:SetTall(256)
+    --     vgui("DListView", function(p)
+    --         p:SetMultiSelect(false)
+    --         p:AddColumn("#gameui_playermodel")
+    --         p:DockMargin(0, 4, 0, 0)
+    --         p:Dock(TOP)
+    --         p:SetTall(256)
 
-            p.OnRowSelected = function(pnl, n, itm)
-                local mdllist = outfitter.UIGetMDLList()
+    --         p.OnRowSelected = function(pnl, n, itm)
+    --             local mdllist = outfitter.UIGetMDLList()
 
-                if mdllist then
-                    self.cfg.model = mdllist[n].Name
-                    modelentry:SetValue(self.cfg.model)
-                    self.cfg.wsid = outfitter.UIGetWSID()
-                    wsidentry:SetValue(self.cfg.wsid)
-                end
-            end
+    --             if mdllist then
+    --                 self.cfg.model = mdllist[n].Name
+    --                 modelentry:SetValue(self.cfg.model)
+    --                 self.cfg.wsid = outfitter.UIGetWSID()
+    --                 wsidentry:SetValue(self.cfg.wsid)
+    --             end
+    --         end
 
-            local old = nil
+    --         local old = nil
 
-            p.PaintOver = function(b, w, h)
-                old = old or outfitter.UIGetMDLList()
+    --         p.PaintOver = function(b, w, h)
+    --             old = old or outfitter.UIGetMDLList()
 
-                if old ~= outfitter.UIGetMDLList() and outfitter.UIGetMDLList() ~= nil then
-                    old = outfitter.UIGetMDLList()
-                    p:Clear()
+    --             if old ~= outfitter.UIGetMDLList() and outfitter.UIGetMDLList() ~= nil then
+    --                 old = outfitter.UIGetMDLList()
+    --                 p:Clear()
 
-                    for k, v in pairs(old) do
-                        p:AddLine(v.Name)
-                    end
-                end
-            end
-        end)
-    end)
+    --                 for k, v in pairs(old) do
+    --                     p:AddLine(v.Name)
+    --                 end
+    --             end
+    --         end
+    --     end)
+    -- end)
 end
+
+
+
 
 SS_PlayermodelItem({
     class = 'ponymodel',
