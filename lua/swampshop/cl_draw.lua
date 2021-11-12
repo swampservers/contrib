@@ -431,7 +431,6 @@ local enforce_models = {}
 -- hook.Add("NetworkEntityCreated", "ragdoll1", function(rag)
 --     if rag:GetClass() == "class C_HL2MPRagdoll" then
 --         local ply = rag:GetRagdollOwner()
-
 --         if ply:IsValid() then
 --             local mdl, dw = ply:GetDisplayModel()
 --             if not mdl then return end
@@ -445,7 +444,6 @@ local enforce_models = {}
 --             rag:InvalidateBoneCache()
 --             rag:SetModel(mdl)
 --             rag:InvalidateBoneCache()
-
 --             rag.RenderOverride = function(rag)
 --                 -- if rag.enforce_model then
 --                 rag:SetModel(mdl)
@@ -458,7 +456,6 @@ local enforce_models = {}
 --         end
 --     end
 -- end)
-
 -- hook.Add("Think","ragdoll2",function()
 -- for rag,count in pairs(enforce_models) do
 --     if rag:IsValid() and count>0 then
