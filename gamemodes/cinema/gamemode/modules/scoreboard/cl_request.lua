@@ -32,12 +32,9 @@ end
 
 local PANEL = {}
 PANEL.HistoryWidth = 300
-local CloseTexture = Material("theater/close.png")
-CreateClientConVar("linuxinputfix", "1", true, false)
 
 function PANEL:Init()
     RequestPanel = self
-    self:SetFocusTopLevel(true)
     local w = math.Clamp(ScrW() - 100, 800, 1152 + self.HistoryWidth)
     local h = ScrH()
 
@@ -48,101 +45,72 @@ function PANEL:Init()
     end
 
     self:SetSize(w, h)
-    self.CloseButton = vgui.Create("DButton", self)
-    self.CloseButton:SetZPos(5)
-    self.CloseButton:NoClipping(true)
-    self.CloseButton:SetText("")
 
-    self.CloseButton.DoClick = function(button)
-        self:OnClose()
-        self:Remove()
-    end
+	self.HomeURL = "https://swamp.sv/video/"
+	self.Browser:OpenURL(self.HomeURL)
+	self.AddressBar:SetText(self.HomeURL)
 
-    self.CloseButton.Paint = function(panel, w, h)
-        DisableClipping(true)
-        surface.SetDrawColor(BrandColorGray)
-        surface.DrawRect(2, 2, w - 4, h - 4)
-        surface.SetDrawColor(BrandColorGrayDarker)
-        surface.SetMaterial(CloseTexture)
-        surface.DrawTexturedRect(0, 0, w, h)
-        DisableClipping(false)
-    end
-
-    self.BrowserContainer = vgui.Create("DPanel", self)
-    self.Browser = vgui.Create("TheaterHTML", self.BrowserContainer)
-    Msg("AWESOMIUM: Initialized instance for video request window\n")
-    self.Browser:SetAllowLua(true)
-    self.Browser:OpenURL("https://swamp.sv/video/")
-    self.Controls = vgui.Create("TheaterHTMLControls", self.BrowserContainer)
-    self.Controls:SetHTML(self.Browser)
-    self.Controls.BorderSize = 0
     self.History = vgui.Create("RequestHistory", self)
     self.History:SetPaintBackgroundEnabled(false)
-
-    if (system.IsLinux() and GetConVar("linuxinputfix"):GetInt() == 1) then
-        self.PanelInput = vgui.Create("TextEntry", self)
-        self.PanelInput:SetText("")
-        self.PanelInput:SetVisible(false)
-
-        self.PanelInput.OnEnter = function()
-            TextEntryLoseFocus()
-        end
-
-        self.Browser:AddFunction("browser", "getinput", function()
-            self.PanelInput:RequestFocus()
-            self.Browser:RunJavascript("if(document.activeElement.tagName.toLowerCase()=='input')document.activeElement.value='" .. self.PanelInput:GetValue() .. "'")
-        end)
-
-        self.Browser.Paint = function(selfb, w, h)
-            selfb:SetKeyboardInputEnabled(not self.PanelInput:HasFocus())
-            selfb:RunJavascript("if(document.activeElement.tagName.toLowerCase()=='input')browser.getinput()")
+	
+	self.AddressBar:DockMargin(0, 2 * 3, 0, 2 * 3)
+    self.AddressBar.OnChange = function()
+        if theater.ExtractURLInfo(self.AddressBar:GetValue()) then
+            self.RequestButton:SetDisabled(false)
+        else
+            self.RequestButton:SetDisabled(true)
         end
     end
+	
+    self.RequestButton = vgui.Create("TheaterButton", self.Controls)
+    self.RequestButton:SetSize(32 * 8, 32)
+    self.RequestButton:SetText(T'Request_Url')
+    self.RequestButton:SetTooltip(T'Request_Url_Tooltip')
+    self.RequestButton:SetDisabled(true)
+    self.RequestButton:Dock(RIGHT)
+    self.RequestButton:DockMargin(8, 4, 8, 4)
+    self.RequestButton.BackgroundColor = Color(123, 32, 29)
 
+    self.RequestButton.DoClick = function()
+        RequestVideoURL(self.AddressBar:GetValue())
+    end
+	
+    self.HomeButton.DoRightClick = function()
+        local menu = DermaMenu()
+
+        menu:AddOption("Advanced User Mode", function()
+            if not RequestPanel.f then
+                CinemaResourceMonitor(RequestPanel)
+            end
+        end)
+
+        menu:Open()
+    end
+	
     self.Browser.OnDocumentReady = function(panel, url)
-        self.Controls.AddressBar:SetText(url)
-        self.Controls.RefreshButton:SetDisabled(false)
+        self.AddressBar:SetText(url)
 
         if IsValid(self.PanelInput) then
             self.PanelInput:SetText("")
         end
 
         if theater.ExtractURLInfo(url) then
-            self.Controls.RequestButton:SetDisabled(false)
+            self.RequestButton:SetDisabled(false)
         else
-            self.Controls.RequestButton:SetDisabled(true)
-        end
-    end
-
-    function self.Browser:Think()
-        if not self._nextUrlPoll or self._nextUrlPoll < RealTime() then
-            self:RunJavascript('console.log("HREF:"+window.location.href);')
-            self._nextUrlPoll = RealTime() + 0.25
-        end
-    end
-
-    local prevurl = ""
-
-    function self.Browser:ConsoleMessage(msg)
-        if isstring(msg) and msg:StartWith("HREF:") and "HREF:" .. prevurl ~= msg then
-            prevurl = msg:sub(6)
-            self.OnDocumentReady(self, prevurl)
-        end
-
-        if isstring(msg) and msg:StartWith("RVIDEO:") then
-            local strLua = msg:sub(8)
-            SELF = self
-            RequestVideoURL(strLua)
-            SELF = nil
+            self.RequestButton:SetDisabled(true)
         end
     end
 end
 
-function PANEL:OnClose()
-    if ValidPanel(self.Browser) then
-        Msg("AWESOMIUM: Destroyed instance for video request window\n")
-        self.Browser:Remove()
-    end
+function PANEL:PerformLayout()
+    local w, h = self:GetSize()
+    self.CloseButton:SetSize(32, 32)
+    self.CloseButton:SetPos(w - 34, 2)
+    self.BrowserContainer:Dock(FILL)
+    self.Browser:Dock(FILL)
+    self.History:Dock(RIGHT)
+    self.History:SetWide(self.HistoryWidth)
+    self.Controls:Dock(TOP)
 end
 
 function PANEL:CheckClose()
@@ -155,19 +123,7 @@ function PANEL:CheckClose()
     end
 end
 
-function PANEL:PerformLayout()
-    local w, h = self:GetSize()
-    self.CloseButton:SetSize(32, 32)
-    self.CloseButton:SetPos(w - 34, 2)
-    self.BrowserContainer:Dock(FILL)
-    self.Browser:Dock(FILL)
-    self.History:Dock(RIGHT)
-    -- self.History:DockMargin( 8, 0, 0, 0 )
-    self.History:SetWide(self.HistoryWidth)
-    self.Controls:Dock(TOP)
-end
-
-vgui.Register("VideoRequestFrame", PANEL, "EditablePanel")
+vgui.Register("VideoRequestFrame", PANEL, "BrowserBase")
 local HISTORY = {}
 HISTORY.TitleHeight = 64
 HISTORY.VidHeight = 32 -- 48
