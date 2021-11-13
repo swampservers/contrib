@@ -41,9 +41,8 @@ function require_workshop_info(id)
         return STEAMWS_FILEINFO[id] --.size  / 1000000
     elseif not STEAMWS_FILEINFO_STARTED[id] then
         STEAMWS_FILEINFO_STARTED[id] = true
-
         local _id_ = id
-        
+
         steamworks.FileInfo(id, function(info)
             STEAMWS_FILEINFO[_id_] = info
         end)
@@ -56,21 +55,36 @@ function require_workshop(id, range)
     -- print("ID", id, STEAMWS_DOWNLOAD_STARTED[id], STEAM_WORKSHOP_INFLIGHT)
     -- 
     assert(isstring(id))
-
     local shouldload = true
 
     if range then
         local info = require_workshop_info(id)
+
         if info then
             local setting = loadrange:GetInt()
             local mb = info.size / 1000000
-            if setting == -3 then shouldload=false end
-            if setting == -2 and mb * 100 > 1000 - range then shouldload=false end
-            if setting == -1 and mb * 40 > 1200 - range then shouldload=false end
-            if setting == 0 and mb * 25 > 1500 - range then shouldload=false end
-            if setting == 1 and mb * 50 > 3000 - range then shouldload=false end
+
+            if setting == -3 then
+                shouldload = false
+            end
+
+            if setting == -2 and mb * 100 > 1000 - range then
+                shouldload = false
+            end
+
+            if setting == -1 and mb * 40 > 1200 - range then
+                shouldload = false
+            end
+
+            if setting == 0 and mb * 25 > 1500 - range then
+                shouldload = false
+            end
+
+            if setting == 1 and mb * 50 > 3000 - range then
+                shouldload = false
+            end
         else
-            shouldload=false
+            shouldload = false
         end
     end
 
@@ -125,28 +139,27 @@ function SafeMountGMA(wsid, filename)
 
     -- print("safemount")
     -- local badmodels = {}
-
     -- for mdl, mwsid in pairs(STEAMWS_REGISTRY) do
     --     if mwsid == wsid then
     --         print("MOUNTING FOR", mdl)
     --         badmodels[mdl] = true
     --     end
     -- end
-
     local resetmodels = {}
 
     for i, v in ipairs(ents.GetAll()) do
         if v:EntIndex() == -1 then
             local m = v:GetModel()
+
             if m and not util.IsValidModel(m) then
                 resetmodels[v] = {m, v:GetSequence()}
+
                 v:SetModel("models/maxofs2d/logo_gmod_b.mdl")
             end
         end
     end
 
     local succ, files = game.MountGMA(filename)
-
     PrintTable(files)
 
     for ent, mod in pairs(resetmodels) do
