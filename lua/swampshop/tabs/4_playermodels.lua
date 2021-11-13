@@ -555,40 +555,24 @@ function HeyNozFillThisIn(self, cust)
         return
     end
 
-    local wsidentry, modelentry
+    local label
     local _self = self
     _self.wsid = nil
 
     vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
-        p:SetText("Select Model (WIP)")
+		p:DockPadding(0,0,0,0)
 
-        wsidentry = vgui("DTextEntry", function(p)
-            p:Dock(TOP)
-            p:SetValue(self.cfg.wsid or "")
-            p:SetPlaceholderText("Workshop ID, like: 13376969")
-            p:SetUpdateOnType(true)
-
-            p.OnValueChange = function(pnl, txt)
-                self.cfg.wsid = txt
-                cust:UpdateCfg()
-            end
+        vgui("DLabel", function(p)
+			p:SizeToContents()
+            p:SetContentAlignment(5)
+            p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+			p:SetTall(32)
+			p:Dock(TOP)
+			p:SetFont("DermaLarge")
+            p:SetText("Open the Workshop")
+			label = p
         end)
-
-        modelentry = vgui("DTextEntry", function(p)
-            p:Dock(TOP)
-            p:SetValue(self.cfg.model or "")
-            p:SetPlaceholderText("Model path, like: models/player/kleiner.mdl")
-            p:SetUpdateOnType(true)
-
-            p.OnValueChange = function(pnl, txt)
-                print("HERE", txt)
-                self.cfg.model = txt
-                cust:UpdateCfg()
-            end
-        end)
-    end)
-
-    vgui("DSSCustomizerSection", cust.LeftColumn, function(p)
+	
         vgui("DButton", function(p)
             p:Dock(TOP)
             p:SetText("#open_workshop")
@@ -605,6 +589,7 @@ function HeyNozFillThisIn(self, cust)
                         wsidentry:SetValue(data)
                         modelentry:SetValue("")
                     end
+					label:SetText("Loading...")
                 end
             end
         end)
@@ -622,9 +607,7 @@ function HeyNozFillThisIn(self, cust)
 
                 if models then
                     self.cfg.model = models[n]
-                    modelentry:SetValue(self.cfg.model)
                     self.cfg.wsid = _self.wsid
-                    wsidentry:SetValue(self.cfg.wsid)
                 end
             end
             end
@@ -642,6 +625,14 @@ function HeyNozFillThisIn(self, cust)
                         for k, v in pairs(models) do
                             p:AddLine(v)
                         end
+						if #models > 0 then
+							label:SetText("Select a Playermodel")
+						else
+							label:SetText("No Valid Playermodels Found")
+						end
+						if p:GetLine(1) then
+							p:SelectItem(p:GetLine(1))
+						end
                     end
                 end
             end
