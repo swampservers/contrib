@@ -9,7 +9,7 @@ function RefreshWorkshop()
     STEAMWS_MOUNTED = {}
     STEAM_WORKSHOP_INFLIGHT = 0
     STEAMWS_PLAYERMODELS = {}
-    STEAMWS_REGISTRY = {}
+    -- STEAMWS_REGISTRY = {}
 end
 
 if not STEAMWS_DOWNLOAD_STARTED then
@@ -29,7 +29,7 @@ end
 function require_model(mdl, wsid, range)
     -- if range==nil then print(mdl, wsid) end
     if (wsid or "") == "" or IsModelAvailable(mdl) then return true end
-    STEAMWS_REGISTRY[mdl] = wsid
+    -- STEAMWS_REGISTRY[mdl] = wsid
     -- will return true despite being error if the workshop is missing the model
 
     return require_workshop(wsid, range)
@@ -112,7 +112,6 @@ function require_workshop(id, range)
         end)
     end
 
-
     return STEAMWS_MOUNTED[id] and true or false
 end
 
@@ -125,26 +124,30 @@ function SafeMountGMA(wsid, filename)
     end
 
     -- print("safemount")
-    local badmodels = {}
+    -- local badmodels = {}
 
-    for mdl, mwsid in pairs(STEAMWS_REGISTRY) do
-        if mwsid == wsid then
-            print("MOUNTING FOR", mdl)
-            badmodels[mdl] = true
-        end
-    end
+    -- for mdl, mwsid in pairs(STEAMWS_REGISTRY) do
+    --     if mwsid == wsid then
+    --         print("MOUNTING FOR", mdl)
+    --         badmodels[mdl] = true
+    --     end
+    -- end
 
     local resetmodels = {}
 
     for i, v in ipairs(ents.GetAll()) do
-        if v:EntIndex() == -1 and badmodels[v:GetModel()] then
-            resetmodels[v] = {v:GetModel(), v:GetSequence()}
-
-            v:SetModel("models/maxofs2d/logo_gmod_b.mdl")
+        if v:EntIndex() == -1 then
+            local m = v:GetModel()
+            if m and not util.IsValidModel(m) then
+                resetmodels[v] = {m, v:GetSequence()}
+                v:SetModel("models/maxofs2d/logo_gmod_b.mdl")
+            end
         end
     end
 
     local succ, files = game.MountGMA(filename)
+
+    PrintTable(files)
 
     for ent, mod in pairs(resetmodels) do
         ent:SetModel(mod[1])
