@@ -45,15 +45,13 @@ function PANEL:Init()
     end
 
     self:SetSize(w, h)
-
-	self.HomeURL = "https://swamp.sv/video/"
-	self.Browser:OpenURL(self.HomeURL)
-	self.AddressBar:SetText(self.HomeURL)
-
+    self.HomeURL = "https://swamp.sv/video/"
+    self.Browser:OpenURL(self.HomeURL)
+    self.AddressBar:SetText(self.HomeURL)
     self.History = vgui.Create("RequestHistory", self)
     self.History:SetPaintBackgroundEnabled(false)
-	
-	self.AddressBar:DockMargin(0, 2 * 3, 0, 2 * 3)
+    self.AddressBar:DockMargin(0, 2 * 3, 0, 2 * 3)
+
     self.AddressBar.OnChange = function()
         if theater.ExtractURLInfo(self.AddressBar:GetValue()) then
             self.RequestButton:SetDisabled(false)
@@ -61,7 +59,7 @@ function PANEL:Init()
             self.RequestButton:SetDisabled(true)
         end
     end
-	
+
     self.RequestButton = vgui.Create("TheaterButton", self.Controls)
     self.RequestButton:SetSize(32 * 8, 32)
     self.RequestButton:SetText(T'Request_Url')
@@ -74,7 +72,7 @@ function PANEL:Init()
     self.RequestButton.DoClick = function()
         RequestVideoURL(self.AddressBar:GetValue())
     end
-	
+
     self.HomeButton.DoRightClick = function()
         local menu = DermaMenu()
 
@@ -86,7 +84,7 @@ function PANEL:Init()
 
         menu:Open()
     end
-	
+
     self.Browser.OnDocumentReady = function(panel, url)
         self.AddressBar:SetText(url)
 

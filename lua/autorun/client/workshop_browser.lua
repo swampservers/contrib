@@ -1,22 +1,19 @@
 ﻿local PANEL = {}
 local matUp = Material("icon16/arrow_up.png")
-
 --NOMINIFY
-
-
 local maxfilesize = 60
 
 function PANEL:Init()
-	self.HomeURL = "http://steamcommunity.com/workshop/browse/?appid=4000&searchtext=playermodel&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Model"
-	self.Browser:OpenURL(self.HomeURL)
-	self.AddressBar:SetText(self.HomeURL)
+    self.HomeURL = "http://steamcommunity.com/workshop/browse/?appid=4000&searchtext=playermodel&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Model"
+    self.Browser:OpenURL(self.HomeURL)
+    self.AddressBar:SetText(self.HomeURL)
 
     self.Browser:AddFunction("gmod", "wssubscribe", function()
-		if self.addonsize and self.addonsize<maxfilesize then
-			self:GetWSID(tostring(self.chosen_id))
+        if self.addonsize and self.addonsize < maxfilesize then
+            self:GetWSID(tostring(self.chosen_id))
             self:OnClose()
-			self:Remove()
-		end
+            self:Remove()
+        end
     end)
 
     self.Browser.Think = function(self)
@@ -42,8 +39,8 @@ function PANEL:Init()
         if isstring(msg) and msg:StartWith("HREF:") and "HREF:" .. prevurl ~= msg then
             prevurl = msg:sub(6)
             self.addonsize = nil
-			self.AddressBar:SetText(prevurl)
-			self:LoadedURL()
+            self.AddressBar:SetText(prevurl)
+            self:LoadedURL()
         end
     end
 
@@ -64,22 +61,19 @@ function PANEL:Init()
             local info = require_workshop_info(self.chosen_id)
 
             if info then
-                self.addonsize = info.size/1000000
-                if info.size/1000000 > 60 then
+                self.addonsize = info.size / 1000000
+
+                if info.size / 1000000 > 60 then
                     b:SetText("Addon is too big (>60mb)!")
                     b:SetEnabled(false)
-
-                    surface.SetDrawColor(Color(255, 0,0))
+                    surface.SetDrawColor(Color(255, 0, 0))
                     surface.DrawRect(0, 0, w, h)
                 else
                     b:SetText("Use this addon")
                     b:SetEnabled(true)
-
                     surface.SetDrawColor(b:IsHovered() and Color(60, 255, 60) or Color(0, 255, 0))
                     surface.DrawRect(0, 0, w, h)
                 end
-
-
 
                 return
             end
@@ -88,7 +82,6 @@ function PANEL:Init()
         b:SetColor(Color(255, 255, 255))
         b:SetText("Select a playermodel...")
         b:SetEnabled(false)
-
         surface.SetDrawColor(Color(16, 16, 16))
         surface.DrawRect(0, 0, w, h)
     end
@@ -98,7 +91,7 @@ function PANEL:Init()
         if self.chosen_id then
             self:GetWSID(tostring(self.chosen_id))
             self:OnClose()
-			self:Remove()
+            self:Remove()
         end
     end
 end

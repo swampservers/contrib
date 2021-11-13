@@ -1,5 +1,4 @@
-
-local PANEL = {}
+﻿local PANEL = {}
 local CloseTexture = Material("theater/close.png")
 CreateClientConVar("linuxinputfix", "1", true, false)
 
@@ -13,11 +12,10 @@ function PANEL:Init()
     elseif h > 600 then
         h = h * 7 / 8
     end
-	
+
     self:SetSize(w, h)
     self:Center()
     self:MakePopup()
-	
     self.CloseButton = vgui.Create("DButton", self)
     self.CloseButton:SetZPos(5)
     self.CloseButton:NoClipping(true)
@@ -69,16 +67,17 @@ function PANEL:Init()
         end
     end
 
-	function self.Browser:OnURLChanged(new, old)
-		self.OnDocumentReady(self, new)
-	end
+    function self.Browser:OnURLChanged(new, old)
+        self.OnDocumentReady(self, new)
+    end
 
-	self.Controls = vgui.Create("Panel", self.BrowserContainer)
-	self.Controls.Paint = function(panel, w, h)
-		draw.RoundedBoxEx(0, 0, 0, w, h, Color(33, 33, 33, 255), true, true, false, false)
-		draw.RoundedBoxEx(0, 0, h - 2, w, 2, Color(128, 128, 128, 255), false, false, false, false)
-	end
-	
+    self.Controls = vgui.Create("Panel", self.BrowserContainer)
+
+    self.Controls.Paint = function(panel, w, h)
+        draw.RoundedBoxEx(0, 0, 0, w, h, Color(33, 33, 33, 255), true, true, false, false)
+        draw.RoundedBoxEx(0, 0, h - 2, w, 2, Color(128, 128, 128, 255), false, false, false, false)
+    end
+
     local ButtonSize = 32
     local Margins = 2
     local Spacing = 0
@@ -89,7 +88,7 @@ function PANEL:Init()
     self.BackButton:DockMargin(Spacing * 3, Margins, Spacing, Margins)
 
     self.BackButton.DoClick = function()
-		self.Browser:GoBack()
+        self.Browser:GoBack()
     end
 
     self.ForwardButton = vgui.Create("DImageButton", self.Controls)
@@ -99,7 +98,7 @@ function PANEL:Init()
     self.ForwardButton:DockMargin(Spacing, Margins, Spacing, Margins)
 
     self.ForwardButton.DoClick = function()
-		self.Browser:GoForward()
+        self.Browser:GoForward()
     end
 
     self.RefreshButton = vgui.Create("DImageButton", self.Controls)
@@ -160,6 +159,7 @@ end
 
 vgui.Register("BrowserBase", PANEL, "EditablePanel")
 
-concommand.Add("browser", function() --keep for dev use
+--keep for dev use
+concommand.Add("browser", function()
     local p = vgui.Create("BrowserBase")
 end)
