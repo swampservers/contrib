@@ -19,7 +19,7 @@ end
 local AvailableMdls = {}
 local ValidPlayerMdls = {}
 
-local function IsModelAvailable(mdl)
+ function IsModelAvailable(mdl)
     if AvailableMdls[mdl] == nil then
         AvailableMdls[mdl] = file.Exists(mdl, 'GAME')
     end
@@ -27,7 +27,7 @@ local function IsModelAvailable(mdl)
     return AvailableMdls[mdl]
 end
 
-local function IsValidPlayermodel(mdl)
+function IsValidPlayermodel(mdl)
     if not IsModelAvailable(mdl) then return false end
 
     if ValidPlayerMdls[mdl]==nil then
@@ -86,7 +86,7 @@ function require_workshop(id, range)
         end
     end
 
-    if shouldload and not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT == 0 then
+    if shouldload and not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT < 2 then
         STEAMWS_DOWNLOAD_STARTED[id] = true
         print("\n\n***DOWNLOADING " .. id .. " OF SIZE " .. STEAMWS_FILEINFO[id].size .. "***\n\n")
         local _id_ = id

@@ -76,6 +76,14 @@ else
                 mdl = dmdl
                 -- IT MAKES THE MODEL STAY
                 ply:SetPredictable(ply == LocalPlayer())
+
+                -- timer.Simple(0, function()
+                --     if IsValid(ply) then
+                --         ply:SetModel(dmdl)
+                --         ply:SetPredictable(ply == LocalPlayer())
+                --     end
+                -- end)
+                
             end
         end
 
@@ -85,11 +93,18 @@ else
         end
     end
 
-    hook.Add("PrePlayerDraw", "PlayerModelWSApplierChangeDetector", checkmodel)
+    local players2check={}
+
+    hook.Add("PrePlayerDraw", "PlayerModelWSApplierChangeDetector", function(ply) players2check[ply]=true end)
 
     hook.Add("Tick", "LocalPlayerForceModel", function()
         if IsValid(LocalPlayer()) then
             checkmodel(LocalPlayer())
+        end
+
+        for k,v in pairs(players2check) do
+            if IsValid(k) then checkmodel(k) end
+            players2check[k]=nil
         end
     end)
 

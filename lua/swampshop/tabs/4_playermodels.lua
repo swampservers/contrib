@@ -438,7 +438,11 @@ function SS_PlayermodelItem(item)
     item.playermodel = true
 
     item.PlayerSetModel = item.PlayerSetModel or function(self, ply)
-        ply:SetModel(self.model)
+        if self.workshop then
+            ply:SetDisplayModel(self.model, tonumber(self.workshop))
+        else
+            ply:SetModel(self.model)
+        end
 
         if self.OnPlayerSetModel then
             self:OnPlayerSetModel(ply)

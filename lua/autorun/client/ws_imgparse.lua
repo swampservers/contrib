@@ -163,7 +163,7 @@ function file.ParseJPG(file)
 			if file:Tell() + 2 < endofjpg then
 				readheader = file:Read(2)
 			else
-				print("Reached end of file", 0)
+				-- print("Reached end of file", 0)
 				foundheader = 1
 			end
 

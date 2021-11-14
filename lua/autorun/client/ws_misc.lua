@@ -1,10 +1,10 @@
 ﻿
 local function dbg(...)
-    print(...)
+    -- print(...)
 
 end
 local function dbgn(...)
-    print(...)
+    -- print(...)
 
 end
 
