@@ -19,7 +19,7 @@ end
 local AvailableMdls = {}
 local ValidPlayerMdls = {}
 
- function IsModelAvailable(mdl)
+function IsModelAvailable(mdl)
     if AvailableMdls[mdl] == nil then
         AvailableMdls[mdl] = file.Exists(mdl, 'GAME')
     end
@@ -30,11 +30,15 @@ end
 function IsValidPlayermodel(mdl)
     if not IsModelAvailable(mdl) then return false end
 
-    if ValidPlayerMdls[mdl]==nil then
-        local ok,err = MDLIsPlayermodel(mdl)
+    if ValidPlayerMdls[mdl] == nil then
+        local ok, err = MDLIsPlayermodel(mdl)
         ValidPlayerMdls[mdl] = ok
-        if not ok then print("INVALID PLAYERMODEL "..mdl.." BECAUSE "..err) end
+
+        if not ok then
+            print("INVALID PLAYERMODEL " .. mdl .. " BECAUSE " .. err)
+        end
     end
+
     return ValidPlayerMdls[mdl]
 end
 
@@ -53,9 +57,8 @@ function require_workshop_info(id)
         return STEAMWS_FILEINFO[id] --.size  / 1000000
     elseif not STEAMWS_FILEINFO_STARTED[id] then
         STEAMWS_FILEINFO_STARTED[id] = true
-
         local _id_ = id
-        
+
         steamworks.FileInfo(id, function(info)
             STEAMWS_FILEINFO[_id_] = info
         end)
@@ -68,21 +71,36 @@ function require_workshop(id, range)
     -- print("ID", id, STEAMWS_DOWNLOAD_STARTED[id], STEAM_WORKSHOP_INFLIGHT)
     -- 
     assert(isstring(id))
-
     local shouldload = true
 
     if range then
         local info = require_workshop_info(id)
+
         if info then
             local setting = loadrange:GetInt()
             local mb = info.size / 1000000
-            if setting == -3 then shouldload=false end
-            if setting == -2 and mb * 100 > 1000 - range then shouldload=false end
-            if setting == -1 and mb * 40 > 1200 - range then shouldload=false end
-            if setting == 0 and mb * 25 > 1500 - range then shouldload=false end
-            if setting == 1 and mb * 50 > 3000 - range then shouldload=false end
+
+            if setting == -3 then
+                shouldload = false
+            end
+
+            if setting == -2 and mb * 100 > 1000 - range then
+                shouldload = false
+            end
+
+            if setting == -1 and mb * 40 > 1200 - range then
+                shouldload = false
+            end
+
+            if setting == 0 and mb * 25 > 1500 - range then
+                shouldload = false
+            end
+
+            if setting == 1 and mb * 50 > 3000 - range then
+                shouldload = false
+            end
         else
-            shouldload=false
+            shouldload = false
         end
     end
 
@@ -128,21 +146,24 @@ function require_workshop(id, range)
 end
 
 function SafeMountGMA(wsid, filename)
-
-    local ok,err = GMABlacklist(filename)
+    local ok, err = GMABlacklist(filename)
 
     if not ok then
-        print("COULD NOT MOUNT "..wsid.. " BECAUSE "..err)
+        print("COULD NOT MOUNT " .. wsid .. " BECAUSE " .. err)
+
         return false, {}
     end
 
     -- mounting with a clientside error model crashes the game
     local resetmodels = {}
+
     for i, v in ipairs(ents.GetAll()) do
         if v:EntIndex() == -1 then
             local m = v:GetModel()
+
             if m and not util.IsValidModel(m) then
                 resetmodels[v] = {m, v:GetSequence()}
+
                 v:SetModel("models/maxofs2d/logo_gmod_b.mdl")
             end
         end
@@ -150,7 +171,7 @@ function SafeMountGMA(wsid, filename)
 
     local succ, files = game.MountGMA(filename)
 
-    for i,v in ipairs(files) do
+    for i, v in ipairs(files) do
         if v:EndsWith(".mdl") then
             AvailableMdls[v] = true
         end
@@ -223,16 +244,16 @@ end
 hook.Add("Think", "ForceLocalPlayerModel", function() end)
 hook.Add("PlayerPostThink", "ForceLocalPlayerModel", function(ply) end) -- if ply ~= LocalPlayer() or not IsFirstTimePredicted() then return end -- local dmdl, wsid = ply:GetDisplayModel() -- if dmdl then --     if require_model(dmdl, wsid) then -- --         -- ply:SetModel(dmdl) --         if ply:GetModel() ~= dmdl then --             print("SET", ply, dmdl) --             ply:SetModel(dmdl) --             -- ply:SetPredictable(false) --             -- ply:ResetHull() --             -- ply:SetWalkSpeed(ply:GetWalkSpeed()) --             -- ply:SetRunSpeed(ply:GetRunSpeed()) --             -- THIS MAKES IT WORK --             ply:SetPredictable(true) --         end --     end -- end  -- local state = LocalPlayer():GetPredictable() -- ply:SetPredictable(true) -- print(LocalPlayer():GetModel())
 
-
 function require_playermodel_list(wsid)
     if not require_workshop(wsid) then return end
+
     if not STEAMWS_PLAYERMODELS[wsid] then
-        
         local mdl_list = {}
 
         for k, f in ipairs(STEAMWS_MOUNTED[wsid]) do
             if f:EndsWith(".mdl") then
                 local isplr, err, err2 = MDLIsPlayermodel(f)
+
                 if isplr then
                     table.insert(mdl_list, f)
                 end
