@@ -70,7 +70,7 @@ else
 
         -- if ply==LocalPlayer() then print(mdl,dmdl) end
         if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
-            if require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos())) then
+            if require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos())) and IsValidPlayermodel(dmdl) then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
                 mdl = dmdl
