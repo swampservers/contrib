@@ -428,34 +428,34 @@ local enforce_models = {}
 
 -- Setting display model has to be done in this hook or it breaks!
 --DISABLED
--- hook.Add("NetworkEntityCreated", "ragdoll1", function(rag)
---     if rag:GetClass() == "class C_HL2MPRagdoll" then
---         local ply = rag:GetRagdollOwner()
---         if ply:IsValid() then
---             local mdl, dw = ply:GetDisplayModel()
---             if not mdl then return end
---             -- local mdlr = rag:GetModel()
---             -- local mdlp = pl:GetModel()
---             -- local hasenforced   = mdlr==mdl
---             -- local isplyenforced = mdlp==mdl
---             -- dbgn(2,"DeathRagdollEnforce",pl,rag,mdl,hasenforced and ("ENFORCED RAG: "..tostring(mdlr)) or "" ,isplyenforced and "" or ("NOT ENFORCED PLY: "..tostring(mdlp)) )
---             -- rag.enforce_model = mdl
---             -- enforce_models[rag] = 8
---             rag:InvalidateBoneCache()
---             rag:SetModel(mdl)
---             rag:InvalidateBoneCache()
---             rag.RenderOverride = function(rag)
---                 -- if rag.enforce_model then
---                 rag:SetModel(mdl)
---                 -- if enforce_models[rag] then
---                 --     rag:InvalidateBoneCache()
---                 -- end
---                 -- end
---                 rag:DrawModel()
---             end
---         end
---     end
--- end)
+hook.Add("NetworkEntityCreated", "ragdoll1", function(rag)
+    -- if rag:GetClass() == "class C_HL2MPRagdoll" then
+    --     local ply = rag:GetRagdollOwner()
+    --     if ply:IsValid() then
+    --         local mdl, dw = ply:GetDisplayModel()
+    --         if not mdl then return end
+    --         -- local mdlr = rag:GetModel()
+    --         -- local mdlp = pl:GetModel()
+    --         -- local hasenforced   = mdlr==mdl
+    --         -- local isplyenforced = mdlp==mdl
+    --         -- dbgn(2,"DeathRagdollEnforce",pl,rag,mdl,hasenforced and ("ENFORCED RAG: "..tostring(mdlr)) or "" ,isplyenforced and "" or ("NOT ENFORCED PLY: "..tostring(mdlp)) )
+    --         -- rag.enforce_model = mdl
+    --         -- enforce_models[rag] = 8
+    --         rag:InvalidateBoneCache()
+    --         rag:SetModel(mdl)
+    --         rag:InvalidateBoneCache()
+    --         -- rag.RenderOverride = function(rag)
+    --         --     -- if rag.enforce_model then
+    --         --     rag:SetModel(mdl)
+    --         --     -- if enforce_models[rag] then
+    --         --     --     rag:InvalidateBoneCache()
+    --         --     -- end
+    --         --     -- end
+    --         --     rag:DrawModel()
+    --         -- end
+    --     end
+    -- end
+end)
 -- hook.Add("Think","ragdoll2",function()
 -- for rag,count in pairs(enforce_models) do
 --     if rag:IsValid() and count>0 then
