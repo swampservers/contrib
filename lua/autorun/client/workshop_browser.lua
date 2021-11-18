@@ -33,16 +33,16 @@ function PANEL:Init()
         end
     end
 
-    local prevurl = ""
+    -- local prevurl = ""
 
-    self.Browser.ConsoleMessage = function(panel, msg)
-        if isstring(msg) and msg:StartWith("HREF:") and "HREF:" .. prevurl ~= msg then
-            prevurl = msg:sub(6)
-            self.addonsize = nil
-            self.AddressBar:SetText(prevurl)
-            self:LoadedURL()
-        end
-    end
+    -- self.Browser.ConsoleMessage = function(panel, msg)
+    --     if isstring(msg) and msg:StartWith("HREF:") and "HREF:" .. prevurl ~= msg then
+    --         prevurl = msg:sub(6)
+    --         self.addonsize = nil
+    --         self.AddressBar:SetText(prevurl)
+    --         self:LoadedURL()
+    --     end
+    -- end
 
     local b = vgui.Create('DButton', self)
     self.chooseb = b
@@ -96,8 +96,8 @@ function PANEL:Init()
     end
 end
 
-function PANEL:LoadedURL()
-    local url = self.AddressBar:GetValue()
+function PANEL:OnDocumentReady(url)
+    -- local url = self.AddressBar:GetValue()
     local id = url:match('://steamcommunity.com/sharedfiles/filedetails/.*[%?%&]id=(%d+)') or url:match('://steamcommunity.com/workshop/filedetails/.*[%?%&]id=(%d+)')
     -- self.chooseb:SetEnabled(id and true or false)
     self.chosen_id = id

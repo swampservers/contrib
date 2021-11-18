@@ -65,11 +65,14 @@ function PANEL:Init()
         if IsValid(self.PanelInput) then
             self.PanelInput:SetText("")
         end
+
+        print("DOC",url)
+        if self.OnDocumentReady then self:OnDocumentReady(url) end
     end
 
-    function self.Browser:OnURLChanged(new, old)
-        self.OnDocumentReady(self, new)
-    end
+    -- function self.Browser:OnURLChanged(new, old)
+    --     self.OnDocumentReady(self, new)
+    -- end
 
     self.Controls = vgui.Create("Panel", self.BrowserContainer)
 
