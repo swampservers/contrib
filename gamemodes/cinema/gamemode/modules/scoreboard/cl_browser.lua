@@ -66,8 +66,11 @@ function PANEL:Init()
             self.PanelInput:SetText("")
         end
 
-        print("DOC",url)
-        if self.OnDocumentReady then self:OnDocumentReady(url) end
+        print("DOC", url)
+
+        if self.OnDocumentReady then
+            self:OnDocumentReady(url)
+        end
     end
 
     function self.Browser:OnURLChanged(new, old)
