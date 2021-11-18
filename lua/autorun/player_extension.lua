@@ -70,7 +70,7 @@ else
 
         -- if ply==LocalPlayer() then print(mdl,dmdl) end
         if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
-            if require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos())) and IsValidPlayermodel(dmdl) then
+            if (dwsid==nil or require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos()))) and IsValidPlayermodel(dmdl) then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
                 mdl = dmdl
@@ -144,8 +144,15 @@ else
 end
 
 function PLAYER:GetDisplayModel()
-    local mdl, wsid = self:GetNW2String("DisplayModel", ""), tostring(self:GetNW2String("DisplayWSID", ""))
-    if mdl ~= "" then return mdl, wsid end
+    local st = self:GetNW2String("DisplayModel", "")
+    if st=="" then return self:GetModel(), nil end
+
+    -- wsid might be nil
+    mdl,wsid = unpack(string.Explode("@", st))
+    return mdl,wsid
+
+    -- local mdl, wsid = self:GetNW2String("DisplayModel", ""), tostring(self:GetNW2String("DisplayWSID", ""))
+    -- if mdl ~= "" then return mdl, wsid end
 end
 
 function PLAYER:SetDefaultJumpPower()

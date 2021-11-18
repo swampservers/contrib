@@ -21,6 +21,7 @@ function ForEachPMCS(dothis)
         iteratepmcs = v
         ProtectedCall(dothis)
     end
+    iteratepmcs=nil
 end
 
 --[[

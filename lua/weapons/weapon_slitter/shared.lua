@@ -81,6 +81,8 @@ function SWEP:SetupDataTables()
                 for k, v in pairs(self.Owner.SS_Items or {}) do
                     if v.class == "knifeskin" and v.eq then
                         self:SetForceModel(v.specs.model or "")
+                        self.WorldModel = v.specs.model 
+                        self:SetModel(self.WorldModel)
                         self:Deploy()
                     end
                 end
@@ -149,10 +151,10 @@ function SlitterBuildBonePositions(self, nbones)
 end
 
 function SWEP:DrawWorldModel()
-    -- if self.WorldModel ~= self:GetViewModel() then 
-    --     self.WorldModel=self:GetViewModel() 
-    --     self:SetModel(self.WorldModel)
-    -- end
+    if self.WorldModel ~= self:GetViewModel() then 
+        self.WorldModel=self:GetViewModel() 
+        self:SetModel(self.WorldModel)
+    end
     -- if not self.BBPCallback then 
     --     self.BBPCallback=true
     --     self:AddCallback( "BuildBonePositions", function( ent, numbones )
@@ -188,38 +190,45 @@ function SWEP:DrawWorldModel()
 
         local modelstuff = SlitterModels[self:GetViewModel()]
 
-        if not modelstuff.csmodel then
-            print("GEN")
-            modelstuff.csmodel = ClientsideModel(self:GetViewModel())
-            modelstuff.csmodel:SetNoDraw(true)
+        -- if not modelstuff.csmodel then
+        --     print("GEN")
+        --     modelstuff.csmodel = ClientsideModel(self:GetViewModel())
+        --     modelstuff.csmodel:SetNoDraw(true)
             local mat = Matrix()
             mat:SetTranslation(modelstuff.pos)
             mat:SetAngles(modelstuff.ang)
             mat:SetScale(modelstuff.scale)
-            modelstuff.csmodel:EnableMatrix("RenderMultiply", mat)
-        end
+            self:EnableMatrix("RenderMultiply", mat)
+        --     modelstuff.csmodel:EnableMatrix("RenderMultiply", mat)
+        -- end
 
         -- opos, oang = LocalToWorld(modelstuff.pos, modelstuff.ang, opos, oang)
         -- print(self:GetBoneCount())
-        -- self:InvalidateBoneCache()
-        -- self:SetupBones()
-        -- local mrt = Matrix() --self:GetBoneMatrix(0)
-        -- if mrt then
+        self:InvalidateBoneCache()
+        self:SetupBones()
+        local mrt = Matrix() --self:GetBoneMatrix(0)
+        if mrt then
+
         --     print("MRT", nbones )
-        -- mrt:SetTranslation(opos)
-        -- mrt:SetAngles(oang)
+        mrt:SetTranslation(opos)
+        mrt:SetAngles(oang)
         -- mrt:SetScale(modelstuff.scale)
-        modelstuff.csmodel:SetPos(opos)
-        modelstuff.csmodel:SetAngles(oang)
-        modelstuff.csmodel:SetupBones()
-        -- modelstuff.csmodel:SetBoneMatrix(0, mrt)
-        modelstuff.csmodel:DrawModel()
-        --     -- self:SetBoneMatrix(0, mrt)
-        --     self:SetBonePosition(0, opos, oang)
-        -- end
-    else
-        self:DrawModel()
+        -- modelstuff.csmodel:SetPos(opos)
+        -- modelstuff.csmodel:SetAngles(oang)
+        -- modelstuff.csmodel:SetupBones()
+        -- -- modelstuff.csmodel:SetBoneMatrix(0, mrt)
+        -- modelstuff.csmodel:DrawModel()
+
+
+            self:SetBoneMatrix(0, mrt)
+            -- self:SetBonePosition(0, opos, oang)
+
+
+        end
+
     end
+        self:DrawModel()
+    
 end
 
 function SWEP:TraceSphere(vp, vr, sp, radius, maxdist)

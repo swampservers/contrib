@@ -278,7 +278,6 @@ SS_BoneModItem({
 
             for i, v in ipairs(allthebones) do
                 local bonename = v
-                print("checkbox", v)
 
                 vgui('DSSCustomizerCheckBox', function(p)
                     local parentbox = p
@@ -333,7 +332,7 @@ SS_BoneModItem({
         end)
     end,
     ApplyBoneMod = function(self, ent)
-        -- {[self.cfg[ent:PMCS"bone"]]=true} -- 
+
         local bones = self.cfg[ent:PMCS"bones"] or {
             ["LrigScull"] = true,
             ["ValveBiped.Bip01_Head1"] = true
