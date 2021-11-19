@@ -333,7 +333,6 @@ SS_BoneModItem({
     end,
     ApplyBoneMod = function(self, ent)
         -- {[self.cfg[ent:PMCS"bone"]]=true} -- 
-
         local bones = self.cfg[ent:PMCS"bones"] or {
             ["LrigScull"] = true,
             ["ValveBiped.Bip01_Head1"] = true
@@ -485,8 +484,7 @@ SS_PlayermodelItem({
 
         return "Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
-    GetModel = function(self) --     -- if self.specs.wsid or self.cfg.wsid then
---     --     -- so the callback when downloaded makes the model refresh
+    GetModel = function(self) --     --     -- so the callback when downloaded makes the model refresh
 --     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
 --     --     -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
 --     --     -- if self.Owner == LocalPlayer() then
@@ -495,7 +493,7 @@ SS_PlayermodelItem({
 --     -- end
 --     return 
 -- end
-return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" end, -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then
+return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then end, --     -- if self.specs.wsid or self.cfg.wsid then
     GetWorkshop = function(self) return self.specs and (self.specs.wsid or self.cfg.wsid) end,
     invcategory = "Playermodels",
     playermodel = true,
