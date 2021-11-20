@@ -484,16 +484,9 @@ SS_PlayermodelItem({
 
         return "Use any playermodel from workshop! Once the model is finalized, it can't be changed."
     end,
-    GetModel = function(self) --     --     -- so the callback when downloaded makes the model refresh
---     --     register_workshop_model(self.specs.model or self.cfg.model, self.specs.wsid or self.cfg.wsid)
---     --     -- makes sure we download this addon when the item is viewed in shop, see autorun/sh_workshop.lua
---     --     -- if self.Owner == LocalPlayer() then
---     --     --     require_workshop(self.specs.wsid or self.cfg.wsid )
---     --     -- end
---     -- end
---     return 
--- end
-return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" -- if CLIENT and self.specs and (self.specs.model or (self.cfg.model and self.cfg.wsid)) then end, --     -- if self.specs.wsid or self.cfg.wsid then
+    GetModel = function(self)
+
+        return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/logo_gmod_b.mdl" end,
     GetWorkshop = function(self) return self.specs and (self.specs.wsid or self.cfg.wsid) end,
     invcategory = "Playermodels",
     playermodel = true,
@@ -528,8 +521,10 @@ return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/l
             self.cfg.finalize = dirty.finalize and true or nil
         end
 
-        if dirty.bodygroups then
-            local chars = {string.byte(dirty.bodygroups, 1, math.min(dirty.bodygroups:len(), 10))}
+        if dirty.bodygroups and dirty.bodygroups:len()<30 then
+
+
+            local chars = {string.byte(dirty.bodygroups, 1, dirty.bodygroups:len())}
 
             local ok = true
 
@@ -541,7 +536,7 @@ return self.specs and (self.specs.model or self.cfg.model) or "models/maxofs2d/l
             end
 
             if ok then
-                self.cfg.bodygroups = chars
+                self.cfg.bodygroups = dirty.bodygroups
             end
         end
     end,
@@ -553,7 +548,77 @@ function HeyNozFillThisIn(self, cust)
         vgui("DSSCustomizerSection", cust.RightColumn, function(p)
             p:SetText("Model is already finalized!")
         end)
-        -- TODO: bodygroup chooser even if model is finalized
+
+        vgui("DSSCustomizerSection", cust.RightColumn, function(p)
+            p:SetText("Body Groups")
+
+            local bgc = p
+
+            p.Think = function(p)
+                local ent = (SS_PreviewPanel or {}).Entity
+                local mdl = IsValid(ent) and ent:GetActualModel() or ""
+                
+                if mdl ~= bgc.setmodel then bgc:SetupEntity(ent) bgc.setmodel=mdl end
+
+            end
+
+            p.SetupEntity = function(p, e)
+
+                
+                for i,v in ipairs(bgc.comboboxes or {}) do
+                    v:Remove()
+                end
+
+                bgc.comboboxes = {}
+
+                if not IsValid(e) then return end
+
+                for i,v in ipairs(e:GetBodyGroups()) do
+
+                    if v.num>1 then 
+                        local combo = vgui("DSSCustomizerComboBox", p, function(p)
+                            -- local mats = LocalPlayer():GetMaterials()
+            
+                            for i = 1, v.num do
+                                -- p:AddChoice(tostring(i) .. " (" .. table.remove(string.Explode("/", mats[i] or "")) .. ")", tostring(i - 1), tonumber(self.cfg.submaterial or 0) == i - 1)
+                                p:AddChoice(v.name.." "..i,tostring(i-1),i==1)
+                            end
+            
+                            p.OnSelect = function(panel, index, word, value)
+
+                                local bgroups = ""
+
+                                for i,v in ipairs(bgc.comboboxes) do
+                                    if isstring(v) then bgroups=bgroups..v else 
+                                        local txt,data = v:GetSelected()
+                                        bgroups=bgroups..data
+                                    end
+                                end
+
+                                self.cfg.bodygroups = bgroups
+
+                                print("BGROUPS", bgroups)
+
+                                cust:UpdateCfg()
+
+                                --TODO PUT THIS ELSEWHERE
+                                if  IsValid(e) then e:SetBodyGroups(bgroups) end
+                            end
+                        end) 
+                        table.insert(bgc.comboboxes, combo)
+                    else
+                        table.insert(bgc.comboboxes, "0")
+                    end
+                end
+
+
+            end
+
+
+
+
+
+        end)
 
         return
     end
