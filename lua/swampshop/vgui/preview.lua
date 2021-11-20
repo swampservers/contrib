@@ -13,7 +13,6 @@ function PANEL:Init()
     self.Pitch = pitchtarget
     self.Yaw = 0
     self.LastInteractionTime = 0
-
     SS_PreviewPanel = self
 end
 
