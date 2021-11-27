@@ -132,7 +132,7 @@ function PANEL:EnsureURL(url)
 end
 
 function PANEL:FetchPageURL()
-    self:RunJavascript('if (document.readyState === "complete") { console.log("HREF:"+window.location.href); }')
+    self:RunJavascript('console.log("HREF:"+window.location.href);')
 end
 
 function PANEL:OpenURL(url)

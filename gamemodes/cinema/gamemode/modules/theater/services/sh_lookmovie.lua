@@ -6,7 +6,7 @@ SERVICE.Name = "LookMovie"
 SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
-local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com"}
+local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com", "bestalltimemovies.xyz"}
 
 function SERVICE:GetKey(url)
     if (util.JSONToTable(url.encoded)) then return false end
