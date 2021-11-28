@@ -311,4 +311,16 @@ function VIDEO:Paint(w, h)
     surface.DrawRect(0, 0, self:GetSize())
 end
 
+function VIDEO:OnMousePressed(key)
+    if key == MOUSE_RIGHT then
+        local menu = DermaMenu()
+        
+        menu:AddOption("Copy Link", function()
+            SetClipboardText(self.Video.url)
+        end)
+        
+        menu:Open()
+    end
+end
+
 vgui.Register("RequestVideo", VIDEO)

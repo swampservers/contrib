@@ -289,12 +289,16 @@ function CinemaResourceMonitor(html)
         html.f = nil
 
         html.Browser.OnDocumentReady = function(panel, url)
-            html.Controls.AddressBar:SetText(url)
+            html.AddressBar:SetText(url)
+
+            if IsValid(html.PanelInput) then
+                html.PanelInput:SetText("")
+            end
 
             if theater.ExtractURLInfo(url) then
-                html.Controls.RequestButton:SetDisabled(false)
+                html.RequestButton:SetDisabled(false)
             else
-                html.Controls.RequestButton:SetDisabled(true)
+                html.RequestButton:SetDisabled(true)
             end
         end
 
@@ -311,12 +315,12 @@ function CinemaResourceMonitor(html)
         LinkList:Clear()
         urls = {}
         InjectResourceMonitor(html.Browser)
-        html.Controls.AddressBar:SetText(url)
+        html.AddressBar:SetText(url)
 
         if theater.ExtractURLInfo(url) then
-            html.Controls.RequestButton:SetDisabled(false)
+            html.RequestButton:SetDisabled(false)
         else
-            html.Controls.RequestButton:SetDisabled(true)
+            html.RequestButton:SetDisabled(true)
         end
     end
 
