@@ -314,11 +314,11 @@ end
 function VIDEO:OnMousePressed(key)
     if key == MOUSE_RIGHT then
         local menu = DermaMenu()
-        
+
         menu:AddOption("Copy Link", function()
             SetClipboardText(self.Video.url)
         end)
-        
+
         menu:Open()
     end
 end
