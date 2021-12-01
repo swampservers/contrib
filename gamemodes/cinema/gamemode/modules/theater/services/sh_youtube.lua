@@ -35,7 +35,6 @@ if CLIENT then
 	]]
 
     function SERVICE:LoadVideo(Video, panel)
-        local enabled = false
 
         if (self:IsMature(Video)) then
 			if (string.StartWith(panel:GetURL(),"http://swamp.sv/s/cinema/youtube.html")) then
@@ -43,7 +42,7 @@ if CLIENT then
 			end
             panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1")
 			panel:RunJavascript(payload)
-            enabled = true
+            local enabled = true
 			
 			panel:AddFunction("gmod", "loaded", function()
 			    enabled = false
