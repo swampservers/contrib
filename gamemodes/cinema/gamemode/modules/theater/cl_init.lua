@@ -287,9 +287,9 @@ net.Receive("TheaterVoteSkips", function()
     ReqVoteSkips = required
 end)
 
-function LoadVideo(Video)
+function LoadVideo(Video,force)
     -- refresh panels on service change to fix bugs
-    if CurrentVideo and Video and CurrentVideo:Type() ~= Video:Type() then
+    if CurrentVideo and Video and CurrentVideo:Type() ~= Video:Type() or force then
         RemovePanels()
     end
 
@@ -310,7 +310,7 @@ function LoadVideo(Video)
     ActivePanel.OnFinishLoading = function() end
     LocalPlayer().theaterPanel = ActivePanel
 
-    if (LocalPlayer().videoDebug) then
+    if (LocalPlayer().videoDebug and not force) then
         print("KEY: " .. Video:Key(), string.len(Video:Key()))
         print("DATA: " .. Video:Data(), string.len(Video:Data()))
     end
@@ -326,6 +326,8 @@ function LoadVideo(Video)
             svc:SeekTo(seektime, ActivePanel)
         end
     end
+	
+	if (force) then return end
 
     -- Output debug information
     Msg("Loaded Video\n")
