@@ -171,7 +171,9 @@ function SafeMountGMA(wsid, filename)
 
     local succ, files = game.MountGMA(filename)
 
-    if not succ then files={} end
+    if not succ then
+        files = {}
+    end
 
     for i, v in ipairs(files) do
         if v:EndsWith(".mdl") then
