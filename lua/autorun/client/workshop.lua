@@ -6,6 +6,11 @@ function RefreshWorkshop()
     STEAMWS_FILEINFO_STARTED = {}
     STEAMWS_DOWNLOAD_STARTED = {}
     STEAMWS_FILEINFO = {}
+
+    -- id -> gma file path, only contains downloaded but unmounted stuff
+    STEAMWS_UNMOUNTED = {}
+
+    -- id -> file table, for mounted stuff
     STEAMWS_MOUNTED = {}
     STEAM_WORKSHOP_INFLIGHT = 0
     STEAMWS_PLAYERMODELS = {}
@@ -70,7 +75,28 @@ end
 function require_workshop(id, range)
     -- print("ID", id, STEAMWS_DOWNLOAD_STARTED[id], STEAM_WORKSHOP_INFLIGHT)
     -- 
+    if STEAMWS_MOUNTED[id] then return true end
+
     assert(isstring(id))
+
+    if STEAMWS_UNMOUNTED[id] then
+        print("UM")
+        if STEAM_WORKSHOP_INFLIGHT==0 then
+            -- MOUNT ALL GMAS
+
+            print("MOUNT")
+            for _id_,path in pairs(STEAMWS_UNMOUNTED) do
+                print(_id_,path)
+            end
+
+            SafeMountGMAs()
+            assert(table.IsEmpty(STEAMWS_UNMOUNTED))
+        end
+
+        return false
+    end
+
+
     local shouldload = true
 
     if range then
@@ -104,55 +130,70 @@ function require_workshop(id, range)
         end
     end
 
-    if shouldload and not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT < 2 then
-        STEAMWS_DOWNLOAD_STARTED[id] = true
-        print("\n\n***DOWNLOADING " .. id .. " OF SIZE " .. STEAMWS_FILEINFO[id].size .. "***\n\n")
-        local _id_ = id
-        STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
+    if shouldload then
+        if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT < 2 then
+            STEAMWS_DOWNLOAD_STARTED[id] = true
+            print("\n\n***DOWNLOADING " .. id .. " OF SIZE " .. STEAMWS_FILEINFO[id].size .. "***\n\n")
+            local _id_ = id
+            STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
 
-        steamworks.DownloadUGC(id, function(name, file)
-            print("\n\n***CALLBACK " .. id .. "***\n\n")
+            steamworks.DownloadUGC(id, function(name, file)
+                print("\n\n***CALLBACK " .. id .. "***\n\n")
 
-            timer.Simple(0.1, function()
-                STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT - 1
-            end)
-
-            -- NOTE:
-            -- Any error models currently loaded that the mounted addon provides will be reloaded.
-            -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
-            -- That means that this cannot be used to fix missing map materials, as the map materials are loaded before you are able to call this.
-            if name then
-                -- print("MOUNTAVBE", _id_, name) 
-                -- game.MountGMA(name)
-                local succ, files = SafeMountGMA(_id_, name)
-
-                if succ then
-                    STEAMWS_MOUNTED[_id_] = files
-                else
-                    STEAMWS_MOUNTED[_id_] = {}
-                end
-            else
-                print("Workshop download failed for " .. _id_)
-
-                timer.Simple(60, function()
-                    print("Retrying for " .. _id_)
-                    STEAMWS_DOWNLOAD_STARTED[_id_] = nil
+                timer.Simple(0.1, function()
+                    STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT - 1
                 end)
-            end
-        end)
+
+                -- NOTE:
+                -- Any error models currently loaded that the mounted addon provides will be reloaded.
+                -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
+                -- That means that this cannot be used to fix missing map materials, as the map materials are loaded before you are able to call this.
+                if name then
+                    -- print("MOUNTAVBE", _id_, name) 
+                    -- game.MountGMA(name)
+
+                    -- TODO: mount all GMAs at once
+                    -- local succ, files = SafeMountGMA(_id_, name)
+
+                    -- if succ then
+                    --     STEAMWS_MOUNTED[_id_] = files
+                    -- else
+                    --     STEAMWS_MOUNTED[_id_] = {}
+                    -- end
+
+                    STEAMWS_UNMOUNTED[_id_] = name
+
+
+
+                else
+                    print("Workshop download failed for " .. _id_)
+
+                    timer.Simple(60, function()
+                        print("Retrying for " .. _id_)
+                        STEAMWS_DOWNLOAD_STARTED[_id_] = nil
+                    end)
+                end
+            end)
+        end
     end
 
-    return STEAMWS_MOUNTED[id] and true or false
+    return false
 end
 
-function SafeMountGMA(wsid, filename)
-    local ok, err = GMABlacklist(filename)
+function SafeMountGMAs()
 
-    if not ok then
-        print("COULD NOT MOUNT " .. wsid .. " BECAUSE " .. err)
+    for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
+        local ok, err = GMABlacklist(filename)
 
-        return false, {}
+        if not ok then
+            print("COULD NOT MOUNT " .. wsid .. " BECAUSE " .. err)
+
+            STEAMWS_MOUNTED[wsid] = {}
+            STEAMWS_UNMOUNTED[wsid] = nil
+        end
     end
+
+    if table.IsEmpty(STEAMWS_UNMOUNTED) then return end
 
     -- mounting with a clientside error model crashes the game
     local resetmodels = {}
@@ -169,24 +210,25 @@ function SafeMountGMA(wsid, filename)
         end
     end
 
-    local succ, files = game.MountGMA(filename)
+    for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
+        print("MOUNTING", wsid)
+        local succ, files = game.MountGMA(filename)
+        if not succ then files={} end
 
-    if not succ then
-        files = {}
-    end
-
-    for i, v in ipairs(files) do
-        if v:EndsWith(".mdl") then
-            AvailableMdls[v] = true
+        for i, v in ipairs(files) do
+            if v:EndsWith(".mdl") then
+                AvailableMdls[v] = true
+            end
         end
+
+        STEAMWS_MOUNTED[wsid] = files
+        STEAMWS_UNMOUNTED[wsid] = nil
     end
 
     for ent, mod in pairs(resetmodels) do
         ent:SetModel(mod[1])
         ent:SetSequence(mod[2])
     end
-
-    return succ, files
 end
 
 -- STEAMWS_REGISTRY = STEAMWS_REGISTRY or {}
