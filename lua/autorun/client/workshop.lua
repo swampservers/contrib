@@ -6,10 +6,8 @@ function RefreshWorkshop()
     STEAMWS_FILEINFO_STARTED = {}
     STEAMWS_DOWNLOAD_STARTED = {}
     STEAMWS_FILEINFO = {}
-
     -- id -> gma file path, only contains downloaded but unmounted stuff
     STEAMWS_UNMOUNTED = {}
-
     -- id -> file table, for mounted stuff
     STEAMWS_MOUNTED = {}
     STEAM_WORKSHOP_INFLIGHT = 0
@@ -76,16 +74,15 @@ function require_workshop(id, range)
     -- print("ID", id, STEAMWS_DOWNLOAD_STARTED[id], STEAM_WORKSHOP_INFLIGHT)
     -- 
     if STEAMWS_MOUNTED[id] then return true end
-
     assert(isstring(id))
 
     if STEAMWS_UNMOUNTED[id] then
-        if STEAM_WORKSHOP_INFLIGHT==0 then
+        if STEAM_WORKSHOP_INFLIGHT == 0 then
             -- MOUNT ALL GMAS
-
             print("MOUNT")
-            for _id_,path in pairs(STEAMWS_UNMOUNTED) do
-                print(_id_,path)
+
+            for _id_, path in pairs(STEAMWS_UNMOUNTED) do
+                print(_id_, path)
             end
 
             SafeMountGMAs()
@@ -94,7 +91,6 @@ function require_workshop(id, range)
 
         return false
     end
-
 
     local shouldload = true
 
@@ -150,20 +146,14 @@ function require_workshop(id, range)
                 if name then
                     -- print("MOUNTAVBE", _id_, name) 
                     -- game.MountGMA(name)
-
                     -- TODO: mount all GMAs at once
                     -- local succ, files = SafeMountGMA(_id_, name)
-
                     -- if succ then
                     --     STEAMWS_MOUNTED[_id_] = files
                     -- else
                     --     STEAMWS_MOUNTED[_id_] = {}
                     -- end
-
                     STEAMWS_UNMOUNTED[_id_] = name
-
-
-
                 else
                     print("Workshop download failed for " .. _id_)
 
@@ -180,20 +170,17 @@ function require_workshop(id, range)
 end
 
 function SafeMountGMAs()
-
     for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
         local ok, err = GMABlacklist(filename)
 
         if not ok then
             print("COULD NOT MOUNT " .. wsid .. " BECAUSE " .. err)
-
             STEAMWS_MOUNTED[wsid] = {}
             STEAMWS_UNMOUNTED[wsid] = nil
         end
     end
 
     if table.IsEmpty(STEAMWS_UNMOUNTED) then return end
-
     -- mounting with a clientside error model crashes the game
     local resetmodels = {}
 
@@ -212,7 +199,10 @@ function SafeMountGMAs()
     for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
         print("MOUNTING", wsid)
         local succ, files = game.MountGMA(filename)
-        if not succ then files={} end
+
+        if not succ then
+            files = {}
+        end
 
         for i, v in ipairs(files) do
             if v:EndsWith(".mdl") then
