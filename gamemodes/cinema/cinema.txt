@@ -1,7 +1,7 @@
 "Gamemode"
 {
 	"base"			"base"
-	"title"			"Cinema"
+	"title"			"Swamp Cinema"
 	"menusystem" 	"1"
 	"maps" 			"theater|theater_|cinema_"
 	"workshopid"	"2453150484"

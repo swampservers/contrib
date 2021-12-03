@@ -15,7 +15,7 @@ if SERVER then
         net.Send(ply)
     end)
 
-    timer.Create("KEEP IT REAL", 2, 0, function()
+    timer.Create("FixGlobalEnts", 2, 0, function()
         local glblents = {}
 
         for k, v in pairs(glbls) do
@@ -24,9 +24,11 @@ if SERVER then
             end
         end
 
-        net.Start("Glbl", true)
-        net.WriteTable(glblents)
-        net.Broadcast()
+        if not table.IsEmpty(glblents) then
+            net.Start("Glbl", true)
+            net.WriteTable(glblents)
+            net.Broadcast()
+        end
     end)
 
     function SetG(k, v)

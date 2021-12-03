@@ -333,6 +333,43 @@ SS_Product({
     end
 })
 
+if CLIENT then
+    -- it might be cool to make this piggyback off the shop accessories (ply:GetExtraAccessories...?) and just attach another model?
+    hook.Add("PrePlayerDraw", "DrawSpacehat", function(ply)
+        if ply:GetNWBool("spacehat", false) and ply:Alive() then
+            if not IsValid(SpaceHatCSModel) then
+                local prod = SS_Products['spacehat']
+                SpaceHatCSModel = ClientsideModel(prod.model, RENDERGROUP_OPAQUE)
+                SpaceHatCSModel:SetMaterial(prod.material)
+                SpaceHatCSModel:SetNoDraw(true)
+            end
+
+            local attach_id = ply:LookupAttachment('eyes')
+
+            if attach_id then
+                local attacht = ply:GetAttachment(attach_id)
+
+                if attacht then
+                    pos = attacht.Pos
+                    ang = attacht.Ang
+                    SpaceHatCSModel:SetAngles(ang)
+
+                    if ply:IsPony() then
+                        SpaceHatCSModel:SetPos(pos + ang:Up() * 4 + ang:Forward() * -4)
+                        SpaceHatCSModel:SetModelScale(1.0)
+                    else
+                        SpaceHatCSModel:SetPos(pos)
+                        SpaceHatCSModel:SetModelScale(0.7)
+                    end
+
+                    SpaceHatCSModel:SetupBones()
+                    SpaceHatCSModel:DrawModel()
+                end
+            end
+        end
+    end)
+end
+
 SS_WeaponProduct({
     class = "weapon_pickaxe_diamond",
     price = 10000,

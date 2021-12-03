@@ -40,10 +40,8 @@ function ComputeSpray(SWEP, args)
     SWEP.SprayDecay = shotdecay() / SWEP.CycleTime
 
     if math.abs(sos() - targetsos) > 0.01 then
-        print("WARNING, BAD SOS!", sos())
+        print(SWEP.PrintName, "can't reach target spray")
     end
-
-    print("SOS", SWEP.SprayIncrement)
 end
 
 -- function SetupSpray(SWEP)
@@ -52,49 +50,6 @@ end
 -- end
 function SprayControlFactor(self, control)
     self.SprayDecay = control * self.SprayIncrement / self.CycleTime
-end
-
-function SprayShotsTo80(SWEP, shots)
-    -- local shotdecay = SWEP.SprayDecay * SWEP.CycleTime
-    -- print(shotdecay)
-    SWEP.SpraySaturation = 3
-
-    local function shotdecay()
-        return SWEP.SprayIncrement / SWEP.SpraySaturation
-    end
-
-    local function sos()
-        local sdecay = shotdecay()
-        local spray = 0
-
-        for i = 1, shots do
-            spray = math.max(0, spray + SWEP.SprayIncrement / (SWEP.SpraySaturation ^ spray) - sdecay)
-        end
-
-        return spray
-    end
-
-    -- for safe=1,100 do 
-    --     if sos() < 0.9 then
-    --         if safe==1 then print("ADD MORE SprayIncrement!", sos()) 
-    --             SWEP.SprayDecay=shotdecay() / SWEP.CycleTime 
-    --             return 
-    --         end
-    --          break 
-    --     end 
-    --     SWEP.SpraySaturation = SWEP.SpraySaturation+1 
-    -- end 
-    -- if SWEP.SpraySaturation==1 then print("ADD MORE SprayIncrement!", sos()) end
-    local approach = 2
-
-    -- SWEP.SpraySaturation = SWEP.SpraySaturation-approach
-    for refine = 1, 10 do
-        SWEP.SpraySaturation = SWEP.SpraySaturation + (sos() < 0.8 and approach or -approach)
-        approach = 0.5 * approach
-    end
-
-    SWEP.SprayDecay = shotdecay() / SWEP.CycleTime
-    print("SOS", sos(), SWEP.SpraySaturation)
 end
 
 game.AddAmmoType{

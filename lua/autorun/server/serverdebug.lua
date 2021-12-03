@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 RecentErrors = RecentErrors or {}
 
 function ServerDebug(e)
@@ -49,11 +48,11 @@ local function sendclientdebug(ply)
 end
 
 concommand.Add("clientdebug", function(ply, cmd, args)
-    if CurTime()-clientdebugtime > 60 then
+    if CurTime() - clientdebugtime > 60 then
         file.AsyncRead("clientside_errors.txt", "MOD", function(fn, gp, status, data)
-        	if  status == FSASYNC_OK  then
+            if status == FSASYNC_OK then
                 print("READDONE", #data)
-                clientdebugtxt = data:sub(#data-1500)
+                clientdebugtxt = data:sub(#data - 1500)
                 clientdebugtime = CurTime()
                 sendclientdebug(ply)
             end

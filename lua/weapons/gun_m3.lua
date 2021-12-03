@@ -28,8 +28,8 @@ SWEP.Spray = 0.12
 SWEP.SprayExponent = 2
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 1.2,
-    ShotsTo90Spray = 3
+    TapFireInterval = 1.5,
+    ShotsTo90Spray = 5
 })
 
 --

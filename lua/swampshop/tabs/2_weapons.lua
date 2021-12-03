@@ -291,6 +291,12 @@ SS_WeaponPerkData = {
         minrating = 5,
         maxrating = 7
     },
+    antikleiner = {
+        name = "Anti-Kleiner",
+        description = "Kleiner Killer",
+        minrating = 7,
+        maxrating = 7
+    },
     antimaterial = {
         name = "Anti-Material",
         description = "Can damage any prop (AWP instaremoves)",
@@ -319,12 +325,6 @@ SS_WeaponPerkData = {
     moredamage = {
         name = "Armor-Piercing",
         description = "More damage",
-        minrating = 7,
-        maxrating = 8
-    },
-    antikleiner = {
-        name = "Anti-Kleiner",
-        description = "Kleiner Killer",
         minrating = 7,
         maxrating = 8
     },

@@ -6,8 +6,8 @@ SWEP.Instructions = "Press jump to tip your fedora!"
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.ViewModelFOV = 85
-SWEP.WorldModel = Model("models/fedora_rainbowdash/fedora_rainbowdash.mdl")
-SWEP.ViewModel = Model("models/fedora_rainbowdash/fedora_rainbowdash.mdl")
+SWEP.WorldModel = "models/fedora_rainbowdash/fedora_rainbowdash.mdl"
+SWEP.ViewModel = "models/fedora_rainbowdash/fedora_rainbowdash.mdl"
 
 function SWEP:Initialize()
     self:SetHoldType("normal")
@@ -25,7 +25,7 @@ end
 
 function SWEP:SetupMove(ply, mv, cmd)
     if mv:KeyPressed(IN_JUMP) then
-        if ply.Obesity and ply:Obesity() > 40 then return end
+        if ply:IsJuggernaut() then return end
         local self = ply:GetActiveWeapon()
         local power = 200
 
