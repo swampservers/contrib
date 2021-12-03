@@ -23,7 +23,7 @@ if (SERVER) then
     MAGICBUTTON_ENT_DESIRED_NUMBER = 2
 
     timer.Create("magicbutton_ent_spawner", 5, 0, function()
-        if EntityCount("magicbutton") < MAGICBUTTON_ENT_DESIRED_NUMBER then
+        if #(Ents.magicbutton) < MAGICBUTTON_ENT_DESIRED_NUMBER then
             local button = ents.Create("magicbutton")
 
             if (IsValid(button)) then

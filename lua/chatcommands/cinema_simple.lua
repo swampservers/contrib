@@ -35,20 +35,6 @@ end, {
 
 RegisterChatConsoleCommand({'drop', 'dropweapon'}, "drop")
 
-RegisterChatConsoleCommand('dropall', "dropall")
-
-RegisterChatCommand({'rent', 'protect'}, function(ply, arg)
-    TryProtectTheater(ply)
-end)
-
-timer.Create("steamspam", 100, 0, function()
-    if math.random() < 0.1 then
-        for k, v in pairs(player.GetAll()) do
-            v:ChatPrint("[orange]Say [gold]/join[orange] to join our steam chat (and click 'Enter chat room') but don't be mean!")
-        end
-    end
-end)
-
 concommand.Add("drop", function(ply, cmd, args)
     ply.LastWepDropTime = ply.LastWepDropTime or 0
     if (CurTime() - ply.LastWepDropTime) < 2 then return end
@@ -74,6 +60,8 @@ concommand.Add("drop", function(ply, cmd, args)
     end
 end)
 
+RegisterChatConsoleCommand('dropall', "dropall")
+
 concommand.Add("dropall", function(ply, cmd, args)
     ply.LastWepDropTime = ply.LastWepDropTime or 0
     if (CurTime() - ply.LastWepDropTime) < 2 then return end
@@ -84,6 +72,18 @@ concommand.Add("dropall", function(ply, cmd, args)
 
         if cl ~= "weapon_ebola" or cl ~= "weapon_tag" then
             ply:StripWeapon(cl)
+        end
+    end
+end)
+
+RegisterChatCommand({'rent', 'protect'}, function(ply, arg)
+    TryProtectTheater(ply)
+end)
+
+timer.Create("steamspam", 100, 0, function()
+    if math.random() < 0.1 then
+        for k, v in pairs(player.GetAll()) do
+            v:ChatPrint("[orange]Say [gold]/join[orange] to join our steam chat (and click 'Enter chat room') but don't be mean!")
         end
     end
 end)

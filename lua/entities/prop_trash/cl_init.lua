@@ -174,6 +174,30 @@ local mind2 = 600 ^ 2
 local maxd2 = 3000 ^ 2
 local targetcount = 8
 
+
+
+function CurrentFrustrum()
+    local v1 = gui.ScreenToVector(0, 0)
+    local v2 = gui.ScreenToVector(ScrW(), 0)
+    local v3 = gui.ScreenToVector(ScrW(), ScrH())
+    local v4 = gui.ScreenToVector(0, ScrH())
+
+    local frustrum = {
+        {v1:Cross(v2), 0},
+        {v2:Cross(v3), 0},
+        {v3:Cross(v4), 0},
+        {v4:Cross(v1), 0}
+    }
+
+    for n = 1, 4 do
+        frustrum[n][2] = frustrum[n][1]:Dot(EyePos())
+    end
+
+    return frustrum
+end
+
+
+
 -- TODO can we do one every tick cyclically instead of all at once
 timer.Create("TrashLights", 0.1, 0, function()
     if not IsValid(LocalPlayer()) then return end

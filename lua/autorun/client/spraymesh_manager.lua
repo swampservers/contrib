@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
+
 surface.CreateFont("DermaMedium", {
     font = "Roboto",
     size = 22,
@@ -200,21 +200,6 @@ timer.Simple(0, function()
                 -- draw.DrawText("Recent Sprays", "DermaMedium", 20, y+h2 + 4, Color(255, 255, 255), TEXT_ALIGN_LEFT)
             end
 
-            -- function p:PaintOver(w, h)
-            --     if basedpanel.input:GetValue()!="" then
-            --         local x,y = self.scrollzone:GetPos()
-            --         local w2,h2 = self.scrollzone:GetSize()
-            --         surface.SetDrawColor(0,0,0,128)
-            --         surface.DrawRect(x,y,w2,h2)
-            --         local id = basedpanel.input.SanitizedInput 
-            --         if id then
-            --             local m = ImgurMaterial({id=id, shader = "UnlitGeneric"})
-            --             surface.SetDrawColor( 255, 255, 255, 255 ) 
-            --             surface.SetMaterial( m )
-            --             surface.DrawTexturedRect( x+(w2/2) - 128, y+(h2/2) - 128,256,256 ) 
-            --         end
-            --     end
-            -- end
             basedpanel.inputholder = vgui("Panel", function(p)
                 p:SetTall(56)
                 p:Dock(TOP)
@@ -265,25 +250,6 @@ timer.Simple(0, function()
                 end)
             end)
 
-            -- vgui("Panel", function(p)
-            --     p:Dock(TOP)
-            --     basedpanel.checkbox = vgui("DCheckBoxLabel", function(p)
-            --         p:Dock(LEFT)
-            --         p:SetText("Is this spray pornograhic?")
-            --     end)
-            --     vgui("DButton", function(p)
-            --         p:Dock(RIGHT)
-            --         p:SetText("OK")
-            --         function p:DoClick()
-            --             if basedpanel.input.SanitizedInput then
-            --                 urlconvar:SetString("i.imgur.com/"..basedpanel.input.SanitizedInput)
-            --                 nsfwconvar:SetString(basedpanel.input.SanitizedInput..(basedpanel.checkbox:GetChecked() and "=1" or "=0"))
-            --             end
-            --         end
-            --     end)
-            -- end)
-            -- p:InvalidateLayout( true )
-            -- p:SizeToChildren( false, true )
             basedpanel.scrollzone = vgui("DLabel", function(p)
                 p:Dock(BOTTOM)
                 p:SetText("To open this panel quickly, run in console: bind <key> spray")

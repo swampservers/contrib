@@ -1,4 +1,6 @@
-﻿function render.DrawingScreen()
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+function render.DrawingScreen()
     local t = render.GetRenderTarget()
 
     return (t == nil) or (tostring(t) == "[NULL Texture]")

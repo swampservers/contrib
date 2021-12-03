@@ -772,6 +772,30 @@ SS_PlayermodelItem({
     model = 'models/milaco/minecraft_pm/minecraft_pm.mdl'
 })
 
+-- TODO: make minecraft playermodel have a material mod
+-- hook.Add("SetPlayerModelMaterials", "minecraftmats", function(ent, ply)
+--     if ent:GetModel() == MCSPmodel and ply:GetNWString("MCSPSkinURL", false) then
+--         ent:SetWebSubMaterial(1, {
+--             id = ply:GetNWString("MCSPSkinURL", false),
+--             owner = ply,
+--             stretch = true,
+--             pointsample = true,
+--             shader = "VertexLitGeneric",
+--             params = [[{["$opaque"]=1,["$halflambert"]=1,["$model"]=1}]]
+--         })
+
+--         ent:SetWebSubMaterial(0, {
+--             id = ply:GetNWString("MCSPSkinURL", false),
+--             owner = ply,
+--             stretch = true,
+--             pointsample = true,
+--             shader = "VertexLitGeneric",
+--             params = [[{["$alphatest"]=1,["$halflambert"]=1,["$model"]=1}]]
+--         })
+--     end
+-- end)
+
+
 --cant find workshop plus i think it needs to be colorable
 SS_PlayermodelItem({
     class = 'crusadermodel',
