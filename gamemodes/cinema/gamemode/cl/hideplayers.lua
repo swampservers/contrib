@@ -1,10 +1,9 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 local cvar = CreateClientConVar("cinema_hideplayers", 0, true, false, "", 0, 1)
-
 local undomodelblend = false
 local white = Material("models/debug/debugwhite")
+
 hook.Add("PrePlayerDraw", "HidePlayers", function(ply)
     assert(not ply:GetNoDraw())
     -- TODO: or ply:GetNoDraw()?
@@ -25,7 +24,7 @@ hook.Add("PrePlayerDraw", "HidePlayers", function(ply)
             render.SetBlend(0.2)
             render.ModelMaterialOverride(white)
             render.SetColorModulation(0.5, 0.5, 0.5)
-            
+
             hook.Add("PostPlayerDraw", "UndoPlayerBlend", function(ply)
                 render.SetBlend(1.0)
                 render.ModelMaterialOverride()
@@ -35,4 +34,3 @@ hook.Add("PrePlayerDraw", "HidePlayers", function(ply)
         end
     end
 end)
-

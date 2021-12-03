@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 local wasf4down = false
 
 concommand.Add("swamp_thirdperson", function()

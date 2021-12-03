@@ -50,7 +50,6 @@ function Player:IsJuggernaut()
     return self:GetNWFloat("garfield", 1) > 40
 end
 
-
 function Player:SetObesity(obs)
     if obs == 1 and self:Obesity() == 1 then return end
     self:SetNWFloat("garfield", obs)

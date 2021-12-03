@@ -1,4 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local Player = FindMetaTable("Player")
 local Entity = FindMetaTable("Entity")
 

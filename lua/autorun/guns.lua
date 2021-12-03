@@ -52,7 +52,6 @@ function SprayControlFactor(self, control)
     self.SprayDecay = control * self.SprayIncrement / self.CycleTime
 end
 
-
 game.AddAmmoType{
     name = "BULLET_PLAYER_50AE",
     dmgtype = DMG_BULLET,

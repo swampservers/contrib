@@ -1,7 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-local cm_dn =  "swamponions/cm_d"
-hook.Add("Tick","cm_dn",function()
+local cm_dn = "swamponions/cm_d"
+
+hook.Add("Tick", "cm_dn", function()
     cm_dn = GetGlobalBool("DAY") and "swamponions/cm_d" or "swamponions/cm_n"
 end)
 

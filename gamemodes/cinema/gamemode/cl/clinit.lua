@@ -1,9 +1,7 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- Chat colors
 ColDefault = Color(200, 200, 200)
 ColHighlight = Color(158, 37, 33)
-
 
 -- CHudCrosshair=true,
 GM.HUDToHide = {
@@ -52,7 +50,6 @@ function GM:HUDShouldDraw(name)
     return (not self.HUDToHide[name])
 end
 
-
 hook.Add("HUDShouldDraw", "HideHUsddfD", function(name)
     if GetConVarNumber("cinema_hideinterface") <= 0 then return end
     if name == "CHudDeathNotice" then return false end
@@ -61,9 +58,6 @@ end)
 hook.Add("PlayerStartVoice", "Hidevoiceasd", function(name)
     if GetConVarNumber("cinema_hideinterface") > 0 then return false end
 end)
-
-
-
 
 function GM:HUDPaint()
     hook.Run("HUDDrawTargetID")
@@ -74,7 +68,6 @@ end
 function GM:HUDDrawTargetID()
     return false
 end
-
 
 function GM:CalcView(ply, origin, angles, fov, znear, zfar)
     local Vehicle = ply:GetVehicle()

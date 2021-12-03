@@ -176,6 +176,7 @@ local targetcount = 8
 
 
 
+
 function CurrentFrustrum()
     local v1 = gui.ScreenToVector(0, 0)
     local v2 = gui.ScreenToVector(ScrW(), 0)

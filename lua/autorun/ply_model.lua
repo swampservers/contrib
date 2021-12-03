@@ -1,5 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local Player = FindMetaTable("Player")
 
 function Player:GetDisplayModel()
@@ -7,12 +6,12 @@ function Player:GetDisplayModel()
     if st == "" then return self:GetModel(), nil end
     -- wsid might be nil
     mdl, wsid = unpack(("@"):Explode(st))
+
     return mdl, wsid
 end
 
 if CLIENT then
     -- TODO: move forcing logic to client_force_mdl_mat.lua
-
     local function checkmodel(ply)
         local mdl = ply:GetModel()
         local dmdl, dwsid = ply:GetDisplayModel()

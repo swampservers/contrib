@@ -1,8 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- TODO: Can we remove this? the volume control function can be handled by the thing that handles all game sounds, all it will really do is lip animation
-
 net.Receive("ExtSound", function(len)
     local ply = net.ReadEntity()
     local sound = net.ReadString()

@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 matproxy.Add({
     name = "ToggleSelfillum",
     init = function(self, mat, values)
@@ -26,8 +25,6 @@ matproxy.Add({
         mat:SetInt("$emissiveBlendEnabled", on and 1 or 0)
     end
 })
-
-
 
 local ClockArms = Material("debug/debugvertexcolor")
 local ClockCenter = Vector(0, 1039.4 + 155, 192 - 4)
@@ -61,10 +58,13 @@ hook.Add("PostDrawTranslucentRenderables", "lobbyclock", function(depth, sky)
 end)
 
 local hevmaterial = Material("models/hevsuit/hevsuit_sheet")
+
 timer.Simple(0, function()
     hevmaterial:SetInt("$flags", 8192 + 65536)
 end)
+
 local resetmaterial = Material("swamponions/reset")
+
 timer.Simple(0, function()
     resetmaterial:SetInt("$flags", 0)
 end)
@@ -122,8 +122,6 @@ timer.Simple(0, function()
     }))
 end)
 
-
-
 local last_thing = 0
 
 hook.Add("Think", "VapeSignColor", function()
@@ -143,7 +141,6 @@ hook.Add("Think", "VapeSignColor", function()
 end)
 
 -- vapesignmaterial:SetVector("$color2",Vector(1,0.4,0.6))
-
 local citymat = Material("swamponions/af/city")
 local c0 = Vector(-2385, 96, 763) --left edge of window
 local c1 = Vector(-2096, -193, 646) --right edge of window
@@ -153,6 +150,7 @@ local w_height = c0.z - c1.z
 local v_width = 16000
 local v_height = 9000
 local v_dist = 5000
+
 hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function(depth, sky)
     if sky or depth then return end
     local to_c0 = c0 - EyePos()
@@ -178,4 +176,3 @@ hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function(depth, sk
     surface.DrawTexturedRectUV(-w_width / 2, -w_height / 2, w_width, w_height, u0, v0, u1, v1)
     cam.End3D2D()
 end)
-

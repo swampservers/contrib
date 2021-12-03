@@ -11,6 +11,7 @@ if CLIENT then
     killicon.Add("doom3_bfg", "vgui/icons/bfgw", Color(255, 80, 0, 255))
 end
 
+
 SWEP.VElements = {
     ["d3ammo"] = {
         type = "Quad",

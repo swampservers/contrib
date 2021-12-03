@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 timer.Simple(1, function()
     net.Start("setcntry")
     net.WriteString(string.lower(system.GetCountry()))

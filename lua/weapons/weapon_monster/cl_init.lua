@@ -88,7 +88,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     return pos, ang
 end
 
-
 net.Receive("MonsterZero", function()
     local ply = net.ReadEntity()
     if not IsValid(ply) then return end

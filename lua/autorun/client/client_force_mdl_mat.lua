@@ -23,7 +23,9 @@ hook.Add("Tick", "ClientForceMaterial", function()
                 end
             end
 
-            if ent.CLIENTFORCEDSKIN then ent:BasedSetSkin( ent.CLIENTFORCEDSKIN ) end
+            if ent.CLIENTFORCEDSKIN then
+                ent:BasedSetSkin(ent.CLIENTFORCEDSKIN)
+            end
         end
     end
 end)
@@ -38,7 +40,7 @@ end)
 
 hook.Add("NotifyShouldTransmit", "ClientForceMaterial3", function(ent, trans)
     ent.CFM_AppearTime = CurTime()
-    watchlist[ent] = ( (ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) and trans) or nil
+    watchlist[ent] = ((ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) and trans) or nil
 end)
 
 local Entity = FindMetaTable("Entity")
@@ -63,7 +65,10 @@ end
 
 function Entity:SetSkin(skin)
     self.CLIENTFORCEDSKIN = skin
-    if skin then self:BasedSetSkin(skin) end
+
+    if skin then
+        self:BasedSetSkin(skin)
+    end
 end
 
 function Entity:SetMaterial(mat)

@@ -74,8 +74,6 @@ function ENT:AltMod()
     self:CycleInstrument()
 end
 
-
-
 -- MIDI stuff
 function LOADMIDI()
     if (file.Exists("lua/bin/gmcl_midi_win32.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_win64.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_linux.dll", "MOD")) then
@@ -293,9 +291,9 @@ function LOADMIDI()
                 -- Zero velocity NOTE_ON substitutes NOTE_OFF
                 if not midi or midi.GetCommandName(command) ~= "NOTE_ON" or velocity == 0 or not MIDIKeys or not MIDIKeys[note] then return end
                 notesPlayable = notesPlayable - 1
+
                 if notesPlayable > 0 then
                     instrument:OnRegisteredKeyPlayed(MIDIKeys[note].Sound)
-            
                 end
             end)
             --chat.AddText("PIANO FLOOD DETECTED")

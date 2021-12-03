@@ -15,7 +15,6 @@ if SERVER then
         net.Send(ply)
     end)
 
-
     timer.Create("FixGlobalEnts", 2, 0, function()
         local glblents = {}
 
