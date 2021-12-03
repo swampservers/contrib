@@ -196,6 +196,14 @@ function CurrentFrustrum()
     return frustrum
 end
 
+function FrustrumCull(frustrum, p, r)
+    for n = 1, 4 do
+        if frustrum[n][1]:Dot(p) < frustrum[n][2] - r then return true end
+    end
+
+    return false
+end
+
 
 
 -- TODO can we do one every tick cyclically instead of all at once
