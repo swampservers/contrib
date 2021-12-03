@@ -783,7 +783,6 @@ SS_PlayermodelItem({
 --             shader = "VertexLitGeneric",
 --             params = [[{["$opaque"]=1,["$halflambert"]=1,["$model"]=1}]]
 --         })
-
 --         ent:SetWebSubMaterial(0, {
 --             id = ply:GetNWString("MCSPSkinURL", false),
 --             owner = ply,
@@ -794,8 +793,6 @@ SS_PlayermodelItem({
 --         })
 --     end
 -- end)
-
-
 --cant find workshop plus i think it needs to be colorable
 SS_PlayermodelItem({
     class = 'crusadermodel',

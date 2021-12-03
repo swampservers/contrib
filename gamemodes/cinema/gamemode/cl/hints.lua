@@ -40,7 +40,6 @@ hook.Add("HUDDrawScoreBoard", "Hint_Draw", function()
     alpha = math.Clamp(alpha + (HintConVar:GetBool() and 1 or -1) * FrameTime() * 4, 0, 1)
     if alpha == 0 then return end
     local shift = 0.5 + 0.5 * math.cos(alpha * math.pi)
-
     local scrw = ScrW()
     local pad = "   "
 

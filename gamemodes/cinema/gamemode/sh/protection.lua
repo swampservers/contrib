@@ -43,4 +43,3 @@ function Entity:IsProtected(att)
 
     return false
 end
-

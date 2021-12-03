@@ -34,7 +34,6 @@ function PANEL:Init()
     end
 
     -- local prevurl = ""
-
     -- self.Browser.ConsoleMessage = function(panel, msg)
     --     if isstring(msg) and msg:StartWith("HREF:") and "HREF:" .. prevurl ~= msg then
     --         prevurl = msg:sub(6)
@@ -43,7 +42,6 @@ function PANEL:Init()
     --         self:LoadedURL()
     --     end
     -- end
-
     local b = vgui.Create('DButton', self)
     self.chooseb = b
     b:Dock(BOTTOM)

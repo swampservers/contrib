@@ -1,8 +1,6 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local Player = FindMetaTable("Player")
-
 Player.TrueName = Player.TrueName or Player.Nick
-
 local decor_pattern = "[%[%]%{%}%(%)%<%>%-%|%=% ]+"
 
 function StripNameAdvert(name, advert)
@@ -32,7 +30,7 @@ function Player:ComputeName()
     tn = StripNameAdvert(tn, "sups.gg")
     tn = StripNameAdvert(tn, "moat.gg") --lol rip
     tn = StripNameAdvert(tn, "velk.ca")
-    tn = tn:gsub("DADG","RETARD")
+    tn = tn:gsub("DADG", "RETARD")
 
     return tn
 end

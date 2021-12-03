@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 surface.CreateFont("DermaMedium", {
     font = "Roboto",
     size = 22,

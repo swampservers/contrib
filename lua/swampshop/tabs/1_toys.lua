@@ -370,9 +370,6 @@ if CLIENT then
     end)
 end
 
-
-
-
 SS_WeaponProduct({
     class = "weapon_pickaxe_diamond",
     price = 10000,

@@ -1,18 +1,15 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
 local LANG = {}
-
 translations = {}
 local Languages = {}
 local DefaultId = "en"
 
 function T(key, ...)
     if not key then return "" end
+
     return string.format(LANG[key] or key, ...)
 end
-
 
 local patterns = {
     format = "{{%s:%s}}",
@@ -95,9 +92,8 @@ local function C(...)
 end
 
 LANG.Name = "English"
-LANG.Id = "en" 
-LANG.Author = "" 
-
+LANG.Id = "en"
+LANG.Author = ""
 LANG.Cinema = "CINEMA"
 LANG.Volume = "Volume"
 LANG.Voteskips = "Voteskips"
@@ -106,7 +102,6 @@ LANG.Invalid = "[INVALID]"
 LANG.NoVideoPlaying = "No video playing"
 LANG.Cancel = "Cancel"
 LANG.Set = "Set"
-
 LANG.Theater_VideoRequestedBy = C("Current video requested by ", ColHighlight, "%s", ColDefault, ".")
 LANG.Theater_InvalidRequest = "Invalid video request."
 LANG.Theater_AlreadyQueued = "The requested video is already in the queue."
@@ -125,18 +120,15 @@ LANG.Theater_OwnerUseOnly = "Only the theater owner can use that."
 LANG.Theater_PublicVideoLength = "Public theater requests are limited to %s second(s) in length."
 LANG.Theater_PlayerVoteSkipped = C(ColHighlight, "%s", ColDefault, " has voted to skip ", ColHighlight, "(%s/%s)", ColDefault, ".")
 LANG.Theater_VideoAddedToQueue = C(ColHighlight, "%s", ColDefault, " has been added to the queue.")
-
 LANG.Warning_Unsupported_Line1 = "The current map is unsupported by the Cinema gamemode"
 LANG.Warning_Unsupported_Line2 = "Press F1 to open the official map on workshop"
 LANG.Warning_OSX_Line1 = "Mac OS X users may experience blank screens in Cinema"
 LANG.Warning_OSX_Line2 = "Press F1 to view troubleshooting tips and to remove this message"
-
 LANG.Queue_Title = "QUEUE"
 LANG.Request_Video = "Request Video"
 LANG.Vote_Skip = "Vote Skip"
 LANG.Toggle_Fullscreen = "Toggle Fullscreen"
 LANG.Refresh_Theater = "Refresh Theater"
-
 LANG.Theater_Admin = "ADMIN"
 LANG.Theater_Owner = "OWNER"
 LANG.Theater_Skip = "Skip"
@@ -145,16 +137,13 @@ LANG.Theater_Reset = "Reset"
 LANG.Theater_ChangeName = "Change Name"
 LANG.Theater_QueueLock = "Toggle Queue Lock"
 LANG.Theater_SeekQuery = "HH:MM:SS or number of seconds (e.g. 1:30:00 or 5400)"
-
 LANG.TheaterList_NowShowing = "NOW SHOWING"
-
 LANG.Request_History = "HISTORY"
 LANG.Request_Clear = "Clear"
 LANG.Request_DeleteTooltip = "Remove video from history"
 LANG.Request_PlayCount = "%d request(s)" -- e.g. 10 request(s)
 LANG.Request_Url = "Request URL"
 LANG.Request_Url_Tooltip = "Press to request a valid video URL.\nThe button will be red when the URL is valid"
-
 LANG.Settings_Title = "SETTINGS"
 LANG.Settings_ClickActivate = "CLICK TO ACTIVATE YOUR MOUSE"
 LANG.Settings_VolumeLabel = "Volume"
@@ -165,10 +154,7 @@ LANG.Settings_HidePlayersLabel = "Hide Players In Theater"
 LANG.Settings_HidePlayersTooltip = "Reduce player visibility inside of theaters."
 LANG.Settings_MuteFocusLabel = "Mute audio while alt-tabbed"
 LANG.Settings_MuteFocusTooltip = "Mute theater volume while Garry's Mod is out-of-focus (e.g. you alt-tabbed)."
-
 LANG.Service_EmbedDisabled = "The requested video is embed disabled."
 LANG.Service_PurchasableContent = "The requested video is purchasable content and can't be played."
 LANG.Service_StreamOffline = "The requested stream is offline."
-
 LANG.ActCommand = C(ColHighlight, "%s", ColDefault, " %s") -- e.g. Sam dances
-

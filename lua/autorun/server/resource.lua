@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 local gm = engine.ActiveGamemode()
 
 if gm == "cinema" or gm == "gungame" then
@@ -40,7 +39,6 @@ end
 if gm == "spades" then
     resource.AddWorkshop("1326275319") -- AOS content
 end
-
 --[[
 	resource.AddSingleFile("models/error.mdl") -- FUCK error meme
 	resource.AddSingleFile("models/error.dx80.vtx")

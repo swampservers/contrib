@@ -1,14 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-    SWEP.PrintName = "BFG9K"
-    SWEP.Author = "Upset"
-    SWEP.Slot = 4
-    SWEP.SlotPos = 1
-    SWEP.WepSelectIcon = surface.GetTextureID("vgui/icons/bfgw")
-    SWEP.SwayBounds = 4
-    killicon.Add("doom3_bfg", "vgui/icons/bfgw", Color(255, 80, 0, 255))
-
+SWEP.PrintName = "BFG9K"
+SWEP.Author = "Upset"
+SWEP.Slot = 4
+SWEP.SlotPos = 1
+SWEP.WepSelectIcon = surface.GetTextureID("vgui/icons/bfgw")
+SWEP.SwayBounds = 4
+killicon.Add("doom3_bfg", "vgui/icons/bfgw", Color(255, 80, 0, 255))
 
 SWEP.VElements = {
     ["d3ammo"] = {

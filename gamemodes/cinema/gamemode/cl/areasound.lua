@@ -1,8 +1,5 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
-
 timer.Create("AreaMusicController", 0.5, 0, function()
     if not IsValid(LocalPlayer()) or LocalPlayer().GetLocationName == nil then return end
     local target = ""

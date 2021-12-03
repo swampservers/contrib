@@ -6,10 +6,8 @@ function RefreshWorkshop()
     STEAMWS_FILEINFO_STARTED = {}
     STEAMWS_DOWNLOAD_STARTED = {}
     STEAMWS_FILEINFO = {}
-
     -- id -> gma file path, only contains downloaded but unmounted stuff
     STEAMWS_UNMOUNTED = {}
-
     -- id -> file table, for mounted stuff
     STEAMWS_MOUNTED = {}
     STEAM_WORKSHOP_INFLIGHT = 0
@@ -75,7 +73,6 @@ end
 function require_workshop(id, range)
     if STEAMWS_MOUNTED[id] then return true end
     if STEAMWS_UNMOUNTED[id] then return false end
-
     local shouldload = true
 
     if range then
@@ -140,43 +137,41 @@ function require_workshop(id, range)
     return false
 end
 
-
 -- Mounts all downloaded GMAs at once downloading is finished
-hook.Add("Tick","WorkshopMounter",function()
-    if STEAM_WORKSHOP_INFLIGHT==0 and not table.IsEmpty(STEAMWS_UNMOUNTED) then
+hook.Add("Tick", "WorkshopMounter", function()
+    if STEAM_WORKSHOP_INFLIGHT == 0 and not table.IsEmpty(STEAMWS_UNMOUNTED) then
         print("MOUNT")
-        for _id_,path in pairs(STEAMWS_UNMOUNTED) do
-            print(_id_,path)
+
+        for _id_, path in pairs(STEAMWS_UNMOUNTED) do
+            print(_id_, path)
         end
 
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
             local ok, err = GMABlacklist(filename)
-    
+
             if not ok then
                 print("COULD NOT MOUNT " .. wsid .. " BECAUSE " .. err)
-    
                 STEAMWS_MOUNTED[wsid] = {}
                 STEAMWS_UNMOUNTED[wsid] = nil
             end
         end
-    
+
         if table.IsEmpty(STEAMWS_UNMOUNTED) then return end
-    
         -- mounting with a clientside error model crashes the game
         local resetmodels = {}
-    
+
         for i, v in ipairs(ents.GetAll()) do
             if v:EntIndex() == -1 then
                 local m = v:GetModel()
-    
+
                 if m and not util.IsValidModel(m) then
                     resetmodels[v] = {m, v:GetSequence()}
-    
+
                     v:SetModel("models/maxofs2d/logo_gmod_b.mdl")
                 end
             end
         end
-    
+
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
             print("MOUNTING", wsid)
             -- NOTE:
@@ -184,25 +179,27 @@ hook.Add("Tick","WorkshopMounter",function()
             -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
             -- That means that this cannot be used to fix missing map materials, as the map materials are loaded before you are able to call this.
             local succ, files = game.MountGMA(filename)
-            if not succ then files={} end
-    
+
+            if not succ then
+                files = {}
+            end
+
             for i, v in ipairs(files) do
                 if v:EndsWith(".mdl") then
                     AvailableMdls[v] = true
                 end
             end
-    
+
             STEAMWS_MOUNTED[wsid] = files
             STEAMWS_UNMOUNTED[wsid] = nil
         end
-    
+
         for ent, mod in pairs(resetmodels) do
             ent:SetModel(mod[1])
             ent:SetSequence(mod[2])
         end
     end
 end)
-
 
 local Entity = FindMetaTable("Entity")
 local getmodel = Entity.GetModel

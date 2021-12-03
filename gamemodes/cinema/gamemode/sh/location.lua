@@ -691,18 +691,15 @@ function Entity:GetTheater()
     return theater.GetByLocation(self:GetLocation())
 end
 
-
 if CLIENT then
-
     print("HI")
-
     local DebugEnabled = CreateClientConVar("cinema_debug_locations", "0", false, false)
 
     local function update()
         if DebugEnabled:GetBool() then
             hook.Add("PostDrawTranslucentRenderables", "CinemaDebugLocations", function(depth, sky, sky3d)
                 if sky or depth or sky3d then return end
-                
+
                 for k, v in pairs(Locations) do
                     local center = (v.Min + v.Max) / 2
                     Debug3D.DrawBox(v.Min, v.Max)
@@ -715,7 +712,4 @@ if CLIENT then
     end
 
     cvars.AddChangeCallback("convar name", cinema_debug_locations)
-
-    
-
 end

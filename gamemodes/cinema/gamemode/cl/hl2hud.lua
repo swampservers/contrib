@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- Enable this if HUD is used outside cinema
 -- local hide = {
 --     ["CHudAmmo"] = false,
@@ -10,7 +9,6 @@
 -- hook.Add("HUDShouldDraw", "HideAmmo", function(name)
 --     return hide[name]
 -- end)
-
 local overall_scale = 1.1
 local color_bg = NamedColor("BgColor")
 local color_fg = NamedColor("FgColor")
@@ -19,11 +17,10 @@ local last_ammotext
 
 local function MakeFonts()
     surface.CreateFont("smallhud_label", {
-        font = "Verdana", 
+        font = "Verdana",
         size = math.Round(ScreenScale(6 * overall_scale)),
         weight = 700,
         additive = true,
-
     })
 
     surface.CreateFont("smallhud_content", {
@@ -36,12 +33,10 @@ end
 
 MakeFonts()
 hook.Add("OnScreenSizeChanged", "SetupFonts", MakeFonts)
-
 local pngmatcache = {}
 
 function GetAmmoIconMat(png)
-    if not pngmatcache[png] then 
-
+    if not pngmatcache[png] then
         local pngmat = Material(png, "noclamp smooth mips")
 
         pngmatcache[png] = CreateMaterial("ammoiconmat" .. png, "UnlitGeneric", {

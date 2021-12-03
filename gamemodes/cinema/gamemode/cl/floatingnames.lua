@@ -1,7 +1,5 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
@@ -118,9 +116,7 @@ ShowEyeAng = false
 concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
 end)
-
 -- TODO: make targeted players' names light up at long distance like in code below
-
 -- hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sky)
 -- if sky then return end
 -- if not render.DrawingScreen() then return end
@@ -181,5 +177,3 @@ end)
 --     -- print(3, SysTime()-t1)
 -- end
 -- end)
-
-

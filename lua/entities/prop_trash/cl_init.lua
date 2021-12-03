@@ -174,8 +174,6 @@ local mind2 = 600 ^ 2
 local maxd2 = 3000 ^ 2
 local targetcount = 8
 
-
-
 function CurrentFrustrum()
     local v1 = gui.ScreenToVector(0, 0)
     local v2 = gui.ScreenToVector(ScrW(), 0)
@@ -195,8 +193,6 @@ function CurrentFrustrum()
 
     return frustrum
 end
-
-
 
 -- TODO can we do one every tick cyclically instead of all at once
 timer.Create("TrashLights", 0.1, 0, function()
