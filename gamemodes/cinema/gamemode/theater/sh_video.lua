@@ -156,7 +156,16 @@ if SERVER then
         if not callback then return end
 
         if self:Type() ~= "" then
-            SQL_GetVideoCache(self, function(stuff)
+            
+            local function getcache(callback)
+                SQL("SELECT * FROM cinema_cache WHERE type=? AND `key`=? AND expire_t > UNIX_TIMESTAMP()", {self:Type(), self:Key()}, function(res)
+                    callback(res.data[1])
+                end, function()
+                    callback()
+                end)
+            end
+
+            getcache(function(stuff)
                 if stuff then
                     self._VideoTitle = stuff.title or "(Unknown)"
                     self._VideoDuration = tonumber(stuff.duration) or -1
@@ -188,7 +197,11 @@ if SERVER then
                         end
 
                         --log here for better performance
-                        SQL_SetVideoCache(self)
+                        local cachelife = self:IsTimed() and self:Service().CacheLife or self:Service().LivestreamCacheLife
+                        if cachelife > 0 then
+                            SQL_Query("INSERT INTO cinema_cache (type,`key`,title,duration,thumb,data,expire_t) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title=VALUES(title),duration=VALUES(duration),thumb=VALUES(thumb),data=VALUES(data),expire_t=VALUES(expire_t)", {self:Type(), self:Key(), self:Title(), self:Duration(), self:Thumbnail(), self:Data(), os.time() + cachelife})
+                        end
+
                         callback(true)
                     end, loadFailure)
 
