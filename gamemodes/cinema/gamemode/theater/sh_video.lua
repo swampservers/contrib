@@ -156,7 +156,6 @@ if SERVER then
         if not callback then return end
 
         if self:Type() ~= "" then
-            
             local function getcache(callback)
                 SQL("SELECT * FROM cinema_cache WHERE type=? AND `key`=? AND expire_t > UNIX_TIMESTAMP()", {self:Type(), self:Key()}, function(res)
                     callback(res.data[1])
@@ -198,6 +197,7 @@ if SERVER then
 
                         --log here for better performance
                         local cachelife = self:IsTimed() and self:Service().CacheLife or self:Service().LivestreamCacheLife
+
                         if cachelife > 0 then
                             SQL_Query("INSERT INTO cinema_cache (type,`key`,title,duration,thumb,data,expire_t) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title=VALUES(title),duration=VALUES(duration),thumb=VALUES(thumb),data=VALUES(data),expire_t=VALUES(expire_t)", {self:Type(), self:Key(), self:Title(), self:Duration(), self:Thumbnail(), self:Data(), os.time() + cachelife})
                         end
