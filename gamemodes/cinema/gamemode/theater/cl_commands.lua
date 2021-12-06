@@ -11,13 +11,12 @@ end
 
 MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true, "", 0, 1)
 MuteVoiceConVar = CreateClientConVar("cinema_mute_voice", 0, true, true, "", 0, 4)
-HideNamesConVar = CreateClientConVar("cinema_hidenames", 0, true, false, "", 0, 1)
+
 CreateClientConVar("cinema_lightfx", 0, true, false, "", 0, 1)
 CreateClientConVar("cinema_quality", 1, true, false, "", 0, 3)
-CreateClientConVar("cinema_hideinterface", 0, true, false, "", 0, 1)
+
 local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false, "", 0, 1)
 
--- CreateClientConVar("cinema_cc", 0, true, false, "",0,1) --maybe add this back if another deaf guy complains
 net.Receive("EntityEmitSound", function(len)
     local ent = net.ReadEntity()
     local soundname = net.ReadString()
