@@ -121,7 +121,12 @@ function PANEL:OpenItem(item)
                         SS_ItemServerAction(self.item.id, "configure", self.item.cfg)
                         self:Close()
                     end
-                    if self.item.ConfirmCustomizer then self.item:ConfirmCustomizer(callback) else callback() end
+
+                    if self.item.ConfirmCustomizer then
+                        self.item:ConfirmCustomizer(callback)
+                    else
+                        callback()
+                    end
                 end
             end)
         end)

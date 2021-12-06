@@ -20,11 +20,10 @@ SWEP.Primary.Ammo = "none"
 SWEP.ThrowSound = Sound("Weapon_Crowbar.Single")
 SWEP.ReloadSound = Sound("weapons/weapon_snowball/crunch.ogg")
 
-
 function FreeSnowballs(ply)
     local locname = ply:GetLocationName()
 
-    return locname == "Outside" or locname == "Golf" 
+    return locname == "Outside" or locname == "Golf"
 end
 
 --only activate during December

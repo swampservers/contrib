@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 function SS_SanitizeVector(val, min, max)
     return isvector(val) and val:Clamp(min, max) or nil
 end
@@ -18,7 +17,8 @@ end
 
 function SS_SanitizeModel(mdl)
     if not isstring(mdl) then return nil end
-    if mdl:len()>100 then return nil end
+    if mdl:len() > 100 then return nil end
     if not mdl:StartWith("models/") or not mdl:EndsWith(".mdl") then return nil end
+
     return mdl
 end

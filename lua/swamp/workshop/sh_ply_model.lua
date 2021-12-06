@@ -21,7 +21,11 @@ if CLIENT then
             if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos()))) and IsValidPlayermodel(dmdl) then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
-                if bodygroups then ply:SetBodyGroups(bodygroups) end
+
+                if bodygroups then
+                    ply:SetBodyGroups(bodygroups)
+                end
+
                 mdl = dmdl
                 -- IT MAKES THE MODEL STAY
                 ply:SetPredictable(ply == LocalPlayer())

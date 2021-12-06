@@ -384,7 +384,7 @@ for i = 1, 5 do
                 local item = SS_GenerateItem(ply, "playermodel", {
                     wsid = m[1],
                     model = m[2],
-                    source="oftheday",
+                    source = "oftheday",
                 })
 
                 ply:SS_GiveNewItem(item)
@@ -417,7 +417,7 @@ SS_Product({
         local item = SS_GenerateItem(ply, "playermodel", {
             wsid = m[1],
             model = m[2],
-            source="random",
+            source = "random",
         })
 
         ply:SS_GiveNewItem(item, function(item)
@@ -455,7 +455,6 @@ function SS_PlayermodelItem(item)
     SS_Item(item)
 end
 
-
 SS_PlayermodelItem({
     class = "playermodel",
     price = 1000000,
@@ -472,9 +471,11 @@ SS_PlayermodelItem({
         if self.specs then
             if self.specs.model then
                 local d = "A playermodel."
+
                 if self.specs.wsid then
-                    d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
+                    d = d .. "\nWorkshop: " .. self.specs.wsid .. "\n" .. self.specs.model
                 end
+
                 return d
             end
 
@@ -506,34 +507,37 @@ SS_PlayermodelItem({
         HeyNozFillThisIn(self, cust)
     end,
     ConfirmCustomizer = function(self, callback)
-        Derma_Query("Once this playermodel is set, you won't be able to change it! (unless you buy a new one)\n\nCheck the preview to ensure it looks correct.",
-            "Finalize playermodel?", "Go back", nil, "Confirm", callback)
+        Derma_Query("Once this playermodel is set, you won't be able to change it! (unless you buy a new one)\n\nCheck the preview to ensure it looks correct.", "Finalize playermodel?", "Go back", nil, "Confirm", callback)
     end,
-
     Sanitize = function(self)
-        local dw,dm = (tonumber(self.specs.wsid) and tostring(tonumber(self.specs.wsid)) or nil),SS_SanitizeModel(self.specs.model)
-        if not dm or self.specs.wsid~=dw or self.specs.model~=dm then dw,dm = nil,nil end
-        if dw and dm and OUTFIT_BLACKLIST and (OUTFIT_BLACKLIST[dw] or OUTFIT_BLACKLIST[dw.."/"..dm:lower()]) then
-            dw,dm = nil,nil
+        local dw, dm = (tonumber(self.specs.wsid) and tostring(tonumber(self.specs.wsid)) or nil), SS_SanitizeModel(self.specs.model)
+
+        if not dm or self.specs.wsid ~= dw or self.specs.model ~= dm then
+            dw, dm = nil, nil
+        end
+
+        if dw and dm and OUTFIT_BLACKLIST and (OUTFIT_BLACKLIST[dw] or OUTFIT_BLACKLIST[dw .. "/" .. dm:lower()]) then
+            dw, dm = nil, nil
         end
 
         -- if not dm then
         --     if self.specs.set_time
         --     if self.specs.model==nil
         -- end        
-
         if not dm then
             -- if a model from randombox or modeloftheday gets blacklisted, reroll it to prevent exploit (TODO change to storing a date)
             if self.specs.source then
                 local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
-                if m then 
-                    dw,dm = m[1],m[2]
+
+                if m then
+                    dw, dm = m[1], m[2]
                 end
             else
                 -- user set models must have both
-                local cdw,cdm = (tonumber(self.cfg.wsid) and tostring(tonumber(self.cfg.wsid)) or nil),SS_SanitizeModel(self.cfg.model)
+                local cdw, cdm = (tonumber(self.cfg.wsid) and tostring(tonumber(self.cfg.wsid)) or nil), SS_SanitizeModel(self.cfg.model)
+
                 if cdw and cdm then
-                    dw,dm = cdw,cdm
+                    dw, dm = cdw, cdm
                 end
             end
         end
@@ -542,17 +546,17 @@ SS_PlayermodelItem({
         self.cfg.bodygroups = nil
         local fixedbg = isstring(bg) and bg:len() < 30 and bg:match("^%d+$") or nil
 
-        if self.specs.wsid~=dw or self.specs.model~=dm or not table.IsEmpty(self.cfg) or bg~=fixedbg then
-            self.specs.wsid=dw
-            self.specs.model=dm
+        if self.specs.wsid ~= dw or self.specs.model ~= dm or not table.IsEmpty(self.cfg) or bg ~= fixedbg then
+            self.specs.wsid = dw
+            self.specs.model = dm
             table.Empty(self.cfg)
             self.cfg.bodygroups = fixedbg
+
             return true
         else
             self.cfg.bodygroups = fixedbg
         end
     end,
-
     SellValue = function(self) return 25000 end
 })
 
@@ -560,25 +564,23 @@ function HeyNozFillThisIn(self, cust)
     if self.specs.model then
         vgui("DSSCustomizerSection", cust.RightColumn, function(p)
             p:SetText("Model is already finalized!")
-
-            local fullpath = self.specs.wsid.."/"..self.specs.model
+            local fullpath = self.specs.wsid .. "/" .. self.specs.model
 
             vgui("DButton", function(p)
                 p:SetText("Copy model path")
                 p:SetWide(160)
                 p:Dock(TOP)
                 p.Paint = SS_PaintButtonBrandHL
-    
+
                 p.UpdateColours = function(btn)
                     btn:SetTextStyleColor(MenuTheme_TX)
                 end
-    
+
                 p.DoClick = function(btn)
                     SetClipboardText(fullpath)
-                    LocalPlayerNotify("Copied: "..fullpath)
+                    LocalPlayerNotify("Copied: " .. fullpath)
                 end
             end)
-
         end)
 
         vgui("DSSCustomizerSection", cust.RightColumn, function(p)

@@ -136,7 +136,6 @@ SS_WeaponProduct({
     extrapreviewgap = 1
 })
 
-
 function ProtectionShotgunAllowed(v)
     return (v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner() == v and v:GetTheater()._PermanentOwnerID == nil)
 end
