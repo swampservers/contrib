@@ -4,24 +4,24 @@ local Player = FindMetaTable("Player")
 function Player:GetDisplayModel()
     local st = self:GetNW2String("DisplayModel", "")
     if st == "" then return self:GetModel(), nil end
-    -- wsid might be nil
-    mdl, wsid = unpack(("@"):Explode(st))
+    -- wsid,bodygroups might be nil
+    mdl, wsid, bodygroups = unpack(("@"):Explode(st))
 
-    return mdl, wsid
+    return mdl, wsid, bodygroups
 end
 
 if CLIENT then
     -- TODO: move forcing logic to client_force_mdl_mat.lua
     local function checkmodel(ply)
         local mdl = ply:GetModel()
-        local dmdl, dwsid = ply:GetDisplayModel()
+        local dmdl, dwsid, dbodygroups = ply:GetDisplayModel()
 
         -- if ply==LocalPlayer() then print(mdl,dmdl) end
         if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
             if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos()))) and IsValidPlayermodel(dmdl) then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
-                -- ply:SetBodyGroups("11111111")
+                if bodygroups then ply:SetBodyGroups(bodygroups) end
                 mdl = dmdl
                 -- IT MAKES THE MODEL STAY
                 ply:SetPredictable(ply == LocalPlayer())

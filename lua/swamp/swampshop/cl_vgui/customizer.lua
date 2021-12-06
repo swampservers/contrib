@@ -117,8 +117,11 @@ function PANEL:OpenItem(item)
                 end
 
                 p.DoClick = function(butn)
-                    SS_ItemServerAction(self.item.id, "configure", self.item.cfg)
-                    self:Close()
+                    local callback = function()
+                        SS_ItemServerAction(self.item.id, "configure", self.item.cfg)
+                        self:Close()
+                    end
+                    if self.item.ConfirmCustomizer then self.item:ConfirmCustomizer(callback) else callback() end
                 end
             end)
         end)

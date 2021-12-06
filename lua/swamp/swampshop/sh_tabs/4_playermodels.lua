@@ -455,6 +455,7 @@ function SS_PlayermodelItem(item)
     SS_Item(item)
 end
 
+
 SS_PlayermodelItem({
     class = "playermodel",
     price = 1000000,
@@ -462,8 +463,7 @@ SS_PlayermodelItem({
     GetName = function(self)
         --fix product
         if self.specs then
-            if self.specs.model then return SS_PrettyMDLName(self.specs.model) end
-            if self.cfg.model and self.cfg.wsid then return SS_PrettyMDLName(self.cfg.model) .. " (UNFINALIZED)" end
+            if self.specs.model or self.cfg.model then return SS_PrettyMDLName(self.specs.model or self.cfg.model) end
         end
 
         return 'Any Workshop Outfit'
@@ -472,14 +472,13 @@ SS_PlayermodelItem({
         if self.specs then
             if self.specs.model then
                 local d = "A playermodel."
-                -- if self.specs.wsid then
-                --     d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
-                -- end
-
+                if self.specs.wsid then
+                    d = d .. "\nWorkshop: "..self.specs.wsid.."\n"..self.specs.model
+                end
                 return d
             end
 
-            if self.cfg.model and self.cfg.wsid then return "Finalize this model to wear it.\n(" .. self.cfg.wsid .. "/" .. self.cfg.model .. ")" end
+            if self.cfg.model then return "Finalize this model to wear it.\n(" .. self.cfg.wsid .. "/" .. self.cfg.model .. ")" end
 
             return "Customize this item to set your playermodel."
         end
@@ -493,7 +492,7 @@ SS_PlayermodelItem({
     PlayerSetModel = function(self, ply)
         if self.specs.model then
             if self.specs.wsid then
-                ply:SetDisplayModel(self.specs.model, tonumber(self.specs.wsid))
+                ply:SetDisplayModel(self.specs.model, tonumber(self.specs.wsid), self.cfg.bodygroups)
             else
                 ply:SetModel(self.specs.model)
             end
@@ -506,38 +505,54 @@ SS_PlayermodelItem({
     SetupCustomizer = function(self, cust)
         HeyNozFillThisIn(self, cust)
     end,
-    SanitizeSpecs = function(self)
-        if SERVER and not self.specs.model and self.cfg.model and self.cfg.wsid and self.cfg.finalize then
-            self.specs.model = self.cfg.model
-            self.specs.wsid = self.cfg.wsid
-
-            return true
-        end
+    ConfirmCustomizer = function(self, callback)
+        Derma_Query("Once this playermodel is set, you won't be able to change it! (unless you buy a new one)\n\nCheck the preview to ensure it looks correct.",
+            "Finalize playermodel?", "Go back", nil, "Confirm", callback)
     end,
-    SanitizeCfg = function(self, dirty)
-        if self.specs.model == nil then
-            self.cfg.wsid = tonumber(dirty.wsid) and tostring(tonumber(dirty.wsid)) or nil
-            self.cfg.model = isstring(dirty.model) and dirty.model:sub(1, 200):Trim() or nil
-            self.cfg.finalize = dirty.finalize and true or nil
+
+    Sanitize = function(self)
+        local dw,dm = (tonumber(self.specs.wsid) and tostring(tonumber(self.specs.wsid)) or nil),SS_SanitizeModel(self.specs.model)
+        if not dm or self.specs.wsid~=dw or self.specs.model~=dm then dw,dm = nil,nil end
+        if dw and dm and OUTFIT_BLACKLIST and (OUTFIT_BLACKLIST[dw] or OUTFIT_BLACKLIST[dw.."/"..dm:lower()]) then
+            dw,dm = nil,nil
         end
 
-        if dirty.bodygroups and dirty.bodygroups:len() < 30 then
-            local chars = {string.byte(dirty.bodygroups, 1, dirty.bodygroups:len())}
+        -- if not dm then
+        --     if self.specs.set_time
+        --     if self.specs.model==nil
+        -- end        
 
-            local ok = true
-
-            -- ensure all chars numeric - tonumber() wont work because of leading zeroes
-            for i, v in ipairs(chars) do
-                if v < 48 or v > 57 then
-                    ok = false
+        if not dm then
+            -- if a model from randombox or modeloftheday gets blacklisted, reroll it to prevent exploit (TODO change to storing a date)
+            if self.specs.source then
+                local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
+                if m then 
+                    dw,dm = m[1],m[2]
+                end
+            else
+                -- user set models must have both
+                local cdw,cdm = (tonumber(self.cfg.wsid) and tostring(tonumber(self.cfg.wsid)) or nil),SS_SanitizeModel(self.cfg.model)
+                if cdw and cdm then
+                    dw,dm = cdw,cdm
                 end
             end
+        end
 
-            if ok then
-                self.cfg.bodygroups = dirty.bodygroups
-            end
+        local bg = self.cfg.bodygroups
+        self.cfg.bodygroups = nil
+        local fixedbg = isstring(bg) and bg:len() < 30 and bg:match("^%d+$") or nil
+
+        if self.specs.wsid~=dw or self.specs.model~=dm or not table.IsEmpty(self.cfg) or bg~=fixedbg then
+            self.specs.wsid=dw
+            self.specs.model=dm
+            table.Empty(self.cfg)
+            self.cfg.bodygroups = fixedbg
+            return true
+        else
+            self.cfg.bodygroups = fixedbg
         end
     end,
+
     SellValue = function(self) return 25000 end
 })
 
@@ -545,6 +560,25 @@ function HeyNozFillThisIn(self, cust)
     if self.specs.model then
         vgui("DSSCustomizerSection", cust.RightColumn, function(p)
             p:SetText("Model is already finalized!")
+
+            local fullpath = self.specs.wsid.."/"..self.specs.model
+
+            vgui("DButton", function(p)
+                p:SetText("Copy model path")
+                p:SetWide(160)
+                p:Dock(TOP)
+                p.Paint = SS_PaintButtonBrandHL
+    
+                p.UpdateColours = function(btn)
+                    btn:SetTextStyleColor(MenuTheme_TX)
+                end
+    
+                p.DoClick = function(btn)
+                    SetClipboardText(fullpath)
+                    LocalPlayerNotify("Copied: "..fullpath)
+                end
+            end)
+
         end)
 
         vgui("DSSCustomizerSection", cust.RightColumn, function(p)
@@ -697,25 +731,6 @@ function HeyNozFillThisIn(self, cust)
                     end
                 end
             end
-        end)
-    end)
-
-    vgui("DSSCustomizerSection", cust.RightColumn, function(p)
-        p:SetText("Finalize?")
-
-        vgui("DPanel", function(p)
-            p:SetTall(32)
-            p:Dock(TOP)
-            p.Paint = noop
-
-            vgui("DSSCustomizerCheckBox", function(p)
-                p:SetText("Make sure the preview looks right!")
-
-                p.OnValueChanged = function(pnl, val)
-                    self.cfg.finalize = val
-                    cust:UpdateCfg()
-                end
-            end)
         end)
     end)
 end

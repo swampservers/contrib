@@ -111,7 +111,7 @@ end
 function SS_Item(item)
     item.ScaleLimitOffset = item.ScaleLimitOffset or function() return 1 end
 
-    function item:Sanitize()
+    item.Sanitize = item.Sanitize or function(self)
         local changed = false
 
         if self.SanitizeCfg then

@@ -19,16 +19,19 @@ SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "none"
 SWEP.ThrowSound = Sound("Weapon_Crowbar.Single")
 SWEP.ReloadSound = Sound("weapons/weapon_snowball/crunch.ogg")
-local ti = os.date("%B", os.time())
+
+
+function FreeSnowballs(ply)
+    local locname = ply:GetLocationName()
+
+    return locname == "Outside" or locname == "Golf" 
+end
 
 --only activate during December
-if ti == "December" then
+if os.date("%B", os.time()) == "December" and SERVER then
     --auto equip the snowball when outside
     hook.Add("PlayerChangeLocation", "ChristmasSnowballs", function(ply, loc, old)
-        if not IsValid(ply) then return end
-        local locname = ply:GetLocationName()
-
-        if locname == "Outside" or locname == "Golf" and not ply:HasWeapon("weapon_snowball") then
+        if FreeSnowballs(ply) then
             ply:Give("weapon_snowball")
         end
     end)
@@ -119,11 +122,13 @@ function SWEP:PrimaryAttack()
         end
     end
 
-    timer.Simple(0.6, function()
-        if SERVER and IsValid(self) then
-            self:Remove()
-        end
-    end)
+    if SERVER and not FreeSnowballs(self.Owner) then
+        timer.Simple(0.6, function()
+            if IsValid(self) then
+                self:Remove()
+            end
+        end)
+    end
 end
 
 --custom color select menu

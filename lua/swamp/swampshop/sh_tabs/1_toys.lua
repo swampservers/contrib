@@ -29,7 +29,7 @@ SS_WeaponProduct({
 })
 
 SS_WeaponProduct({
-    class = "gmod_camera",
+    class = "weapon_camera",
     price = 0,
     name = "Cringe Compiler",
     description = "*SNAP*",
