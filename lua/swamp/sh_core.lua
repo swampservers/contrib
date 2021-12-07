@@ -62,9 +62,11 @@ math.nextpow2 = math.power2
 -- TABLE
 function table.Set(tab)
     local s = {}
-    for i,v in ipairs(tab) do
-        s[v]=true
+
+    for i, v in ipairs(tab) do
+        s[v] = true
     end
+
     return s
 end
 
@@ -180,7 +182,7 @@ function defaultdict(constructor)
     return setmetatable({}, {
         __index = function(tab, key)
             local d = constructor(key)
-            tab[key] =d
+            tab[key] = d
 
             return d
         end

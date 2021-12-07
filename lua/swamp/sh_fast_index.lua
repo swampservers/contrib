@@ -2,7 +2,6 @@
 local Player = FindMetaTable("Player")
 local Weapon = FindMetaTable("Weapon")
 local Entity = FindMetaTable("Entity")
-
 ENTITY_CGETTABLE = ENTITY_CGETTABLE or Entity.GetTable
 local cgettable = ENTITY_CGETTABLE
 
@@ -18,7 +17,6 @@ function Entity:GetTable()
     if not tab then
         tab = cgettable(self)
         EntTableCache[self] = tab
-
         -- TODO: perhaps initialize default values in the entity table here?
     end
 
