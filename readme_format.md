@@ -31,23 +31,7 @@ Try to put cinema-specific weapons/entities in gamemodes/cinema/ and generic cod
 
 # API
 
-# end
-self:SetHoldType( "pistol" )
-*file: gamemodes/cinema/gamemode/weapons/weapon_laserpointer.lua*
-# self:SetHoldType("slam")
-self:SetHoldType( "pistol" )
-*file: gamemodes/cinema/gamemode/weapons/weapon_laserpointer.lua*
-# GAME_IP_CACHE = GAME_IP_CACHE or game.GetIPAddress()
-SERVER SESSION STUFF
-test2
-test3
-*file: lua/sv_sql_locks.lua*
-# function SQL_CreateServerSession()
-SERVER SESSION STUFF
-test2
-test3
-*file: lua/sv_sql_locks.lua*
-
+DOCSGOHERE
 
 **COPYRIGHT: This repository and most of its content is copyrighted and owned by Swamp Servers. All other content is, to the best of our knowledge, used under license. If your copyrighted work is here without permission, please contact the email shown [here](https://swampservers.net/contact). This repository DOES NOT license its contents to be used for other purposes, nor does its existence on GitHub imply such a license.**
 
