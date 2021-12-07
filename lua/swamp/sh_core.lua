@@ -60,6 +60,14 @@ end
 math.nextpow2 = math.power2
 
 -- TABLE
+function table.Set(tab)
+    local s = {}
+    for i,v in ipairs(tab) do
+        s[v]=true
+    end
+    return s
+end
+
 function table.sub(tab, a, b)
     local out = {}
 

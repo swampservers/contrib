@@ -51,6 +51,9 @@ function ENT:Use(ply)
         end
     end
 end
+
+function ENT:Tape()
+end
 -- function ENT:Draw()
 --     local url, own = self:GetImgur()
 --     if not url and self:GetHardened() then

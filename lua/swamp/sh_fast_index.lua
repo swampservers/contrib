@@ -18,6 +18,8 @@ function Entity:GetTable()
     if not tab then
         tab = cgettable(self)
         EntTableCache[self] = tab
+
+        -- TODO: perhaps initialize default values in the entity table here?
     end
 
     return tab

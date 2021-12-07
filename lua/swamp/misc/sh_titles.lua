@@ -44,7 +44,6 @@ function AddTitle(thresholds, description, nwp_vars, progress_fn)
         return description:format(min)
     end
 
-
     if isstring(nwp_vars) then
         nwp_vars = {nwp_vars}
     end
@@ -69,12 +68,13 @@ function AddTitle(thresholds, description, nwp_vars, progress_fn)
 end
 
 -- TODO add point rewards for reaching some?
---todo: print who currently has the title?
+
 
 AddTitle("Newfriend", "Test title", {}, function() return true end)
 
 AddTitle({[100]="Gift Giver",[1000]="Santa"}, "Give %s gifts (mystery boxes) to other players (NOT WORKING YET DONT COMPLAIN)", "s_giftgiver")
 
+--todo: print who currently has the title?
 AddTitle("Platinum Patriot", "Be the top donor to Donald Trump", "trump_patriot", function(ply) return ply.NWPrivate.trump_patriot==1 end)
 AddTitle("Golden Patriot", "Be on Donald Trump's donation leaderboard", "trump_patriot", function(ply) return ply.NWPrivate.trump_patriot~=nil end)
 AddTitle("Greatest Ally", "Be the top donor to Joe Biden", "biden_patriot", function(ply) return ply.NWPrivate.biden_patriot==1 end)
