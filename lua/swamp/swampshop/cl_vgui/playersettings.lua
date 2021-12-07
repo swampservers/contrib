@@ -18,7 +18,11 @@ vgui.Register("DSSTitleInfo", {
             v:Remove()
         end
 
+        local lastlocked = false
+        local extra = 0
+
         for i,min,name,reward in self.Title:Thresholds() do
+            if lastlocked then extra=extra+1 continue end
             vgui("DLabel", self, function(p)
                 p:SetFont("SS_DESCINSTFONT")
                 p:SetText(name)
@@ -30,7 +34,7 @@ vgui.Register("DSSTitleInfo", {
             end)
 
             vgui("DLabel", self, function(p)
-                p:SetText(self.Title:Description(min))
+                p:SetText(self.Title:Description(i, min)..(reward>0 and " - Reward: "..reward.." points" or ""))
                 p:Dock(TOP)
             end)
 
@@ -40,6 +44,7 @@ vgui.Register("DSSTitleInfo", {
                 else
                     p:SetText("Title locked ("..progress.."/"..min..")")
                     p:SetEnabled(false)
+                    lastlocked = true
                 end
                 p:Dock(TOP)
 
@@ -51,6 +56,14 @@ vgui.Register("DSSTitleInfo", {
             end)
         end
 
+        if extra>0 then
+            vgui("DLabel", self, function(p)
+                p:SetText(extra.." more titles available")
+                p:Dock(TOP)
+            end)
+
+        end
+
             
     end
 }, "DSSCustomizerSection")
@@ -59,12 +72,12 @@ vgui.Register("DSSTitleInfo", {
 
 vgui.Register('DSSPlayerSettingsMode', {
     Init = function(self)
+        SS_TitlesPanel = self
 
         vgui("DSSCustomizerSection", self, function(p)
-            function p:Think()
-                local t = LocalPlayer():GetTitle()
-                p:SetText("Titles (WIP, MOST NOT WORKING DONT COMPLAIN) - Current title: "..(t=="" and "None" or t))
-            end
+
+                p:SetText("Titles (WIP, SOME NOT WORKING DONT COMPLAIN)")
+
 
             vgui("DButton", function(p)
                 p:SetText("Remove title")

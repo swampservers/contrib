@@ -21,6 +21,7 @@ local function try(func,fn)
     func(fn)
 end
 
+
 if SERVER then
     function cl_file(fn)
         AddCSLuaFile(fn)

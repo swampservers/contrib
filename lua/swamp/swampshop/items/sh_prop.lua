@@ -13,6 +13,8 @@ SS_Item({
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
 
+        if specs.model== "models/props_wasteland/interior_fence001g.mdl" then specs.model=nil end
+
         if not specs.model then
             specs.model = GetSandboxProp()
             ch = true

@@ -356,6 +356,11 @@ function PANEL:Paint(w, h)
         end
     end
 
+    if SS_TitlesPanel:IsVisible() then
+        draw.SimpleText(LocalPlayer():Nick(), "SS_POINTSFONT", self:GetWide() / 2, 26, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(LocalPlayer():GetTitle()~="" and LocalPlayer():GetTitle() or "No title", "SS_DESCFONTBIG", self:GetWide() / 2, 64, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
+
     if IsValid(SS_DescriptionPanel) then
         _, h = SS_DescriptionPanel:GetPos()
     end
