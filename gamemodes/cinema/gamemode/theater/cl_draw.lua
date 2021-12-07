@@ -91,8 +91,9 @@ function DrawVideoInfo(w, h)
     end
 end
 
-hook.Add("PostDrawOpaqueRenderables", "DrawTheaterScreen", function(depth, sky)
-    if depth or sky then return end
+-- use the gamemode hook so it draws over sprays
+function GM:PostDrawOpaqueRenderables(depth, sky, sky3d)
+    if depth or sky or sky3d then return end
 
     if LastLocation ~= LocalPlayer():GetLocation() then
         LocationChangeTime = RealTime()
@@ -165,7 +166,7 @@ hook.Add("PostDrawOpaqueRenderables", "DrawTheaterScreen", function(depth, sky)
     end)
 
     render.OverrideDepthEnable(false, true)
-end)
+end
 
 hook.Add("HUDPaint", "DrawFullscreenInfo", function()
     if not IsValid(ActivePanel) then return end

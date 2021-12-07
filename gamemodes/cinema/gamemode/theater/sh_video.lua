@@ -157,7 +157,7 @@ if SERVER then
 
         if self:Type() ~= "" then
             local function getcache(callback)
-                SQL("SELECT * FROM cinema_cache WHERE type=? AND `key`=? AND expire_t > UNIX_TIMESTAMP()", {self:Type(), self:Key()}, function(res)
+                SQL_Query("SELECT * FROM cinema_cache WHERE type=? AND `key`=? AND expire_t > UNIX_TIMESTAMP()", {self:Type(), self:Key()}, function(res)
                     callback(res.data[1])
                 end, function()
                     callback()

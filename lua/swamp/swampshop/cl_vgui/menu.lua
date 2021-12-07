@@ -407,7 +407,7 @@ function PANEL:Init()
     vgui('DSSCustomizerMode', self.mainpane)
 
     vgui("DSSPlayerSettingsMode", self.mainpane, function(p)
-        MakeCategoryButton(p, "Player Settings", 'icon16/rosette.png', false, RIGHT)
+        MakeCategoryButton(p, "Titles", 'icon16/rosette.png', false, RIGHT)
     end)
 
     if (IN_STEAMGROUP or 0) <= 0 then
