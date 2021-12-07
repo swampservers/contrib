@@ -1,5 +1,62 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
+--NOMINIFY
+
+vgui.Register("DSSTitleInfo", {
+    SetTitle = function(self, title)
+        self.Title = title
+    end,
+    Think = function(self)
+        if not self.Title then return end
+        local progress = self.Title:Progress(LocalPlayer())
+        if progress==self.LastProgress then return end
+        self.LastProgress = progress
+
+        -- setup for this title/progress
+        -- note: Text will be removed
+        for _, v in ipairs( self:GetChildren() ) do
+            v:Remove()
+        end
+
+        for min,name in self.Title:Thresholds() do
+            vgui("DLabel", self, function(p)
+                p:SetFont("SS_DESCINSTFONT")
+                p:SetText(name)
+                p:SetTextColor(SS_SwitchableColor)
+                p:SizeToContents()
+                p:SetContentAlignment(5)
+                p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
+                p:Dock(TOP)
+            end)
+
+            vgui("DLabel", self, function(p)
+                p:SetText(self.Title:Description(min))
+                p:Dock(TOP)
+            end)
+
+            vgui("DButton", self, function(p)
+                if progress>=min then
+                    p:SetText("Select title")
+                else
+                    p:SetText("Title locked ("..progress.."/"..min..")")
+                    p:SetEnabled(false)
+                end
+                p:Dock(TOP)
+
+                p.DoClick = function()
+                    net.Start("PlayerTitle")
+                    net.WriteString(name)
+                    net.SendToServer()
+                end
+            end)
+        end
+
+            
+    end
+}, "DSSCustomizerSection")
+
+
+
 vgui.Register('DSSPlayerSettingsMode', {
     Init = function(self)
 
@@ -22,35 +79,9 @@ vgui.Register('DSSPlayerSettingsMode', {
         end)
 
         for i,title in ipairs(Titles) do
-            for min,name in title:Thresholds() do
-
-                vgui("DSSCustomizerSection", self, function(p)
-
-
-                    p:SetText(name)
-
-                    vgui("DLabel", function(p)
-                        p:SetText(title:Description(min))
-                        p:Dock(TOP)
-                    end)
-
-                    vgui("DButton", function(p)
-                        p:SetText("Select title")
-                        p:Dock(TOP)
-        
-                        p.DoClick = function()
-                            net.Start("PlayerTitle")
-                            net.WriteString(n)
-                            net.SendToServer()
-                        end
-                    end)
-
-
+                vgui("DSSTitleInfo", self, function(p)
+                    p:SetTitle(title)
                 end)
-
-
-            end
-
 
         end
         
