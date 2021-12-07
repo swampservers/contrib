@@ -13,21 +13,21 @@ RegisterChatLUACommand({'global', 'globalchat', 'ooc'}, [[chat.AddText("[orange]
 RegisterChatLUACommand({'golf', 'golfclub'}, [[chat.AddText("[orange]Walk up to a golf rack to grab a golf club!")]])
 
 RegisterChatCommand({'kills', 'showkills'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has gotten [edgy]" .. tostring(ply.SQL_STATS["stat_kills"]) .. "[fbc] lifetime kills!")
+    BotSayGlobal(ply:Nick() .. " has gotten [edgy]" .. ply:GetStat("kills_legacy") .. "[fbc] lifetime kills!")
 end, {
     global = true,
     throttle = true
 })
 
 RegisterChatCommand({'deaths', 'showdeaths'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has died [edgy]" .. tostring(ply.SQL_STATS["stat_deaths"]) .. "[fbc] times!")
+    BotSayGlobal(ply:Nick() .. " has died [edgy]" .. ply:GetStat("deaths_legacy") .. "[fbc] times!")
 end, {
     global = true,
     throttle = true
 })
 
 RegisterChatCommand({'playtime', 'showplaytime', 'hours'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has played for [rainbow]" .. tostring(math.floor(ply.SQL_STATS["stat_minutes"] / 60)) .. "[fbc] hours!")
+    BotSayGlobal(ply:Nick() .. " has played for [rainbow]" .. math.floor( ply:GetStat("minutes_legacy") / 60) .. "[fbc] hours!")
 end, {
     global = true,
     throttle = true

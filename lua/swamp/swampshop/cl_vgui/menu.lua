@@ -410,7 +410,13 @@ function PANEL:Init()
         MakeCategoryButton(p, "Titles", 'icon16/rosette.png', false, RIGHT)
     end)
 
-    if (IN_STEAMGROUP or 0) <= 0 then
+    local in_steamgroup = NWPrivate.in_steamgroup
+
+    function self:Think()
+        if in_steamgroup ~= NWPrivate.in_steamgroup then RunConsoleCommand("ps_destroymenu") end
+    end
+
+    if not in_steamgroup then
         p = vgui.Create("DButton", self)
         p:SetZPos(1000)
         p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))

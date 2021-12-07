@@ -171,9 +171,10 @@ WHITE = Color(255, 255, 255, 255)
 function defaultdict(constructor)
     return setmetatable({}, {
         __index = function(tab, key)
-            tab[key] = constructor(key)
+            local d = constructor(key)
+            tab[key] =d
 
-            return tab[key]
+            return d
         end
     })
 end

@@ -188,7 +188,7 @@ function Player:SS_BaseIncomeMultiplier()
         mult = mult * 0.25
     end
 
-    if ((SERVER and self.IN_STEAMGROUP or IN_STEAMGROUP) or 0) <= 0 then
+    if not self.NWPrivate.in_steamgroup then
         mult = mult / 2
     end
 
