@@ -18,7 +18,7 @@ vgui.Register("DSSTitleInfo", {
             v:Remove()
         end
 
-        for min,name in self.Title:Thresholds() do
+        for i,min,name,reward in self.Title:Thresholds() do
             vgui("DLabel", self, function(p)
                 p:SetFont("SS_DESCINSTFONT")
                 p:SetText(name)
@@ -63,7 +63,7 @@ vgui.Register('DSSPlayerSettingsMode', {
         vgui("DSSCustomizerSection", self, function(p)
             function p:Think()
                 local t = LocalPlayer():GetTitle()
-                p:SetText("Titles (WIP) - Current title: "..(t=="" and "None" or t))
+                p:SetText("Titles (WIP, MOST NOT WORKING DONT COMPLAIN) - Current title: "..(t=="" and "None" or t))
             end
 
             vgui("DButton", function(p)
