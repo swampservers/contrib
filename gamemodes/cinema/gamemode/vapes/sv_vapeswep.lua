@@ -70,16 +70,12 @@ function ReleaseVape(ply)
 
     if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass():sub(1, 11) == "weapon_vape" then
         if ply.vapeCount >= 5 then
-
             if ply.vapeCount >= 20 and ply.vapeCount < 50 then
-                
-
                 ply:AddStat("hitvape")
 
-                if ply:GetActiveWeapon():GetClass()=="weapon_vape_mega" then
+                if ply:GetActiveWeapon():GetClass() == "weapon_vape_mega" then
                     ply:AddStat("hitmegavape")
                 end
-
                 -- if self.Owner:GetActiveWeapon():GetClass()=="weapon_vape_dragon" then
                 --     self.Owner:AddStat("hitdragonvape")
                 -- end
