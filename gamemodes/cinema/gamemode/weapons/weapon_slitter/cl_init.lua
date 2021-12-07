@@ -53,7 +53,7 @@ net.Receive("SlitThroatneck", function(len)
         util.Effect("bloodspray", effectdata, true, true)
     end
 
-    if ply ~= LocalPlayer() then
+    if ply ~= Me then
         sound.Play("Weapon_Knife.Hit", pos, 80, 100, 1)
         local effectdata = EffectData()
         blood(pos, norm, 15)

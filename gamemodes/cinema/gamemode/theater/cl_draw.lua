@@ -23,7 +23,7 @@ function DrawVideoInfo(w, h)
     local explicitblock = false
 
     if not GetConVar("swamp_mature_content"):GetBool() then
-        explicitblock = Video:IsMature() and not (LocalPlayer():GetTheater():Name() == "Movie Theater" and IsValid(Video:GetOwner()) and Video:GetOwner():IsStaff())
+        explicitblock = Video:IsMature() and not (Me:GetTheater():Name() == "Movie Theater" and IsValid(Video:GetOwner()) and Video:GetOwner():IsStaff())
     end
 
     if input.IsKeyDown(KEY_Q) then
@@ -58,7 +58,7 @@ function DrawVideoInfo(w, h)
         DrawTheaterText(NumVoteSkips .. "/" .. ReqVoteSkips, "VideoInfoMedium", w - 72, 246, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
 
-    if LocalPlayer():IsProtected() then
+    if Me:IsProtected() then
         DrawTheaterText("PROTECTED", "VideoInfoSmall", w - 72, 90, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
 
@@ -95,9 +95,9 @@ end
 function GM:PostDrawOpaqueRenderables(depth, sky, sky3d)
     if depth or sky or sky3d then return end
 
-    if LastLocation ~= LocalPlayer():GetLocation() then
+    if LastLocation ~= Me:GetLocation() then
         LocationChangeTime = RealTime()
-        LastLocation = LocalPlayer():GetLocation()
+        LastLocation = Me:GetLocation()
     end
 
     if (not IsValid(ActivePanel)) or (not ActivePanel:IsLoading()) then
@@ -112,7 +112,7 @@ function GM:PostDrawOpaqueRenderables(depth, sky, sky3d)
     local drawpanel = IsValid(ActivePanel) and ((not ActivePanel:IsLoading()) or (RealTime() - LoadingStartTime) > 1.0)
     LastHtmlMaterial = drawpanel and ActivePanel:GetHTMLMaterial() or nil
     -- gets at least to here once each frame
-    local Theater = LocalPlayer():GetTheater()
+    local Theater = Me:GetTheater()
     if not Theater or Fullscreen then return end
     local ang = Angle(Theater:GetAngles()) -- makes copy
     ang:RotateAroundAxis(ang:Forward(), 90)
@@ -183,7 +183,7 @@ hook.Add("HUDPaint", "DrawFullscreenInfo", function()
 
         DrawVideoInfo(ScrW(), ScrH())
     else
-        local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater() or nil
+        local Theater = Me.GetTheater and Me:GetTheater() or nil
         if not Theater or Theater:Name() == "Vapor Lounge" then return end
         if LastHtmlMaterial == nil then return end
         if GetConVar("cinema_lightfx"):GetInt() < 1 then return end
@@ -230,7 +230,7 @@ hook.Add("HUDPaint", "DrawFullscreenInfo", function()
 end)
 
 hook.Add("HUDPaint", "DrawNoFlashWarning", function()
-    local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater()
+    local Theater = Me.GetTheater and Me:GetTheater()
 
     if Theater and Theater._Video then
         if (not EmbeddedIsReady()) then return end

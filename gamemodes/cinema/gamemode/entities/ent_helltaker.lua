@@ -45,7 +45,7 @@ if CLIENT then
 
     hook.Add("CalcView", "HellTakerView", function(ply, pos, angles, fov)
         if IsValid(HELLTAKERFRAME) then
-            if IsValid(LocalPlayer()) and LocalPlayer():InVehicle() then
+            if IsValid(Me) and Me:InVehicle() then
                 HELLTAKERFRAME:Close()
 
                 return
@@ -102,7 +102,7 @@ if CLIENT then
     end)
 
     function PlayHelltaker()
-        -- if LocalPlayer():Nick() ~= "Joker Gaming" then return end
+        -- if Me:Nick() ~= "Joker Gaming" then return end
         if IsValid(HELLTAKERFRAME) then
             HELLTAKERFRAME:Close()
 

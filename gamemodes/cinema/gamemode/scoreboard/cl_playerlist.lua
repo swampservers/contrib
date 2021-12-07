@@ -59,7 +59,7 @@ end)
 
 function UpdateMutes()
     for k, v in pairs(player.GetAll()) do
-        if v ~= LocalPlayer() then
+        if v ~= Me then
             v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteVoiceConVar:GetInt() >= 2))
         end
     end
@@ -396,7 +396,7 @@ function PLAYER:SetPlayer(ply)
             RunConsoleCommand("say", "/tp " .. self.Player:Nick())
         end):SetIcon("icon16/world.png")
 
-        if (LocalPlayer():IsStaff()) then
+        if (Me:IsStaff()) then
             menu:AddOption("Copy SteamID", function()
                 SetClipboardText(self.Player:SteamID())
             end):SetIcon("icon16/user_red.png")

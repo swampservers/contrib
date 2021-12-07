@@ -130,7 +130,7 @@ function vape_do_pulse(ply, amt, spreadadd, fx)
     end
 
     local attachid = ply:LookupAttachment("eyes")
-    VapeParticleEmitter:SetPos(LocalPlayer():GetPos())
+    VapeParticleEmitter:SetPos(Me:GetPos())
 
     local angpos = ply:GetAttachment(attachid) or {
         Ang = Angle(0, 0, 0),
@@ -140,7 +140,7 @@ function vape_do_pulse(ply, amt, spreadadd, fx)
     local fwd
     local pos
 
-    if (ply ~= LocalPlayer()) then
+    if (ply ~= Me) then
         fwd = (angpos.Ang:Forward() - angpos.Ang:Up()):GetNormalized()
         pos = angpos.Pos + (fwd * 3.5)
     else
@@ -157,7 +157,7 @@ function vape_do_pulse(ply, amt, spreadadd, fx)
         if fx == 6 then
             particle = VapeParticleEmitter:Add(string.format("effects/fire_cloud1"), pos)
 
-            if ply == LocalPlayer() then
+            if ply == Me then
                 table.insert(MyDragonVapeParticles, particle)
             end
         else
@@ -250,7 +250,7 @@ timer.Create("DragonVapeCollisionDetection", 0.2, 0, function()
 
     if #MyDragonVapeParticles > 0 then
         for k, v in next, ents.GetAll() do
-            if (v.nextDragonVapeTime or 0) < CurTime() and v:IsSolid() and v ~= LocalPlayer() then
+            if (v.nextDragonVapeTime or 0) < CurTime() and v:IsSolid() and v ~= Me then
                 local pos = v:LocalToWorld(v:OBBCenter())
                 local rad = v:BoundingRadius() + 20
                 rad = rad * rad

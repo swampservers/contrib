@@ -21,7 +21,7 @@ SS_ClientsideFakeItem({
             Text = function()
                 local any = false
 
-                for k, v in pairs(LocalPlayer().SS_Items) do
+                for k, v in pairs(Me.SS_Items) do
                     if v.PlayerSetModel and v.eq then
                         any = true
                     end
@@ -32,7 +32,7 @@ SS_ClientsideFakeItem({
             OnClient = function()
                 local any = false
 
-                for k, v in pairs(LocalPlayer().SS_Items) do
+                for k, v in pairs(Me.SS_Items) do
                     if v.PlayerSetModel and v.eq then
                         v.actions.equip.OnClient(v)
                         any = true

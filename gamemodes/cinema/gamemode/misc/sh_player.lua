@@ -45,7 +45,7 @@ function GM:OnPlayerChat(player, strText, bTeamOnly, bPlayerIsDead)
         table.insert(tab, "(G) ")
     else
         if player.GetLocation ~= nil then
-            if IsValid(LocalPlayer()) and IsValid(player) and (LocalPlayer():GetLocation() ~= player:GetLocation()) and (LocalPlayer():InTheater() or player:InTheater()) and LocalPlayer():GetRank() >= 2 then
+            if IsValid(Me) and IsValid(player) and (Me:GetLocation() ~= player:GetLocation()) and (Me:InTheater() or player:InTheater()) and Me:GetRank() >= 2 then
                 table.insert(tab, Color(128, 128, 128))
                 table.insert(tab, "[" .. player:GetLocationName() .. "] ")
             end

@@ -70,7 +70,7 @@ if CLIENT then
 
                     info.duration = math.ceil(duration)
 
-                    if (LocalPlayer().videoDebug) then
+                    if (Me.videoDebug) then
                         PrintTable(info)
                     end
 
@@ -110,7 +110,7 @@ if CLIENT then
             if msg then
                 msg = tostring(msg)
 
-                if (LocalPlayer().videoDebug) then
+                if (Me.videoDebug) then
                     print(msg)
                 end
 

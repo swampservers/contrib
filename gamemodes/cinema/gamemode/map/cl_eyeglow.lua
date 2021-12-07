@@ -2,11 +2,11 @@
 -- INSTALL: CINEMA
 -- Applies to the maze as well as minecraft
 hook.Add("Think", "UndergroundEyeGlow", function()
-    if not IsValid(LocalPlayer()) then return end
-    local pp = LocalPlayer():EyePos()
+    if not IsValid(Me) then return end
+    local pp = Me:EyePos()
     if pp.z > -290 then return end
     if pp.x < 724 and pp.y > -768 and (pp.y > -312 or pp.x < 242) then return end
-    local dlight = DynamicLight(LocalPlayer():EntIndex())
+    local dlight = DynamicLight(Me:EntIndex())
 
     if dlight then
         dlight.pos = pp

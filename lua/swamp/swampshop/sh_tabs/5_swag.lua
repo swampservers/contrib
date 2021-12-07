@@ -95,7 +95,7 @@ SS_Item({
         return attach, translate, rotate, scale
     end,
     SetupCustomizer = function(item, self)
-        local pone = LocalPlayer():IsPony()
+        local pone = Me:IsPony()
         local suffix = pone and "_p" or "_h"
         local itmcw = (item:GetSettings() or {}).wear
         local attach, translate, rotate, scale = item:AccessoryTransform(pone)

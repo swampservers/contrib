@@ -155,8 +155,8 @@ if CLIENT then
     hook.Add("Think", "TrashToolUpdate", function()
         PropTrashLookedAt = nil
 
-        if IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass():StartWith("weapon_trash") then
-            local self = LocalPlayer():GetActiveWeapon()
+        if IsValid(Me) and IsValid(Me:GetActiveWeapon()) and Me:GetActiveWeapon():GetClass():StartWith("weapon_trash") then
+            local self = Me:GetActiveWeapon()
             local tr = {}
             tr.start = self.Owner:GetShootPos()
             tr.endpos = self.Owner:GetShootPos() + (self.Owner:GetAimVector() * 120)

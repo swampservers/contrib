@@ -17,7 +17,7 @@ function PANEL:OpenItem(item)
 
     self.item = item
     item.applied_cfg = table.Copy(item.cfg)
-    self.wear = LocalPlayer():IsPony() and "wear_p" or "wear_h"
+    self.wear = Me:IsPony() and "wear_p" or "wear_h"
     self.Paint = SS_PaintBG
     self:SetVisible(true)
 
@@ -156,7 +156,7 @@ function PANEL:SetupControls()
         self.item:SetupCustomizer(self)
     end
 
-    local pone = LocalPlayer():IsPony()
+    local pone = Me:IsPony()
     local suffix = pone and "_p" or "_h"
     local settings = self.item:GetSettings() or {}
 
@@ -284,7 +284,7 @@ end
 
 function ImageGetterPanel()
     local mat
-    local mdl = IsValid(SS_HoverCSModel) and SS_HoverCSModel or LocalPlayer()
+    local mdl = IsValid(SS_HoverCSModel) and SS_HoverCSModel or Me
 
     if IsValid(SS_HoverCSModel) then
         mat = SS_HoverCSModel:GetMaterials()[1]

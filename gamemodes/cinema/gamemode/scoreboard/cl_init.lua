@@ -107,10 +107,10 @@ hook.Add("OnVideoVote", "SortQueueList", function()
 end)
 
 function GM:MenuShow()
-    if not IsValid(LocalPlayer()) or not LocalPlayer().GetTheater then return end
-    local Theater = LocalPlayer():GetTheater()
+    if not IsValid(Me) or not Me.GetTheater then return end
+    local Theater = Me:GetTheater()
     if not Theater then return end
-    if not LocalPlayer():Alive() then return end
+    if not Me:Alive() then return end
 
     -- Queue
     if not ValidPanel(GuiQueue) then
@@ -121,7 +121,7 @@ function GM:MenuShow()
     GuiQueue:SetVisible(true)
     GAMEMODE:ShowMouse()
 
-    if (Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) or (LocalPlayer():StaffControlTheater()) then
+    if (Theater:IsPrivate() and Theater:GetOwner() == Me) or (Me:StaffControlTheater()) then
         if not ValidPanel(GuiAdmin) then
             GuiAdmin = vgui.Create("ScoreboardAdmin")
         end
@@ -136,10 +136,10 @@ function GM:MenuShow()
             GuiSeekBar:SetPos(0, ScrH() - ScrH() * .142)
 
             function GuiSeekBar:Paint(w, h)
-                Theater = LocalPlayer():GetTheater()
+                Theater = Me:GetTheater()
                 local Video = Theater and Theater:GetVideo()
 
-                if Video and Video:IsTimed() and (Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
+                if Video and Video:IsTimed() and (Theater:IsPrivate() and Theater:GetOwner() == Me) then
                     local percent = math.Clamp(((CurTime() - Video:StartTime()) / Video:Duration()) * 100, 0, 100)
                     local bh = h * 1 / 4
                     draw.RoundedBox(0, 0, h - bh, w, bh + 1, Color(0, 0, 0, 200))

@@ -18,7 +18,7 @@ end
 --         GOLFSWINGFRAMES = {}
 --         GOLFSWINGX = -5
 --         GOLFSWINGY = 0
---         LocalPlayer():SetEyeAngles(GOLFCAMVECTOR:Angle())
+--         Me:SetEyeAngles(GOLFCAMVECTOR:Angle())
 --         ADDGOLFFRAME()
 --     else
 --         GOLFCAMVECTOR = nil
@@ -30,9 +30,9 @@ function STARTGOLFSHOT(dir)
     GOLFSWINGX = -5
     GOLFSWINGY = 0
     GOLFCAMINTTIME = SysTime()
-    GOLFCAMINTPOS = LocalPlayer():EyePos()
-    GOLFCAMINTANG = LocalPlayer():EyeAngles()
-    LocalPlayer():SetEyeAngles(GOLFCAMVECTOR:Angle())
+    GOLFCAMINTPOS = Me:EyePos()
+    GOLFCAMINTANG = Me:EyeAngles()
+    Me:SetEyeAngles(GOLFCAMVECTOR:Angle())
     ADDGOLFFRAME()
 end
 
@@ -83,14 +83,14 @@ hook.Add("CreateMove", "golfswinger", function(cmd) end) -- if GOLFCAMVECTOR the
 
 hook.Add("Think", "golfswinger2", function()
     if GOLFCAMVECTOR then
-        if not IsValid(LocalPlayer()) or not IsValid(LocalPlayer():GetActiveWeapon()) or LocalPlayer():GetActiveWeapon():GetClass() ~= "weapon_golfclub" then
+        if not IsValid(Me) or not IsValid(Me:GetActiveWeapon()) or Me:GetActiveWeapon():GetClass() ~= "weapon_golfclub" then
             GOLFCAMVECTOR = nil
 
             return
         end
 
         local target = GOLFCAMVECTOR:Angle()
-        local a = LocalPlayer():EyeAngles()
+        local a = Me:EyeAngles()
         local xm = math.AngleDifference(a.yaw, target.yaw)
         local ym = math.AngleDifference(a.pitch, target.pitch)
         GOLFSWINGX = GOLFSWINGX + xm * 0.3
@@ -99,7 +99,7 @@ hook.Add("Think", "golfswinger2", function()
         GOLFSWINGX = GOLFSWINGX * scale
         GOLFSWINGY = GOLFSWINGY * scale
         ADDGOLFFRAME()
-        LocalPlayer():SetEyeAngles(target)
+        Me:SetEyeAngles(target)
         local strike_offset = math.Clamp(-GOLFSWINGY, -GOLFCLUBRADIUS, GOLFCLUBRADIUS)
         local v1 = Vector(GOLFSWINGFRAMES[1][1], GOLFSWINGFRAMES[1][2] + strike_offset, 0)
         local v2 = Vector(GOLFSWINGX, GOLFSWINGY + strike_offset, 0)
@@ -124,7 +124,7 @@ hook.Add("Think", "golfswinger2", function()
 
                 chat.AddText(string.format("Hit power: %G, angle %G", localvel:Length(), angg))
                 local speed = localvel.x * GOLFCAMVECTOR - localvel.y * GOLFCAMVECTOR:Angle():Right()
-                local realclub = LocalPlayer():GetActiveWeapon()
+                local realclub = Me:GetActiveWeapon()
                 local realball = realclub:GetBall()
                 realball:InterpolateHit(speed)
                 net.Start("GolfShot")
@@ -132,17 +132,17 @@ hook.Add("Think", "golfswinger2", function()
                 net.SendToServer()
                 ENDGOLFSHOT()
                 --local p,a = realclub:GolfCamViewTargets(OLDGOLFCAMVECTOR)
-                local p = LocalPlayer():EyePos()
+                local p = Me:EyePos()
                 -- local a = OLDGOLFCAMVECTOR:Angle()
                 -- a:RotateAroundAxis(Vector(0,0,1),-10)
                 -- a:RotateAroundAxis(a:Right(),-20)
                 -- POSTGOLFVIEWANGLE = a
                 POSTGOLFVIEWANGLE = ((realball:GetPos() + speed * 1.5) - p):Angle()
-                LocalPlayer():SetEyeAngles(POSTGOLFVIEWANGLE)
+                Me:SetEyeAngles(POSTGOLFVIEWANGLE)
             end
         end
     elseif POSTGOLFVIEWANGLE and SysTime() - GOLFCAMINTTIME < 0.5 then
-        LocalPlayer():SetEyeAngles(POSTGOLFVIEWANGLE)
+        Me:SetEyeAngles(POSTGOLFVIEWANGLE)
     end
 end)
 
@@ -212,7 +212,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local p = self:GetBall()
         if not IsValid(p) then return end
         pos, ang = LocalToWorld(Vector(-0.5 + GOLFSWINGX, 13.5 + GOLFSWINGY, 32.5), Angle(160, -90, 0), p:GetPos(), GOLFCAMVECTOR:Angle())
-        self.ViewModelFOV = LocalPlayer():GetFOV()
+        self.ViewModelFOV = Me:GetFOV()
     end
 
     return pos, ang
@@ -277,7 +277,7 @@ function SWEP:DrawHUD()
     if (IsValid(self:GetBall())) then
         cam.Start3D()
         local ball = self:GetBall()
-        local trace = LocalPlayer():GetEyeTrace()
+        local trace = Me:GetEyeTrace()
         local p1 = util.IntersectRayWithPlane(EyePos(), EyeAngles():Forward(), ball:GetPos(), Vector(0, 0, 1))
         local p2 = ball:GetPos()
 
@@ -445,7 +445,7 @@ function SWEP:DrawHUD()
         local trc = {}
         trc.start = EyePos()
         trc.endpos = ball:GetPos()
-        trc.filter = LocalPlayer()
+        trc.filter = Me
         local seetrace = util.TraceLine(trc)
 
         if (seetrace.Entity ~= ball) then
@@ -465,7 +465,7 @@ function SWEP:DrawHUD()
 
     if (stage == 0) then
         cam.Start3D()
-        local trace = LocalPlayer():GetEyeTrace()
+        local trace = Me:GetEyeTrace()
         local cpos = trace.HitPos + Vector(-6, 6, 0)
         local pos = trace.HitPos
         --pos.z = ball:GetPos().z
@@ -494,10 +494,10 @@ function SWEP:DrawHUD()
     end
 
     if (stage == 2 and IsValid(self:GetBall())) then
-        local trace = LocalPlayer():GetEyeTrace()
+        local trace = Me:GetEyeTrace()
         local ball = self:GetBall()
         local p1 = util.IntersectRayWithPlane(EyePos(), EyeAngles():Forward(), ball:GetPos(), Vector(0, 0, 1))
-        local medist = LocalPlayer():EyePos():Distance(ball:GetPos())
+        local medist = Me:EyePos():Distance(ball:GetPos())
         --local p1 = trace.HitPos
         local p2 = ball:GetPos()
 
@@ -578,7 +578,7 @@ end
 -- if (CLIENT) then end -- --[[ hook.Add( "PreDrawHalos", "GolfHalo", function()
 
 -- for k, v in pairs(ents.FindByClass("ent_golfball")) do
---     if (v:GetNWEntity("BallOwner") == LocalPlayer()) then
+--     if (v:GetNWEntity("BallOwner") == Me) then
 --         if (v:GetNWBool("shootable")) then
 --             halo.Add({v}, Color(100, 255, 100), 2, 2, 2)
 --         else

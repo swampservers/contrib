@@ -10,8 +10,8 @@ Queue = Queue or {}
 local _Volume = -1
 
 hook.Add("Tick", "TheaterPanelRemover", function()
-    if IsValid(LocalPlayer()) then
-        if not LocalPlayer():GetTheater() then
+    if IsValid(Me) then
+        if not Me:GetTheater() then
             RemovePanels()
         end
 
@@ -22,7 +22,7 @@ hook.Add("Tick", "TheaterPanelRemover", function()
 end)
 
 function CreatePanel()
-    if not LocalPlayer():GetTheater() then
+    if not Me:GetTheater() then
         error("Not in a theater")
     end
 
@@ -81,7 +81,7 @@ function ResizePanel()
     if Fullscreen then
         ActivePanel:SetSize(ScrW(), ScrH())
     else
-        local Theater = LocalPlayer():GetTheater()
+        local Theater = Me:GetTheater()
         local tw, th = Theater:GetSize()
         local aspect = tw / th
         local q = GetConVar("cinema_quality"):GetInt()
@@ -150,7 +150,7 @@ function ToggleFullscreen()
 end
 
 function GetQueue()
-    if LocalPlayer():GetTheater() then
+    if Me:GetTheater() then
         return Queue
     else
         return {}
@@ -179,10 +179,10 @@ end
 
 function PollServer()
     -- Prevent spamming requests
-    if LocalPlayer().LastTheaterRequest and LocalPlayer().LastTheaterRequest + 0.5 > CurTime() then return end
+    if Me.LastTheaterRequest and Me.LastTheaterRequest + 0.5 > CurTime() then return end
     net.Start("TheaterInfo")
     net.SendToServer()
-    LocalPlayer().LastTheaterRequest = CurTime()
+    Me.LastTheaterRequest = CurTime()
 end
 
 net.Receive("TheaterVideo", function()
@@ -205,14 +205,14 @@ net.Receive("TheaterVideo", function()
     end
 
     -- Private theater owner
-    local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater()
+    local Theater = Me.GetTheater and Me:GetTheater()
 
     if Theater then
         Theater:SetVideo(Video)
         LoadVideo(Video)
     else
         timer.Simple(0.1, function()
-            Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater()
+            Theater = Me.GetTheater and Me:GetTheater()
 
             if Theater then
                 Theater:SetVideo(Video)
@@ -230,7 +230,7 @@ end)
 net.Receive("TheaterSeek", function()
     local seconds = net.ReadFloat()
     local Video = CurrentVideo
-    local Theater = LocalPlayer():GetTheater()
+    local Theater = Me:GetTheater()
     if not Video or not Theater then return end
     Video._VideoStart = seconds
     Theater._VideoStart = seconds
@@ -308,9 +308,9 @@ function LoadVideo(Video, force)
     end
 
     ActivePanel.OnFinishLoading = function() end
-    LocalPlayer().theaterPanel = ActivePanel
+    Me.theaterPanel = ActivePanel
 
-    if (LocalPlayer().videoDebug and not force) then
+    if (Me.videoDebug and not force) then
         print("KEY: " .. Video:Key(), string.len(Video:Key()))
         print("DATA: " .. Video:Data(), string.len(Video:Data()))
     end

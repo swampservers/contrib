@@ -231,7 +231,7 @@ function LootBoxAnimation(itemid, othermdls)
                         if not IsValid(p) then return end
 
                         if arg[1] then
-                            for k, v in pairs(LocalPlayer().SS_Items) do
+                            for k, v in pairs(Me.SS_Items) do
                                 if v.id == itemid then
                                     the_item = v
                                 end
@@ -275,7 +275,7 @@ local skull = Material("HUD/killicons/default")
 local skullwhitetime = SysTime()
 
 hook.Add("HUDPaint", "DeathNotice", function()
-    if not IsValid(LocalPlayer()) or LocalPlayer():Alive() or (not killdata) then
+    if not IsValid(Me) or Me:Alive() or (not killdata) then
         if CurTime() > killdatarecipt + 2 then
             killdata = nil
         end

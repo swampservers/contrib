@@ -22,7 +22,7 @@ SS_Item({
             p:SetText("Skin ID")
 
             vgui("DSSCustomizerComboBox", function(p)
-                local mats = LocalPlayer():GetMaterials()
+                local mats = Me:GetMaterials()
 
                 for i = 1, math.min(31, #mats) do
                     p:AddChoice(tostring(i) .. " (" .. table.remove(string.Explode("/", mats[i] or "")) .. ")", tostring(i - 1), tonumber(self.cfg.submaterial or 0) == i - 1)
@@ -72,7 +72,7 @@ function SS_BoneModItem(item)
 
     function item:AddBoneSelector(cust)
         vgui('DSSCustomizerBone', cust.LeftColumn, function(p)
-            p:SetValue(self.cfg[PMCS"bone"] or (LocalPlayer():IsPony() and "Scull" or "Head1"))
+            p:SetValue(self.cfg[PMCS"bone"] or (Me:IsPony() and "Scull" or "Head1"))
 
             p.OnValueChanged = function(pnl, val)
                 self.cfg[PMCS"bone"] = val
@@ -254,7 +254,7 @@ SS_BoneModItem({
     pos_range = Vector(8, 8, 8),
     SetupCustomizer = function(self, cust)
         -- vgui('DSSCustomizerBone', cust.LeftColumn, function(p)
-        --     p:SetValue(self.cfg[PMCS"bone"] or (LocalPlayer():IsPony() and "Scull" or "Head1"))
+        --     p:SetValue(self.cfg[PMCS"bone"] or (Me:IsPony() and "Scull" or "Head1"))
         --     p.OnValueChanged = function(pnl, val)
         --         self.cfg[PMCS"bone"] = val
         --         cust:UpdateCfg()
@@ -263,9 +263,9 @@ SS_BoneModItem({
         -- make sure the bones dont like change or something idk
         local allthebones = {}
 
-        for x = 0, (LocalPlayer():GetBoneCount() - 1) do
-            if LocalPlayer():GetBoneParent(x) ~= -1 then
-                local bn = LocalPlayer():GetBoneName(x)
+        for x = 0, (Me:GetBoneCount() - 1) do
+            if Me:GetBoneParent(x) ~= -1 then
+                local bn = Me:GetBoneName(x)
 
                 if SS_CleanBoneName(bn) then
                     table.insert(allthebones, bn)
@@ -608,7 +608,7 @@ function HeyNozFillThisIn(self, cust)
                 for i, v in ipairs(e:GetBodyGroups()) do
                     if v.num > 1 then
                         local combo = vgui("DSSCustomizerComboBox", p, function(p)
-                            -- local mats = LocalPlayer():GetMaterials()
+                            -- local mats = Me:GetMaterials()
                             for i = 1, v.num do
                                 -- p:AddChoice(tostring(i) .. " (" .. table.remove(string.Explode("/", mats[i] or "")) .. ")", tostring(i - 1), tonumber(self.cfg.submaterial or 0) == i - 1)
                                 p:AddChoice(v.name .. " " .. i, tostring(i - 1), i == 1)

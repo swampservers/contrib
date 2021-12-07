@@ -17,7 +17,7 @@ vgui.Register('DSSInventoryMode', {
 
             local itemstemp = {}
 
-            for _, item in ipairs(LocalPlayer().SS_Items or {}) do
+            for _, item in ipairs(Me.SS_Items or {}) do
                 table.insert(itemstemp, item)
             end
 
@@ -46,7 +46,7 @@ vgui.Register('DSSInventoryMode', {
 
             for k, v in pairs(SS_Items) do
                 if v.clientside_fake then
-                    table.insert(itemstemp, SS_GenerateItem(LocalPlayer(), v.class))
+                    table.insert(itemstemp, SS_GenerateItem(Me, v.class))
                 end
             end
 

@@ -64,10 +64,10 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:Think()
-    self.UseFirstPersonTrail = self.Owner == LocalPlayer() and not hook.Run("ShouldDrawLocalPlayer", LocalPlayer())
+    self.UseFirstPersonTrail = self.Owner == Me and not hook.Run("ShouldDrawLocalPlayer", Me)
 
     if self.UseFirstPersonTrail then
-        local ep = LocalPlayer():EyePos() + Vector(0, 0, 3 + math.sin(SysTime() * 20)) - LocalPlayer():EyeAngles():Forward() * 10
+        local ep = Me:EyePos() + Vector(0, 0, 3 + math.sin(SysTime() * 20)) - Me:EyeAngles():Forward() * 10
         self.CalcAbsolutePosition = function(ent, pos, ang) return ep, oang end
     end
 end

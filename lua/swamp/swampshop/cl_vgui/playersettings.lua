@@ -7,7 +7,7 @@ vgui.Register("DSSTitleInfo", {
     end,
     Think = function(self)
         if not self.Title then return end
-        local progress = self.Title:Progress(LocalPlayer())
+        local progress = self.Title:Progress(Me)
         if progress == self.LastProgress then return end
         self.LastProgress = progress
 
@@ -107,18 +107,18 @@ vgui.Register('DSSPlayerSettingsMode', {
 --     vgui("DLabel", function(p)
 --         p:Dock(TOP)
 --         function p:Think()
---             local t = LocalPlayer():GetTitle()
+--             local t = Me:GetTitle()
 --             self:SetText("Current title: " .. (t == "" and "None" or t))
 --         end
 --     end)
 --     local titlepicker = vgui("DComboBox", function(p)
 --         p:Dock(TOP)
---         p:SetValue(LocalPlayer():GetTitle())
+--         p:SetValue(Me:GetTitle())
 --         p:AddChoice("None")
 --         p:ChooseOption("None", 1)
---         for i, v in ipairs(LocalPlayer():GetTitles()) do
+--         for i, v in ipairs(Me:GetTitles()) do
 --             p:AddChoice(v)
---             if v == LocalPlayer():GetTitle() then
+--             if v == Me:GetTitle() then
 --                 p:ChooseOption(v, 1)
 --             end
 --         end

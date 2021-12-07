@@ -84,7 +84,7 @@ end)
 local barfade = 0
 
 hook.Add("RenderScreenspaceEffects", "BarBrightness", function()
-    if IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Drunken Clam" then
+    if IsValid(Me) and Me:GetLocationName() == "Drunken Clam" then
         barfade = math.min(barfade + FrameTime(), 1)
     else
         barfade = math.max(barfade - FrameTime() * 2, 0)

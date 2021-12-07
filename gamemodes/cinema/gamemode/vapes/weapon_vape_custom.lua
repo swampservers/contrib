@@ -23,7 +23,7 @@ if CLIENT then
     CreateConVar("cl_vapecolor", "0.35 0 1.0", FCVAR_ARCHIVE, "The value is a Vector - so between 0-1 - not between 0-255")
 
     function SWEP:OwnerChanged()
-        if self.Owner == LocalPlayer() then
+        if self.Owner == Me then
             self.Owner.CustomVapeColor = Vector(GetConVar("cl_vapecolor"):GetString())
             net.Start("VapeUpdateCustomColor")
             net.WriteVector(self.Owner.CustomVapeColor)

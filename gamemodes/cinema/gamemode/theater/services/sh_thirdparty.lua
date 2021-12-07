@@ -69,7 +69,7 @@ if CLIENT then
         function panel:ConsoleMessage(msg)
             local smsg = tostring(msg)
 
-            if (LocalPlayer().videoDebug) then
+            if (Me.videoDebug) then
                 print(smsg)
             end
 

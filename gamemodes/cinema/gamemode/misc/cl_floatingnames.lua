@@ -12,7 +12,7 @@ end)
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
-    if (not LocalPlayer():IsStaff()) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
+    if (not Me:IsStaff()) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
     local dist = EyePos():Distance(ply:EyePos())
     if (dist >= 800) then return end
     local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
@@ -22,8 +22,8 @@ local function DrawName(ply, opacityScale)
     local ang = EyeAngles()
     ang:RotateAroundAxis(ang:Forward(), 90)
     ang:RotateAroundAxis(ang:Right(), 90)
-    -- if LocalPlayer():InVehicle() then
-    --     ang:RotateAroundAxis(ang:Right(), -LocalPlayer():GetVehicle():GetAngles().y)
+    -- if Me:InVehicle() then
+    --     ang:RotateAroundAxis(ang:Right(), -Me:GetVehicle():GetAngles().y)
     -- end
     --[[
 	if ply:InVehicle() then
@@ -56,7 +56,7 @@ local function DrawName(ply, opacityScale)
         ch = ch - 50
     end
 
-    if LocalPlayer():IsStaff() and ShowEyeAng then
+    if Me:IsStaff() and ShowEyeAng then
         DrawTheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
         DrawTheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
         ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
@@ -77,7 +77,7 @@ local HUDTargets = {}
 local fadeTime = 2
 
 hook.Add("PrePlayerDraw", "RecordDrawPlayerNames", function(ply)
-    if ply ~= LocalPlayer() then
+    if ply ~= Me then
         HUDTargets[ply] = true
     end
 end)
@@ -88,10 +88,10 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
     if depth or sky3d then return end
     if not render.DrawingScreen() then return end
     if HideNamesConVar:GetBool() then return end
-    if not IsValid(LocalPlayer()) or not LocalPlayer().InTheater then return end
-    if LocalPlayer():UsingWeapon("weapon_camera") then return end
-    if LocalPlayer():InTheater() and (theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool()) then return end
-    local tv = LocalPlayer():InTheater() or LocalPlayer():InVehicle()
+    if not IsValid(Me) or not Me.InTheater then return end
+    if Me:UsingWeapon("weapon_camera") then return end
+    if Me:InTheater() and (theater.Fullscreen or GetConVar("cinema_hideplayers"):GetBool()) then return end
+    local tv = Me:InTheater() or Me:InVehicle()
     local fwd = EyeAngles():Forward()
     local ep = EyePos()
     local sorteddraw = {}
@@ -127,10 +127,10 @@ end)
 -- if not render.DrawingScreen() then return end
 -- local t1 = os.clock()
 -- if GetConVar("cinema_drawnames") and not GetConVar("cinema_drawnames"):GetBool() then return end
--- if not LocalPlayer().InTheater then return end
--- --if IsValid( LocalPlayer():GetVehicle() ) then return end
+-- if not Me.InTheater then return end
+-- --if IsValid( Me:GetVehicle() ) then return end
 -- -- Draw lower opacity and recently targetted players in theater
--- if LocalPlayer():InTheater() then
+-- if Me:InTheater() then
 --     if theater.Fullscreen then return end
 --     if GetConVar("cinema_hideplayers"):GetBool() then return end
 --     for ply, time in pairs(HUDTargets) do
@@ -141,7 +141,7 @@ end)
 --         -- Fade over time
 --         DrawName(ply, 0.11 * ((time - RealTime()) / fadeTime))
 --     end
---     local tr = util.GetPlayerTrace(LocalPlayer())
+--     local tr = util.GetPlayerTrace(Me)
 --     local trace = util.TraceLine(tr)
 --     if (not trace.Hit) then return end
 --     if (not trace.HitNonWorld) then return end
@@ -155,7 +155,7 @@ end)
 --     local t1 = SysTime()
 --     -- local ap = player.GetAll()
 --     local v1 = EyeVector():GetNormalized()
---     local lp = LocalPlayer()
+--     local lp = Me
 --     local ep = EyePos()
 --     -- for _, ply in ipairs(player.GetAll()) do
 --     -- for k,ply in ipairs(ap) do

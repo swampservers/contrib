@@ -16,9 +16,9 @@ if CLIENT then
         local mdl = ply:GetModel()
         local dmdl, dwsid, dbodygroups = ply:GetDisplayModel()
 
-        -- if ply==LocalPlayer() then print(mdl,dmdl) end
+        -- if ply==Me then print(mdl,dmdl) end
         if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
-            if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(LocalPlayer():GetPos()))) and IsValidPlayermodel(dmdl) then
+            if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(Me:GetPos()))) and IsValidPlayermodel(dmdl) then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
 
@@ -28,11 +28,11 @@ if CLIENT then
 
                 mdl = dmdl
                 -- IT MAKES THE MODEL STAY
-                ply:SetPredictable(ply == LocalPlayer())
+                ply:SetPredictable(ply == Me)
                 -- timer.Simple(0, function()
                 --     if IsValid(ply) then
                 --         ply:SetModel(dmdl)
-                --         ply:SetPredictable(ply == LocalPlayer())
+                --         ply:SetPredictable(ply == Me)
                 --     end
                 -- end)
             end
@@ -51,8 +51,8 @@ if CLIENT then
     end)
 
     hook.Add("Tick", "LocalPlayerForceModel", function()
-        if IsValid(LocalPlayer()) then
-            checkmodel(LocalPlayer())
+        if IsValid(Me) then
+            checkmodel(Me)
         end
 
         for k, v in pairs(players2check) do

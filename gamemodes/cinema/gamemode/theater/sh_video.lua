@@ -239,8 +239,8 @@ if CLIENT then
 
     hook.Add("Think", "VideoTrust", function()
         if input.IsKeyDown(KEY_F8) then
-            if IsValid(LocalPlayer()) then
-                local th = LocalPlayer():GetTheater()
+            if IsValid(Me) then
+                local th = Me:GetTheater()
 
                 if th then
                     local v = th:GetVideo()

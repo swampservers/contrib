@@ -187,9 +187,9 @@ list.Set("DesktopWindows", "PlayerEditor", {
         end
 
         local function UpdateFromConvars()
-            local model = LocalPlayer():GetInfo("cl_playermodel")
+            local model = Me:GetInfo("cl_playermodel")
             local modelname = player_manager.TranslatePlayerModel(model)
-            local altmodelname = LocalPlayer():GetModel():lower()
+            local altmodelname = Me:GetModel():lower()
             local found = false
 
             for k, v in pairs(player_manager.AllValidModels()) do

@@ -78,7 +78,7 @@ end
 
 function PANEL:FillPlayers()
     for _, ply in pairs(player.GetAll()) do
-        if ply == LocalPlayer() then continue end
+        if ply == Me then continue end
         if ply:IsBot() then continue end
         self.playerselect:AddChoice(ply:Nick(), ply:UniqueID())
     end
@@ -107,7 +107,7 @@ function PANEL:Update()
         disabled = true
     end
 
-    if (self.pselector:GetValue() < 1) or (self.pselector:GetValue() > LocalPlayer():SS_GetPoints()) then
+    if (self.pselector:GetValue() < 1) or (self.pselector:GetValue() > Me:SS_GetPoints()) then
         disabled = true
         self.pselector:SetTextColor(Color(180, 0, 0, 255))
     else

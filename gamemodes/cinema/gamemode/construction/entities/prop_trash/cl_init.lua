@@ -204,9 +204,9 @@ end
 
 -- TODO can we do one every tick cyclically instead of all at once
 timer.Create("TrashLights", 0.1, 0, function()
-    if not IsValid(LocalPlayer()) then return end
-    local ep = LocalPlayer():EyePos()
-    local ev = LocalPlayer():EyeAngles():Forward()
+    if not IsValid(Me) then return end
+    local ep = Me:EyePos()
+    local ev = Me:EyeAngles():Forward()
     local f = CurrentFrustrum()
     local candidates = {}
 
@@ -298,8 +298,8 @@ hook.Add("PreDrawTranslucentRenderables", "TrashHoverDraw", function()
 end)
 
 hook.Add("PreDrawHalos", "TrashHalos", function()
-    if not IsValid(LocalPlayer()) then return end
-    local id = LocalPlayer():SteamID()
+    if not IsValid(Me) then return end
+    local id = Me:SteamID()
     local sz = ScrH() / 200
 
     if IsValid(PropTrashLookedAt) then
@@ -328,7 +328,7 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
 
             halo.Add(e, Color(255, 0, 255), sz, sz, 1, true, false)
             -- TODO: check:
-            -- if v:GetOwnerID() == LocalPlayer():SteamID() then
+            -- if v:GetOwnerID() == Me:SteamID() then
             --     render.SetColorModulation(0, 1, 1)
             -- else
             --     render.SetColorModulation(1, 0.5, 0)
@@ -336,10 +336,10 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
         end
     end
 
-    if IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "weapon_trash_manager" then
+    if IsValid(Me:GetActiveWeapon()) and Me:GetActiveWeapon():GetClass() == "weapon_trash_manager" then
         if IsValid(TRASHMANAGERWINDOW) then
             if TRASHMANAGERDELETEBUTTON:IsHovered() or TRASHMANAGERDELETEBUTTON:GetText() == "" then
-                local d = LocalPlayer():GetActiveWeapon():GetDeleteEntities()
+                local d = Me:GetActiveWeapon():GetDeleteEntities()
                 TRASHMANAGERDELETEBUTTON:SetText("Cleanup " .. #d .. " props")
 
                 if TRASHMANAGERDELETEBUTTON:IsHovered() then
@@ -348,7 +348,7 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
             end
 
             if TRASHMANAGERSAVEBUTTON:IsHovered() or TRASHMANAGERSAVEBUTTON:GetText() == "" then
-                local t = LocalPlayer():GetActiveWeapon():GetSaveEntities()
+                local t = Me:GetActiveWeapon():GetSaveEntities()
                 TRASHMANAGERSAVEBUTTON:SetText("Save " .. #t .. " props")
 
                 if TRASHMANAGERSAVEBUTTON:IsHovered() then
@@ -361,24 +361,24 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
             end
         end
         -- 
-        -- halo.Add(LocalPlayer():GetActiveWeapon():GetSaveEntities(), Color( 0,255, 0), sz, sz, 1, true, false)
+        -- halo.Add(Me:GetActiveWeapon():GetSaveEntities(), Color( 0,255, 0), sz, sz, 1, true, false)
     end
 end)
 
 --NOMINIFY
 hook.Add("HUDPaint", "TrashHUD", function()
-    if not IsValid(LocalPlayer()) then return end
+    if not IsValid(Me) then return end
 
     if IsValid(PropTrashLookedAt) then
         local c = PropTrashLookedAt:LocalToWorld(PropTrashLookedAt:OBBCenter()):ToScreen()
 
         if c.visible then
             local owner = player.GetBySteamID(PropTrashLookedAt:GetOwnerID())
-            draw.SimpleText(owner == LocalPlayer() and "Yours" or (IsValid(owner) and "Belongs to " .. owner:GetName() or "Belongs to someone offline."), "DermaDefault", c.x, c.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText(owner == Me and "Yours" or (IsValid(owner) and "Belongs to " .. owner:GetName() or "Belongs to someone offline."), "DermaDefault", c.x, c.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
     end
 
-    local lastt = LocalPlayer():GetNWFloat("LastTrash", 0)
+    local lastt = Me:GetNWFloat("LastTrash", 0)
 
     if lastt + TRASH_SPAWN_COOLDOWN > CurTime() then
         local barsize = (1 - (CurTime() - lastt) / TRASH_SPAWN_COOLDOWN) * ScrW() / 2

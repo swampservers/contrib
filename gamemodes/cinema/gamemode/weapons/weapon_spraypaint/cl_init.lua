@@ -143,7 +143,7 @@ function SWEP:GetPreviewMat(decal)
 end
 
 hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
-    local wep = LocalPlayer():GetActiveWeapon()
+    local wep = Me:GetActiveWeapon()
 
     --baseclass friendly
     if (IsValid(wep) and wep.DrawSpraypaintReticle) then

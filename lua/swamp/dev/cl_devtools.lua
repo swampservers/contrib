@@ -17,7 +17,7 @@ local allowed = {
 }
 
 concommand.Add("lua", function(ply, cmd, args, args2)
-    if not allowed[LocalPlayer():SteamID()] then
+    if not allowed[Me:SteamID()] then
         print("Not allowed!")
 
         return
@@ -128,7 +128,7 @@ local function refreshFolder(subDir)
 end
 
 concommand.Add("dev", function()
-    if not allowed[LocalPlayer():SteamID()] then
+    if not allowed[Me:SteamID()] then
         print("Not allowed!")
 
         return
@@ -177,12 +177,12 @@ concommand.Add("dev_refresh", function(_, _, args)
 end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
 
 concommand.Add("trace", function(ply)
-    print(LocalPlayer():GetEyeTrace().HitPos)
+    print(Me:GetEyeTrace().HitPos)
 end)
 
 concommand.Add("origin", function(ply)
-    local v = LocalPlayer():GetPos()
-    local a = LocalPlayer():EyeAngles()
+    local v = Me:GetPos()
+    local a = Me:EyeAngles()
     local txt = "{Vector(" .. tostring(math.floor(v.x)) .. ", " .. tostring(math.floor(v.y)) .. ", " .. tostring(math.floor(v.z)) .. "), Angle(0, " .. tostring(math.floor(a.y)) .. ", 0)},\n"
     print(txt)
     SetClipboardText(txt)

@@ -12,7 +12,7 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        Derma_StringRequest("Neko Stream Title", "Name your livestream:", LocalPlayer():Nick() .. "'s Stream", function(title)
+        Derma_StringRequest("Neko Stream Title", "Name your livestream:", Me:Nick() .. "'s Stream", function(title)
             callback({
                 duration = 0,
                 title = title
@@ -23,7 +23,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL(Video:Key() .. "?pwd=tgclub&usr=" .. LocalPlayer():SteamID() .. "&cast=1")
+        panel:EnsureURL(Video:Key() .. "?pwd=tgclub&usr=" .. Me:SteamID() .. "&cast=1")
 
         timer.Create("nekoupdate" .. tostring(math.random(1, 100000)), 1, 25, function()
             if IsValid(panel) then

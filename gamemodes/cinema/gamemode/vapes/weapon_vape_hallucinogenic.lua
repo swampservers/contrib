@@ -69,11 +69,11 @@ if CLIENT then
             end
 
             local alpha = vapeHallucinogen / 100
-            local eyeang = LocalPlayer():EyeAngles()
-            local drift = math.min(LocalPlayer():GetVelocity():Length() / 150, 1) * alpha
+            local eyeang = Me:EyeAngles()
+            local drift = math.min(Me:GetVelocity():Length() / 150, 1) * alpha
             eyeang.p = eyeang.p + FrameTime() * math.sin(SysTime() * 0.6) * drift
             eyeang.y = eyeang.y + FrameTime() * math.sin(SysTime() * 0.5) * drift * 2
-            LocalPlayer():SetEyeAngles(eyeang)
+            Me:SetEyeAngles(eyeang)
             local coloralpha = alpha ^ 0.33
             local distortalpha = math.min(1, ((alpha * 1.1) ^ 3))
             DrawMotionBlur(0.05, alpha, 0)
@@ -101,9 +101,9 @@ if CLIENT then
             end
         end
 
-        if IsValid(LocalPlayer()) and LocalPlayer().dspset ~= dsp then
-            LocalPlayer():SetDSP(dsp, false)
-            LocalPlayer().dspset = dsp
+        if IsValid(Me) and Me.dspset ~= dsp then
+            Me:SetDSP(dsp, false)
+            Me.dspset = dsp
         end
 
         if (vapeHallucinogen or 0) > 0 then

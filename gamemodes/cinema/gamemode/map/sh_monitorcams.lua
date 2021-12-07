@@ -4,7 +4,7 @@ if CLIENT then
     SituationMonitorRT = nil
 
     hook.Add("PreRender", "MonitorTheSituation", function()
-        if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0) > 0 then
+        if IsValid(Me) and Me:GetNWInt("MONZ", 0) > 0 then
             if SituationMonitorRT == nil then
                 SituationMonitorRT = GetRenderTarget(cvx_anonymous_name(), 1024, 1024, false)
 
@@ -19,7 +19,7 @@ if CLIENT then
             render.PushRenderTarget(SituationMonitorRT)
 
             -- MONITORINGTHESITUATION = true
-            if LocalPlayer():GetNWInt("MONZ", 0) == 1 then
+            if Me:GetNWInt("MONZ", 0) == 1 then
                 render.RenderView({
                     origin = GetGlobalVector("MON1P", Vector(0, 0, 0)),
                     angles = GetGlobalAngle("MON1A", Angle(0, 0, 0)),
@@ -32,7 +32,7 @@ if CLIENT then
                     drawhud = false,
                 })
             else
-                local a = LocalPlayer():EyePos() - KLEINERPORTALPOS
+                local a = Me:EyePos() - KLEINERPORTALPOS
                 a.z = -a.z
                 local l = math.max(a:Length() * 0.02, 1)
                 a:Rotate(GetGlobalAngle("MON2A", Angle(0, 0, 0)))
@@ -67,7 +67,7 @@ if CLIENT then
     hook.Add("PostDrawOpaqueRenderables", "MonitorDraw", function(depth, sky)
         if sky or depth then return end
 
-        if IsValid(LocalPlayer()) and LocalPlayer():GetNWInt("MONZ", 0) == 1 then
+        if IsValid(Me) and Me:GetNWInt("MONZ", 0) == 1 then
             SituationMonitorMaterial:SetMatrix("$texture2transform", Matrix({
                 {1.5, 0, 0, math.Rand(0, 1)},
                 {0, 1, 0, math.Rand(0, 1)},

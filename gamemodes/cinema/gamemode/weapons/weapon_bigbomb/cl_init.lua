@@ -52,7 +52,7 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
-    --if !LocalPlayer():IsPony() then
+    --if !Me:IsPony() then
     pos = pos + ang:Forward() * 2
     pos = pos + ang:Right() * 15
     pos = pos + ang:Up() * -1

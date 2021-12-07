@@ -77,7 +77,7 @@ end
 
 function SWEP:PrimaryAttack()
     if self:GetStage() == 2 and self:WeirdGolf() then
-        if CLIENT and LocalPlayer() == self.Owner and IsFirstTimePredicted() then
+        if CLIENT and Me == self.Owner and IsFirstTimePredicted() then
             if GOLFCAMVECTOR then
                 ENDGOLFSHOT()
 

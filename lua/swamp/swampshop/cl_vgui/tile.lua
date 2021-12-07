@@ -87,7 +87,7 @@ function PANEL:OnMousePressed(b)
         self:Deselect()
 
         if self.product then
-            local cantbuy = self.product:CannotBuy(LocalPlayer())
+            local cantbuy = self.product:CannotBuy(Me)
 
             if cantbuy then
                 surface.PlaySound("common/wpn_denyselect.wav")
@@ -100,7 +100,7 @@ function PANEL:OnMousePressed(b)
             if self.item.primaryaction then
                 surface.PlaySound("UI/buttonclick.wav")
 
-                if LocalPlayer():SS_FindItem(self.item.id) then
+                if Me:SS_FindItem(self.item.id) then
                     RunConsoleCommand("ps", self.item.primaryaction.id, self.item.id)
                 else
                     self.item.primaryaction.OnClient(self.item)
@@ -156,7 +156,7 @@ function PANEL:Select()
             p:Dock(TOP)
         end
 
-        local cannot = self.product:CannotBuy(LocalPlayer())
+        local cannot = self.product:CannotBuy(Me)
 
         if cannot then
             addline(cannot)
@@ -166,7 +166,7 @@ function PANEL:Select()
 
         if cannot ~= SS_CANNOTBUY_OWNED then
             if self.product.sample_item then
-                local count = LocalPlayer():SS_CountItem(self.product.sample_item.class)
+                local count = Me:SS_CountItem(self.product.sample_item.class)
 
                 if count > 0 then
                     addline("You own " .. tostring(count) .. " of these")
@@ -235,7 +235,7 @@ function PANEL:Select()
                     p.DoClick = function(butn)
                         surface.PlaySound("UI/buttonclick.wav")
 
-                        if LocalPlayer():SS_FindItem(self.item.id) then
+                        if Me:SS_FindItem(self.item.id) then
                             RunConsoleCommand("ps", act.id, self.item.id)
                         else
                             act.OnClient(self.item)
@@ -341,7 +341,7 @@ function PANEL:Paint(w, h)
             self.modelapplied = mdl
 
             if IsValid(self.Entity) then
-                self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
+                self.Entity.GetPlayerColor = function() return Me:GetPlayerColor() end
                 local item = self.item or self.product.sample_item
 
                 if item then
@@ -373,7 +373,7 @@ function PANEL:PaintOver(w, h)
 
     if self.product then
         barheight = barheight or 0
-        local cannot = ProtectedCall(self.product:CannotBuy(LocalPlayer()))
+        local cannot = ProtectedCall(self.product:CannotBuy(Me))
 
         if cannot then
             fademodel = true
@@ -387,7 +387,7 @@ function PANEL:PaintOver(w, h)
             barcolor = Color(20, 100, 20, 255) --Color(0, 112, 0, 160)
         end
 
-        local c = self.product.sample_item and LocalPlayer():SS_CountItem(self.product.sample_item.class) or 0
+        local c = self.product.sample_item and Me:SS_CountItem(self.product.sample_item.class) or 0
 
         if c > 0 then
             icon = ownedcheckmark
@@ -425,7 +425,7 @@ function PANEL:PaintOver(w, h)
             local leqc = 0
             local totalc = 0
 
-            for k, otheritem in pairs(LocalPlayer().SS_Items or {}) do
+            for k, otheritem in pairs(Me.SS_Items or {}) do
                 if self.item:GetName() == otheritem:GetName() then
                     totalc = totalc + 1
 

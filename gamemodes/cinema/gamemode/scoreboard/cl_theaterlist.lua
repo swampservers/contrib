@@ -70,10 +70,10 @@ function THEATERLIST:RemoveTheater( th )
 end ]]
 function THEATERLIST:Update()
     -- Prevent spamming requests
-    if (LocalPlayer().LastTheaterListRequest or 0) + 0.4 > CurTime() then return end
+    if (Me.LastTheaterListRequest or 0) + 0.4 > CurTime() then return end
     net.Start("TheaterListInfo")
     net.SendToServer()
-    LocalPlayer().LastTheaterListRequest = CurTime()
+    Me.LastTheaterListRequest = CurTime()
 end
 
 net.Receive("TheaterListInfo", function()

@@ -81,7 +81,7 @@ end)
     Material("CONCRETE/CONCRETEFLOOR011A"):SetString("$surfaceprop","snow")
     ]]
 --[[concommand.Add("mattrace", function()
-    tr = LocalPlayer():GetEyeTrace()
+    tr = Me:GetEyeTrace()
 
     if tr.HitTexture then
         PrintTable(tr)
@@ -121,8 +121,8 @@ concommand.Add("shine", function()
     print("OK", table.Count(mats)) --,mat:GetTexture("$basetexture"))
 
     hook.Add("Think", "reflectivity", function()
-        if IsValid(LocalPlayer()) then
-            local l = render.ComputeLighting(LocalPlayer():GetPos() + Vector(0, 0, 8), Vector(0, 0, 1))
+        if IsValid(Me) then
+            local l = render.ComputeLighting(Me:GetPos() + Vector(0, 0, 8), Vector(0, 0, 1))
             local i = math.min(1, (l.x + l.y + l.z) / 3)
             i = math.sqrt(i)
             print(i)

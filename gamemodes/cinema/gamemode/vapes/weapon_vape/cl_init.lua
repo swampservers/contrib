@@ -85,13 +85,13 @@ function SWEP:GetViewModelPosition(pos, ang)
     local vmpos2 = self.VapeVMPos2 or Vector(24, -8, -11.2)
     local vmang2 = self.VapeVMAng2 or Vector(170, -108, 132)
 
-    if not LocalPlayer().vapeArmTime then
-        LocalPlayer().vapeArmTime = 0
+    if not Me.vapeArmTime then
+        Me.vapeArmTime = 0
     end
 
-    local lerp = math.Clamp((os.clock() - LocalPlayer().vapeArmTime) * 3, 0, 1)
+    local lerp = math.Clamp((os.clock() - Me.vapeArmTime) * 3, 0, 1)
 
-    if LocalPlayer().vapeArm then
+    if Me.vapeArm then
         lerp = 1 - lerp
     end
 

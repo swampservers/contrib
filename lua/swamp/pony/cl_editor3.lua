@@ -49,7 +49,7 @@ if CLIENT then
         WEARSLOTSL = {}
         WEARSLOTSR = {}
         PPM.ed3_selectedNode = nil
-        LocalPlayer().pi_wear = LocalPlayer().pi_wear or {}
+        Me.pi_wear = Me.pi_wear or {}
         left_open = false
         left_isOpening = false
         right_open = false
@@ -119,7 +119,7 @@ if CLIENT then
         local time = 0
 
         function mdl:LayoutEntity()
-            -- PPM.copyLocalPonyTo(LocalPlayer(), self.Entity)
+            -- PPM.copyLocalPonyTo(Me, self.Entity)
             PPM.editor3_pony = self.Entity
             self.Entity.isEditorPony = true
 
@@ -131,13 +131,13 @@ if CLIENT then
                 PPM.editor3_clothing = mdl.model2
             end
 
-            -- if LocalPlayer().pi_wear[50] ~= nil then
-            --     self.Entity.ponydata.bodyt0 = LocalPlayer().pi_wear[50].wearid or 1
+            -- if Me.pi_wear[50] ~= nil then
+            --     self.Entity.ponydata.bodyt0 = Me.pi_wear[50].wearid or 1
             -- end
             PPM.editor3_pony:SetPoseParameter("move_x", 0)
 
-            -- if (LocalPlayer().pi_wear ~= nil) then
-            --     for i, item in pairs(LocalPlayer().pi_wear) do
+            -- if (Me.pi_wear ~= nil) then
+            --     for i, item in pairs(Me.pi_wear) do
             --         PPM.setBodygroupSafe(PPM.editor3_pony, item.bid, item.bval)
             --         PPM.setBodygroupSafe(mdl.model2, item.bid, item.bval)
             --     end
@@ -361,11 +361,11 @@ if CLIENT then
         APPLY:SetColor(Color(255, 255, 255, 255))
 
         APPLY.DoClick = function()
-            --[[local cm = LocalPlayer():GetInfo( "cl_playermodel" )
+            --[[local cm = Me:GetInfo( "cl_playermodel" )
 		if(cm!= "pony" and cm!= "ponynj") then
 			RunConsoleCommand( "cl_playermodel", "ponynj" )
 		end]]
-            --PPM.SendCharToServer(LocalPlayer())
+            --PPM.SendCharToServer(Me)
             PPM_Save("_current.txt")
             SendLocalPonyCfg()
             -- hook.Run("PPM.Apply", window)
@@ -385,7 +385,7 @@ if CLIENT then
 
     function spawnTabs()
         taboffset = 5 * -32
-        --local ponymodel =LocalPlayer():GetInfo( "cl_playermodel" )
+        --local ponymodel =Me:GetInfo( "cl_playermodel" )
         --if(PPM.Editor3_ponies[ponymodel]!=nil) then
         spawnTab("node_main", "t")
         spawnTab("node_body", "b")
@@ -433,7 +433,7 @@ if CLIENT then
                 PPM.E3_CURRENT_NODE = nil
                 cleanValueEditors()
                 cleanButtons()
-                local ponymodel = "pony" --LocalPlayer():GetInfo( "cl_playermodel" )
+                local ponymodel = "pony" --Me:GetInfo( "cl_playermodel" )
 
                 --if(PPM.Editor3_ponies[ponymodel]!=nil) then
                 if (PPM.Editor3_nodes[PPM.Editor3_ponies[ponymodel][TABBUTTON.node]] ~= nil) then
@@ -459,7 +459,7 @@ if CLIENT then
     end
 
     function setupCurPone()
-        --local ponymodel =LocalPlayer():GetInfo( "cl_playermodel" )
+        --local ponymodel =Me:GetInfo( "cl_playermodel" )
         --if(PPM.Editor3_ponies[ponymodel]!=nil) then
         PPM.E3_CURRENT_NODE = PPM.Editor3_nodes[PPM.Editor3_ponies["pony"].node_body]
         cleanButtons()

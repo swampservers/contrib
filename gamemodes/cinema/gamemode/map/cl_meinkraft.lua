@@ -161,12 +161,12 @@ hook.Add("Think", "DlightCleanup", function()
     CVX_SORTABLE_DLIGHTS = {}
 
     -- eyeglow override
-    if IsValid(LocalPlayer()) then
+    if IsValid(Me) then
         table.insert(CVX_SORTABLE_DLIGHTS, {
             2e-6, --lower number = light has more priority
-            LocalPlayer():EyePos(), {
+            Me:EyePos(), {
                 color = Vector(1, 1, 1) * 0.2, --0.08,
-                pos = LocalPlayer():EyePos(),
+                pos = Me:EyePos(),
                 quadraticFalloff = 0,
                 linearFalloff = 1,
                 constantFalloff = 0,
@@ -179,7 +179,7 @@ hook.Add("Think", "DlightCleanup", function()
             nxt[k] = v
 
             --Don't double count the eyeglow one
-            if not IsValid(LocalPlayer()) or k ~= LocalPlayer():EntIndex() then
+            if not IsValid(Me) or k ~= Me:EntIndex() then
                 if v.pos == nil then
                     print("WARNING nil light pos")
                     -- print(v.traceback)
@@ -251,7 +251,7 @@ MINECRAFTOREMESHES = {} --MINECRAFTOREMESHES or {}
 
 hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
     if sky or depth then return end
-    if not (CVX_WORLD_ID and IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
+    if not (CVX_WORLD_ID and IsValid(Me) and Me:GetLocationName() == "In Minecraft") then return end
     MINECRAFT_OREANGLE = Angle(0, 0, 0)
     MINECRAFT_OREMINS = -Vector(0.51, 0.51, 0.51) * CVX_SCALE
     MINECRAFT_OREMAXS = Vector(0.51, 0.51, 0.51) * CVX_SCALE
@@ -331,7 +331,7 @@ hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
 end)
 
 hook.Add("Think", "MinecraftOreUpdates", function()
-    if not (CVX_WORLD_ID and IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "In Minecraft") then return end
+    if not (CVX_WORLD_ID and IsValid(Me) and Me:GetLocationName() == "In Minecraft") then return end
 
     if not REQUESTED_ORES then
         net.Start("cvxOres")
@@ -414,7 +414,7 @@ hook.Add("PreDrawOpaqueRenderables", "SpadesAntiXray", function()
         local pos = (EyePos() - CVX_ORIGIN) / CVX_SCALE
 
         if cvx_get_vox_solid(math.floor(pos.x), math.floor(pos.y), math.floor(pos.z)) then
-            if IsValid(LocalPlayer()) and LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP then return end
+            if IsValid(Me) and Me:GetMoveType() == MOVETYPE_NOCLIP then return end
             render.CullMode(1)
             render.SetMaterial(BLACKBOXMAT)
             render.DrawBox(EyePos() + EyeAngles():Forward() * 0, Angle(0, 0, 0), Vector(-1, -1, -1) * 50, Vector(1, 1, 1) * 50, Color(0, 0, 0, 255))
@@ -424,7 +424,7 @@ hook.Add("PreDrawOpaqueRenderables", "SpadesAntiXray", function()
 end)
 
 timer.Create("MinecraftPlayerLighting", 0.1, 0, function()
-    if CVX_WORLD_ID and IsValid(LocalPlayer()) and LocalPlayer().GetLocationName and LocalPlayer():GetLocationName() == "In Minecraft" then
+    if CVX_WORLD_ID and IsValid(Me) and Me.GetLocationName and Me:GetLocationName() == "In Minecraft" then
         --hack but it works
         hook.Add("PrePlayerDraw", "MCPRPD", function(ply)
             cvx_pre_draw_leaf(ply)
@@ -435,7 +435,7 @@ timer.Create("MinecraftPlayerLighting", 0.1, 0, function()
         end)
 
         hook.Add("HUDPaint", "MinecraftCompass", function()
-            local fw = LocalPlayer():EyeAngles():Forward()
+            local fw = Me:EyeAngles():Forward()
             fw.z = 0
             fw:Normalize()
             surface.SetDrawColor(255, 255, 255, 255)

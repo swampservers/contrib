@@ -122,7 +122,7 @@ function PS:SendModifications(item_id, modifications)
 end ]]
 -- function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
 --     calls = calls or 50
---     local ply = pi == -1 and LocalPlayer() or Entity(pi)
+--     local ply = pi == -1 and Me or Entity(pi)
 --     if IsValid(ply) then
 --         ply[prop] = val
 --         if callback then
@@ -140,7 +140,7 @@ end ]]
 -- end
 local function OnPlayerLoad(pi, callback, ready_check, calls)
     calls = calls or 50
-    local ply = pi == -1 and LocalPlayer() or Entity(pi)
+    local ply = pi == -1 and Me or Entity(pi)
 
     if IsValid(ply) and (ready_check == nil or ready_check(ply)) then
         callback(ply)
@@ -160,7 +160,7 @@ local function postupdate(ply, shown)
         ply:SS_AttachAccessories()
         ply.SS_SetupPlayermodel = nil
 
-        if ply == LocalPlayer() then
+        if ply == Me then
             SS_RefreshShopAccessories()
         end
     else
@@ -265,8 +265,8 @@ concommand.Add("ps_buy", function(ply, cmd, args)
     end
 
     -- if they have the wep and the wep is not a single-use e.g. peacekeeper
-    if LocalPlayer():HasWeapon(args[1]) and not SS_Products[args[1]]['ammotype'] then
-        input.SelectWeapon(LocalPlayer():GetWeapon(args[1]))
+    if Me:HasWeapon(args[1]) and not SS_Products[args[1]]['ammotype'] then
+        input.SelectWeapon(Me:GetWeapon(args[1]))
 
         return
     end
@@ -275,21 +275,21 @@ concommand.Add("ps_buy", function(ply, cmd, args)
 end)
 
 -- function SS_SellItem(item_id)
---     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     if not Me:SS_FindItem(item_id) then return end
 --     net.Start('SS_SellItem')
 --     net.WriteUInt(item_id, 32)
 --     net.SendToServer()
 -- end
 -- -- REMOVE THIS
 -- function SS_EquipItem(item_id, state)
---     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     if not Me:SS_FindItem(item_id) then return end
 --     net.Start('SS_EquipItem')
 --     net.WriteUInt(item_id, 32)
 --     net.WriteBool(state)
 --     net.SendToServer()
 -- end
 -- function SS_ActivateItem(item_id, args)
---     if not LocalPlayer():SS_FindItem(item_id) then return end
+--     if not Me:SS_FindItem(item_id) then return end
 --     net.Start('SS_ActivateItem')
 --     net.WriteUInt(item_id, 32)
 --     net.WriteTable(args or {})
@@ -298,7 +298,7 @@ end)
 concommand.Add("ps", function(ply, cmd, args)
     local action, itemid = args[1], tonumber(args[2] or "")
     if not action or not itemid then return end
-    local item = LocalPlayer():SS_FindItem(itemid)
+    local item = Me:SS_FindItem(itemid)
     if not item then return end
     local act = item.actions[action]
     if not act then return end
@@ -307,7 +307,7 @@ concommand.Add("ps", function(ply, cmd, args)
 end)
 
 function SS_ItemServerAction(item_id, action_id, args)
-    if not LocalPlayer():SS_FindItem(item_id) then return end
+    if not Me:SS_FindItem(item_id) then return end
     net.Start('SS_ItemAction')
     net.WriteUInt(item_id, 32)
     net.WriteString(action_id)

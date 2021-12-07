@@ -38,7 +38,7 @@ function PPM_Load(filename)
         end
     end
 
-    PPM_SetPonyCfg(LocalPlayer(), SanitizePonyCfg(ponydata))
+    PPM_SetPonyCfg(Me, SanitizePonyCfg(ponydata))
 end
 
 function PPM_Randomize()
@@ -77,13 +77,13 @@ function PPM_Randomize()
     ponydata.eyeholesize = 0.7 + math.Rand(-0.1, 0.1)
     ponydata.eyecolor_hole = Vector(0, 0, 0)
     -- TODO assert(ponydata == SanitizePonyCfg(ponydata))
-    PPM_SetPonyCfg(LocalPlayer(), SanitizePonyCfg(ponydata))
+    PPM_SetPonyCfg(Me, SanitizePonyCfg(ponydata))
 end
 
 function PPM_Save(filename)
     local saveframe = {}
 
-    for k, v in SortedPairs(LocalPlayer().ponydata) do
+    for k, v in SortedPairs(Me.ponydata) do
         if type(v) == "number" then
             table.insert(saveframe, "\n " .. k .. " " .. tostring(v))
         elseif type(v) == "Vector" then
@@ -120,15 +120,15 @@ function ReloadCurrentPony()
 end
 
 hook.Add("Think", "PPM_Loader", function()
-    -- and LocalPlayer():IsPPMPony() then --disabled so it appears in shop
-    if IsValid(LocalPlayer()) then
+    -- and Me:IsPPMPony() then --disabled so it appears in shop
+    if IsValid(Me) then
         ReloadCurrentPony()
         hook.Remove("Think", "PPM_Loader")
     end
 end)
 
 function SendLocalPonyCfg()
-    local tab = LocalPlayer().ponydata
+    local tab = Me.ponydata
     assert(istable(tab))
     -- if not istable(tbl) then return end
     -- if (delays > CurTime()) then return end

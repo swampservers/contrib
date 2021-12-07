@@ -9,7 +9,7 @@ local iteratepmcs = nil
 function PMCS(key)
     if iteratepmcs then return key .. iteratepmcs end
 
-    return LocalPlayer():PMCS(key)
+    return Me:PMCS(key)
 end
 
 function Entity:PMCS(key)

@@ -225,7 +225,7 @@ function SS_Item(item)
             sort = -2,
             Text = function(item, args) return "Auction" end,
             OnClient = function(item)
-                -- if LocalPlayer():SteamID() ~= "STEAM_0:0:38422842" then return end
+                -- if Me:SteamID() ~= "STEAM_0:0:38422842" then return end
                 SS_OpenAuctionWindow(item)
             end
         }

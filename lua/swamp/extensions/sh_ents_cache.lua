@@ -214,4 +214,4 @@ function _TestEnts()
 end
 
 --
-timer.Create("TestTheEnts", 5, 0, function() end) -- if SERVER or IsValid(LocalPlayer()) and LocalPlayer():Nick() == "Joker Gaming" then --     _TestEnts() -- end
+timer.Create("TestTheEnts", 5, 0, function() end) -- if SERVER or IsValid(Me) and Me:Nick() == "Joker Gaming" then --     _TestEnts() -- end

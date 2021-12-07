@@ -44,7 +44,7 @@ function ENT:DrawThumbnail()
         surface.SetMaterial(DefaultThumbnail)
         surface.DrawTexturedRect(0, 0, ThumbWidth - 1, ThumbHeight - 1)
         background = ""
-    elseif IsValid(LocalPlayer()) and LocalPlayer():FlashlightIsOn() then
+    elseif IsValid(Me) and Me:FlashlightIsOn() then
         surface.SetDrawColor(80, 80, 80)
         surface.SetMaterial(DefaultThumbnail) --FIX WEIRD BUG
         surface.DrawTexturedRect(0, 0, 1, 1)

@@ -55,7 +55,7 @@ function DrawText(vecPos, strText, strFont, color, scale)
         scale = 1
     end
 
-    local ang = LocalPlayer():EyeAngles()
+    local ang = Me:EyeAngles()
     ang:RotateAroundAxis(ang:Forward(), 90)
     ang:RotateAroundAxis(ang:Right(), 90)
     surface.SetFont(strFont)

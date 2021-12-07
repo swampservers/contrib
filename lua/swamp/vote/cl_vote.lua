@@ -181,7 +181,7 @@ net.Receive("StartVote", function(len)
     ACTIVEVOTESTARTTIME = RealTime()
     ACTIVEVOTEENDTIME = RealTime() + duration
 
-    LocalPlayer():AddPlayerOption(title, duration, function(id)
+    Me:AddPlayerOption(title, duration, function(id)
         if ACTIVEVOTEOPTIONS[id] then
             net.Start("DoVote")
             net.WriteUInt(id, 8)

@@ -12,11 +12,11 @@ hook.Add("PrePlayerDraw", "HidePlayers", function(ply)
     if not ply:InVehicle() then
         local transhide = false
 
-        if LocalPlayer():InVehicle() and LocalPlayer():GetVehicle():GetNWBool("IsChessSeat", false) and ChessLocalHideSpectators then
+        if Me:InVehicle() and Me:GetVehicle():GetNWBool("IsChessSeat", false) and ChessLocalHideSpectators then
             transhide = true
         end
 
-        if LocalPlayer():InTheater() and cvar:GetBool() then
+        if Me:InTheater() and cvar:GetBool() then
             transhide = true
         end
 

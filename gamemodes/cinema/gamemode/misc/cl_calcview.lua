@@ -3,9 +3,9 @@
 GM.TauntCam = TauntCamera()
 
 function UseThirdperson()
-    local wc = IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass()
+    local wc = IsValid(Me) and IsValid(Me:GetActiveWeapon()) and Me:GetActiveWeapon():GetClass()
 
-    return THIRDPERSON or LocalPlayer():GetActiveWeapon().AlwaysThirdPerson or wc == "weapon_fists" or LocalPlayer():HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(LocalPlayer()) and not LocalPlayer():InVehicle())
+    return THIRDPERSON or Me:GetActiveWeapon().AlwaysThirdPerson or wc == "weapon_fists" or Me:HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(Me) and not Me:InVehicle())
 end
 
 local wasf4down = false

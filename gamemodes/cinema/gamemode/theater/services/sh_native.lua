@@ -26,7 +26,7 @@ if CLIENT then
         end)
 
         function vpanel:ConsoleMessage(msg)
-            if (LocalPlayer().videoDebug) then
+            if (Me.videoDebug) then
                 print(msg)
             end
 

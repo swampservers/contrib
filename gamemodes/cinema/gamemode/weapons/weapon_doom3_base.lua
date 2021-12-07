@@ -307,7 +307,7 @@ if CLIENT then
     function SWEP:DrawHUD()
         local x, y
 
-        if self.Owner == LocalPlayer() and self.Owner:ShouldDrawLocalPlayer() then
+        if self.Owner == Me and self.Owner:ShouldDrawLocalPlayer() then
             local tr = util.GetPlayerTrace(self.Owner)
             local trace = util.TraceLine(tr)
             local coords = trace.HitPos:ToScreen()
@@ -326,7 +326,7 @@ if CLIENT then
     end
 
     net.Receive("D3HitCheck", function()
-        LocalPlayer():GetActiveWeapon().cHitTime = CurTime() + .15
+        Me:GetActiveWeapon().cHitTime = CurTime() + .15
     end)
 
     local SwayOldAng = Angle()

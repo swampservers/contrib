@@ -15,7 +15,7 @@ VISUALIZER_SETTINGS = {"Rave", "Colorful", "Flash", "Red", "Blue", "Dark", "None
 hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
     if sky or depth then return end
     VISUALIZER_TYPE_TARGET = nil
-    if not (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Vapor Lounge" and LocalPlayer():GetTheater()) then return end
+    if not (IsValid(Me) and Me:GetLocationName() == "Vapor Lounge" and Me:GetTheater()) then return end
     local c, a = Vector(2302, 530, 69), Angle(0, 0, 40)
     local scl = 0.06
     local lh = 24
@@ -35,7 +35,7 @@ hook.Add("PostDrawOpaqueRenderables", "MusicVisUI", function(depth, sky)
         end
     end
 
-    -- local own = LocalPlayer():GetTheater():GetOwner()==LocalPlayer()
+    -- local own = Me:GetTheater():GetOwner()==Me
     if cam.StartCulled3D2D(c, a, scl) then
         -- costs fps?? EyePos():Distance(c)<100 and
         --and HtmlLightsMatFixx then

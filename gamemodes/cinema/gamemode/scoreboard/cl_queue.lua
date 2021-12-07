@@ -106,7 +106,7 @@ function QUEUE:RemoveVideo(vid)
 end
 
 function QUEUE:Update()
-    local Theater = LocalPlayer():GetTheater()
+    local Theater = Me:GetTheater()
     if not Theater then return end
     theater.PollServer()
 end
@@ -327,9 +327,9 @@ function VIDEOVOTE:Update()
         self:Vote(nil)
     end
 
-    local Theater = LocalPlayer():GetTheater()
+    local Theater = Me:GetTheater()
 
-    if self.Video.own or LocalPlayer():StaffControlTheater() or (Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
+    if self.Video.own or Me:StaffControlTheater() or (Theater and Theater:IsPrivate() and Theater:GetOwner() == Me) then
         self:AddRemoveButton()
         self:SetWide(84)
     else

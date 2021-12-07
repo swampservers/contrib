@@ -100,7 +100,7 @@ local function DecorrectSaveData(data)
     local shift = nil
 
     for pti = 2, 4 do
-        if LocalPlayer():GetLocationName() == "Private Theater " .. pti then
+        if Me:GetLocationName() == "Private Theater " .. pti then
             shift = 384 * (pti - 1)
         end
     end
@@ -160,7 +160,7 @@ but you need a nearby theater/field to respawn them.]])
 
                     function p:DoClick()
                         Derma_StringRequest("Filename", "Name of this prop configuration?", "stuff", function(text)
-                            local w = LocalPlayer():GetActiveWeapon()
+                            local w = Me:GetActiveWeapon()
 
                             if IsValid(w) and w:GetClass() == "weapon_trash_manager" then
                                 local c = {}
@@ -223,7 +223,7 @@ but you need a nearby theater/field to respawn them.]])
                             d = d.props or d
                             local items = {}
 
-                            for k, v in pairs(LocalPlayer().SS_Items or {}) do
+                            for k, v in pairs(Me.SS_Items or {}) do
                                 items[v.id] = v
                             end
 
@@ -233,7 +233,7 @@ but you need a nearby theater/field to respawn them.]])
                             while i <= #d do
                                 local v = d[i]
 
-                                if not items[v.id] or v.pos:Distance(LocalPlayer():GetPos()) > TRASH_MANAGER_LOAD_RANGE or TrashLocationOwner(FindLocation(v.pos), v.pos) ~= LocalPlayer():SteamID() then
+                                if not items[v.id] or v.pos:Distance(Me:GetPos()) > TRASH_MANAGER_LOAD_RANGE or TrashLocationOwner(FindLocation(v.pos), v.pos) ~= Me:SteamID() then
                                     table.remove(d, i)
                                 else
                                     i = i + 1
@@ -311,7 +311,7 @@ but you need a nearby theater/field to respawn them.]])
                             p:Center()
                             p:MakePopup()
                             p:CloseOnEscape()
-                            LocalPlayer().TrashFriends = LocalPlayer().TrashFriends or {}
+                            Me.TrashFriends = Me.TrashFriends or {}
 
                             vgui("DLabel", function(p)
                                 p:Dock(TOP)
@@ -325,19 +325,19 @@ but you need a nearby theater/field to respawn them.]])
                                 p:AddColumn("Friend?"):SetFixedWidth(50)
 
                                 for i, v in ipairs(player.GetAll()) do
-                                    if v ~= LocalPlayer() and not v:IsBot() then
-                                        p:AddLine(v:Name(), LocalPlayer().TrashFriends[v] and "X" or "").player = v
+                                    if v ~= Me and not v:IsBot() then
+                                        p:AddLine(v:Name(), Me.TrashFriends[v] and "X" or "").player = v
                                     end
                                 end
 
                                 function p:OnRowSelected(index, pnl)
                                     if IsValid(pnl.player) then
-                                        LocalPlayer().TrashFriends[pnl.player] = (not LocalPlayer().TrashFriends[pnl.player]) and true or nil
-                                        pnl:SetColumnText(2, LocalPlayer().TrashFriends[pnl.player] and "X" or "")
+                                        Me.TrashFriends[pnl.player] = (not Me.TrashFriends[pnl.player]) and true or nil
+                                        pnl:SetColumnText(2, Me.TrashFriends[pnl.player] and "X" or "")
                                     end
 
                                     net.Start("SetTrashFriends")
-                                    net.WriteTable(LocalPlayer().TrashFriends)
+                                    net.WriteTable(Me.TrashFriends)
                                     net.SendToServer()
                                 end
                             end)
@@ -361,7 +361,7 @@ net.Receive("SetTrashFriends", function(len)
 
     if net.ReadBool() then
         e.TrashFriends = {
-            [LocalPlayer()] = true
+            [Me] = true
         }
     else
         e.TrashFriends = {}

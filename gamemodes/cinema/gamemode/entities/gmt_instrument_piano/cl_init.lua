@@ -286,7 +286,7 @@ function LOADMIDI()
                     return
                 end
 
-                local instrument = LocalPlayer().Instrument
+                local instrument = Me.Instrument
                 if not IsValid(instrument) then return end
                 -- Zero velocity NOTE_ON substitutes NOTE_OFF
                 if not midi or midi.GetCommandName(command) ~= "NOTE_ON" or velocity == 0 or not MIDIKeys or not MIDIKeys[note] then return end

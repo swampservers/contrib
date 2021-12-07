@@ -551,7 +551,7 @@ function SWEP:DrawHUD()
         surface.DrawTexturedRect(ScrW() / 2 - 40 + 150 * x, 0, 80, 80)
     end
 
-    draw.WordBox(8, ScrW() * 2 / 4, 20, "Weight: " .. tostring(math.floor(10 * LocalPlayer():Obesity())) .. " lbs", "DermaLarge", Color(0, 0, 0, 100), Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+    draw.WordBox(8, ScrW() * 2 / 4, 20, "Weight: " .. tostring(math.floor(10 * Me:Obesity())) .. " lbs", "DermaLarge", Color(0, 0, 0, 100), Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
     local txt = ""
     local cf = GetG("CURFATTESTCAT")
 

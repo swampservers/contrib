@@ -2,7 +2,7 @@
 
 if CLIENT then
     function GM:CreateMove(cmd)
-        local p = LocalPlayer()
+        local p = Me
         -- in cl_calcview.lua
         if self.TauntCam:CreateMove(cmd, p, p:IsPlayingTaunt()) then return true end
     end

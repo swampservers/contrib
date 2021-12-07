@@ -34,8 +34,8 @@ end
 hook.Add("PostDrawTranslucentRenderables", "DrawPickaxeBlockMarker", function(depth, sky)
     if sky or depth then return end
 
-    if IsValid(LocalPlayer()) then
-        local wep = LocalPlayer():GetActiveWeapon()
+    if IsValid(Me) then
+        local wep = Me:GetActiveWeapon()
 
         if IsValid(wep) and wep:GetClass():StartWith("weapon_pickaxe") then
             local x, y, z = wep:GetTargetingBlock()

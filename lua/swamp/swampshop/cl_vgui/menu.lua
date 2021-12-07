@@ -131,7 +131,7 @@ function PANEL:Init()
 
             local av = vgui("AvatarImage", function(p)
                 p:Dock(LEFT)
-                p:SetPlayer(LocalPlayer(), 184)
+                p:SetPlayer(Me, 184)
                 p:SetSize(SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2), SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2))
                 p:SetPos(SS_COMMONMARGIN, SS_COMMONMARGIN)
             end)
@@ -167,9 +167,9 @@ function PANEL:Init()
 
                 p.Paint = function(pnl, w, h)
                     local x, y = 4, (h / 2)
-                    draw.SimpleText(string.Comma(LocalPlayer():SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', x, y - 15, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                    draw.SimpleText(string.Comma(Me:SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', x, y - 15, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
                     local newoffset = 5
-                    local w2, h2 = draw.SimpleText("Income: " .. tostring(LocalPlayer():SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', x, y + 16 + newoffset, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                    local w2, h2 = draw.SimpleText("Income: " .. tostring(Me:SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', x, y + 16 + newoffset, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
                     helpbutton:SetPos(x + w2 + 7, y + 11 + newoffset)
                     givebutton:SetPos(x + w2 + 28, y + 10 + newoffset)
                 end

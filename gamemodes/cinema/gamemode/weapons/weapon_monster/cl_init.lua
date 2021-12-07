@@ -69,13 +69,13 @@ function SWEP:GetViewModelPosition(pos, ang)
     local vmang1 = Vector(215, -95, 92)
     local vmang2 = Vector(200, -175, 175)
 
-    if not LocalPlayer().monsterArmTime then
-        LocalPlayer().monsterArmTime = 0
+    if not Me.monsterArmTime then
+        Me.monsterArmTime = 0
     end
 
-    local lerp = math.Clamp((os.clock() - LocalPlayer().monsterArmTime) * 3, 0, 1)
+    local lerp = math.Clamp((os.clock() - Me.monsterArmTime) * 3, 0, 1)
 
-    if LocalPlayer().monsterArm then
+    if Me.monsterArm then
         lerp = 1 - lerp
     end
 

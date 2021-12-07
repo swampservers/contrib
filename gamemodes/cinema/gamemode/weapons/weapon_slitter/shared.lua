@@ -303,7 +303,7 @@ function SWEP:PrimaryAttack()
         if hitplayer then
             net.Start("SlitThroatneck")
             net.WriteEntity(hitplayer)
-            net.WriteVector(LocalPlayer():EyeAngles():Forward())
+            net.WriteVector(Me:EyeAngles():Forward())
             net.WriteVector(self.TraceHitPos)
             net.WriteVector(self.TraceHitNormal)
             net.SendToServer()

@@ -22,11 +22,11 @@ PPM.Editor3_presets["view_cmark"] = {
         IMAGER:Dock(TOP)
 
         IMAGER.Think = function()
-            --Mat:SetTexture("$basetexture",LocalPlayer().ponydata_tex.eyeltex)
-            if LocalPlayer().ponydata.custom_mark then
+            --Mat:SetTexture("$basetexture",Me.ponydata_tex.eyeltex)
+            if Me.ponydata.custom_mark then
                 IMAGER:SetMaterial(PPM.m_cmark)
             else
-                IMAGER:SetImage(PPM.m_cmarks[LocalPlayer().ponydata.cmark][1])
+                IMAGER:SetImage(PPM.m_cmarks[Me.ponydata.cmark][1])
             end
         end
     end
@@ -58,7 +58,7 @@ PPM.Editor3_presets["view_eye"] = {
         end
 
         IMAGER.Think = function()
-            Mat:SetTexture("$basetexture", LocalPlayer().ponydata_tex.eyeltex)
+            Mat:SetTexture("$basetexture", Me.ponydata_tex.eyeltex)
             IMAGER:SetMaterial(Mat)
         end
     end
@@ -72,14 +72,14 @@ local item_selection_panel = nil
 function PPM_UpdateSlot(k, eqSlot)
     if eqSlot ~= nil and eqSlot ~= NULL then
         --MsgN(k,eqSlot.weareditem)
-        eqSlot.weareditem = LocalPlayer().pi_wear[k]
+        eqSlot.weareditem = Me.pi_wear[k]
 
         if (eqSlot.weareditem ~= nil) then
             --eqSlot.btn:SetTooltip( eqSlot.weareditem.name )  
             eqSlot:SetImage("gui/items/" .. eqSlot.weareditem.img .. ".png")
             eqSlot.namelabel:SetText(eqSlot.weareditem.name)
             PPM:pi_SetupItem(eqSlot.weareditem, PPM.editor_clothing, true)
-            PPM:pi_SetupItem(eqSlot.weareditem, LocalPlayer())
+            PPM:pi_SetupItem(eqSlot.weareditem, Me)
         end
     end
 end
@@ -91,7 +91,7 @@ function PPM_UpdateSlots()
 end
 
 function OpenItemMenu(slotid, container)
-    local plymodel = "pony" --LocalPlayer():GetInfo( "cl_playermodel" )
+    local plymodel = "pony" --Me:GetInfo( "cl_playermodel" )
     local avitems = PPM:GetAvailItems(plymodel, slotid)
     local posx, posy = container:LocalToScreen()
 
@@ -118,7 +118,7 @@ function OpenItemMenu(slotid, container)
 
             icon.OnMousePressed = function()
                 for i, slot in pairs(item.slot) do
-                    LocalPlayer().pi_wear[slot] = item
+                    Me.pi_wear[slot] = item
                     --MsgN("set slot["..slot.."] = "..item.name)
                 end
 
@@ -177,7 +177,7 @@ end
 --         DISPLAY_CASE:SetPos(0, 0)
 --         DISPLAY_CASE:SetSize(70, 70)
 --         DISPLAY_CASE:SetColor(Color(255, 255, 255, 255))
---         local plymodel = "pony" --LocalPlayer():GetInfo( "cl_playermodel" )
+--         local plymodel = "pony" --Me:GetInfo( "cl_playermodel" )
 --         local avitems = PPM:GetAvailItems(plymodel, SLOTID)
 --         if (avitems ~= nil and table.Count(avitems) > 0) then
 --             DISPLAY_CASE:SetImage("gui/item.png")
@@ -227,7 +227,7 @@ PPM.Editor3_presets["edit_bool"] = {
         --SELECTOR:SetSize( 100, 100 ) 
         SELECTOR:SetPos(20, 20)
         SELECTOR:Dock(FILL)
-        SELECTOR:SetValue(LocalPlayer().ponydata[variable.param] == variable.onvalue)
+        SELECTOR:SetValue(Me.ponydata[variable.param] == variable.onvalue)
 
         SELECTOR.OnChange = function(pSelf, fValue)
             PPM_UpdateLocalPonyCfg(variable.param, fValue and variable.onvalue or variable.offvalue)
@@ -256,7 +256,7 @@ PPM.Editor3_presets["edit_number"] = {
         --SELECTOR:SetSize( 100, 100 ) 
         SELECTOR:SetPos(20, 20)
         SELECTOR:Dock(FILL)
-        SELECTOR:SetValue(LocalPlayer().ponydata[variable.param])
+        SELECTOR:SetValue(Me.ponydata[variable.param])
 
         SELECTOR.OnValueChanged = function()
             --local value =variable.min + SELECTOR:GetValue()*(variable.max-variable.min)
@@ -288,7 +288,7 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         DLabel:SetText("Paste an imgur URL here. Example:\nhttp://i.imgur.com/OMyCUd4.jpg")
         local TextEntry = vgui.Create("DTextEntry", CONTAINER)
         TextEntry:SetSize(75, 30)
-        TextEntry:SetText(LocalPlayer().ponydata.imgurcmark or "")
+        TextEntry:SetText(Me.ponydata.imgurcmark or "")
         TextEntry:DockMargin(8, 0, 8, 4)
         TextEntry:Dock(TOP)
         local DermaButton = vgui.Create("DButton", CONTAINER)
@@ -298,8 +298,8 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
 
         DermaButton.DoClick = function()
             PPM_UpdateLocalPonyCfg('imgurcmark', SanitizeImgurId(TextEntry:GetValue()))
-            --print("imgur cmark:"..LocalPlayer().ponydata.imgurcmark)
-            TextEntry:SetValue(LocalPlayer().ponydata.imgurcmark)
+            --print("imgur cmark:"..Me.ponydata.imgurcmark)
+            TextEntry:SetValue(Me.ponydata.imgurcmark)
         end
 
         local DermaButton = vgui.Create("DButton", CONTAINER)
@@ -316,7 +316,7 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
 
 PPM.Editor3_presets["edit_color"] = {
     spawn = function(parent, variable)
-        local VALUE = LocalPlayer().ponydata[variable.param] or Vector(1, 1, 1)
+        local VALUE = Me.ponydata[variable.param] or Vector(1, 1, 1)
         local CONTAINER = vgui.Create("DPanel", parent)
         CONTAINER:SetSize(200, 220)
         CONTAINER:Dock(TOP)
@@ -368,7 +368,7 @@ PPM.Editor3_presets["edit_color"] = {
 
 PPM.Editor3_presets["edit_type"] = {
     spawn = function(parent, variable)
-        local VALUE = LocalPlayer().ponydata[variable.param] or 0
+        local VALUE = Me.ponydata[variable.param] or 0
         local CONTAINER = vgui.Create("DPanel", parent)
         CONTAINER:SetSize(200, 220)
         CONTAINER:Dock(TOP)
@@ -400,9 +400,9 @@ PPM.Editor3_presets["edit_type"] = {
 		for k , v in pairs(variable.choises) do
 			SELECTOR:AddChoice( v ) 
 		end
-		SELECTOR:ChooseOptionID(LocalPlayer().ponydata[variable.param] or 1)
+		SELECTOR:ChooseOptionID(Me.ponydata[variable.param] or 1)
 		SELECTOR.OnSelect = function( panel, index, value, data ) 
-			LocalPlayer().ponydata[variable.param] = index 
+			Me.ponydata[variable.param] = index 
 		end 
 	end
 	]]
@@ -421,7 +421,7 @@ PPM.Editor3_presets["edit_type"] = {
         SELECTOR_INNER:SetPos(0, 0)
         SELECTOR_INNER:SetSize(200, 2000)
         SELECTOR.PerformLayout = function() end --SELECTOR_INNER:SetSize(200,2000) --PPM.CDVScrollBar:SetUp(1000,PPM.smenupanel_inner:GetTall()) --SELECTOR_INNER:SetPos(0,SCROLL:GetOffset()) 
-        local VARIABLE = LocalPlayer().ponydata[variable.param] or 1
+        local VARIABLE = Me.ponydata[variable.param] or 1
         SELECTOR.buttons = {}
 
         if variable.choises ~= nill then
@@ -548,7 +548,7 @@ end
 
 PPM.Editor3_presets["menu_save_load"] = {
     spawn = function(parent, variable)
-        local VALUE = LocalPlayer().ponydata[variable.param] or Vector(1, 1, 1)
+        local VALUE = Me.ponydata[variable.param] or Vector(1, 1, 1)
         local CONTAINER = vgui.Create("DPanel", parent)
         CONTAINER:SetSize(200, 1000)
         CONTAINER:Dock(TOP)
@@ -717,12 +717,12 @@ PPM.Editor3_presets["menu_save_load"] = {
             --if(PPM.selected_filename==nil) then return end
             --if(PPM.selected_filename=="@NEWFILE@") then return end
             --PPM.ReadFile(PPM.selected_filename)  
-            -- PPM.cleanPony(LocalPlayer())
+            -- PPM.cleanPony(Me)
             -- for k, v in pairs(addition) do
             --     destination[k] = v
             -- end
             PPM_Load(selected_fname)
-            --PPM.SendCharToServer(LocalPlayer()) 
+            --PPM.SendCharToServer(Me) 
             colorFlash(INDICATOR_ONE, 0.1, Color(0, 200, 0), Color(255, 255, 255))
             colorFlash(INDICATOR_TWO, 0.1, Color(0, 200, 0), Color(255, 255, 255))
         end
@@ -738,7 +738,7 @@ PPM.Editor3_presets["menu_save_load"] = {
         button_reset:Dock(TOP)
 
         button_reset.DoClick = function(button)
-            -- PPM.cleanPony(LocalPlayer())
+            -- PPM.cleanPony(Me)
             colorFlash(INDICATOR_ONE, 0.1, Color(0, 200, 0), Color(255, 255, 255))
             colorFlash(INDICATOR_TWO, 0.1, Color(0, 200, 0), Color(255, 255, 255))
         end

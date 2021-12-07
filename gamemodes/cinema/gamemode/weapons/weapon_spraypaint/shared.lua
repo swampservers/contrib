@@ -162,12 +162,12 @@ function SWEP:GetCurrentDecal()
     local decal = ply:GetInfo(self.ConVar)
 
     --I don't think GetInfo is properly networked
-    if (CLIENT and ply ~= LocalPlayer()) then
+    if (CLIENT and ply ~= Me) then
         decal = self:GetLastDecal()
     end
 
     if (SPRAYPAINT_DECALS_WHITELIST[decal]) then return decal end
-    -- if decal~="" and ply==LocalPlayer() then
+    -- if decal~="" and ply==Me then
     --     net.Start("BanMe")
     --     net.SendToServer()
     -- end

@@ -21,7 +21,7 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        if (LocalPlayer().videoDebug and string.match(key, "dropbox.com")) then
+        if (Me.videoDebug and string.match(key, "dropbox.com")) then
             print("Dropbox Failsafe Activated")
         end
 
@@ -40,7 +40,7 @@ if CLIENT then
             end)
 
             function vpanel:ConsoleMessage(msg)
-                if (LocalPlayer().videoDebug) then
+                if (Me.videoDebug) then
                     print(msg)
                 end
 
@@ -70,7 +70,7 @@ if CLIENT then
                             duration = duration
                         })
                     else
-                        Derma_StringRequest("RTMP Stream Title", "Name your livestream:", LocalPlayer():Nick() .. "'s Stream", function(title)
+                        Derma_StringRequest("RTMP Stream Title", "Name your livestream:", Me:Nick() .. "'s Stream", function(title)
                             callback({
                                 duration = duration,
                                 title = title
@@ -106,7 +106,7 @@ if CLIENT then
         --	urll = "http://swamp.sv/s/cinema/filevjs.html"
         --end
         panel:EnsureURL(urll)
-        local cc = LocalPlayer():GetNetworkedString("cntry", "us")
+        local cc = Me:GetNetworkedString("cntry", "us")
 
         local eu_countries = {
             at = true,

@@ -6,7 +6,7 @@ function PPM_SetPonyCfg(ent, cfg)
 end
 
 function PPM_UpdateLocalPonyCfg(k, v)
-    local ent = LocalPlayer()
+    local ent = Me
     ent.ponydata[k] = v
     ent.ponymaterials = nil
 end

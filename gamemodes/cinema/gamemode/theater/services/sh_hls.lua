@@ -17,7 +17,7 @@ end
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         if (string.EndsWith(key, ".m3u8")) then
-            Derma_StringRequest("HLS Stream Title", "Name your livestream:", LocalPlayer():Nick() .. "'s Stream", function(title)
+            Derma_StringRequest("HLS Stream Title", "Name your livestream:", Me:Nick() .. "'s Stream", function(title)
                 callback({
                     title = title
                 })
@@ -41,7 +41,7 @@ if CLIENT then
                 end)
 
                 function vpanel:ConsoleMessage(msg)
-                    if (LocalPlayer().videoDebug) then
+                    if (Me.videoDebug) then
                         print(msg)
                     end
 
@@ -60,7 +60,7 @@ if CLIENT then
                         self:Remove()
                         print("Success!")
 
-                        Derma_StringRequest("HLS Stream Title", "Name your livestream:", LocalPlayer():Nick() .. "'s Stream", function(title)
+                        Derma_StringRequest("HLS Stream Title", "Name your livestream:", Me:Nick() .. "'s Stream", function(title)
                             callback({
                                 data = link,
                                 title = title

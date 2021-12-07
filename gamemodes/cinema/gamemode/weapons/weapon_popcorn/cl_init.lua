@@ -73,7 +73,7 @@ net.Receive("Popcorn_Eat", function()
     if not IsValid(ply) then return end
     local size = net.ReadFloat()
     local attachid = ply:LookupAttachment("eyes")
-    emitter:SetPos(LocalPlayer():GetPos())
+    emitter:SetPos(Me:GetPos())
 
     local angpos = ply:GetAttachment(attachid) or {
         ["Pos"] = ply:EyePos(),
@@ -83,7 +83,7 @@ net.Receive("Popcorn_Eat", function()
     local fwd
     local pos
 
-    if (ply ~= LocalPlayer()) then
+    if (ply ~= Me) then
         fwd = (angpos.Ang:Forward() - angpos.Ang:Up()):GetNormalized()
         pos = angpos.Pos + fwd * 3
     else

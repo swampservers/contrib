@@ -285,7 +285,7 @@ end
 
 --makes a CSModel for a product or item
 function SS_AttachAccessory(item, ent, recycle_mdl, forceload)
-    -- local ply = item.owner == SS_SAMPLE_ITEM_OWNER and LocalPlayer() or item.owner
+    -- local ply = item.owner == SS_SAMPLE_ITEM_OWNER and Me or item.owner
     -- mdl.Attach = function(e, ent)
     --     ent = ent or ply
     -- if not IsValid(e:GetParent()) or e.lastent ~= ent then
@@ -383,7 +383,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl, forceload)
     -- if item.cfg.imgur then
     --     mdl:SetImgurMaterial(item.cfg.imgur.url)
     -- end
-    -- if IsValid(LocalPlayer()) and LocalPlayer():GetName()=="Joker Gaming" then
+    -- if IsValid(Me) and Me:GetName()=="Joker Gaming" then
     --     mdl:SetColoredBaseMaterial(Vector(1,0,0)) 
     -- else
     SS_SetItemMaterialToEntity(item, mdl, forceload)
@@ -407,7 +407,7 @@ end
 
 -- Revise if we add translucent accessories
 hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
-    local ply = LocalPlayer()
+    local ply = Me
 
     if IsValid(ply) and ply:Alive() then
         ply:SS_AttachAccessories(ply.SS_ShownItems)
@@ -449,7 +449,7 @@ hook.Add("NetworkEntityCreated", "ragdoll1", function(rag) end) -- if rag:GetCla
 hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, rag)
     if IsValid(ply) and ply:IsPlayer() then
         -- local dm,dw = ply:GetDisplayModel()
-        -- if dm and require_model(dm,dw,LocalPlayer():GetPos():Distance(rag:GetPos())) then
+        -- if dm and require_model(dm,dw,Me:GetPos():Distance(rag:GetPos())) then
         --     print("DM",dm)
         --     rag:SetModel(dm)
         --     hook.Add("Tick",rag,function()
@@ -535,7 +535,7 @@ function Entity:SS_AttachAccessories(items, forceload)
     --         end
     --     end)
     -- end
-    -- if LocalPlayer()==self then print("H)") end
+    -- if Me==self then print("H)") end
     -- if self.SS_AttachedModel == m and self.SS_AttachedItems == items then return end
     self.SS_AttachedModel = m
     self.SS_AttachedInVehicle = iv

@@ -79,7 +79,7 @@ local sky_space_sun = Material("effects/yellowflare_noz")
 
 hook.Add("PostDrawSkyBox", "DrawMoonStars", function()
     if not render.DrawingScreen() then return end
-    local alpha = IsValid(LocalPlayer()) and math.Clamp((LocalPlayer():GetPos().z - 3700) / 3500, 0, 1) or 0
+    local alpha = IsValid(Me) and math.Clamp((Me:GetPos().z - 3700) / 3500, 0, 1) or 0
     if alpha <= 0 then return end
     sky_space_rt:SetFloat("$alpha", alpha)
     sky_space_lf:SetFloat("$alpha", alpha)

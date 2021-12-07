@@ -193,7 +193,7 @@ function THEATER:Think()
         --[[
 	else
 
-		if LocalPlayer():GetLocation() != self:GetLocation() then return end
+		if Me:GetLocation() != self:GetLocation() then return end
 
 		-- Synchronize clientside video playback
 		if self:IsPlaying() and self._Video:IsTimed() and

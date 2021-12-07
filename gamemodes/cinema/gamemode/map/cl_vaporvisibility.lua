@@ -18,7 +18,7 @@ end)
 timer.Create("VaporVis", 0.2, 0, function()
     local shouldsee = true --false
 
-    if IsValid(LocalPlayer()) and LocalPlayer():EyePos():WithinAABox(VAPORSEEMIN, VAPORSEEMAX) then
+    if IsValid(Me) and Me:EyePos():WithinAABox(VAPORSEEMIN, VAPORSEEMAX) then
         shouldsee = true
     end
 

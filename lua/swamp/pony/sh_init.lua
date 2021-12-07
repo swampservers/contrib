@@ -9,7 +9,7 @@ end
 
 function Entity:PonyPlayer()
     if self:IsPlayer() then return self end
-    if self:EntIndex() == -1 then return LocalPlayer() end --pointshop model
+    if self:EntIndex() == -1 then return Me end --pointshop model
     if self.RagdollSourcePlayer then return self.RagdollSourcePlayer end
     -- if self.PonyPlayerEntity then return 
     -- if its a ragdoll then return owner

@@ -34,7 +34,7 @@ function GM:HUDShouldDraw(name)
     if hideinterface:GetBool() then return false end
     -- if name == "CHudDeathNotice" then return false end
 
-    local ply = LocalPlayer()
+    local ply = Me
     local wep = IsValid(ply) and ply:GetActiveWeapon()
 
     if IsValid(wep) then
@@ -243,7 +243,7 @@ local wicons = {
 
 hook.Add("HUDPaint", "SwampHealthAmmo", function()
     if GetConVar("cinema_hideinterface") and GetConVar("cinema_hideinterface"):GetBool() == true then return end
-    local ply = LocalPlayer()
+    local ply = Me
     local wep = ply:GetActiveWeapon()
     local alpha = AMMO_ALPHA
     local drawammo = ply:Alive() and IsValid(wep) and ((wep.DrawAmmo ~= nil and wep.DrawAmmo) or (wep.DrawAmmo == nil and true))
@@ -339,6 +339,6 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
     HEALTH_ALPHA = math.Approach(HEALTH_ALPHA or 0, drawhealth and 1 or 0, FrameTime() * 4)
 
     if HEALTH_ALPHA > 0 then
-        DrawHL2Bubble("HEALTH", math.max(0, LocalPlayer():Health()), rightedge - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, HEALTH_ALPHA, ply:Health() <= 20)
+        DrawHL2Bubble("HEALTH", math.max(0, Me:Health()), rightedge - 8, ScrH() - 8 - stack_height, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, HEALTH_ALPHA, ply:Health() <= 20)
     end
 end)

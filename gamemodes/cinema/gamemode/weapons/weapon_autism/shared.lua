@@ -33,7 +33,7 @@ function SWEP:PrimaryAttack()
         })
 
         local stime = SoundDuration(soundfile) * 100 / pit
-        self.Owner:SendLua("util.ScreenShake(LocalPlayer():GetPos(), 5, 0.5, " .. tostring((stime * 1.65)) .. ", 10000 )")
+        self.Owner:SendLua("util.ScreenShake(Me:GetPos(), 5, 0.5, " .. tostring((stime * 1.65)) .. ", 10000 )")
 
         timer.Simple(math.Rand(0, 1), function()
             if IsValid(self) and IsValid(self.Owner) then

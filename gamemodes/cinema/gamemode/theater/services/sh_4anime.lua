@@ -54,7 +54,7 @@ if CLIENT then
 
             function vpanel:ConsoleMessage(msg)
                 if msg then
-                    if (LocalPlayer().videoDebug) then
+                    if (Me.videoDebug) then
                         print(msg)
                     end
 
@@ -73,7 +73,7 @@ if CLIENT then
                                 url = self.data,
                                 success = function(code)
                                     if (code == 403 or code == 503) then
-                                        LocalPlayer():PrintMessage(HUD_PRINTTALK, "[red]The video file is currently inaccessible")
+                                        Me:PrintMessage(HUD_PRINTTALK, "[red]The video file is currently inaccessible")
                                         print("File returned a " .. code .. " error")
                                         print("Failed")
                                         callback()

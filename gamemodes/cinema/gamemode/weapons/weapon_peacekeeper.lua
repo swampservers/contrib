@@ -114,7 +114,7 @@ end
 if CLIENT then
     function SWEP:Think()
         ply = self.Owner
-        if LocalPlayer():GetActiveWeapon() ~= self then return end
+        if Me:GetActiveWeapon() ~= self then return end
     end
 end
 

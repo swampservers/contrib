@@ -56,11 +56,11 @@ if CLIENT then
     concommand.Add("+undo", BuyAmmo)
 
     hook.Add("HUDPaint", "BuyAmmoNotification", function()
-        local wep = LocalPlayer():GetActiveWeapon()
+        local wep = Me:GetActiveWeapon()
 
         -- note: slam uses clip2/secondary
-        if IsValid(wep) and wep:Clip1() == 0 and LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType()) == 0 then
-            local opt = GetAmmoPurchaseOption(LocalPlayer())
+        if IsValid(wep) and wep:Clip1() == 0 and Me:GetAmmoCount(wep:GetPrimaryAmmoType()) == 0 then
+            local opt = GetAmmoPurchaseOption(Me)
 
             if opt then
                 local bind = (input.LookupBinding("gmod_undo") or ""):upper()

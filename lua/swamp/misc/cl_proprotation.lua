@@ -12,7 +12,7 @@ net.Receive("RotateHeldEnt", function(len)
 end)
 
 hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
-    if not IsValid(LocalPlayer()) then return end
+    if not IsValid(Me) then return end
 
     if not IsValid(PROPROTATIONHELDENT) or not cmd:KeyDown(IN_ATTACK2) or not PROPROTATIONLASTEYEANGLE then
         -- just released it
@@ -59,7 +59,7 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
 end)
 
 hook.Add("HUDPaint", "RotateHeldEntsHint", function()
-    if not IsValid(LocalPlayer()) then return end
+    if not IsValid(Me) then return end
 
     if IsValid(PROPROTATIONHELDENT) then
         -- print(PROPROTATIONHELDENT)

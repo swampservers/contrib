@@ -7,7 +7,7 @@ if (CLIENT) then
     ENT.MaxWorldTipDistance = 256
 
     function ENT:BeingLookedAtByLocalPlayer()
-        local ply = LocalPlayer()
+        local ply = Me
         if (not IsValid(ply)) then return false end
         local view = ply:GetViewEntity()
         local dist = self.MaxWorldTipDistance

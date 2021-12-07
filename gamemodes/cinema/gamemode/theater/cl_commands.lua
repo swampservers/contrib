@@ -28,8 +28,8 @@ net.Receive("EntityEmitSound", function(len)
     local dsp = net.ReadUInt(8)
     if not IsValid(ent) then return end --unloaded ent
     -- played in prediction, hopefully...?
-    if ent == LocalPlayer() or ent:IsWeapon() and ent.Owner == LocalPlayer() then return end
-    -- if net.ReadEntity() == LocalPlayer() then return end --predictedplayer
+    if ent == Me or ent:IsWeapon() and ent.Owner == Me then return end
+    -- if net.ReadEntity() == Me then return end --predictedplayer
     ent:EmitSound(soundname, soundlevel, pitch, volume, channel ~= -2 and channel or nil, flags, dsp)
 end)
 
@@ -42,13 +42,13 @@ net.Receive("EmitSound", function(len)
     local flags = net.ReadUInt(10)
     local pitch = net.ReadFloat()
     local dsp = net.ReadUInt(8)
-    if net.ReadEntity() == LocalPlayer() then return end --predictedplayer
+    if net.ReadEntity() == Me then return end --predictedplayer
     -- EmitSound(soundname,pos,-1,channel,volume,soundlevel,flags,pitch,dsp)
     sound.Play(soundname, pos, soundlevel, pitch, volume)
 end)
 
 function CinemaGameVolumeSetting()
-    if IsValid(LocalPlayer()) and LocalPlayer():InTheater() and MuteGameConVar:GetBool() then return 0 end
+    if IsValid(Me) and Me:InTheater() and MuteGameConVar:GetBool() then return 0 end
 
     return GameVolumeConVar:GetFloat() / 100
 end

@@ -79,7 +79,7 @@ function ENT:Think()
     self:SetNextClientThink(0)
     --process notes here for maximum responsivness
     local time = SysTime()
-    local loc = LocalPlayer():GetLocationName()
+    local loc = Me:GetLocationName()
     if (loc == "Trumppenbunker" or loc == "Situation Monitoring Room" or loc == "Weapons Testing Range" or loc == "Office of the Vice President") then return true end
 
     for k, v in pairs(self.QueuedNotes) do
@@ -93,7 +93,7 @@ function ENT:Think()
         end
     end
 
-    if not IsValid(LocalPlayer().Instrument) or LocalPlayer().Instrument ~= self then return end
+    if not IsValid(Me.Instrument) or Me.Instrument ~= self then return end
     if self.DelayKey and self.DelayKey > CurTime() then return end
 
     -- Update last pressed
@@ -153,7 +153,7 @@ function ENT:OnRegisteredKeyPlayed(key)
     --Note effect
     local pos = string.sub(key, 2, 3)
     pos = math.Fit(tonumber(pos), 1, 36, -3.8, 4)
-    pos = LocalPlayer():GetPos() + Vector(-15, pos * 10, -5)
+    pos = Me:GetPos() + Vector(-15, pos * 10, -5)
     local eff = EffectData()
     eff:SetOrigin(pos)
     util.Effect("musicnotes", eff, true, true)
@@ -383,9 +383,9 @@ function ENT:CtrlMod()
 end
 
 hook.Add("HUDPaint", "InstrumentPaint", function()
-    if IsValid(LocalPlayer().Instrument) then
+    if IsValid(Me.Instrument) then
         -- HUD
-        local inst = LocalPlayer().Instrument
+        local inst = Me.Instrument
         inst:DrawHUD()
         -- Notice bar
         local name = inst.PrintName or "INSTRUMENT"
@@ -416,12 +416,12 @@ net.Receive("InstrumentNetwork", function(length, client)
 
     -- When the player uses it or leaves it
     if enum == INSTNET_USE then
-        if IsValid(LocalPlayer().Instrument) then
-            LocalPlayer().Instrument:Shutdown()
+        if IsValid(Me.Instrument) then
+            Me.Instrument:Shutdown()
         end
 
         ent.DelayKey = CurTime() + .1 -- delay to the key a bit so they do not play on use key
-        LocalPlayer().Instrument = ent
+        Me.Instrument = ent
         -- Play the notes for everyone else
     elseif enum == INSTNET_HEAR then
         -- Instrument does not exist
@@ -436,7 +436,7 @@ net.Receive("InstrumentNetwork", function(length, client)
         local timestamp = net.ReadDouble()
         local pos = net.ReadVector()
         -- Do not play for the owner
-        if IsValid(LocalPlayer().Instrument) and LocalPlayer().Instrument == ent then return end
+        if IsValid(Me.Instrument) and Me.Instrument == ent then return end
 
         -- Calculate timing offset - how much farther ahead the server clock is to ours
         if not inst_timing_offset then

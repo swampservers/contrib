@@ -345,7 +345,7 @@ function MvisNextFrame(...)
 end
 
 hook.Add("RenderScreenspaceEffects", "MusicVis", function()
-    local th = (IsValid(LocalPlayer()) and LocalPlayer():GetLocationName() == "Vapor Lounge") and LocalPlayer():GetTheater()
+    local th = (IsValid(Me) and Me:GetLocationName() == "Vapor Lounge") and Me:GetTheater()
 
     if th and th:IsPlaying() then
         if not GetConVar("musicvis_flashing"):GetBool() then

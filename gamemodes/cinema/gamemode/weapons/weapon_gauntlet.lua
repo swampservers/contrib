@@ -159,8 +159,8 @@ function SWEP:FindTarget()
 end
 
 hook.Add("PreDrawHalos", "InfinityGauntletHalo", function()
-    if (LocalPlayer():UsingWeapon("weapon_gauntlet")) then
-        local wep = LocalPlayer():GetWeapon("weapon_gauntlet")
+    if (Me:UsingWeapon("weapon_gauntlet")) then
+        local wep = Me:GetWeapon("weapon_gauntlet")
         local ply = wep:FindTarget()
 
         if (IsValid(ply)) then

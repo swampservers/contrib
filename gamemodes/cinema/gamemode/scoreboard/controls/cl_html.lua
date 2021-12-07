@@ -113,7 +113,7 @@ function PANEL:Think()
         -- Run queued javascript
         if self.JS then
             for k, v in pairs(self.JS) do
-                if (LocalPlayer().videoDebug) then
+                if (Me.videoDebug) then
                     print("(JS)", v)
                 end
 
@@ -225,7 +225,7 @@ concommand.Add("cinema_debug_videojavascript", function(ply, cmd, str)
 end)
 
 function PANEL:ConsoleMessage(msg, func)
-    if (LocalPlayer().videoDebug and not isstring(msg)) then
+    if (Me.videoDebug and not isstring(msg)) then
         print("[JS] " .. tostring(msg), type(msg))
     end
 
@@ -233,7 +233,7 @@ function PANEL:ConsoleMessage(msg, func)
         msg = "*js variable*"
     end
 
-    if (LocalPlayer().videoDebug and isstring(msg) and not msg:StartWith("HREF:") and not msg:StartWith("T:") and not msg:StartWith("DURATIONTITLE:")) then
+    if (Me.videoDebug and isstring(msg) and not msg:StartWith("HREF:") and not msg:StartWith("T:") and not msg:StartWith("DURATIONTITLE:")) then
         print(msg)
     end
 

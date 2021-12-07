@@ -23,7 +23,7 @@ ADMIN.TitleHeight = 64
 ADMIN.VidHeight = 32 -- 48
 
 function ADMIN:Init()
-    local Theater = LocalPlayer():GetTheater()
+    local Theater = Me:GetTheater()
     self:SetZPos(1)
     self:SetSize(256, 512)
     self:SetPos(ScrW() - (256 + 8), ScrH() / 2 - (self:GetTall() / 2))
@@ -58,7 +58,7 @@ function ADMIN:Init()
     self.Options:AddItem(SeekButton)
 
     -- Admin-only options
-    if LocalPlayer():IsAdmin() then
+    if Me:IsAdmin() then
         -- Reset the theater
         local ResetButton = vgui.Create("TheaterButton")
         ResetButton:SetText(T'Theater_Reset')
@@ -101,7 +101,7 @@ function ADMIN:Init()
 
         self.Options:AddItem(self.AllowItemUse)
 
-        if Theater:GetOwner() ~= LocalPlayer() then
+        if Theater:GetOwner() ~= Me then
             self.AllowItemUse:SetVisible(false)
         end
 
@@ -115,7 +115,7 @@ function ADMIN:Init()
 
         self.Options:AddItem(self.MuteMode)
 
-        if Theater:GetOwner() ~= LocalPlayer() then
+        if Theater:GetOwner() ~= Me then
             self.MuteMode:SetVisible(false)
         end
 
@@ -129,18 +129,18 @@ function ADMIN:Init()
 
         self.Options:AddItem(self.extendRent)
 
-        if Theater:GetOwner() ~= LocalPlayer() then
+        if Theater:GetOwner() ~= Me then
             self.extendRent:SetVisible(false)
         end
     end
 end
 
 function ADMIN:Update()
-    local Theater = LocalPlayer():GetTheater() -- get player's theater from their location
+    local Theater = Me:GetTheater() -- get player's theater from their location
     if not Theater then return end
 
     -- Change title text
-    if Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer() then
+    if Theater:IsPrivate() and Theater:GetOwner() == Me then
         self.Title:SetText(T'Theater_Owner')
 
         if self.extendRent then
@@ -154,7 +154,7 @@ function ADMIN:Update()
         if self.MuteMode then
             self.MuteMode:SetVisible(true)
         end
-    elseif LocalPlayer():StaffControlTheater() then
+    elseif Me:StaffControlTheater() then
         self.Title:SetText('STAFF CONTROL')
 
         if self.extendRent then

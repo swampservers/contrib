@@ -359,7 +359,7 @@ vgui.Register('DSSCustomizerVectorSection', {
 -- TODO: weird ass issue with the dnumberscratch handles not being in the right place...
 vgui.Register('DSSCustomizerBone', {
     Init = function(self)
-        self:SetText("Mod (" .. (LocalPlayer():IsPony() and "pony" or "human") .. ")")
+        self:SetText("Mod (" .. (Me:IsPony() and "pony" or "human") .. ")")
 
         self.ComboBox = vgui("DComboBox", self, function(p)
             p:SetTall(24)
@@ -371,8 +371,8 @@ vgui.Register('DSSCustomizerBone', {
                 pnl:SetTextColor(MenuTheme_TX)
             end
 
-            for x = 0, (LocalPlayer():GetBoneCount() - 1) do
-                local bn = LocalPlayer():GetBoneName(x)
+            for x = 0, (Me:GetBoneCount() - 1) do
+                local bn = Me:GetBoneName(x)
                 local cleanname = SS_CleanBoneName(bn)
 
                 if cleanname ~= "__INVALIDBONE__" then

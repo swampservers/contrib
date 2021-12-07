@@ -287,8 +287,8 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     local beamstart = origin
     local beamend = tr.HitPos
 
-    if (tr.Entity == LocalPlayer():GetObserverTarget() or tr.Entity == LocalPlayer() or beamend:Distance(EyePos()) < 5) then
-        local dot = dir:Dot(LocalPlayer():GetAimVector() * -1)
+    if (tr.Entity == Me:GetObserverTarget() or tr.Entity == Me or beamend:Distance(EyePos()) < 5) then
+        local dot = dir:Dot(Me:GetAimVector() * -1)
 
         if (tr.Entity:IsPlayer() and math.deg(math.acos(dot)) < 45) then
             local hitply = tr.Entity
@@ -419,7 +419,7 @@ hook.Add("PostDrawTranslucentRenderables", "laserhook", function(depth, sky)
             local beamdir = ply:GetAimVector()
             local vm = ply:GetViewModel()
 
-            if (not ply:ShouldDrawLocalPlayer() and ply == LocalPlayer()) then
+            if (not ply:ShouldDrawLocalPlayer() and ply == Me) then
                 local vmpos, vmang = ply:GetActiveWeapon():GetViewModelPosition(EyePos(), EyeAngles())
                 beamstart = vmpos + vmang:Up() * 6.6
                 beamdir = vmang:Up()
@@ -739,7 +739,7 @@ function SWEP:GetViewModelPosition(epos, eang)
     local tr = {}
     tr.start = epos
     tr.endpos = epos + self:GetOwner():GetAimVector() * 60000
-    tr.filter = LocalPlayer()
+    tr.filter = Me
     local trace = util.TraceLine(tr)
     epos, eang = self:GetOwner():EyePos(), self:GetOwner():EyeAngles()
     local fov = self.ViewModelFOV

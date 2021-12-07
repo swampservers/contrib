@@ -1,11 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 timer.Create("AreaMusicController", 0.5, 0, function()
-    if not IsValid(LocalPlayer()) or LocalPlayer().GetLocationName == nil then return end
+    if not IsValid(Me) or Me.GetLocationName == nil then return end
     local target = ""
-    local loc = LocalPlayer():GetLocationName()
+    local loc = Me:GetLocationName()
 
-    if loc == "Vapor Lounge" and not (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying()) then
+    if loc == "Vapor Lounge" and not (Me:GetTheater() and Me:GetTheater():IsPlaying()) then
         target = "vapor"
     end
 
@@ -30,7 +30,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
 
     if MusicPagePanel then
         if target == MusicPagePanel.target then
-        else -- MusicPagePanel:RunJavascript("setAttenuation(" .. (LocalPlayer():GetTheater() and LocalPlayer():GetTheater():IsPlaying() and "0" or "1") .. ")")
+        else -- MusicPagePanel:RunJavascript("setAttenuation(" .. (Me:GetTheater() and Me:GetTheater():IsPlaying() and "0" or "1") .. ")")
             if (target == "cavern" or target == "cavernalt") and (MusicPagePanel.target == "cavern" or MusicPagePanel.target == "cavernalt") then return end
             --don't remove panel for caverns themes
             MusicPagePanel:Remove()
@@ -65,10 +65,10 @@ timer.Create("RandomCaveAmbientSound", 20, 0, function()
     if math.random(0, 250) >= 5 then return end --rare chance to trigger
 
     --any sewer location that isn't a theater
-    if string.find(LocalPlayer():GetLocationName(), "Sewer") and not LocalPlayer():InTheater() then
+    if string.find(Me:GetLocationName(), "Sewer") and not Me:InTheater() then
         sound.PlayFile("sound/sewers/cave0" .. tostring(math.random(1, 6)) .. ".ogg", "3d noplay", function(snd, errid, errnm)
             if not IsValid(snd) then return end
-            snd:SetPos(LocalPlayer():GetPos() + VectorRand(-500, 500)) --set in a random location near the player
+            snd:SetPos(Me:GetPos() + VectorRand(-500, 500)) --set in a random location near the player
             snd:Play()
             snd:Set3DFadeDistance(600, 100000)
         end)

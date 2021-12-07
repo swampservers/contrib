@@ -5,7 +5,7 @@ local pitchtarget = 15
 
 --NOMINIFY
 function PANEL:Init()
-    -- self:SetModel(LocalPlayer():GetModel())
+    -- self:SetModel(Me:GetModel())
     -- self.Angles = Angle(0, 0, 0)
     -- self.ZoomOffset = 0
     -- HORIZONTAL FOV
@@ -54,7 +54,7 @@ function PANEL:GetDesiredModel()
 
         return m, SS_HoverIOP.PlayerSetModel ~= nil
     else
-        return LocalPlayer():GetModel(), true
+        return Me:GetModel(), true
     end
 end
 
@@ -199,7 +199,7 @@ function PANEL:FocalPointAndDistance()
 end
 
 function PANEL:Paint(w, h)
-    local ply = LocalPlayer()
+    local ply = Me
     local mdl, playermodel = self:GetDesiredModel() --TODO set the model first so theres not 1 frame flicker
 
     if mdl ~= self.appliedmodel then
@@ -273,8 +273,8 @@ function PANEL:Paint(w, h)
         local diam = PrevMins:Distance(PrevMaxs)
         self:SetCamPos(center + (diam * Vector(0.4, 0.4, 0.1)))
         self:SetLookAt(center)
-        self.Entity.GetPlayerColor = function() return LocalPlayer():GetPlayerColor() end
-        local mods = LocalPlayer():SS_GetActivePlayermodelMods()
+        self.Entity.GetPlayerColor = function() return Me:GetPlayerColor() end
+        local mods = Me:SS_GetActivePlayermodelMods()
         local hoveritem = SS_HoverItem
 
         -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
@@ -298,7 +298,7 @@ function PANEL:Paint(w, h)
         end
 
         SS_ApplyBoneMods(self.Entity, mods)
-        SS_ApplyMaterialMods(self.Entity, LocalPlayer())
+        SS_ApplyMaterialMods(self.Entity, Me)
         self.Entity:SetEyeTarget(self:GetCamPos())
         self.Entity:DrawModel()
     end
@@ -318,8 +318,8 @@ function PANEL:Paint(w, h)
                 table.insert(a, hoveritem)
             end
 
-            if IsValid(LocalPlayer()) then
-                for _, item in ipairs(LocalPlayer().SS_ShownItems or {}) do
+            if IsValid(Me) then
+                for _, item in ipairs(Me.SS_ShownItems or {}) do
                     -- prefer hoveritem because it has the updated config, shownitems are worn on the server
                     if hoveritem == nil or hoveritem.id ~= item.id then
                         table.insert(a, item)
@@ -357,8 +357,8 @@ function PANEL:Paint(w, h)
     end
 
     if SS_TitlesPanel:IsVisible() then
-        draw.SimpleText(LocalPlayer():Nick(), "SS_POINTSFONT", self:GetWide() / 2, 26, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        draw.SimpleText(LocalPlayer():GetTitle() ~= "" and LocalPlayer():GetTitle() or "No title", "SS_DESCFONTBIG", self:GetWide() / 2, 64, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(Me:Nick(), "SS_POINTSFONT", self:GetWide() / 2, 26, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(Me:GetTitle() ~= "" and Me:GetTitle() or "No title", "SS_DESCFONTBIG", self:GetWide() / 2, 64, MenuTheme_TX, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
     if IsValid(SS_DescriptionPanel) then

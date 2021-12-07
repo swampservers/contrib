@@ -133,8 +133,8 @@ vgui.Register('DSSAuctionMode', {
         items = SS_MakeItems(SS_SAMPLE_ITEM_OWNER, items)
 
         for _, item in pairs(items) do
-            local mine = (item.seller == LocalPlayer():SteamID64())
-            local mybid = (item.auction_bidder == LocalPlayer():SteamID64())
+            local mine = (item.seller == Me:SteamID64())
+            local mybid = (item.auction_bidder == Me:SteamID64())
             local sn = item.seller_name
             local bn = item.bidder_name
 
@@ -158,7 +158,7 @@ vgui.Register('DSSAuctionMode', {
                 desc = desc .. "\nHighest bidder is " .. bn .. " (" .. item.auction_price .. ")"
             end
 
-            -- if item.seller == LocalPlayer():SteamID64() then
+            -- if item.seller == Me:SteamID64() then
             if mine then
                 if item.auction_bidder == "0" then
                     item.actions = {

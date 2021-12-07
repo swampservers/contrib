@@ -83,7 +83,7 @@ end
 -- Mouse 2 action
 --
 function SWEP:Tick()
-    if (CLIENT and self.Owner ~= LocalPlayer()) then return end -- If someone is spectating a player holding this weapon, bail
+    if (CLIENT and self.Owner ~= Me) then return end -- If someone is spectating a player holding this weapon, bail
     local cmd = self.Owner:GetCurrentCommand()
     if (not cmd:KeyDown(IN_ATTACK2)) then return end -- Not holding Mouse 2, bail
     self:SetZoom(math.Clamp(self:GetZoom() + cmd:GetMouseY() * 0.1, 0.1, 175)) -- Handles zooming
@@ -209,7 +209,7 @@ end
 
 if CLIENT then
     hook.Add("Think", "RemoveVoiceIcons", function()
-        local visible = not (IsValid(LocalPlayer()) and LocalPlayer():UsingWeapon("weapon_camera"))
+        local visible = not (IsValid(Me) and Me:UsingWeapon("weapon_camera"))
 
         if ValidPanel(g_VoicePanelList) then
             g_VoicePanelList:SetVisible(visible)

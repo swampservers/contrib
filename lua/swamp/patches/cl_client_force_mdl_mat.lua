@@ -9,7 +9,7 @@ local watchlist = {}
 -- when it reapplies its server material setting (but the time is inconsistent)
 -- I couldn't find any hacky way to detect it so this is what you get.
 hook.Add("Tick", "ClientForceMaterial", function()
-    local cutoff = CurTime() - (0.5 + (IsValid(LocalPlayer()) and LocalPlayer():Ping() / 1000 or 1))
+    local cutoff = CurTime() - (0.5 + (IsValid(Me) and Me:Ping() / 1000 or 1))
 
     for ent, _ in pairs(watchlist) do
         if not IsValid(ent) or (ent.CFM_AppearTime or 0) < cutoff or not (ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) then

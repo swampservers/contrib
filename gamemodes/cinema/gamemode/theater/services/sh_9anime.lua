@@ -59,7 +59,7 @@ if CLIENT then
                 if msg then
                     msg = tostring(msg)
 
-                    if (LocalPlayer().videoDebug) then
+                    if (Me.videoDebug) then
                         print(msg)
                     end
 
@@ -153,9 +153,9 @@ if CLIENT then
                     ["Cache-Control"] = "no-cache"
                 },
                 success = function(code, body, headers)
-                    if IsValid(panel) and LocalPlayer():GetTheater() then
+                    if IsValid(panel) and Me:GetTheater() then
                         if code == 200 then
-                            local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), LocalPlayer():GetTheater():VideoCurrentTime(true))
+                            local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true))
                             panel:QueueJavascript(str)
                         else
                             EmbeddedCheckCodecs(function()
@@ -179,7 +179,7 @@ if CLIENT then
 
                                 timer.Create("9animeupdate" .. tostring(math.random(1, 100000)), 1, 20, function()
                                     if IsValid(vpanel) then
-                                        if not LocalPlayer():GetTheater() then
+                                        if not Me:GetTheater() then
                                             vpanel:Remove()
                                             timer.Remove("9AnimeViewerTimer")
                                         end
@@ -202,7 +202,7 @@ if CLIENT then
                                     if msg then
                                         msg = tostring(msg)
 
-                                        if (LocalPlayer().videoDebug) then
+                                        if (Me.videoDebug) then
                                             print(msg)
                                         end
 
@@ -212,10 +212,10 @@ if CLIENT then
                                                 self.phase = 1
                                             end
                                         elseif self.phase == 1 then
-                                            if string.StartWith(msg, "URL:") and LocalPlayer():GetTheater() then
+                                            if string.StartWith(msg, "URL:") and Me:GetTheater() then
                                                 cachedURL[key] = msg:sub(5, -1)
                                                 self:Remove()
-                                                local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), LocalPlayer():GetTheater():VideoCurrentTime(true))
+                                                local str = string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true))
                                                 panel:QueueJavascript(str)
                                             end
                                         end
