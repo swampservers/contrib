@@ -1,10 +1,9 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 SWEP.PrintName = "Anonymous Mask"
 SWEP.Slot = 2
 SWEP.WorldModel = "models/v/maskhq.mdl"
 SWEP.ViewModel = ""
-
 SWEP.DrawWeaponInfoBox = false
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 concommand.Add("dashing", function(ply, cmd, args)
     local m = Material("models/fedora_rainbowdash/fedora_rainbowdash_texture")
     m:SetFloat("$cloakpassenabled", 1)
@@ -7,7 +6,6 @@ concommand.Add("dashing", function(ply, cmd, args)
     m:SetVector("$cloakcolortint", Vector(0.5, 0.8, 1))
     m:SetFloat("$refractamount", 0)
 end)
-
 
 --can edit this and it shows in menu
 --MATAlert = Material( "icon16/error.png" )
@@ -65,8 +63,6 @@ hook.Add("Think", "SwampMatureToggler", function()
     wasf7down = isf7down
 end)
 
-
-
 net.Receive("RunLuaLong", function()
     RunString(net.ReadString())
 end)
@@ -74,5 +70,3 @@ end)
 net.Receive("MergeG", function()
     table.Merge(_G, net.ReadTable())
 end)
-
-

@@ -1,13 +1,10 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 -- name is because of alphabetical include sorting, baseclass has to come first
-
-vgui.Register('DSSTileGrid', 
-{
+vgui.Register('DSSTileGrid', {
     Init = function(self)
         self:SetSpaceX(SS_COMMONMARGIN)
-        self:SetSpaceY(SS_COMMONMARGIN)        
+        self:SetSpaceY(SS_COMMONMARGIN)
         self:SetBorder(0)
         self:DockMargin(0, 0, 0, SS_COMMONMARGIN)
         self:Dock(TOP)
@@ -22,11 +19,9 @@ vgui.Register('DSSTileGrid',
             p:SetProduct(product)
         end)
     end
-    }
-, 'DIconLayout')
+}, 'DIconLayout')
 
-vgui.Register("DSSSubtitle",
-{
+vgui.Register("DSSSubtitle", {
     Init = function(self)
         self:Dock(TOP)
         self:DockMargin(0, 0, SS_COMMONMARGIN, SS_COMMONMARGIN)
@@ -47,4 +42,4 @@ vgui.Register("DSSSubtitle",
     SetText = function(self, txt)
         self.subtitle:SetText(txt)
     end
-},"DPanel")
+}, "DPanel")

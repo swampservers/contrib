@@ -194,6 +194,7 @@ function SWEP:PrimaryAttack(networked)
     timer.Create(ply:EntIndex() .. "stopmonkeyingaround", delay + 0.1, 1, function()
         if (IsValid(self)) then
             self.MonkeyingAround = nil
+
             if (IsValid(ply)) then
                 ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
             end

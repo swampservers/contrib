@@ -3,7 +3,6 @@ PPM = PPM or {}
 PPM.Playermodel = "models/ppm/player_default_base.mdl"
 local Entity = FindMetaTable("Entity")
 
-
 function IsPonyModel(modelName)
     modelName = modelName:sub(1, 17)
     if modelName == "models/ppm/player" then return true end
@@ -21,7 +20,6 @@ function Entity:IsPPMPony()
     return self:GetModel() == PPM.Playermodel
 end
 
-
 function Entity:PonyNoseOffsetBone(ang)
     if self.IsPPMPony and self:IsPPMPony() then
         if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
@@ -38,8 +36,6 @@ function Entity:PonyNoseOffsetAttach(ang)
     return Vector(0, 0, 0)
 end
 
-
-
 function Entity:PonyPlayer()
     if self:IsPlayer() then return self end
     if self:EntIndex() == -1 then return Me end --pointshop model
@@ -51,10 +47,10 @@ end
 
 PPM.serverPonydata = PPM.serverPonydata or {}
 PPM.isLoaded = false
+
 -- Deleted items because apparently it was never even meant to save, what a garbage system!
 -- Even if I added saving of the items, it would be incompatible with other PPM servers.
 -- Plus it is extra complication.
-
 -- TODO SET MAX NUMBERS TO THE CORRECT MAX OR AT LEAST HIGH ENOUGH
 -- TODO MOVE THIS TO pony_player.lua AND USE THE SAME TABLE AS IS IN THERE
 local ponydata_numbers = {

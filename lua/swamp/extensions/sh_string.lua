@@ -31,4 +31,3 @@ function string.reduce(str, font, width)
 
     return str
 end
-

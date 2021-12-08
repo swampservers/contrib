@@ -38,18 +38,19 @@ if CLIENT then
         end
     end)
 
-
     -- code for center screen announcements
     GlobAnnce = false
+
     net.Receive("Announcement", function()
         surface.PlaySound("npc/attack_helicopter/aheli_damaged_alarm1.wav")
         GlobAnnce = net.ReadString()
         local time = net.ReadUInt(8)
-    
+
         timer.Create("AnnouncementRemover", time, 1, function()
             GlobAnnce = false
         end)
     end)
+
     hook.Add("HUDPaint", "Drawannocnr", function()
         if not GlobAnnce then return end
         local bs = 15
@@ -59,9 +60,6 @@ if CLIENT then
         bs = bs - 5
         draw.WordBox(bs, ((ScrW() - w) / 2) - bs, ((ScrH() - h) / 2) - bs, GlobAnnce, "DermaLarge", Color(0, 0, 0), Color(255, 255, 255))
     end)
-    
-
-
 else
     util.AddNetworkString('Notify')
     local Player = FindMetaTable('Player')

@@ -257,7 +257,7 @@ function SWEP:MakePaint(trace, delay)
 end
 
 function SWEP:DoSound(delay)
-    if (not self.SpraySound) and CinemaGameVolumeSetting()>0 then
+    if (not self.SpraySound) and CinemaGameVolumeSetting() > 0 then
         sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
             if (IsValid(sound)) then
                 self.SpraySound = sound

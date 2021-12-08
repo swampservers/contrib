@@ -27,7 +27,7 @@ SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = false
 SWEP.HoldType = "slam"
 SWEP.VapeID = 1
-SWEP.DrawCrosshair =false
+SWEP.DrawCrosshair = false
 
 function SWEP:Deploy()
     self:SetHoldType("slam")

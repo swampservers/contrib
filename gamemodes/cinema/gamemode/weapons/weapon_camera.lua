@@ -206,7 +206,6 @@ function SWEP:DrawWorldModel()
     self:DrawModel()
 end
 
-
 if CLIENT then
     hook.Add("Think", "RemoveVoiceIcons", function()
         local visible = not (IsValid(Me) and Me:UsingWeapon("weapon_camera"))

@@ -1,10 +1,8 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 SWEP.PrintName = "Atheist"
 SWEP.Slot = 2
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
-
 SWEP.DrawWeaponInfoBox = false
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
@@ -16,7 +14,6 @@ end
 function SWEP:Deploy()
     self.Owner:DrawViewModel(false)
 end
-
 
 function SWEP:PrimaryAttack()
     self:ExtEmitSound("littleponyass.ogg", {

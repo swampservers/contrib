@@ -22,14 +22,12 @@ setmetatable(vgui, {
         if isfunction(parent_or_constructor) then
             constructor = parent_or_constructor
             parent_or_constructor = vgui_stack[#vgui_stack] --nil if empty
-        -- else
-        --     assert(table.IsEmpty(vgui_stack), "Expect empty vgui stack with specified parent")
+            -- else
+            --     assert(table.IsEmpty(vgui_stack), "Expect empty vgui stack with specified parent")
         end
 
         assert(parent_or_constructor == nil or ispanel(parent_or_constructor))
-
         assert(not (ispanel(classname_or_element) and ispanel(parent_or_constructor)), "Can't specify parent with already created element")
-
         local p = isstring(classname_or_element) and vgui.Create(classname_or_element, parent_or_constructor) or classname_or_element
 
         if constructor then
@@ -38,7 +36,7 @@ setmetatable(vgui, {
             ProtectedCall(function()
                 constructor(p)
             end)
-        
+
             table.remove(vgui_stack)
         end
 

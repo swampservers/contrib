@@ -7,7 +7,9 @@ GM.Version = "swamp"
 GM.TeamBased = false
 
 -- This has to be here for autorefresh to work
-Include = function(fn) include(fn) end
+Include = function(fn)
+    include(fn)
+end
 
 local files, dirs = file.Find("cinema/gamemode/*", "LUA", "namedesc")
 

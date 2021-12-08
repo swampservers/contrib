@@ -1,15 +1,9 @@
-
-
-
-SWEP.PrintName = "Dr. Isaac Kleiner"
+﻿SWEP.PrintName = "Dr. Isaac Kleiner"
 SWEP.Slot = 2
 SWEP.WorldModel = ""
-
-
 SWEP.DrawWeaponInfoBox = false
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
-
 
 function SWEP:Initialize()
     self:SetHoldType("normal")
@@ -53,5 +47,3 @@ function SWEP:Tick()
 
     self.justreloaded = self.justreloaded - 1
 end
-
-

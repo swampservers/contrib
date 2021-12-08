@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 local hideinterface = CreateClientConVar("cinema_hideinterface", 0, true, false, "", 0, 1)
 
 -- CHudCrosshair=true,
@@ -29,11 +28,9 @@ local HUDToHide = {
 --     weapon_shotgun = true
 -- }
 -- GM.AmmoWeapons = {"weapon_boltaction", "cvx_blocks",}
-
 function GM:HUDShouldDraw(name)
     if hideinterface:GetBool() then return false end
     -- if name == "CHudDeathNotice" then return false end
-
     local ply = Me
     local wep = IsValid(ply) and ply:GetActiveWeapon()
 
@@ -58,11 +55,6 @@ function GM:HUDPaint()
     hook.Run("DrawDeathNotice", 0.85, 0.04)
 end
 
-
-
-
-
-
 -- Enable this if HUD is used outside cinema
 -- local hide = {
 --     ["CHudAmmo"] = false,
@@ -72,12 +64,6 @@ end
 -- hook.Add("HUDShouldDraw", "HideAmmo", function(name)
 --     return hide[name]
 -- end)
-
-
-
-
-
-
 local overall_scale = 1.1
 local color_bg = NamedColor("BgColor")
 local color_fg = NamedColor("FgColor")

@@ -1,13 +1,10 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 local HideNamesConVar = CreateClientConVar("cinema_hidenames", 0, true, false, "", 0, 1)
-
 local ShowEyeAng = false
 
 concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
 end)
-
 
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
@@ -119,8 +116,6 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
         end
     end
 end)
-
-
 -- TODO: make targeted players' names light up at long distance like in code below
 -- hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sky)
 -- if sky then return end

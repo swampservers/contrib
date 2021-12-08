@@ -426,10 +426,8 @@ net.Receive("InstrumentNetwork", function(length, client)
     elseif enum == INSTNET_HEAR then
         -- Instrument does not exist
         if not IsValid(ent) then return end
-
         -- weird error
         if not ent.GetSound then return end
-
         -- Gather note
         local key = net.ReadString()
         local sound = ent:GetSound(key)

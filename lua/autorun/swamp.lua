@@ -8,7 +8,6 @@
     - sh_init will be loaded first, followed by cl_init and sv_init, followed by all other files
     - special cases for loading ents/sweps in folders titled "entities" and "weapons"
 ]]
-
 -- has to be copied into the gamemode to make autorefresh work
 Include = function(fn)
     include(fn)

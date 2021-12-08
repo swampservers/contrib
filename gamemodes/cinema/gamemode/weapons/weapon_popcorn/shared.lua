@@ -66,7 +66,11 @@ function SWEP:SecondaryAttack()
     self.Owner:EmitSound("weapons/slam/throw.wav")
     self.Owner:ViewPunch(Angle(math.Rand(-8, 8), math.Rand(-8, 8), 0))
     bucket = ents.Create("ent_popcorn_thrown")
-    if self:GetClass() == "weapon_sandcorn" then bucket.sandcorn=true end
+
+    if self:GetClass() == "weapon_sandcorn" then
+        bucket.sandcorn = true
+    end
+
     bucket:SetOwner(self.Owner)
     bucket:SetPos(self.Owner:GetShootPos())
     bucket:Spawn()

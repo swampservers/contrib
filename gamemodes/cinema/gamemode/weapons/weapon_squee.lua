@@ -1,12 +1,7 @@
-
-
-
-
-SWEP.PrintName = "Squee"
+﻿SWEP.PrintName = "Squee"
 SWEP.Slot = 2
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
-
 SWEP.DrawWeaponInfoBox = false
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
@@ -14,7 +9,6 @@ SWEP.DrawCrosshair = false
 function SWEP:Initialize()
     self:SetHoldType("normal")
 end
-
 
 function SWEP:PrimaryAttack()
     self:ExtEmitSound("squee.wav", {
@@ -36,6 +30,3 @@ function SWEP:Reload()
         shared = true
     })
 end
-
-
-

@@ -1,6 +1,4 @@
-
-
-if SERVER then
+﻿if SERVER then
     language = language or {}
     language.GetPhrase = function(s) return s:gsub("#Cstrike_WPNHUD_", "") end
 end

@@ -1,5 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 function GM:PlayerShouldTakeDamage(ply, attacker)
     if attacker:GetClass() == "ent_popcorn_thrown" then return false end
     if attacker:GetClass() == "dodgeball" then return false end
@@ -23,15 +22,14 @@ function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
 end
 
 function GM:EntityTakeDamage(target, dmginfo)
-    local att,inf = dmginfo:GetAttacker(), dmginfo:GetInflictor()
-   
+    local att, inf = dmginfo:GetAttacker(), dmginfo:GetInflictor()
 
     if IsValid(inf) and inf:GetClass() == "npc_grenade_frag" then
         dmginfo:ScaleDamage(2)
     end
 
-    if IsValid(att) and att:IsPlayer() then 
-        if  att:UsingWeapon("weapon_shotgun") then
+    if IsValid(att) and att:IsPlayer() then
+        if att:UsingWeapon("weapon_shotgun") then
             dmginfo:ScaleDamage(2)
         end
 

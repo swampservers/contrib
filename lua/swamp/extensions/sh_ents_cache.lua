@@ -1,8 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 -- Keeps a cache of all entities in tables divided by classname
 -- To use it try something like this: for i,v in ipairs(Ents.prop_physics) do ...
-
 local Entity = FindMetaTable("Entity")
 local EntClass = Entity.GetClass
 local EntIndex = Entity.EntIndex

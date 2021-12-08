@@ -1,4 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 net.Receive("RotateHeldEnt", function(len)
     if len > 0 then
         PROPROTATIONHELDENT = net.ReadEntity()

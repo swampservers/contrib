@@ -17,7 +17,6 @@ function ReloadStyle(color)
     color = color or GetConVar("ps_themecolor"):GetInt()
     MenuTheme_Brand = BrandColors[color] or BrandColors[1]
     MenuTheme_BrandDarker = Color(MenuTheme_Brand.r * 0.7, MenuTheme_Brand.g * 0.7, MenuTheme_Brand.b * 0.7)
-
     MenuTheme_BG = BrandColorGrayDarker
     MenuTheme_FG = BrandColorGrayDark
     MenuTheme_MD = BrandColorGray

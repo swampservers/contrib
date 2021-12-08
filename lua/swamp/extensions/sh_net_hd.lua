@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 function net.WriteVectorHD(vec)
     net.WriteFloat(vec.x)
     net.WriteFloat(vec.y)

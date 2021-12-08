@@ -413,7 +413,9 @@ function PANEL:Init()
     local in_steamgroup = NWPrivate.in_steamgroup
 
     function self:Think()
-        if in_steamgroup ~= NWPrivate.in_steamgroup then RunConsoleCommand("ps_destroymenu") end
+        if in_steamgroup ~= NWPrivate.in_steamgroup then
+            RunConsoleCommand("ps_destroymenu")
+        end
     end
 
     if not in_steamgroup then

@@ -1,5 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 if CLIENT then
     function GM:CreateMove(cmd)
         local p = Me
@@ -10,7 +9,7 @@ end
 
 function GM:SetupMove(ply, mv, cmd)
     local w = ply:GetActiveWeapon()
-    if IsValid(w) and w.SetupMove and not ply:InVehicle() then return w:SetupMove(ply, mv, cmd) end    
+    if IsValid(w) and w.SetupMove and not ply:InVehicle() then return w:SetupMove(ply, mv, cmd) end
 end
 
 function GM:Move(ply, mv)
@@ -19,5 +18,4 @@ function GM:Move(ply, mv)
 end
 
 function GM:FinishMove(ply, mv)
-    
 end

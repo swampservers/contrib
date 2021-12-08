@@ -1,5 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 net.Receive("BoneModReset", function()
     local v = net.ReadEntity()
 

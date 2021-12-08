@@ -1,6 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 function Ply(name)
     local humans = player.GetHumans()
     name = string.lower(name)

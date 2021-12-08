@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 GM.TauntCam = TauntCamera()
 
 function UseThirdperson()
@@ -9,26 +8,29 @@ function UseThirdperson()
 end
 
 local wasf4down = false
+
 concommand.Add("swamp_thirdperson", function()
     THIRDPERSON = not THIRDPERSON
 end)
+
 hook.Add("Think", "ThirdPersonToggler", function()
     local isf4down = input.IsKeyDown(KEY_F4)
+
     if isf4down and not wasf4down then
         THIRDPERSON = not THIRDPERSON
     end
+
     wasf4down = isf4down
 end)
 
 function GM:CalcView(ply, origin, angles, fov, znear, zfar)
-
     local view = {
         origin = origin,
         angles = angles,
         fov = fov,
         znear = znear,
         zfar = zfar,
-        drawviewer = false    
+        drawviewer = false
     }
 
     if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then return view end
@@ -55,13 +57,10 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
         return view
     end
 
-
     local Vehicle = ply:GetVehicle()
     local Weapon = ply:GetActiveWeapon()
-    
     if IsValid(Vehicle) then return GAMEMODE:CalcVehicleView(Vehicle, ply, view) end
     if drive.CalcView(ply, view) then return view end
-    
 
     -- Give the active weapon a go at changing the viewmodel position
     if IsValid(Weapon) then
@@ -84,4 +83,3 @@ end
 function GM:ShouldDrawLocalPlayer(ply)
     return UseThirdperson() or self.TauntCam:ShouldDrawLocalPlayer(ply, ply:IsPlayingTaunt())
 end
-
