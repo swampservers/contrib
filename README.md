@@ -65,7 +65,8 @@ Boolean\
 *lua/swamp/clientcheck/sh_afk_detect.lua (hidden file)*
 
 ### Me (global)
-Use this global instead of LocalPlayer()\
+Use this global instead of LocalPlayer()
+\
  It will be either nil or a valid entity. Don't write `if IsValid(Me)`... , just write `if Me`...\
 *lua/swamp/extensions/cl_me.lua*
 
@@ -90,21 +91,36 @@ Makes the DFrame :Close() if escape is pressed\
 *lua/swamp/extensions/cl_vgui_function.lua*
 
 ### function vgui(classname, parent (optional), constructor)
-This defines the function vgui(classname, parent (optional), constructor) which creates and returns a panel.\
+This defines the function vgui(classname, parent (optional), constructor) which creates and returns a panel.
 \
- The parent should only be passed when creating a root element (eg. a DFrame) which need a parent.\
- Child elements should be constructed using vgui() from within the parent's constructor, and their parent will be set automatically.\
+
 \
- This is helpful for creating complex guis as the hierarchy of the layout is clearly reflected in the code structure.\
+ The parent should only be passed when creating a root element (eg. a DFrame) which need a parent.
 \
- Example: (a better example is in the file)\
- ```\
- vgui("Panel", function(p)\
-    -- p is the panel, set it up here\
-    vgui("DLabel", function(p)\
-        -- p is the label here\
-    end)\
- end)\
+ Child elements should be constructed using vgui() from within the parent's constructor, and their parent will be set automatically.
+\
+
+\
+ This is helpful for creating complex guis as the hierarchy of the layout is clearly reflected in the code structure.
+\
+
+\
+ Example: (a better example is in the file)
+\
+ ```
+\
+ vgui("Panel", function(p)
+\
+    -- p is the panel, set it up here
+\
+    vgui("DLabel", function(p)
+\
+        -- p is the label here
+\
+    end)
+\
+ end)
+\
  ```\
 *lua/swamp/extensions/cl_vgui_function.lua*
 
@@ -117,9 +133,12 @@ A timer which will only call the callback (with the entity passed as the argumen
 *lua/swamp/extensions/sh_ent_timer.lua*
 
 ### Ents (global)
-A global cache of all entities, in subtables divided by classname.\
- Works on client and server. Much, much faster than `ents.FindByClass` or even `player.GetAll`\
- Each subtable is ordered and will never be nil even if no entities were created.\
+A global cache of all entities, in subtables divided by classname.
+\
+ Works on client and server. Much, much faster than `ents.FindByClass` or even `player.GetAll`
+\
+ Each subtable is ordered and will never be nil even if no entities were created.
+\
  To use it try something like this: `for i,v in ipairs(Ents.prop_physics) do` ...\
 *lua/swamp/extensions/sh_ents_cache.lua*
 
@@ -208,7 +227,8 @@ Selects a range of an ordered table similar to string.sub\
 *lua/swamp/sh_core.lua*
 
 ### Player, Entity, Weapon
-Omit FindMetaTable from your code because these globals always refer to their respective metatables.\
+Omit FindMetaTable from your code because these globals always refer to their respective metatables.
+\
  Player/Entity are still callable and function the same as the default global functions.\
 *lua/swamp/sh_meta.lua*
 
@@ -233,13 +253,16 @@ Give points. `callback` happens once the points are written. `fcallback` = faile
 *lua/swamp/swampshop/sv_init.lua (hidden file)*
 
 ### function Player:SS_TryTakePoints(points, callback, fcallback)
-Take points, but only if they have enough.\
- `callback` runs once the points have been taken.\
+Take points, but only if they have enough.
+\
+ `callback` runs once the points have been taken.
+\
  `fcallback` runs if they don't have enough points or it otherwise fails to take them\
 *lua/swamp/swampshop/sv_init.lua (hidden file)*
 
 ### function Entity:SetWebMaterial(args)
-Like `WebMaterial` but sets it to an entity (only needs to be called once)\
+Like `WebMaterial` but sets it to an entity (only needs to be called once)
+\
  The material will load when the entity is close unless `args.forceload=true` is passed.\
 *lua/swamp/webmaterials/cl_webmaterials.lua (hidden file)*
 
@@ -248,20 +271,34 @@ Like `Entity:SetWebMaterial`\
 *lua/swamp/webmaterials/cl_webmaterials.lua (hidden file)*
 
 ### function WebMaterial(args)
-To use web materials, just call in your draw hook:\
+To use web materials, just call in your draw hook:
 \
- `mat = WebMaterial(args)`\
+
 \
- Then set/override material to mat\
+ `mat = WebMaterial(args)`
 \
- args is a table with the following potential keys:\
- - id: string, from `SanitizeImgurId`\
- - owner: player/steamid or nil\
- - pos: vector or nil - rendering position, used for delayed distance loading\
- - stretch: bool = false (stretch to fill frame, or contain to maintain aspect)\
- - shader: str = "VertexLitGeneric"\
- - params: str = "{}" - A "table" of material parameters for CreateMaterial (NOT A TABLE, A STRING THAT CAN BE PARSED AS A TABLE)\
- - pointsample: bool = false\
+
+\
+ Then set/override material to mat
+\
+
+\
+ args is a table with the following potential keys:
+\
+ - id: string, from `SanitizeImgurId`
+\
+ - owner: player/steamid or nil
+\
+ - pos: vector or nil - rendering position, used for delayed distance loading
+\
+ - stretch: bool = false (stretch to fill frame, or contain to maintain aspect)
+\
+ - shader: str = "VertexLitGeneric"
+\
+ - params: str = "{}" - A "table" of material parameters for CreateMaterial (NOT A TABLE, A STRING THAT CAN BE PARSED AS A TABLE)
+\
+ - pointsample: bool = false
+\
  - nsfw: bool = false - (can be false, true, or "?")\
 *lua/swamp/webmaterials/cl_webmaterials.lua (hidden file)*
 
