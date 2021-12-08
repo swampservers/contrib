@@ -29,7 +29,7 @@ for root, dirs, files in os.walk(".", topdown=False):
                             comment = line[4 if line[3]==" " else 3:]
                     else:
                         if line.startswith("--") and (len(line)==2 or line[2]!="-"):
-                            comment += "\n\\\n" + line[3 if len(line)>3 and line[3]==" " else 2:]
+                            comment += "\\\n" + line[3 if len(line)>3 and line[3]==" " else 2:]
                         elif line=="":
                             # todo: file comment?
                             comment = None
@@ -49,7 +49,7 @@ luadocs.sort(key= lambda x: x["file"]+" "+x["code"])
 docgen = "".join(
     f"""
 ### {x["code"]}
-{x["comment"]}\\
+{x["comment"]}\n\\
 *{x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden file)") }*
 """ for x in luadocs
 )
