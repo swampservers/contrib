@@ -26,44 +26,60 @@ vgui.Register("DSSTitleInfo", {
                 continue
             end
 
-            vgui("DLabel", self, function(p)
-                p:SetFont("SS_DESCINSTFONT")
-                p:SetText(name)
-                p:SetTextColor(SS_SwitchableColor)
-                p:SizeToContents()
-                p:SetContentAlignment(5)
-                p:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-                p:Dock(TOP)
-            end)
-
-            vgui("DLabel", self, function(p)
-                p:SetText(self.Title:Description(i, min) .. (reward > 0 and " - Reward: " .. reward .. " points" or ""))
-                p:Dock(TOP)
-            end)
-
-            vgui("DButton", self, function(p)
-                if progress >= min then
-                    p:SetText("Select title")
-                else
-                    p:SetText("Title locked (" .. progress .. "/" .. min .. ")")
-                    p:SetEnabled(false)
-                    lastlocked = true
-                end
+            vgui("DPanel", self, function(p)
 
                 p:Dock(TOP)
+                p:SetTall(24)
+                p.Paint=noop
+                p:DockPadding(40,0,40,0)
+                p:DockMargin(0,0,0,16)
 
-                p.DoClick = function()
-                    net.Start("PlayerTitle")
-                    net.WriteString(name)
-                    net.SendToServer()
-                end
+                vgui("DLabel", function(p)
+                    p:SetFont("SS_DESCINSTFONT")
+                    p:SetText(name)
+                    p:SetTextColor(SS_SwitchableColor)
+                    p:SetWide(160)
+                    p:SetContentAlignment(5)
+                    p:Dock(LEFT)
+                end)
+
+                vgui("DButton",  function(p)
+                    if progress >= min then
+                        p:SetText("Select title")
+                    else
+                        p:SetText("Title locked (" .. progress .. "/" .. min .. ")")
+                        p:SetEnabled(false)
+                        lastlocked = true
+                    end
+    
+                    p:Dock(RIGHT)
+                    p:SetWide(160)
+    
+                    p.DoClick = function()
+                        net.Start("PlayerTitle")
+                        net.WriteString(name)
+                        net.SendToServer()
+                    end
+                end)
+            
+                vgui("DLabel", function(p)
+                    p:SetText(self.Title:Description(i, min) .. (reward > 0 and " - Reward: " .. reward .. " points" or ""))
+                    p:Dock(FILL)
+                    p:SetContentAlignment(5)
+                end)
+    
+
+            
             end)
+
+
         end
 
         if extra > 0 then
             vgui("DLabel", self, function(p)
-                p:SetText(extra .. " more titles available")
+                p:SetText(extra .. (extra==1 and " more title available" or " more titles available"))
                 p:Dock(TOP)
+                p:SetContentAlignment(5)
             end)
         end
     end
@@ -74,11 +90,12 @@ vgui.Register('DSSPlayerSettingsMode', {
         SS_TitlesPanel = self
 
         vgui("DSSCustomizerSection", self, function(p)
-            p:SetText("Titles (WIP, SOME NOT WORKING DONT COMPLAIN)")
+            p:SetText("Titles (WIP)")
 
             vgui("DButton", function(p)
                 p:SetText("Remove title")
                 p:Dock(TOP)
+                p:DockMargin(40,0,40,0)
 
                 p.DoClick = function()
                     net.Start("PlayerTitle")

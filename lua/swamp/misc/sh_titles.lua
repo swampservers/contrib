@@ -8,7 +8,6 @@ end
 --NOMINIFY
 Titles = {}
 TitleRefreshDir = defaultdict(function() return {} end)
-print("HI")
 
 if SERVER then
     for k, v in pairs(player.GetAll()) do
@@ -18,6 +17,7 @@ end
 
 function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn)
     local title = {}
+    table.insert(Titles, title)
 
     if isstring(thresholds) then
         thresholds = {
@@ -71,7 +71,8 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn)
         return p
     end
 
-    local sv_last_max = {}
+    local titleindex = #Titles
+    local maxkey = "lasttitlemax"..titleindex
 
     function title:Progress(ply)
         local p = num(progress_fn(ply))
@@ -88,21 +89,19 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn)
                 im = i
             end
 
-            if sv_last_max[ply] and sv_last_max[ply] < im then
+            if (ply[maxkey] or 0) < im and not ply.SUPPRESSTITLEUNLOCK then
                 ply:Notify("Unlocked a new title: " .. t .. "")
             end
 
-            sv_last_max[ply] = im
+            ply[maxkey] = im
             ply:PointsReward(reward_id, r, "unlocking a title")
         end
 
         return p
     end
 
-    table.insert(Titles, title)
-
     for i, v in ipairs(nwp_vars) do
-        table.insert(TitleRefreshDir[v], #Titles)
+        table.insert(TitleRefreshDir[v], titleindex)
     end
 end
 
@@ -154,13 +153,27 @@ AddTitle("kleinertp", {
 -- local id = ply:AccountID()
 -- id = string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
 -- FIX THE DONATION BOXES
-AddTitle("", {
-    {100, "Gift Giver"},
-    {1000, "Santa"}
-}, "Give %s gifts (mystery boxes) to other players", "s_giftgiver")
+-- AddTitle("", {
+--     {100, "Gift Giver"},
+--     {1000, "Santa"}
+-- }, "Give %s gifts (mystery boxes) to other players", "s_giftgiver")
 
-AddTitle("garfield", {
-    {200, "Chonkers", 10000},
-    {1000, "Fat Cat", 100000},
-    {10000, "I Eat, Jon.", 1000000}
-}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
+-- AddTitle("garfield", {
+--     {200, "Chonkers", 10000},
+--     {1000, "Fat Cat", 100000},
+--     {10000, "I Eat, Jon.", 1000000}
+-- }, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
+
+
+-- TODO make these global and make the call do the current global function that exists so it still works lol
+
+
+local Player = FindMetaTable("Player")
+
+function Player:ShortID()
+    local id = self:AccountID()
+    return string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
+end
+
+-- local id = ply:AccountID()
+-- id = string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))

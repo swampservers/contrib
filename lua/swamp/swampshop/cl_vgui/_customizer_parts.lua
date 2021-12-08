@@ -25,11 +25,11 @@ vgui.Register('DSSCustomizerSection', {
     PerformLayout = function(self)
         self:SizeToChildren(false, true)
 
-        if IsValid(parent) and parent:GetName() == "DScrollPanel" then
-            self:DockMargin(0, 0, parent.VBar:IsVisible() and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
-        else
-            self:DockMargin(0, 0, 0, SS_COMMONMARGIN)
-        end
+        local p = self:GetParent()
+        local p2 = IsValid(p) and p:GetParent()
+
+        self:DockMargin(0, 0, ((IsValid(p) and IsValid(p.VBar) and p.VBar:IsVisible()) or (IsValid(p2) and IsValid(p2.VBar) and p2.VBar:IsVisible())) and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
+
     end,
 }, "DPanel")
 
