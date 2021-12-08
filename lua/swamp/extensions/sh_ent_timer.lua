@@ -2,6 +2,7 @@
 -- Entity timer system, timers are removed when entity is
 local Entity = FindMetaTable("Entity")
 
+--- A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid
 function Entity:TimerSimple(delay, callback)
     timer.Simple(delay, function()
         if IsValid(self) then
@@ -10,6 +11,7 @@ function Entity:TimerSimple(delay, callback)
     end)
 end
 
+--- A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid
 function Entity:TimerCreate(identifier, delay, repetitions, callback)
     self:TimerRemove(identifier)
     local timers = self.ENT_TIMERS

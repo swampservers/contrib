@@ -1,6 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- Keeps a cache of all entities in tables divided by classname
+
+---A global cache of all entities, in subtables divided by classname.
+-- Works on client and server. Much, much faster than ents.FindByClass or even player.GetAll.
+-- Each subtable is ordered and will never be nil even if no entities were created.
 -- To use it try something like this: for i,v in ipairs(Ents.prop_physics) do ...
+---Ents
+
 local Entity = FindMetaTable("Entity")
 local EntClass = Entity.GetClass
 local EntIndex = Entity.EntIndex

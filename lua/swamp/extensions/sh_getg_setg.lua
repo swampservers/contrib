@@ -2,6 +2,9 @@
 -- WORKING SETGLOBAL* BECAUSE GARRYS VERSION UNSETS ITSELF RANDOMLY THANKS A LOT GARRY
 glbls = glbls or {}
 
+-- TODO use just a table called Global similar to NWPrivate
+
+--- Get a globally shared value (similar to GetGlobal* but actually works)
 function GetG(k)
     return glbls[k]
 end
@@ -31,6 +34,7 @@ if SERVER then
         end
     end)
 
+    --- Set a globally shared value (server)
     function SetG(k, v)
         if not istable(v) and glbls[k] == v then return end
         net.Start("Glbl")

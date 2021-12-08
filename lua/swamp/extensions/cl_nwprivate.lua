@@ -3,7 +3,11 @@
 local Player = FindMetaTable("Player")
 NWPrivate = NWPrivate or {}
 
---NOMINIFY
+--- A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
+--- player.NWPrivate = {}
+
+-- TODO rename to NWP
+
 -- NWPrivateListener = NWPrivateListener or {}
 net.Receive("UpdatePrivates", function(len)
     for k, v in pairs(net.ReadTable()) do
@@ -20,7 +24,6 @@ net.Receive("UpdatePrivates", function(len)
     end
 end)
 
--- end
 hook.Add("OnEntityCreated", "NWPrivate", function(ply)
     if ply == Me then
         ply.NWPrivate = setmetatable({}, {

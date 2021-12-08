@@ -32,9 +32,44 @@ Try to put cinema-specific weapons/entities in gamemodes/cinema/ and generic cod
 # API
 
 
+### function Player:IsAFK()
+Boolean\
+*lua/swamp/clientcheck/sh_afk_detect.lua (hidden file)*
+
 ### Me = LocalPlayer()
 Use this global instead of LocalPlayer() (it will be either nil or a valid entity)\
 *lua/swamp/extensions/cl_me.lua*
+
+### player.NWPrivate = {}
+A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.\
+*lua/swamp/extensions/cl_nwprivate.lua*
+
+### function Entity:TimerCreate(identifier, delay, repetitions, callback)
+A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid\
+*lua/swamp/extensions/sh_ent_timer.lua*
+
+### function Entity:TimerSimple(delay, callback)
+A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid\
+*lua/swamp/extensions/sh_ent_timer.lua*
+
+### Ents
+A global cache of all entities, in subtables divided by classname.
+Works on client and server. Much, much faster than ents.FindByClass or even player.GetAll.
+Each subtable is ordered and will never be nil even if no entities were created.
+To use it try something like this: for i,v in ipairs(Ents.prop_physics) do ...\
+*lua/swamp/extensions/sh_ents_cache.lua*
+
+### function GetG(k)
+Get a globally shared value (similar to GetGlobal* but actually works)\
+*lua/swamp/extensions/sh_getg_setg.lua*
+
+### function SetG(k, v)
+Set a globally shared value (server)\
+*lua/swamp/extensions/sh_getg_setg.lua*
+
+### function Player:UsingWeapon(class)
+Faster than writing `IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass()==class`\
+*lua/swamp/extensions/sh_player_extension.lua*
 
 ### function Entity:IsPony()
 Boolean, mostly for players\

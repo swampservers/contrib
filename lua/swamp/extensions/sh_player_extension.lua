@@ -1,10 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local Player = FindMetaTable("Player")
 
-function Player:UsingWeapon(cls)
+--- Faster than writing `IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass()==class`
+function Player:UsingWeapon(class)
     local c = self:GetActiveWeapon()
 
-    return IsValid(c) and c:GetClass() == cls
+    return IsValid(c) and c:GetClass() == class
 end
 
 -- Use the player color as the weapon color
