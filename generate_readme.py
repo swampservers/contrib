@@ -36,7 +36,7 @@ for root, dirs, files in os.walk(".", topdown=False):
                         else:
                             # can end with --- to put something that isnt actually code in the code slot
                             if line.startswith("---"):
-                                line = comment = line[3:].strip()
+                                line = line[3:].strip()
                             luadocs.append({
                                 "code":line,
                                 "comment": comment,

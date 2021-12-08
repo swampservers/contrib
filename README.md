@@ -45,7 +45,8 @@ Returns a table such that when indexing the table, if the value doesn't exist, t
 *lua/swamp/sh_core.lua*
 
 ### Player, Entity, Weapon
-Player, Entity, Weapon\
+Omit FindMetaTable from your code because these globals always refer to their respective metatables.
+Player/Entity are still callable and function the same as the default global functions.\
 *lua/swamp/sh_meta.lua*
 
 ### function Player:GetRank()
