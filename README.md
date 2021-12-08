@@ -36,11 +36,12 @@ Try to put cinema-specific weapons/entities in gamemodes/cinema/ and generic cod
 Boolean\
 *lua/swamp/clientcheck/sh_afk_detect.lua (hidden file)*
 
-### Me = LocalPlayer()
-Use this global instead of LocalPlayer() (it will be either nil or a valid entity)\
+### Me (global)
+Use this global instead of LocalPlayer()\
+It will be either nil or a valid entity. Don't write `if IsValid(Me)`... , just write `if Me`...\
 *lua/swamp/extensions/cl_me.lua*
 
-### player.NWPrivate = {}
+### ply.NWPrivate = {}
 A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.\
 *lua/swamp/extensions/cl_nwprivate.lua*
 
@@ -53,9 +54,9 @@ A timer which will only call the callback (with the entity passed as the argumen
 *lua/swamp/extensions/sh_ent_timer.lua*
 
 ### Ents
-A global cache of all entities, in subtables divided by classname.
-Works on client and server. Much, much faster than ents.FindByClass or even player.GetAll.
-Each subtable is ordered and will never be nil even if no entities were created.
+A global cache of all entities, in subtables divided by classname.\
+Works on client and server. Much, much faster than ents.FindByClass or even player.GetAll.\
+Each subtable is ordered and will never be nil even if no entities were created.\
 To use it try something like this: for i,v in ipairs(Ents.prop_physics) do ...\
 *lua/swamp/extensions/sh_ents_cache.lua*
 
@@ -71,22 +72,84 @@ Set a globally shared value (server)\
 Faster than writing `IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass()==class`\
 *lua/swamp/extensions/sh_player_extension.lua*
 
+### function PlyCount(name)
+Find a player whose name contains some text. Returns any found player as well as the count of found players.\
+*lua/swamp/extensions/sh_playerbyname.lua*
+
+### function string.FormatSeconds(sec)
+Turns a number of seconds into a string like hh:mm:ss or mm:ss\
+*lua/swamp/extensions/sh_string.lua*
+
+### function player.GetBySteamID(id)
+Unlike the built-in function, this (along with player.GetBySteamID64 and player.GetByAccountID) is fast.\
+*lua/swamp/extensions/sv_playerbysteamid.lua (hidden file)*
+
 ### function Entity:IsPony()
 Boolean, mostly for players\
 *lua/swamp/pony/sh_init.lua*
+
+### function apcall(func, ...)
+Calls the function and does ErrorNoHalt if it fails. Returns nothing\
+*lua/swamp/sh_core.lua*
+
+### function call(func, ...)
+Just calls the function with the args\
+*lua/swamp/sh_core.lua*
+
+### function call_async(callback, ...)
+Shorthand timer.Simple(0, callback) and also passes args\
+*lua/swamp/sh_core.lua*
 
 ### function defaultdict(constructor)
 Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.\
 *lua/swamp/sh_core.lua*
 
+### function math.nextpow2(n)
+Returns next power of 2 >= n\
+*lua/swamp/sh_core.lua*
+
+### function noop()
+Shorthand for empty function\
+*lua/swamp/sh_core.lua*
+
+### function table.Set(tab)
+Convert an ordered table {a,b,c} into a set {[a]=true,[b]=true,[c]=true}\
+*lua/swamp/sh_core.lua*
+
+### function table.imax(tab)
+Selects the maximum value of an ordered table. See also: table.imin\
+*lua/swamp/sh_core.lua*
+
+### function table.isum(tab)
+Sums an ordered table.\
+*lua/swamp/sh_core.lua*
+
+### function table.sub(tab, startpos, endpos)
+Selects a range of an ordered table similar to string.sub\
+*lua/swamp/sh_core.lua*
+
 ### Player, Entity, Weapon
-Omit FindMetaTable from your code because these globals always refer to their respective metatables.
+Omit FindMetaTable from your code because these globals always refer to their respective metatables.\
 Player/Entity are still callable and function the same as the default global functions.\
 *lua/swamp/sh_meta.lua*
 
 ### function Player:GetRank()
 Numeric player ranking (all players are zero, staff are 1+)\
 *lua/swamp/swampcop/sh_init.lua (hidden file)*
+
+### function Player:IsStaff()
+Boolean\
+*lua/swamp/swampcop/sh_init.lua (hidden file)*
+
+### function Player:SS_GivePoints(points, callback, fcallback)
+Give points. `callback` happens once the points are written. `fcallback` = failed to write\
+*lua/swamp/swampshop/sv_init.lua (hidden file)*
+
+### function Player:SS_TryTakePoints(points, callback, fcallback)
+Take points, but only if they have enough.\
+`callback` runs once the points have been taken.\
+`fcallback` runs if they don't have enough points or it otherwise fails to take them\
+*lua/swamp/swampshop/sv_init.lua (hidden file)*
 
 
 **COPYRIGHT: This repository and most of its content is copyrighted and owned by Swamp Servers. All other content is, to the best of our knowledge, used under license. If your copyrighted work is here without permission, please contact the email shown [here](https://swampservers.net/contact). This repository DOES NOT license its contents to be used for other purposes, nor does its existence on GitHub imply such a license.**

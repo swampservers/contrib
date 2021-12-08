@@ -29,7 +29,7 @@ for root, dirs, files in os.walk(".", topdown=False):
                             comment = line[3:].strip()
                     else:
                         if line.startswith("--") and len(line)>2 and line[2]!="-":
-                            comment += "\n" + line[2:].strip()
+                            comment += "\\\n" + line[2:].strip()
                         elif line=="":
                             # todo: file comment?
                             comment = None

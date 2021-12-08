@@ -1,24 +1,18 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 function Ply(name)
-    local humans = player.GetHumans()
-    name = string.lower(name)
-
-    for _, v in ipairs(humans) do
-        if string.lower(v:Name()) == name then return v end
-    end
-
-    for _, v in ipairs(humans) do
-        if (string.find(string.lower(v:Name()), name, 1, true) ~= nil) then return v end
-    end
+    local ply,c = PlyCount(name)
+    return ply
 end
 
+--- Find a player whose name contains some text. Returns any found player as well as the count of found players.
 function PlyCount(name)
-    name = string.lower(name)
+    name = name:lower()
     local rply = nil
     local c = 0
 
     for _, v in ipairs(player.GetHumans()) do
-        if (string.find(string.lower(v:Name()), name, 1, true) ~= nil) then
+        if string.lower(v:Name()):find(name, 1, true) then
             rply = v
             c = c + 1
         end

@@ -1,5 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
+
+-- TODO this doesnt operate on a string lmao
+
+--- Turns a number of seconds into a string like hh:mm:ss or mm:ss
 function string.FormatSeconds(sec)
     local hours = math.floor(sec / 3600)
     local minutes = math.floor((sec % 3600) / 60)
