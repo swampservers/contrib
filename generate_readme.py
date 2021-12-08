@@ -46,7 +46,7 @@ luadocs.sort(key= lambda x: x["file"]+" "+x["code"])
 docgen = "".join(
     f"""
 ### {x["code"]}
-{x["comment"]}\
+{x["comment"]}\\
 *{x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden file)") }*
 """ for x in luadocs
 )
