@@ -8,26 +8,17 @@ Contribute to Swamp Cinema here! How to:
 
 - 'Fork' this repo. This creates a copy of it you have edit permissions of.
 - Clone your forked repo into garrysmod/addons (so it creates garrysmod/addons/contrib), edit it, and push it back. You'll need the GitHub desktop or commandline client. Look up GitHub tutorials for that.
-- For clientside work, check out the [devtools](https://github.com/swampservers/contrib/blob/master/lua/autorun/client/cl_devtools.lua) which allow you to work on the actual server environment.
+- For clientside work, check out the [devtools](https://github.com/swampservers/contrib/blob/master/lua/swamp/dev/cl_devtools.lua) which allow you to work on the actual server environment.
 - Make a pull request on this repo. Use the 'compare across forks' link to request to merge your changes on your forked repo to this repo. We'll review the changes and, if accepted, will be live the next day.
 - Minor, single-file changes can just be done in the web browser by clicking the pencil icon.
 
 All models/materials/sounds in this repository will be automatically uploaded to our workshop addons, so don't worry about that.
 
-# Paid contributions
+# Code
 
-Please see our [task list](https://github.com/swampservers/contrib/issues/231) for more information.
-
-# Code guidelines
-
- - Please submit code that is readable; you can use https://fptje.github.io/glualint-web/ to do this.
- - Please write *as few lines of code as possible* to acheive the desired result. More code is not better!!!!
-
-# Files
-
-IMPORTANT: Make all your code compatible with our loading system. Refer to lua/autorun/swamp.lua
-
-Try to put cinema-specific weapons/entities in gamemodes/cinema/ and generic code in lua/. Both folders are loaded the same way.
+- Please submit code that is **clean and concise**. You may want to run it through [glualint](https://fptje.github.io/glualint-web/). Do a good job! 
+- Make your code compatible with our [loading system](https://github.com/swampservers/contrib/blob/master/lua/autorun/swamp.lua).
+- Try to put cinema-specific code in gamemodes/cinema/ and generic (cross-server) code in lua/. Both folders are loaded using our loading system.
 
 # API
 
