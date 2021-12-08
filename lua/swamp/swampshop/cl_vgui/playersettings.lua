@@ -20,6 +20,8 @@ vgui.Register("DSSTitleInfo", {
         local lastlocked = false
         local extra = 0
 
+        local pad = 20
+
         for i, min, name, reward in self.Title:Thresholds() do
             if lastlocked then
                 extra = extra + 1
@@ -31,7 +33,7 @@ vgui.Register("DSSTitleInfo", {
                 p:Dock(TOP)
                 p:SetTall(24)
                 p.Paint=noop
-                p:DockPadding(40,0,40,0)
+                p:DockPadding(pad,0,pad,0)
                 p:DockMargin(0,0,0,16)
 
                 vgui("DLabel", function(p)
@@ -71,8 +73,35 @@ vgui.Register("DSSTitleInfo", {
 
             
             end)
+        end
 
+        local pset = self.Title.nwp_vars[1]
+        local pset_verb = self.Title.pset_verb
+        if pset_verb then
+            vgui("DButton",  self, function(p)
+                function p:Think()
+                    if SHOWNPSET==pset then
+                        p:SetText("Stop showing who you've "..pset_verb)
+                    else
+                        p:SetText("Show who you've already "..pset_verb)
+                    end
+                end
 
+                p:DockMargin(540,0,pad,0)
+
+                p:Dock(TOP)
+                p:SetWide(160)
+
+                p.DoClick = function()
+                    if SHOWNPSET ~= pset then
+                        SHOWNPSET = pset
+                        SHOWNPSETVERB = pset_verb
+                        LocalPlayerNotify("Look at players' nameplates to see if you've "..pset_verb.." them")
+                    else
+                        SHOWNPSET =nil
+                    end
+                end
+            end)
         end
 
         if extra > 0 then
@@ -82,6 +111,7 @@ vgui.Register("DSSTitleInfo", {
                 p:SetContentAlignment(5)
             end)
         end
+
     end
 }, "DSSCustomizerSection")
 

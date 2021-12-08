@@ -178,6 +178,8 @@ end
 BLACK = Color(0, 0, 0, 255)
 WHITE = Color(255, 255, 255, 255)
 
+
+--- Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
 function defaultdict(constructor)
     return setmetatable({}, {
         __index = function(tab, key)
@@ -187,4 +189,8 @@ function defaultdict(constructor)
             return d
         end
     })
+end
+
+function bit.packu32(i)
+    return string.char(bit.band(bit.rshift(i, 24), 255), bit.band(bit.rshift(i, 16), 255), bit.band(bit.rshift(i, 8), 255), bit.band(i, 255))
 end

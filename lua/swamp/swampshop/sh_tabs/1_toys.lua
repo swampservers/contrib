@@ -153,6 +153,48 @@ SS_WeaponProduct({
 
 SS_Heading("Expensive Toys")
 
+
+SS_Product({
+    class = 'mystery',
+    price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
+    name = (os.date("%B", os.time()) == "December" and 'Present') or 'Mystery Box', --'Mystery Box','Present'
+    description = "Contains a random weapon or other item.",
+    model = (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
+    OnBuy = function(self, ply)
+        if ply.cantmakepresent then
+            ply:SS_GivePoints(self.price)
+            ply:Notify("Cooldown...")
+
+            return
+        end
+
+        ply.cantmakepresent = true
+
+        timer.Simple(3, function()
+            ply.cantmakepresent = false
+        end)
+
+        ply:Notify("Press use (E) to open your crate!")
+        local presentCount = 0
+
+        for k, v in pairs(ents.FindByClass("ent_mysterybox")) do
+            presentCount = presentCount + 1
+
+            if presentCount > 20 then
+                v:Remove()
+            end
+        end
+
+        local e = ents.Create("ent_mysterybox")
+        e:SetOwner(ply)
+        local pos = ply:GetPos() + (Vector(ply:GetAimVector().x, ply:GetAimVector().y, 0):GetNormalized() * 50) + Vector(0, 0, 10)
+        e:SetPos(pos)
+        e:SetAngles(Angle(0, math.random(0, 360), 0))
+        e:Spawn()
+        e:Activate()
+    end
+})
+
 SS_WeaponProduct({
     class = "weapon_hamsterball",
     price = 2000,
@@ -235,45 +277,6 @@ SS_WeaponAndAmmoProduct({
     class = 'weapon_laserpointer'
 })
 
-SS_Product({
-    class = 'mystery',
-    price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
-    name = (os.date("%B", os.time()) == "December" and 'Present') or 'Mystery Box', --'Mystery Box','Present'
-    description = "Contains a random weapon or other item.",
-    model = (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
-    OnBuy = function(self, ply)
-        if ply.cantmakepresent then
-            ply:SS_GivePoints(self.price)
-            ply:Notify("Cooldown...")
-
-            return
-        end
-
-        ply.cantmakepresent = true
-
-        timer.Simple(3, function()
-            ply.cantmakepresent = false
-        end)
-
-        ply:Notify("Press use (E) to open your crate!")
-        local presentCount = 0
-
-        for k, v in pairs(ents.FindByClass("ent_mysterybox")) do
-            presentCount = presentCount + 1
-
-            if presentCount > 20 then
-                v:Remove()
-            end
-        end
-
-        local e = ents.Create("ent_mysterybox")
-        local pos = ply:GetPos() + (Vector(ply:GetAimVector().x, ply:GetAimVector().y, 0):GetNormalized() * 50) + Vector(0, 0, 10)
-        e:SetPos(pos)
-        e:SetAngles(Angle(0, math.random(0, 360), 0))
-        e:Spawn()
-        e:Activate()
-    end
-})
 
 local function CannotBuyTrash(self, ply)
     if SERVER then return CannotMakeTrash(ply) end

@@ -34,6 +34,12 @@ local function DrawName(ply, opacityScale)
     local name = string.upper(ply:GetName())
     cam.Start3D2D(pos, Angle(0, ang.y, 90), 0.15)
     -- render.OverrideDepthEnable(false, true)
+
+    if SHOWNPSET then
+        local inset = InPartnerSet(Me.NWPrivate[SHOWNPSET] or "", ply)
+        DrawTheaterText(inset and (SHOWNPSETVERB[1]:upper()..SHOWNPSETVERB:sub(2)) or ("Not "..SHOWNPSETVERB), "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity*1.5))
+    end
+
     DrawTheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
     local ch = ply:TypingChars()
     local chy = 58

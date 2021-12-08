@@ -15,7 +15,7 @@ if SERVER then
     end
 end
 
-function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn)
+function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pset_verb)
     local title = {}
     table.insert(Titles, title)
 
@@ -52,6 +52,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn)
     if isstring(nwp_vars) then
         nwp_vars = {nwp_vars}
     end
+    title.nwp_vars = nwp_vars
 
     local function num(p)
         if not isnumber(p) then
@@ -100,6 +101,8 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn)
         return p
     end
 
+    title.pset_verb=pset_verb
+
     for i, v in ipairs(nwp_vars) do
         table.insert(TitleRefreshDir[v], titleindex)
     end
@@ -111,7 +114,19 @@ end
 --description: string which can be formatted with the threshold for the next target, or list of strings corresponding to each level
 --nwp_vars: var or list of vars that are used to calculate progress, so when they change the server can strip the title if necessary
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
+--pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
 AddTitle("", "Newfriend", "Welcome to the Swamp", {}, function() return true end)
+
+
+AddTitle("christmas", {
+    {1, "Festive", 25000},
+
+}, "During December, give a present (from shop) to another player", "s_christmas")
+
+AddTitle("giftgiver", {
+    {50, "Gift Giver", 1000000},
+    {1000, "Saint Nick", 1000000}
+}, "Give a present (from shop) to %s different players", "s_giftgiver", function(ply) return PartnerSetSize(ply.NWPrivate.s_giftgiver or "") end, "gifted")
 
 AddTitle("popcornhit", {
     {10, "Goofball", 2000},
@@ -153,10 +168,7 @@ AddTitle("kleinertp", {
 -- local id = ply:AccountID()
 -- id = string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
 -- FIX THE DONATION BOXES
--- AddTitle("", {
---     {100, "Gift Giver"},
---     {1000, "Santa"}
--- }, "Give %s gifts (mystery boxes) to other players", "s_giftgiver")
+
 
 -- AddTitle("garfield", {
 --     {200, "Chonkers", 10000},
@@ -164,9 +176,4 @@ AddTitle("kleinertp", {
 --     {10000, "I Eat, Jon.", 1000000}
 -- }, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
 
-local Player = FindMetaTable("Player")
-
-function Player:ShortID()
-    local id = self:AccountID()
-    return string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
-end
+--NOMINIFY

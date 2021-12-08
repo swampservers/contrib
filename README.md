@@ -34,11 +34,15 @@ Try to put cinema-specific weapons/entities in gamemodes/cinema/ and generic cod
 
 ### Me = LocalPlayer()
 Use this global instead of LocalPlayer() (it will be either nil or a valid entity)\
-*lua/swamp/misc/cl_me.lua*
+*lua/swamp/extensions/cl_me.lua*
 
 ### function Entity:IsPony()
 Boolean, mostly for players\
 *lua/swamp/pony/sh_init.lua*
+
+### function defaultdict(constructor)
+Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.\
+*lua/swamp/sh_core.lua*
 
 ### function Player:GetRank()
 Numeric player ranking (all players are zero, staff are 1+)\
