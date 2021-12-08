@@ -85,12 +85,27 @@ Bool if we are currently drawing to the screen.\
 Sets the color modulation, calls your callback, then sets it back to what it was before.\
 *lua/swamp/extensions/cl_render_extension.lua*
 
-### --
-This defines the function vgui(classname, parent (optional), constructor) which creates and returns a panel.\
-*lua/swamp/extensions/cl_vgui_function.lua*
-
 ### function DFrame:CloseOnEscape()
 Makes the DFrame :Close() if escape is pressed\
+*lua/swamp/extensions/cl_vgui_function.lua*
+
+### function vgui(classname, parent (optional), constructor)
+This defines the function vgui(classname, parent (optional), constructor) which creates and returns a panel.\
+\
+ The parent should only be passed when creating a root element (eg. a DFrame) which need a parent.\
+ Child elements should be constructed using vgui() from within the parent's constructor, and their parent will be set automatically.\
+\
+ This is helpful for creating complex guis as the hierarchy of the layout is clearly reflected in the code structure.\
+\
+ Example: (a better example is in the file)\
+ ```\
+ vgui("Panel", function(p)\
+    -- p is the panel, set it up here\
+    vgui("DLabel", function(p)\
+        -- p is the label here\
+    end)\
+ end)\
+ ```\
 *lua/swamp/extensions/cl_vgui_function.lua*
 
 ### function Entity:TimerCreate(identifier, delay, repetitions, callback)
@@ -223,10 +238,6 @@ Take points, but only if they have enough.\
  `fcallback` runs if they don't have enough points or it otherwise fails to take them\
 *lua/swamp/swampshop/sv_init.lua (hidden file)*
 
-### --
-To use web materials, just call in your draw hook:\
-*lua/swamp/webmaterials/cl_webmaterials.lua (hidden file)*
-
 ### function Entity:SetWebMaterial(args)
 Like `WebMaterial` but sets it to an entity (only needs to be called once)\
  The material will load when the entity is close unless `args.forceload=true` is passed.\
@@ -234,6 +245,24 @@ Like `WebMaterial` but sets it to an entity (only needs to be called once)\
 
 ### function Entity:SetWebSubMaterial(idx, args)
 Like `Entity:SetWebMaterial`\
+*lua/swamp/webmaterials/cl_webmaterials.lua (hidden file)*
+
+### function WebMaterial(args)
+To use web materials, just call in your draw hook:\
+\
+ `mat = WebMaterial(args)`\
+\
+ Then set/override material to mat\
+\
+ args is a table with the following potential keys:\
+ - id: string, from `SanitizeImgurId`\
+ - owner: player/steamid or nil\
+ - pos: vector or nil - rendering position, used for delayed distance loading\
+ - stretch: bool = false (stretch to fill frame, or contain to maintain aspect)\
+ - shader: str = "VertexLitGeneric"\
+ - params: str = "{}" - A "table" of material parameters for CreateMaterial (NOT A TABLE, A STRING THAT CAN BE PARSED AS A TABLE)\
+ - pointsample: bool = false\
+ - nsfw: bool = false - (can be false, true, or "?")\
 *lua/swamp/webmaterials/cl_webmaterials.lua (hidden file)*
 
 ### function AsyncSanitizeImgurId(id, callback)

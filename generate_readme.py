@@ -28,8 +28,8 @@ for root, dirs, files in os.walk(".", topdown=False):
                         if line.startswith("---") and len(line)>3 and line[3]!="-":
                             comment = line[4 if line[3]==" " else 3:]
                     else:
-                        if line.startswith("--") and len(line)>2 and line[2]!="-":
-                            comment += "\\\n" + line[3 if line[3]==" " else 2:]
+                        if line.startswith("--") and (len(line)==2 or line[2]!="-"):
+                            comment += "\\\n" + line[3 if len(line)>3 and line[3]==" " else 2:]
                         elif line=="":
                             # todo: file comment?
                             comment = None
