@@ -3,7 +3,7 @@
 -- Works on client and server. Much, much faster than `ents.FindByClass` or even `player.GetAll`
 -- Each subtable is ordered and will never be nil even if no entities were created.
 -- To use it try something like this: `for i,v in ipairs(Ents.prop_physics) do` ...
---- Ents (global)
+--- Ents  (global variable)
 local EntClass = Entity.GetClass
 local EntIndex = Entity.EntIndex
 local EntTable = Entity.GetTable

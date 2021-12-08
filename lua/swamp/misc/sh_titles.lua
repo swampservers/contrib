@@ -120,6 +120,10 @@ end
 --pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
 AddTitle("", "Newfriend", "Welcome to the Swamp", {}, function() return true end)
 
+
+-- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
+
+--jolly
 AddTitle("christmas", {
     {1, "Festive", 25000},
 }, "During December, give a present (from shop) to another player", "s_christmas")
@@ -137,7 +141,7 @@ AddTitle("popcornhit", {
 }, "Throw popcorn in someone's face %s times", "s_popcornhit")
 
 AddTitle("mined", {
-    {30, "Digger", 10000},
+    {20, "Digger", 10000},
     {100, "Spelunker", 20000},
     {500, "Excavator", 30000},
     {2000, "Earth Mover", 40000},
@@ -159,6 +163,8 @@ AddTitle("kleinertp", {
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
+-- Founder of ISIS and Jihad Squad should be a leaderboard
+
 AddTitle("", {
     {10, "Insurrectionist"},
     {20, "Terrorist"},
@@ -166,7 +172,6 @@ AddTitle("", {
     {40, "Founder of ISIS"}
 }, "Kill at least %s active players in a suicide bombing", "s_bigjihad")
 
--- Founder of ISIS and Jihad Squad should be a leaderboard on this stat
 AddTitle("", {
     {50, "Suicide Bomber"},
     {1000, "Jihad Squad"}

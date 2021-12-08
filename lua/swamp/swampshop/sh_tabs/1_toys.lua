@@ -155,8 +155,8 @@ SS_Heading("Expensive Toys")
 
 SS_Product({
     class = 'mystery',
-    price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
-    name = (os.date("%B", os.time()) == "December" and 'Present') or 'Mystery Box', --'Mystery Box','Present'
+    price = (os.date("%B", os.time()) == "December" and 4000) or 5000,
+    name = (os.date("%B", os.time()) == "December" and 'Mystery Present') or 'Mystery Box', --'Mystery Box','Present'
     description = "Contains a random weapon or other item.",
     model = (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
     OnBuy = function(self, ply)

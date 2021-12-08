@@ -128,7 +128,7 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
 
     if IsValid(eater) then
         local vo, ao = vic:Obesity(), eater:Obesity()
-        local ratio = 1 --math.min(math.pow(vo / ao, 0.3),1) * 0.9 --math.min(0.7, (vo/ao))
+        local ratio = vic:IsBot() and 0.2 or (vic:IsAFK() and 0.5 or 1) --math.min(math.pow(vo / ao, 0.3),1) * 0.9 --math.min(0.7, (vo/ao))
 
         if ratio < 0.3 then
             if ratio <= 0.1 then
@@ -153,7 +153,7 @@ if SERVER then
             v = v.Owner
 
             if IsValid(v) then
-                v:SetObesity(math.max(1, v:Obesity() * 0.997 - 0.02))
+                v:SetObesity(math.max(1, v:Obesity() * 0.996 - 0.02))
                 v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
             end
         end
@@ -162,7 +162,7 @@ end
 
 function SWEP:Deploy()
     self.Owner:SetModel("models/player/pyroteknik/garfield.mdl")
-    self:SetObesity()
+    if SERVER then self:SetObesity() end
 end
 
 function SWEP:Initialize()

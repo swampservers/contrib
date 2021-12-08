@@ -131,9 +131,12 @@ function PANEL:Init()
 
             local av = vgui("AvatarImage", function(p)
                 p:Dock(LEFT)
-                p:SetPlayer(Me, 184)
-                p:SetSize(SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2), SS_BOTBARHEIGHT - (SS_COMMONMARGIN * 2))
-                p:SetPos(SS_COMMONMARGIN, SS_COMMONMARGIN)
+                local grow = 2
+                local sz = SS_BOTBARHEIGHT - ( (SS_COMMONMARGIN - grow) * 2)
+                p:DockMargin(-grow,-grow,0,-grow)
+                p:SetWide(sz)
+                p:SetPlayer(Me, sz) --184
+                -- TODO figure out how it gets these images, then integrate them into swampchat
             end)
 
             vgui("DPanel", function(p)

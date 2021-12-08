@@ -72,7 +72,7 @@ function ReleaseVape(ply)
         if ply.vapeCount >= 5 then
             -- ply.vapeCount >= 20 and
             if ply.vapeCount < 50 then
-                ply:AddStat("hitvape")
+                ply:AddStat("vapehit")
 
                 if ply:GetActiveWeapon():GetClass() == "weapon_vape_mega" then
                     ply:FlagStat("megavape")
