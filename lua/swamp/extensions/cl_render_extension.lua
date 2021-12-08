@@ -1,6 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 --- Bool if we are currently drawing to the screen.
 function render.DrawingScreen()
     local t = render.GetRenderTarget()
