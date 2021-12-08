@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 
+# Generates the docs in README.md. Write the docs like luadoc/ldoc (using three --- to denote the start of something)
+
 import os
 import shutil
 
 lua_dir = "/swamp/workspace"
 output_dir = "/swamp/repos/contrib"
 
-
-luadocs = [
-
-]
-
+luadocs = []
 
 os.chdir(lua_dir)
 for root, dirs, files in os.walk(".", topdown=False):
@@ -39,13 +37,15 @@ for root, dirs, files in os.walk(".", topdown=False):
                                 "comment": comment,
                                 "file": f
                             })
+                            comment = None
 
 luadocs.sort(key= lambda x: x["file"]+" "+x["code"])
 
 docgen = "".join(
-    f"""# {x["code"]}
+    f"""
+## {x["code"]}
 {x["comment"]}
-*file: {x["file"]}*
+*{x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden file)") }*
 """ for x in luadocs
 )
 

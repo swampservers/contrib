@@ -75,7 +75,6 @@ function SWEP:ButtonSound(state)
 end
 
 function SWEP:Initialize()
-    ---self:SetHoldType( "pistol" )
     self:SetHoldType("slam")
 end
 

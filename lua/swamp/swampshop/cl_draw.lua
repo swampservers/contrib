@@ -63,7 +63,7 @@ local EntityGetModel = Entity.GetModel
 --TODO: add "defaultcfg" as a standard field in items rather than this hack!
 --TODO this is lag causin
 -- function SS_GetItemWorldPos(item, ent)
---     local pone = isPonyModel(EntityGetModel(ent))
+--     local pone = IsPonyModel(EntityGetModel(ent))
 --     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 --     local pos, ang
 --     if attach == "eyes" then
@@ -88,7 +88,7 @@ local EntityGetModel = Entity.GetModel
 -- function SS_DrawWornCSModel(item, mdl, ent)
 --     local pos, ang = SS_GetItemWorldPos(item, ent)
 --     mdl:Refresh()
---     -- local pone = isPonyModel(EntityGetModel(ent))
+--     -- local pone = IsPonyModel(EntityGetModel(ent))
 --     -- local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 --     -- local pos, ang
 --     -- if attach == "eyes" then
@@ -203,7 +203,7 @@ function SS_ApplyBoneMods(ent, mods)
     end
 
     if HumanTeamName then return end
-    local pone = isPonyModel(ent:GetModel())
+    local pone = IsPonyModel(ent:GetModel())
     local suffix = pone and "_p" or "_h"
     --if pelvis has no children, it's not ready!
     local pelvis = ent:LookupBone(pone and "LrigPelvis" or "ValveBiped.Bip01_Pelvis")
@@ -302,7 +302,7 @@ function SS_AttachAccessory(item, ent, recycle_mdl, forceload)
     end
 
     mdl.item = item
-    local pone = isPonyModel(EntityGetModel(ent))
+    local pone = IsPonyModel(EntityGetModel(ent))
     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
 
     if attach == "eyes" then

@@ -200,12 +200,12 @@ PPM.MARK_COUNT = 27
 
 -- PPM.pony_models = {
 --     ["models/ppm/player_default_base.mdl"] = {
---         isPonyModel = true,
+--         IsPonyModel = true,
 --         BgroupCount = 8
 --     }
 --     -- ,
 -- --     ["models/ppm/player_default_clothes1.mdl"] = {
--- --         isPonyModel = false,
+-- --         IsPonyModel = false,
 -- --         BgroupCount = 8
 -- --     }
 -- }
@@ -267,7 +267,7 @@ PPM.MARK_COUNT = 27
 -- end
 -- function PPM.hasPonyModel(model)
 --     if PPM.pony_models[model] == nil then return false end
---     return PPM.pony_models[model].isPonyModel
+--     return PPM.pony_models[model].IsPonyModel
 -- end
 -- function PPM.isValidPonyLight(ent)
 --     if not IsValid(ent) then return false end

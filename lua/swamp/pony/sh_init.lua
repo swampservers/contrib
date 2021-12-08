@@ -3,9 +3,42 @@ PPM = PPM or {}
 PPM.Playermodel = "models/ppm/player_default_base.mdl"
 local Entity = FindMetaTable("Entity")
 
+
+function IsPonyModel(modelName)
+    modelName = modelName:sub(1, 17)
+    if modelName == "models/ppm/player" then return true end
+    if modelName == "models/mlp/player" then return true end
+
+    return false
+end
+
+--- Boolean, mostly for players
+function Entity:IsPony()
+    return IsPonyModel(self:GetModel())
+end
+
 function Entity:IsPPMPony()
     return self:GetModel() == PPM.Playermodel
 end
+
+
+function Entity:PonyNoseOffsetBone(ang)
+    if self.IsPPMPony and self:IsPPMPony() then
+        if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.9 + ang:Right() * 1.2 end
+    end
+
+    return Vector(0, 0, 0)
+end
+
+function Entity:PonyNoseOffsetAttach(ang)
+    if self.IsPPMPony and self:IsPPMPony() then
+        if (self.ponydata or {}).gender == 2 then return ang:Forward() * 1.8 + ang:Up() * 0.8 end
+    end
+
+    return Vector(0, 0, 0)
+end
+
+
 
 function Entity:PonyPlayer()
     if self:IsPlayer() then return self end

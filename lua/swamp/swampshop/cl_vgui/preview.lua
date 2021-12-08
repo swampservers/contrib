@@ -177,7 +177,7 @@ function PANEL:FocalPointAndDistance()
         end
 
         if SS_HoverItem and SS_HoverItem.bonemod then
-            local pone = isPonyModel(self.Entity:GetModel())
+            local pone = IsPonyModel(self.Entity:GetModel())
             local suffix = pone and "_p" or "_h"
             local bn = SS_HoverItem.cfg["bone" .. suffix] or (pone and "LrigScull" or "ValveBiped.Bip01_Head1")
             local x = self.Entity:LookupBone(bn)
@@ -250,7 +250,7 @@ function PANEL:Paint(w, h)
     self:AlignEntity()
     self:StartCamera()
 
-    if isPonyModel(self.Entity:GetModel()) then
+    if IsPonyModel(self.Entity:GetModel()) then
         -- PPM.PrePonyDraw(self.Entity, true)
         -- PPM.setBodygroups(self.Entity, true)
         -- 
@@ -264,7 +264,7 @@ function PANEL:Paint(w, h)
     else
         local PrevMins, PrevMaxs = self.Entity:GetRenderBounds()
 
-        if isPonyModel(self.Entity:GetModel()) then
+        if IsPonyModel(self.Entity:GetModel()) then
             PrevMins = Vector(-42, -20, -2.5)
             PrevMaxs = Vector(38, 20, 83)
         end
