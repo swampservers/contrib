@@ -27,6 +27,18 @@ function net.ReadAngleHD()
     return Angle(x, y, z)
 end
 
+function net.WriteBinaryString(st)
+    local l = st:len()
+    net.WriteUInt(l, 16)
+    net.WriteData(st, l)
+end
+
+function net.ReadBinaryString()
+    local l = net.ReadUInt(16)
+    return net.ReadData(l)
+end
+
+
 function net.WriteTableHD(tab)
     for k, v in pairs(tab) do
         net.WriteTypeHD(k)
@@ -53,7 +65,7 @@ net.WriteVarsHD = {
     end,
     [TYPE_STRING] = function(t, v)
         net.WriteUInt(t, 8)
-        net.WriteString(v)
+        net.WriteBinaryString(v)
     end,
     [TYPE_NUMBER] = function(t, v)
         net.WriteUInt(t, 8)
@@ -105,7 +117,7 @@ end
 
 net.ReadVarsHD = {
     [TYPE_NIL] = function() return nil end,
-    [TYPE_STRING] = function() return net.ReadString() end,
+    [TYPE_STRING] = function() return net.ReadBinaryString(v) end,
     [TYPE_NUMBER] = function() return net.ReadDouble() end,
     [TYPE_TABLE] = function() return net.ReadTableHD() end,
     [TYPE_BOOL] = function() return net.ReadBool() end,

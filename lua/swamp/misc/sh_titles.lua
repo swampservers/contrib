@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
+local Player = FindMetaTable("Player")
 
 --- Get current title string or ""
 function Player:GetTitle()
@@ -16,6 +16,8 @@ if SERVER then
     end
 end
 
+
+--TODO: should we combine all reward_ids into one, for all titles?
 function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pset_verb)
     local title = {}
     table.insert(Titles, title)
@@ -118,7 +120,6 @@ end
 --pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
 AddTitle("", "Newfriend", "Welcome to the Swamp", {}, function() return true end)
 
-
 AddTitle("christmas", {
     {1, "Festive", 25000},
 
@@ -133,20 +134,44 @@ AddTitle("giftgiver", {
 AddTitle("popcornhit", {
     {10, "Goofball", 2000},
     {200, "Troll", 10000},
-    {1000, "Asshole", 50000},
+    {1000, "Minge", 50000},
     {100000, "Retard", 0}
 }, "Throw popcorn in someone's face %s times", "s_popcornhit")
 
--- TODO put back the flags thing?
+
+AddTitle("mined", {
+    {30, "Digger", 10000},
+    {100, "Spelunker", 20000},
+    {500, "Excavator", 30000},
+    {2000, "Earth Mover",40000},
+    {10000, "Minecraft Steve",50000}
+}, "Dig up %s pieces of ore (In Minecraft)", "s_mined")
+
+
+AddTitle("garfield", {
+    {200, "Chonkers", 10000},
+    {1000, "Fat Cat", 100000},
+    {10000, "I Eat, Jon.", 1000000}
+}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
+
+
 AddTitle("megavape", {
     {1, "Vapist", 50000}
 }, "Find the mega vape and hit it", "s_megavape")
 
---todo: print who currently has the title?
+AddTitle("kleinertp", {
+    {1, "Test Subject", 10000}
+}, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
+
+
 AddTitle("", {
-    {1, "The 1%"},
-    {13, "Illuminati"}
-}, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points_leader", function(ply) return 16 - (ply.NWPrivate.points_leader or 16) end)
+    {5, "Suicide Bomber"},
+    {10, "Jihad Squad"},
+    {15, "Insurrectionist"},
+    {20, "Terrorist"},
+    {40, "Founder of ISIS"}
+}, "Suicide bomb a theater and kill at least %s players", "s_bigjihadth")
+
 
 AddTitle("", {
     {1, "Patriot"},
@@ -160,15 +185,13 @@ AddTitle("", {
     {3, "Greatest Ally"}
 }, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, {"s_lefty_donation", "s_lefty_donation_leader"}, function(ply) return ((ply.NWPrivate.s_lefty_donation or 0) >= 100000 and 1 or 0) + (ply.NWPrivate.s_lefty_donation_leader and 1 or 0) + (ply.NWPrivate.s_lefty_donation_leader == 1 and 1 or 0) end)
 
-AddTitle("kleinertp", {
-    {1, "Test Subject", 10000}
-}, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
-AddTitle("garfield", {
-    {200, "Chonkers", 10000},
-    {1000, "Fat Cat", 100000},
-    {10000, "I Eat, Jon.", 1000000}
-}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
+--todo: print who currently has the title?
+AddTitle("", {
+    {1, "The 1%"},
+    {13, "Illuminati"}
+}, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points_leader", function(ply) return 16 - (ply.NWPrivate.points_leader or 16) end)
+
 
 -- AddTitle("vandal", {
 --     {200, "Tagger", 10000},

@@ -10,7 +10,7 @@ NWPrivate = NWPrivate or {}
 
 -- NWPrivateListener = NWPrivateListener or {}
 net.Receive("UpdatePrivates", function(len)
-    for k, v in pairs(net.ReadTable()) do
+    for k, v in pairs(net.ReadTableHD()) do
         NWPrivate[k] = v
         -- if NWPrivateListener[k] then NWPrivateListener[k](Me, v) end
     end
@@ -18,7 +18,7 @@ net.Receive("UpdatePrivates", function(len)
     -- doesnt work
     -- local a,b = net.BytesLeft()
     -- if b>0 then
-    for k, _ in pairs(net.ReadTable()) do
+    for k, _ in pairs(net.ReadTableHD()) do
         NWPrivate[k] = nil
         -- if NWPrivateListener[k] then NWPrivateListener[k](Me, nil) end
     end
