@@ -164,16 +164,9 @@ AddTitle("kleinertp", {
 --     {10000, "I Eat, Jon.", 1000000}
 -- }, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
 
-
--- TODO make these global and make the call do the current global function that exists so it still works lol
-
-
 local Player = FindMetaTable("Player")
 
 function Player:ShortID()
     local id = self:AccountID()
     return string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
 end
-
--- local id = ply:AccountID()
--- id = string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
