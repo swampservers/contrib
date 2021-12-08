@@ -32,10 +32,6 @@ Try to put cinema-specific weapons/entities in gamemodes/cinema/ and generic cod
 # API
 
 
-### function Player:IsAFK()
-Boolean\
-*lua/swamp/clientcheck/sh_afk_detect.lua (hidden file)*
-
 ### Me = LocalPlayer()
 Use this global instead of LocalPlayer() (it will be either nil or a valid entity)\
 *lua/swamp/misc/cl_me.lua*
