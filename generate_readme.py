@@ -44,13 +44,13 @@ for root, dirs, files in os.walk(".", topdown=False):
                             })
                             comment = None
 
-luadocs.sort(key= lambda x: x["file"]+" "+x["code"])
+luadocs.sort(key= lambda x: ("!" if x["file"].startswith("lua") else "") +x["file"]+" "+x["code"])
 
 docgen = "".join(
     f"""
 ### {x["code"]}
 {x["comment"]}\n\\
-*{x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden file)") }*
+*file: {x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden)") }*
 """ for x in luadocs
 )
 
