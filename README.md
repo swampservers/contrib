@@ -33,7 +33,7 @@ Boolean
 \
 *file: lua/swamp/clientcheck/sh_afk_detect.lua (hidden)*
 
-### Me (global)
+### Me  (global variable)
 Use this global instead of LocalPlayer()\
  It will be either nil or a valid entity. Don't write `if IsValid(Me)`... , just write `if Me`...
 \
@@ -95,7 +95,7 @@ A timer which will only call the callback (with the entity passed as the argumen
 \
 *file: lua/swamp/extensions/sh_ent_timer.lua*
 
-### Ents (global)
+### Ents  (global variable)
 A global cache of all entities, in subtables divided by classname.\
  Works on client and server. Much, much faster than `ents.FindByClass` or even `player.GetAll`\
  Each subtable is ordered and will never be nil even if no entities were created.\
@@ -213,7 +213,7 @@ Selects a range of an ordered table similar to string.sub
 \
 *file: lua/swamp/sh_core.lua*
 
-### Player, Entity, Weapon (global)
+### Player, Entity, Weapon  (global variables)
 Omit FindMetaTable from your code because these globals always refer to their respective metatables.\
  Player/Entity are still callable and function the same as the default global functions.
 \
