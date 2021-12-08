@@ -51,9 +51,15 @@ function Player:IsJuggernaut()
 end
 
 function Player:SetObesity(obs)
+    if obs and  obs>1 then self:MaxStat("garfield", math.floor(obs*10)) end
+
+
     if obs == 1 and self:Obesity() == 1 then return end
+
+    obs = obs or self:Obesity()
+
     self:SetNWFloat("garfield", obs)
-    local sc = 1 --self:HasWeapon("weapon_garfield") and 0.55 or 1
+    local sc = self:HasWeapon("weapon_garfield") and 0.55 or 1
     -- if not self:IsBot() then
     self:SetModelScale(self:ObesityScale() * sc)
 
@@ -138,26 +144,26 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
             eater:SetObesity(ao + vo * ratio)
         end
 
-        eater:SetHealth(math.min(eater:GetMaxHealth(), eater:Health() + 300)) --   eater:Health() + (eater:GetMaxHealth() - eater:Health()) * (ratio)) --/0.9))
+        eater:SetHealth(math.min(eater:GetMaxHealth(), eater:Health() + 100)) --   eater:Health() + (eater:GetMaxHealth() - eater:Health()) * (ratio)) --/0.9))
         vic:SetNW2Entity("EATER", nil)
     end
 end)
 
--- if SERVER then
---     timer.Create("GarfieldDecay", 30, 0, function()
---         for k, v in pairs(player.GetAll()) do
---             -- v:SetObesity(math.max(1, v:Obesity() * 0.99))
---         end
---     end)
---     --10
---     timer.Create("GarfieldHeal", 10, 0, function()
---         for k, v in pairs(player.GetAll()) do
---             v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
---         end
---     end)
--- end
+if SERVER then
+    timer.Create("GarfieldDecay", 10, 0, function()
+        for k, v in pairs(Ents.weapon_garfield) do
+            v=v.Owner
+            if IsValid(v) then
+            v:SetObesity(math.max(1, v:Obesity() * 0.997 - 0.02))
+            v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
+            end
+        end
+    end)
+end
+
 function SWEP:Deploy()
     self.Owner:SetModel("models/player/pyroteknik/garfield.mdl")
+    self:SetObesity()
 end
 
 function SWEP:Initialize()
@@ -503,9 +509,7 @@ function SWEP:SecondaryAttack()
     end
 end
 
-function SWEP:Reload()
-    if SERVER then end
-end
+
 
 hook.Add("KeyPress", "GarfieldJump", function(ply, key)
     if CLIENT then return end
@@ -529,10 +533,6 @@ hook.Add("KeyPress", "GarfieldJump", function(ply, key)
     self.Owner:SetVelocity(av * 450 - self.Owner:GetVelocity())
     self.Owner:SetObesity(math.max(1, self.Owner:Obesity() * 0.95))
 end)
-
-function SWEP:Deploy()
-    self.Owner:DrawViewModel(false)
-end
 
 function SWEP:DrawWorldModel()
     if not IsValid(self.Owner) then

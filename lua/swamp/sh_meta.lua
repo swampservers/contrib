@@ -1,5 +1,9 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- stores these metatables in global variables, but adds a second layer of metatable with call so the old global functions still work
+
+--- Omit FindMetaTable from your code because these globals always refer to their respective metatables.
+-- Player/Entity are still callable and function the same as the default global functions.
+--- Player, Entity, Weapon
+
 if isfunction(Entity) then
     local EntityFunction = Entity
     Entity = FindMetaTable("Entity")

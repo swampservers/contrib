@@ -123,9 +123,10 @@ AddTitle("christmas", {
 
 }, "During December, give a present (from shop) to another player", "s_christmas")
 
+-- {1000, "Saint Nick", 1000000}
 AddTitle("giftgiver", {
-    {100, "Gift Giver", 1000000},
-    {1000, "Saint Nick", 1000000}
+    {100, "Gift Giver", 1000000}
+    
 }, "Give a present (from shop) to %s different players", "s_giftgiver", function(ply) return PartnerSetSize(ply.NWPrivate.s_giftgiver or "") end, "gifted")
 
 AddTitle("popcornhit", {
@@ -162,18 +163,17 @@ AddTitle("kleinertp", {
     {1, "Test Subject", 10000}
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
---NOT IMPLEMENTED
---TODO: try to make it where you have to give it to X DIFFERENT players
--- just take player:AccountID() (id3) and convert the last number to 4 uint bytes, there probably wont be universe conflicts and if there are its not a big deal
--- local id = ply:AccountID()
--- id = string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
--- FIX THE DONATION BOXES
+AddTitle("garfield", {
+    {200, "Chonkers", 10000},
+    {1000, "Fat Cat", 100000},
+    {10000, "I Eat, Jon.", 1000000}
+}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
+
+-- AddTitle("vandal", {
+--     {200, "Tagger", 10000},
+--     {1000, "Vandal", 100000}
+-- }, "Place %s feet of spraypaint", "s_spraypaint")
 
 
--- AddTitle("garfield", {
---     {200, "Chonkers", 10000},
---     {1000, "Fat Cat", 100000},
---     {10000, "I Eat, Jon.", 1000000}
--- }, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
 
 --NOMINIFY

@@ -44,6 +44,10 @@ Boolean, mostly for players\
 Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.\
 *lua/swamp/sh_core.lua*
 
+### Player, Entity, Weapon
+Player, Entity, Weapon\
+*lua/swamp/sh_meta.lua*
+
 ### function Player:GetRank()
 Numeric player ranking (all players are zero, staff are 1+)\
 *lua/swamp/swampcop/sh_init.lua (hidden file)*
