@@ -65,7 +65,7 @@ else
     util.AddNetworkString('Notify')
 end
 
-local Player = FindMetaTable('Player')
+
 
 --- Show a notification (bottow center screen popup)
 function Player:Notify(...)

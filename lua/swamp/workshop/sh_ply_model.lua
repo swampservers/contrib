@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local Player = FindMetaTable("Player")
+
 
 function Player:GetDisplayModel()
     local st = self:GetNW2String("DisplayModel", "")

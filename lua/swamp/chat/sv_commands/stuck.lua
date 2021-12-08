@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-local PLAYER = FindMetaTable("Player")
+
 
 local function AppropriateNavArea(ply, area)
     if (not IsValid(area)) then return false end
@@ -31,7 +31,7 @@ local function biasdist(pos1, pos2, biasvec)
     return (pos1 * biasvec):Distance((pos2 * biasvec))
 end
 
-function PLAYER:IsStuck()
+function Player:IsStuck()
     if (self:InVehicle()) then return false end
     local mins, maxs = self:GetCollisionBounds()
     local tr = {}
@@ -53,7 +53,7 @@ function PLAYER:IsStuck()
     return false
 end
 
-function PLAYER:UnStick()
+function Player:UnStick()
     --reuse the last spot they were placed if this happens frequently
     if (self.LastUnstickSpot and self:GetPos():Distance(self.LastUnstickSpot) < 200) then
         self:SetPos(self.LastUnstickSpot)

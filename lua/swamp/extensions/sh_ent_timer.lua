@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- Entity timer system, timers are removed when entity is
-local Entity = FindMetaTable("Entity")
+
 
 --- A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid
 function Entity:TimerSimple(delay, callback)

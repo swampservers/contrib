@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local Player = FindMetaTable('Player')
+
 
 function Player:SS_GetDonation()
     return self.SS_Donation or 0

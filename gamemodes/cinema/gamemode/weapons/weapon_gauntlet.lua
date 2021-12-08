@@ -37,9 +37,7 @@ end)
 function SWEP:Initialize()
 end
 
-local meta = FindMetaTable("Player")
-
-function meta:Fizzle(attacker, inflictor, damage)
+function Player:Fizzle(attacker, inflictor, damage)
     if SERVER then
         if (self:InVehicle()) then
             self:ExitVehicle()

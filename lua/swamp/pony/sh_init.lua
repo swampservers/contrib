@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 PPM = PPM or {}
 PPM.Playermodel = "models/ppm/player_default_base.mdl"
-local Entity = FindMetaTable("Entity")
+
 
 function IsPonyModel(modelName)
     modelName = modelName:sub(1, 17)

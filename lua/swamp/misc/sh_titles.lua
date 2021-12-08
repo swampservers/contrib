@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local Player = FindMetaTable("Player")
+
 
 --- Get current title string or ""
 function Player:GetTitle()

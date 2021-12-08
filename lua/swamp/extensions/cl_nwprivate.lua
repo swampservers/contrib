@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- Similar to GetNW* but only works on players and is not sent to other players. Use ply:SetPrivate on server
-local Player = FindMetaTable("Player")
+
 NWPrivate = NWPrivate or {}
 
 --- A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.

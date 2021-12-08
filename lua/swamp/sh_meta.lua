@@ -2,7 +2,7 @@
 
 --- Omit FindMetaTable from your code because these globals always refer to their respective metatables.
 -- Player/Entity are still callable and function the same as the default global functions.
---- Player, Entity, Weapon
+--- Player, Entity, Weapon (global)
 
 if isfunction(Entity) then
     local EntityFunction = Entity

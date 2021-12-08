@@ -5,7 +5,7 @@ if CLIENT then
     -- CreateConVar("cl_weaponcolor", "0.30 1.80 2.10", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255")
 end
 
-local Player = FindMetaTable("Player")
+
 
 function Player:StaffControlTheater()
     local minn = 2

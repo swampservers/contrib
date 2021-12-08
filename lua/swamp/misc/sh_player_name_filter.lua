@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local Player = FindMetaTable("Player")
+
 
 --- Return player's actual Steam name without any filters (eg removing swamp.sv). All default name functions have filters.
 --- function Player:TrueName()

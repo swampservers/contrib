@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-local Player = FindMetaTable('Player')
+
 SS_Products = SS_Products or {}
 
 function SS_Product(product)

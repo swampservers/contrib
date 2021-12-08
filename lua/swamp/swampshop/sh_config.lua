@@ -1,8 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 AddCSLuaFile()
-local Entity = FindMetaTable('Entity')
-local Player = FindMetaTable('Player')
+
+
 -- Player Model Class Specific
 local iteratepmcs = nil
 

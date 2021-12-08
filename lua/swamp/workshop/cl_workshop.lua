@@ -201,7 +201,7 @@ hook.Add("Tick", "WorkshopMounter", function()
     end
 end)
 
-local Entity = FindMetaTable("Entity")
+
 local getmodel = Entity.GetModel
 
 function Entity:GetActualModel()

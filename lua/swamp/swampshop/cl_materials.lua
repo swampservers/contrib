@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-local Entity = FindMetaTable('Entity')
+
 SS_MaterialCache = {}
 
 function SS_GetMaterial(nam)

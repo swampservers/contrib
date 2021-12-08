@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-local Player = FindMetaTable('Player')
-local Entity = FindMetaTable('Entity')
+
+
 local EntityGetModel = Entity.GetModel
 
 --NOMINIFY

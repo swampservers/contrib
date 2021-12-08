@@ -3,7 +3,7 @@
 AddCSLuaFile()
 DEFINE_BASECLASS("base_anim")
 ENT.Type = "anim"
-local Entity = FindMetaTable("Entity")
+
 
 function Entity:GetTrashClass()
     local tc = self:GetNW2String("trc")

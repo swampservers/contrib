@@ -646,8 +646,8 @@ function GetPlayersInLocation(idx)
     return tab
 end
 
-local Player = FindMetaTable("Player")
-local Entity = FindMetaTable("Entity")
+
+
 
 
 function Player:GetLocation()

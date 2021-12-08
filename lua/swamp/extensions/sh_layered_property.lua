@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local Player = FindMetaTable("Player")
-local Entity = FindMetaTable("Entity")
+
+
 
 local function CreateLayeredProperty(getter, setter, id_argument, additive, default)
     local basedgetter, basedsetter = "Based" .. getter, "Based" .. setter
