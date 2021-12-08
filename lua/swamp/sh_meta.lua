@@ -1,29 +1,24 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 -- stores these metatables in global variables, but adds a second layer of metatable with call so the old global functions still work
 if isfunction(Entity) then
     local EntityFunction = Entity
     Entity = FindMetaTable("Entity")
 
     setmetatable(Entity, {
-        __call = function(_, x)
-            return EntityFunction(x)
-        end
+        __call = function(_, x) return EntityFunction(x) end
     })
 end
+
 if isfunction(Player) then
     local PlayerFunction = Player
     Player = FindMetaTable("Player")
 
     setmetatable(Player, {
-        __call = function(_, x)
-            return PlayerFunction(x)
-        end
+        __call = function(_, x) return PlayerFunction(x) end
     })
 end
+
 Weapon = FindMetaTable("Weapon")
-
-
 -- caches the Entity.GetTable so stuff is super fast
 ENTITY_CGETTABLE = ENTITY_CGETTABLE or Entity.GetTable
 local cgettable = ENTITY_CGETTABLE

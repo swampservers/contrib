@@ -52,6 +52,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
     if isstring(nwp_vars) then
         nwp_vars = {nwp_vars}
     end
+
     title.nwp_vars = nwp_vars
 
     local function num(p)
@@ -73,7 +74,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
     end
 
     local titleindex = #Titles
-    local maxkey = "lasttitlemax"..titleindex
+    local maxkey = "lasttitlemax" .. titleindex
 
     function title:Progress(ply)
         local p = num(progress_fn(ply))
@@ -101,7 +102,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
         return p
     end
 
-    title.pset_verb=pset_verb
+    title.pset_verb = pset_verb
 
     for i, v in ipairs(nwp_vars) do
         table.insert(TitleRefreshDir[v], titleindex)
@@ -117,10 +118,8 @@ end
 --pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
 AddTitle("", "Newfriend", "Welcome to the Swamp", {}, function() return true end)
 
-
 AddTitle("christmas", {
     {1, "Festive", 25000},
-
 }, "During December, give a present (from shop) to another player", "s_christmas")
 
 AddTitle("giftgiver", {
@@ -161,19 +160,15 @@ AddTitle("", {
 AddTitle("kleinertp", {
     {1, "Test Subject", 10000}
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
-
 --NOT IMPLEMENTED
 --TODO: try to make it where you have to give it to X DIFFERENT players
 -- just take player:AccountID() (id3) and convert the last number to 4 uint bytes, there probably wont be universe conflicts and if there are its not a big deal
 -- local id = ply:AccountID()
 -- id = string.char(bit.band(bit.rshift(id, 24), 255), bit.band(bit.rshift(id, 16), 255), bit.band(bit.rshift(id, 8), 255), bit.band(id, 255))
 -- FIX THE DONATION BOXES
-
-
 -- AddTitle("garfield", {
 --     {200, "Chonkers", 10000},
 --     {1000, "Fat Cat", 100000},
 --     {10000, "I Eat, Jon.", 1000000}
 -- }, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
-
 --NOMINIFY

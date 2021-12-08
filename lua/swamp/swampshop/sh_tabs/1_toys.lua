@@ -153,7 +153,6 @@ SS_WeaponProduct({
 
 SS_Heading("Expensive Toys")
 
-
 SS_Product({
     class = 'mystery',
     price = (os.date("%B", os.time()) == "December" and 3000) or 5000, --5000,3000
@@ -276,7 +275,6 @@ SS_WeaponAndAmmoProduct({
     model = 'models/brian/laserpointer.mdl',
     class = 'weapon_laserpointer'
 })
-
 
 local function CannotBuyTrash(self, ply)
     if SERVER then return CannotMakeTrash(ply) end

@@ -19,7 +19,6 @@ vgui.Register("DSSTitleInfo", {
 
         local lastlocked = false
         local extra = 0
-
         local pad = 20
 
         for i, min, name, reward in self.Title:Thresholds() do
@@ -29,12 +28,11 @@ vgui.Register("DSSTitleInfo", {
             end
 
             vgui("DPanel", self, function(p)
-
                 p:Dock(TOP)
                 p:SetTall(24)
-                p.Paint=noop
-                p:DockPadding(pad,0,pad,0)
-                p:DockMargin(0,0,0,16)
+                p.Paint = noop
+                p:DockPadding(pad, 0, pad, 0)
+                p:DockMargin(0, 0, 0, 16)
 
                 vgui("DLabel", function(p)
                     p:SetFont("SS_DESCINSTFONT")
@@ -45,7 +43,7 @@ vgui.Register("DSSTitleInfo", {
                     p:Dock(LEFT)
                 end)
 
-                vgui("DButton",  function(p)
+                vgui("DButton", function(p)
                     if progress >= min then
                         p:SetText("Select title")
                     else
@@ -53,42 +51,39 @@ vgui.Register("DSSTitleInfo", {
                         p:SetEnabled(false)
                         lastlocked = true
                     end
-    
+
                     p:Dock(RIGHT)
                     p:SetWide(160)
-    
+
                     p.DoClick = function()
                         net.Start("PlayerTitle")
                         net.WriteString(name)
                         net.SendToServer()
                     end
                 end)
-            
+
                 vgui("DLabel", function(p)
                     p:SetText(self.Title:Description(i, min) .. (reward > 0 and " - Reward: " .. reward .. " points" or ""))
                     p:Dock(FILL)
                     p:SetContentAlignment(5)
                 end)
-    
-
-            
             end)
         end
 
         local pset = self.Title.nwp_vars[1]
         local pset_verb = self.Title.pset_verb
+
         if pset_verb then
-            vgui("DButton",  self, function(p)
+            vgui("DButton", self, function(p)
                 function p:Think()
-                    if SHOWNPSET==pset then
-                        p:SetText("Stop showing who you've "..pset_verb)
+                    if SHOWNPSET == pset then
+                        p:SetText("Stop showing who you've " .. pset_verb)
                     else
-                        p:SetText("Show who you've already "..pset_verb)
+                        p:SetText("Show who you've already " .. pset_verb)
                     end
                 end
 
-                p:DockMargin(540,0,pad,0)
-
+                p:DockMargin(540, 0, pad, 0)
                 p:Dock(TOP)
                 p:SetWide(160)
 
@@ -96,9 +91,9 @@ vgui.Register("DSSTitleInfo", {
                     if SHOWNPSET ~= pset then
                         SHOWNPSET = pset
                         SHOWNPSETVERB = pset_verb
-                        LocalPlayerNotify("Look at players' nameplates to see if you've "..pset_verb.." them")
+                        LocalPlayerNotify("Look at players' nameplates to see if you've " .. pset_verb .. " them")
                     else
-                        SHOWNPSET =nil
+                        SHOWNPSET = nil
                     end
                 end
             end)
@@ -106,12 +101,11 @@ vgui.Register("DSSTitleInfo", {
 
         if extra > 0 then
             vgui("DLabel", self, function(p)
-                p:SetText(extra .. (extra==1 and " more title available" or " more titles available"))
+                p:SetText(extra .. (extra == 1 and " more title available" or " more titles available"))
                 p:Dock(TOP)
                 p:SetContentAlignment(5)
             end)
         end
-
     end
 }, "DSSCustomizerSection")
 
@@ -125,7 +119,7 @@ vgui.Register('DSSPlayerSettingsMode', {
             vgui("DButton", function(p)
                 p:SetText("Remove title")
                 p:Dock(TOP)
-                p:DockMargin(40,0,40,0)
+                p:DockMargin(40, 0, 40, 0)
 
                 p.DoClick = function()
                     net.Start("PlayerTitle")
