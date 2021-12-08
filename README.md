@@ -45,6 +45,26 @@ It will be either nil or a valid entity. Don't write `if IsValid(Me)`... , just 
 A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.\
 *lua/swamp/extensions/cl_nwprivate.lua*
 
+### function cam.Culled3D2D(pos, ang, scale, callback)
+Runs `cam.Start3D2D(pos, ang, scale) callback() cam.End3D2D()` but only if the user is in front of the "screen" so they can see it.\
+*lua/swamp/extensions/cl_render_extension.lua*
+
+### function render.DrawingScreen()
+Bool if we are currently drawing to the screen.\
+*lua/swamp/extensions/cl_render_extension.lua*
+
+### function render.WithColorModulation(r, g, b, callback)
+Sets the color modulation, calls your callback, then sets it back to what it was before.\
+*lua/swamp/extensions/cl_render_extension.lua*
+
+### --
+This defines the function vgui(classname, parent (optional), constructor) which creates and returns a panel.\
+*lua/swamp/extensions/cl_vgui_function.lua*
+
+### function DFrame:CloseOnEscape()
+Makes the DFrame :Close() if escape is pressed\
+*lua/swamp/extensions/cl_vgui_function.lua*
+
 ### function Entity:TimerCreate(identifier, delay, repetitions, callback)
 A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid\
 *lua/swamp/extensions/sh_ent_timer.lua*
@@ -53,11 +73,11 @@ A timer which will only call the callback (with the entity passed as the argumen
 A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid\
 *lua/swamp/extensions/sh_ent_timer.lua*
 
-### Ents
+### Ents (global)
 A global cache of all entities, in subtables divided by classname.\
-Works on client and server. Much, much faster than ents.FindByClass or even player.GetAll.\
+Works on client and server. Much, much faster than `ents.FindByClass` or even `player.GetAll`\
 Each subtable is ordered and will never be nil even if no entities were created.\
-To use it try something like this: for i,v in ipairs(Ents.prop_physics) do ...\
+To use it try something like this: `for i,v in ipairs(Ents.prop_physics) do` ...\
 *lua/swamp/extensions/sh_ents_cache.lua*
 
 ### function GetG(k)
@@ -140,6 +160,14 @@ Numeric player ranking (all players are zero, staff are 1+)\
 ### function Player:IsStaff()
 Boolean\
 *lua/swamp/swampcop/sh_init.lua (hidden file)*
+
+### function Player:SS_GetPoints()
+Number of points\
+*lua/swamp/swampshop/sh_init.lua*
+
+### function Player:SS_HasPoints(points)
+If the player has at least this many points. Don't use it on the server if you are about to buy something; just do SS_TryTakePoints\
+*lua/swamp/swampshop/sh_init.lua*
 
 ### function Player:SS_GivePoints(points, callback, fcallback)
 Give points. `callback` happens once the points are written. `fcallback` = failed to write\

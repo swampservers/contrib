@@ -1,4 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+
+--- Bool if we are currently drawing to the screen.
 function render.DrawingScreen()
     local t = render.GetRenderTarget()
 
@@ -24,11 +27,11 @@ function render.PopColorModulation()
     render.BaseSetColorModulation(col.x, col.y, col.z)
 end
 
--- Unrelated to the stack thing above
-function render.WithColorModulation(r, g, b, func)
+--- Sets the color modulation, calls your callback, then sets it back to what it was before.
+function render.WithColorModulation(r, g, b, callback)
     local lr, lg, lb = render.GetColorModulation()
     render.SetColorModulation(r, g, b)
-    func()
+    callback()
     render.SetColorModulation(lr, lg, lb)
 end
 
@@ -40,9 +43,10 @@ function cam.StartCulled3D2D(pos, ang, scale)
     end
 end
 
-function cam.Culled3D2D(pos, ang, scale, func)
+--- Runs `cam.Start3D2D(pos, ang, scale) callback() cam.End3D2D()` but only if the user is in front of the "screen" so they can see it.
+function cam.Culled3D2D(pos, ang, scale, callback)
     if cam.StartCulled3D2D(pos, ang, scale) then
-        func()
+        callback()
         cam.End3D2D()
     end
 end

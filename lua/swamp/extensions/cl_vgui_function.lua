@@ -1,18 +1,23 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
---[[
-This defines the function vgui(classname, (parent,)? constructor) which creates and returns a panel.
 
-The parent should only be passed when creating a root element (eg. a DFrame).
-Child elements should be constructed using vgui() from within the parent's
-constructor, and their parent will be set automatically.
+--- This defines the function vgui(classname, parent (optional), constructor) which creates and returns a panel.
+--
+-- The parent should only be passed when creating a root element (eg. a DFrame) which need a parent.
+-- Child elements should be constructed using vgui() from within the parent's constructor, and their parent will be set automatically.
+--
+-- This is helpful for creating complex guis as the hierarchy of the layout is clearly reflected in the code structure.
+--
+-- Example: (a better example is in the file)
+-- ```
+-- > vgui("Panel", function(p)
+-- >     -- p is the panel, set it up here
+-- >     vgui("DLabel", function(p)
+-- >         -- p is the label here
+-- >     end)
+-- > end)
+-- ```
+--- function vgui(classname, parent (optional), constructor)
 
-This is helpful for creating complex guis as the hierarchy of the layout is
-clearly reflected in the code structure.
-
-Recommended to use glualint or similar to keep the formatting correct.
-
-Example below.
-]]
 local vgui_stack = {}
 
 setmetatable(vgui, {
@@ -45,6 +50,9 @@ setmetatable(vgui, {
 })
 
 timer.Simple(0, function()
+
+    --- Makes the DFrame :Close() if escape is pressed
+    --- function DFrame:CloseOnEscape()
     vgui.GetControlTable("DFrame").CloseOnEscape = function(self)
         VGUI_CLOSE_ON_ESCAPE = (VGUI_CLOSE_ON_ESCAPE or 0) + 1
         local p = self
@@ -67,6 +75,7 @@ timer.Simple(0, function()
         end)
     end
 end)
+
 -- function vgui_example()
 --     vgui("DFrame", function(p)
 --         p:SetSize(400, 400)
