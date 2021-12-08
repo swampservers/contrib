@@ -47,6 +47,8 @@ function SWEP:SetupMove(ply, mv, cmd)
             speech = 0,
             shared = true
         })
+
+        if SERVER and not ply:IsAFK() then ply:AddStat("fedoratip") end
     end
 end
 

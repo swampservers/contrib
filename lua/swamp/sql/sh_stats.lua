@@ -1,12 +1,15 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
-
-function Player:GetStat(name)
-    return self.NWPrivate["s_" .. name] or 0
+--- Get the value of the stat with the given name. If default isn't given it is 0
+function Player:GetStat(name, default)
+    local v = self.NWP["s_" .. name]
+    if v==nil then v=default end
+    if v==nil then v=0 end
+    return v
 end
 
 -- function Player:GetFlag(name)
---     return self.NWPrivate["f_" .. name] or false
+--     return self.NWP["f_" .. name] or false
 -- end
 -- they are strings with 4 bytes for each user (accountid u32)
 -- todo LRU?

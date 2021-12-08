@@ -3,6 +3,7 @@
 SWEP.PrintName = "Suicide Bombing"
 SWEP.Slot = 4
 SWEP.WorldModel = Model("models/dav0r/tnt/tnt.mdl")
+SWEP.ViewModel = ""
 
 function SWEP:Deploy()
     self.Owner:DrawViewModel(false)

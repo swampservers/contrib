@@ -3,8 +3,9 @@
 
 NWPrivate = NWPrivate or {}
 
---- A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
---- ply.NWPrivate = {}
+--- NWP="Networked Private"
+-- A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
+--- ply.NWP = {}
 
 -- TODO rename to NWP
 
@@ -26,7 +27,7 @@ end)
 
 hook.Add("OnEntityCreated", "NWPrivate", function(ply)
     if ply == Me then
-        ply.NWPrivate = setmetatable({}, {
+        ply.NWP = setmetatable({}, {
             __index = function(t, k) return NWPrivate[k] end,
             __newindex = function(t, k, v)
                 assert(false)

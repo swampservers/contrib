@@ -23,6 +23,11 @@ All models/materials/sounds in this repository will be automatically uploaded to
 # API
 
 
+### function Player:IsTyping()
+Bool (typing a chat message)
+\
+*file: lua/swamp/chat/sh_swampchat.lua (hidden)*
+
 ### function Player:IsAFK()
 Boolean
 \
@@ -34,8 +39,9 @@ Use this global instead of LocalPlayer()\
 \
 *file: lua/swamp/extensions/cl_me.lua*
 
-### ply.NWPrivate = {}
-A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
+### ply.NWP = {}
+NWP="Networked Private"\
+ A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
 \
 *file: lua/swamp/extensions/cl_nwprivate.lua*
 
@@ -106,6 +112,11 @@ Get a globally shared value (similar to GetGlobal* but actually works)
 Set a globally shared value (server)
 \
 *file: lua/swamp/extensions/sh_getg_setg.lua*
+
+### function Entity:IsHuman()
+IsPlayer and not IsBot
+\
+*file: lua/swamp/extensions/sh_player_extension.lua*
 
 ### function Player:UsingWeapon(class)
 Faster than writing `IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass()==class`
@@ -207,6 +218,31 @@ Omit FindMetaTable from your code because these globals always refer to their re
  Player/Entity are still callable and function the same as the default global functions.
 \
 *file: lua/swamp/sh_meta.lua*
+
+### function Player:GetStat(name, default)
+Get the value of the stat with the given name. If default isn't given it is 0
+\
+*file: lua/swamp/sql/sh_stats.lua*
+
+### function Player:AddStat(name, increment)
+Adds increment (or 1) to a stat with the given name
+\
+*file: lua/swamp/sql/sv_stats.lua (hidden)*
+
+### function Player:FlagStat(name)
+Sets the stat to 1 (cheaper storage than integer stats)
+\
+*file: lua/swamp/sql/sv_stats.lua (hidden)*
+
+### function Player:MaxStat(name, record)
+Sets the stat with the given name to the max of its previous value and the record
+\
+*file: lua/swamp/sql/sv_stats.lua (hidden)*
+
+### function Player:PartnerSetStat(name, other)
+(WIP) Adds the other player to the "partner set" by the given name. This way you can make stats that require interaction with many players.
+\
+*file: lua/swamp/sql/sv_stats.lua (hidden)*
 
 ### function Player:GetRank()
 Numeric player ranking (all players are zero, staff are 1+)
@@ -314,6 +350,20 @@ Bool
 Global function to compute a location ID (avoid this, it doesn't cache)
 \
 *file: gamemodes/cinema/gamemode/location/sh_location.lua*
+
+### function Player:ExtEmitSound(sound, options)
+Will probably be deprecated\
+ possible options:\
+ pitch\
+ crouchpitch\
+ level\
+ volume\
+ channel\
+ ent: emit from this ent instead of player\
+ shared: emit on client without networking, assuming called in shared function\
+ speech: move player lips (time to move lips, or auto if < 0)
+\
+*file: gamemodes/cinema/gamemode/sound/sh_extsound.lua (hidden)*
 
 ### function Entity:IsProtected(att)
 If we are "protected" from this attacker by theater protection. `att` doesn't need to be passed, it's only used to let theater owners override protection and prevent killing out of a protected area.

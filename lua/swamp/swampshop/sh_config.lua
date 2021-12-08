@@ -188,7 +188,7 @@ function Player:SS_BaseIncomeMultiplier()
         mult = mult * 0.25
     end
 
-    if not self.NWPrivate.in_steamgroup then
+    if not self.NWP.in_steamgroup then
         mult = mult / 2
     end
 

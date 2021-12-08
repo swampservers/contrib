@@ -17,7 +17,7 @@ if SERVER then
 end
 
 
---TODO: should we combine all reward_ids into one, for all titles?
+--TODO: should we combine all title reward_ids into one? or maybe just some simpler ones like the kleinertp one?
 function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pset_verb)
     local title = {}
     table.insert(Titles, title)
@@ -69,7 +69,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
         local p = 0
 
         for i, var in ipairs(nwp_vars) do
-            p = p + num(ply.NWPrivate[var])
+            p = p + num(ply.NWP[var])
         end
 
         return p
@@ -129,7 +129,7 @@ AddTitle("christmas", {
 AddTitle("giftgiver", {
     {100, "Gift Giver", 1000000}
     
-}, "Give a present (from shop) to %s different players", "s_giftgiver", function(ply) return PartnerSetSize(ply.NWPrivate.s_giftgiver or "") end, "gifted")
+}, "Give a present (from shop) to %s different players", "s_giftgiver", function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end, "gifted")
 
 AddTitle("popcornhit", {
     {10, "Goofball", 2000},
@@ -163,34 +163,53 @@ AddTitle("kleinertp", {
     {1, "Test Subject", 10000}
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
+-- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
+AddTitle("", {
+    {10, "Insurrectionist"},
+    {20, "Terrorist"},
+    {30, "Islamist"},
+    {40, "Founder of ISIS"}
+}, "Kill at least %s active players in a suicide bombing", "s_bigjihad")
+
+-- Founder of ISIS and Jihad Squad should be a leaderboard on this stat
+AddTitle("", {
+    {50, "Suicide Bomber"},
+    {1000, "Jihad Squad"}
+}, "Kill a total of %s players by jihading theaters", "s_theaterjihad")
+
 
 AddTitle("", {
-    {5, "Suicide Bomber"},
-    {10, "Jihad Squad"},
-    {15, "Insurrectionist"},
-    {20, "Terrorist"},
-    {40, "Founder of ISIS"}
-}, "Suicide bomb a theater and kill at least %s players", "s_bigjihadth")
+    {99, "Cloud Chaser"},
+    {999, "Junkie"},
+    {9999, "Dropout"}
+}, "Hit a vape %s times", "s_vapehit")
 
+-- Philosopher, Intellectual, Elegant, Suave, Stylish
+AddTitle("", {
+    {1000, "Classy"},
+    {10000, "Elegant"},
+    {100000, "Sophisticated"},
+    {1000000, "Enlightened"}
+}, "Tip your flappy fedora %s times", "s_fedoratip")
 
 AddTitle("", {
     {1, "Patriot"},
     {2, "Golden Patriot"},
     {3, "Platinum Patriot"}
-}, {"Visit Donald Trump's donation box and give at least 100,000 points", "Be on Donald Trump's donation leaderboard", "Be the top donor to Donald Trump"}, {"s_trump_donation", "s_trump_donation_leader"}, function(ply) return ((ply.NWPrivate.s_trump_donation or 0) >= 100000 and 1 or 0) + (ply.NWPrivate.s_trump_donation_leader and 1 or 0) + (ply.NWPrivate.s_trump_donation_leader == 1 and 1 or 0) end)
+}, {"Visit Donald Trump's donation box and give at least 100,000 points", "Be on Donald Trump's donation leaderboard", "Be the top donor to Donald Trump"}, {"s_trump_donation", "s_trump_donation_leader"}, function(ply) return ((ply.NWP.s_trump_donation or 0) >= 100000 and 1 or 0) + (ply.NWP.s_trump_donation_leader and 1 or 0) + (ply.NWP.s_trump_donation_leader == 1 and 1 or 0) end)
 
 AddTitle("", {
     {1, "Ally"},
     {2, "Libtard"},
     {3, "Greatest Ally"}
-}, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, {"s_lefty_donation", "s_lefty_donation_leader"}, function(ply) return ((ply.NWPrivate.s_lefty_donation or 0) >= 100000 and 1 or 0) + (ply.NWPrivate.s_lefty_donation_leader and 1 or 0) + (ply.NWPrivate.s_lefty_donation_leader == 1 and 1 or 0) end)
+}, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, {"s_lefty_donation", "s_lefty_donation_leader"}, function(ply) return ((ply.NWP.s_lefty_donation or 0) >= 100000 and 1 or 0) + (ply.NWP.s_lefty_donation_leader and 1 or 0) + (ply.NWP.s_lefty_donation_leader == 1 and 1 or 0) end)
 
 
 --todo: print who currently has the title?
 AddTitle("", {
     {1, "The 1%"},
     {13, "Illuminati"}
-}, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points_leader", function(ply) return 16 - (ply.NWPrivate.points_leader or 16) end)
+}, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points_leader", function(ply) return 16 - (ply.NWP.points_leader or 16) end)
 
 
 -- AddTitle("vandal", {
@@ -198,6 +217,6 @@ AddTitle("", {
 --     {1000, "Vandal", 100000}
 -- }, "Place %s feet of spraypaint", "s_spraypaint")
 
-
+-- fidget spinner max rpm: helicopter tard
 
 --NOMINIFY
