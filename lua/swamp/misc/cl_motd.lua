@@ -37,6 +37,7 @@ function HideMotd()
     end
 end
 
+--- Pop up the MOTD browser thing with this URL
 function ShowMotd(url)
     HideMotd()
     MOTDWINDOW = vgui.Create("DFrame")

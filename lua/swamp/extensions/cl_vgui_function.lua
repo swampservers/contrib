@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --- This defines the function vgui(classname, parent (optional), constructor) which creates and returns a panel.
 --
 -- The parent should only be passed when creating a root element (eg. a DFrame) which need a parent.
@@ -8,14 +9,15 @@
 --
 -- Example: (a better example is in the file)
 -- ```
--- > vgui("Panel", function(p)
--- >     -- p is the panel, set it up here
--- >     vgui("DLabel", function(p)
--- >         -- p is the label here
--- >     end)
--- > end)
+-- vgui("Panel", function(p)
+--     -- p is the panel, set it up here
+--     vgui("DLabel", function(p)
+--         -- p is the label here
+--     end)
+-- end)
 -- ```
 --- function vgui(classname, parent (optional), constructor)
+
 local vgui_stack = {}
 
 setmetatable(vgui, {
@@ -48,6 +50,7 @@ setmetatable(vgui, {
 })
 
 timer.Simple(0, function()
+
     --- Makes the DFrame :Close() if escape is pressed
     --- function DFrame:CloseOnEscape()
     vgui.GetControlTable("DFrame").CloseOnEscape = function(self)
@@ -72,6 +75,7 @@ timer.Simple(0, function()
         end)
     end
 end)
+
 -- function vgui_example()
 --     vgui("DFrame", function(p)
 --         p:SetSize(400, 400)

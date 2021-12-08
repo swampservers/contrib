@@ -6,6 +6,7 @@ if CLIENT then
         LocalPlayerNotify(net.ReadString())
     end)
 
+
     function LocalPlayerNotify(str)
         print(str)
 
@@ -62,13 +63,19 @@ if CLIENT then
     end)
 else
     util.AddNetworkString('Notify')
-    local Player = FindMetaTable('Player')
+end
 
-    function Player:Notify(...)
+local Player = FindMetaTable('Player')
+
+--- Show a notification (bottow center screen popup)
+function Player:Notify(...)
+    local st = table.concat({...}, '')
+    if SERVER then
         net.Start('Notify')
-
-        net.WriteString(table.concat({...}, ''))
-
+        net.WriteString(st)
         net.Send(self)
+    else
+        assert(self == Me)
+        LocalPlayerNotify(st)
     end
 end

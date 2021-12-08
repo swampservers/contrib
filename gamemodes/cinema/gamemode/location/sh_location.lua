@@ -621,14 +621,14 @@ function RefreshLocations()
     end
 end
 
--- returns the index of the players current location or 0 if unknown
-function FindLocation(pos)
-    if isentity(pos) then
-        pos = pos:GetPos()
+--- Global function to compute a location ID (avoid this, it doesn't cache)
+function FindLocation(ent_or_pos)
+    if isentity(ent_or_pos) then
+        ent_or_pos = ent_or_pos:GetPos()
     end
 
     for k, v in ipairs(Locations) do
-        if v:Contains(pos) then return k end
+        if v:Contains(ent_or_pos) then return k end
     end
 
     return #Locations
@@ -649,17 +649,19 @@ end
 local Player = FindMetaTable("Player")
 local Entity = FindMetaTable("Entity")
 
+
 function Player:GetLocation()
     local set = self:GetDTInt(0)
 
     if Locations[set] == nil then
-        print("FUCK")
+        print("FUCK NO LOCATION")
         set = #Locations
     end
 
     return set
 end
 
+--- Int location ID
 function Entity:GetLocation()
     assert(not self:IsPlayer())
     local pos = self:GetPos()
@@ -672,18 +674,22 @@ function Entity:GetLocation()
     return self.LastLocation
 end
 
+--- String
 function Entity:GetLocationName()
     return self:GetLocationTable().Name or "Unknown"
 end
 
+--- Location table
 function Entity:GetLocationTable()
     return Locations[self:GetLocation()] or {}
 end
 
+--- Bool
 function Entity:InTheater()
     return self:GetLocationTable().Theater ~= nil
 end
 
+--- Theater table
 function Entity:GetTheater()
     return theater.GetByLocation(self:GetLocation())
 end
