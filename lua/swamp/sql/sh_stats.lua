@@ -1,10 +1,16 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 --- Get the value of the stat with the given name. If default isn't given it is 0
 function Player:GetStat(name, default)
     local v = self.NWP["s_" .. name]
-    if v==nil then v=default end
-    if v==nil then v=0 end
+
+    if v == nil then
+        v = default
+    end
+
+    if v == nil then
+        v = 0
+    end
+
     return v
 end
 

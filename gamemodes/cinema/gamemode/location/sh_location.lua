@@ -646,10 +646,6 @@ function GetPlayersInLocation(idx)
     return tab
 end
 
-
-
-
-
 function Player:GetLocation()
     local set = self:GetDTInt(0)
 

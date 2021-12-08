@@ -6,7 +6,6 @@ if CLIENT then
         LocalPlayerNotify(net.ReadString())
     end)
 
-
     function LocalPlayerNotify(str)
         print(str)
 
@@ -65,11 +64,10 @@ else
     util.AddNetworkString('Notify')
 end
 
-
-
 --- Show a notification (bottow center screen popup)
 function Player:Notify(...)
     local st = table.concat({...}, '')
+
     if SERVER then
         net.Start('Notify')
         net.WriteString(st)

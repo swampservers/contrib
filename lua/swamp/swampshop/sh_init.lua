@@ -1,6 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 function Player:SS_GetDonation()
     return self.SS_Donation or 0
 end

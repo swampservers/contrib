@@ -28,7 +28,6 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-
 -- hook.Add("PlayerModelChanged", "GarfHead", function(ply, mdl)
 --     if mdl:find("garfield.mdl") then
 --         local bn = ply:LookupBone("ValveBiped.Bip01_Head1")
@@ -51,13 +50,12 @@ function Player:IsJuggernaut()
 end
 
 function Player:SetObesity(obs)
-    if obs and  obs>1 then self:MaxStat("garfield", math.floor(obs*10)) end
-
+    if obs and obs > 1 then
+        self:MaxStat("garfield", math.floor(obs * 10))
+    end
 
     if obs == 1 and self:Obesity() == 1 then return end
-
     obs = obs or self:Obesity()
-
     self:SetNWFloat("garfield", obs)
     local sc = self:HasWeapon("weapon_garfield") and 0.55 or 1
     -- if not self:IsBot() then
@@ -152,10 +150,11 @@ end)
 if SERVER then
     timer.Create("GarfieldDecay", 10, 0, function()
         for k, v in pairs(Ents.weapon_garfield) do
-            v=v.Owner
+            v = v.Owner
+
             if IsValid(v) then
-            v:SetObesity(math.max(1, v:Obesity() * 0.997 - 0.02))
-            v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
+                v:SetObesity(math.max(1, v:Obesity() * 0.997 - 0.02))
+                v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
             end
         end
     end)
@@ -508,8 +507,6 @@ function SWEP:SecondaryAttack()
         })
     end
 end
-
-
 
 hook.Add("KeyPress", "GarfieldJump", function(ply, key)
     if CLIENT then return end

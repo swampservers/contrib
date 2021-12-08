@@ -1,6 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 function Player:GetDisplayModel()
     local st = self:GetNW2String("DisplayModel", "")
     if st == "" then return self:GetModel(), nil end

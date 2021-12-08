@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 function Ply(name)
-    local ply,c = PlyCount(name)
+    local ply, c = PlyCount(name)
+
     return ply
 end
 

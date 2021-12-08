@@ -3,7 +3,6 @@
 glbls = glbls or {}
 
 -- TODO use just a table called Global similar to NWPrivate
-
 --- Get a globally shared value (similar to GetGlobal* but actually works)
 function GetG(k)
     return glbls[k]

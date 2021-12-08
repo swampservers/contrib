@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- GLOBAL
-
 --- Shorthand for empty function
 function noop()
 end
@@ -120,7 +119,6 @@ end
 --     end
 --     return out  
 -- end
-
 local vector = FindMetaTable("Vector")
 local vec__baseadd = vec__baseadd or vector.__add
 local vec__basesub = vec__basesub or vector.__sub
@@ -191,6 +189,7 @@ function defaultdict(constructor)
         __index = function(tab, key)
             local d = constructor(key)
             tab[key] = d
+
             return d
         end
     })

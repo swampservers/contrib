@@ -1,7 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
 AddCSLuaFile()
-
 SS_Items = SS_Items or {}
 -- this is not used as a table, it is just a unique value
 SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}

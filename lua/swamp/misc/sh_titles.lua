@@ -16,7 +16,6 @@ if SERVER then
     end
 end
 
-
 --TODO: should we combine all title reward_ids into one? or maybe just some simpler ones like the kleinertp one?
 function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pset_verb)
     local title = {}
@@ -55,6 +54,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
     if isstring(nwp_vars) then
         nwp_vars = {nwp_vars}
     end
+
     title.nwp_vars = nwp_vars
 
     local function num(p)
@@ -76,7 +76,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
     end
 
     local titleindex = #Titles
-    local maxkey = "lasttitlemax"..titleindex
+    local maxkey = "lasttitlemax" .. titleindex
 
     function title:Progress(ply)
         local p = num(progress_fn(ply))
@@ -104,7 +104,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
         return p
     end
 
-    title.pset_verb=pset_verb
+    title.pset_verb = pset_verb
 
     for i, v in ipairs(nwp_vars) do
         table.insert(TitleRefreshDir[v], titleindex)
@@ -122,13 +122,11 @@ AddTitle("", "Newfriend", "Welcome to the Swamp", {}, function() return true end
 
 AddTitle("christmas", {
     {1, "Festive", 25000},
-
 }, "During December, give a present (from shop) to another player", "s_christmas")
 
 -- {1000, "Saint Nick", 1000000}
 AddTitle("giftgiver", {
     {100, "Gift Giver", 1000000}
-    
 }, "Give a present (from shop) to %s different players", "s_giftgiver", function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end, "gifted")
 
 AddTitle("popcornhit", {
@@ -138,22 +136,19 @@ AddTitle("popcornhit", {
     {100000, "Retard", 0}
 }, "Throw popcorn in someone's face %s times", "s_popcornhit")
 
-
 AddTitle("mined", {
     {30, "Digger", 10000},
     {100, "Spelunker", 20000},
     {500, "Excavator", 30000},
-    {2000, "Earth Mover",40000},
-    {10000, "Minecraft Steve",50000}
+    {2000, "Earth Mover", 40000},
+    {10000, "Minecraft Steve", 50000}
 }, "Dig up %s pieces of ore (In Minecraft)", "s_mined")
-
 
 AddTitle("garfield", {
     {200, "Chonkers", 10000},
     {1000, "Fat Cat", 100000},
     {10000, "I Eat, Jon.", 1000000}
 }, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
-
 
 AddTitle("megavape", {
     {1, "Vapist", 50000}
@@ -176,7 +171,6 @@ AddTitle("", {
     {50, "Suicide Bomber"},
     {1000, "Jihad Squad"}
 }, "Kill a total of %s players by jihading theaters", "s_theaterjihad")
-
 
 AddTitle("", {
     {99, "Cloud Chaser"},
@@ -204,19 +198,14 @@ AddTitle("", {
     {3, "Greatest Ally"}
 }, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, {"s_lefty_donation", "s_lefty_donation_leader"}, function(ply) return ((ply.NWP.s_lefty_donation or 0) >= 100000 and 1 or 0) + (ply.NWP.s_lefty_donation_leader and 1 or 0) + (ply.NWP.s_lefty_donation_leader == 1 and 1 or 0) end)
 
-
 --todo: print who currently has the title?
 AddTitle("", {
     {1, "The 1%"},
     {13, "Illuminati"}
 }, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points_leader", function(ply) return 16 - (ply.NWP.points_leader or 16) end)
-
-
 -- AddTitle("vandal", {
 --     {200, "Tagger", 10000},
 --     {1000, "Vandal", 100000}
 -- }, "Place %s feet of spraypaint", "s_spraypaint")
-
 -- fidget spinner max rpm: helicopter tard
-
 --NOMINIFY

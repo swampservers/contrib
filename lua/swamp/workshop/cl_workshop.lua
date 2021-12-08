@@ -201,7 +201,6 @@ hook.Add("Tick", "WorkshopMounter", function()
     end
 end)
 
-
 local getmodel = Entity.GetModel
 
 function Entity:GetActualModel()

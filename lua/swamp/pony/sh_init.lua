@@ -2,7 +2,6 @@
 PPM = PPM or {}
 PPM.Playermodel = "models/ppm/player_default_base.mdl"
 
-
 function IsPonyModel(modelName)
     modelName = modelName:sub(1, 17)
     if modelName == "models/ppm/player" then return true end

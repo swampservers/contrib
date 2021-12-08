@@ -35,9 +35,9 @@ end
 
 function net.ReadBinaryString()
     local l = net.ReadUInt(16)
+
     return net.ReadData(l)
 end
-
 
 function net.WriteTableHD(tab)
     for k, v in pairs(tab) do

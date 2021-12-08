@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
 SS_MaterialCache = {}
 
 function SS_GetMaterial(nam)

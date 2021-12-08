@@ -1,7 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- INSTALL: CINEMA
-
-
 local function AppropriateNavArea(ply, area)
     if (not IsValid(area)) then return false end
     local mins, maxs = ply:GetCollisionBounds()

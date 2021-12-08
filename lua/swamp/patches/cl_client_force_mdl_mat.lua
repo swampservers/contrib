@@ -43,7 +43,6 @@ hook.Add("NotifyShouldTransmit", "ClientForceMaterial3", function(ent, trans)
     watchlist[ent] = ((ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) and trans) or nil
 end)
 
-
 Entity.BasedGetSkin = Entity.BasedGetSkin or Entity.GetSkin
 Entity.BasedSetSkin = Entity.BasedSetSkin or Entity.SetSkin
 Entity.BasedGetMaterial = Entity.BasedGetMaterial or Entity.GetMaterial
