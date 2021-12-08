@@ -5,6 +5,8 @@
 import os
 import shutil
 
+print("generating readme")
+
 lua_dir = "/swamp/workspace"
 output_dir = "/swamp/repos/contrib"
 
@@ -43,8 +45,8 @@ luadocs.sort(key= lambda x: x["file"]+" "+x["code"])
 
 docgen = "".join(
     f"""
-## {x["code"]}
-{x["comment"]}
+### {x["code"]}
+{x["comment"]}\
 *{x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden file)") }*
 """ for x in luadocs
 )
@@ -54,3 +56,5 @@ with open(output_dir+"/readme_format.md") as fp:
 
 with open(output_dir+"/README.md", "w") as fp:
     fp.write(fmt.replace("DOCSGOHERE", docgen))
+
+print("done")

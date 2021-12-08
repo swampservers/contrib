@@ -32,21 +32,17 @@ Try to put cinema-specific weapons/entities in gamemodes/cinema/ and generic cod
 # API
 
 
-## function Player:IsAFK()
-Boolean
-*lua/swamp/clientcheck/sh_afk_detect.lua (hidden file)*
+### function Player:IsAFK()
+Boolean*lua/swamp/clientcheck/sh_afk_detect.lua (hidden file)*
 
-## Me = LocalPlayer()
-Use this global instead of LocalPlayer() (it will be either nil or a valid entity)
-*lua/swamp/misc/cl_me.lua*
+### Me = LocalPlayer()
+Use this global instead of LocalPlayer() (it will be either nil or a valid entity)*lua/swamp/misc/cl_me.lua*
 
-## function Entity:IsPony()
-Boolean, mostly for players
-*lua/swamp/pony/sh_init.lua*
+### function Entity:IsPony()
+Boolean, mostly for players*lua/swamp/pony/sh_init.lua*
 
-## function Player:GetRank()
-Numeric player ranking (all players are zero, staff are 1+)
-*lua/swamp/swampcop/sh_init.lua (hidden file)*
+### function Player:GetRank()
+Numeric player ranking (all players are zero, staff are 1+)*lua/swamp/swampcop/sh_init.lua (hidden file)*
 
 
 **COPYRIGHT: This repository and most of its content is copyrighted and owned by Swamp Servers. All other content is, to the best of our knowledge, used under license. If your copyrighted work is here without permission, please contact the email shown [here](https://swampservers.net/contact). This repository DOES NOT license its contents to be used for other purposes, nor does its existence on GitHub imply such a license.**
