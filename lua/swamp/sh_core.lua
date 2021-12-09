@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- GLOBAL
+
 --- Shorthand for empty function
 function noop()
 end
@@ -198,3 +198,7 @@ end
 function bit.packu32(i)
     return string.char(bit.band(bit.rshift(i, 24), 255), bit.band(bit.rshift(i, 16), 255), bit.band(bit.rshift(i, 8), 255), bit.band(i, 255))
 end
+
+
+
+

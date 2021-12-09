@@ -33,6 +33,11 @@ Boolean
 \
 *file: lua/swamp/clientcheck/sh_afk_detect.lua (hidden)*
 
+### function bench(func)
+Prints how long it takes to run a function, averaging over a large number of samples with minimal overhead
+\
+*file: lua/swamp/dev/sh_bench.lua*
+
 ### Me  (global variable)
 Use this global instead of LocalPlayer()\
  It will be either nil or a valid entity. Don't write `if IsValid(Me)`... , just write `if Me`...

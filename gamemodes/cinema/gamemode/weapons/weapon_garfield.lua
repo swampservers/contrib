@@ -128,7 +128,7 @@ hook.Add("PlayerDeath", "FinishEating", function(vic, inf, att)
 
     if IsValid(eater) then
         local vo, ao = vic:Obesity(), eater:Obesity()
-        local ratio = vic:IsBot() and 0.2 or (vic:IsAFK() and 0.5 or 1) --math.min(math.pow(vo / ao, 0.3),1) * 0.9 --math.min(0.7, (vo/ao))
+        local ratio = (vic:IsAFK() or vic:IsBot()) and 0.3 or 1 --math.min(math.pow(vo / ao, 0.3),1) * 0.9 --math.min(0.7, (vo/ao))
 
         if ratio < 0.3 then
             if ratio <= 0.1 then
