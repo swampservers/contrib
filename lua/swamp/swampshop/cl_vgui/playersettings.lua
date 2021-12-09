@@ -45,7 +45,7 @@ vgui.Register("DSSTitleInfo", {
 
                 vgui("DButton", function(p)
                     if progress >= min then
-                        p:SetText("Select title ("..progress.."/" .. min ..")")
+                        p:SetText("Select title (" .. progress .. "/" .. min .. ")")
                     else
                         p:SetText("Title locked (" .. progress .. "/" .. min .. ")")
                         p:SetEnabled(false)
