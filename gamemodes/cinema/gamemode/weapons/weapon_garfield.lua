@@ -162,7 +162,10 @@ end
 
 function SWEP:Deploy()
     self.Owner:SetModel("models/player/pyroteknik/garfield.mdl")
-    if SERVER then self:SetObesity() end
+
+    if SERVER then
+        self:SetObesity()
+    end
 end
 
 function SWEP:Initialize()

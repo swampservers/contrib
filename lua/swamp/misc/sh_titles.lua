@@ -120,9 +120,7 @@ end
 --pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
 AddTitle("", "Newfriend", "Welcome to the Swamp", {}, function() return true end)
 
-
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
-
 --jolly
 AddTitle("christmas", {
     {1, "Festive", 25000},
@@ -164,7 +162,6 @@ AddTitle("kleinertp", {
 
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
 -- Founder of ISIS and Jihad Squad should be a leaderboard
-
 AddTitle("", {
     {10, "Insurrectionist"},
     {20, "Terrorist"},
@@ -214,6 +211,5 @@ AddTitle("", {
 -- }, "Place %s feet of spraypaint", "s_spraypaint")
 -- fidget spinner max rpm: helicopter tard
 --NOMINIFY
-
 --TODO: titles where you don't have a description but the title itself hints at what you do? like a secret achievement but not totally secret
 --TODO: if threshold=true, its 1 but you can put better text on the button in that case
