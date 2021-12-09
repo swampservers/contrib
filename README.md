@@ -168,11 +168,6 @@ Boolean, mostly for players
 \
 *file: lua/swamp/pony/sh_init.lua*
 
-### function apcall(func, ...)
-Calls the function and does ErrorNoHalt if it fails. Returns nothing
-\
-*file: lua/swamp/sh_core.lua*
-
 ### function call(func, ...)
 Just calls the function with the args
 \
@@ -215,6 +210,11 @@ Sums an ordered table.
 
 ### function table.sub(tab, startpos, endpos)
 Selects a range of an ordered table similar to string.sub
+\
+*file: lua/swamp/sh_core.lua*
+
+### function try(func, catch)
+Calls the function and if it fails, calls catch (default: ErrorNoHaltWithStack) with the error. Doesn't return anything
 \
 *file: lua/swamp/sh_core.lua*
 

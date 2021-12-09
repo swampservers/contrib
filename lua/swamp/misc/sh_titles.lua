@@ -131,6 +131,11 @@ AddTitle("giftgiver", {
     {100, "Gift Giver", 1000000}
 }, "Give a present (from shop) to %s different players", "s_giftgiver", function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end, "gifted")
 
+AddTitle("", {
+    {200, "Gift Receiver"},
+    {1000, "Spoiled Child"},
+}, "Open %s presents which you didn't buy yourself", "s_giftopener")
+
 AddTitle("popcornhit", {
     {10, "Goofball", 2000},
     {200, "Troll", 10000},
