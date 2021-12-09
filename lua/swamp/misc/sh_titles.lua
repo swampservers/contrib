@@ -160,6 +160,23 @@ AddTitle("kleinertp", {
     {1, "Test Subject", 10000}
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
+AddTitle("buttonsearch", {
+    { 1, "Button Rookie", 0},
+    { 10, "Button Hunter", 0},
+    { 100, "Button Master", 0}
+}, "Find and press %s buttons.", "s_magicbutton")
+
+AddTitle("bountykill", {
+    {10, "Bounty Hunter", 0},
+    {100, "Hitman", 0},
+    {1000, "The Cleaner", 0}
+}, "Collect %s bounties.", "s_bounties")
+
+AddTitle("snaps" {
+    {5, "Snap", 0},
+    {30, "Perfectly Balanced", 0}
+},"Snap and kill %s players with the Thanos Gauntlet.", "s_snaps")
+
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
 -- Founder of ISIS and Jihad Squad should be a leaderboard
 AddTitle("", {
