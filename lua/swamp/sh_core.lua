@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
 --- Shorthand for empty function
 function noop()
 end
@@ -17,12 +18,12 @@ function call_async(callback, ...)
     end)
 end
 
---- Calls the function and does ErrorNoHalt if it fails. Returns nothing
-function apcall(func, ...)
-    local succ, err = pcall(func, ...)
+--- Calls the function and if it fails, calls catch (default: ErrorNoHaltWithStack) with the error. Doesn't return anything
+function try(func, catch)
+    local succ, err = pcall(func)
 
     if not succ then
-        ErrorNoHalt(err)
+        (catch or ErrorNoHaltWithStack)(err)
     end
 end
 

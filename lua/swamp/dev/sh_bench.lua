@@ -8,6 +8,7 @@ end
 
 --- Prints how long it takes to run a function, averaging over a large number of samples with minimal overhead
 function bench(func)
+    -- TODO pass ... if that is possible
     -- , calls
     local t, calls
 
