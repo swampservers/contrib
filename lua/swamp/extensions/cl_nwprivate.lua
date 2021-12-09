@@ -24,6 +24,7 @@ end)
 
 hook.Add("OnEntityCreated", "NWPrivate", function(ply)
     if ply == Me then
+        -- todo maybe just set this to NWPrivate directly to skip extra call
         ply.NWP = setmetatable({}, {
             __index = function(t, k) return NWPrivate[k] end,
             __newindex = function(t, k, v)
