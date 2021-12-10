@@ -168,14 +168,48 @@ AddTitle("buttonsearch", {
 
 AddTitle("bountykill", {
     {10, "Bounty Hunter", 0},
-    {100, "Hitman", 0},
-    {1000, "The Cleaner", 0}
+    {100, "The Cleaner", 0},
+    {1000, "THitman", 0}
 }, "Collect %s bounties.", "s_bounties")
 
-AddTitle("snaps" {
+AddTitle("headshotkill", {
+    {50, "Boom Headshot!", 2500},
+    {250, "American Sniper", 10000},
+    {1000, "Lee Harvey Oswald", 50000}
+}, "Kill %s non-afk players with headshots.", "s_headshotkill")
+
+AddTitle("kleinerkiller", {
+    {100, "Kleiner Killer", 1000},
+    {1000, "Anti Kleiner", 10000},
+    {10000, "Kleiner Exterminator", 50000}
+}, "Kill %s Kleiners.", "s_kleinerkiller")
+
+AddTitle("knifekill", {
+    {25, "Edgelord", 0},
+    {100, "Stab Enthusiast", 0},
+    {1000, "American Psycho", 0}
+}, "Kill %s non-afk players with the throatneck slitter.", "s_knifekill")
+
+AddTitle("theaterkill", {
+    {100, "Peacekeeper", 0}
+}, "Defend your theater %s amount of times.", "s_theaterkill")
+
+AddTitle("fistkill", {
+    {10, "Fightclub Member", 1000},
+    {100, "Chad", 2500},
+    {250, "Giga Chad", 10000},
+    {1000, "Billy's Disciple", 25000}
+}, "Get %s kills with the fists.", "s_fistkill")
+
+AddTitle("dodgeballkill", {
+    {10, "FatKid", 1000},
+    {100, "Dodgeball Warrior", 5000}
+}, "Get %s kills with the dodgeball.", "s_dodgeballkill")
+
+AddTitle("snaps", {
     {5, "Snap", 0},
     {30, "Perfectly Balanced", 0}
-},"Snap and kill %s players with the Thanos Gauntlet.", "s_snaps")
+}, "Snap and kill %s players with the Thanos Gauntlet.", "s_snaps")
 
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
 -- Founder of ISIS and Jihad Squad should be a leaderboard
@@ -230,3 +264,25 @@ AddTitle("", {
 --NOMINIFY
 --TODO: titles where you don't have a description but the title itself hints at what you do? like a secret achievement but not totally secret
 --TODO: if threshold=true, its 1 but you can put better text on the button in that case
+
+if SERVER then
+    local TitleFuncs =
+    {
+        ["weapon_gauntlet"] = function(atk) atk:AddStat("snaps") end,
+        ["weapon_slitter"] = function(atk,vic) if vic:IsPlayer() && not vic:IsAfk() then atk:AddStat("knifekill") end end,
+        ["dodgeball"] = function(atk,vic) atk:AddStat("dodgeballkill") end,
+        ["weapon_fists"] = function(atk) atk:AddStat("fistkill") end
+    }
+
+    local function TitlesPlayerDeath(vic,inf,atk)
+        if atk:IsPlayer() then
+            if TitleFuncs[inf:GetClass()] then TitleFuncs[inf:GetClass()](atk,vic) end
+            if vic:IsPlayer() && not vic:IsAfk() && vic:LastHitGroup() == 1 then atk:AddStat("headshotkill") end
+            if vic:GetModel() == "models/player/kleiner.mdl" then atk:AddStat("kleinerkiller") end
+            if atk:InTheater() && vic:InTheater() then
+                if atk:GetTheater():GetOwner() == atk && vic:GetTheater():GetOwner() == atk then atk:AddStat("theaterkill") end
+            end
+        end
+    end
+    hook.Add("PlayerDeath", "TitlesPlayerDeath", TitlesPlayerDeath)
+end

@@ -45,10 +45,6 @@ function Player:Fizzle(attacker, inflictor, damage)
 
         local dmginfo = DamageInfo()
         dmginfo:SetDamage(damage or 200)
-        -- Ensure that the target is taking lethal damage.
-        if self:Health() >= dmginfo:GetDamage() then
-            attacker:AddStat("snaps")
-        end
         dmginfo:SetDamageType(DMG_DISSOLVE)
         dmginfo:SetAttacker(attacker or game.GetWorld())
         dmginfo:SetDamageForce(Vector(0, 0, 1))
