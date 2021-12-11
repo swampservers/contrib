@@ -179,9 +179,9 @@ AddTitle("headshotkill", {
 }, "Kill %s non-afk players with headshots.", "s_headshotkill")
 
 AddTitle("kleinerkiller", {
-    {100, "Kleiner Killer", 1000},
+    {100, "Kleiner Killer", 5000},
     {1000, "Anti Kleiner", 10000},
-    {10000, "Kleiner Exterminator", 50000}
+    {10000, "Kleiner Exterminator", 25000}
 }, "Kill %s Kleiners.", "s_kleinerkiller")
 
 AddTitle("knifekill", {
@@ -195,20 +195,22 @@ AddTitle("theaterkill", {
 }, "Defend your theater %s amount of times.", "s_theaterkill")
 
 AddTitle("fistkill", {
-    {10, "Fightclub Member", 1000},
-    {100, "Chad", 2500},
-    {250, "Giga Chad", 10000},
-    {1000, "Billy's Disciple", 25000}
+    {25, "Fightclub Member", 5000},
+    {100, "Chad", 1000},
+    {500, "Giga Chad", 25000},
+    {1000, "Billy's Disciple", 100000}
 }, "Get %s kills with the fists.", "s_fistkill")
 
 AddTitle("dodgeballkill", {
-    {10, "FatKid", 1000},
-    {100, "Dodgeball Warrior", 5000}
+    {25, "FatKid", 2500},
+    {100, "Underdog", 10000},
+    {500, "Strongarm", 50000},
+    {1000, "Dodgeball Warrior", 100000}
 }, "Get %s kills with the dodgeball.", "s_dodgeballkill")
 
 AddTitle("snaps", {
-    {5, "Snap", 0},
-    {30, "Perfectly Balanced", 0}
+    {10, "Snap", 0},
+    {50, "Perfectly Balanced", 0}
 }, "Snap and kill %s players with the Thanos Gauntlet.", "s_snaps")
 
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
