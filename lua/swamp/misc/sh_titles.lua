@@ -169,7 +169,7 @@ AddTitle("buttonsearch", {
 AddTitle("bountykill", {
     {10, "Bounty Hunter", 0},
     {100, "The Cleaner", 0},
-    {1000, "THitman", 0}
+    {1000, "Hitman", 0}
 }, "Collect %s bounties.", "s_bounties")
 
 AddTitle("headshotkill", {
