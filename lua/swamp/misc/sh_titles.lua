@@ -196,7 +196,7 @@ AddTitle("theaterkill", {
 
 AddTitle("fistkill", {
     {25, "Fightclub Member", 5000},
-    {100, "Chad", 1000},
+    {100, "Chad", 10000},
     {500, "Giga Chad", 25000},
     {1000, "Billy's Disciple", 100000}
 }, "Get %s kills with the fists.", "s_fistkill")
