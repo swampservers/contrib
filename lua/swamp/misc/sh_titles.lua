@@ -166,6 +166,16 @@ AddTitle("buttonsearch", {
     { 100, "Button Master", 0}
 }, "Find and press %s buttons.", "s_magicbutton")
 
+AddTitle("snowballhit", {
+    {100, "Frosty The Snowman"}
+}, "Hit %s active players with a snowball.", "s_snowballhit")
+
+AddTitle("drinkenergy", {
+    {100, "Boomer"},
+    {500, "Quake Was A Good Game"},
+    {1000, "Quake Champion"}
+}, "Drink your boomer juice %s times", "s_drinkenergy")
+
 AddTitle("bountykill", {
     {10, "Bounty Hunter", 0},
     {100, "The Cleaner", 0},
@@ -268,7 +278,7 @@ AddTitle("", {
 --TODO: if threshold=true, its 1 but you can put better text on the button in that case
 
 if SERVER then
-    local TitleFuncs =
+    local TitleFunctions =
     {
         ["weapon_gauntlet"] = function(atk) atk:AddStat("snaps") end,
         ["weapon_slitter"] = function(atk,vic) if vic:IsPlayer() && not vic:IsAfk() then atk:AddStat("knifekill") end end,
@@ -278,7 +288,7 @@ if SERVER then
 
     local function TitlesPlayerDeath(vic,inf,atk)
         if atk:IsPlayer() then
-            if TitleFuncs[inf:GetClass()] then TitleFuncs[inf:GetClass()](atk,vic) end
+            if TitleFuncions[inf:GetClass()] then TitleFunctions[inf:GetClass()](atk,vic) end
             if vic:IsPlayer() && not vic:IsAfk() && vic:LastHitGroup() == 1 then atk:AddStat("headshotkill") end
             if vic:GetModel() == "models/player/kleiner.mdl" then atk:AddStat("kleinerkiller") end
             if atk:InTheater() && vic:InTheater() then

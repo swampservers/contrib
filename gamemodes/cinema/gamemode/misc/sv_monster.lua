@@ -57,6 +57,7 @@ function ReleaseMonster(ply)
             ply:SetWalkSpeed(1.5, "monster")
             ply:SetRunSpeed(1.5, "monster")
             ply:SetFOV(ply.realFov + 10, 1)
+            ply:AddStat("drinkenergy")
 
             timer.Simple(10, function()
                 if IsValid(ply) then
