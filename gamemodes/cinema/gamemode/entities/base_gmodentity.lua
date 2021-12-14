@@ -3,7 +3,7 @@
 AddCSLuaFile()
 DEFINE_BASECLASS("base_anim")
 
-if (CLIENT) then
+if CLIENT then
     ENT.MaxWorldTipDistance = 256
 
     function ENT:BeingLookedAtByLocalPlayer()
@@ -45,7 +45,7 @@ end
 
 function ENT:GetOverlayText()
     local txt = self:GetNWString("GModOverlayText")
-    if (txt == "") then return "" end
+    if txt == "" then return "" end
     if (game.SinglePlayer()) then return txt end
     local PlayerName = self:GetPlayerName()
 
@@ -67,7 +67,7 @@ function ENT:SetPlayer(ply)
 end
 
 function ENT:GetPlayer()
-    if (self.Founder == nil) then
+    if self.Founder == nil then
         -- SetPlayer has not been called
         return NULL
     elseif (IsValid(self.Founder)) then

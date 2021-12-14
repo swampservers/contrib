@@ -45,10 +45,10 @@ hook.Add("PlayerSpawn", "PlayerACSnowball", function(ply)
         if (ply:OnGround()) then
             local trace = util.TraceLine(util.GetPlayerTrace(ply, Vector(0, 0, -1)))
 
-            if (trace.HitTexture == "PROPS/METALFAN001A") then
+            if trace.HitTexture == "PROPS/METALFAN001A" then
                 ply.FrozenBalls = math.min((ply.FrozenBalls or 0) + 2, 8)
 
-                if (ply.FrozenBalls >= 5) then
+                if ply.FrozenBalls >= 5 then
                     ply:Give("weapon_snowball")
                 end
             end

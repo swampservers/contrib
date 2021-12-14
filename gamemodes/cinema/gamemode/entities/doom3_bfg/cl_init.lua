@@ -7,7 +7,7 @@ function ENT:Initialize()
     local emitter = ParticleEmitter(Pos)
     self.particle = emitter:Add("particles/fire_glow", Pos)
 
-    if (self.particle) then
+    if self.particle then
         self.particle:SetLifeTime(0)
         self.particle:SetDieTime(100)
         self.particle:SetStartAlpha(60)

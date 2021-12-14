@@ -94,11 +94,11 @@ function SWEP:DrawWorldModel()
         local oang = self:GetAngles()
         local bp, ba = self.Owner:GetBonePosition(bone)
 
-        if (bp) then
+        if bp then
             opos = bp
         end
 
-        if (ba) then
+        if ba then
             oang = ba
         end
 

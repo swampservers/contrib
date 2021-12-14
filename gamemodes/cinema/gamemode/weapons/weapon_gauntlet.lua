@@ -23,7 +23,7 @@ SWEP.Instructions = "Hold left mouse button to snap. wait time is based on targe
 SWEP.TargetCone = 15
 
 --NOMINIFY
-if (CLIENT) then
+if CLIENT then
     language.Add("infinitygauntlet_ammo", "Comedy Stones")
 end
 
@@ -62,7 +62,7 @@ end
 function SWEP:Snap(target)
     self:GetOwner():SetAnimation(PLAYER_ATTACK1)
 
-    if (SERVER) then
+    if SERVER then
         self:GetOwner():EmitSound("gauntlet/snap.wav", 100)
         util.ScreenShake(self:GetOwner():GetPos(), 1, 2, 0.2, 300)
     end
@@ -101,8 +101,8 @@ function SWEP:GetTargetNearness(v)
     local b = (otherpos - ply:GetShootPos()):GetNormalized()
     local dis = otherpos:Distance(ply:GetShootPos()) / 20
     local cn = math.deg(math.acos(a:Dot(b)))
-    if (cn > self.TargetCone) then return end
-    if (dis * 20 > 1000) then return end --2000
+    if cn > self.TargetCone then return end
+    if dis * 20 > 1000 then return end --2000
 
     return cn + dis
 end
@@ -124,7 +124,7 @@ function SWEP:FindTarget()
         if (not self:CanTarget(v)) then continue end
         local near = self:GetTargetNearness(v)
 
-        if (near and near < target[2]) then
+        if near and near < target[2] then
             local tr = util.TraceLine({
                 start = ply:GetShootPos(),
                 endpos = otherpos,
@@ -147,13 +147,13 @@ function SWEP:FindTarget()
                 tr2.Hit = false
             end
 
-            if (not tr.Hit or not tr2.Hit) then
+            if not tr.Hit or not tr2.Hit then
                 target = {v, near}
             end
         end
     end
 
-    if (target[1]) then return target[1] end
+    if target[1] then return target[1] end
 end
 
 hook.Add("PreDrawHalos", "InfinityGauntletHalo", function()
@@ -177,13 +177,13 @@ function SWEP:CanPrimaryAttack()
     return self:GetOwner():GetAmmoCount("infinitygauntlet") > 0
 end
 
-if (SERVER) then end
+if SERVER then end
 
 function SWEP:PrimaryAttack()
     local target = self:FindTarget()
     if (not self:CanPrimaryAttack()) then return end
 
-    if (SERVER) then
+    if SERVER then
         SuppressHostEvents(self:GetOwner())
     end
 
@@ -195,7 +195,7 @@ function SWEP:PrimaryAttack()
         self:SetNextPrimaryFire(CurTime() + 0.15)
     end
 
-    if (SERVER) then
+    if SERVER then
         SuppressHostEvents()
     end
 end
@@ -246,11 +246,11 @@ function SWEP:DrawWorldModel()
     local oang = self:GetAngles()
     local bp, ba = self.Owner:GetBonePosition(bone)
 
-    if (bp) then
+    if bp then
         opos = bp
     end
 
-    if (ba) then
+    if ba then
         oang = ba
     end
 

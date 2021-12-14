@@ -2,7 +2,7 @@
 -- it seems like a fairly recent issue, but i'm not 100% positive
 hook.Add("AcceptInput", "ElevatorSoundsFix", function(ent, name, activator, caller, data)
     if (ent:GetName() == "tt_elevator") then
-        if (name == "SetPosition") then
+        if name == "SetPosition" then
             ent:StopSound("plats/elevator_move_loop1.wav")
         end
     end

@@ -36,7 +36,7 @@ sv_GetVideoInfo.native = function(self, key, ply, onSuccess, onFailure)
             method = "HEAD",
             url = key,
             success = function(code)
-                if (code == 200) then
+                if code == 200 then
                     onReceive(info)
                 else
                     onFailure('File is only available to you')

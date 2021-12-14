@@ -41,7 +41,7 @@ if CLIENT then
                 end)
 
                 function vpanel:ConsoleMessage(msg)
-                    if (Me.videoDebug) then
+                    if Me.videoDebug then
                         print(msg)
                     end
 

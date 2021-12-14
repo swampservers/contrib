@@ -54,7 +54,7 @@ function net.ReadTableHD()
 
     while true do
         local k = net.ReadTypeHD()
-        if (k == nil) then return tab end
+        if k == nil then return tab end
         tab[k] = net.ReadTypeHD()
     end
 end
@@ -111,7 +111,7 @@ function net.WriteTypeHD(v)
     end
 
     local wv = net.WriteVarsHD[typeid]
-    if (wv) then return wv(typeid, v) end
+    if wv then return wv(typeid, v) end
     error("net.WriteType: Couldn't write " .. type(v) .. " (type " .. typeid .. ")")
 end
 
@@ -131,7 +131,7 @@ net.ReadVarsHD = {
 function net.ReadTypeHD(typeid)
     typeid = typeid or net.ReadUInt(8)
     local rv = net.ReadVarsHD[typeid]
-    if (rv) then return rv() end
+    if rv then return rv() end
     error("net.ReadType: Couldn't read type " .. typeid)
 end
 

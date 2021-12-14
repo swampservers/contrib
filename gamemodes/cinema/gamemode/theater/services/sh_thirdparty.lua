@@ -10,7 +10,7 @@ SERVICE.CacheLife = 0
 function SERVICE:GetKey(tbl)
     local t = util.JSONToTable(tbl.encoded)
 
-    if (t and t["referer"] and t["key"]) then
+    if t and t["referer"] and t["key"] then
         if (url.parse2(t["referer"]).scheme and url.parse2(t["key"]).scheme) then return tbl.encoded end
     end
 
@@ -59,7 +59,7 @@ if CLIENT then
 
         --failsafe
         timer.Simple(5, function()
-            if (b) then
+            if b then
                 LoadCustomPage(panel, str, realkey)
                 loaded = true
                 b = false
@@ -69,7 +69,7 @@ if CLIENT then
         function panel:ConsoleMessage(msg)
             local smsg = tostring(msg)
 
-            if (Me.videoDebug) then
+            if Me.videoDebug then
                 print(smsg)
             end
 
@@ -102,7 +102,7 @@ if CLIENT then
         local nvar = RandomString()
         local str = "var " .. nvar .. "=setInterval(function(){if(typeof(th_seek)!='undefined'){th_seek(" .. time .. ");clearInterval(" .. nvar .. ");}},100);"
 
-        if (not loaded) then
+        if not loaded then
             timer.Simple(3, function()
                 if IsValid(panel) then
                     panel:RunJavascript(str)

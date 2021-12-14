@@ -77,7 +77,7 @@ function PANEL:LayoutEntity(thisEntity)
         self:RunAnimation()
     end
 
-    if (self.Pressed) then
+    if self.Pressed then
         local mx, my = gui.MousePos()
 
         --self.Angles = self.Angles - Angle( ( self.PressY or my ) - my, ( self.PressX or mx ) - mx, 0 )
@@ -225,7 +225,7 @@ function PANEL:Paint(w, h)
     -- local x, y = self:LocalToScreen(0, 0)
     self:LayoutEntity(self.Entity)
     -- local ang = self.aLookAngle
-    -- if (not ang) then
+    -- if not ang then
     --     ang = (self.vLookatPos - self.vCamPos):Angle()
     -- end
     -- local pos = self.vCamPos

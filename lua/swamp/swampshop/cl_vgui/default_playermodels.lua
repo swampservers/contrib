@@ -107,14 +107,14 @@ list.Set("DesktopWindows", "PlayerEditor", {
             local anims = list.Get("PlayerOptionsAnimations")
             local anim = default_animations[math.random(1, #default_animations)]
 
-            if (anims[playermodel]) then
+            if anims[playermodel] then
                 anims = anims[playermodel]
                 anim = anims[math.random(1, #anims)]
             end
 
             local iSeq = panel.Entity:LookupSequence(anim)
 
-            if (iSeq > 0) then
+            if iSeq > 0 then
                 panel.Entity:ResetSequence(iSeq)
             end
         end
@@ -123,16 +123,16 @@ list.Set("DesktopWindows", "PlayerEditor", {
         local function UpdateBodyGroups(pnl, val)
         end
 
-        --[[	if ( pnl.type == "bgroup" ) then
+        --[[	if  pnl.type == "bgroup"  then
 
 				mdl.Entity:SetBodygroup( pnl.typenum, math.Round( val ) )
 
 				local str = string.Explode( " ", GetConVarString( "cl_playerbodygroups" ) )
-				if ( #str < pnl.typenum + 1 ) then for i = 1, pnl.typenum + 1 do str[ i ] = str[ i ] or 0 end end
+				if  #str < pnl.typenum + 1  then for i = 1, pnl.typenum + 1 do str[ i ] = str[ i ] or 0 end end
 				str[ pnl.typenum + 1 ] = math.Round( val )
 				RunConsoleCommand( "cl_playerbodygroups", table.concat( str, " " ) )
 
-			elseif ( pnl.type == "skin" ) then
+			elseif  pnl.type == "skin"  then
 
 				mdl.Entity:SetSkin( math.Round( val ) )
 				RunConsoleCommand( "cl_playerskin", math.Round( val ) )
@@ -143,7 +143,7 @@ list.Set("DesktopWindows", "PlayerEditor", {
             bgtab.Tab:SetVisible(false)
             --[[
 			local nskins = mdl.Entity:SkinCount() - 1
-			if ( nskins > 0 ) then
+			if  nskins > 0  then
 				local skins = vgui.Create( "DNumSlider" )
 				skins:Dock( TOP )
 				skins:SetText( "Skin" )
@@ -223,7 +223,7 @@ list.Set("DesktopWindows", "PlayerEditor", {
         UpdateFromConvars()
 
         function PanelSelect:OnActivePanelChanged(old, new)
-            if (old ~= new) then end -- Only reset if we changed the model --RunConsoleCommand( "cl_playerbodygroups", "0" ) --RunConsoleCommand( "cl_playerskin", "0" )
+            if old ~= new then end -- Only reset if we changed the model --RunConsoleCommand( "cl_playerbodygroups", "0" ) --RunConsoleCommand( "cl_playerskin", "0" )
 
             timer.Simple(0.1, function()
                 UpdateFromConvars()
@@ -241,11 +241,11 @@ list.Set("DesktopWindows", "PlayerEditor", {
         end
 
         function mdl:LayoutEntity(ent)
-            if (self.bAnimated) then
+            if self.bAnimated then
                 self:RunAnimation()
             end
 
-            if (self.Pressed) then
+            if self.Pressed then
                 local mx, my = gui.MousePos()
                 self.Angles = self.Angles - Angle(0, (self.PressX or mx) - mx, 0)
                 self.PressX, self.PressY = gui.MousePos()

@@ -61,7 +61,7 @@ function SWEP:Reload(networked)
     local ply = self:GetOwner()
     if (not IsValid(ply)) then return end
 
-    if (SERVER) then
+    if SERVER then
         ply:SetHealth(math.min(self.Owner:Health() + math.random(8, 30), self.Owner:GetMaxHealth()))
     end
 
@@ -70,7 +70,7 @@ function SWEP:Reload(networked)
     ply.ChewDur = 0.2
     self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ply.IsPony and ply:IsPony() and ACT_LAND or self.EatTaunt, true)
 
-    if (ply.ExtEmitSound) then
+    if ply.ExtEmitSound then
         ply:ExtEmitSound("beans/eating.wav", {
             level = 60,
             shared = true
@@ -105,7 +105,7 @@ local function SoundMul()
     return (SERVER and 2 or CLIENT and 4.3)
 end
 
-if (CLIENT) then
+if CLIENT then
     net.Receive("MonkyTaunt", function(len)
         local wep = net.ReadEntity()
         if (not IsValid(wep)) then return end
@@ -113,26 +113,26 @@ if (CLIENT) then
         if (not IsValid(wep:GetOwner())) then return end
         local state = net.ReadInt(8)
 
-        if (state == 1 and wep.PrimaryAttack) then
+        if state == 1 and wep.PrimaryAttack then
             wep:PrimaryAttack(true)
         end
 
-        if (state == 2 and wep.PrimaryAttack) then
+        if state == 2 and wep.PrimaryAttack then
             wep:SecondaryAttack(true)
         end
 
-        if (state == 3 and wep.PrimaryAttack) then
+        if state == 3 and wep.PrimaryAttack then
             wep:Reload(true)
         end
     end)
 end
 
-if (SERVER) then
+if SERVER then
     util.AddNetworkString("MonkyTaunt")
 end
 
 function SWEP:NetworkTaunt(tt)
-    if (SERVER) then
+    if SERVER then
         if (not IsValid(self:GetOwner()) or not IsValid(self)) then return end
         net.Start("MonkyTaunt")
         net.WriteEntity(self)
@@ -145,9 +145,9 @@ function SWEP:GetPlayerCurrentTauntActivity()
     local ply = self:GetOwner()
     if (not IsValid(ply)) then return end
     local seq = ply:GetLayerSequence(0)
-    if (seq == nil) then return end
+    if seq == nil then return end
     local seqinfo = ply:GetSequenceInfo(seq)
-    if (seqinfo == nil) then return end
+    if seqinfo == nil then return end
     local act = seqinfo.activityname
     local actID = seqinfo.activity
 
@@ -162,11 +162,11 @@ function SWEP:PrimaryAttack(networked)
     local sound = self.SoundsPrimary[soundindex]
     local delay = self.SoundsPrimaryLength[soundindex]
 
-    if (delay == nil or delay == 0) then
+    if delay == nil or delay == 0 then
         delay = 1
     end
 
-    if (ply.ExtEmitSound) then
+    if ply.ExtEmitSound then
         if (IsFirstTimePredicted() or networked) then
             ply:ExtEmitSound(sound, {
                 speech = 0.1,
@@ -181,7 +181,7 @@ function SWEP:PrimaryAttack(networked)
 
     ply:ViewPunch(Angle(-2, 0, 0))
 
-    if (self.MonkeyingAround ~= 1) then
+    if self.MonkeyingAround ~= 1 then
         self.MonkeyingAround = 1
     end
 
@@ -201,7 +201,7 @@ function SWEP:PrimaryAttack(networked)
         end
     end)
 
-    if (SERVER) then
+    if SERVER then
         self:SetRandomSeed(math.random(1, 8008135))
     end
 
@@ -217,11 +217,11 @@ function SWEP:SecondaryAttack(networked)
     local sound = self.SoundsSecondary[soundindex]
     local delay = self.SoundsSecondaryLength[soundindex]
 
-    if (delay == nil or delay == 0) then
+    if delay == nil or delay == 0 then
         delay = 4
     end
 
-    if (ply.ExtEmitSound) then
+    if ply.ExtEmitSound then
         if (IsFirstTimePredicted() or networked) then
             ply:ExtEmitSound(sound, {
                 speech = 0.1,
@@ -266,7 +266,7 @@ function SWEP:SecondaryAttack(networked)
         self:DropBanana(delay)
     end
 
-    if (SERVER) then
+    if SERVER then
         self:SetRandomSeed(math.random(1, 8008135))
     end
 
@@ -279,28 +279,28 @@ function SWEP:SlapChest()
     if (not IsValid(ply)) then return end
     local val = self.BeatChestValue == 1 and 2 or 1
 
-    if (val ~= self.BeatChestValue) then
+    if val ~= self.BeatChestValue then
         if (IsValid(ply)) then
             local ang1 = Angle(30, -90, 0)
             local ang2 = Angle(-30, -90, 0)
 
-            if (val == 1) then
+            if val == 1 then
                 ang1 = Angle(0, 0, 0)
             end
 
-            if (val == 2) then
+            if val == 2 then
                 ang2 = Angle(0, 0, 0)
             end
 
-            if (val == 1) then
+            if val == 1 then
                 ply:ViewPunch(Angle(0, -1, 1))
             end
 
-            if (val == 2) then
+            if val == 2 then
                 ply:ViewPunch(Angle(0, 1, -1))
             end
 
-            if (CLIENT) then
+            if CLIENT then
                 if (ply:LookupBone("ValveBiped.Bip01_L_Forearm")) then
                     ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), ang1, "monke")
                 end
@@ -310,7 +310,7 @@ function SWEP:SlapChest()
                 end
             end
 
-            if (val ~= 0) then
+            if val ~= 0 then
                 ply:EmitSound("physics/body/body_medium_impact_soft" .. math.random(1, 4) .. ".wav", 90, 100, 0.2)
             end
         end
@@ -360,7 +360,7 @@ function SWEP:DropBanana(delay)
         return
     end
 
-    if (SERVER) then return end
+    if SERVER then return end
 
     if (IsValid(self.BananaGib)) then
         self.BananaGib:Remove()
@@ -406,14 +406,14 @@ function SWEP:DrawWorldModel(flags, check)
         local opos = self:GetPos()
         local oang = self:GetAngles()
 
-        if (bone ~= 0) then
+        if bone ~= 0 then
             local bp, ba = self.Owner:GetBonePosition(bone)
 
-            if (bp) then
+            if bp then
                 opos = bp
             end
 
-            if (ba) then
+            if ba then
                 oang = ba
             end
 
@@ -442,25 +442,25 @@ function SWEP:DrawWorldModel(flags, check)
                 self:SetBoneMatrix(0, mrt)
             end
 
-            if (not check) then
+            if not check then
                 if (self.BananaNextRender == nil or (self.BananaNextRender ~= nil and banscale > 0)) then
                     self:DrawModel()
                 end
             end
         else
-            if (not check) then
+            if not check then
                 self:DrawModel()
 
                 return
             end
         end
 
-        if (check) then return mrt end
+        if check then return mrt end
 
         return
     end
 
-    if (not check) then
+    if not check then
         self:DrawModel()
     end
 

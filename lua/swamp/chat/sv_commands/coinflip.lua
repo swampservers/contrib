@@ -50,12 +50,12 @@ timer.Create("CoinFlip", 1, 0, function()
             local toPlayer = player.GetBySteamID(j[1])
 
             -- This whole nonsense is because I want to show the from/to's name if possible, but otherwise show a different message.
-            if (fromPlayer and toPlayer) then
+            if fromPlayer and toPlayer then
                 fromPlayer:ChatPrint("[edgy]" .. toPlayer:Nick() .. "[orange] doesn't want to play. Try again later.")
                 toPlayer:ChatPrint("[orange]You missed out on a coinflip from [edgy]" .. fromPlayer:Nick() .. "[orange].")
-            elseif (not fromPlayer and toPlayer) then
+            elseif not fromPlayer and toPlayer then
                 toPlayer:ChatPrint("[orange]You missed out on a coinflip.")
-            elseif (fromPlayer and not toPlayer) then
+            elseif fromPlayer and not toPlayer then
                 fromPlayer:ChatPrint("[red]The player you requested a coinflip to has left. Try again later.")
             end
 
@@ -112,7 +112,7 @@ function finishCoinFlip(fromID, toPlayer)
     local fromPlayer = player.GetBySteamID(fromID)
     local amount = CoinFlips[fromID][2]
 
-    if (not fromPlayer) then
+    if not fromPlayer then
         CoinFlips[fromID] = nil -- Remove request from CoinFlip because initiator left the server
         toPlayer:ChatPrint("[red]The initiator left, coinflip cancelled.")
     elseif fromPlayer:SS_HasPoints(amount) and toPlayer:SS_HasPoints(amount) then

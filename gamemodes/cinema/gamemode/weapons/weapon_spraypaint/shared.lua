@@ -61,14 +61,14 @@ function SWEP:Initialize()
     self:SetHoldType("pistol")
 end
 
-if (SERVER) then
+if SERVER then
     util.AddNetworkString("SpraypaintNetworked")
 end
 
 function SWEP:PrimaryAttack()
     local ply = self:GetOwner()
 
-    if (SERVER) then
+    if SERVER then
         local filt = RecipientFilter()
         filt:AddPVS(ply:GetPos())
         filt:RemovePlayer(ply)
@@ -93,7 +93,7 @@ function SWEP:PrimaryAttack()
         trace.Invalid = true
     end
 
-    if (not trace.Invalid) then
+    if not trace.Invalid then
         self:MakePaint(trace, (self.PaintDelay))
         self.LastPaintPos = trace.HitPos
     end
@@ -109,7 +109,7 @@ function SWEP:PrimaryAttack()
     self:SetNextPrimaryFire(CurTime() + (self.PaintDelay))
 end
 
-if (CLIENT) then
+if CLIENT then
     net.Receive("SpraypaintNetworked", function(len)
         local ent = net.ReadEntity()
 
@@ -130,7 +130,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Deploy()
-    if (SERVER) then
+    if SERVER then
         self:SendWeaponAnim(ACT_VM_DRAW)
     end
 
@@ -162,11 +162,11 @@ function SWEP:GetCurrentDecal()
     local decal = ply:GetInfo(self.ConVar)
 
     --I don't think GetInfo is properly networked
-    if (CLIENT and ply ~= Me) then
+    if CLIENT and ply ~= Me then
         decal = self:GetLastDecal()
     end
 
-    if (SPRAYPAINT_DECALS_WHITELIST[decal]) then return decal end
+    if SPRAYPAINT_DECALS_WHITELIST[decal] then return decal end
     -- if decal~="" and ply==Me then
     --     net.Start("BanMe")
     --     net.SendToServer()
@@ -184,7 +184,7 @@ function SWEP:GetTrace()
     --tr.mask = MASK_VISIBLE
     tr.filter = ply
     local trace = util.TraceLine(tr)
-    if (trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**") then end --trace.Invalid = true
+    if trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**" then end --trace.Invalid = true
 
     if (trace.HitPos:Distance(org) > 128) then
         trace.Invalid = true
@@ -202,7 +202,7 @@ function SWEP:GetDecalColor(decal)
     local ply = self:GetOwner()
     if (not IsValid(ply)) then return Vector(1, 1, 1), 1 end
     decal = decal or self:GetCurrentDecal()
-    if (SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal]) then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
+    if SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal] then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
     local mat = Material(SPRAYPAINT_MATLOOKUP[decal] or util.DecalMaterial(decal))
     local maintex
 
@@ -211,7 +211,7 @@ function SWEP:GetDecalColor(decal)
     end
 
     --shit seems to crash if you try to access width
-    if (mat) then
+    if mat then
         local texwidth = mat:Width()
         local size = texwidth * tonumber(mat:GetFloat("$decalscale") or 1)
         size = size or 1
@@ -237,8 +237,8 @@ function SWEP:MakePaint(trace, delay)
         return
     end
 
-    if (trace.HitSky) then return end
-    if (not trace.Hit) then return end
+    if trace.HitSky then return end
+    if not trace.Hit then return end
     local pos = trace.HitPos * 1
     local normal = trace.HitNormal * 1
     local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
@@ -267,7 +267,7 @@ function SWEP:DoSound(delay)
         end)
     end
 
-    if (self.SpraySound) then
+    if self.SpraySound then
         self.SpraySound:SetPos(self:GetPos())
 
         if (self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING) then

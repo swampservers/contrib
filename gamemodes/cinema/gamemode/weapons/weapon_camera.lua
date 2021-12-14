@@ -19,7 +19,7 @@ SWEP.DrawCrosshair = false
 SWEP.Spawnable = true
 SWEP.ShootSound = Sound("NPC_CScanner.TakePhoto")
 
-if (SERVER) then
+if SERVER then
     SWEP.AutoSwitchTo = false
     SWEP.AutoSwitchFrom = false
 
@@ -38,7 +38,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 0, "Zoom")
     self:NetworkVar("Float", 1, "Roll")
 
-    if (SERVER) then
+    if SERVER then
         self:SetZoom(70)
         self:SetRoll(0)
     end
@@ -83,7 +83,7 @@ end
 -- Mouse 2 action
 --
 function SWEP:Tick()
-    if (CLIENT and self.Owner ~= Me) then return end -- If someone is spectating a player holding this weapon, bail
+    if CLIENT and self.Owner ~= Me then return end -- If someone is spectating a player holding this weapon, bail
     local cmd = self.Owner:GetCurrentCommand()
     if (not cmd:KeyDown(IN_ATTACK2)) then return end -- Not holding Mouse 2, bail
     self:SetZoom(math.Clamp(self:GetZoom() + cmd:GetMouseY() * 0.1, 0.1, 175)) -- Handles zooming
@@ -126,7 +126,7 @@ function SWEP:DoShootEffect()
     self.Owner:SetAnimation(PLAYER_ATTACK1)
 end
 
-if (SERVER) then return end -- Only clientside lua after this line
+if SERVER then return end -- Only clientside lua after this line
 SWEP.WepSelectIcon = surface.GetTextureID("vgui/gmod_camera")
 
 -- Don't draw the weapon info on the weapon selection thing
@@ -138,8 +138,8 @@ end
 
 function SWEP:HUDShouldDraw(name)
     -- So we can change weapons
-    if (name == "CHudWeaponSelection") then return true end
-    if (name == "CHudChat") then return true end
+    if name == "CHudWeaponSelection" then return true end
+    if name == "CHudChat" then return true end
 
     return false
 end
@@ -175,11 +175,11 @@ function SWEP:DrawWorldModel()
         local oang = self:GetAngles()
         local bp, ba = ply:GetBonePosition(bon)
 
-        if (bp) then
+        if bp then
             opos = bp
         end
 
-        if (ba) then
+        if ba then
             oang = ba
         end
 
@@ -194,7 +194,7 @@ function SWEP:DrawWorldModel()
         self:SetModelScale(1, 0)
         local mrt = self:GetBoneMatrix(0)
 
-        if (mrt) then
+        if mrt then
             mrt:SetTranslation(opos)
             mrt:SetAngles(oang)
             --self:SetBoneMatrix(0, mrt )

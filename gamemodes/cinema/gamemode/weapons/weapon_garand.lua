@@ -84,7 +84,7 @@ end
 function SWEP:DrawWorldModel()
     -- self:SetupBones()
     local mrt = self:GetBoneMatrix(0)
-    if (mrt) then end -- mrt:SetTranslation(mrt:GetTranslation()+(mrt:GetUp()*-0.8)) --self:SetBoneMatrix(0, mrt )
+    if mrt then end -- mrt:SetTranslation(mrt:GetTranslation()+(mrt:GetUp()*-0.8)) --self:SetBoneMatrix(0, mrt )
     self:DrawModel()
 end
 
@@ -236,7 +236,7 @@ function InGarandZone(v)
     local ang = Angle(0, 26.75, 0)
     local size = Vector(275, 350, 128)
     local pos, normal, frac = util.IntersectRayWithOBB(v:EyePos(), v:GetAimVector(), origin, ang, -size / 2, size / 2)
-    if (frac == 0) then return true end
+    if frac == 0 then return true end
 
     return false
 end

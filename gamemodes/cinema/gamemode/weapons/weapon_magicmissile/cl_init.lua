@@ -13,7 +13,7 @@ hook.Add("Think", "magicmissilelight", function()
     for k, pBall in pairs(Ents.prop_combine_ball) do
         local dlight = DynamicLight(pBall:EntIndex())
 
-        if (dlight) then
+        if dlight then
             local c = pBall:GetColor()
             dlight.Pos = pBall:GetPos()
             dlight.r = c.r

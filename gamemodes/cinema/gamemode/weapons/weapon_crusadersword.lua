@@ -71,7 +71,7 @@ SWEP.Offset = {
 
 local glow_mat
 
-if (CLIENT) then
+if CLIENT then
     glow_mat = CreateMaterial("crusader_glow", "UnlitGeneric", {
         ["$basetexture"] = "sprites/physgun_glow",
         ["$model"] = 1,
@@ -178,7 +178,7 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:Initialize()
-    if (SERVER) then
+    if SERVER then
         self:SetHoldType(self.HoldType)
     end
 end
@@ -198,15 +198,15 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 0, "Overhead")
     self:NetworkVar("Bool", 1, "Holy")
 
-    if (SERVER) then
+    if SERVER then
         self:NetworkVarNotify("Holy", self.OnVarChanged)
     end
 end
 
 function SWEP:OnVarChanged(name, old, new)
-    if (old == new) then return end
+    if old == new then return end
 
-    if (name == "Holy") then
+    if name == "Holy" then
         local ent = self
 
         if (IsValid(self:GetOwner())) then
@@ -235,7 +235,7 @@ function SWEP:PrimaryAttack()
     self:SetChargeEnd(CurTime() - 1)
     self.Weapon:EmitSound(self.SwingSound, 100, math.random(90, 120))
 
-    if (holy) then
+    if holy then
         self.Weapon:EmitSound(self.BigSwingSound, 100, math.random(177, 200))
     end
 
@@ -282,7 +282,7 @@ function SWEP:Think()
         vm:SetPlaybackRate(1.7)
     end
 
-    if (charging) then
+    if charging then
         if (not ply:OnGround()) then
             ply:SetFOV(0, 0.5)
             self.Weapon:SetNextSecondaryFire(CurTime() + 2)
@@ -301,7 +301,7 @@ function SWEP:Think()
         tr.maxs = Vector(1, 1, 1) * 16
         local trace = util.TraceHull(tr)
 
-        if (trace.Hit) then
+        if trace.Hit then
             local flesh = util.GetSurfacePropName(trace.SurfaceProps) == "flesh"
             local dmg = DamageInfo()
             dmg:SetDamage(self.ChargeAttackDamagePeak) --ply:GetVelocity():Length() / self.ChargeAttackVelocityPeak * self.ChargeAttackDamagePeak)
@@ -312,12 +312,12 @@ function SWEP:Think()
             dmg:SetInflictor(self)
             trace.Entity:DispatchTraceAttack(dmg, trace)
 
-            if (not holy or not flesh) then
+            if not holy or not flesh then
                 self:SetChargeEnd(CurTime() - 1)
                 ply:SetFOV(0, 0.5)
             end
 
-            if (flesh) then
+            if flesh then
                 trace.Entity:EmitSound(self.FleshSound, 80, 100, 1, CHAN_WEAPON)
                 self:GetOwner():EmitSound("physics/flesh/flesh_impact_hard" .. math.random(1, 4) .. ".wav")
             else
@@ -343,7 +343,7 @@ function SWEP:Think()
         local horz = Lerp(1 - math.pow(math.abs(yawoffset / 90), 3), 0.4, 1)
         local ang = ply:EyeAngles()
 
-        if (overhead) then
+        if overhead then
             ang:RotateAroundAxis(ang:Right(), -yawoffset)
         else
             ang:RotateAroundAxis(ang:Up(), yawoffset)
@@ -355,11 +355,11 @@ function SWEP:Think()
         debugoverlay.Line(trace.StartPos, trace.HitPos, 4, HSVToColor(count * 10, 1, 1), true)
         debugoverlay.SweptBox(trace.StartPos, trace.HitPos, tr.mins, tr.maxs, Angle(), 4, ColorAlpha(HSVToColor(count * 10, 1, 0.4), 32))
 
-        if (trace.Hit) then
+        if trace.Hit then
             local lowered = self.HitFirstTarget and not holy
             local dmgvalue = lowered and self.SlashDamageAfter or self.SlashDamage
 
-            if (overhead) then
+            if overhead then
                 dmgvalue = lowered and self.ChopDamageAfter or self.ChopDamage
             end
 
@@ -373,14 +373,14 @@ function SWEP:Think()
             trace.Entity:DispatchTraceAttack(dmg, trace)
             local flesh = util.GetSurfacePropName(trace.SurfaceProps) == "flesh"
 
-            if (flesh) then
+            if flesh then
                 trace.Entity:EmitSound(self.FleshSound, 80, 100, 1, CHAN_WEAPON)
                 self.HitFirstTarget = true
                 table.insert(self.SwingFilter, trace.Entity)
                 debugoverlay.Text(trace.HitPos, dmg:GetDamage() .. "  " .. tostring(trace.Entity), 4, true)
             end
 
-            if (not flesh) then
+            if not flesh then
                 self.Weapon:SetNextPrimaryFire(CurTime() + (overhead and self.ChopDelayHit or self.SlashDelayHit))
                 ply:SetVelocity(trace.HitNormal * 450)
                 local vm = ply:GetViewModel()
@@ -394,13 +394,13 @@ function SWEP:Think()
                 else
                     ply:SetVelocity(trace.HitNormal * 25)
 
-                    if (not self.HitFirstTarget) then
+                    if not self.HitFirstTarget then
                         self.HitFirstTarget = true
                         self:EmitSound("physics/metal/metal_sheet_impact_soft2.wav", 80, math.Rand(90, 122), 1, CHAN_WEAPON)
                     end
                 end
 
-                if (CLIENT) then
+                if CLIENT then
                     local effectdata = EffectData()
                     effectdata:SetOrigin(trace.HitPos)
                     effectdata:SetNormal(trace.HitNormal)
@@ -412,7 +412,7 @@ function SWEP:Think()
             end
         end
 
-        if (self.LastHit) then
+        if self.LastHit then
             debugoverlay.Line(self.LastHit, trace.HitPos, 4, Color(0, 0, 0), true)
         end
 
@@ -477,7 +477,7 @@ hook.Add("DoPlayerDeath", "Holiness", function(ply, attacker, dmg)
         attacker:SetHealth(math.max(math.min(attacker:Health() + 3, attacker:GetMaxHealth()), attacker:Health()))
         wep.KillChain = (wep.KillChain or 0) + 1
 
-        if (wep.KillChain > 2) then
+        if wep.KillChain > 2 then
             wep:SetHoly(true)
         end
 

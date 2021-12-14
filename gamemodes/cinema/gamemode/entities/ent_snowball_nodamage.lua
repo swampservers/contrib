@@ -45,7 +45,7 @@ function ENT:PhysicsCollide(data)
         data.HitEntity:SetVelocity(Vector(fwd * 100))
         local ply = data.HitEntity
 
-        if (self.Hardness and self.Hardness > 0) then
+        if self.Hardness and self.Hardness > 0 then
             self:EmitSound("physics/flesh/flesh_impact_bullet" .. math.random(1, 4) .. ".wav")
             local d = DamageInfo()
             d:SetDamage(self.Hardness * 10)

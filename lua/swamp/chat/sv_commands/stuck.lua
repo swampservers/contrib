@@ -10,7 +10,7 @@ local function AppropriateNavArea(ply, area)
     tr.endpos = area:GetCenter()
 
     tr.filter = function(ent)
-        if (ent == ply) then return false end
+        if ent == ply then return false end
         local should = hook.Call("ShouldCollide", nil, ply, ent) or true
 
         return should
@@ -19,7 +19,7 @@ local function AppropriateNavArea(ply, area)
     tr.mins = mins
     tr.maxs = maxs
     local trace = util.TraceHull(tr)
-    if (trace.StartSolid) then return false end
+    if trace.StartSolid then return false end
 
     return true
 end
@@ -37,7 +37,7 @@ function Player:IsStuck()
     tr.endpos = tr.start + self:GetVelocity() * FrameTime()
 
     tr.filter = function(ent)
-        if (ent == self) then return false end
+        if ent == self then return false end
         local should = hook.Call("ShouldCollide", nil, self, ent) or true
 
         return should
@@ -46,7 +46,7 @@ function Player:IsStuck()
     tr.mins = mins
     tr.maxs = maxs
     local trace = util.TraceHull(tr)
-    if (trace.StartSolid) then return true end
+    if trace.StartSolid then return true end
 
     return false
 end
@@ -104,7 +104,7 @@ function Player:UnStick()
         end
     end
 
-    if (bestarea) then
+    if bestarea then
         self:SetPos(bestarea:GetCenter() + Vector(0, 0, 16))
         self.LastUnstickSpot = bestarea:GetCenter() + Vector(0, 0, 16)
         self:DropToFloor()

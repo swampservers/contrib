@@ -9,7 +9,7 @@ sv_GetVideoInfo.dlive = function(self, key, ply, onSuccess, onFailure)
 
         --returns list of active streams
         http.Fetch("https://live.prd.dlive.tv/hls/live/" .. (string.match(body, 'username":"(.+)","f') or "") .. ".m3u8", function(body2, length2, headers2, code2)
-            if (code2 == 200) then
+            if code2 == 200 then
                 for k, v in ipairs(string.Split(body2, "\n")) do
                     if (v:EndsWith("src/live.m3u8")) then
                         info.data = "https://cors.oak.re/" .. v

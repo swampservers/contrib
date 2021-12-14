@@ -80,7 +80,7 @@ function PLAYERLIST:Init()
     self.PlayerList = vgui.Create("TheaterList", self)
 
     self.PlayerList.VBar.btnGrip.OnMousePressed = function(pnl, code)
-        if (code == MOUSE_RIGHT) then
+        if code == MOUSE_RIGHT then
             local menu = DermaMenu()
             local lettertab = {}
 
@@ -108,21 +108,21 @@ function PLAYERLIST:Init()
 
             for letter, first in SortedPairs(lettertab) do
                 if (first ~= false or (string.byte(letter) >= 65 and string.byte(letter) <= 90)) then
-                    if (letter == "?") then
+                    if letter == "?" then
                         letter = "Top"
                     end
 
-                    if (letter == "~") then
+                    if letter == "~" then
                         letter = "Bottom"
                     end
 
                     local opt = menu:AddOption("Jump To: " .. letter, function()
-                        if (first ~= false) then
+                        if first ~= false then
                             self.PlayerList:ScrollToChild(first)
                         end
                     end)
 
-                    if (first == false) then
+                    if first == false then
                         opt:SetEnabled(false)
                     end
                 end

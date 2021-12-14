@@ -140,7 +140,7 @@ function vape_do_pulse(ply, amt, spreadadd, fx)
     local fwd
     local pos
 
-    if (ply ~= Me) then
+    if ply ~= Me then
         fwd = (angpos.Ang:Forward() - angpos.Ang:Up()):GetNormalized()
         pos = angpos.Pos + (fwd * 3.5)
     else

@@ -103,11 +103,11 @@ function SWEP:DrawWorldModel()
         local oang = self:GetAngles()
         local bp, ba = ply:GetBonePosition(bon)
 
-        if (bp) then
+        if bp then
             opos = bp
         end
 
-        if (ba) then
+        if ba then
             oang = ba
         end
 

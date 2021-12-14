@@ -19,7 +19,7 @@ ENT.PlacementSettings.SurfacePropBlacklist = {"dirt", "grass", "gravel", "rock"}
 --**studio** is any model
 ENT.PlacementSettings.TextureBlacklist = {"**empty**", "TOOLS/TOOLSBLACK", "**studio**"}
 
-if (SERVER) then
+if SERVER then
     MAGICBUTTON_ENT_DESIRED_NUMBER = 2
 
     timer.Create("magicbutton_ent_spawner", 5, 0, function()
@@ -55,15 +55,15 @@ function ENT:IsTraceValid(trace, final)
     local surprop = util.GetSurfacePropName(trace.SurfaceProps)
     if (table.HasValue(self.PlacementSettings.SurfacePropBlacklist, surprop)) then return false end
     if (table.HasValue(self.PlacementSettings.TextureBlacklist, trace.HitTexture)) then return false end
-    if (not trace.Hit) then return false end
-    if (trace.HitSky) then return false end
-    if (trace.HitNoDraw) then return false end
+    if not trace.Hit then return false end
+    if trace.HitSky then return false end
+    if trace.HitNoDraw then return false end
     if (IsValid(trace.Entity)) then return false end
-    if (trace.AllSolid) then return false end
-    if (trace.StartSolid and trace.FractionLeftSolid == 0) then return false end
+    if trace.AllSolid then return false end
+    if trace.StartSolid and trace.FractionLeftSolid == 0 then return false end
 
-    if (not self.PlacementSettings.AllowFloor) then
-        if (final and trace.HitNormal.z > 0.8) then return false end
+    if not self.PlacementSettings.AllowFloor then
+        if final and trace.HitNormal.z > 0.8 then return false end
     end
 
     return true
@@ -76,7 +76,7 @@ function ENT:FindSuitableCastOrigin()
     local navareas = navmesh.GetAllNavAreas()
     local picks
 
-    if (MAGICBUTTON_CACHED_ORIGINPOINTS == nil) then
+    if MAGICBUTTON_CACHED_ORIGINPOINTS == nil then
         local origins = {}
 
         for _, area in pairs(navareas) do
@@ -119,19 +119,19 @@ function ENT:FindSuitableCastOrigin()
 end
 
 function ENT:FindCastBox(casttrace)
-    if (casttrace == nil) then return end
+    if casttrace == nil then return end
     local hull = MAGICBUTTON_HULLSIZE
     -- debugoverlay.SweptBox(casttrace.StartPos, casttrace.HitPos, hull * Vector(1, 1, 0.1) * -0.5, hull * Vector(1, 1, 0.1) * 0.5, Angle(), 60, Color(255, 0, 0, 0))
     local randir = VectorRand()
 
-    if (not casttrace.Hit) then
+    if not casttrace.Hit then
         randir.z = math.Rand(-0.5, -0.1)
     else
         randir.z = randir.z / 4
         randir = randir:GetNormalized()
     end
 
-    if (not self.PlacementSettings.AllowFloor and self.PlacementSettings.RequireCeiling) then
+    if not self.PlacementSettings.AllowFloor and self.PlacementSettings.RequireCeiling then
         randir.z = math.abs(randir.z)
     end
 
@@ -161,11 +161,11 @@ function ENT:FindCastBox(casttrace)
 end
 
 function ENT:FindCastFinal(trace, index)
-    if (trace == nil) then return end
+    if trace == nil then return end
     local hull = MAGICBUTTON_HULLSIZE
     local randir = VectorRand() * Vector(1, 1, 0.7):GetNormalized()
 
-    if (not self.PlacementSettings.AllowFloor and self.PlacementSettings.RequireCeiling) then
+    if not self.PlacementSettings.AllowFloor and self.PlacementSettings.RequireCeiling then
         randir.z = math.abs(randir.z)
     end
 
@@ -192,21 +192,21 @@ function ENT:FindHidingSpot()
     while (trace2 == nil and ATTEMPTS_TOTAL < 10000) do
         ATTEMPTS_TOTAL = ATTEMPTS_TOTAL + 1
 
-        if (startpoint == nil or ORIGIN_FAILURES > 10) then
+        if startpoint == nil or ORIGIN_FAILURES > 10 then
             ORIGIN_FAILURES = 0
             startpoint = self:FindSuitableCastOrigin() --returns a random area spot to test from
             TRACE_COUNTER = TRACE_COUNTER + 1
             trace1 = nil
         end
 
-        if (trace1 == nil or TRACE1_FAILURES > 10) then
+        if trace1 == nil or TRACE1_FAILURES > 10 then
             TRACE1_FAILURES = 0
             trace1 = self:FindCastBox(startpoint) --returns a valid hull sized trace in a rnadom direction
             TRACE_COUNTER = TRACE_COUNTER + 1
             trace2 = nil
         end
 
-        if (trace1 == nil) then
+        if trace1 == nil then
             ORIGIN_FAILURES = ORIGIN_FAILURES + 1
             TOTAL_FAILURES = TOTAL_FAILURES + 1
             continue
@@ -214,14 +214,14 @@ function ENT:FindHidingSpot()
             trace2 = self:FindCastFinal(trace1, TRACE1_FAILURES) --only returns a final result if it's considered valid
         end
 
-        if (trace2 == nil) then
+        if trace2 == nil then
             TRACE1_FAILURES = TRACE1_FAILURES + 1
             TOTAL_FAILURES = TOTAL_FAILURES + 1
             continue
         end
     end
 
-    if (trace1 and trace2) then return trace2, trace1 end
+    if trace1 and trace2 then return trace2, trace1 end
     Error()
 end
 
@@ -235,7 +235,7 @@ function ENT:MoveToTraceResult(trace)
 end
 
 function ENT:Initialize()
-    if (SERVER) then
+    if SERVER then
         self.Entity:SetModel("models/pyroteknik/secretbutton.mdl")
         local bmins, bmaxs = Vector(-4.8, -3.1, 0), Vector(4.8, 3.1, 2)
         self:SetCollisionBounds(bmins, bmaxs)
@@ -251,7 +251,7 @@ function ENT:Initialize()
         end
 
         --self:FindHidingSpot()
-        if (not self.HasSpot) then
+        if not self.HasSpot then
             local trace = self:FindHidingSpot()
             self:MoveToTraceResult(trace)
         end
@@ -263,7 +263,7 @@ function ENT:Initialize()
         end)
     end
 
-    if (CLIENT) then
+    if CLIENT then
         local effectdata = EffectData()
         effectdata:SetOrigin(self:GetPos())
         effectdata:SetEntity(self)
@@ -319,7 +319,7 @@ end
 
 local function MagicOutcomePrize(ply)
     local amount = ButtonMoneyPrize()
-    if (ply.SS_GivePoints == nil) then return nil end
+    if ply.SS_GivePoints == nil then return nil end
     ply:SS_GivePoints(amount)
 
     return "and won [white]" .. string.Comma(amount) .. " points![fbc];coins;"
@@ -327,7 +327,7 @@ end
 
 local function MagicOutcomeBountyAndPrize(ply)
     local amount = ButtonMoneyPrize()
-    if (ply.SS_GivePoints == nil or SetPlayerBounty == nil or GetPlayerBounty == nil) then return nil end
+    if ply.SS_GivePoints == nil or SetPlayerBounty == nil or GetPlayerBounty == nil then return nil end
     ply:SS_GivePoints(amount)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
@@ -336,7 +336,7 @@ local function MagicOutcomeBountyAndPrize(ply)
 end
 
 local function MagicOutcomeBountyAll(ply)
-    if (SetPlayerBounty == nil or GetPlayerBounty == nil) then return nil end
+    if SetPlayerBounty == nil or GetPlayerBounty == nil then return nil end
     local amount = 1000
 
     if (math.random(1, 20) == 1) then
@@ -366,7 +366,7 @@ local function MagicOutcomeKleinerFanclub(ply)
             KLEINER_OVERRIDE_TARGET = nil
         end)
 
-        if (someoneelse) then return "and it made " .. ply:Nick() .. " really popular with kleiners! ;kleinerfortnite;" end
+        if someoneelse then return "and it made " .. ply:Nick() .. " really popular with kleiners! ;kleinerfortnite;" end
 
         return "and it made them really popular with kleiners! ;kleinerfortnite;"
     end
@@ -413,7 +413,7 @@ local function MagicOutcomeKleinerSlur(ply)
         end
 
         KLEINER_BULLIES[ply:SteamID()] = 5000
-        if (someoneelse) then return "and it sent the kleiner mob after " .. ply:Nick() .. "! ;antikleiner;" end
+        if someoneelse then return "and it sent the kleiner mob after " .. ply:Nick() .. "! ;antikleiner;" end
 
         return "and it made them accidentally say a anti-kleiner slur! Now you're gonna get it! ;antikleiner;"
     end
@@ -432,7 +432,7 @@ local function MagicOutcomeKleinerTeleported(ply)
             v:TeleportSafe(ply:GetPos())
         end
 
-        if (someoneelse) then return "and it teleported all kleiners to the player [white]" .. ply:Nick() .. ";hahaha;" end
+        if someoneelse then return "and it teleported all kleiners to the player [white]" .. ply:Nick() .. ";hahaha;" end
 
         return "and it teleported all kleiners to them! ;kleinerfortnite;"
     end
@@ -459,7 +459,7 @@ local function MagicOutcomeButtonSpawn(ply)
     button:Spawn()
     local trace = button:FindHidingSpot()
 
-    if (trace) then
+    if trace then
         button:MoveToTraceResult(trace)
     end
 
@@ -468,7 +468,7 @@ local function MagicOutcomeButtonSpawn(ply)
         local locd = Locations[loc]
         local locname = locd.Name
 
-        if (locname == "Outside") then
+        if locname == "Outside" then
             local nearest = 1000000
             local nearestname
             local secondnearestname
@@ -526,14 +526,14 @@ local function MagicOutcomeSpawnObject(ply, button)
         ent:SetPos(button:GetPos() + button:GetUp() * ent:BoundingRadius())
         SafeRemoveEntityDelayed(ent, 60 * 5) --whatever we spawn, make sure it's gone after 5 minutes
 
-        if (func) then
+        if func then
             func(ent, button)
         end
     end
 
     local what = name or ent.PrintName or ent:GetClass()
 
-    if (number > 1) then
+    if number > 1 then
         return "and it spawned " .. number .. " " .. what .. "s!"
     else
         return "and it spawned a " .. what .. "!"
@@ -631,7 +631,7 @@ local MagicButtonOutcomes = {
     },
     {
         func = function(ply, button)
-            if (OpenAPresent) then
+            if OpenAPresent then
                 local content = OpenAPresent(ply, button:GetPos())
 
                 return "and got [white]" .. content .. "[fbc]! ;alien;"
@@ -656,18 +656,18 @@ function ENT:Effect(ply)
     for _, index in pairs(outcometable) do
         effect = MagicButtonOutcomes[index]
 
-        if (effect.func ~= nil) then
+        if effect.func ~= nil then
             item = effect.func(ply, self)
         end
 
-        if (item ~= nil) then break end
+        if item ~= nil then break end
     end
 
     return item
 end
 
 function ENT:Use(activator)
-    if (not self.Pressed) then
+    if not self.Pressed then
         self.Pressed = true
 
         timer.Simple(5, function()

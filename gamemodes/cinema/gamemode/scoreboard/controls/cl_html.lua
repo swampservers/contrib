@@ -113,7 +113,7 @@ function PANEL:Think()
         -- Run queued javascript
         if self.JS then
             for k, v in pairs(self.JS) do
-                if (Me.videoDebug) then
+                if Me.videoDebug then
                     print("(JS)", v)
                 end
 
@@ -277,7 +277,7 @@ function PANEL:ConsoleMessage(msg, func)
     -- Filter messages output to the console
     -- 'console.gmod' always gets output
     local filterLevel = FilterCVar:GetInt()
-    if (func ~= "gmod" and filterLevel == FILTER_ALL) then return end
+    if func ~= "gmod" and filterLevel == FILTER_ALL then return end
     local prefixColor = ConsoleColors.default
     local prefix = "[HTML"
 
@@ -311,7 +311,7 @@ function PANEL:OnCallback(obj, func, args)
     -- Use AddFunction to add functions to this.
     --
     local f = self.Callbacks[obj][func]
-    if (f) then return f(unpack(args)) end
+    if f then return f(unpack(args)) end
 end
 
 --
@@ -325,7 +325,7 @@ function PANEL:AddFunction(obj, funcname, func)
     --
     -- Create the `object` if it doesn't exist
     --
-    if (not self.Callbacks[obj]) then
+    if not self.Callbacks[obj] then
         self:NewObject(obj)
         self.Callbacks[obj] = {}
     end

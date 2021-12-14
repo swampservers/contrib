@@ -31,12 +31,12 @@ function GM:OnPlayerChat(player, strText, bTeamOnly, bPlayerIsDead)
     local slashme = false
 
     --if string.sub( strText, 1, 4 ) == "/me " then slashme=true strText = strText:sub(5) end
-    if (bPlayerIsDead) then
+    if bPlayerIsDead then
         table.insert(tab, Color(255, 30, 40))
         table.insert(tab, "*DEAD* ")
     end
 
-    if (bTeamOnly) then
+    if bTeamOnly then
         table.insert(tab, Color(123, 32, 29))
         table.insert(tab, "(G) ")
     else

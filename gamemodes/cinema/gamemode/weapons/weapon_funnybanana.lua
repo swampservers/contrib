@@ -146,7 +146,7 @@ if CLIENT then
             self:SetModelScale(0.6, 0)
             local mrt = self:GetBoneMatrix(0)
 
-            if (mrt) then
+            if mrt then
                 mrt:SetTranslation(opos)
                 mrt:SetAngles(oang)
                 self:SetBoneMatrix(0, mrt)

@@ -11,7 +11,7 @@ sv_GetVideoInfo.soundcloud = function(self, key, ply, onSuccess, onFailure)
             info.title = t["title"]
             info.duration = math.ceil(tonumber(t["duration"]) / 1000)
 
-            if (t["artwork_url"] ~= nil) then
+            if t["artwork_url"] ~= nil then
                 info.thumb = string.Replace(t["artwork_url"], "-large.jpg", "-original.jpg")
             end
 

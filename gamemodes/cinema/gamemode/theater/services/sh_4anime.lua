@@ -54,7 +54,7 @@ if CLIENT then
 
             function vpanel:ConsoleMessage(msg)
                 if msg then
-                    if (Me.videoDebug) then
+                    if Me.videoDebug then
                         print(msg)
                     end
 
@@ -72,7 +72,7 @@ if CLIENT then
                                 method = "HEAD",
                                 url = self.data,
                                 success = function(code)
-                                    if (code == 403 or code == 503) then
+                                    if code == 403 or code == 503 then
                                         Me:PrintMessage(HUD_PRINTTALK, "[red]The video file is currently inaccessible")
                                         print("File returned a " .. code .. " error")
                                         print("Failed")
@@ -91,7 +91,7 @@ if CLIENT then
                             print("TITLE: " .. self.title)
                         end
 
-                        if (self.data ~= nil and self.title ~= nil) then
+                        if self.data ~= nil and self.title ~= nil then
                             self.phase = 2
                             self:OpenURL("http://swamp.sv/s/cinema/file.html")
                         end

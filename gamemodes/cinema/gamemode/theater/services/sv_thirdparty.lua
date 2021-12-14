@@ -21,7 +21,7 @@ sv_GetVideoInfo.thirdparty = function(self, key, ply, onSuccess, onFailure)
             if (string.find(realkey, ".m3u8") and ((not headers["Access-Control-Allow-Origin"]) or headers["Access-Control-Allow-Origin"] and (headers["Access-Control-Allow-Origin"] ~= "*" and headers["Access-Control-Allow-Origin"] ~= referer))) then
                 ply:PrintMessage(HUD_PRINTCONSOLE, "WRONG ORIGIN")
 
-                if (headers["Access-Control-Allow-Origin"]) then
+                if headers["Access-Control-Allow-Origin"] then
                     ply:PrintMessage(HUD_PRINTCONSOLE, "TRY REFERER: " .. headers["Access-Control-Allow-Origin"])
                 end
             end

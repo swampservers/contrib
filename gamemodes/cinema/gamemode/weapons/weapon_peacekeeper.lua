@@ -208,7 +208,7 @@ function SWEP:Reload()
         self.Owner:SetAnimation(PLAYER_RELOAD)
         self.Owner.NextReload = CurTime() + 1
 
-        if (SERVER) then
+        if SERVER then
             self.Owner:SetFOV(0, 0.15)
             --self:SetIronsights(false)
         end

@@ -292,7 +292,7 @@ PPM.rig = {
 
 PPM.rig_tail = {38, 39, 40}
 -- function PPM.getPonyValues(ent, localvals)
---     if (localvals) then
+--     if localvals then
 --         local pony = ent.ponydata
 --         pony._cmark = {}
 --         return ent.ponydata

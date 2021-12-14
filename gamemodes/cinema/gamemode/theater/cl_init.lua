@@ -310,7 +310,7 @@ function LoadVideo(Video, force)
     ActivePanel.OnFinishLoading = function() end
     Me.theaterPanel = ActivePanel
 
-    if (Me.videoDebug and not force) then
+    if Me.videoDebug and not force then
         print("KEY: " .. Video:Key(), string.len(Video:Key()))
         print("DATA: " .. Video:Data(), string.len(Video:Data()))
     end
@@ -327,7 +327,7 @@ function LoadVideo(Video, force)
         end
     end
 
-    if (force) then return end
+    if force then return end
     -- Output debug information
     Msg("Loaded Video\n")
     Msg("\tTitle:\t\t" .. tostring(Video:Title()) .. "\n")
@@ -335,7 +335,7 @@ function LoadVideo(Video, force)
     local vkey = tostring(Video:Key())
     local t = util.JSONToTable(vkey)
 
-    if (t and t["referer"]) then
+    if t and t["referer"] then
         vkey = t["referer"]
     end
 

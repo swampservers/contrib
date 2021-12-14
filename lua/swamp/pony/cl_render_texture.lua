@@ -16,7 +16,7 @@ function FixVertexLitMaterial(Mat)
     if (string.find(Mat:GetShader(), "VertexLitGeneric") or string.find(Mat:GetShader(), "Cable")) then
         local t = Mat:GetString("$basetexture")
 
-        if (t) then
+        if t then
             local params = {}
             params["$basetexture"] = t
             params["$vertexcolor"] = 1
@@ -78,7 +78,7 @@ PPM.rendertargettasks.bodytex = {
         else
             mats[PPMMAT_BODY]:SetVector("$color2", ent.ponydata.coatcolor)
 
-            if (ent.ponydata.gender == 1) then
+            if ent.ponydata.gender == 1 then
                 mats[PPMMAT_BODY]:SetTexture("$basetexture", PPM.m_bodyf:GetTexture("$basetexture"))
             else
                 mats[PPMMAT_BODY]:SetTexture("$basetexture", PPM.m_bodym:GetTexture("$basetexture"))
@@ -93,7 +93,7 @@ PPM.rendertargettasks.bodytex = {
     drawfunc = function()
         local pony = PPM.currt_ponydata
 
-        if (pony.gender == 1) then
+        if pony.gender == 1 then
             render.SetMaterial(FixVertexLitMaterial(Material("models/ppm/base/render/bodyf")))
         else
             render.SetMaterial(FixVertexLitMaterial(Material("models/ppm/base/render/bodym")))
@@ -106,7 +106,7 @@ PPM.rendertargettasks.bodytex = {
             local detailvalue = pony["bodydetail" .. C] or 1
             local detailcolor = pony["bodydetail" .. C .. "_c"] or Vector(0, 0, 0)
 
-            if (detailvalue > 1) then
+            if detailvalue > 1 then
                 local mat = PPM.m_bodydetails[detailvalue - 1]
 
                 if mat then
@@ -122,10 +122,10 @@ PPM.rendertargettasks.bodytex = {
 
         local pbt = pony.bodyt0 or 1
 
-        if (pbt > 1) then
+        if pbt > 1 then
             local mmm = PPM.m_bodyt0[pbt - 1]
 
-            if (mmm ~= nil) then
+            if mmm ~= nil then
                 render.SetMaterial(FixVertexLitMaterial(mmm)) --Material("models/ppm/base/render/clothes_sbs_full")) 
                 --surface.SetTexture( surface.GetTextureID( "models/ppm/base/render/horn" ) )
                 render.SetBlend(1)
@@ -305,7 +305,7 @@ end
 PPM.tex_draweyefunc = function(pony, isR)
     local prefix = "l"
 
-    if (not isR) then
+    if not isR then
         prefix = "r"
     end
 
@@ -399,10 +399,10 @@ PPM.rendertargettasks.ccmarktex = {
         if PPM_CheckTexture(ent, "ccmarktex") then
             mats[PPMMAT_CMARK]:SetTexture("$basetexture", ent.ponydata_tex.ccmarktex)
         else
-            if (ent.ponydata == nil) then return end
-            if (ent.ponydata.cmark == nil) then return end
-            if (PPM.m_cmarks[ent.ponydata.cmark] == nil) then return end
-            if (PPM.m_cmarks[ent.ponydata.cmark][2] == nil) then return end
+            if ent.ponydata == nil then return end
+            if ent.ponydata.cmark == nil then return end
+            if PPM.m_cmarks[ent.ponydata.cmark] == nil then return end
+            if PPM.m_cmarks[ent.ponydata.cmark][2] == nil then return end
             if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == nil) then return end
             if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == NULL) then return end
             mats[PPMMAT_CMARK]:SetTexture("$basetexture", PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture"))

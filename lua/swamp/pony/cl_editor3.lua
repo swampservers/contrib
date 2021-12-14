@@ -136,7 +136,7 @@ if CLIENT then
             -- end
             PPM.editor3_pony:SetPoseParameter("move_x", 0)
 
-            -- if (Me.pi_wear ~= nil) then
+            -- if Me.pi_wear ~= nil then
             --     for i, item in pairs(Me.pi_wear) do
             --         PPM.setBodygroupSafe(PPM.editor3_pony, item.bid, item.bval)
             --         PPM.setBodygroupSafe(mdl.model2, item.bid, item.bval)
@@ -159,7 +159,7 @@ if CLIENT then
             self:SetAnimSpeed(0.5)
             self:SetAnimated(false)
 
-            if (PPM.faceviewmode) then
+            if PPM.faceviewmode then
                 local attachmentID = self.Entity:LookupAttachment("eyes")
                 local attachpos = self.Entity:GetAttachment(attachmentID).Pos + Vector(-10, 0, 3)
                 self.vLookatPos = self.vLookatPos + (attachpos - self.vLookatPos) / 20
@@ -169,7 +169,7 @@ if CLIENT then
                 mdl.fFOV = mdl.fFOV + (70 - mdl.fFOV) / 50
             end
 
-            if (self.ismousepressed) then
+            if self.ismousepressed then
                 local x, y = self:CursorPos()
                 self.camangadd = Angle(math.Clamp(self.camang.p - y + self.mdy, -89, 13) - self.camang.p, -x + self.mdx, 0)
             end
@@ -209,7 +209,7 @@ if CLIENT then
             -- PPM.PrePonyDraw(mdl.Entity, true)
             local ang = mdl.aLookAngle
 
-            if (not ang) then
+            if not ang then
                 ang = (mdl.vLookatPos - mdl.vCamPos):Angle()
             end
 
@@ -234,7 +234,7 @@ if CLIENT then
             for i = 0, 6 do
                 local col = mdl.DirectionalLight[i]
 
-                if (col) then
+                if col then
                     render.SetModelLighting(i, col.r / 255, col.g / 255, col.b / 255)
                 end
             end
@@ -280,7 +280,7 @@ if CLIENT then
 				end
 				//PPM.selector_circle[1]:Draw()
 				]]
-            if (PPM.E3_CURRENT_NODE ~= nil and PPM.E3_CURRENT_NODE.name == nil) then
+            if PPM.E3_CURRENT_NODE ~= nil and PPM.E3_CURRENT_NODE.name == nil then
                 for k, v in pairs(PPM.E3_CURRENT_NODE) do
                     local x, y, viz = VectorToLPCameraScreen(((mdl.Entity:GetPos() + v.pos) - mdl.camvec - mdl.vLookatPos):GetNormal(), w, h, ang, math.rad(mdl.fFOV))
                     local tt = 50
@@ -295,7 +295,7 @@ if CLIENT then
                     local dist = tvpos:Distance(mousepos) / 40
                     surface.SetDrawColor(255, 255, 255, 255)
 
-                    if (v == PPM.ed3_selectedNode) then
+                    if v == PPM.ed3_selectedNode then
                         if (false and x > ScrW() / 2) then
                             surface.DrawLine(x - tt / 2, y - tt / 2, x + minim, y - minim)
                             surface.SetDrawColor(255, 255, 255, 100)
@@ -405,21 +405,21 @@ if CLIENT then
         TABBUTTON:SetImage("gui/editor/gui_tab_" .. pfx .. ".png")
 
         TABBUTTON.OnCursorEntered = function()
-            if (selected_tab ~= TABBUTTON) then
+            if selected_tab ~= TABBUTTON then
                 local px, py = TABBUTTON:GetPos()
                 TABBUTTON:SetPos(px, -50)
             end
         end
 
         TABBUTTON.OnCursorExited = function()
-            if (selected_tab ~= TABBUTTON) then
+            if selected_tab ~= TABBUTTON then
                 local px, py = TABBUTTON:GetPos()
                 TABBUTTON:SetPos(px, -64)
             end
         end
 
         TABBUTTON.DoClick = function()
-            if (selected_tab ~= TABBUTTON) then
+            if selected_tab ~= TABBUTTON then
                 if (IsValid(selected_tab)) then
                     local px, py = selected_tab:GetPos()
                     selected_tab:SetPos(px, -64)
@@ -436,10 +436,10 @@ if CLIENT then
                 local ponymodel = "pony" --Me:GetInfo( "cl_playermodel" )
 
                 --if(PPM.Editor3_ponies[ponymodel]!=nil) then
-                if (PPM.Editor3_nodes[PPM.Editor3_ponies[ponymodel][TABBUTTON.node]] ~= nil) then
+                if PPM.Editor3_nodes[PPM.Editor3_ponies[ponymodel][TABBUTTON.node]] ~= nil then
                     PPM.E3_CURRENT_NODE = PPM.Editor3_nodes[PPM.Editor3_ponies[ponymodel][TABBUTTON.node]]
 
-                    if (PPM.E3_CURRENT_NODE.name ~= nil) then
+                    if PPM.E3_CURRENT_NODE.name ~= nil then
                         PPM.ed3_selectedNode = PPM.E3_CURRENT_NODE
                         spawnEditPanel()
                         spawnValueEditor()
@@ -480,7 +480,7 @@ if CLIENT then
     end
 
     function spawnButtons()
-        if (PPM.E3_CURRENT_NODE ~= nil) then
+        if PPM.E3_CURRENT_NODE ~= nil then
             for k, v in pairs(PPM.E3_CURRENT_NODE) do
                 local button = vgui.Create("DImageButton", PPM.Editor3)
                 button:SetSize(50, 50)
@@ -539,7 +539,7 @@ if CLIENT then
 
             for k, v in pairs(PPM.ed3_selectedNode.controlls) do
                 --MsgN("preset ",v.type,"   ",v.name)
-                if (PPM.Editor3_presets[v.type] ~= nil) then
+                if PPM.Editor3_presets[v.type] ~= nil then
                     --MsgN("has ",v.type)
                     PPM.Editor3_presets[v.type].spawn(PPM.smenupanel_inner, v)
                 end

@@ -32,7 +32,7 @@ hook.Add("PlayerCanHaveLaserBeams", "DisableBeamModeInTheaters", function(ply, w
     if ply:IsProtected() then return false end
 end)
 
-if (CLIENT) then
+if CLIENT then
     language.Add("laserpointer_ammo", "Laser Pointer Battery")
     local wepicon = Material("laserpointer/laserpointer_icon.png", "smooth")
     SWEP.WepSelectIcon = wepicon:GetTexture("$basetexture")
@@ -67,7 +67,7 @@ end)
 function SWEP:ButtonSound(state)
     local clicksound = self.ClickSound
 
-    if (not state) then
+    if not state then
         clicksound = self.UnClickSound
     end
 
@@ -99,7 +99,7 @@ end)
 function SWEP:SecondaryAttack()
     local can = hook.Call("PlayerCanHaveLaserBeams", nil, self:GetOwner(), self)
 
-    if (can ~= false) then
+    if can ~= false then
         self:SetBeamMode(not self:GetBeamMode())
         self:ButtonSound(true)
         self.LastRightClick = true
@@ -109,7 +109,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Deploy()
-    if (CLIENT) then
+    if CLIENT then
         self.HornBG = nil
     end
 
@@ -130,7 +130,7 @@ hook.Add("KeyPress", "LaserColorPicker", function(ply, key)
     local wep = ply:GetActiveWeapon()
 
     if (key == IN_RELOAD and IsValid(wep) and wep:GetClass() == "weapon_laserpointer") then
-        if (SERVER) then
+        if SERVER then
             ply:SendLua("CustomLaserOpenPanel()")
         end
     end
@@ -140,7 +140,7 @@ hook.Add("KeyRelease", "LaserColorPicker", function(ply, key)
     local wep = ply:GetActiveWeapon()
 
     if (key == IN_ATTACK2 and IsValid(wep) and wep:GetClass() == "weapon_laserpointer") then
-        if (wep.LastRightClick) then
+        if wep.LastRightClick then
             wep.LastRightClick = nil
             wep:ButtonSound(false)
         end
@@ -179,7 +179,7 @@ function SWEP:PrimaryAttack()
     if (self:GetOnState() ~= true) then
         local can = hook.Call("PlayerCanHaveLaserBeams", nil, self:GetOwner(), self)
 
-        if (can == false) then
+        if can == false then
             self:SetBeamMode(false)
         end
 
@@ -212,7 +212,7 @@ function SWEP:PrimaryAttack()
 end
 
 hook.Add("KeyRelease", "LaserPointerReleaseCheck", function(ply, key)
-    if (key == IN_ATTACK) then
+    if key == IN_ATTACK then
         local pointer = ply:GetActiveWeapon()
 
         if (IsValid(pointer) and pointer:GetClass() == "weapon_laserpointer" and pointer:GetOnState() == true) then
@@ -237,7 +237,7 @@ pony_head_hitbones["Mane05"] = true
 local laser_material
 local beam_material
 
-if (CLIENT) then
+if CLIENT then
     beam_material = CreateMaterial("laserpointer_beam", "UnlitGeneric", {
         ["$basetexture"] = "sprites/light_glow02",
         ["$model"] = 1,
@@ -264,13 +264,13 @@ lpointer_laser_source = lpointer_laser_source or {}
 function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverride)
     if (not CLIENT or not IsValid(ply) or not IsValid(wep) or origin == nil or dir == nil or color == nil) then return end
     phase = phase or 0
-    if (phase >= 15) then return end
+    if phase >= 15 then return end
     local trace = {}
     trace.start = origin
     trace.endpos = origin + (dir * 60000)
     trace.mask = wep.LaserMask
 
-    if (phase == 0) then
+    if phase == 0 then
         trace.filter = ply
     end
 
@@ -278,7 +278,7 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     local basesize = 8
     local beammode = wep:GetBeamMode()
 
-    if (beammode) then
+    if beammode then
         basesize = 12
     end
 
@@ -311,7 +311,7 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
         beamstart = startoverride
     end
 
-    if (phase == 0 or beammode) then
+    if phase == 0 or beammode then
         local viewnormal = (EyePos() - beamstart):GetNormal()
         local startsize = basesize / 2
         --if(phase == 0)then startsize = startsize / 3 end
@@ -322,12 +322,12 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     render.SetMaterial(beam_material)
     local dist = math.Rand(0.45, 0.55)
 
-    if (beammode) then
+    if beammode then
         render.DrawBeam(beamstart, beamend, basesize / 4, dist, dist, color)
         render.DrawBeam(beamstart, beamend, basesize / 8, dist, dist, cwh)
     else
         -- only the first beam is rendered in low beam mode, only a certain distance
-        if (phase == 0) then
+        if phase == 0 then
             local dir2 = (beamend - beamstart):GetNormal()
             local bdist = math.min(16, beamstart:Distance(beamend))
             local bcut = 1 - (bdist / 16)
@@ -342,7 +342,7 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     if ((tr.HitWorld or tr.Hit) and not tr.HitSky) then
         local reflect = tr.Entity:GetClass() == "func_reflective_glass" or tr.MatType == MAT_GLASS
 
-        if (reflect) then
+        if reflect then
             local newstart = tr.HitPos
             local dir3 = tr.Normal - 2 * tr.Normal:Dot(tr.HitNormal) * tr.HitNormal
             LaserPointer_DrawBeam(ply, wep, newstart, dir3, color, phase + 1, nil)
@@ -361,13 +361,13 @@ end
 function LaserPointer_SVBeam(ply, wep, origin, dir, phase)
     if (not SERVER or not IsValid(ply) or not IsValid(wep) or origin == nil or dir == nil) then return end
     phase = phase or 0
-    if (phase >= 15) then return end
+    if phase >= 15 then return end
     local trace = {}
     trace.start = origin
     trace.endpos = origin + (dir * 60000)
     trace.mask = wep.LaserMask
 
-    if (phase == 0) then
+    if phase == 0 then
         trace.filter = ply
     end
 
@@ -377,10 +377,10 @@ function LaserPointer_SVBeam(ply, wep, origin, dir, phase)
         wep:MakePlane(tr.HitPos + (origin - tr.HitPos):GetNormal() * 1000, ply:GetPos())
     end
 
-    if (tr.HitWorld or tr.Hit) then
+    if tr.HitWorld or tr.Hit then
         local reflect = tr.Entity:GetClass() == "func_reflective_glass" or tr.MatType == MAT_GLASS
 
-        if (reflect) then
+        if reflect then
             local newstart = tr.HitPos
             local dir3 = tr.Normal - 2 * tr.Normal:Dot(tr.HitNormal) * tr.HitNormal
             LaserPointer_SVBeam(ply, wep, newstart, dir3, phase + 1)
@@ -403,7 +403,7 @@ hook.Add("PostDrawTranslucentRenderables", "laserhook", function(depth, sky)
     if sky or depth then return end
     render.SetMaterial(laser_material)
 
-    if (laser_material) then
+    if laser_material then
         for wep, _ in next, lpointer_laser_source do
             local ply = wep:GetOwner()
             if (not IsValid(ply)) then continue end
@@ -427,7 +427,7 @@ hook.Add("PostDrawTranslucentRenderables", "laserhook", function(depth, sky)
                 local vmpos, vmang = ply:EyePos(), ply:EyeAngles()
                 local matrix = wep:DrawWorldModel(true)
 
-                if (matrix) then
+                if matrix then
                     beamstart = matrix:GetTranslation() + matrix:GetAngles():Up() * 6.6
                     beamdir = matrix:GetAngles():Up()
                 end
@@ -440,7 +440,7 @@ hook.Add("PostDrawTranslucentRenderables", "laserhook", function(depth, sky)
 end)
 
 function SWEP:MakePlane(pos, targetpos)
-    if (CLIENT) then return end
+    if CLIENT then return end
     if (GLOB_NEXTPLANE ~= nil and GLOB_NEXTPLANE > CurTime()) then return end
     local exp = ents.Create("env_explosion")
     exp:SetPos(pos)
@@ -496,7 +496,7 @@ function SWEP:GetLaserColor()
         local wpncolor = self:GetCustomColor()
         local ch, cs, cv = ColorToHSV(Color(wpncolor.r * 255, wpncolor.g * 255, wpncolor.b * 255))
 
-        if (cv < 0.1) then
+        if cv < 0.1 then
             self.RainbowRand = self.RainbowRand or math.Rand(0, 360)
 
             return HSVToColor(180 + math.NormalizeAngle(-180 + self.RainbowRand + CurTime() * 720), 1, 1)
@@ -512,7 +512,7 @@ function SWEP:GetLaserColor()
     return Color(255, 0, 0)
 end
 
-if (CLIENT) then
+if CLIENT then
     function draw.Circle(x, y, radius, seg)
         local cir = {}
 
@@ -547,7 +547,7 @@ if (CLIENT) then
     end
 end
 
-if (CLIENT) then
+if CLIENT then
     surface.CreateFont("laserpointer_display15", {
         font = "Coolvetica", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
         extended = false,
@@ -567,7 +567,7 @@ if (CLIENT) then
     })
 end
 
-if (CLIENT) then
+if CLIENT then
     surface.CreateFont("laserpointer_display15", {
         font = "Roboto", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
         extended = false,
@@ -603,7 +603,7 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
     local psuf = "%"
     local pval = math.Round((self:GetBattery() / self:GetFullBattery()) * 100, 0)
 
-    if (pval > 999) then
+    if pval > 999 then
         font = "laserpointer_display15"
     end
 
@@ -636,10 +636,10 @@ function SWEP:DrawWorldModel(query)
         local modelStr = ply:GetModel():sub(1, 17)
         local isPony = modelStr == "models/ppm/player" or modelStr == "models/mlp/player" or modelStr == "models/cppm/playe"
 
-        if (isPony and self.HornBG == nil) then
+        if isPony and self.HornBG == nil then
             self.HornBG = ply:FindBodygroupByName("Horn")
 
-            if (self.HornBG == -1) then
+            if self.HornBG == -1 then
                 self.HornBG = ply:FindBodygroupByName("horn")
             end
         end
@@ -663,7 +663,7 @@ function SWEP:DrawWorldModel(query)
         end
 
         if isPony then
-            if (horn) then
+            if horn then
                 opos = opos + (oang:Forward() * 7) + (oang:Right() * 15.5) + (oang:Up() * 0)
                 oang:RotateAroundAxis(oang:Right(), 80)
                 oang:RotateAroundAxis(oang:Forward(), 12)
@@ -675,7 +675,7 @@ function SWEP:DrawWorldModel(query)
                 oang:RotateAroundAxis(oang:Up(), 20)
             end
         else
-            if (bn ~= 0) then
+            if bn ~= 0 then
                 oang:RotateAroundAxis(oang:Forward(), 90)
                 oang:RotateAroundAxis(oang:Right(), 90)
                 opos = opos + (oang:Forward() * 1) + (oang:Up() * -3) + (oang:Right() * 1.5)
@@ -688,8 +688,8 @@ function SWEP:DrawWorldModel(query)
         oang:RotateAroundAxis(oang:Right(), -90)
         opos = opos + oang:Up() * -2
 
-        if (isPony) then
-            if (horn) then
+        if isPony then
+            if horn then
                 opos = opos - oang:Up() * 5
             else
                 opos = opos + oang:Up() * 3
@@ -703,20 +703,20 @@ function SWEP:DrawWorldModel(query)
             mrt:SetTranslation(opos)
             mrt:SetAngles(oang)
 
-            if (query ~= true) then
+            if query ~= true then
                 self:SetBoneMatrix(0, mrt)
             end
         end
     end
 
-    if (query ~= true and not horn) then
+    if query ~= true and not horn then
         render.MaterialOverride()
         draw.NoTexture()
         render.SetBlend(1)
         self:DrawModel()
     end
 
-    if (query == true) then return mrt end
+    if query == true then return mrt end
 end
 
 function SWEP:OnRemove()

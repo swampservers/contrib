@@ -40,7 +40,7 @@ end
 	GetFloatValue
 ---------------------------------------------------------]]
 function PANEL:GetFloatValue(max)
-    if (not self.m_fFloatValue) then
+    if not self.m_fFloatValue then
         m_fFloatValue = 0
     end
 
@@ -51,14 +51,14 @@ end
    Name: SetValue
 ---------------------------------------------------------]]
 function PANEL:SetValue(val)
-    if (val == nil) then return end
+    if val == nil then return end
     local OldValue = val
     val = tonumber(val)
     val = val or 0
 
-    if (self.m_iDecimals == 0) then
+    if self.m_iDecimals == 0 then
         val = Format("%i", val)
-    elseif (val ~= 0) then
+    elseif val ~= 0 then
         val = Format("%." .. self.m_iDecimals .. "f", val)
         -- Trim trailing 0's and .'s 0 this gets rid of .00 etc
         val = string.TrimRight(val, "0")

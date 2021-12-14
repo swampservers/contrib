@@ -21,7 +21,7 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        if (vpanel) then
+        if vpanel then
             vpanel:Remove()
         end
 
@@ -36,13 +36,13 @@ if CLIENT then
         local function onFetchReceive(body)
             local t = util.JSONToTable(body)
 
-            if (t == nil) then
+            if t == nil then
                 callback()
             else
                 local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
                 local subs = ""
 
-                if (isTV) then
+                if isTV then
                     url = t["streams"][1080] or t["streams"][720] or t["streams"][480] or t["streams"][360]
                 end
 
@@ -70,7 +70,7 @@ if CLIENT then
 
                     info.duration = math.ceil(duration)
 
-                    if (Me.videoDebug) then
+                    if Me.videoDebug then
                         PrintTable(info)
                     end
 
@@ -92,15 +92,15 @@ if CLIENT then
                 vpanel:RunJavascript("console.log('CAPTCHA:'+document.title);")
                 vpanel:RunJavascript("var stor = window['" .. (isTV and "show" or "movie") .. "_storage" .. "'];")
 
-                if (not info.title or not info.thumb) then
-                    if (isTV) then
+                if not info.title or not info.thumb then
+                    if isTV then
                         vpanel:RunJavascript("if(stor){x=stor['seasons'];for(var i in x){if(x[i].id_episode==" .. string.match(key, "#.+%-(%d+)$") .. ")console.log('TITLE:'+stor.title+' ('+stor.year+') S'+x[i].season+' E'+x[i].episode+(x[i].title ? ' | '+x[i].title : ''));}console.log('THUMB:'+stor.poster_medium);}")
                     else
                         vpanel:RunJavascript("if(stor){console.log('TITLE:'+stor.title+' ('+stor.year+')');console.log('THUMB:'+stor.movie_poster);}")
                     end
                 end
 
-                if (vpanel.response == "") then
+                if vpanel.response == "" then
                     vpanel:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id_" .. (isTV and "episode" or "movie") .. "=" .. (isTV and string.match(key, "#.+%-(%d+)$") .. "'" or "'+stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
                 end
             end
@@ -110,7 +110,7 @@ if CLIENT then
             if msg then
                 msg = tostring(msg)
 
-                if (Me.videoDebug) then
+                if Me.videoDebug then
                     print(msg)
                 end
 
@@ -134,7 +134,7 @@ if CLIENT then
                     self.response = msg:sub(6, -1)
                 end
 
-                if (self.response ~= "" and info.title and info.thumb) then
+                if self.response ~= "" and info.title and info.thumb then
                     print("success")
                     self:Remove()
                     onFetchReceive(self.response)

@@ -14,7 +14,7 @@ end
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         EmbeddedCheckCodecs(function()
-            if (vpanel) then
+            if vpanel then
                 vpanel:Remove()
             end
 
@@ -59,7 +59,7 @@ if CLIENT then
                 if msg then
                     msg = tostring(msg)
 
-                    if (Me.videoDebug) then
+                    if Me.videoDebug then
                         print(msg)
                     end
 
@@ -79,7 +79,7 @@ if CLIENT then
                             print("PLAYER: " .. self.player)
                         end
 
-                        if (self.episode ~= nil and self.title ~= nil and self.player ~= nil) then
+                        if self.episode ~= nil and self.title ~= nil and self.player ~= nil then
                             vpanel:RunJavascript("location.href='" .. self.player .. "'")
                             self.phase = 1
                         end
@@ -104,7 +104,7 @@ if CLIENT then
                             self.duration = math.ceil(tonumber(string.sub(msg, 10)))
                             print("DURATION: " .. self.duration)
 
-                            if (self.episode ~= "Full") then
+                            if self.episode ~= "Full" then
                                 self.title = self.title .. " Episode " .. self.episode
                             end
 
@@ -159,7 +159,7 @@ if CLIENT then
                             panel:QueueJavascript(str)
                         else
                             EmbeddedCheckCodecs(function()
-                                if (vpanel) then
+                                if vpanel then
                                     vpanel:Remove()
                                     timer.Remove("9AnimeViewerTimer")
                                 end
@@ -202,7 +202,7 @@ if CLIENT then
                                     if msg then
                                         msg = tostring(msg)
 
-                                        if (Me.videoDebug) then
+                                        if Me.videoDebug then
                                             print(msg)
                                         end
 

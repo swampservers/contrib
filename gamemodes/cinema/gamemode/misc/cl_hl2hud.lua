@@ -253,7 +253,7 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
         local customammo = wep.CustomAmmoDisplay and wep:CustomAmmoDisplay() or {}
         local drawtype = AMMOLABEL_MAGCOUNTER
 
-        if (customammo.PrimaryAmmo) then
+        if customammo.PrimaryAmmo then
             ammo = customammo.PrimaryAmmo
         end
 

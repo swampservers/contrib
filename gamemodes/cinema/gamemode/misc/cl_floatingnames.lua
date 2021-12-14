@@ -11,7 +11,7 @@ local function DrawName(ply, opacityScale)
     if ply:IsDormant() or ply:GetNoDraw() then return end
     if (not Me:IsStaff()) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
     local dist = EyePos():Distance(ply:EyePos())
-    if (dist >= 800) then return end
+    if dist >= 800 then return end
     local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
     opacity = opacity * opacityScale
     if opacity <= 0 then return end
@@ -144,8 +144,8 @@ end)
 --     end
 --     local tr = util.GetPlayerTrace(Me)
 --     local trace = util.TraceLine(tr)
---     if (not trace.Hit) then return end
---     if (not trace.HitNonWorld) then return end
+--     if not trace.Hit then return end
+--     if not trace.HitNonWorld then return end
 --     -- Keep track of recently targetted players
 --     if trace.Entity:IsPlayer() then
 --         HUDTargets[trace.Entity] = RealTime() + fadeTime

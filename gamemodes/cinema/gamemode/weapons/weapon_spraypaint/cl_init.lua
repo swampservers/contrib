@@ -27,11 +27,11 @@ function SWEP:DrawWorldModel(flags)
         local oang = self:GetAngles()
         local bp, ba = ply:GetBonePosition(bon)
 
-        if (bp) then
+        if bp then
             opos = bp
         end
 
-        if (ba) then
+        if ba then
             oang = ba
         end
 
@@ -45,7 +45,7 @@ function SWEP:DrawWorldModel(flags)
         self:SetupBones()
         local mrt = self:GetBoneMatrix(0)
 
-        if (mrt) then
+        if mrt then
             mrt:SetTranslation(opos)
             mrt:SetAngles(oang)
             self:SetBoneMatrix(0, mrt)
@@ -78,7 +78,7 @@ function SWEP:DoParticle(pos)
 
     for i = 1, 5 do
         self.SprayEmitter = self.SprayEmitter or ParticleEmitter(pos)
-        if (not SpraypaintParticleEmitter) then return end
+        if not SpraypaintParticleEmitter then return end
         self.SprayEmitter:SetPos(pos)
         local particle = self.SprayEmitter:Add(string.format("particle/smokesprites_00%02d", math.random(7, 16)), pos)
         particle:SetColor(color.x * 255, color.y * 255, color.z * 255, 255)
@@ -106,26 +106,26 @@ function SWEP:GetPreviewMat(decal)
     local ply = self:GetOwner()
     decal = decal or self:GetCurrentDecal()
     local decalmat = SPRAYPAINT_MATLOOKUP[decal] or util.DecalMaterial(decal)
-    if (not decalmat) then return Material("___error") end
+    if not decalmat then return Material("___error") end
     local mat = Material(decalmat) --let's create a new material
     if (not mat or (mat and mat:IsError())) then return Material("___error") end
 
-    if (SPRAYPAINT_DECALPREVIEW_CACHE[decal] == nil) then
+    if SPRAYPAINT_DECALPREVIEW_CACHE[decal] == nil then
         local t = mat:GetString("$basetexture")
         local f = mat:GetFloat("$frame")
         local sc = mat:GetFloat("$decalscale")
         local c = mat:GetVector("$color2")
         local shader = mat:GetShader() or "VertexLitGeneric"
 
-        if (shader == "Subrect") then
+        if shader == "Subrect" then
             shader = "UnlitGeneric"
         end
 
-        if (shader == "VertexLitGeneric") then
+        if shader == "VertexLitGeneric" then
             shader = "UnlitGeneric"
         end
 
-        if (shader == "LightmappedGeneric") then
+        if shader == "LightmappedGeneric" then
             shader = "UnlitGeneric"
         end
 
@@ -155,13 +155,13 @@ function SWEP:DrawSpraypaintReticle()
     if (CurTime() < self:GetNextPrimaryFire() - FrameTime()) then return end
     local trace = self:GetTrace()
     if (not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance()) then return end
-    if (trace.HitSky) then return end
+    if trace.HitSky then return end
     local pos = trace.HitPos + trace.HitNormal * 0.1
     local ang = trace.HitNormal:Angle()
     local mat = self:GetPreviewMat()
     local color, size = self:GetDecalColor()
 
-    if (mat) then
+    if mat then
         ang:RotateAroundAxis(ang:Up(), 90)
         ang:RotateAroundAxis(ang:Forward(), 90)
 
@@ -171,7 +171,7 @@ function SWEP:DrawSpraypaintReticle()
 
         local cc = Vector(1, 1, 1)
 
-        if (mat and size) then
+        if mat and size then
             cam.Start3D2D(pos, ang, 1)
             surface.SetDrawColor(color.x * 255, color.y * 255, color.z * 255, 128)
             render.SetBlend(0.5)
@@ -200,7 +200,7 @@ function SWEP:SpraypaintOpenPanel()
 
     --auto-pressed buttons if associated with a specific key
     function Frame:OnKeyCodePressed(keycode)
-        if (self.KeyCodeBinding[keycode]) then
+        if self.KeyCodeBinding[keycode] then
             self.KeyCodeBinding[keycode]:DoClick()
         end
     end
@@ -222,7 +222,7 @@ function SWEP:SpraypaintOpenPanel()
         DButton.PerformLayout = function() end
         local keycode = list.Get(self.DecalSet .. "_keycodes")[k]
 
-        if (keycode) then
+        if keycode then
             Frame.KeyCodeBinding[keycode] = DButton
         end
 
@@ -258,7 +258,7 @@ function SWEP:SpraypaintOpenPanel()
 
         columncounter = columncounter + 1
 
-        if (columncounter > self.MenuColumns) then
+        if columncounter > self.MenuColumns then
             columncounter = 0
             rows = rows + 1
         end

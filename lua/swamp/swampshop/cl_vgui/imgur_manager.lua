@@ -72,7 +72,7 @@ function CONTENTPICKER:Init()
         local img = self.AddField:GetText()
 
         AsyncSanitizeImgurId(img, function(id)
-            if (id == nil) then
+            if id == nil then
                 local prevtext = img .. ""
                 textentry:SetText("BAD URL")
                 textentry:SetTextColor(Color(255, 0, 0, 255))
@@ -194,7 +194,7 @@ function CONTENTPICKER:Add(url, nsfw)
         end
     end
 
-    if (dont) then return end
+    if dont then return end
     local tile = self.Tiles:Add(DImgurThumbnail(url))
     self:InvalidateLayout(true)
     self:InvalidateParent(true)
@@ -210,14 +210,14 @@ function CONTENTPICKER:AddPermanent(url)
     local dont
 
     for k, v in pairs(self.Images) do
-        if (v.url == url) then
+        if v.url == url then
             self.Images[k] = {
                 url = url
             }
         end
     end
 
-    if (dont) then
+    if dont then
         self:Save()
 
         return

@@ -30,7 +30,7 @@ function PANEL:Init()
 end
 
 function PANEL:Paint(w, h)
-    if (not self.m_bBackground) then return end
+    if not self.m_bBackground then return end
 
     if (self.Depressed or self:IsSelected() or self:GetToggle()) then
         surface.SetDrawColor(self.DepressedColor)

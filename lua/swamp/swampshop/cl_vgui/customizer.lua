@@ -363,7 +363,7 @@ function ImageGetterPanel()
             end
 
             DownloadTexture(Material(mat), function(fname, data)
-                if (fname) then
+                if fname then
                     Frame:SetTitle("Downloaded! Look for file: garrysmod/data/" .. fname)
                 else
                     Frame:SetTitle("Couldn't Download!")
@@ -440,7 +440,7 @@ vgui.Register('DSSCustomizerMode', PANEL, 'DSSMode')
 --     textures.OnChoose = function(pnl, img)
 --         SingleAsyncSanitizeImgurId(img, function(id)
 --             if not IsValid(pnl) then return end
---             if (id) then
+--             if id then
 --                 SS_CustomizerPanel.TextureBar:SetText(id)
 --                 textures.AddField:SetText(id)
 --             end

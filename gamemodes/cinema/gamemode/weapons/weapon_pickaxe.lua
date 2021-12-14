@@ -212,11 +212,11 @@ function SWEP:DrawWorldModel()
         local oang = self:GetAngles()
         local bp, ba = ply:GetBonePosition(bon)
 
-        if (bp) then
+        if bp then
             opos = bp
         end
 
-        if (ba) then
+        if ba then
             oang = ba
         end
 
@@ -235,7 +235,7 @@ function SWEP:DrawWorldModel()
         self:SetModelScale(0.8, 0)
         local mrt = self:GetBoneMatrix(0)
 
-        if (mrt) then
+        if mrt then
             mrt:SetTranslation(opos)
             mrt:SetAngles(oang)
             self:SetBoneMatrix(0, mrt)

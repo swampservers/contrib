@@ -1174,12 +1174,12 @@ end
 --             end
 --         end
 --     }
---     -- if (trace.Fraction == 1) then return end
+--     -- if trace.Fraction == 1 then return end
 --     -- -- TODO: convert this to physprops? there doesn't seem to be a way to get penetration from those
 --     -- local flPenetrationModifier, flDamageModifier = unpack(PenetrationValues[trace.MatType] or PenetrationValues[MAT_DEFAULT])
 --     -- flCurrentDistance = flCurrentDistance + trace.Fraction * (trace.HitPos - vecStart):Length()
 --     -- iDamage = iDamage * flRangeModifier ^ (flCurrentDistance / 500)
---     -- if (flCurrentDistance > flPenetrationDistance and iPenetration > 0) then
+--     -- if flCurrentDistance > flPenetrationDistance and iPenetration > 0 then
 --     --     iPenetration = 0
 --     -- end
 --     -- if iPenetration == 0 and not trace.MatType == MAT_GRATE then return end
@@ -1193,7 +1193,7 @@ end
 --     --     mask = MASK_SHOT,
 --     --     filter = function(e)
 --     --         local ret = e:IsPlayer()
---     --         if (ret and not hitent_already) then
+--     --         if ret and not hitent_already then
 --     --             hitent_already = true
 --     --             return false
 --     --         end
@@ -1202,5 +1202,5 @@ end
 --     -- }
 --     -- bHitGrate = tr.MatType == MAT_GRATE and bHitGrate
 --     -- local iExitMaterial = tr.MatType
---     -- if (iExitMaterial == trace.MatType) then
+--     -- if iExitMaterial == trace.MatType then
 --     --     i

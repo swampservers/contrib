@@ -29,15 +29,15 @@ function SWEP:OnChangeThrowState(name, old, new)
     local holdtype = "melee"
     local power = self:GetThrowPower()
 
-    if (new > 0 and power <= 600) then
+    if new > 0 and power <= 600 then
         holdtype = "physgun"
     end
 
-    if (new == 0) then
+    if new == 0 then
         holdtype = "physgun"
     end
 
-    if (new == 1 and old == 0) then
+    if new == 1 and old == 0 then
         if (IsValid(self:GetOwner())) then
             local gest = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE
             self:GetOwner():AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, gest, true)
@@ -87,7 +87,7 @@ function SWEP:AdvanceState()
     local delaytweak = SERVER and math.max(ply:Ping() / 1000, 0) or 0
 
     --change to throw pose
-    if (curstate == 0) then
+    if curstate == 0 then
         self:SetStateTime(CurTime() + 0.15 - (delaytweak))
         self:SetThrowState(1)
 
@@ -95,7 +95,7 @@ function SWEP:AdvanceState()
     end
 
     --play throw animation
-    if (curstate == 1) then
+    if curstate == 1 then
         self:ThrowBall(self:GetThrowPower())
         self:SetStateTime(CurTime() + 0.3)
         self:SetThrowState(2)
@@ -104,11 +104,11 @@ function SWEP:AdvanceState()
     end
 
     --die
-    if (curstate == 2) then
+    if curstate == 2 then
         self:SetStateTime(CurTime() + 0.35)
         self:SetThrowState(3)
 
-        if (SERVER) then
+        if SERVER then
             self:Remove()
         end
 

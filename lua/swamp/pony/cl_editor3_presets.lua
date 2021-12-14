@@ -74,7 +74,7 @@ function PPM_UpdateSlot(k, eqSlot)
         --MsgN(k,eqSlot.weareditem)
         eqSlot.weareditem = Me.pi_wear[k]
 
-        if (eqSlot.weareditem ~= nil) then
+        if eqSlot.weareditem ~= nil then
             --eqSlot.btn:SetTooltip( eqSlot.weareditem.name )  
             eqSlot:SetImage("gui/items/" .. eqSlot.weareditem.img .. ".png")
             eqSlot.namelabel:SetText(eqSlot.weareditem.name)
@@ -97,7 +97,7 @@ function OpenItemMenu(slotid, container)
 
     --local paddx,paddy =container:GetParent():GetParent():GetPos() 
     --MsgN(posx,posy)
-    if (item_selection_panel ~= nil) then
+    if item_selection_panel ~= nil then
         item_selection_panel:Remove()
     end
 
@@ -122,7 +122,7 @@ function OpenItemMenu(slotid, container)
                     --MsgN("set slot["..slot.."] = "..item.name)
                 end
 
-                if (item.issuit) then
+                if item.issuit then
                     PPM_UpdateLocalPonyCfg(item.varslot, item.wearid)
                 end
 
@@ -438,7 +438,7 @@ PPM.Editor3_presets["edit_type"] = {
                 ITEM_INDICATOR:Dock(LEFT)
                 SELECTOR.buttons[k] = ITEM_INDICATOR
 
-                if (k == VARIABLE) then
+                if k == VARIABLE then
                     ITEM_INDICATOR:SetColor(Color(200, 255, 200)) --PPM.colorcircles(k))
                 else
                     ITEM_INDICATOR:SetColor(Color(100, 100, 100))
@@ -464,7 +464,7 @@ PPM.Editor3_presets["edit_type"] = {
                     PPM_UpdateLocalPonyCfg(variable.param, VARIABLE)
 
                     for k2, v2 in pairs(variable.choises) do
-                        if (k2 == VARIABLE) then
+                        if k2 == VARIABLE then
                             SELECTOR.buttons[k2]:SetColor(Color(200, 255, 200))
                         else
                             SELECTOR.buttons[k2]:SetColor(Color(100, 100, 100))
@@ -480,7 +480,7 @@ local INDICATOR_ONE = nil
 local INDICATOR_TWO = nil
 
 function NewPresetMenu(parent)
-    if (curmenupanel ~= nil) then
+    if curmenupanel ~= nil then
         curmenupanel:Remove()
         curmenupanel = nil
     end
@@ -602,7 +602,7 @@ PPM.Editor3_presets["menu_save_load"] = {
         bDelPreset.DoClick = function(button)
             local selline = dPresetList:GetSelectedLine()
 
-            if (selline == nil) then
+            if selline == nil then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(0, 0, 0))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(0, 0, 0))
                 bDelPreset.goDef()
@@ -612,7 +612,7 @@ PPM.Editor3_presets["menu_save_load"] = {
 
             local selected_fname = dPresetList:GetLine(selline):GetColumnText(1)
 
-            if (selected_fname == nil) then
+            if selected_fname == nil then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(0, 0, 0))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(0, 0, 0))
                 bDelPreset.goDef()
@@ -660,7 +660,7 @@ PPM.Editor3_presets["menu_save_load"] = {
         button_save.DoClick = function(button)
             local selline = dPresetList:GetSelectedLine()
 
-            if (selline == nil) then
+            if selline == nil then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(255, 255, 255))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(255, 255, 255))
 
@@ -669,7 +669,7 @@ PPM.Editor3_presets["menu_save_load"] = {
 
             local selected_fname = dPresetList:GetLine(selline):GetColumnText(1)
 
-            if (selected_fname == nil) then
+            if selected_fname == nil then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(255, 255, 255))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(255, 255, 255))
 
@@ -698,7 +698,7 @@ PPM.Editor3_presets["menu_save_load"] = {
         button_load.DoClick = function(button)
             local selline = dPresetList:GetSelectedLine()
 
-            if (selline == nil) then
+            if selline == nil then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(255, 255, 255))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(255, 255, 255))
 
@@ -707,7 +707,7 @@ PPM.Editor3_presets["menu_save_load"] = {
 
             local selected_fname = dPresetList:GetLine(selline):GetColumnText(1)
 
-            if (selected_fname == nil) then
+            if selected_fname == nil then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(255, 255, 255))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(255, 255, 255))
 

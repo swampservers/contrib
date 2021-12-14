@@ -124,7 +124,7 @@ function SWEP:PrimaryAttack(right)
     self.Owner:SetAnimation(PLAYER_ATTACK1)
     local anim = "fists_left"
 
-    if (right) then
+    if right then
         anim = "fists_right"
     end
 
@@ -148,7 +148,7 @@ function SWEP:PrimaryAttack(right)
                     local otherpos = v:LocalToWorld(v:OBBCenter())
                     local dis = tracepos:Distance(otherpos)
 
-                    if (dis < target[2]) then
+                    if dis < target[2] then
                         local tr = util.TraceLine({
                             start = tracepos,
                             endpos = otherpos,
@@ -162,7 +162,7 @@ function SWEP:PrimaryAttack(right)
                 end
             end
 
-            if (target[2] < 58) then
+            if target[2] < 58 then
                 self:TestTagPlayer(target[1], self.Owner)
             end
         end
@@ -176,11 +176,11 @@ function SWEP:DrawWorldModel()
     local oang = self:GetAngles()
     local bp, ba = self.Owner:GetBonePosition(bone)
 
-    if (bp) then
+    if bp then
         opos = bp
     end
 
-    if (ba) then
+    if ba then
         oang = ba
     end
 

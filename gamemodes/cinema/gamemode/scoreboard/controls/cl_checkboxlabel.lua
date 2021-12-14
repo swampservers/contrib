@@ -8,13 +8,13 @@ local PANEL = {}
 function PANEL:PerformLayout()
     self.BaseClass.PerformLayout(self)
 
-    if (self.Button) then
+    if self.Button then
         local x, y = self.Button:GetPos()
         y = (self:GetTall() / 2) - (self.Button:GetTall() / 2)
         self.Button:SetPos(x, y)
     end
 
-    if (self.Label) then
+    if self.Label then
         local x, y = self.Label:GetPos()
         y = (self:GetTall() / 2) - (self.Label:GetTall() / 2)
         self.Label:SetPos(x, y)
@@ -39,7 +39,7 @@ function PANEL:Paint()
     local cx, cy = self.Button:LocalCursorPos()
     local cl = BrandColorGray
 
-    if (cx >= x and cy >= y and cx < x + w and cy < y + h) then
+    if cx >= x and cy >= y and cx < x + w and cy < y + h then
         cl = highlightcolor
     end
 

@@ -55,11 +55,11 @@ function SWEP:Think()
             self:CancelShot()
         end
     end
-    -- if (SERVER) then
+    -- if SERVER then
     --     if (self:Clip1() > 0 and stage ~= 0) then
     --         self:SetStage(0)
     --     end
-    --     if (stage == 1) then
+    --     if stage == 1 then
     --         local fball = self.ActiveBall
     --         if (IsValid(fball)) then
     --             if (not fball:GetPhysicsObject():IsMotionEnabled()) then

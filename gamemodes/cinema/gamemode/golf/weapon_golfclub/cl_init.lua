@@ -156,11 +156,11 @@ function SWEP:DrawWorldModel()
         local oang = self:GetAngles()
         local bp, ba = ply:GetBonePosition(bon)
 
-        if (bp) then
+        if bp then
             opos = bp
         end
 
-        if (ba) then
+        if ba then
             oang = ba
         end
 
@@ -178,7 +178,7 @@ function SWEP:DrawWorldModel()
         --self:SetModelScale(0.8,0)
         local mrt = self:GetBoneMatrix(0)
 
-        if (mrt) then
+        if mrt then
             mrt:SetTranslation(opos)
             mrt:SetAngles(oang)
             self:SetBoneMatrix(0, mrt)
@@ -281,7 +281,7 @@ function SWEP:DrawHUD()
         local p1 = util.IntersectRayWithPlane(EyePos(), EyeAngles():Forward(), ball:GetPos(), Vector(0, 0, 1))
         local p2 = ball:GetPos()
 
-        if (p1 == nil) then
+        if p1 == nil then
             p1 = p2
         end
 
@@ -301,7 +301,7 @@ function SWEP:DrawHUD()
         local tv = Vector(-5, 5, 0)
         tv:Rotate(a2)
 
-        if (stage == 2) then
+        if stage == 2 then
             if self:WeirdGolf() then
                 if not GOLFCAMVECTOR then
                     local off = 5
@@ -448,7 +448,7 @@ function SWEP:DrawHUD()
         trc.filter = Me
         local seetrace = util.TraceLine(trc)
 
-        if (seetrace.Entity ~= ball) then
+        if seetrace.Entity ~= ball then
             cam.Start3D2D(bpos, angle, 1)
             local c = ball:GetColor()
             surface.SetDrawColor(128, 128, 128, 255)
@@ -463,7 +463,7 @@ function SWEP:DrawHUD()
         cam.End3D()
     end
 
-    if (stage == 0) then
+    if stage == 0 then
         cam.Start3D()
         local trace = Me:GetEyeTrace()
         local cpos = trace.HitPos + Vector(-6, 6, 0)
@@ -489,7 +489,7 @@ function SWEP:DrawHUD()
     local fnd = false
     local rdy = nil
 
-    if (stage == 1) then
+    if stage == 1 then
         stg = "Ball is moving..."
     end
 
@@ -501,7 +501,7 @@ function SWEP:DrawHUD()
         --local p1 = trace.HitPos
         local p2 = ball:GetPos()
 
-        if (p1 == nil) then
+        if p1 == nil then
             p1 = p2
         end
 
@@ -523,7 +523,7 @@ function SWEP:DrawHUD()
             end
         end
 
-        if (medist > 150) then
+        if medist > 150 then
             stg = "Move closer to the ball"
             clr = Color(255, 0, 0, 255)
         end
@@ -532,23 +532,23 @@ function SWEP:DrawHUD()
     local clr2 = Color(255, 255, 255, 255)
     local strom = strk .. " Stroke"
 
-    if (strk > 1) then
+    if strk > 1 then
         strom = strom .. "s"
     end
 
-    if (strk == 0) then
+    if strk == 0 then
         strom = ""
     end
 
-    if (strk == 8) then
+    if strk == 8 then
         clr2 = Color(255, 255, 0, 255)
     end
 
-    if (strk == 9) then
+    if strk == 9 then
         clr2 = Color(255, 100, 0, 255)
     end
 
-    if (strk == 10) then
+    if strk == 10 then
         clr2 = Color(255, 0, 0, 255)
         strom = "Final Stroke!"
     end
@@ -559,7 +559,7 @@ function SWEP:DrawHUD()
     local mix, miy = ScrW() - bw / 2 - marg, ScrH() - bh / 2 - marg
     draw.RoundedBox(8, ScrW() - bw - marg, ScrH() - bh - marg, bw, bh, Color(25, 25, 25, 200))
 
-    if (stage == 0 or strom == "") then
+    if stage == 0 or strom == "" then
         draw.SimpleText(stg, "Trebuchet24", mix, miy, clr, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     else
         draw.SimpleText(strom, "Trebuchet24", mix, miy - 16, clr2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -574,7 +574,7 @@ end
 
 function SWEP:CustomAmmoDisplay()
 end
--- if (CLIENT) then end -- --[[ hook.Add( "PreDrawHalos", "GolfHalo", function()
+-- if CLIENT then end -- --[[ hook.Add( "PreDrawHalos", "GolfHalo", function()
 -- for k, v in pairs(ents.FindByClass("ent_golfball")) do
 --     if (v:GetNWEntity("BallOwner") == Me) then
 --         if (v:GetNWBool("shootable")) then

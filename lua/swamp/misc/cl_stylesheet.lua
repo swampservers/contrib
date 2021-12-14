@@ -52,8 +52,8 @@ function SS_CullPanel(pnl)
         par = par:GetParent()
     end
 
-    if (x >= x2) then return end
-    if (y >= y2) then return end
+    if x >= x2 then return end
+    if y >= y2 then return end
     x, y = pnl:ScreenToLocal(x, y)
     x2, y2 = pnl:ScreenToLocal(x2, y2)
 
@@ -71,7 +71,7 @@ end
 
 function SS_DrawPanelShadow(pnl, w, h)
     local sx, sy, sw, sh = SS_CullPanel(pnl)
-    if (not sx) then return end
+    if not sx then return end
     local par = pnl:GetParent()
     local betterpar
     DisableClipping(true)
@@ -83,7 +83,7 @@ function SS_DrawPanelShadow(pnl, w, h)
         render.SetScissorRect(wx, wy, wx2, wy2, true)
     end
 
-    if (sx) then
+    if sx then
         local border = 0
         draw.BoxShadow(sx - border / 2, sy - border / 2, sw + (border), sh + (border), 12, 0.7)
     end
@@ -564,15 +564,15 @@ draw.WordBox = function(bordersize, x, y, text, font, color, fontcolor, xalign, 
     surface.SetFont(font)
     local w, h = surface.GetTextSize(text)
 
-    if (xalign == TEXT_ALIGN_CENTER) then
+    if xalign == TEXT_ALIGN_CENTER then
         x = x - (bordersize + w / 2)
-    elseif (xalign == TEXT_ALIGN_RIGHT) then
+    elseif xalign == TEXT_ALIGN_RIGHT then
         x = x - (bordersize * 2 + w)
     end
 
-    if (yalign == TEXT_ALIGN_CENTER) then
+    if yalign == TEXT_ALIGN_CENTER then
         y = y - (bordersize + h / 2)
-    elseif (yalign == TEXT_ALIGN_BOTTOM) then
+    elseif yalign == TEXT_ALIGN_BOTTOM then
         y = y - (bordersize * 2 + h)
     end
 

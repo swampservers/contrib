@@ -43,15 +43,15 @@ end
 -- draws 3d2d'd text in 3d space
 -- the text will be centered at the position
 function DrawText(vecPos, strText, strFont, color, scale)
-    if (not strFont) then
+    if not strFont then
         strFont = "Default"
     end
 
-    if (not color) then
+    if not color then
         color = Color(255, 255, 255, 255)
     end
 
-    if (not scale) then
+    if not scale then
         scale = 1
     end
 

@@ -21,7 +21,7 @@ hook.Add("PostRenderVGUI", "OOPSIE WOOPSIE", function()
     draw.RoundedBox(2, 34, 34, w, 30, Color(40, 40, 40, 255))
     draw.RoundedBox(2, 32, 32, w, 30, Color(240, 240, 240, 255))
 
-    if (LASTERRORTIME > Recent) then
+    if LASTERRORTIME > Recent then
         draw.RoundedBox(2, 32, 32, w, 30, Color(255, 200, 0, (LASTERRORTIME - Recent) * 510))
     end
 

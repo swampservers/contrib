@@ -10,7 +10,7 @@ function ENT:Initialize()
     self:SetModel("models/pyroteknik/dodgeball.mdl")
     self:SetColor(Color(255, 0, 0, 255))
 
-    if (self.Clientside) then
+    if self.Clientside then
         self:SetColor(Color(0, 0, 255))
     end
 
@@ -89,7 +89,7 @@ function ENT:PhysicsCollide(data, phys)
         local max = 300
         local scale = math.Clamp(data.Speed - 100, 0, max) / max
 
-        if (scale > 0) then
+        if scale > 0 then
             local pitch = Lerp(scale, 80, 110)
             local vol = Lerp(scale, 0.2, 1)
             self:EmitSound("dodgeball_hithard.wav", 100, pitch, vol)

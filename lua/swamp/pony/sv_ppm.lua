@@ -38,7 +38,7 @@ end)
 -- net.Receive("player_equip_item", function(len, ply)
 --     local id = net.ReadFloat()
 --     local item = PPM:pi_GetItemById(id)
---     if (item ~= nil) then
+--     if item ~= nil then
 --         PPM.setupPony(ply, false)
 --         PPM:pi_SetupItem(item, ply)
 --     end

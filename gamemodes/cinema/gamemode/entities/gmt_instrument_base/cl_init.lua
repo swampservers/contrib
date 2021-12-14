@@ -80,7 +80,7 @@ function ENT:Think()
     --process notes here for maximum responsivness
     local time = SysTime()
     local loc = Me:GetLocationName()
-    if (loc == "Trumppenbunker" or loc == "Situation Monitoring Room" or loc == "Weapons Testing Range" or loc == "Office of the Vice President") then return true end
+    if loc == "Trumppenbunker" or loc == "Situation Monitoring Room" or loc == "Weapons Testing Range" or loc == "Office of the Vice President" then return true end
 
     for k, v in pairs(self.QueuedNotes) do
         if time >= v.timestamp then

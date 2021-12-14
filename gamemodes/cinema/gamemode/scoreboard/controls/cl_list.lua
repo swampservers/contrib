@@ -39,13 +39,13 @@ function PANEL:Init()
             return
         end
 
-        if (panel.Depressed) then
+        if panel.Depressed then
             draw.RoundedBox(4, 2, 1, w, h, MenuTheme_Brand)
 
             return
         end
 
-        if (panel.Hovered) then
+        if panel.Hovered then
             draw.RoundedBox(4, 2, 1, w, h, self.Scrollbar.HoverColor)
 
             return
@@ -55,8 +55,8 @@ function PANEL:Init()
     end
 
     self.VBar.OnCursorMoved = function(self, x, y)
-        if (not self.Enabled) then return end
-        if (not self.Dragging) then return end
+        if not self.Enabled then return end
+        if not self.Dragging then return end
         local x = 0
         local y = gui.MouseY()
         local x, y = self:ScreenToLocal(x, y)

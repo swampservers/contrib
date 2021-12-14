@@ -21,7 +21,7 @@ SWEP.PaintDelay = 0.25
 SWEP.SlotPos = 101
 SWEP.WindowTitle = "Pick a Stencil (You can use your keyboard to choose)"
 
-if (CLIENT) then
+if CLIENT then
     CreateClientConVar("spraypaint_stencil", "stencil_decal27", true, true, "decal to spray from the can")
 end
 
@@ -39,7 +39,7 @@ for i = 1, 40 do
     --Material(matname)
     list.Set("SprayPaintStencils", i, dname)
 
-    if (10 + i <= 36) then
+    if 10 + i <= 36 then
         list.Set("SprayPaintStencils_keycodes", i, 10 + i)
     end
 end
@@ -66,7 +66,7 @@ SWEP.ConVar = "spraypaint_stencil"
 function SWEP:GetCurrentDecal()
     local ply = self:GetOwner()
     local decal = ply:GetInfo(self.ConVar)
-    if (SPRAYPAINT_STENCILS_WHITELIST[decal]) then return decal end
+    if SPRAYPAINT_STENCILS_WHITELIST[decal] then return decal end
     -- if decal~="" and ply==Me then
     --     net.Start("BanMe")
     --     net.SendToServer()

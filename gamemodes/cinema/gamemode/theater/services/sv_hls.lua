@@ -16,7 +16,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
     end
 
     local onFetchReceive = function(body, length, headers, code)
-        if (headers["Access-Control-Allow-Origin"] and headers["Access-Control-Allow-Origin"] ~= "*" and headers["Access-Control-Allow-Origin"] ~= "https://swamp.sv/") then
+        if headers["Access-Control-Allow-Origin"] and headers["Access-Control-Allow-Origin"] ~= "*" and headers["Access-Control-Allow-Origin"] ~= "https://swamp.sv/" then
             datalink = "https://cors.oak.re/" .. (datalink or key)
         end
 
@@ -29,7 +29,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
                 duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1]) --split because it can be 1.0000,live instead of just 1.0000,
             end
 
-            if (v == "#EXT-X-ENDLIST" or v == "#EXT-X-PLAYLIST-TYPE:VOD") then
+            if v == "#EXT-X-ENDLIST" or v == "#EXT-X-PLAYLIST-TYPE:VOD" then
                 timed = true
             end
         end

@@ -17,12 +17,12 @@ function ENT:SetupDataTables()
 end
 
 function ENT:Initialize()
-    if (CLIENT) then
+    if CLIENT then
         self.PixVis = util.GetPixelVisibleHandle()
     end
 
     --lights are rolling around even though the model isn't round!!
-    if (SERVER) then
+    if SERVER then
         self:SetModel(MODEL)
         self:PhysicsInit(SOLID_VPHYSICS)
         self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -54,11 +54,11 @@ end
 function ENT:Think()
     self.BaseClass.Think(self)
 
-    if (CLIENT) then
+    if CLIENT then
         if (not self:GetOn()) then return end
         local dlight = DynamicLight(self:EntIndex())
 
-        if (dlight) then
+        if dlight then
             local c = self:GetColor()
             dlight.Pos = self:GetPos()
             dlight.r = c.r
@@ -85,7 +85,7 @@ function ENT:DrawTranslucent()
     local Distance = ViewNormal:Length()
     ViewNormal:Normalize()
     local Visibile = util.PixelVisible(LightPos, 4, self.PixVis)
-    if (not Visibile or Visibile < 0.1) then return end
+    if not Visibile or Visibile < 0.1 then return end
     if (not self:GetOn()) then return end
     local c = self:GetColor()
     local Alpha = 255 * Visibile

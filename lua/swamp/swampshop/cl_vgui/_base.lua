@@ -10,7 +10,7 @@ vgui.Register('DScrollPanelPaddable', {
         self.VBar:SetUp(self:GetTall(), self.pnlCanvas:GetTall())
         YPos = self.VBar:GetOffset()
 
-        if (self.VBar.Enabled) then
+        if self.VBar.Enabled then
             Wide = Wide - self.VBar:GetWide()
         end
 

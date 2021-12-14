@@ -15,35 +15,35 @@ INST_LATENCY = 1.000000
 --ENT.Keys = {}
 ENT.ControlKeys = {
     [KEY_TAB] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         RunConsoleCommand("instrument_leave", inst:EntIndex())
     end,
     [KEY_SPACE] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         inst:ToggleSheetMusic()
     end,
     [KEY_LEFT] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         inst:SheetMusicBack()
     end,
     [KEY_RIGHT] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         inst:SheetMusicForward()
     end,
     [KEY_LCONTROL] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         inst:CtrlMod()
     end,
     [KEY_RCONTROL] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         inst:CtrlMod()
     end,
     [KEY_LALT] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         inst:AltMod()
     end,
     [KEY_RALT] = function(inst, bPressed)
-        if (not bPressed) then return end
+        if not bPressed then return end
         inst:AltMod()
     end,
     [KEY_LSHIFT] = function(inst, bPressed)
@@ -52,7 +52,7 @@ ENT.ControlKeys = {
 }
 
 function ENT:GetSound(snd)
-    if (snd == nil or snd == "") then return nil end
+    if snd == nil or snd == "" then return nil end
 
     return "gmodtower/lobby/instruments/" .. (self.Instruments[self:GetNWInt("CurrentInstrument")] or "Piano") .. "/" .. snd .. ".ogg"
 end
