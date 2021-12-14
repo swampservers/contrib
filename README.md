@@ -163,6 +163,11 @@ Boolean, mostly for players
 \
 *file: lua/swamp/pony/sh_init.lua*
 
+### function API_Struct(value_type)
+A struct is a table with only string keys, and all string keys are kept on the NetworkString table. It's not as static as a C struct.
+\
+*file: lua/swamp/sh_api.lua*
+
 ### if CLIENT then
 Register a function which is called on the server and executed on the client. See this file for details.
 \
@@ -190,6 +195,11 @@ Returns next power of 2 >= n
 
 ### function noop()
 Shorthand for empty function
+\
+*file: lua/swamp/sh_core.lua*
+
+### function table.Inverse(tab)
+Convert a table of {k=v} to {v=k}
 \
 *file: lua/swamp/sh_core.lua*
 

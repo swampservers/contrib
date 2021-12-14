@@ -72,6 +72,18 @@ function table.Set(tab)
     return s
 end
 
+--- Convert a table of {k=v} to {v=k}
+function table.Inverse(tab)
+    local s = {}
+
+    for k, v in pairs(tab) do
+        s[v] = k
+    end
+
+    return s
+end
+
+
 --- Selects a range of an ordered table similar to string.sub
 function table.sub(tab, startpos, endpos)
     local out = {}

@@ -1,22 +1,44 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 --NOMINIFY
 -- TODO: check if having non byte aligned stuff matters for performance
--- this is to make sure the ids dont change order if we change them
-APIDATAUSEDINDEXES = APIDATAUSEDINDEXES or {}
 
-for i, v in ipairs({"API_DATALEN", "API_ANY", "API_STRUCT_ANY", "API_NIL", "API_FALSE", "API_TRUE", "API_EMPTYTABLE", "API_BOOL", "API_FLOAT", "API_DOUBLE", "API_INT8", "API_INT16", "API_INT32", "API_UINT", "API_UINT8", "API_UINT16", "API_UINT32", "API_STRING", "API_NT_STRING", "API_NETWORK_STRING", "API_NETWORK_STRING_TABLE_UPDATE", "API_VECTOR", "API_COMP_VECTOR", "API_ANGLE", "API_COMP_ANGLE", "API_ENTITY", "API_ENTITY_HANDLE", "API_LIST", "API_TABLE", "API_STRUCT",}) do
-    -- we can't use 1 because we wanna be able to do {TYPE} for a list and {[TYPE]=TYPE} for a dict
-    if not _G[v] then
-        _G[v] = i + 1
-
-        while (APIDATAUSEDINDEXES[_G[v]] or v) ~= v do
-            _G[v] = _G[v] + 1
-        end
-
-        API_TYPESIZE = math.ceil(math.log(_G[v]) / math.log(2))
-        APIDATAUSEDINDEXES[_G[v]] = v
-    end
+local function bitsneeded(maxval)
+    return math.ceil(math.log(maxval) / math.log(2))
 end
+
+
+
+
+-- this is to make sure the ids dont change order if we change them
+-- APIDATAUSEDINDEXES = APIDATAUSEDINDEXES or {}
+
+for i, v in ipairs(
+    {"API_DATALEN", "API_ANY", "API_STRUCT_ANY", "API_NIL", "API_FALSE", "API_TRUE", "API_EMPTYTABLE", "API_BOOL", "API_FLOAT", "API_DOUBLE", "API_INT8", "API_INT16", "API_INT32", "API_UINT", "API_UINT8", "API_UINT16", "API_UINT32", "API_STRING", "API_NT_STRING", "API_NETWORK_STRING", "API_NETWORK_STRING_TABLE_UPDATE", "API_VECTOR", "API_COMP_VECTOR", "API_ANGLE", "API_COMP_ANGLE", "API_ENTITY", "API_ENTITY_HANDLE", "API_TABLE", "API_LIST", "API_SET", "API_DICT", "API_STRUCT",}
+) do
+    -- we can't use 1 because we wanna be able to do {TYPE} for a list and {[TYPE]=TYPE} for a dict
+    -- if not _G[v] then
+    --     _G[v] = i + 1
+
+    --     while (APIDATAUSEDINDEXES[_G[v]] or v) ~= v do
+    --         _G[v] = _G[v] + 1
+    --     end
+
+        
+    --     APIDATAUSEDINDEXES[_G[v]] = v
+    -- end
+    _G[v] = i
+    API_TYPESIZE = bitsneeded(i)
+end
+
+
+
+
+
+
+
+
+
+
 
 local API_TypeToType = {
     ["nil"] = function(x) return API_NIL end,
@@ -51,17 +73,20 @@ local API_TypeToType = {
     Angle = function(x) return API_ANGLE end,
     Entity = function(x) return API_ENTITY end,
     Player = function(x) return API_ENTITY end,
-    table = function(x)
-        local realcount = table.Count(x)
-        if realcount == 0 then return API_EMPTYTABLE end
-
-        for i = 1, realcount do
-            if x[i] == nil then return API_TABLE end
-        end
-
-        return API_LIST
-    end
+    table = function(x) return API_TABLE end,
 }
+
+function API_GetTableType(x) 
+    local realcount = table.Count(x)
+    if realcount == 0 then return API_EMPTYTABLE end
+
+    for i = 1, realcount do
+        if x[i] == nil then return API_DICT end
+    end
+
+    return API_LIST
+end
+
 
 function API_GetType(v)
     local fn = API_TypeToType[type(v)]
@@ -143,11 +168,9 @@ local API_Readers = {
         return st
     end,
     [API_NETWORK_STRING_TABLE_UPDATE] = function()
-        local t = API_Read({
-            [API_NETWORK_STRING] = API_ANY
-        })
+        local t = API_Struct().Read()
 
-        t[1] = API_Read({API_NETWORK_STRING})
+        t[1] = API_List(API_NETWORK_STRING).Read()
 
         return t
     end,
@@ -173,18 +196,17 @@ local API_Readers = {
 
         return EntityHandle(net.ReadInt(16))
     end,
-    [API_LIST] = function()
-        return API_Read({API_ANY})
-    end,
     [API_TABLE] = function()
-        return API_Read({
-            [API_ANY] = API_ANY
-        })
+        return API_Dict().Read()
+    end,
+    [API_LIST] = function()
+        return API_List().Read()
+    end,
+    [API_DICT] = function()
+        return API_Dict().Read()
     end,
     [API_STRUCT] = function()
-        return API_Read({
-            [API_NETWORK_STRING] = API_STRUCT_ANY
-        })
+        return API_Struct().Read()
     end
 }
 
@@ -262,13 +284,8 @@ local API_Writers = {
             v[1] = nil
         end
 
-        API_Write({
-            [API_NETWORK_STRING] = API_ANY
-        }, v)
-
-        API_Write({
-            [API_NETWORK_STRING] = API_TRUE
-        }, r or {})
+        API_Struct().Write(v)
+        API_Set(API_NETWORK_STRING).Write(r or {})
 
         if r then
             v[1] = r
@@ -296,67 +313,152 @@ local API_Writers = {
         API_EntityHandles[id] = true
         net.WriteInt(id, 16)
     end,
-    [API_LIST] = function(v)
-        API_Write({API_ANY}, v)
-    end,
     [API_TABLE] = function(v)
-        API_Write({
-            [API_ANY] = API_ANY
-        }, v)
+        API_Dict().Write(v)
+    end,
+    [API_LIST] = function(v)
+        API_List().Write(v)
+    end,
+    [API_DICT] = function(v)
+        API_Dict().Write(v)
     end,
     [API_STRUCT] = function(v)
-        API_Write({
-            [API_NETWORK_STRING] = API_STRUCT_ANY
-        }, v)
+        API_Struct().Write(v)
     end
 }
 
-function API_Read(typ)
-    if istable(typ) then
-        local key_type, value_type = next(typ)
-        local nvals = API_Read(API_DATALEN)
-        local out = {}
+function API_Union(...)
+    local types = {...}
+    local itypes,ntypes = table.Inverse(types),#types
+    local typebits = bitsneeded(ntypes)
+    -- any struct/list/dict should be the final type
+    local table_type = types[ntypes]
 
-        -- list
-        if key_type == 1 then
+    return {
+        Read = function()
+            return API_Read(types[net.ReadUInt(typebits)])
+        end,
+        Write = function(v)
+            local typ = API_GetType(v)
+            if typ==API_TABLE then typ=table_type end
+            net.WriteUInt(itypes[typ], typebits)
+            API_Write(typ, v)
+        end
+    }
+end
+
+function API_Optional(typ)
+    return API_Union(API_NIL, typ)
+end
+
+function API_List(value_type)
+    value_type = value_type or API_ANY
+    return {
+        Read = function()
+            local out, nvals = {}, API_Read(API_DATALEN) 
             for i = 1, nvals do
                 out[i] = API_Read(value_type)
             end
-        else
+            return out
+        end,
+        Write = function(v)
+            local nvals = #v
+            API_Write(API_DATALEN, nvals)
+            for i = 1, nvals do
+                API_Write(value_type, v[i])
+            end
+        end
+    }
+end
+
+function API_Dict(key_type, value_type)
+    key_type = key_type or API_ANY
+    value_type = value_type or API_ANY
+    return {
+        Read = function()
+            local out, nvals = {}, API_Read(API_DATALEN) 
             for i = 1, nvals do
                 local k = API_Read(key_type)
                 out[k] = API_Read(value_type)
             end
+            return out
+        end,
+        Write = function(val)
+            API_Write(API_DATALEN, table.Count(val))
+            for k, v in pairs(val) do
+                print(key_type,k,API_NETWORK_STRING)
+                API_Write(key_type, k)
+                API_Write(value_type, v)
+            end
         end
+    }
+end
 
-        return out
+function API_Set(key_type)
+    return API_Dict(key_type or API_ANY, API_TRUE)
+end
+
+--- A struct is a table with only string keys, and all string keys are kept on the NetworkString table. It's not as static as a C struct.
+function API_Struct(value_type)
+    return API_Dict(API_NETWORK_STRING, value_type or API_STRUCT_ANY)
+end
+
+
+function API_Read(typ)
+    if istable(typ) then
+        -- if typ.Read then
+            return typ.Read()
+        -- end
+
+        -- local key_type, value_type = next(typ)
+        -- local nvals = API_Read(API_DATALEN)
+        -- local out = {}
+
+        -- -- list
+        -- if key_type == 1 then
+        --     for i = 1, nvals do
+        --         out[i] = API_Read(value_type)
+        --     end
+        -- else
+        --     for i = 1, nvals do
+        --         local k = API_Read(key_type)
+        --         out[k] = API_Read(value_type)
+        --     end
+        -- end
+
+        -- return out
     else
         return API_Readers[typ]()
     end
 end
 
+
 function API_Write(typ, val)
     if istable(typ) then
-        local key_type, value_type = next(typ)
+        -- if typ.Write then
+            return typ.Write(val)
+        -- end
 
-        -- list
-        if key_type == 1 then
-            local nvals = #val
-            API_Write(API_DATALEN, nvals)
+        -- local key_type, value_type = next(typ)
 
-            for i = 1, nvals do
-                API_Write(value_type, val[i])
-            end
-        else
-            API_Write(API_DATALEN, table.Count(val))
+        -- -- list
+        -- if key_type == 1 then
+        --     local nvals = #val
+        --     API_Write(API_DATALEN, nvals)
 
-            for k, v in pairs(val) do
-                API_Write(key_type, k)
-                API_Write(value_type, v)
-            end
-        end
+        --     for i = 1, nvals do
+        --         API_Write(value_type, val[i])
+        --     end
+        -- else
+        --     API_Write(API_DATALEN, table.Count(val))
 
-        return out
+        --     for k, v in pairs(val) do
+        --         API_Write(key_type, k)
+        --         API_Write(value_type, v)
+        --     end
+        -- end
+
+        -- return out
     else
         API_Writers[typ](val)
     end
