@@ -2,7 +2,7 @@
 -- INSTALL: CINEMA
 -- override this if you want to make new visualizations and look at them locally
 function UsingMusicVis(name)
-    return GetG("musicvis") == name
+    return NWGlobal.musicvis == name
 end
 
 MVIS_DATA = {} -- MVIS_DATA or {}
@@ -487,7 +487,7 @@ end
 function MvisDrawDebug()
     local t = MVISTAB_NEXT
     if not t then return end
-    draw.DrawText("Setting: " .. tostring(GetG("musicvis")), "DermaDefault", 410, 1)
+    draw.DrawText("Setting: " .. tostring(NWGlobal.musicvis), "DermaDefault", 410, 1)
 
     for j, tab in ipairs(MVIS_PLOTS) do
         local chart, name, mean0, lookback = tab.chart, tab.name, tab.mean0, tab.lookback

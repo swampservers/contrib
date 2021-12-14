@@ -7,7 +7,7 @@
 local NetworkStringToIDCache = {}
 
 -- Faster than util.NetworkStringToID, returns nil if missing on client, added automatically if missing on server
-local function NetworkStringToID(str)
+function NetworkStringToID(str)
     local id = NetworkStringToIDCache[str]
     if id then return id end
     id = util.NetworkStringToID(str)
@@ -50,37 +50,9 @@ function net.Incoming(len, client)
     func(len - 16, client)
 end
 
-if SERVER then
-    local BaseNetStart = net.Start
 
-    function net.Start(messageName, unreliable)
-        NetworkStringToID(messageName)
+API_Request("NetReady", {})
 
-        return BaseNetStart(messageName, unreliable)
-    end
-
-    -- Reload network strings we created in previous server runs
-    SavedNetworkStrings = util.JSONToTable(file.Read("networkstringcache.txt", "DATA") or "[]")
-    local BaseAddNetworkString = util.AddNetworkString
-
-    function util.AddNetworkString(str)
-        SavedNetworkStrings[str] = 10
-
-        if not StartedSaveNetworkStrings then
-            StartedSaveNetworkStrings = true
-
-            timer.Simple(5, function()
-                StartedSaveNetworkStrings = nil
-                file.Write("networkstringcache.txt", util.TableToJSON(SavedNetworkStrings))
-            end)
-        end
-
-        return BaseAddNetworkString(str)
-    end
-
-    for k, v in pairs(SavedNetworkStrings) do
-        util.AddNetworkString(k)
-        SavedNetworkStrings[k] = v > 1 and v - 1 or nil
-    end
+if CLIENT then
+    hook.Add("InitPostEntity", "NetReady", RequestNetReady)
 end
---NOMINIFY

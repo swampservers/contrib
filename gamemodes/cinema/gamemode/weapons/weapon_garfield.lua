@@ -553,19 +553,19 @@ function SWEP:DrawHUD()
 
     draw.WordBox(8, ScrW() * 2 / 4, 20, "Weight: " .. tostring(math.floor(10 * Me:Obesity())) .. " lbs", "DermaLarge", Color(0, 0, 0, 100), Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
     local txt = ""
-    local cf = GetG("CURFATTESTCAT")
+    -- local cf = GetG("CURFATTESTCAT")
 
-    if IsValid(cf) then
-        txt = txt .. "Current largest:\n"
-        txt = txt .. cf:Name() .. " - " .. tostring(math.floor(10 * cf:Obesity())) .. " lbs\n"
-    end
+    -- if IsValid(cf) then
+    --     txt = txt .. "Current largest:\n"
+    --     txt = txt .. cf:Name() .. " - " .. tostring(math.floor(10 * cf:Obesity())) .. " lbs\n"
+    -- end
 
-    txt = txt .. "\nHighest ever:\n"
+    -- txt = txt .. "\nHighest ever:\n"
 
-    for i, cat in ipairs(GetG("FATTESTCATS") or {}) do
-        txt = txt .. tostring(i) .. ". " .. cat[1] .. " (" .. cat[2] .. ") - " .. tostring(math.floor(10 * cat[3])) .. " lbs\n"
-        -- draw.WordBox(8,ScrW()*2/4,30, txt, "Trebuchet18", Color(0,0,0,100), Color(255,255,255,255), TEXT_ALIGN_CENTER)
-    end
+    -- for i, cat in ipairs(GetG("FATTESTCATS") or {}) do
+    --     txt = txt .. tostring(i) .. ". " .. cat[1] .. " (" .. cat[2] .. ") - " .. tostring(math.floor(10 * cat[3])) .. " lbs\n"
+    --     -- draw.WordBox(8,ScrW()*2/4,30, txt, "Trebuchet18", Color(0,0,0,100), Color(255,255,255,255), TEXT_ALIGN_CENTER)
+    -- end
 
     draw.DrawText(txt, "DermaDefault", 10, 10, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT)
     surface.SetDrawColor(255, 255, 255, 255)

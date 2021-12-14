@@ -102,16 +102,6 @@ A global cache of all entities, in subtables divided by classname.\
 \
 *file: lua/swamp/extensions/sh_ents_cache.lua*
 
-### function GetG(k)
-Get a globally shared value (similar to GetGlobal* but actually works)
-\
-*file: lua/swamp/extensions/sh_getg_setg.lua*
-
-### function SetG(k, v)
-Set a globally shared value (server)
-\
-*file: lua/swamp/extensions/sh_getg_setg.lua*
-
 ### ply.NWP = {}
 NWP="Networked Private"\
  A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
@@ -167,11 +157,6 @@ Get current title string or ""
 Boolean, mostly for players
 \
 *file: lua/swamp/pony/sh_init.lua*
-
-### function API_Command(name, argtypes, client_function, unreliable)
-Register a function which is called on the server and executed on the client. See this file for details.
-\
-*file: lua/swamp/sh_api.lua*
 
 ### function call(func, ...)
 Just calls the function with the args
