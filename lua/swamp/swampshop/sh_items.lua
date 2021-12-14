@@ -27,11 +27,12 @@ end
 function SS_MakeItems(ply, itemdatas, skip_unknown)
     local out = {}
 
-    for i, v in ipairs(itemdatas) do
+    for k, v in pairs(itemdatas) do
         v = SS_MakeItem(ply, v)
 
         if v then
             table.insert(out, v)
+            -- out[v.id] = v
         elseif not skip_unknown then
             error()
         end
@@ -212,11 +213,6 @@ function SS_Item(item)
                 SS_CustomizerPanel:OpenItem(item)
             end
         }
-        -- if SS_CustomizerPanel:IsVisible() then
-        --     SS_CustomizerPanel:Close()
-        -- else
-        --     SS_CustomizerPanel:Open(item)
-        -- end
     end
 
     if not item.clientside_fake then

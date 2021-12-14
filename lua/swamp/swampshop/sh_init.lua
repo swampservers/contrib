@@ -1,26 +1,39 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+
 API_Request("ShownItems", {API_ENTITY})
 
 API_Command("PointOutInventory", {}, function()
     SS_INVENTORY_POINT_OUT = RealTime()
 end)
 
-API_Command("Items", {API_STRING}, function(items)
+
+API_Command("Items", {API_STRING}, function(  items)
     MeOnValid(function(ply)
         Me.SS_Items = SS_MakeItems(Me, util.JSONToTable(util.Decompress(items)))
-        SS_PostItemsUpdate(Me, false)
+        
+        SS_InventoryVersion = (SS_InventoryVersion or 0) + 1
     end)
 end)
 
-API_Command("ShownItems", {API_ENTITY_HANDLE, API_List(API_STRUCT)}, function(ph, items)
+
+API_Command("ShownItems", {API_ENTITY_HANDLE, API_Dict(API_UINT32, API_STRUCT)}, function(ph,  items)
     ph:OnValid(function(ply)
         ply.SS_ShownItems = SS_MakeItems(ply, items)
-        SS_PostItemsUpdate(ply, true)
+    
+        ply:SS_AttachAccessories()
+        ply.SS_SetupPlayermodel = nil
+
+        if ply == Me then
+            SS_RefreshShopAccessories()
+        end
     end)
 end)
 
--- empty table to delete it
+
+-- table with .delete to delete it
 API_Command("UpdateItem", {API_STRUCT}, function(item)
+
     if Me and Me.SS_Items then
         if item.delete then
             SS_RemoveItemID(Me.SS_Items, item.delete)
@@ -32,7 +45,11 @@ API_Command("UpdateItem", {API_STRUCT}, function(item)
 
         SS_InventoryVersion = (SS_InventoryVersion or 0) + 1
     end
+        
 end)
+
+
+
 
 --- Number of points
 function Player:SS_GetPoints()

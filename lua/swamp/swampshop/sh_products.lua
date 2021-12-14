@@ -98,9 +98,11 @@ function SS_WeaponProduct(product)
 
     function product:CannotBuy(ply)
         if ply:HasWeapon(self.class) then
-            if SERVER then
+
+            -- hack to make client switch to the weapon
+            if SERVER or ply:UsingWeapon(self.class) then
                 ply:SelectWeapon(self.class)
-                -- hack so client still sends it
+                
 
                 return "You already have this weapon!"
             end
@@ -208,17 +210,6 @@ SS_CANNOTBUY_AFFORD = "You can't afford this."
 SS_CANNOTBUY_OWNED = "You already own this."
 SS_CANNOTBUY_OWNEDMULTI = "You own the maximum number of these."
 
--- SS_BUYSTATUS_OK = 0
--- SS_BUYSTATUS_AFFORD = 1
--- SS_BUYSTATUS_OWNED = 2
--- SS_BUYSTATUS_OWNED_MULTI = 3
--- SS_BUYSTATUS_SLOTS = 4
--- SS_BUYSTATUS_TAKEN = 5
--- SS_BUYSTATUS_PRIVATETHEATER = 6
--- SS_BUYSTATUS_CANTBUILD = 7
--- SS_BUYSTATUS_PONYONLY = 8
--- SS_BUYSTATUS_PREVIOUS_SLOTS = 9
--- SS_BuyStatusMessage = {"You can't afford this.", "You already own this.", "You own the maximum number of these.", "Buy more accessory slots (in Upgrades) first.", "Someone else is using this - kill them.", "You must own a private theater to use this.", "You can't build here.", "You must own the ponymodel to buy this.", "Buy the previous slots to unlock this one."}
 function SS_DeathKeepnotice(product)
     product.keepnotice = "This " .. ((product.price or 0) == 0 and "item" or "purchase") .. " will be lost if you die or log out."
 end

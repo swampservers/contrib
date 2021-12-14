@@ -85,58 +85,6 @@ function SS_ToggleMenu()
     end
 end
 
---[[
-function PS:SetHoverItem(item_id)
-	local ITEM = PS.Items[item_id]
-	
-	if ITEM.Model then
-		self.HoverModel = item_id
-	
-		self.HoverModelClientsideModel = ClientsideModel(ITEM.Model, RENDERGROUP_OPAQUE)
-		self.HoverModelClientsideModel:SetNoDraw(true)
-	end
-end
-
-function PS:RemoveHoverItem()
-	self.HoverModel = nil
-	self.HoverModelClientsideModel = nil
-end ]]
---[[
-function PS:ShowColorChooser(item, modifications)
-	-- TODO: Do this
-	local chooser = vgui.Create('DPointShopColorChooser')
-	chooser:SetColor(modifications.color)
-	
-	chooser.OnChoose = function(color)
-		modifications.color = color
-		self:SendModifications(item.ID, modifications)
-	end
-end
-
-function PS:SendModifications(item_id, modifications)
-	net.Start('SS_ModifyItem')
-		net.WriteString(item_id)
-		net.WriteTable(modifications)
-	net.SendToServer()
-end ]]
--- function SetLoadingPlayerProperty(pi, prop, val, callback, calls)
---     calls = calls or 50
---     local ply = pi == -1 and Me or Entity(pi)
---     if IsValid(ply) then
---         ply[prop] = val
---         if callback then
---             callback(ply)
---         end
---     else
---         if calls < 1 then
---             print("ERROR loading " .. prop .. " for " .. tostring(pi))
---         else
---             timer.Simple(0.5, function()
---                 SetLoadingPlayerProperty(pi, prop, val, callback, calls - 1)
---             end)
---         end
---     end
--- end
 local function OnPlayerLoad(pi, callback, ready_check, calls)
     calls = calls or 50
     local ply = pi == -1 and Me or Entity(pi)
@@ -154,36 +102,7 @@ local function OnPlayerLoad(pi, callback, ready_check, calls)
     end
 end
 
-local function postupdate(ply, shown)
-    if shown then
-        ply:SS_AttachAccessories()
-        ply.SS_SetupPlayermodel = nil
 
-        if ply == Me then
-            SS_RefreshShopAccessories()
-        end
-    else
-        SS_InventoryVersion = (SS_InventoryVersion or 0) + 1
-    end
-end
-
-SS_PostItemsUpdate = postupdate
-
-local function setitems(pi, shown, items)
-    OnPlayerLoad(pi, function(ply)
-        items = SS_MakeItems(ply, items)
-        ply[shown and "SS_ShownItems" or "SS_Items"] = SS_MakeItems(ply, items)
-        postupdate(ply, shown)
-    end)
-end
-
-net.Receive('SS_Items', function(length)
-    setitems(-1, false, net.ReadCompressedTable())
-end)
-
-net.Receive('SS_ShownItems', function(length)
-    setitems(net.ReadUInt(8), true, net.ReadTableHD())
-end)
 
 function SS_RemoveItemID(tab, id)
     for i, v in ipairs(tab) do
@@ -195,29 +114,12 @@ function SS_RemoveItemID(tab, id)
     end
 end
 
-net.Receive('SS_UpdateItem', function(length)
-    local pi, shown, item = -1, false, net.ReadTableHD()
 
-    OnMeValid(function()
-        if Me.SS_Items then
-            item = SS_MakeItem(Me, item)
-            SS_RemoveItemID(Me.SS_Items, item.id)
-            table.insert(Me.SS_Items, item)
-            SS_InventoryVersion = (SS_InventoryVersion or 0) + 1
-        end
-    end)
-end)
 
-local function deleteitem(pi, shown, id)
-    OnPlayerLoad(pi, function(ply)
-        SS_RemoveItemID(shown and ply.SS_ShownItems or ply.SS_Items, id)
-        postupdate(ply, shown)
-    end, function(ply) return shown and ply.SS_ShownItems or ply.SS_Items end)
-end
 
-net.Receive('SS_DeleteItem', function(length)
-    deleteitem(-1, false, net.ReadUInt(32))
-end)
+
+
+
 
 function SS_BuyProduct(id)
     if not SS_Products[id] then
@@ -239,37 +141,10 @@ concommand.Add("ps_buy", function(ply, cmd, args)
         return
     end
 
-    -- if they have the wep and the wep is not a single-use e.g. peacekeeper
-    if Me:HasWeapon(args[1]) and not SS_Products[args[1]]['ammotype'] then
-        input.SelectWeapon(Me:GetWeapon(args[1]))
-
-        return
-    end
-
     SS_BuyProduct(args[1])
 end)
 
--- function SS_SellItem(item_id)
---     if not Me:SS_FindItem(item_id) then return end
---     net.Start('SS_SellItem')
---     net.WriteUInt(item_id, 32)
---     net.SendToServer()
--- end
--- -- REMOVE THIS
--- function SS_EquipItem(item_id, state)
---     if not Me:SS_FindItem(item_id) then return end
---     net.Start('SS_EquipItem')
---     net.WriteUInt(item_id, 32)
---     net.WriteBool(state)
---     net.SendToServer()
--- end
--- function SS_ActivateItem(item_id, args)
---     if not Me:SS_FindItem(item_id) then return end
---     net.Start('SS_ActivateItem')
---     net.WriteUInt(item_id, 32)
---     net.WriteTable(args or {})
---     net.SendToServer()
--- end
+
 concommand.Add("ps", function(ply, cmd, args)
     local action, itemid = args[1], tonumber(args[2] or "")
     if not action or not itemid then return end
