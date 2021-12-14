@@ -78,8 +78,9 @@ local function loadFile(filePath, environmentVars)
     end
 
     xpcall(function()
-		GM = GAMEMODE
+        GM = GAMEMODE
         RunString(code, "SwampDevTools/" .. filePath)
+        GM = nil
     end, function(err)
         print("[contrib] Error during loading file with devtools:", err)
         debug.Trace()
