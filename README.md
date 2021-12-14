@@ -44,6 +44,11 @@ Use this global instead of LocalPlayer()\
 \
 *file: lua/swamp/extensions/cl_me.lua*
 
+### function MeOnValid(func)
+Call the function when Me becomes valid
+\
+*file: lua/swamp/extensions/cl_me.lua*
+
 ### function cam.Culled3D2D(pos, ang, scale, callback)
 Runs `cam.Start3D2D(pos, ang, scale) callback() cam.End3D2D()` but only if the user is in front of the "screen" so they can see it.
 \

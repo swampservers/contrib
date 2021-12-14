@@ -185,7 +185,7 @@ net.Receive('SS_ShownItems', function(length)
     setitems(net.ReadUInt(8), true, net.ReadTableHD())
 end)
 
-local function removeitemid(tab, id)
+function SS_RemoveItemID(tab, id)
     for i, v in ipairs(tab) do
         if v.id == id then
             table.remove(tab, i)
@@ -195,37 +195,31 @@ local function removeitemid(tab, id)
     end
 end
 
-local function updateitem(pi, shown, item)
-    OnPlayerLoad(pi, function(ply)
-        item = SS_MakeItem(ply, item)
-        local tab = shown and ply.SS_ShownItems or ply.SS_Items
-        removeitemid(tab, item.id)
-        table.insert(tab, item)
-        postupdate(ply, shown)
-    end, function(ply) return shown and ply.SS_ShownItems or ply.SS_Items end)
-end
+
+
 
 net.Receive('SS_UpdateItem', function(length)
-    updateitem(-1, false, net.ReadTableHD())
+    local pi, shown, item = -1, false, net.ReadTableHD()
+    OnMeValid(function()
+        if Me.SS_Items then
+            item = SS_MakeItem(Me, item)
+            SS_RemoveItemID(Me.SS_Items, item.id)
+            table.insert(Me.SS_Items, item)
+            SS_InventoryVersion = (SS_InventoryVersion or 0) + 1
+        end
+    end)
 end)
 
-net.Receive('SS_UpdateShownItem', function(length)
-    updateitem(net.ReadUInt(8), true, net.ReadTableHD())
-end)
 
 local function deleteitem(pi, shown, id)
     OnPlayerLoad(pi, function(ply)
-        removeitemid(shown and ply.SS_ShownItems or ply.SS_Items, id)
+        SS_RemoveItemID(shown and ply.SS_ShownItems or ply.SS_Items, id)
         postupdate(ply, shown)
     end, function(ply) return shown and ply.SS_ShownItems or ply.SS_Items end)
 end
 
 net.Receive('SS_DeleteItem', function(length)
     deleteitem(-1, false, net.ReadUInt(32))
-end)
-
-net.Receive('SS_DeleteShownItem', function(length)
-    deleteitem(net.ReadUInt(8), true, net.ReadUInt(32))
 end)
 
 function SS_BuyProduct(id)

@@ -1,30 +1,47 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 
+
+API_Request("ShownItems", {API_ENTITY})
+
 API_Command("PointOutInventory", {}, function()
     SS_INVENTORY_POINT_OUT = RealTime()
 end)
 
-API_Command("ShownItems", {API_ENTITY_HANDLE, API_UINT, API_LIST}, function(ph, itemsversion, items)
+
+API_Command("Items", {API_STRING}, function(  items)
+    MeOnValid(function(ply)
+        Me.SS_Items = SS_MakeItems(Me, util.JSONToTable(util.Decompress(items)))
+        SS_PostItemsUpdate(Me, false)
+    end)
+end)
+
+
+API_Command("ShownItems", {API_ENTITY_HANDLE, {API_STRUCT}}, function(ph,  items)
     ph:OnValid(function(ply)
-        print(ply, itemsversion)
-        ply.ShownItemsVersion = itemsversion
         ply.SS_ShownItems = SS_MakeItems(ply, items)
         SS_PostItemsUpdate(ply, true)
     end)
 end)
 
 
-API_Request("ShownItems", {API_ENTITY})
+-- empty table to delete it
+API_Command("UpdateItem", {API_STRUCT}, function(item)
 
-if SERVER then
-    API_HandleRequest("ShownItems",function(ply, other)
-        other.ShownItemsVersionSent = other.ShownItemsVersionSent or {}
-        if IsValid(other) and other:IsPlayer() and other.ShownItemsVersionSent[ply]~=other.NW.ShownItemsVersion then
-            other.ShownItemsVersionSent[ply] = other.NW.ShownItemsVersion
-            ply:CommandShownItems(other, other.NW.ShownItemsVersion, other.SS_ShownItems)
+    if Me and Me.SS_Items then
+        if item.delete then
+            SS_RemoveItemID(Me.SS_Items, item.delete)
+        else
+            item = SS_MakeItem(Me, item)
+            SS_RemoveItemID(Me.SS_Items, item.id)
+            table.insert(Me.SS_Items, item)
         end
-    end)
-end
+
+        SS_InventoryVersion = (SS_InventoryVersion or 0) + 1
+    end
+        
+end)
+
+
 
 
 

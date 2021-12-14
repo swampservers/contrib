@@ -411,8 +411,8 @@ end
 hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
     if IsValid(Me) and Me:Alive() then
 
-        if Me.RequestedShownItemsVersion ~= Me.NWP.ShownItemsVersion then 
-            Me.RequestedShownItemsVersion = Me.NWP.ShownItemsVersion
+        if Me.RequestedShownItemsVersion ~= Me.NW.ShownItemsVersion then 
+            Me.RequestedShownItemsVersion = Me.NW.ShownItemsVersion
             RequestShownItems(Me)
         end
 
@@ -514,6 +514,7 @@ end)
 
 -- Note: we expect items table not to change internally when items are updated (make whole new table)
 function Entity:SS_AttachAccessories(items, forceload)
+
     -- print(items, rangecheck)
     SS_UpdatedAccessories[self] = true
     local m = self:GetActualModel()

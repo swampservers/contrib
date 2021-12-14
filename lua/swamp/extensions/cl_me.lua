@@ -17,5 +17,15 @@ hook.Add("OnEntityCreated", "FindMe", function()
                 ErrorNoHalt()
             end
         end)
+
+        for i,v in ipairs(MeOnValidFunc or {}) do
+            v(Me)
+        end
+        MeOnValidFunc = nil
     end
 end)
+
+--- Call the function when Me becomes valid
+function MeOnValid(func)
+    if Me then func(Me) else MeOnValidFunc = MeOnValidFunc or {} table.insert(MeOnValidFunc, func) end
+end

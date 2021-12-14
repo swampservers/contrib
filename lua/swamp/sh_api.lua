@@ -10,10 +10,12 @@ APIDATAUSEDINDEXES = APIDATAUSEDINDEXES or {}
 for i,v in ipairs({
     "API_DATALEN",
     "API_ANY",
+    "API_STRUCT_ANY",
 
     "API_NIL",
     "API_FALSE",
     "API_TRUE",
+    "API_EMPTYTABLE",
 
     "API_BOOL",
 
@@ -43,16 +45,18 @@ for i,v in ipairs({
 
     "API_LIST",
     "API_TABLE",
-
+    "API_STRUCT",
     
 }) do
     -- we can't use 1 because we wanna be able to do {TYPE} for a list and {[TYPE]=TYPE} for a dict
-    _G[v]=i+1
-    while (APIDATAUSEDINDEXES[_G[v]] or v)~=v do
-        _G[v]=_G[v]+1
+    if not _G[v] then
+        _G[v]=i+1
+        while (APIDATAUSEDINDEXES[_G[v]] or v)~=v do
+            _G[v]=_G[v]+1
+        end
+        API_TYPESIZE = math.ceil(math.log(_G[v]) / math.log(2))
+        APIDATAUSEDINDEXES[_G[v]] = v
     end
-    API_TYPESIZE = math.ceil(math.log(_G[v]) / math.log(2))
-    APIDATAUSEDINDEXES[_G[v]] = v
 end
 
 local API_TypeToType = {
@@ -96,6 +100,7 @@ local API_TypeToType = {
     Player = function(x) return API_ENTITY end,
     table = function(x) 
         local realcount = table.Count(x)
+        if realcount==0 then return API_EMPTYTABLE end
         for i=1,realcount do
             if x[i]==nil then return API_TABLE end
         end
@@ -131,8 +136,12 @@ local API_Readers = {
         return l1==255 and net.ReadUInt(16) or l1
     end,
     [API_ANY] = function()
-        local typ = net.ReadUInt(API_TYPESIZE)
-        return API_Read(typ)
+        
+        return API_Read(net.ReadUInt(API_TYPESIZE))
+    end,
+    [API_STRUCT_ANY] = function()
+        
+        return API_Read(net.ReadUInt(API_TYPESIZE))
     end,
 
     [API_NIL] = function()
@@ -143,6 +152,9 @@ local API_Readers = {
     end,
     [API_TRUE] = function()
         return true
+    end,
+    [API_EMPTYTABLE] = function()
+        return {}
     end,
     [API_BOOL] = net.ReadBool,
     [API_FLOAT] = net.ReadFloat,
@@ -214,6 +226,9 @@ local API_Readers = {
     end,
     [API_TABLE] = function()
         return API_Read({[API_ANY]=API_ANY})
+    end,
+    [API_STRUCT] = function()
+        return API_Read({[API_NETWORK_STRING]=API_STRUCT_ANY})
     end
 }
 
@@ -234,11 +249,19 @@ local API_Writers = {
         net.WriteUInt( typ, API_TYPESIZE)
         API_Write(typ, v)
     end,
+    [API_STRUCT_ANY] = function(v)
+        local typ = API_GetType(v)
+        if typ==API_TABLE then typ=API_STRUCT end
+        net.WriteUInt( typ, API_TYPESIZE)
+        API_Write(typ, v)
+    end,
     [API_NIL] = function(v)
     end,
     [API_FALSE] = function(v)
     end,
     [API_TRUE] = function(v)
+    end,
+    [API_EMPTYTABLE] = function(v)
     end,
     [API_BOOL] = net.WriteBool,
 
@@ -282,7 +305,7 @@ local API_Writers = {
     [API_NT_STRING] = net.WriteString,
     [API_NETWORK_STRING] = function(v)
         local id = API_NetworkStringCache[v]
-        if not id and SERVER then util.AddNetworkString(v)  id = API_NetworkStringCache end
+        if not id and SERVER then util.AddNetworkString(v)  id = API_NetworkStringCache[v] end
         if not id then 
             ErrorNoHaltWithStack("No Network String ID! "..v)
             id = 0
@@ -329,6 +352,9 @@ local API_Writers = {
     end,
     [API_TABLE] = function(v)
         API_Write({[API_ANY]=API_ANY}, v)
+    end,
+    [API_STRUCT] = function(v)
+        API_Write({[API_NETWORK_STRING]=API_STRUCT_ANY}, v)
     end
 }
 
