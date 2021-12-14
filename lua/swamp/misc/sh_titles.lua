@@ -286,7 +286,7 @@ if SERVER then
         "weapon_fists" = function(atk) atk:AddStat("fistkill") end
     }
 
-    local function TitlesPlayerDeath(vic,inf,atk)
+    hook.Add("PlayerDeath", "TitlesPlayerDeath", function(vic,inf,atk)
         if atk:IsPlayer() then
             if TitleFuncions[inf:GetClass()] then TitleFunctions[inf:GetClass()](atk,vic) end
             if vic:IsPlayer() && not vic:IsAfk() && vic:LastHitGroup() == 1 then atk:AddStat("headshotkill") end
@@ -295,6 +295,5 @@ if SERVER then
                 if atk:GetTheater():GetOwner() == atk && vic:GetTheater():GetOwner() == atk then atk:AddStat("theaterkill") end
             end
         end
-    end
-    hook.Add("PlayerDeath", "TitlesPlayerDeath", TitlesPlayerDeath)
+    end)
 end
