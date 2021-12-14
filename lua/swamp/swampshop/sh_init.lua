@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 --- Number of points
 function Player:SS_GetPoints()
     return self.NWP.points or 0

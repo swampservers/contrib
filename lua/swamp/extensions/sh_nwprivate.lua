@@ -1,26 +1,26 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 --- NWP="Networked Private"
 -- A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
 --- ply.NWP = {}
-
-
 -- TODO: should we use the stringtable for key names?
-
-API_Command("UpdateNWPrivates", { {[API_NETWORK_STRING]=API_ANY, {API_NETWORK_STRING}} }, function(change, remove)
+API_Command("UpdateNWPrivates", {
+    {
+        [API_NETWORK_STRING] = API_ANY,
+        {API_NETWORK_STRING}
+    }
+}, function(change, remove)
     for k, v in pairs(change) do
         NWPrivate[k] = v
         -- if NWPrivateListener[k] then NWPrivateListener[k](Me, v) end
     end
-    for i,v in ipairs(remove) do
+
+    for i, v in ipairs(remove) do
         NWPrivate[v] = nil
         -- if NWPrivateListener[k] then NWPrivateListener[k](Me, nil) end
     end
 end)
 
-
 if CLIENT then
-
     NWPrivate = NWPrivate or {}
 
     -- TODO rename to NWP
@@ -51,5 +51,4 @@ if CLIENT then
             })
         end
     end)
-
 end
