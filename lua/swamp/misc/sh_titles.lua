@@ -280,10 +280,10 @@ AddTitle("", {
 if SERVER then
     local TitleFunctions =
     {
-        ["weapon_gauntlet"] = function(atk) atk:AddStat("snaps") end,
-        ["weapon_slitter"] = function(atk,vic) if vic:IsPlayer() && not vic:IsAfk() then atk:AddStat("knifekill") end end,
-        ["dodgeball"] = function(atk,vic) atk:AddStat("dodgeballkill") end,
-        ["weapon_fists"] = function(atk) atk:AddStat("fistkill") end
+        "weapon_gauntlet" = function(atk) atk:AddStat("snaps") end,
+        "weapon_slitter" = function(atk,vic) if vic:IsPlayer() && not vic:IsAfk() then atk:AddStat("knifekill") end end,
+        "dodgeball" = function(atk,vic) atk:AddStat("dodgeballkill") end,
+        "weapon_fists" = function(atk) atk:AddStat("fistkill") end
     }
 
     local function TitlesPlayerDeath(vic,inf,atk)
