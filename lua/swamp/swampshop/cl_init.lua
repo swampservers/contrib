@@ -102,8 +102,6 @@ local function OnPlayerLoad(pi, callback, ready_check, calls)
     end
 end
 
-
-
 function SS_RemoveItemID(tab, id)
     for i, v in ipairs(tab) do
         if v.id == id then
@@ -113,13 +111,6 @@ function SS_RemoveItemID(tab, id)
         end
     end
 end
-
-
-
-
-
-
-
 
 function SS_BuyProduct(id)
     if not SS_Products[id] then
@@ -143,7 +134,6 @@ concommand.Add("ps_buy", function(ply, cmd, args)
 
     SS_BuyProduct(args[1])
 end)
-
 
 concommand.Add("ps", function(ply, cmd, args)
     local action, itemid = args[1], tonumber(args[2] or "")
