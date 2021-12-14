@@ -45,7 +45,6 @@ end
 -- Ents = Ents or _SetupEnts()
 Ents = _SetupEnts2()
 
-
 -- Ents = _SetupEnts()
 hook.Add("OnEntityCreated", "Ents_OnEntityCreated", function(v)
     local cl = EntClass(v)
@@ -120,10 +119,6 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(v)
 
     v.EntsCacheIndex = nil
 end)
-
-
-
-
 
 function EntsWithPrefix(pfx)
     local ok, ov, ik, iv

@@ -83,7 +83,6 @@ function table.Inverse(tab)
     return s
 end
 
-
 --- Selects a range of an ordered table similar to string.sub
 function table.sub(tab, startpos, endpos)
     local out = {}

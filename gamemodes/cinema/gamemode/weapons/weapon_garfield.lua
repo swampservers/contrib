@@ -106,7 +106,6 @@ function Player:SetObesity(obs)
 end
 
 --NOMINIFY
-
 function Player:ObesityScale()
     return math.pow(self:Obesity(), 1 / 3)
 end
