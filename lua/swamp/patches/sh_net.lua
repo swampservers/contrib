@@ -50,7 +50,6 @@ function net.Incoming(len, client)
     func(len - 16, client)
 end
 
-
 API_Request("NetReady", {})
 
 if CLIENT then

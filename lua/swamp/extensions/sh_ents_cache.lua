@@ -120,9 +120,6 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(v)
     v.EntsCacheIndex = nil
 end)
 
-
-
-
 function EntsWithPrefix(pfx)
     local ok, ov, ik, iv
 
