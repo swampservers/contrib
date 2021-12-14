@@ -98,9 +98,11 @@ function SS_WeaponProduct(product)
 
     function product:CannotBuy(ply)
         if ply:HasWeapon(self.class) then
+
             -- hack to make client switch to the weapon
             if SERVER or ply:UsingWeapon(self.class) then
-                ply:SelectWeapon(self.class)
+                if SERVER then ply:SelectWeapon(self.class) end
+                
 
                 return "You already have this weapon!"
             end
