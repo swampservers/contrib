@@ -60,4 +60,30 @@ if SERVER then
 
         return BaseNetStart(messageName, unreliable)
     end
+
+
+    -- Reload network strings we created in previous server runs
+    SavedNetworkStrings = util.JSONToTable(file.Read("networkstringcache.txt", "DATA") or "[]")
+
+    local BaseAddNetworkString = util.AddNetworkString
+
+    function util.AddNetworkString(str)
+        SavedNetworkStrings[str] = 10
+        if not StartedSaveNetworkStrings then
+            StartedSaveNetworkStrings = true
+            timer.Simple(5, function()
+                StartedSaveNetworkStrings = nil
+                file.Write("networkstringcache.txt", util.TableToJSON(SavedNetworkStrings))
+            end)
+        end
+        return BaseAddNetworkString(str)
+    end
+    
+    for k,v in pairs(SavedNetworkStrings) do
+        util.AddNetworkString(k) 
+        SavedNetworkStrings[k] = v>1 and v-1 or nil
+    end
+
 end
+
+--NOMINIFY
