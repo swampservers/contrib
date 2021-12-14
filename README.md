@@ -163,6 +163,11 @@ Boolean, mostly for players
 \
 *file: lua/swamp/pony/sh_init.lua*
 
+### if CLIENT then
+Register a function which is called on the server and executed on the client. See this file for details.
+\
+*file: lua/swamp/sh_api.lua*
+
 ### function call(func, ...)
 Just calls the function with the args
 \
