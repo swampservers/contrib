@@ -1,4 +1,33 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+API_Command("PointOutInventory", {}, function()
+    SS_INVENTORY_POINT_OUT = RealTime()
+end)
+
+API_Command("ShownItems", {API_ENTITY_HANDLE, API_UINT, API_LIST}, function(ph, itemsversion, items)
+    ph:OnValid(function(ply)
+        print(ply, itemsversion)
+        ply.ShownItemsVersion = itemsversion
+        ply.SS_ShownItems = SS_MakeItems(ply, items)
+        SS_PostItemsUpdate(ply, true)
+    end)
+end)
+
+
+API_Request("ShownItems", {API_ENTITY})
+
+if SERVER then
+    API_HandleRequest("ShownItems",function(ply, other)
+        other.ShownItemsVersionSent = other.ShownItemsVersionSent or {}
+        if IsValid(other) and other:IsPlayer() and other.ShownItemsVersionSent[ply]~=other.NW.ShownItemsVersion then
+            other.ShownItemsVersionSent[ply] = other.NW.ShownItemsVersion
+            ply:CommandShownItems(other, other.NW.ShownItemsVersion, other.SS_ShownItems)
+        end
+    end)
+end
+
+
+
 --- Number of points
 function Player:SS_GetPoints()
     return self.NWP.points or 0

@@ -506,10 +506,6 @@ function PANEL:Paint(w, h)
     SS_PaintBG(self, w, h)
 end
 
-net.Receive("SS_PointOutInventory", function()
-    SS_INVENTORY_POINT_OUT = RealTime()
-end)
-
 function PANEL:PaintOver(w, h)
     local navbottom = self.topbar:GetTall()
     BrandDropDownGradient(0, navbottom, w)

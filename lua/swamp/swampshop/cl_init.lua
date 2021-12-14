@@ -167,6 +167,8 @@ local function postupdate(ply, shown)
     end
 end
 
+SS_PostItemsUpdate = postupdate
+
 local function setitems(pi, shown, items)
     OnPlayerLoad(pi, function(ply)
         items = SS_MakeItems(ply, items)

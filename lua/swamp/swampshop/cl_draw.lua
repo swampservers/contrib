@@ -184,6 +184,10 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     end
 
     if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
+        if ply.RequestedShownItemsVersion ~= ply.NW.ShownItemsVersion then 
+            ply.RequestedShownItemsVersion = ply.NW.ShownItemsVersion
+            RequestShownItems(ply)
+        end
         ply:SS_AttachAccessories(ply.SS_ShownItems)
     end
 end)
@@ -405,13 +409,17 @@ end
 
 -- Revise if we add translucent accessories
 hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
-    local ply = Me
+    if IsValid(Me) and Me:Alive() then
 
-    if IsValid(ply) and ply:Alive() then
-        ply:SS_AttachAccessories(ply.SS_ShownItems)
-        local d = ply:ShouldDrawLocalPlayer()
+        if Me.RequestedShownItemsVersion ~= Me.NWP.ShownItemsVersion then 
+            Me.RequestedShownItemsVersion = Me.NWP.ShownItemsVersion
+            RequestShownItems(Me)
+        end
 
-        for i, v in ipairs(SS_CreatedAccessories[ply] or {}) do
+        Me:SS_AttachAccessories(Me.SS_ShownItems)
+        local d = Me:ShouldDrawLocalPlayer()
+
+        for i, v in ipairs(SS_CreatedAccessories[Me] or {}) do
             -- Setting this on and off during same frame doesn't work
             v:SetNoDraw(true)
 
