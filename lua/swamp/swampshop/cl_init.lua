@@ -195,11 +195,9 @@ function SS_RemoveItemID(tab, id)
     end
 end
 
-
-
-
 net.Receive('SS_UpdateItem', function(length)
     local pi, shown, item = -1, false, net.ReadTableHD()
+
     OnMeValid(function()
         if Me.SS_Items then
             item = SS_MakeItem(Me, item)
@@ -209,7 +207,6 @@ net.Receive('SS_UpdateItem', function(length)
         end
     end)
 end)
-
 
 local function deleteitem(pi, shown, id)
     OnPlayerLoad(pi, function(ply)

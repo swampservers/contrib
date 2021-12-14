@@ -184,10 +184,11 @@ hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     end
 
     if EyePos():DistToSqr(ply:GetPos()) < 2000000 then
-        if ply.RequestedShownItemsVersion ~= ply.NW.ShownItemsVersion then 
+        if ply.RequestedShownItemsVersion ~= ply.NW.ShownItemsVersion then
             ply.RequestedShownItemsVersion = ply.NW.ShownItemsVersion
             RequestShownItems(ply)
         end
+
         ply:SS_AttachAccessories(ply.SS_ShownItems)
     end
 end)
@@ -410,8 +411,7 @@ end
 -- Revise if we add translucent accessories
 hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
     if IsValid(Me) and Me:Alive() then
-
-        if Me.RequestedShownItemsVersion ~= Me.NW.ShownItemsVersion then 
+        if Me.RequestedShownItemsVersion ~= Me.NW.ShownItemsVersion then
             Me.RequestedShownItemsVersion = Me.NW.ShownItemsVersion
             RequestShownItems(Me)
         end
@@ -514,7 +514,6 @@ end)
 
 -- Note: we expect items table not to change internally when items are updated (make whole new table)
 function Entity:SS_AttachAccessories(items, forceload)
-
     -- print(items, rangecheck)
     SS_UpdatedAccessories[self] = true
     local m = self:GetActualModel()
