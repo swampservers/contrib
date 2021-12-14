@@ -226,23 +226,6 @@ net.Receive('SS_DeleteShownItem', function(length)
     deleteitem(net.ReadUInt(8), true, net.ReadUInt(32))
 end)
 
-net.Receive('SS_Pts', function(length)
-    local pts = net.ReadUInt(32)
-
-    OnPlayerLoad(-1, function(ply)
-        ply.SS_Points = pts
-    end)
-end)
-
-net.Receive('SS_Row', function(length)
-    local pts, don = net.ReadUInt(32), net.ReadUInt(32)
-
-    OnPlayerLoad(-1, function(ply)
-        ply.SS_Points = pts
-        ply.SS_Donation = don
-    end)
-end)
-
 function SS_BuyProduct(id)
     if not SS_Products[id] then
         LocalPlayerNotify("Unknown product '" .. tostring(id) .. "'. You may need to update your binds.")

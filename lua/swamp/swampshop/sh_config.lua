@@ -178,7 +178,7 @@ function Player:SS_BaseIncome()
 end
 
 function Player:SS_BaseIncomeMultiplier()
-    local cash = self:SS_GetDonation()
+    local cash = self.NWP.donation_total or 0
     local incomelevel = math.min(math.floor(math.min(cash, 2000) / 1000) + math.floor(cash / 10000) + 1, 42)
     local mult = (3 + incomelevel) * 0.25
 

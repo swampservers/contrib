@@ -44,12 +44,6 @@ Use this global instead of LocalPlayer()\
 \
 *file: lua/swamp/extensions/cl_me.lua*
 
-### ply.NWP = {}
-NWP="Networked Private"\
- A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
-\
-*file: lua/swamp/extensions/cl_nwprivate.lua*
-
 ### function cam.Culled3D2D(pos, ang, scale, callback)
 Runs `cam.Start3D2D(pos, ang, scale) callback() cam.End3D2D()` but only if the user is in front of the "screen" so they can see it.
 \
@@ -118,6 +112,12 @@ Set a globally shared value (server)
 \
 *file: lua/swamp/extensions/sh_getg_setg.lua*
 
+### ply.NWP = {}
+NWP="Networked Private"\
+ A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
+\
+*file: lua/swamp/extensions/sh_nwprivate.lua*
+
 ### function Entity:IsHuman()
 IsPlayer and not IsBot
 \
@@ -138,11 +138,6 @@ Turns a number of seconds into a string like hh:mm:ss or mm:ss
 \
 *file: lua/swamp/extensions/sh_string.lua*
 
-### function player.GetBySteamID(id)
-Unlike the built-in function, this (along with player.GetBySteamID64 and player.GetByAccountID) is fast.
-\
-*file: lua/swamp/extensions/sv_playerbysteamid.lua (hidden)*
-
 ### function ShowMotd(url)
 Pop up the MOTD browser thing with this URL
 \
@@ -158,6 +153,11 @@ Return player's actual Steam name without any filters (eg removing swamp.sv). Al
 \
 *file: lua/swamp/misc/sh_player_name_filter.lua*
 
+### function player.GetBySteamID(id)
+Unlike the built-in function, this (along with player.GetBySteamID64 and player.GetByAccountID) is fast.
+\
+*file: lua/swamp/misc/sh_playerbysteamid.lua*
+
 ### function Player:GetTitle()
 Get current title string or ""
 \
@@ -167,6 +167,11 @@ Get current title string or ""
 Boolean, mostly for players
 \
 *file: lua/swamp/pony/sh_init.lua*
+
+### function API_Command(name, argtypes, client_function, unreliable)
+Register a function which is called on the server and executed on the client. See this file for details.
+\
+*file: lua/swamp/sh_api.lua*
 
 ### function call(func, ...)
 Just calls the function with the args

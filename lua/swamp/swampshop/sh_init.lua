@@ -1,16 +1,13 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-function Player:SS_GetDonation()
-    return self.SS_Donation or 0
-end
 
 --- Number of points
 function Player:SS_GetPoints()
-    return self.SS_Points or 0
+    return self.NWP.points or 0
 end
 
 --- If the player has at least this many points. Don't use it on the server if you are about to buy something; just do SS_TryTakePoints
 function Player:SS_HasPoints(points)
-    return (self.SS_Points or 0) >= points
+    return self:SS_GetPoints() >= points
 end
 
 function Player:SS_FindItem(item_id)
