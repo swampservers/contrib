@@ -78,6 +78,7 @@ local function loadFile(filePath, environmentVars)
     end
 
     xpcall(function()
+		GM = GAMEMODE
         RunString(code, "SwampDevTools/" .. filePath)
     end, function(err)
         print("[contrib] Error during loading file with devtools:", err)
