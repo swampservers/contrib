@@ -436,4 +436,3 @@ end
 API_Command("CancelEntityHandle", {API_ENTITY_HANDLE}, function(h)
     API_EntityHandles[h.id] = nil
 end)
-
