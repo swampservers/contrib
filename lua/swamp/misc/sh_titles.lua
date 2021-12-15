@@ -9,6 +9,9 @@ end
 --NOMINIFY
 Titles = {}
 TitleRefreshDir = defaultdict(function() return {} end)
+RewardIdTitleDir = defaultdict(function() return {} end)
+
+
 
 if SERVER then
     for k, v in pairs(player.GetAll()) do
@@ -17,7 +20,11 @@ if SERVER then
 end
 
 --TODO: should we combine all title reward_ids into one? or maybe just some simpler ones like the kleinertp one?
-function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pset_verb)
+function AddTitle(thresholds, description, nwp_vars, args)
+    args = args or {}
+
+    local reward_id = args.reward_id or "title"
+
     local title = {}
     table.insert(Titles, title)
 
@@ -36,7 +43,10 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
             if i <= n then
                 local v = thresholds[i]
 
-                return i, v[1], v[2], (v[3] or 0)
+                local cutoff = v[1]
+                if isstring(cutoff) then cutoff = NWGlobal[cutoff] or 999999999 end
+
+                return i, cutoff, v[2], (v[3] or 0)
             end
         end
     end
@@ -65,7 +75,7 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
         return p
     end
 
-    progress_fn = progress_fn or function(ply)
+    local progress_fn = args.progress_fn or function(ply)
         local p = 0
 
         for i, var in ipairs(nwp_vars) do
@@ -93,18 +103,30 @@ function AddTitle(reward_id, thresholds, description, nwp_vars, progress_fn, pse
                 im = i
             end
 
-            if (ply[maxkey] or 0) < im and not ply.SUPPRESSTITLEUNLOCK then
-                ply:Notify("Unlocked a new title: " .. t .. "")
+            if (ply[maxkey] or 0) < im then
+                if not ply.SUPPRESSTITLEUNLOCK then
+                    ply:Notify("Unlocked a new title: " .. t .. "")
+                end
+                PlayerTitleRewardRefresh[ply][reward_id] = true
             end
 
             ply[maxkey] = im
-            ply:PointsReward(reward_id, r, "unlocking a title")
         end
 
         return p
     end
 
-    title.pset_verb = pset_verb
+    function title:CurrentReward(ply)
+        local p = num(progress_fn(ply))
+        local r = 0
+        for i, min, name, reward in self:Thresholds() do
+            if min > p then break end
+            r = r + reward                
+        end
+        return r
+    end
+
+    title.pset_verb = args.pset_verb
 
     for i, v in ipairs(nwp_vars) do
         table.insert(TitleRefreshDir[v], titleindex)
@@ -118,98 +140,104 @@ end
 --nwp_vars: var or list of vars that are used to calculate progress, so when they change the server can strip the title if necessary
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
-AddTitle("", "Newfriend", "Welcome to the Swamp", {}, function() return true end)
+AddTitle("Newfriend", "Welcome to the Swamp", {}, {progress_fn=function() return true end})
 
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
 --jolly
-AddTitle("christmas", {
+AddTitle({
     {1, "Festive", 25000},
-}, "During December, give a present (from shop) to another player", "s_christmas")
+}, "During December, give a present (from shop) to another player", "s_christmas", {reward_id="christmas"})
 
 -- {1000, "Saint Nick", 1000000}
-AddTitle("giftgiver", {
+AddTitle({
     {100, "Gift Giver", 1000000}
-}, "Give a present (from shop) to %s different players", "s_giftgiver", function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end, "gifted")
+}, "Give a present (from shop) to %s different players", "s_giftgiver", {
+    reward_id="giftgiver",
+    progress_fn=function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end, 
+    pset_verb="gifted"
+})
 
-AddTitle("", {
+AddTitle( {
     {200, "Gift Receiver"},
     {1000, "Spoiled Child"},
 }, "Open %s presents which you didn't buy yourself", "s_giftopener")
 
-AddTitle("popcornhit", {
+AddTitle( {
     {10, "Goofball", 2000},
     {200, "Troll", 10000},
     {1000, "Minge", 50000},
     {100000, "Retard", 0}
-}, "Throw popcorn in someone's face %s times", "s_popcornhit")
+}, "Throw popcorn in someone's face %s times", "s_popcornhit", {reward_id="popcornhit"})
 
-AddTitle("mined", {
+AddTitle({
     {20, "Digger", 10000},
     {100, "Spelunker", 20000},
     {500, "Excavator", 30000},
     {2000, "Earth Mover", 40000},
     {10000, "Minecraft Steve", 50000}
-}, "Dig up %s pieces of ore (In Minecraft)", "s_mined")
+}, "Dig up %s pieces of ore (In Minecraft)", "s_mined",{reward_id="mined"})
 
-AddTitle("garfield", {
+AddTitle( {
     {200, "Chonkers", 10000},
     {1000, "Fat Cat", 100000},
     {10000, "I Eat, Jon.", 1000000}
-}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield")
+}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield", {reward_id="garfield"})
 
-AddTitle("megavape", {
+AddTitle( {
     {1, "Vapist", 50000}
 }, "Find the mega vape and hit it", "s_megavape")
 
-AddTitle("kleinertp", {
+AddTitle( {
     {1, "Test Subject", 10000}
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
 -- Founder of ISIS and Jihad Squad should be a leaderboard
-AddTitle("", {
+AddTitle({
     {10, "Insurrectionist"},
     {20, "Terrorist"},
     {30, "Islamist"},
-    {40, "Founder of ISIS"}
+    {"s_bigjihad_place1", "Founder of ISIS"}
 }, "Kill at least %s active players in a suicide bombing", "s_bigjihad")
 
-AddTitle("", {
+AddTitle( {
     {50, "Suicide Bomber"},
-    {1000, "Jihad Squad"}
-}, "Kill a total of %s players by jihading theaters", "s_theaterjihad")
+    {"s_theaterjihad_place5", "Jihad Squad"}
+}, {"Kill a total of %s players by jihading theaters", "Be among the top 5 theater jihaders"}, "s_theaterjihad")
 
-AddTitle("", {
+AddTitle( {
     {99, "Cloud Chaser"},
     {999, "Junkie"},
     {9999, "Dropout"}
 }, "Hit a vape %s times", "s_vapehit")
 
 -- Philosopher, Intellectual, Elegant, Suave, Stylish
-AddTitle("", {
+AddTitle( {
     {1000, "Classy"},
     {10000, "Elegant"},
     {100000, "Sophisticated"},
     {1000000, "Enlightened"}
 }, "Tip your flappy fedora %s times", "s_fedoratip")
 
-AddTitle("", {
-    {1, "Patriot"},
-    {2, "Golden Patriot"},
-    {3, "Platinum Patriot"}
-}, {"Visit Donald Trump's donation box and give at least 100,000 points", "Be on Donald Trump's donation leaderboard", "Be the top donor to Donald Trump"}, {"s_trump_donation", "s_trump_donation_leader"}, function(ply) return ((ply.NWP.s_trump_donation or 0) >= 100000 and 1 or 0) + (ply.NWP.s_trump_donation_leader and 1 or 0) + (ply.NWP.s_trump_donation_leader == 1 and 1 or 0) end)
+AddTitle( {
+    {100000, "Patriot"},
+    {"s_trump_donation_place10", "Golden Patriot"},
+    {"s_trump_donation_place1", "Platinum Patriot"}
+}, {"Visit Donald Trump's donation box and give at least 100,000 points", "Be on Donald Trump's donation leaderboard", "Be the top donor to Donald Trump"}, "s_trump_donation")
 
-AddTitle("", {
-    {1, "Ally"},
-    {2, "Libtard"},
-    {3, "Greatest Ally"}
-}, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, {"s_lefty_donation", "s_lefty_donation_leader"}, function(ply) return ((ply.NWP.s_lefty_donation or 0) >= 100000 and 1 or 0) + (ply.NWP.s_lefty_donation_leader and 1 or 0) + (ply.NWP.s_lefty_donation_leader == 1 and 1 or 0) end)
+AddTitle( {
+    {100000, "Ally"},
+    {"s_lefty_donation_place10", "Libtard"},
+    {"s_lefty_donation_place1", "Greatest Ally"}
+}, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, "s_lefty_donation")
 
 --todo: print who currently has the title?
-AddTitle("", {
-    {1, "The 1%"},
-    {13, "Illuminati"}
-}, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points_leader", function(ply) return 16 - (ply.NWP.points_leader or 16) end)
+AddTitle( {
+    {"points_place15", "The 1%"},
+    {"points_place3", "Illuminati"}
+}, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points")
+
+
 -- AddTitle("vandal", {
 --     {200, "Tagger", 10000},
 --     {1000, "Vandal", 100000}

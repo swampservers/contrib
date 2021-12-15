@@ -139,9 +139,9 @@ local function sortedindex(tab, val, a, b)
     end
 end
 
---- Returns the largest index such that tab[index+1] > val (or is the end)
+--- Returns the largest index such that tab[index] > val (or is the end)
 function table.SortedInsertIndex(tab, val)
-    return sortedindex(tab, val, 0, #tab)
+    return sortedindex(tab, val, 0, #tab)+1
 end
 
 -- function table.repeated(val,n)

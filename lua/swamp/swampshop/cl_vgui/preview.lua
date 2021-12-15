@@ -297,8 +297,10 @@ function PANEL:Paint(w, h)
             -- end
         end
 
-        SS_ApplyBoneMods(self.Entity, mods)
-        SS_ApplyMaterialMods(self.Entity, Me)
+        if not SS_HoverIOP or not SS_HoverIOP.PlayerSetModel then
+            SS_ApplyBoneMods(self.Entity, mods)
+            SS_ApplyMaterialMods(self.Entity, Me)
+        end
         self.Entity:SetEyeTarget(self:GetCamPos())
         self.Entity:DrawModel()
     end
