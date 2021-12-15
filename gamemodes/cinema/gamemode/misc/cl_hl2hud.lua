@@ -49,9 +49,7 @@ function GM:PlayerStartVoice(ply)
     end
 end
 
-hook.Add("DrawDeathNotice", "DeathNoticeHide", function()
-    return not hideinterface:GetBool() and nil
-end)
+hook.Add("DrawDeathNotice", "DeathNoticeHide", function() return not hideinterface:GetBool() and nil end)
 
 function GM:HUDPaint()
     -- hook.Run("HUDDrawTargetID")
