@@ -122,6 +122,28 @@ function table.imin(tab)
     return table.ireduce(tab, math.min)
 end
 
+local function sortedindex(tab, val, a, b)
+    if a>=b then
+        assert(a==0 or tab[a]<=val)
+        assert(a==#tab or tab[a+1]>val)
+        return a
+    end
+
+    local mid = math.floor((a+b+1)/2)
+
+    if tab[mid]<=val then
+        return sortedindex(tab, val, mid, b)
+    else
+        return sortedindex(tab, val, a, mid-1)
+    end
+end
+
+--- Returns the largest index such that tab[index+1] > val (or is the end)
+function table.SortedInsertIndex(tab, val)
+    return sortedindex(tab, val, 0, #tab)
+end
+
+
 -- function table.repeated(val,n)
 --     local out = {}
 --     for i=1,n do

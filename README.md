@@ -208,6 +208,11 @@ Convert an ordered table {a,b,c} into a set {[a]=true,[b]=true,[c]=true}
 \
 *file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
 
+### function table.SortedInsertIndex(tab, val)
+Returns the largest index such that tab[index+1] > val (or is the end)
+\
+*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+
 ### function table.imax(tab)
 Selects the maximum value of an ordered table. See also: table.imin
 \
