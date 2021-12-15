@@ -165,6 +165,70 @@ AddTitle("kleinertp", {
     {1, "Test Subject", 10000}
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
+AddTitle("buttonsearch", {
+    {1, "Curious", 0},
+    {10, "Sharp Eye", 0},
+    {100, "Seeker", 0},
+    {1000, "Hunter", 0}
+}, "Find and press %s buttons.", "s_magicbutton")
+
+AddTitle("snowballhit", {
+    {100, "Frosty The Snowman"}
+}, "Hit %s active players with a snowball.", "s_snowballhit")
+
+AddTitle("drinkenergy", {
+    {100, "Boomer"},
+    {500, "Quake Was A Good Game"},
+    {1000, "Quake Champion"}
+}, "Drink your boomer juice %s times", "s_drinkenergy")
+
+AddTitle("bountykill", {
+    {10, "Bounty Hunter", 0},
+    {100, "The Cleaner", 0},
+    {1000, "Hitman", 0}
+}, "Collect %s bounties.", "s_bountykill")
+
+AddTitle("", {
+    {50, "Boom Headshot!", 0},
+    {250, "American Sniper", 0}
+}, "Kill %s non-afk players with headshots.", "s_headshotkill")
+
+AddTitle("kleinerkill", {
+    {100, "Kleiner Killer", 5000},
+    {1000, "Anti Kleiner", 10000},
+    {10000, "Exterminator", 25000}
+}, "Kill %s Kleiners.", "s_kleinerkill")
+
+AddTitle("knifekill", {
+    {25, "Edgelord", 0},
+    {100, "Stab Enthusiast", 0},
+    {1000, "American Psycho", 0}
+}, "Kill %s non-afk players with the throatneck slitter.", "s_knifekill")
+
+AddTitle("theaterkill", {
+    {50, "Protector", 0},
+    {250, "Guardian", 0},
+    {1000, "Homeland Security", 0},
+    {10000, "The Law", 0}
+}, "Defend your theater %s amount of times.", "s_theaterkill")
+
+AddTitle("fistkill", {
+    {25, "Fightclub Member", 5000},
+    {100, "Chad", 1000},
+    {500, "Giga Chad", 25000},
+    {1000, "Billy's Disciple", 100000}
+}, "Get %s kills with the fists.", "s_fistkill")
+
+AddTitle("dodgeballkill", {
+    {25, "Jock", 2500},
+    {100, "Bully", 10000}
+}, "Get %s kills with the dodgeball.", "s_dodgeballkill")
+
+AddTitle("snapkill", {
+    {10, "Snap", 0},
+    {50, "Perfectly Balanced", 0}
+}, "Snap and kill %s players with the Thanos Gauntlet.", "s_snapkill")
+
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
 -- Founder of ISIS and Jihad Squad should be a leaderboard
 AddTitle("", {
@@ -218,3 +282,24 @@ AddTitle("", {
 --NOMINIFY
 --TODO: titles where you don't have a description but the title itself hints at what you do? like a secret achievement but not totally secret
 --TODO: if threshold=true, its 1 but you can put better text on the button in that case
+
+if SERVER then
+    local TitleFunctions =
+    {
+        "weapon_gauntlet" = function(atk) atk:AddStat("snapkill") end,
+        "weapon_slitter" = function(atk,vic) if vic:IsPlayer() && not vic:IsAfk() then atk:AddStat("knifekill") end end,
+        "dodgeball" = function(atk,vic) atk:AddStat("dodgeballkill") end,
+        "weapon_fists" = function(atk) atk:AddStat("fistkill") end
+    }
+
+    hook.Add("PlayerDeath", "TitlesPlayerDeath", function(vic,inf,atk)
+        if atk:IsPlayer() then
+            if TitleFuncions[inf:GetClass()] then TitleFunctions[inf:GetClass()](atk,vic) end
+            if vic:IsPlayer() && not vic:IsAfk() && vic:LastHitGroup() == 1 then atk:AddStat("headshotkill") end
+            if vic:GetModel() == "models/player/kleiner.mdl" then atk:AddStat("kleinerkill") end
+            if atk:InTheater() && vic:InTheater() then
+                if atk:GetTheater():GetOwner() == atk && vic:GetTheater():GetOwner() == atk then atk:AddStat("theaterkill") end
+            end
+        end
+    end)
+end
