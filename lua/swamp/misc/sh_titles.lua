@@ -163,8 +163,8 @@ AddTitle("kleinertp", {
 AddTitle("buttonsearch", {
     {1, "Curious", 0},
     {10, "Sharp Eye", 0},
-    {100, "Seeker", 0}
-    {1000, "Hunter", 0},
+    {100, "Seeker", 0},
+    {1000, "Hunter", 0}
 }, "Find and press %s buttons.", "s_magicbutton")
 
 AddTitle("snowballhit", {
