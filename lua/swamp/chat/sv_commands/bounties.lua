@@ -7,7 +7,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     if bounty > 0 and ply ~= atk and atk:IsPlayer() then
         SetPlayerBounty(ply, 0)
         atk:SS_GivePoints(bounty)
-        atk:AddStat("bountykill")
+        atk:SetPartnerStat("bountykill")
         BotSayGlobal("[edgy]" .. atk:Nick() .. " [fbc]has claimed [gold]" .. ply:Nick() .. "'s [fbc]bounty of [rainbow]" .. bounty .. " [fbc]points!")
     end
 end)
