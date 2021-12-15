@@ -11,8 +11,6 @@ Titles = {}
 TitleRefreshDir = defaultdict(function() return {} end)
 RewardIdTitleDir = defaultdict(function() return {} end)
 
-
-
 if SERVER then
     for k, v in pairs(player.GetAll()) do
         v.TitleCache = nil
@@ -22,9 +20,7 @@ end
 --TODO: should we combine all title reward_ids into one? or maybe just some simpler ones like the kleinertp one?
 function AddTitle(thresholds, description, nwp_vars, args)
     args = args or {}
-
     local reward_id = args.reward_id or "title"
-
     local title = {}
     table.insert(Titles, title)
 
@@ -42,9 +38,11 @@ function AddTitle(thresholds, description, nwp_vars, args)
 
             if i <= n then
                 local v = thresholds[i]
-
                 local cutoff = v[1]
-                if isstring(cutoff) then cutoff = NWGlobal[cutoff] or 999999999 end
+
+                if isstring(cutoff) then
+                    cutoff = NWGlobal[cutoff] or 999999999
+                end
 
                 return i, cutoff, v[2], (v[3] or 0)
             end
@@ -107,6 +105,7 @@ function AddTitle(thresholds, description, nwp_vars, args)
                 if not ply.SUPPRESSTITLEUNLOCK then
                     ply:Notify("Unlocked a new title: " .. t .. "")
                 end
+
                 PlayerTitleRewardRefresh[ply][reward_id] = true
             end
 
@@ -119,10 +118,12 @@ function AddTitle(thresholds, description, nwp_vars, args)
     function title:CurrentReward(ply)
         local p = num(progress_fn(ply))
         local r = 0
+
         for i, min, name, reward in self:Thresholds() do
             if min > p then break end
-            r = r + reward                
+            r = r + reward
         end
+
         return r
     end
 
@@ -140,34 +141,40 @@ end
 --nwp_vars: var or list of vars that are used to calculate progress, so when they change the server can strip the title if necessary
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
-AddTitle("Newfriend", "Welcome to the Swamp", {}, {progress_fn=function() return true end})
+AddTitle("Newfriend", "Welcome to the Swamp", {}, {
+    progress_fn = function() return true end
+})
 
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
 --jolly
 AddTitle({
     {1, "Festive", 25000},
-}, "During December, give a present (from shop) to another player", "s_christmas", {reward_id="christmas"})
+}, "During December, give a present (from shop) to another player", "s_christmas", {
+    reward_id = "christmas"
+})
 
 -- {1000, "Saint Nick", 1000000}
 AddTitle({
     {100, "Gift Giver", 1000000}
 }, "Give a present (from shop) to %s different players", "s_giftgiver", {
-    reward_id="giftgiver",
-    progress_fn=function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end, 
-    pset_verb="gifted"
+    reward_id = "giftgiver",
+    progress_fn = function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end,
+    pset_verb = "gifted"
 })
 
-AddTitle( {
+AddTitle({
     {200, "Gift Receiver"},
     {1000, "Spoiled Child"},
 }, "Open %s presents which you didn't buy yourself", "s_giftopener")
 
-AddTitle( {
+AddTitle({
     {10, "Goofball", 2000},
     {200, "Troll", 10000},
     {1000, "Minge", 50000},
     {100000, "Retard", 0}
-}, "Throw popcorn in someone's face %s times", "s_popcornhit", {reward_id="popcornhit"})
+}, "Throw popcorn in someone's face %s times", "s_popcornhit", {
+    reward_id = "popcornhit"
+})
 
 AddTitle({
     {20, "Digger", 10000},
@@ -175,19 +182,23 @@ AddTitle({
     {500, "Excavator", 30000},
     {2000, "Earth Mover", 40000},
     {10000, "Minecraft Steve", 50000}
-}, "Dig up %s pieces of ore (In Minecraft)", "s_mined",{reward_id="mined"})
+}, "Dig up %s pieces of ore (In Minecraft)", "s_mined", {
+    reward_id = "mined"
+})
 
-AddTitle( {
+AddTitle({
     {200, "Chonkers", 10000},
     {1000, "Fat Cat", 100000},
     {10000, "I Eat, Jon.", 1000000}
-}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield", {reward_id="garfield"})
+}, "Become Garfield and grow to weigh at least %s pounds", "s_garfield", {
+    reward_id = "garfield"
+})
 
-AddTitle( {
+AddTitle({
     {1, "Vapist", 50000}
 }, "Find the mega vape and hit it", "s_megavape")
 
-AddTitle( {
+AddTitle({
     {1, "Test Subject", 10000}
 }, "Be subjected to one of Dr. Isaac Kleiner's teleportation experiments", "s_kleinertp")
 
@@ -200,44 +211,42 @@ AddTitle({
     {"s_bigjihad_place1", "Founder of ISIS"}
 }, "Kill at least %s active players in a suicide bombing", "s_bigjihad")
 
-AddTitle( {
+AddTitle({
     {50, "Suicide Bomber"},
     {"s_theaterjihad_place5", "Jihad Squad"}
 }, {"Kill a total of %s players by jihading theaters", "Be among the top 5 theater jihaders"}, "s_theaterjihad")
 
-AddTitle( {
+AddTitle({
     {99, "Cloud Chaser"},
     {999, "Junkie"},
     {9999, "Dropout"}
 }, "Hit a vape %s times", "s_vapehit")
 
 -- Philosopher, Intellectual, Elegant, Suave, Stylish
-AddTitle( {
+AddTitle({
     {1000, "Classy"},
     {10000, "Elegant"},
     {100000, "Sophisticated"},
     {1000000, "Enlightened"}
 }, "Tip your flappy fedora %s times", "s_fedoratip")
 
-AddTitle( {
+AddTitle({
     {100000, "Patriot"},
     {"s_trump_donation_place10", "Golden Patriot"},
     {"s_trump_donation_place1", "Platinum Patriot"}
 }, {"Visit Donald Trump's donation box and give at least 100,000 points", "Be on Donald Trump's donation leaderboard", "Be the top donor to Donald Trump"}, "s_trump_donation")
 
-AddTitle( {
+AddTitle({
     {100000, "Ally"},
     {"s_lefty_donation_place10", "Libtard"},
     {"s_lefty_donation_place1", "Greatest Ally"}
 }, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, "s_lefty_donation")
 
 --todo: print who currently has the title?
-AddTitle( {
+AddTitle({
     {"points_place15", "The 1%"},
     {"points_place3", "Illuminati"}
 }, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points")
-
-
 -- AddTitle("vandal", {
 --     {200, "Tagger", 10000},
 --     {1000, "Vandal", 100000}

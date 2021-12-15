@@ -301,6 +301,7 @@ function PANEL:Paint(w, h)
             SS_ApplyBoneMods(self.Entity, mods)
             SS_ApplyMaterialMods(self.Entity, Me)
         end
+
         self.Entity:SetEyeTarget(self:GetCamPos())
         self.Entity:DrawModel()
     end
