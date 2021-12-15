@@ -50,7 +50,7 @@ docgen = "".join(
     f"""
 ### {x["code"]}
 {x["comment"]}\n\\
-*file: {x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden)") }*
+*file: [{x["file"] + ("" if os.path.isfile(output_dir+"/"+x["file"]) else " (hidden)") }](https://github.com/swampservers/contrib/blob/master/{x["file"]})*
 """ for x in luadocs
 )
 
