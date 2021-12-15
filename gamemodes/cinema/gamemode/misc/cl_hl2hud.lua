@@ -29,7 +29,7 @@ local HUDToHide = {
 -- }
 -- GM.AmmoWeapons = {"weapon_boltaction", "cvx_blocks",}
 function GM:HUDShouldDraw(name)
-    if hideinterface:GetBool() then return false end
+    if hideinterface:GetBool() and name ~= "CHudGMod" then return false end
     -- if name == "CHudDeathNotice" then return false end
     local ply = Me
     local wep = IsValid(ply) and ply:GetActiveWeapon()
@@ -48,6 +48,10 @@ function GM:PlayerStartVoice(ply)
         self.BaseClass:PlayerStartVoice(ply)
     end
 end
+
+hook.Add("DrawDeathNotice", "DeathNoticeHide", function()
+    return not hideinterface:GetBool() and nil
+end)
 
 function GM:HUDPaint()
     -- hook.Run("HUDDrawTargetID")
