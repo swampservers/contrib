@@ -208,17 +208,15 @@ AddTitle("theaterkill", {
 }, "Defend your theater %s amount of times.", "s_theaterkill")
 
 AddTitle("fistkill", {
-    {25, "Jock", 5000},
-    {100, "Bully", 10000},
-    {500, "Fighter", 25000},
-    {1000, "King in the Ring", 100000}
+    {25, "Fightclub Member", 5000},
+    {100, "Chad", 1000},
+    {500, "Giga Chad", 25000},
+    {1000, "Billy's Disciple", 100000}
 }, "Get %s kills with the fists.", "s_fistkill")
 
 AddTitle("dodgeballkill", {
-    {25, "FatKid", 2500},
-    {100, "Underdog", 10000},
-    {500, "Strongarm", 50000},
-    {1000, "Dodgeball Warrior", 100000}
+    {25, "Jock", 2500},
+    {100, "Bully", 10000}
 }, "Get %s kills with the dodgeball.", "s_dodgeballkill")
 
 AddTitle("snapkill", {
