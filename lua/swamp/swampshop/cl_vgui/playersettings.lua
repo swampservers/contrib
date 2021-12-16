@@ -70,16 +70,16 @@ vgui.Register("DSSTitleInfo", {
             end)
         end
 
-        local pset = self.Title.nwp_vars[1]
-        local pset_verb = self.Title.pset_verb
+        local group_view = self.Title.group_view
 
-        if pset_verb then
+        if group_view then
+            local pset = group_view[1]
             vgui("DButton", self, function(p)
                 function p:Think()
                     if SHOWNPSET == pset then
-                        p:SetText("Stop showing who you've " .. pset_verb)
+                        p:SetText("Stop showing who you've " .. group_view[2])
                     else
-                        p:SetText("Show who you've already " .. pset_verb)
+                        p:SetText("Show who you've already " .. group_view[2])
                     end
                 end
 
@@ -90,8 +90,8 @@ vgui.Register("DSSTitleInfo", {
                 p.DoClick = function()
                     if SHOWNPSET ~= pset then
                         SHOWNPSET = pset
-                        SHOWNPSETVERB = pset_verb
-                        LocalPlayerNotify("Look at players' nameplates to see if you've " .. pset_verb .. " them")
+                        SHOWNPSETVERB = group_view[2]
+                        LocalPlayerNotify("Look at players' nameplates to see if you've " .. group_view[2] .. " them")
                     else
                         SHOWNPSET = nil
                     end

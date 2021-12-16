@@ -2,8 +2,18 @@
 LASTERRORTIME = -100
 REALERRORFUNCTION = REALERRORFUNCTION or debug.getregistry()[1]
 
+local reportederrors = {}
+
 debug.getregistry()[1] = function(...)
     LASTERRORTIME = SysTime()
+
+    local hash = util.CRC( ({...})[1] )
+    if not reportederrors[hash] then
+        reportederrors[hash]=true
+        net.Start("ReportErrorHash")
+        net.WriteUInt(hash, 32)
+        net.SendToServer()
+    end
 
     return REALERRORFUNCTION(...)
 end

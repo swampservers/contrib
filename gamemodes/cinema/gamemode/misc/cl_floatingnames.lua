@@ -36,7 +36,7 @@ local function DrawName(ply, opacityScale)
 
     -- render.OverrideDepthEnable(false, true)
     if SHOWNPSET then
-        local inset = InPartnerSet(Me.NWP[SHOWNPSET] or "", ply)
+        local inset = InGroupSet(Me.NWP[SHOWNPSET] or "", ply)
         DrawTheaterText(inset and (SHOWNPSETVERB[1]:upper() .. SHOWNPSETVERB:sub(2)) or ("Not " .. SHOWNPSETVERB), "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity * 1.5))
     end
 

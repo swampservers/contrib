@@ -11,17 +11,16 @@ Titles = {}
 TitleRefreshDir = defaultdict(function() return {} end)
 RewardIdTitleDir = defaultdict(function() return {} end)
 
-if SERVER then
-    for k, v in pairs(player.GetAll()) do
-        v.TitleCache = nil
-    end
-end
 
 --TODO: should we combine all title reward_ids into one? or maybe just some simpler ones like the kleinertp one?
 function AddTitle(thresholds, description, nwp_vars, args)
     args = args or {}
-    local reward_id = args.reward_id or "title"
-    local title = {}
+    
+    local title = {
+        group_view = args.group_view,
+        reward_id = args.reward_id or "title",
+        nwp_vars = isstring(nwp_vars) and {nwp_vars} or nwp_vars
+    }
     table.insert(Titles, title)
 
     if isstring(thresholds) then
@@ -49,6 +48,12 @@ function AddTitle(thresholds, description, nwp_vars, args)
         end
     end
 
+    local treward = 0
+    for i,min,text,reward in title:Thresholds() do
+        treward = treward + reward
+    end
+    if treward==0 then title.reward_id =nil end
+
     if isstring(description) then
         function title:Description(i, min)
             return description:format(min)
@@ -59,11 +64,6 @@ function AddTitle(thresholds, description, nwp_vars, args)
         end
     end
 
-    if isstring(nwp_vars) then
-        nwp_vars = {nwp_vars}
-    end
-
-    title.nwp_vars = nwp_vars
 
     local function num(p)
         if not isnumber(p) then
@@ -76,7 +76,7 @@ function AddTitle(thresholds, description, nwp_vars, args)
     local progress_fn = args.progress_fn or function(ply)
         local p = 0
 
-        for i, var in ipairs(nwp_vars) do
+        for i, var in ipairs(title.nwp_vars) do
             p = p + num(ply.NWP[var])
         end
 
@@ -89,28 +89,28 @@ function AddTitle(thresholds, description, nwp_vars, args)
     function title:Progress(ply)
         local p = num(progress_fn(ply))
 
-        if SERVER and reward_id ~= "" then
-            local r = 0
-            local t = nil
-            local im = 0
+        -- if SERVER and reward_id ~= "" then
+        --     local r = 0
+        --     local t = nil
+        --     local im = 0
 
-            for i, min, name, reward in self:Thresholds() do
-                if min > p then break end
-                t = name
-                r = r + reward
-                im = i
-            end
+        --     for i, min, name, reward in self:Thresholds() do
+        --         if min > p then break end
+        --         t = name
+        --         r = r + reward
+        --         im = i
+        --     end
 
-            if (ply[maxkey] or 0) < im then
-                if not ply.SUPPRESSTITLEUNLOCK then
-                    ply:Notify("Unlocked a new title: " .. t .. "")
-                end
+        --     if (ply[maxkey] or 0) < im then
+        --         if ply.TitlesInitialized then
+        --             ply:Notify("Unlocked a new title: " .. t .. "")
+        --         end
 
-                PlayerTitleRewardRefresh[ply][reward_id] = true
-            end
+        --         PlayerTitleRewardRefresh[ply][reward_id] = true
+        --     end
 
-            ply[maxkey] = im
-        end
+        --     ply[maxkey] = im
+        -- end
 
         return p
     end
@@ -127,20 +127,23 @@ function AddTitle(thresholds, description, nwp_vars, args)
         return r
     end
 
-    title.pset_verb = args.pset_verb
+    if title.reward_id then
+        table.insert(RewardIdTitleDir[title.reward_id], title)
+    end
 
-    for i, v in ipairs(nwp_vars) do
-        table.insert(TitleRefreshDir[v], titleindex)
+    for i, v in ipairs(title.nwp_vars) do
+        table.insert(TitleRefreshDir[v], title)
     end
 end
 
---AddTitle(reward_id, thresholds, description, nwpvars, progressfn)
---reward_id: string to identify points given for this sequence, use empty string if there are no rewards
+--AddTitle(thresholds, description, nwpvars, args)
 --thresholds: {{progress1, title1, reward1}, {progress2, title2, reward2}} rewards are optional
 --description: string which can be formatted with the threshold for the next target, or list of strings corresponding to each level
 --nwp_vars: var or list of vars that are used to calculate progress, so when they change the server can strip the title if necessary
+--args:
+--reward_id: string to identify points given for this sequence, use empty string if there are no rewards
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
---pset_verb: optional, verb to use if nwpvar1 is a pset and should be trackable
+--group_view: optional, pset id and verb to track with
 AddTitle("Newfriend", "Welcome to the Swamp", {}, {
     progress_fn = function() return true end
 })
@@ -155,16 +158,18 @@ AddTitle({
 
 -- {1000, "Saint Nick", 1000000}
 AddTitle({
-    {100, "Gift Giver", 1000000}
-}, "Give a present (from shop) to %s different players", "s_giftgiver", {
+    {100, "Gift Giver", 1000000},
+    {"s_giftgiver_size_place1", "Saint Nick", 0}
+}, "Give a present (from shop) to %s different players", "s_giftgiver_size", {
     reward_id = "giftgiver",
-    progress_fn = function(ply) return PartnerSetSize(ply.NWP.s_giftgiver or "") end,
-    pset_verb = "gifted"
+    
+    group_view = {"s_giftgiver", "gifted"}
 })
 
 AddTitle({
-    {200, "Gift Receiver"},
-    {1000, "Spoiled Child"},
+    {200, "Gift Receiver", 10000},
+    {1000, "Greedy", 100000},
+    {10000, "Spoiled Child", 1000000},
 }, "Open %s presents which you didn't buy yourself", "s_giftopener")
 
 AddTitle({
@@ -247,6 +252,14 @@ AddTitle({
     {"points_place15", "The 1%"},
     {"points_place3", "Illuminati"}
 }, {"Be among the 15 richest players", "Be among the 3 richest players"}, "points")
+
+AddTitle({
+    {20, "Bug Chaser"},
+    {100, "Dev Server Proponent"}
+}, "Experience %s different Lua errors.", "s_clienterror_size")
+
+
+
 -- AddTitle("vandal", {
 --     {200, "Tagger", 10000},
 --     {1000, "Vandal", 100000}
