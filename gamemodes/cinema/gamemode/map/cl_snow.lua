@@ -64,6 +64,18 @@ concommand.Add("snow", function()
     Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
 end)
 
+
+if os.date("%b")=="Dec" then
+    timer.Simple(1, function()
+        if file.Exists("dontsnow.txt", "DATA") then return end
+        file.Write("dontsnow.txt","")
+        RunConsoleCommand("snow") 
+        timer.Simple(1, function() 
+            file.Delete("dontsnow.txt")
+        end)
+    end)
+end
+
 --[[
     Material("swamponions/ground/concretefloor016a"):SetString("$surfaceprop","snow")
     Material("CONCRETE/CONCRETEFLOOR023A"):SetString("$surfaceprop","snow")
