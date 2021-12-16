@@ -287,7 +287,7 @@ else
 
     net.Receive("pillowboof", function()
         local pos = net.ReadVector()
-        if pos:Distance(Me:EyePos()) > 1200 then return end
+        if not Me or pos:Distance(Me:EyePos()) > 1200 then return end
         if not emitter then return end
 
         for i = 1, math.random(2, 12) do

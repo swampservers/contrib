@@ -154,7 +154,7 @@ if SERVER then
             v = v.Owner
 
             if IsValid(v) then
-                v:SetObesity(math.max(1, v:Obesity() * 0.996 - 0.02))
+                v:SetObesity(math.max(1, v:Obesity() * 0.995 - 0.02))
                 v:SetHealth(math.min(math.floor(v:Health() + v:GetMaxHealth() * 0.05), v:GetMaxHealth()))
             end
         end
