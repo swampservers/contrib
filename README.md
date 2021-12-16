@@ -23,6 +23,11 @@ All models/materials/sounds in this repository will be automatically uploaded to
 # API
 
 
+### gm = engine.ActiveGamemode()
+Shorthand for gamemode name
+\
+*file: [lua/autorun/swamp.lua](https://github.com/swampservers/contrib/blob/master/lua/autorun/swamp.lua)*
+
 ### function Player:IsTyping()
 Bool (typing a chat message)
 \
@@ -259,7 +264,7 @@ Sets the stat to 1 (cheaper storage than integer stats)
 \
 *file: [lua/swamp/sql/sv_stats.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sv_stats.lua)*
 
-### function Player:GroupSetStat(name, other)
+### function Player:GroupStat(name, other)
 Adds the other player to the "partner set" by the given name. This way you can make stats that require interaction with many players.
 \
 *file: [lua/swamp/sql/sv_stats.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sv_stats.lua)*

@@ -8,7 +8,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
         SetPlayerBounty(ply, 0)
 
         if not (ply.BountyFunders or {})[atk] and bounty >= 100000 then
-            atk:GroupSetStat("bountyhunt", ply)
+            atk:GroupStat("bountyhunt", ply)
         end
 
         ply.BountyFunders = nil

@@ -211,6 +211,13 @@ function vector:InBox(vec1, vec2)
     return self.x >= vec1.x and self.x <= vec2.x and self.y >= vec1.y and self.y <= vec2.y and self.z >= vec1.z and self.z <= vec2.z
 end
 
+function vector:Print(round)
+    round=round or 1
+    txt = ("Vector(%s, %s, %s)"):format(math.Round(self.x/round)*round,math.Round(self.y/round)*round,math.Round(self.z/round)*round)
+    SetClipboardText(txt)
+    print(txt)
+end
+
 -- COLOR
 BLACK = Color(0, 0, 0, 255)
 WHITE = Color(255, 255, 255, 255)

@@ -7,7 +7,7 @@ local reportederrors = {}
 debug.getregistry()[1] = function(...)
     LASTERRORTIME = SysTime()
 
-    local hash = util.CRC( ({...})[1] )
+    local hash = tonumber( util.CRC( ({...})[1] ) )
     if not reportederrors[hash] then
         reportederrors[hash]=true
         net.Start("ReportErrorHash")

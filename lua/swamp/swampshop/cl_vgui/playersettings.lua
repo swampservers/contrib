@@ -21,7 +21,16 @@ vgui.Register("DSSTitleInfo", {
         local extra = 0
         local pad = 20
 
+        self.UnlockedTitles = 0
+        self.LockedTitles = 0
+
         for i, min, name, reward in self.Title:Thresholds() do
+            if progress >= min then
+                self.UnlockedTitles = self.UnlockedTitles+1
+            else
+                self.LockedTitles=self.LockedTitles+1
+            end
+
             if lastlocked then
                 extra = extra + 1
                 continue
@@ -113,9 +122,22 @@ vgui.Register('DSSPlayerSettingsMode', {
     Init = function(self)
         SS_TitlesPanel = self
 
-        vgui("DSSCustomizerSection", self, function(p)
-            p:SetText("Titles (WIP)")
+        local titlepanels = {}
 
+        vgui("DSSCustomizerSection", self, function(p)
+            
+            function p:Think()
+                local l = 0
+                local u = 0
+                for i,tp in ipairs(titlepanels) do
+                    if tp.UnlockedTitles then
+                        l=l + tp.LockedTitles
+                        u = u + tp.UnlockedTitles
+                    end
+                end
+                p:SetText("Titles (WIP) - "..u.."/"..(u+l).." unlocked")
+            end
+            
             vgui("DButton", function(p)
                 p:SetText("Remove title")
                 p:Dock(TOP)
@@ -130,9 +152,9 @@ vgui.Register('DSSPlayerSettingsMode', {
         end)
 
         for i, title in ipairs(Titles) do
-            vgui("DSSTitleInfo", self, function(p)
+            table.insert(titlepanels, vgui("DSSTitleInfo", self, function(p)
                 p:SetTitle(title)
-            end)
+            end))
         end
     end
 }, 'DSSScrollableMode')
