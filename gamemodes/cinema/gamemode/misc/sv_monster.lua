@@ -57,7 +57,6 @@ function ReleaseMonster(ply)
             ply:SetWalkSpeed(1.5, "monster")
             ply:SetRunSpeed(1.5, "monster")
             ply:SetFOV(ply.realFov + 10, 1)
-
             local startpos = ply:GetPos()
 
             timer.Simple(7, function()

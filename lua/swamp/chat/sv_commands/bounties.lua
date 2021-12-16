@@ -6,14 +6,13 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
 
     if bounty > 0 and ply ~= atk and atk:IsPlayer() then
         SetPlayerBounty(ply, 0)
-       
+
         if not (ply.BountyFunders or {})[atk] and bounty >= 100000 then
             atk:GroupSetStat("bountyhunt", ply)
         end
-                     
+
         ply.BountyFunders = nil
         atk:SS_GivePoints(bounty)
-        
         BotSayGlobal("[edgy]" .. atk:Nick() .. " [fbc]has claimed [gold]" .. ply:Nick() .. "'s [fbc]bounty of [rainbow]" .. bounty .. " [fbc]points!")
     end
 end)

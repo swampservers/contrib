@@ -44,7 +44,10 @@ function ENT:PhysicsCollide(data)
     if data.HitEntity:IsPlayer() then
         local ply = data.HitEntity
         ply:SetVelocity(Vector(fwd * 100))
-        if not ply:IsAFK() then self:GetOwner():AddStat("snowballhit") end
+
+        if not ply:IsAFK() then
+            self:GetOwner():AddStat("snowballhit")
+        end
 
         if self.Hardness and self.Hardness > 0 then
             self:EmitSound("physics/flesh/flesh_impact_bullet" .. math.random(1, 4) .. ".wav")
