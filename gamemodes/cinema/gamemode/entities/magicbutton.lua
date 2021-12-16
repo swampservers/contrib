@@ -683,7 +683,7 @@ function ENT:Use(activator)
         end)
 
         local message = self:Effect(activator)
-        activator:AddStat("buttonsearch")
+        activator:AddStat("buttonfind")
         assert(message ~= nil)
         message = "[white]" .. activator:Nick() .. "[fbc] pressed a hidden button " .. message
         BotSayGlobal(";clap;[fbc]" .. message)
