@@ -1,9 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 --- Shorthand for gamemode name
-gm = engine.ActiveGamemode() 
-
+gm = engine.ActiveGamemode()
 
 --[[
     SWAMP LOADING CODE:
