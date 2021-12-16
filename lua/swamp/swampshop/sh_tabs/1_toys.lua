@@ -169,7 +169,7 @@ SS_Product({
 
         ply.cantmakepresent = true
 
-        timer.Simple(3, function()
+        timer.Simple(1, function()
             ply.cantmakepresent = false
         end)
 
