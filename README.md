@@ -33,6 +33,11 @@ Boolean
 \
 *file: [lua/swamp/clientcheck/sh_afk_detect.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/clientcheck/sh_afk_detect.lua)*
 
+### function Player:IsActive()
+Boolean, NOT AFK and NOT BOT
+\
+*file: [lua/swamp/clientcheck/sh_afk_detect.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/clientcheck/sh_afk_detect.lua)*
+
 ### function bench(func)
 Prints how long it takes to run a function, averaging over a large number of samples with minimal overhead
 \
@@ -254,13 +259,13 @@ Sets the stat to 1 (cheaper storage than integer stats)
 \
 *file: [lua/swamp/sql/sv_stats.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sv_stats.lua)*
 
-### function Player:MaxStat(name, record)
-Sets the stat with the given name to the max of its previous value and the record
+### function Player:GroupSetStat(name, other)
+Adds the other player to the "partner set" by the given name. This way you can make stats that require interaction with many players.
 \
 *file: [lua/swamp/sql/sv_stats.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sv_stats.lua)*
 
-### function Player:PartnerSetStat(name, other)
-(WIP) Adds the other player to the "partner set" by the given name. This way you can make stats that require interaction with many players.
+### function Player:MaxStat(name, record)
+Sets the stat with the given name to the max of its previous value and the record
 \
 *file: [lua/swamp/sql/sv_stats.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sv_stats.lua)*
 

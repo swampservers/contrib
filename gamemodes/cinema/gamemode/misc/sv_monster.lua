@@ -58,6 +58,14 @@ function ReleaseMonster(ply)
             ply:SetRunSpeed(1.5, "monster")
             ply:SetFOV(ply.realFov + 10, 1)
 
+            local startpos = ply:GetPos()
+
+            timer.Simple(7, function()
+                if IsValid(ply) and ply:GetPos():Distance(startpos) < 5 then
+                    ply:AddStat("boomer")
+                end
+            end)
+
             timer.Simple(10, function()
                 if IsValid(ply) then
                     ply.cantStartmonster = false

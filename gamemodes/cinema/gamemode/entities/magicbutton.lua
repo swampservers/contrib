@@ -693,5 +693,6 @@ function ENT:Use(activator)
         self:SetColor(c2)
         self:ManipulateBonePosition(1, Vector(0, 0, -0.5))
         activator:EmitSound("buttons/button9.wav")
+        activator:AddStat("buttonfind")
     end
 end
