@@ -441,25 +441,26 @@ if not IsValid(ply) then return end
 local mdl, dw = ply:GetDisplayModel() 
 if not mdl or not IsValidPlayermodel(mdl) then return end 
 
-local function enforce()
-rag:InvalidateBoneCache()
-rag:SetModel(mdl) 
-rag:InvalidateBoneCache() 
-end
+-- local function enforce()
+-- rag:InvalidateBoneCache()
+-- rag:SetModel(mdl) 
+-- rag:InvalidateBoneCache() 
+-- end
 
-enforce()
+-- enforce()
 
-rag.RenderOverride = function(rag) 
-    hook.Add("Think",rag,function()
-        enforce()
-        hook.Remove("Think", rag)
-    end)
-    rag:DrawModel() 
-end
+-- rag.RenderOverride = function(rag) 
+--     hook.Add("Think",rag,function()
+--         -- enforce()
+--         rag:SetModel(mdl) 
+--         hook.Remove("Think", rag)
+--     end)
+--     rag:DrawModel() 
+-- end
 
-timer.Simple(0.3, function()
-    if IsValid(rag) then rag.RenderOverride=nil end
-end)
+-- timer.Simple(0.3, function()
+--     if IsValid(rag) then rag.RenderOverride=nil end
+-- end)
 
 
 end)
