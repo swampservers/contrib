@@ -29,7 +29,6 @@ function SS_Product(product)
     end
 
     product.DoBuy = product.OnBuy
-
     -- if product.model then
     --     util.PrecacheModel(product.model)
     --     if product.workshop then
@@ -100,11 +99,11 @@ function SS_WeaponProduct(product)
 
     function product:CannotBuy(ply)
         if ply:HasWeapon(self.class) then
-
             -- hack to make client switch to the weapon
             if SERVER or ply:UsingWeapon(self.class) then
-                if SERVER then ply:SelectWeapon(self.class) end
-                
+                if SERVER then
+                    ply:SelectWeapon(self.class)
+                end
 
                 return "You already have this weapon!"
             end
