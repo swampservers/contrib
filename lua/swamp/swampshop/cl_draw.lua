@@ -431,24 +431,21 @@ hook.Add("PreDrawOpaqueRenderables", "SS_DrawLocalPlayerAccessories", function()
 end)
 
 -- local enforce_models = {}
-
 -- Setting display model has to be done in this hook or it breaks!
-
-hook.Add("NetworkEntityCreated", "ragdoll1", function(rag) 
-if rag:GetClass() ~= "class C_HL2MPRagdoll" then  return end
-local ply = rag:GetRagdollOwner()
-if not IsValid(ply) then return end
-local mdl, dw = ply:GetDisplayModel() 
-if not mdl or not IsValidPlayermodel(mdl) then return end 
+hook.Add("NetworkEntityCreated", "ragdoll1", function(rag)
+    if rag:GetClass() ~= "class C_HL2MPRagdoll" then return end
+    local ply = rag:GetRagdollOwner()
+    if not IsValid(ply) then return end
+    local mdl, dw = ply:GetDisplayModel()
+    if not mdl or not IsValidPlayermodel(mdl) then return end
+end)
 
 -- local function enforce()
 -- rag:InvalidateBoneCache()
 -- rag:SetModel(mdl) 
 -- rag:InvalidateBoneCache() 
 -- end
-
 -- enforce()
-
 -- rag.RenderOverride = function(rag) 
 --     hook.Add("Think",rag,function()
 --         -- enforce()
@@ -457,19 +454,12 @@ if not mdl or not IsValidPlayermodel(mdl) then return end
 --     end)
 --     rag:DrawModel() 
 -- end
-
 -- timer.Simple(0.3, function()
 --     if IsValid(rag) then rag.RenderOverride=nil end
 -- end)
-
-
-end)
-
-
 -- It seems like the ragdoll is created before the cleanup, so this is ok
 hook.Add('CreateClientsideRagdoll', 'SS_CreateClientsideRagdoll', function(ply, rag)
     if IsValid(ply) and ply:IsPlayer() then
-
         local counter = 0
 
         for k, mdl in pairs(SS_CreatedAccessories[ply] or {}) do
