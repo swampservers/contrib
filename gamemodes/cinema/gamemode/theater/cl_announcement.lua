@@ -4,9 +4,7 @@ module("theater", package.seeall)
 
 function AddAnnouncement(tbl)
     if type(tbl) ~= 'table' then return end
-    local key = table.remove(tbl, 1)
-    local values = translations.FormatChat(key, unpack(tbl))
-    chat.AddText(ColDefault, unpack(values))
+    chat.AddText(ColDefault, unpack(translations.FormatChat(table.remove(tbl, 1), unpack(tbl))))
 end
 
 net.Receive("TheaterAnnouncement", function()

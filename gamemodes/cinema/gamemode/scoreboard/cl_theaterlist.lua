@@ -23,7 +23,7 @@ THEATERLIST.TitleHeight = BrandTitleBarHeight
 TheaterListTheaterHeight = 56
 
 function THEATERLIST:Init()
-    self.Title = Label(T'TheaterList_NowShowing', self)
+    self.Title = Label('NOW SHOWING', self)
     self.Title:SetFont("ScoreboardTitleSmall")
     self.Title:SetColor(Color(255, 255, 255))
     self.maxheight = (ScrH() * 0.8) - 200

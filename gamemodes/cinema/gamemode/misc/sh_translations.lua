@@ -3,14 +3,7 @@ ColDefault = Color(200, 200, 200)
 ColHighlight = Color(158, 37, 33)
 local LANG = {}
 translations = {}
-local Languages = {}
 local DefaultId = "en"
-
-function T(key, ...)
-    if not key then return "" end
-
-    return string.format(LANG[key] or key, ...)
-end
 
 local patterns = {
     format = "{{%s:%s}}",
@@ -19,24 +12,8 @@ local patterns = {
     rgb = "(%d+),(%d+),(%d+)"
 }
 
-local function buildTag(name, data)
-    return string.format(patterns.format, name, data)
-end
-
-local function parseTag(tag)
-    local key, value = string.match(tag, patterns.data)
-
-    if key == 'rgb' then
-        local r, g, b = string.match(value, patterns.rgb)
-
-        return Color(r, g, b)
-    end
-
-    return tag
-end
-
 function translations.FormatChat(key, ...)
-    local value = T(key, ...)
+    local value = string.format(LANG[key] or key, ...)
 
     -- Parse tags
     if string.find(value, patterns.tag) then
