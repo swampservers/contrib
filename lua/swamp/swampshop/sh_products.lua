@@ -28,6 +28,8 @@ function SS_Product(product)
         end
     end
 
+    product.DoBuy = product.OnBuy
+
     -- if product.model then
     --     util.PrecacheModel(product.model)
     --     if product.workshop then
