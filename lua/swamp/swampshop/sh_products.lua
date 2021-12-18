@@ -13,7 +13,7 @@ function SS_Product(product)
     end
 
     assert(product.OnBuy)
-    
+
     function product:DoBuy(ply)
         local function finish_buy()
             self:OnBuy(ply)
