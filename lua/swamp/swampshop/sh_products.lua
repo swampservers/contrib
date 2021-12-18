@@ -13,11 +13,10 @@ function SS_Product(product)
     end
 
     assert(product.OnBuy)
-    product.SS_Product_OnBuy = product.OnBuy
-
-    function product:OnBuy(ply)
+    
+    function product:DoBuy(ply)
         local function finish_buy()
-            self:SS_Product_OnBuy(ply)
+            self:OnBuy(ply)
             ply:Notify('Bought ', self:GetName(), ' for ', self.price, ' points')
         end
 
@@ -28,7 +27,7 @@ function SS_Product(product)
         end
     end
 
-    product.DoBuy = product.OnBuy
+    -- product.DoBuy = product.OnBuy
     -- if product.model then
     --     util.PrecacheModel(product.model)
     --     if product.workshop then
