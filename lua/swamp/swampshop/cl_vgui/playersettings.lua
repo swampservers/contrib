@@ -8,7 +8,20 @@ vgui.Register("DSSTitleInfo", {
     Think = function(self)
         if not self.Title then return end
         local progress = self.Title:Progress(Me)
-        if progress == self.LastProgress then return end
+        
+        local allsame = progress == self.LastProgress
+
+        self.Mins = self.Mins or {}
+        local mins = {}
+        for i, min, name, reward in self.Title:Thresholds() do
+            table.insert(mins, min)
+            allsame = allsame and min==self.Mins[i]
+        end
+        allsame = allsame and #mins == #self.Mins
+
+        if allsame then return end
+
+        self.Mins = mins
         self.LastProgress = progress
 
         -- setup for this title/progress
@@ -30,7 +43,7 @@ vgui.Register("DSSTitleInfo", {
                 self.LockedTitles = self.LockedTitles + 1
             end
 
-            if lastlocked then
+            if lastlocked and not self.Title.showall then
                 extra = extra + 1
                 continue
             end
@@ -158,47 +171,3 @@ vgui.Register('DSSPlayerSettingsMode', {
         end
     end
 }, 'DSSScrollableMode')
--- vgui("DSSCustomizerSection", self, function(p)
---     p:SetText("Title")
---     local frame = p
---     vgui("DLabel", function(p)
---         p:SetText("Get a title by being a top donor to trump or biden (more titles coming)")
---         -- p:SetTextWrap(true)
---         p:Dock(TOP)
---         p:SizeToContents()
---     end)
---     vgui("DLabel", function(p)
---         p:Dock(TOP)
---         function p:Think()
---             local t = Me:GetTitle()
---             self:SetText("Current title: " .. (t == "" and "None" or t))
---         end
---     end)
---     local titlepicker = vgui("DComboBox", function(p)
---         p:Dock(TOP)
---         p:SetValue(Me:GetTitle())
---         p:AddChoice("None")
---         p:ChooseOption("None", 1)
---         for i, v in ipairs(Me:GetTitles()) do
---             p:AddChoice(v)
---             if v == Me:GetTitle() then
---                 p:ChooseOption(v, 1)
---             end
---         end
---     end)
---     -- p.OnSelect = function( self, index, value )
---     -- end
---     vgui("DButton", function(p)
---         p:SetText("Apply")
---         p:Dock(TOP)
---         p.DoClick = function()
---             net.Start("PlayerTitles")
---             local t = titlepicker:GetValue()
---             if t == "None" then
---                 t = ""
---             end
---             net.WriteString(t)
---             net.SendToServer()
---         end
---     end)
--- end)

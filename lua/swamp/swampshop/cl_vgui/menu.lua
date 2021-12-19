@@ -16,6 +16,10 @@ surface.CreateFont("SwampShop2", {
     size = 36
 })
 
+function PANEL:OnRemove()
+    gui.EnableScreenClicker(false)
+end
+
 function PANEL:Init()
     SS_ShopMenu = self
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))

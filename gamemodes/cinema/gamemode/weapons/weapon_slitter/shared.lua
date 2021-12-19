@@ -288,6 +288,13 @@ function SWEP:TargetedPlayer()
             return v
         end
     end
+
+    local trace = self.Owner:GetEyeTrace()
+    if IsValid(trace.Entity) and trace.Entity:GetClass()=="ent_mysterybox" and trace.HitPos:Distance(vp)<100 then
+        self.TraceHitPos = trace.HitPos
+        self.TraceHitNormal = trace.HitNormal
+        return trace.Entity
+    end
 end
 
 function SWEP:PrimaryAttack()
@@ -309,14 +316,18 @@ function SWEP:PrimaryAttack()
             net.SendToServer()
             self:EmitSound("Weapon_Knife.Hit", 80, 100, 1, CHAN_WEAPON)
             shouldHearChink = false
-            local effectdata = EffectData()
-            effectdata:SetOrigin(self.TraceHitPos)
-            effectdata:SetNormal(self.TraceHitNormal)
-            effectdata:SetMagnitude(1)
-            effectdata:SetScale(15)
-            effectdata:SetColor(BLOOD_COLOR_RED)
-            effectdata:SetFlags(3)
-            util.Effect("bloodspray", effectdata, true, true)
+
+            if hitplayer:IsPlayer() then
+                local effectdata = EffectData()
+                effectdata:SetOrigin(self.TraceHitPos)
+                effectdata:SetNormal(self.TraceHitNormal)
+                effectdata:SetMagnitude(1)
+                effectdata:SetScale(15)
+                effectdata:SetColor(BLOOD_COLOR_RED)
+                effectdata:SetFlags(3)
+                util.Effect("bloodspray", effectdata, true, true)
+            end
+
             lastkillslit = CurTime()
             justslitplayer = hitplayer
         end
