@@ -290,9 +290,11 @@ function SWEP:TargetedPlayer()
     end
 
     local trace = self.Owner:GetEyeTrace()
-    if IsValid(trace.Entity) and trace.Entity:GetClass()=="ent_mysterybox" and trace.HitPos:Distance(vp)<100 then
+
+    if IsValid(trace.Entity) and trace.Entity:GetClass() == "ent_mysterybox" and trace.HitPos:Distance(vp) < 100 then
         self.TraceHitPos = trace.HitPos
         self.TraceHitNormal = trace.HitNormal
+
         return trace.Entity
     end
 end
