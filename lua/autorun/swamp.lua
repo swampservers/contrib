@@ -2,7 +2,6 @@
 --- Shorthand for gamemode name
 gm = engine.ActiveGamemode()
 
-
 --[[
     SWAMP LOADING CODE:
 

@@ -2,18 +2,16 @@
 local lastcrash = file.Read("swampcrash.txt", "DATA")
 
 if lastcrash then
-timer.Simple(0, function()
-    net.Start("ReportCrash")
-
-    -- if lastcrash then
+    timer.Simple(0, function()
+        net.Start("ReportCrash")
+        -- if lastcrash then
         net.WriteBool(true)
         net.WriteString(lastcrash)
-    -- else
-    --     net.WriteBool(false)
-    -- end
-
-    net.SendToServer()
-end)
+        -- else
+        --     net.WriteBool(false)
+        -- end
+        net.SendToServer()
+    end)
 end
 
 local crashdata = {}
@@ -26,7 +24,7 @@ function SetCrashData(k, v, fortime)
 
     if fortime then
         timer.Simple(fortime, function()
-            if crashdata[k]==v then
+            if crashdata[k] == v then
                 SetCrashData(k, nil)
             end
         end)

@@ -183,7 +183,7 @@ hook.Add("Tick", "WorkshopMounter", function()
             SetCrashData("MOUNTING", wsid)
             table.insert(mounted_ids, wsid)
             local succ, files = game.MountGMA(filename)
-            
+
             if not succ then
                 files = {}
             end
@@ -199,11 +199,9 @@ hook.Add("Tick", "WorkshopMounter", function()
         end
 
         SetCrashData("MOUNTING", nil)
-
         mounted_ids = table.concat(mounted_ids, ",")
-
         SetCrashData("JUSTMOUNTED", mounted_ids, 0.1)
-        
+
         for ent, mod in pairs(resetmodels) do
             ent:SetModel(mod[1])
             ent:SetSequence(mod[2])
