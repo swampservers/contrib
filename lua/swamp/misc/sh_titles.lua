@@ -427,7 +427,7 @@ print("HERE")
 --     {1000, "Vandal", 100000}
 -- }, "Place %s feet of spraypaint", "s_spraypaint")
 -- fidget spinner max rpm: helicopter tard
--- dance on joker stairs
+-- "cannabalistic humanoid underground dweller" for watching videos in sewer theater
 --NOMINIFY
 --TODO: titles where you don't have a description but the title itself hints at what you do? like a secret achievement but not totally secret
 --TODO: if threshold=true, its 1 but you can put better text on the button in that case

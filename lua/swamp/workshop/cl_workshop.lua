@@ -172,14 +172,18 @@ hook.Add("Tick", "WorkshopMounter", function()
             end
         end
 
+        local mounted_ids = {}
+
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
             print("MOUNTING", wsid)
             -- NOTE:
             -- Any error models currently loaded that the mounted addon provides will be reloaded.
             -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
             -- That means that this cannot be used to fix missing map materials, as the map materials are loaded before you are able to call this.
+            SetCrashData("MOUNTING", wsid)
+            table.insert(mounted_ids, wsid)
             local succ, files = game.MountGMA(filename)
-
+            
             if not succ then
                 files = {}
             end
@@ -194,6 +198,12 @@ hook.Add("Tick", "WorkshopMounter", function()
             STEAMWS_UNMOUNTED[wsid] = nil
         end
 
+        SetCrashData("MOUNTING", nil)
+
+        mounted_ids = table.concat(mounted_ids, ",")
+
+        SetCrashData("JUSTMOUNTED", mounted_ids, 0.1)
+        
         for ent, mod in pairs(resetmodels) do
             ent:SetModel(mod[1])
             ent:SetSequence(mod[2])
