@@ -314,7 +314,6 @@ end
 
 function SWEP:PrimaryAttack()
     self:SetNextPrimaryFire(CurTime() + (0.6 / self:TimeScale()))
-    
     if CLIENT and not IsFirstTimePredicted() then return end
 
     if CLIENT then
@@ -326,7 +325,6 @@ function SWEP:PrimaryAttack()
     end
 
     if SERVER then
-
         timer.Simple(0.1 / self:TimeScale(), function()
             if IsValid(self) and IsValid(self.Owner) then
                 local boof = self.Owner:EyePos() + (self.Owner:EyeAngles():Forward() * 50)
