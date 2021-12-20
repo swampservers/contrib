@@ -314,16 +314,18 @@ end
 
 function SWEP:PrimaryAttack()
     self:SetNextPrimaryFire(CurTime() + (0.6 / self:TimeScale()))
+    
     if CLIENT and not IsFirstTimePredicted() then return end
 
     if CLIENT then
         self.localpf = RealTime()
     end
 
+    if not self.Owner:IsPony() then
+        self:GetOwner():AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE, true)
+    end
+
     if SERVER then
-        if not self.Owner:IsPony() then
-            setPlayerGesture(self.Owner, GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE, true)
-        end
 
         timer.Simple(0.1 / self:TimeScale(), function()
             if IsValid(self) and IsValid(self.Owner) then

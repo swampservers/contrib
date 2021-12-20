@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
+-- NOMINIFY
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "Secret Button"
