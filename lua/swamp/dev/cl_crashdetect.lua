@@ -1,27 +1,25 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+local lastcrash = file.Read("swampcrash.txt", "DATA")
 
+timer.Simple(0, function()
+    net.Start("ReportCrash")
 
-local lastcrash = file.Read("swampcrash.txt","DATA") 
+    if lastcrash then
+        net.WriteBool(true)
+        net.WriteString(lastcrash)
+    else
+        net.WriteBool(false)
+    end
 
-
-    timer.Simple(0, function()
-        net.Start("ReportCrash")
-        if lastcrash then
-            net.WriteBool(true)
-            net.WriteString(lastcrash)
-        else
-            net.WriteBool(false)
-        end
-        net.SendToServer()
-    end)
-
+    net.SendToServer()
+end)
 
 local crashdata = nil
 
 function SetCrashData(str, fortime)
-    if crashdata~=str then
+    if crashdata ~= str then
         crashdata = str
-        file.Write("swampcrash.txt",str)
+        file.Write("swampcrash.txt", str)
 
         if fortime then
             timer.Simple(fortime, function()
@@ -35,6 +33,6 @@ end
 
 SetCrashData("")
 
-hook.Add( "ShutDown", "CrashClear", function()
+hook.Add("ShutDown", "CrashClear", function()
     file.Delete("swampcrash.txt")
 end)
