@@ -22,7 +22,7 @@ function AddTitle(thresholds, description, nwp_vars, args)
         group_view = args.group_view,
         reward_id = args.reward_id or "title",
         nwp_vars = isstring(nwp_vars) and {nwp_vars} or nwp_vars,
-        showall=args.showall
+        showall = args.showall
     }
 
     table.insert(Titles, title)
@@ -148,10 +148,6 @@ end
 --reward_id: string to identify points given for this sequence, use empty string if there are no rewards
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --group_view: optional, pset id and verb to track with
-
-
-
-
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
 --jolly
 AddTitle({
@@ -166,40 +162,20 @@ AddTitle({
     {"s_giftgiver_size_place3", "Santa's Little Helper", 0},
     {"s_giftgiver_size_place2", "The Red-Nosed Pony", 0},
     {"s_giftgiver_size_place1", "Saint Nick", 0}
-}, {"Give a present (from shop) to %s different players", 
-"Give a present (from shop) to %s different players (top 10)\n2m reward if this is your title on Christmas!",
-"Give a present (from shop) to %s different players (#4)\n5m reward if this is your title on Christmas!",
-"Give a present (from shop) to %s different players (#3)\n10m reward if this is your title on Christmas!",
-"Give a present (from shop) to %s different players (#2)\n15m reward if this is your title on Christmas!",
-"Give a present (from shop) to %s different players (#1)\n25m reward + special prop if this is your title on Christmas!",
-},
- "s_giftgiver_size", {
+}, {"Give a present (from shop) to %s different players", "Give a present (from shop) to %s different players (top 10)\n2m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#4)\n5m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#3)\n10m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#2)\n15m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#1)\n25m reward + special prop if this is your title on Christmas!",}, "s_giftgiver_size", {
     reward_id = "giftgiver",
     group_view = {"s_giftgiver", "gifted"},
-    showall=true
+    showall = true
 })
-
 
 AddTitle({
     {"s_grinch_place5", "Naughty"},
     {"s_grinch_place1", "The Grinch"}
-}, {"Destroy %s presents using the knife (top 5)\n2m reward if this is your title on Christmas!", 
-"Destroy %s presents using the knife (#1)\n10m reward if this is your title on Christmas!"}, "s_grinch", {
-    showall=true
+}, {"Destroy %s presents using the knife (top 5)\n2m reward if this is your title on Christmas!", "Destroy %s presents using the knife (#1)\n10m reward if this is your title on Christmas!"}, "s_grinch", {
+    showall = true
 })
 
-FORCEDTITLES = {
-    "The Grinch",
-    "Naughty",
-    "Saint Nick",
-    "The Red-Nosed Pony",
-    "Santa's Little Helper",
-    "Frosty The Snowman",
-    "Elf"
-}
-
-
-
+FORCEDTITLES = {"The Grinch", "Naughty", "Saint Nick", "The Red-Nosed Pony", "Santa's Little Helper", "Frosty The Snowman", "Elf"}
 
 AddTitle("Newfriend", "Welcome to the Swamp", {}, {
     progress_fn = function() return true end
@@ -209,7 +185,6 @@ AddTitle("Newfriend", "Welcome to the Swamp", {}, {
 AddTitle({
     {1, "Clown", 10000}
 }, "Dance (say /dance) on the steps near the Joker statue", "s_jokerdance")
-
 
 AddTitle({
     {200, "Gift Receiver", 10000},
@@ -240,7 +215,6 @@ AddTitle({
 -- AddTitle({
 --     {100, "Frosty The Snowman"}
 -- }, "Hit %s active players with a snowball.", "s_snowballhit")
-
 -- Quake Was A Good Game
 AddTitle({
     {10, "30 Year Old Boomer", 10000},

@@ -8,19 +8,17 @@ vgui.Register("DSSTitleInfo", {
     Think = function(self)
         if not self.Title then return end
         local progress = self.Title:Progress(Me)
-        
         local allsame = progress == self.LastProgress
-
         self.Mins = self.Mins or {}
         local mins = {}
+
         for i, min, name, reward in self.Title:Thresholds() do
             table.insert(mins, min)
-            allsame = allsame and min==self.Mins[i]
+            allsame = allsame and min == self.Mins[i]
         end
+
         allsame = allsame and #mins == #self.Mins
-
         if allsame then return end
-
         self.Mins = mins
         self.LastProgress = progress
 
@@ -131,8 +129,8 @@ vgui.Register("DSSTitleInfo", {
     end
 }, "DSSCustomizerSection")
 
-SHOWNPSET="s_giftgiver"
-SHOWNPSETVERB="gifted"
+SHOWNPSET = "s_giftgiver"
+SHOWNPSETVERB = "gifted"
 
 vgui.Register('DSSPlayerSettingsMode', {
     Init = function(self)
