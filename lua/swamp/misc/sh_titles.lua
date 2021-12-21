@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local Player = FindMetaTable("Player")
 
 --- Get current title string or ""
@@ -21,7 +21,8 @@ function AddTitle(thresholds, description, nwp_vars, args)
     local title = {
         group_view = args.group_view,
         reward_id = args.reward_id or "title",
-        nwp_vars = isstring(nwp_vars) and {nwp_vars} or nwp_vars
+        nwp_vars = isstring(nwp_vars) and {nwp_vars} or nwp_vars,
+        showall = args.showall
     }
 
     table.insert(Titles, title)
@@ -69,7 +70,7 @@ function AddTitle(thresholds, description, nwp_vars, args)
         end
     else
         function title:Description(i, min)
-            return description[i]
+            return description[i]:format(min)
         end
     end
 
@@ -147,15 +148,6 @@ end
 --reward_id: string to identify points given for this sequence, use empty string if there are no rewards
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --group_view: optional, pset id and verb to track with
-AddTitle("Newfriend", "Welcome to the Swamp", {}, {
-    progress_fn = function() return true end
-})
-
--- this title should be shown to new players for easy money
-AddTitle({
-    {1, "Clown", 10000}
-}, "Dance (say /dance) on the steps near the Joker statue", "s_jokerdance")
-
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
 --jolly
 AddTitle({
@@ -165,16 +157,39 @@ AddTitle({
 -- {1000, "Saint Nick", 1000000}
 AddTitle({
     {100, "Gift Giver", 1000000},
+    {"s_giftgiver_size_place10", "Elf", 0},
+    {"s_giftgiver_size_place4", "Frosty The Snowman", 0},
+    {"s_giftgiver_size_place3", "Santa's Little Helper", 0},
+    {"s_giftgiver_size_place2", "The Red-Nosed Pony", 0},
     {"s_giftgiver_size_place1", "Saint Nick", 0}
-}, "Give a present (from shop) to %s different players", "s_giftgiver_size", {
+}, {"Give a present (from shop) to %s different players", "Give a present (from shop) to %s different players (top 10)\n2m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#4)\n5m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#3)\n10m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#2)\n15m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#1)\n25m reward + special prop if this is your title on Christmas!",}, "s_giftgiver_size", {
     reward_id = "giftgiver",
-    group_view = {"s_giftgiver", "gifted"}
+    group_view = {"s_giftgiver", "gifted"},
+    showall = true
 })
+
+AddTitle({
+    {"s_grinch_place5", "Naughty"},
+    {"s_grinch_place1", "The Grinch"}
+}, {"Destroy %s presents using the knife (top 5)\n2m reward if this is your title on Christmas!", "Destroy %s presents using the knife (#1)\n10m reward if this is your title on Christmas!"}, "s_grinch", {
+    showall = true
+})
+
+FORCEDTITLES = {"The Grinch", "Naughty", "Saint Nick", "The Red-Nosed Pony", "Santa's Little Helper", "Frosty The Snowman", "Elf"}
+
+AddTitle("Newfriend", "Welcome to the Swamp", {}, {
+    progress_fn = function() return true end
+})
+
+-- this title should be shown to new players for easy money
+AddTitle({
+    {1, "Clown", 10000}
+}, "Dance (say /dance) on the steps near the Joker statue", "s_jokerdance")
 
 AddTitle({
     {200, "Gift Receiver", 10000},
     {1000, "Greedy", 100000},
-    {10000, "Spoiled Child", 1000000}
+    {10000, "Spoiled Child", 1000000},
 }, "Open %s presents which you didn't buy yourself", "s_giftopener")
 
 TitleCategory("Fun")
@@ -192,16 +207,14 @@ AddTitle({
     {10, "Goofball", 2000},
     {200, "Troll", 10000},
     {1000, "Minge", 50000},
-    {100000, "Retard"}
+    {100000, "Retard", 0}
 }, "Throw popcorn in someone's face %s times", "s_popcornhit", {
     reward_id = "popcornhit"
 })
 
-AddTitle({
-    {100, "Frosty The Snowman"},
-    {500, "The Grinch"}
-}, "Hit %s active players with a snowball.", "s_snowballhit")
-
+-- AddTitle({
+--     {100, "Frosty The Snowman"}
+-- }, "Hit %s active players with a snowball.", "s_snowballhit")
 -- Quake Was A Good Game
 AddTitle({
     {10, "30 Year Old Boomer", 10000},
@@ -229,14 +242,14 @@ AddTitle({
     {1, "Quick Maffs"},
     {10, "Nerd"},
     {100, "Whiz Kid"},
-    {500, "Brainiac"},
-    {1000, "Megamind"}
+    {1000, "Brainiac"},
+    {10000, "Megamind"}
 }, "Win %s quick math minigames (where you type the answer in chat)", "s_quickmath")
 
 AddTitle({
     {10, "Fast Fingers"},
     {100, "Typist"},
-    {1000, "Trump's Speech Writer"}
+    {1000, "Trump's Speech Writer"},
 }, "Win %s quick typing minigames (where you type text in chat)", "s_quicktype")
 
 TitleCategory("Exploration")
@@ -250,11 +263,11 @@ AddTitle({
 }, "Find the mega vape and hit it", "s_megavape")
 
 AddTitle({
-    {1, "Curious", 5000},
+    {1, "Curious"},
     {10, "Sharp Eye"},
     {100, "Seeker"},
     {1000, "Button Hunter"}
-}, "Find and press %s hidden buttons.", "s_buttonfind")
+}, "Find and press %s buttons.", "s_buttonfind")
 
 AddTitle({
     {20, "Digger", 10000},
@@ -282,9 +295,8 @@ AddTitle({
 }, {"Kill a total of %s players by jihading theaters", "Be among the top 5 theater jihaders"}, "s_theaterjihad")
 
 AddTitle({
-    {10, "Snap"},
-    {50, "Perfectly Balanced"},
-    {"s_gauntletkill_place1", "Thanos"}
+    {10, "Snap", 0},
+    {50, "Perfectly Balanced", 0}
 }, "Snap and kill %s seated players with the Thanos Gauntlet.", "s_gauntletkill")
 
 AddTitle({
@@ -302,31 +314,30 @@ AddTitle({
 }, "Kill %s Kleiners.", "s_kleinerkill")
 
 AddTitle({
-    {100, "Shanker"},
-    {1000, "Edge Lord"},
-    {5000, "Throat-Neck Slitter"},
-    {10000, "American Psycho", 2000}
+    {100, "Shanker", 0},
+    {1000, "Edge Lord", 0},
+    {5000, "Throat-Neck Slitter", 0},
+    {10000, "American Psycho", 0}
 }, "Kill %s active players with a throatneck slitter.", "s_knifekill")
 
 AddTitle({
-    {20, "Protector"},
-    {100, "Guardian"},
-    {500, "Homeland Security"},
-    {2000, "The Law"}
+    {20, "Protector", 0},
+    {100, "Guardian", 0},
+    {500, "Homeland Security", 0},
+    {2000, "The Law", 0}
 }, "Kill %s players while protecting your private theater.", "s_theaterdefend")
 
 AddTitle({
     {25, "Fightclub Member", 5000},
-    {100, "Chad", 10000},
+    {100, "Chad", 1000},
     {500, "Giga Chad", 25000},
     {1000, "Billy's Disciple", 100000}
 }, "Get %s kills with the fists.", "s_fistkill")
 
 AddTitle({
-    {25, "Jock", 5000},
+    {25, "Jock", 2500},
     {100, "Bully", 10000},
-    {500, "Underdog", 25000},
-    {1000, "Dodgeball Pro", 50000}
+    {500, "Dodgeball Pro", 50000},
 }, "Get %s kills with the dodgeball.", "s_dodgeballkill")
 
 AddTitle({
@@ -343,8 +354,7 @@ TitleCategory("Misc")
 AddTitle({
     {5, "Funposter"},
     {50, "Meme Freak"},
-    {200, "Artist"},
-    {400, "da Vinci"}
+    {200, "Artist"}
 }, "Spray %s different images.", "s_uniquespray_size")
 
 AddTitle({
@@ -417,7 +427,7 @@ print("HERE")
 --     {1000, "Vandal", 100000}
 -- }, "Place %s feet of spraypaint", "s_spraypaint")
 -- fidget spinner max rpm: helicopter tard
--- dance on joker stairs
+-- "cannabalistic humanoid underground dweller" for watching videos in sewer theater
 --NOMINIFY
 --TODO: titles where you don't have a description but the title itself hints at what you do? like a secret achievement but not totally secret
 --TODO: if threshold=true, its 1 but you can put better text on the button in that case
