@@ -1,0 +1,21 @@
+VertexLitGeneric
+{
+	$basetexture "models/pyroteknik/gift_ribbon_diffuse"
+	"$bumpmap" "models/pyroteknik/gift_ribbon_normal"
+	"$blendTintByBaseAlpha" "0"
+	"$phong" "1"
+	"$phongfresnelranges" "[0.5 0.5 1]"
+	"$phongboost" "32"
+	"$phongexponent" "32"
+	"$color2" "[0.5 0.5 0.5]"
+	
+	Proxies
+		{
+			Equals
+				{
+					srcVar1 $color
+					
+					resultVar $phongtint
+				}
+		}
+}

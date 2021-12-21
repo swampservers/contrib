@@ -1,0 +1,34 @@
+VertexLitGeneric
+{
+	$basetexture "models/pyroteknik/gift_wrapping_diffuse"
+	$bumpmap "models/pyroteknik/gift_wrapping_normal"
+	
+	"$phong" "1"
+	"$phongfresnelranges" "[0.5 0.5 1]"
+	"$phongboost" "0.2"
+	"$phongexponent" "4"
+
+	$white "[1 1 1]"
+	$halvedcolor "[0.5 0.5 0.5]"
+	
+	//amount multiply the input color
+	$halfit "[1 1 1]"
+	//amount of white to add to it
+	$fadeit "[0 0 0]"
+
+	Proxies
+	{
+		Multiply
+			{	
+				srcVar1 $color
+				srcVar2 $halfit
+				resultVar $halvedcolor
+			}
+		Add
+			{	
+				srcVar1 $halvedcolor
+				srcVar2 $fadeit
+				resultVar $color
+			}
+	}
+}
