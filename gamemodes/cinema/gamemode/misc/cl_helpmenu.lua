@@ -41,7 +41,7 @@ hook.Add("HUDDrawScoreBoard", "Hint_Draw", function()
     if alpha == 0 then return end
     local shift = 0.5 + 0.5 * math.cos(alpha * math.pi)
     local scrw = ScrW()
-    local pad = "   "
+    local pad = "  "
 
     local controlhints = {
         {bindingname("showscores", "scoreboard"), pad .. "Show currently playing videos and settings:" .. pad},

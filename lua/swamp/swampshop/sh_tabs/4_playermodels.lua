@@ -370,13 +370,13 @@ for i = 1, 5 do
         class = 'modeloftheday' .. mi,
         price = 150000,
         GetName = function(self)
-            local m = NWGlobal.ModelsOfTheDay[mi]
+            local m = (NWGlobal.ModelsOfTheDay or {})[mi]
 
             return m and SS_PrettyMDLName(m[2]) or "Nothing (DONT BUY)"
         end,
         description = "A different playermodel will be here every day!",
-        GetModel = function(self) return (NWGlobal.ModelsOfTheDay[mi] or {})[2] or "models/player/skeleton.mdl" end,
-        GetWorkshop = function(self) return (NWGlobal.ModelsOfTheDay[mi] or {})[1] end,
+        GetModel = function(self) return ((NWGlobal.ModelsOfTheDay or {})[mi] or {})[2] or "models/player/skeleton.mdl" end,
+        GetWorkshop = function(self) return ((NWGlobal.ModelsOfTheDay or {})[mi] or {})[1] end,
         OnBuy = function(self, ply)
             local m = NWGlobal.ModelsOfTheDay[mi]
 
