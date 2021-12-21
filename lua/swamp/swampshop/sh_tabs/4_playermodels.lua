@@ -412,7 +412,6 @@ SS_Product({
     CannotBuy = function(self, ply) end,
     OnBuy = function(self, ply)
         local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
-
         if not m then return end
 
         local item = SS_GenerateItem(ply, "playermodel", {
@@ -435,7 +434,6 @@ SS_Product({
         end, 4)
     end
 })
-
 
 function SS_PlayermodelItem(item)
     item.playermodel = true
