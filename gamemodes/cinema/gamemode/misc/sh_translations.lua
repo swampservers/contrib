@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 ColDefault = Color(200, 200, 200)
 ColHighlight = Color(158, 37, 33)
 local LANG = {}

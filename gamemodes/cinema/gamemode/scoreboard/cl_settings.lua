@@ -25,10 +25,10 @@ function SETTINGS:DoClick()
 end
 
 function SETTINGS:Init()
-    self.Title = Label(T'Settings_Title', self)
+    self.Title = Label('SETTINGS', self)
     self.Title:SetFont("ScoreboardTitleSmall")
     self.Title:SetColor(Color(255, 255, 255))
-    self.Help = Label(T'Settings_ClickActivate', self)
+    self.Help = Label('CLICK TO ACTIVATE YOUR MOUSE', self)
     self.Help:SetFont("ScoreboardHelp")
     self.Help:SetColor(Color(255, 255, 255, 150))
     self.Settings = {}
