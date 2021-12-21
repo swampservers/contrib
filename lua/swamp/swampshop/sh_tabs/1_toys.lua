@@ -159,7 +159,7 @@ SS_Product({
     price = (os.date("%B", os.time()) == "December" and 4000) or 5000,
     name = 'Mystery Present', --'Mystery Box','Present'
     description = "Contains a random weapon or other item.",
-    model = "models/pyroteknik/gift.mdl", 
+    model = "models/pyroteknik/gift.mdl",
     OnBuy = function(self, ply)
         if ply.cantmakepresent then
             ply:SS_GivePoints(self.price)
