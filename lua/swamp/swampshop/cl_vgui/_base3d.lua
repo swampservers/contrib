@@ -43,11 +43,11 @@ end
 
 function PANEL:PreDrawModel()
     local c = self.Entity:GetColor()
-    render.SetColorModulation(c.r/255,c.g/255,c.b/255)
+    render.SetColorModulation(c.r / 255, c.g / 255, c.b / 255)
 end
 
 function PANEL:PostDrawModel()
-    render.SetColorModulation(1,1,1)
+    render.SetColorModulation(1, 1, 1)
 end
 
 vgui.Register('SwampShopModelBase', PANEL, 'DModelPanel')

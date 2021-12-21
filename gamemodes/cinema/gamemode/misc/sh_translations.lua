@@ -8,13 +8,13 @@ local DefaultId = "en"
 
 function T2(key, ...)
     if not key then return "" end
-    
 
     return string.format(LANG[key] or key, ...)
 end
 
 function T(key, ...)
     ErrorNoHaltWithStack("T CALL")
+
     return T2(key, ...)
 end
 
