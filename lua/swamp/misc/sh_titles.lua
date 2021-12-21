@@ -249,6 +249,7 @@ AddTitle({
 AddTitle({
     {10, "Fast Fingers"},
     {100, "Typist"},
+    {500, "Wordsmith"},
     {1000, "Trump's Speech Writer"}
 }, "Win %s quick typing minigames (where you type text in chat)", "s_quicktype")
 
@@ -304,7 +305,8 @@ AddTitle({
     {10, "Steady Hand", 10000},
     {100, "Boom, Headshot!"},
     {500, "American Sniper"},
-    {1000, "HEADBANGER"}
+    {1000, "HEADBANGER"},
+    {10000, "Aimbot Enjoyer"}
 }, "Kill %s active players with headshots.", "s_headshotkill")
 
 AddTitle({
@@ -345,7 +347,8 @@ AddTitle({
 AddTitle({
     {5, "Bounty Hunter", 100000},
     {50, "Hitman", 100000},
-    {200, "The Cleaner", 100000}
+    {200, "The Cleaner", 100000},
+    {400, "John Wick", 100000}
 }, "Collect bounties (funded by others) of at least 100,000 points on %s different players.", "s_bountyhunt_size", {
     reward_id = "bountyhunt",
     group_view = {"s_bountyhunt", "slayed"}
