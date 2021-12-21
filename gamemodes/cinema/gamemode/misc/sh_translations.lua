@@ -6,11 +6,16 @@ translations = {}
 local Languages = {}
 local DefaultId = "en"
 
-function T(key, ...)
+function T2(key, ...)
     if not key then return "" end
-    ErrorNoHaltWithStack("T CALL")
+    
 
     return string.format(LANG[key] or key, ...)
+end
+
+function T(key, ...)
+    ErrorNoHaltWithStack("T CALL")
+    return T2(key, ...)
 end
 
 local patterns = {
@@ -37,7 +42,7 @@ local function parseTag(tag)
 end
 
 function translations.FormatChat(key, ...)
-    local value = T(key, ...)
+    local value = T2(key, ...)
 
     -- Parse tags
     if string.find(value, patterns.tag) then

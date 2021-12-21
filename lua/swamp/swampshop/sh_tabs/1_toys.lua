@@ -160,6 +160,7 @@ SS_Product({
     name = 'Mystery Present', --'Mystery Box','Present'
     description = "Contains a random weapon or other item.",
     model = "models/pyroteknik/gift.mdl",
+    color = Color(255,0,0,255),
     OnBuy = function(self, ply)
         if ply.cantmakepresent then
             ply:SS_GivePoints(self.price)
