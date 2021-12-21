@@ -518,7 +518,7 @@ SS_PlayermodelItem({
             dw, dm = nil, nil
         end
 
-        if dw and dm and IsPlayermodelBlacklisted(dw, dm) then
+        if dw and dm and SERVER and IsPlayermodelBlacklisted(dw, dm) then
             dw, dm = nil, nil
         end
 
