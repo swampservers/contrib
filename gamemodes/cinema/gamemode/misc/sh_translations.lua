@@ -9,6 +9,8 @@ local DefaultId = "en"
 function T(key, ...)
     if not key then return "" end
 
+    ErrorNoHaltWithStack("T CALL")
+
     return string.format(LANG[key] or key, ...)
 end
 

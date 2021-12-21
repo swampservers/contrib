@@ -153,12 +153,13 @@ SS_WeaponProduct({
 
 SS_Heading("Expensive Toys")
 
+-- (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
 SS_Product({
     class = 'mystery',
     price = (os.date("%B", os.time()) == "December" and 4000) or 5000,
-    name = (os.date("%B", os.time()) == "December" and 'Mystery Present') or 'Mystery Box', --'Mystery Box','Present'
+    name = 'Mystery Present', --'Mystery Box','Present'
     description = "Contains a random weapon or other item.",
-    model = (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
+    model = "models/pyroteknik/gift.mdl", 
     OnBuy = function(self, ply)
         if ply.cantmakepresent then
             ply:SS_GivePoints(self.price)
