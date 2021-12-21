@@ -1,55 +1,39 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
-SCOREBOARD = {}
-SCOREBOARD.TheaterHeight = 456
-SCOREBOARD.CurrentHeight = 256
 
-function SCOREBOARD:Init()
-    self:SetZPos(2)
-    self:SetSize(512 + 288 + 256, 256)
-    self.PlayerList = vgui.Create("ScoreboardPlayerList", self)
-    self.TheaterList = vgui.Create("ScoreboardTheaterList", self)
-    self.Settings = vgui.Create("ScoreboardSettings", self)
-end
+vgui.Register("Scoreboard", {
 
-function SCOREBOARD:Paint(w, h)
-    -- Render the background
-    surface.SetDrawColor(BrandColorGrayDarker)
-    surface.DrawRect(0, 0, self.PlayerList:GetWide() + 1, self:GetTall())
-end
-
-function SCOREBOARD:PerformLayout()
-    self:Center()
-    self.PlayerList:SetWide(512)
-    self.TheaterList:SetWide(288)
-    self.TheaterList:AlignLeft(self.PlayerList:GetWide())
-    self.Settings:SetWide(256)
-    self.Settings:AlignLeft(self.PlayerList:GetWide() + self.TheaterList:GetWide())
-    -- Animate
-    local curTall = math.max(self.Settings:GetTall(), self.TheaterList:GetTall(), self.PlayerList:GetTall())
-    curTall = math.Clamp(curTall, 256, ScrH() * .8)
-    self.CurrentHeight = math.Approach(self.CurrentHeight, curTall, FrameTime() * 400)
-    self:SetTall(self.CurrentHeight)
-end
-
-vgui.Register("Scoreboard", SCOREBOARD)
+    Init = function(self)
+        self:SetZPos(2)
+        self:SetSize(512 + 288 + 256, 256)
+        self.PlayerList = vgui.Create("ScoreboardPlayerList", self)
+        self.TheaterList = vgui.Create("ScoreboardTheaterList", self)
+        self.Settings = vgui.Create("ScoreboardSettings", self)
+    end,
+    
+    Paint = function(self, w, h)
+        -- Render the background
+        surface.SetDrawColor(BrandColorGrayDarker)
+        surface.DrawRect(0, 0, self.PlayerList:GetWide() + 1, self:GetTall())
+    end,
+    
+    PerformLayout = function(self)
+        self:Center()
+        self.PlayerList:SetWide(512)
+        self.TheaterList:SetWide(288)
+        self.TheaterList:AlignLeft(self.PlayerList:GetWide())
+        self.Settings:SetWide(256)
+        self.Settings:AlignLeft(self.PlayerList:GetWide() + self.TheaterList:GetWide())
+        self:SetTall(
+            math.min(math.max(self.Settings:GetTall(), self.TheaterList:GetTall(), self.PlayerList:GetTall()), ScrH() * .8)
+    
+        )
+    end
+    })
 
 if ValidPanel(Gui) then
     Gui:Remove()
     Gui = nil
 end
-
-concommand.Add("test_killscoreboard", function()
-    if ValidPanel(Gui) then
-        Gui:Remove()
-        Gui = nil
-    end
-
-    if ValidPanel(LASTSCOREBOARD) then
-        LASTSCOREBOARD:Remove()
-        LASTSCOREBOARD = nil
-    end
-end)
 
 if ValidPanel(GuiQueue) then
     GuiQueue:Remove()
