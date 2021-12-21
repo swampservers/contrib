@@ -1,7 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 vgui.Register("Scoreboard", {
-
     Init = function(self)
         self:SetZPos(2)
         self:SetSize(512 + 288 + 256, 256)
@@ -9,13 +7,11 @@ vgui.Register("Scoreboard", {
         self.TheaterList = vgui.Create("ScoreboardTheaterList", self)
         self.Settings = vgui.Create("ScoreboardSettings", self)
     end,
-    
     Paint = function(self, w, h)
         -- Render the background
         surface.SetDrawColor(BrandColorGrayDarker)
         surface.DrawRect(0, 0, self.PlayerList:GetWide() + 1, self:GetTall())
     end,
-    
     PerformLayout = function(self)
         self:Center()
         self.PlayerList:SetWide(512)
@@ -23,12 +19,9 @@ vgui.Register("Scoreboard", {
         self.TheaterList:AlignLeft(self.PlayerList:GetWide())
         self.Settings:SetWide(256)
         self.Settings:AlignLeft(self.PlayerList:GetWide() + self.TheaterList:GetWide())
-        self:SetTall(
-            math.min(math.max(self.Settings:GetTall(), self.TheaterList:GetTall(), self.PlayerList:GetTall()), ScrH() * .8)
-    
-        )
+        self:SetTall(math.min(math.max(self.Settings:GetTall(), self.TheaterList:GetTall(), self.PlayerList:GetTall()), ScrH() * .8))
     end
-    })
+})
 
 if ValidPanel(Gui) then
     Gui:Remove()
