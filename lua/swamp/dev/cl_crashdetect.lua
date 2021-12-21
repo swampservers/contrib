@@ -1,38 +1,47 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local lastcrash = file.Read("swampcrash.txt", "DATA")
 
-if lastcrash then
-    timer.Simple(0, function()
-        net.Start("ReportCrash")
-        -- if lastcrash then
-        net.WriteBool(true)
-        net.WriteString(lastcrash)
-        -- else
-        --     net.WriteBool(false)
-        -- end
-        net.SendToServer()
-    end)
+if not CRASH_DATA then
+    local lastcrash = file.Read("swamp_crashdata.txt", "DATA")
+    local crashtime = file.Time("swamp_crashdata.txt", "DATA")
+
+    if lastcrash then
+        timer.Simple(0, function()
+            net.Start("ReportCrash")
+            net.WriteDouble(crashtime)
+            net.WriteString(lastcrash)
+            net.SendToServer()
+        end)
+    end
+
+    CRASH_DATA = {
+        osx=system.IsOSX() or nil,
+        linux = system.IsLinux() or nil,
+        initializing=true
+    }
+
+    file.Write("swamp_crashdata.txt", util.TableToJSON(CRASH_DATA))
 end
 
-local crashdata = {}
-
 function SetCrashData(k, v, fortime)
-    if crashdata[k] ~= v then
-        crashdata[k] = v
-        file.Write("swampcrash.txt", util.TableToJSON(crashdata))
+    if CRASH_DATA[k] ~= v then
+        CRASH_DATA[k] = v
+        file.Write("swamp_crashdata.txt", util.TableToJSON(CRASH_DATA))
     end
 
     if fortime then
         timer.Simple(fortime, function()
-            if crashdata[k] == v then
+            if CRASH_DATA[k]==v then
                 SetCrashData(k, nil)
             end
         end)
     end
 end
 
-SetCrashData("os", system.IsWindows() and "win" or (system.IsOSX() and "osx" or "linux"))
+hook.Add("InitPostEntity", "CrashInit", function()
+    timer.Simple(2, function() SetCrashData("initializing", nil) end)
+end)
+
 
 hook.Add("ShutDown", "CrashClear", function()
-    file.Delete("swampcrash.txt")
+    file.Delete("swamp_crashdata.txt")
 end)
