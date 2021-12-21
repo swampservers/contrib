@@ -26,7 +26,7 @@ function QUEUE:Init()
     self:SetZPos(1)
     self:SetSize(288, 512)
     self:SetPos(8, ScrH() / 2 - (self:GetTall() / 2))
-    self.Title = Label(T'Queue_Title', self)
+    self.Title = Label('QUEUE', self)
     self.Title:SetFont("ScoreboardTitle")
     self.Title:SetColor(Color(255, 255, 255))
     self.Videos = {}
@@ -39,7 +39,7 @@ function QUEUE:Init()
     self.Options:SetSpacing(4)
     -- Theater Options
     local RequestButton = vgui.Create("TheaterButton")
-    RequestButton:SetText(T'Request_Video')
+    RequestButton:SetText('Request Video')
 
     RequestButton.DoClick = function(self)
         local RequestFrame = vgui.Create("VideoRequestFrame")
@@ -60,7 +60,7 @@ function QUEUE:Init()
 
     self.Options:AddItem(LastRequestButton)
     local VoteSkipButton = vgui.Create("TheaterButton")
-    VoteSkipButton:SetText(T'Vote_Skip')
+    VoteSkipButton:SetText('Vote Skip')
 
     VoteSkipButton.DoClick = function(self)
         RunConsoleCommand("cinema_voteskip")
@@ -76,7 +76,7 @@ function QUEUE:Init()
 
     self.Options:AddItem(FullscreenButton)
     local RefreshButton = vgui.Create("TheaterButton")
-    RefreshButton:SetText(T'Refresh_Theater')
+    RefreshButton:SetText('Refresh Theater')
 
     RefreshButton.DoClick = function(self)
         RunConsoleCommand("cinema_refresh")
