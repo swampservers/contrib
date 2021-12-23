@@ -69,7 +69,7 @@ if os.date("%b")=="Dec" then
     timer.Simple(1, function()
         if file.Exists("dontsnow.txt", "DATA") then return end
         file.Write("dontsnow.txt","")
-        RunConsoleCommand("snow") 
+--        RunConsoleCommand("snow") 
         timer.Simple(1, function() 
             file.Delete("dontsnow.txt")
         end)
