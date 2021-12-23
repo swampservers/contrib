@@ -67,10 +67,11 @@ end
 concommand.Add("snow", AddSnow)
 
 if os.date("%b") == "Dec" then
-    hook.Add("InitPostEntity","AddSnow",function()
+    hook.Add("InitPostEntity", "AddSnow", function()
         if file.Exists("dontsnow.txt", "DATA") then return end
         file.Write("dontsnow.txt", "")
         AddSnow()
+
         timer.Simple(3, function()
             file.Delete("dontsnow.txt")
         end)

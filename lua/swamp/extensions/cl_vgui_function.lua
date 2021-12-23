@@ -45,8 +45,6 @@ setmetatable(vgui, {
 
         return p
     end
-
-    
 })
 
 print("CONTROLTABLE", vgui.GetControlTable("DFrame"))

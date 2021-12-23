@@ -68,7 +68,7 @@ function require_workshop_info(id)
     end
 end
 
-local messagecolor = Color( 64, 160, 0 )
+local messagecolor = Color(64, 160, 0)
 
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
 --or: models/props_phx/gears/spur24.mdl
@@ -111,23 +111,21 @@ function require_workshop(id, range)
     if shouldload then
         if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT < 2 then
             STEAMWS_DOWNLOAD_STARTED[id] = true
-            MsgC( messagecolor, ("Downloading addon %s (%.2fmb)\n" ):format(id, STEAMWS_FILEINFO[id].size/1000000))
+            MsgC(messagecolor, ("Downloading addon %s (%.2fmb)\n"):format(id, STEAMWS_FILEINFO[id].size / 1000000))
             local _id_ = id
             STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
 
             steamworks.DownloadUGC(id, function(name, file)
                 -- print("\n\n***CALLBACK " .. id .. "***\n\n")
-
                 timer.Simple(0.1, function()
                     STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT - 1
                 end)
 
-                
-
                 if name then
                     STEAMWS_UNMOUNTED[_id_] = name
                 else
-                    MsgC( messagecolor, "Downloading ".._id_.." failed!\n")
+                    MsgC(messagecolor, "Downloading " .. _id_ .. " failed!\n")
+
                     timer.Simple(60, function()
                         STEAMWS_DOWNLOAD_STARTED[_id_] = nil
                     end)
@@ -142,8 +140,6 @@ end
 -- Mounts all downloaded GMAs at once downloading is finished
 hook.Add("Tick", "WorkshopMounter", function()
     if STEAM_WORKSHOP_INFLIGHT == 0 and not table.IsEmpty(STEAMWS_UNMOUNTED) then
-        
-
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
             local ok, err = GMABlacklist(filename)
 
@@ -169,12 +165,11 @@ hook.Add("Tick", "WorkshopMounter", function()
                 end
             end
         end
-        
 
         local mounted_ids = {}
 
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
-            MsgC(messagecolor,  "Mounting "..wsid.."\n" )
+            MsgC(messagecolor, "Mounting " .. wsid .. "\n")
             -- NOTE:
             -- Any error models currently loaded that the mounted addon provides will be reloaded.
             -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
@@ -182,7 +177,7 @@ hook.Add("Tick", "WorkshopMounter", function()
             SetCrashData("MOUNTING", wsid)
             table.insert(mounted_ids, wsid)
             local succ, files = game.MountGMA(filename)
-            
+
             if not succ then
                 files = {}
             end
@@ -198,12 +193,10 @@ hook.Add("Tick", "WorkshopMounter", function()
         end
 
         SetCrashData("MOUNTING", nil)
-
         mounted_ids = table.concat(mounted_ids, ",")
-
         SetCrashData("JUSTMOUNTED", mounted_ids, 0.1)
         SetCrashData("recentlymounted", mounted_ids, 3)
-        
+
         for ent, mod in pairs(resetmodels) do
             ent:SetModel(mod[1])
             ent:SetSequence(mod[2])
