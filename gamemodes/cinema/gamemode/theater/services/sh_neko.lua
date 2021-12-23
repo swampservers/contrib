@@ -27,7 +27,7 @@ if CLIENT then
         timer.Create("nekoupdate" .. tostring(math.random(1, 100000)), 1, 25, function()
             if IsValid(panel) then
                 panel:RunJavascript("document.getElementsByTagName('p')[0].style.display='none';") --hides watermark
-                panel:RunJavascript("document.getElementsByTagName('video')[0].click();") --unmutes player
+                panel:RunJavascript("document.getElementsByTagName('i')[0].click();") --unmutes player
                 self:SetVolume(GetConVar("cinema_volume"):GetInt(), panel)
             end
         end)
