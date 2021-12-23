@@ -7,3 +7,7 @@ hook.Add("AcceptInput", "ElevatorSoundsFix", function(ent, name, activator, call
         end
     end
 end)
+
+hook.Add("PlayerShouldTakeDamage", "elevattorfix", function(ply, att)
+    if att:GetClass() == "func_movelinear" and att:GetPos().y == -624 then return false end
+end)

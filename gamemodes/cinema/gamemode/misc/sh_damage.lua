@@ -3,6 +3,7 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
     if attacker:GetClass() == "ent_popcorn_thrown" then return false end
     if attacker:GetClass() == "dodgeball" then return false end
     if ply:IsProtected(attacker) then return false end
+    if ply:InVehicle() and IsValid(attacker) and attacker:IsPlayer() and ply ~= attacker then return false end
 
     return true
 end

@@ -84,6 +84,8 @@ API_NetworkStringCache = setmetatable({}, {
     end
 })
 
+API_UnfinishedNetworkStrings = {}
+
 local API_Readers = {
     [API_DATALEN] = function()
         local l1 = net.ReadUInt(8)
@@ -118,31 +120,31 @@ local API_Readers = {
     [API_NT_STRING] = net.ReadString,
     [API_NETWORK_STRING] = function()
         local id = net.ReadUInt(12)
-        local st = API_NetworkStringCache[id]
 
-        if st == nil then
-            ErrorNoHaltWithStack("Unknown network string! " .. id)
+        if id==0 then
+            return nil
+        elseif id==4095 then
+            return net.ReadString()
+        else
+            local st = API_NetworkStringCache[id]
 
-            return "UNKNOWN"
+            if st == nil then
+                ErrorNoHaltWithStack("Unknown network string! " .. id)
+
+                return "UNKNOWN"
+            end
+
+            return st
         end
-
-        return st
     end,
     [API_NETWORK_STRING_TABLE_UPDATE] = function()
         local out, nvals = {{}}, API_Read(API_DATALEN)
 
         for i = 1, nvals do
-            local id = net.ReadUInt(12)
+            local st = API_Read(API_NETWORK_STRING)
 
-            if id > 0 then
-                local val = API_Read(API_ANY)
-                local st = API_NetworkStringCache[id]
-
-                if st == nil then
-                    ErrorNoHaltWithStack("Unknown network string! " .. id)
-                else
-                    out[st] = val
-                end
+            if st then
+                out[st] = API_Read(API_ANY)
             else
                 out[1] = API_List(API_NETWORK_STRING).Read()
             end
@@ -241,12 +243,21 @@ local API_Writers = {
     end,
     [API_NT_STRING] = net.WriteString,
     [API_NETWORK_STRING] = function(v)
+        if v==nil then
+            net.WriteUInt(0, 12)
+            return
+        end
+
         assert(isstring(v))
         local id = API_NetworkStringCache[v]
 
         if not id and SERVER then
             util.AddNetworkString(v)
             id = API_NetworkStringCache[v]
+
+            -- send the full string for 1 sec until the id gets pooled
+            API_UnfinishedNetworkStrings[id]=true
+            timer.Simple(1, function() API_UnfinishedNetworkStrings[id]=nil end)
         end
 
         if not id then
@@ -254,7 +265,12 @@ local API_Writers = {
             id = 0
         end
 
-        net.WriteUInt(id, 12)
+        if API_UnfinishedNetworkStrings[id] then
+            net.WriteUInt(4095, 12)
+            net.WriteString(v)
+        else
+            net.WriteUInt(id, 12)
+        end
     end,
     [API_NETWORK_STRING_TABLE_UPDATE] = function(val)
         local removals = val[1]
@@ -274,7 +290,7 @@ local API_Writers = {
         end
 
         if removals and not table.IsEmpty(removals) then
-            net.WriteUInt(0, 12)
+            API_Write(API_NETWORK_STRING, nil)
             API_Set(API_NETWORK_STRING).Write(removals)
         end
     end,
