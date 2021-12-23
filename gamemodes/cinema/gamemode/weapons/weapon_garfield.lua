@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Garfield"
 SWEP.Purpose = "Eat"
 SWEP.Instructions = "Primary: Eat\n\nYou can eat players smaller and slightly larger than you. The bigger you get, the more health you have. To eat larger players, soften them up with weapons first, but be aware that they heal quickly based on size.\n\nR: Leap (costs weight!!)"

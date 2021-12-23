@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- BountyLimit = BountyLimit or {}
 hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     local bounty = GetPlayerBounty(ply)

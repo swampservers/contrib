@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 local cvar = CreateClientConVar("cinema_hideplayers", 0, true, false, "", 0, 1)
 local undomodelblend = false
 local white = Material("models/debug/debugwhite")

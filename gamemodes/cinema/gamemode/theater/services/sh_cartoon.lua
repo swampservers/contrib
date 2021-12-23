@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- www.watchcartoononline.io support for cinema by Swamp
 local SERVICE = {}
 SERVICE.Name = "WatchCartoonOnline"

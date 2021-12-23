@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- weapon_vape_american.lua
 -- Defines a vape which emits red, white, and blue clouds and plays Donald Trump sounds
 -- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/

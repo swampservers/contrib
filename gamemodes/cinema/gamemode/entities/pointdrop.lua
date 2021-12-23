@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Base = "base_anim"

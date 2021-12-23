@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- weapon_vape_mega.lua
 -- Defines a big vape that makes massive clouds (admin only recommended)
 -- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/

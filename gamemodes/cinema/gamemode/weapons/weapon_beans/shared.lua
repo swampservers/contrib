@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.Author = "Noz"
 SWEP.Instructions = "Eat while watching Cars 2"
 SWEP.PrintName = "Beans"

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 include("shared.lua")
 SWEP.Instructions = "WASD: Move\nSpace: Jump\nCtrl: Brake\nLMB: Hamster noises"
 SWEP.DrawAmmo = false

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- weapon_vape_golden.lua
 -- Defines a vape with gold accent and shaded tank
 -- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/

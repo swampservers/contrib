@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 AMMO_PURCHASE_OPTIONS = AMMO_PURCHASE_OPTIONS or {
     weapon_pistol = {500},
     weapon_357 = {500},

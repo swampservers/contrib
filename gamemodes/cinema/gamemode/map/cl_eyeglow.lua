@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- Applies to the maze as well as minecraft
 hook.Add("Think", "UndergroundEyeGlow", function()
     if not IsValid(Me) then return end

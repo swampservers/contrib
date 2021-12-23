@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Flappy Fedora"
 SWEP.Slot = 1
 SWEP.Instructions = "Press jump to tip your fedora!"

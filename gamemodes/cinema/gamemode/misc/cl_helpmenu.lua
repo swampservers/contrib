@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 AddCSLuaFile()
 HintConVar = CreateClientConVar("swamp_help", "1", true, false, "", 0, 1)
 local wasf1down = false

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 include('sh_init.lua')
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 local ThumbWidth = 512 -- Expected to be PO2

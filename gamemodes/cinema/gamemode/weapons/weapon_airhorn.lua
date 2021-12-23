@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.Instructions = "For all your MLG needs"
 SWEP.PrintName = "Airhorn"
 SWEP.IconLetter = "V"

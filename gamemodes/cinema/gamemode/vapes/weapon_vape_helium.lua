@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- weapon_vape_helium.lua
 -- Defines a vape which makes the player float
 -- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/

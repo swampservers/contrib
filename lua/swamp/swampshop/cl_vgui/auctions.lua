@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- todo make it show stuff!
 vgui.Register("DSSAuctionPreview", {
     Init = function(self)

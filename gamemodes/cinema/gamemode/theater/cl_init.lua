@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 module("theater", package.seeall)
 CurrentVideo = CurrentVideo or nil -- Most recent video loaded
 Fullscreen = Fullscreen or false

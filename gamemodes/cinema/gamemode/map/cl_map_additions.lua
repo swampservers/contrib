@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 matproxy.Add({
     name = "ToggleSelfillum",
     init = function(self, mat, values)

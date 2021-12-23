@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 AddCSLuaFile()
 SWEP.ViewModel = Model("models/weapons/c_arms_animations.mdl")
 SWEP.WorldModel = Model("models/MaxOfS2D/camera.mdl")

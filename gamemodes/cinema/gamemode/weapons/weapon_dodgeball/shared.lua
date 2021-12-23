@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Dodgeball"
 SWEP.Slot = 0
 SWEP.ViewModel = Model("models/pyroteknik/dodgeball.mdl")

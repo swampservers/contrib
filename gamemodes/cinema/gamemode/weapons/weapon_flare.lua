@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Flare"
 SWEP.DrawAmmo = false
 SWEP.ViewModelFOV = 85

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 local THEATER_NONE = 0 --default/public theater
 local THEATER_PRIVATE = 1 --private theater
 local THEATER_REPLICATED = 2 --public theater, shows on the scoreboard

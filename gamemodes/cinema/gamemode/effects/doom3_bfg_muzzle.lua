@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 EFFECT.mat = Material("sprites/doom3/bfg_mflash")
 local exists = file.Exists("materials/sprites/doom3/bfg_mflash.vmt", "GAME")
 

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 ENT.Type = "anim"
 DEFINE_BASECLASS("base_gmodentity")
 ENT.Model = Model("models/props_halloween/jackolantern_01.mdl")

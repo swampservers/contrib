@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 hook.Add("Think", "RequestVideoCloser", function()
     if ValidPanel(RequestPanel) and gui.IsGameUIVisible() then
         gui.HideGameUI()

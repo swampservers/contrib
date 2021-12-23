@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 local VAPORSEEMIN = Vector(1726, 282, 0)
 local VAPORSEEMAX = Vector(2544, 1523, 229)
 VAPORENTITIES = VAPORENTITIES or {}

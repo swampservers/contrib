@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 vgui.Register('DSSInventoryMode', {
     SetCategories = function(self, categories)
         self.categories = categories

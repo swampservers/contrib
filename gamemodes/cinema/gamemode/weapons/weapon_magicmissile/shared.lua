@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 if SERVER then
     function SWEP:Deploy()
         self.Owner:DrawViewModel(false)

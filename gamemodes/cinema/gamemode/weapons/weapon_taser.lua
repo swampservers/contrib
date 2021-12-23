@@ -1,5 +1,4 @@
 ﻿SWEP.PrintName = "Police Taser"
--- INSTALL: CINEMA
 SWEP.Author = "Chev"
 SWEP.Instructions = "Left click: Attach taser tongs to a player.\nRight click: Taser attached player.\nReload: Remove attached tongs."
 SWEP.Category = "Taser"

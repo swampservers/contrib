@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 --NOMINIFY
 vgui.Register("DSSTitleInfo", {
     SetTitle = function(self, title)

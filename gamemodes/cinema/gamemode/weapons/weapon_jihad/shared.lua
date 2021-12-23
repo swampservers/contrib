@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Suicide Bombing"
 SWEP.Slot = 4
 SWEP.WorldModel = Model("models/dav0r/tnt/tnt.mdl")

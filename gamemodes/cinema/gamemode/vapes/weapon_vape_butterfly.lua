@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- weapon_vape_buttefly.lua
 -- Defines a vape that flips like a butterfly knife
 -- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/

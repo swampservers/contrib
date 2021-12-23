@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- autorun/server/sv_vapeswep.lua
 -- Defines serverside globals for Vape SWEP
 -- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/

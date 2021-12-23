@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 function EFFECT:Init(data)
     local pos = data:GetOrigin()
     local grav = Vector(0, 0, math.random(50, 60))

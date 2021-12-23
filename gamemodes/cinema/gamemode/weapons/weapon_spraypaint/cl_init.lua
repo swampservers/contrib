@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 include("shared.lua")
 CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
 

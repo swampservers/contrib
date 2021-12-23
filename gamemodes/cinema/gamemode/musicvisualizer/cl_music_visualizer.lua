@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- override this if you want to make new visualizations and look at them locally
 function UsingMusicVis(name)
     return NWGlobal.musicvis == name

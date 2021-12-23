@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 function DecodeMazePart2D(st, d1, d2)
     st = util.Base64Decode(st)
     -- print(st:len(), math.ceil(d1 * d2 / 8))

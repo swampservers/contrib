@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Big Bomb"
 SWEP.Slot = 4
 SWEP.ViewModel = Model("models/dynamite/dynamite.mdl")

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SS_Tab("Playermodels", "user_suit")
 SS_Heading("Mods")
 

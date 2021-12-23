@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 CreateClientConVar("musicvis_flashing", "0")
 CreateClientConVar("musicvis_debug", "0")
 

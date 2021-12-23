@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 local loadrange = CreateClientConVar("swamp_workshop", 0, true, false, "", -3, 1)
 
 function RefreshWorkshop()

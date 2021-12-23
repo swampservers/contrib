@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 function SS_OpenAuctionWindow(item)
     Derma_StringRequest("Auction your " .. item:GetName(), "Enter your starting bid.\nIt costs " .. SS_AUCTION_COST .. " points to create an auction.\nIf sold, " .. tostring(100 * (1 - SS_AUCTION_PAY_FRACTION)) .. "% of the sale price will be WHACKD!", "10000", function(text)
         text = tonumber(text)

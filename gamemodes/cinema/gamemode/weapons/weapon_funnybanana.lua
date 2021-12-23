@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Funny Picture of a Banana"
 SWEP.Purpose = "A hilarious picture. Look at it!"
 SWEP.Author = "John J. Callanan"

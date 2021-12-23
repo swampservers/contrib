@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 CreateClientConVar("cinema_volume", 100, true, false, "", 0, 100)
 GameVolumeConVar = CreateClientConVar("cinema_game_volume", 100, true, false, "", 0, 100)
 VoiceVolumeConVar = CreateClientConVar("cinema_voice_volume", 100, true, false, "", 0, 100)

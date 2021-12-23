@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- Note: CAN BE PRODUCT OR ITEM
 -- TODO: why does it look down so much on the preview compared to the item?
 -- TODO: make camera only change pitch and zoom, object rotates only yaw (because of box lighting)

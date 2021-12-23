@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Autistic Outbursts"
 SWEP.Slot = 2
 SWEP.WorldModel = "models/props_junk/TrafficCone001a.mdl"

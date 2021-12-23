@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- www.animetoon.org support for cinema by Swamp
 local SERVICE = {}
 SERVICE.Name = "AnimeToon"

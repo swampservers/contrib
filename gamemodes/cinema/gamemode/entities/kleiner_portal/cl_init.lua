@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 include("shared.lua")
 
 KLEINERPORTALMATERIAL1 = CreateMaterial(cvx_anonymous_name(), "UnlitGeneric", {

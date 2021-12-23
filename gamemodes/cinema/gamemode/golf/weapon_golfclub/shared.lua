@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Golf Club"
 SWEP.ViewModel = "models/pyroteknik/putter.mdl"
 SWEP.WorldModel = "models/pyroteknik/putter.mdl"

@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Snowballs"
 SWEP.Instructions = "Left click to throw a snowball\nRight click to change flavor. Reload to compress your snowball so it hits harder."
 SWEP.ViewModel = "models/weapons/v_snowball.mdl"

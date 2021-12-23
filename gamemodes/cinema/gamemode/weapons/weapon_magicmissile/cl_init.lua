@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 include("shared.lua")
 SWEP.Instructions = "Primary: Fire\nVaporizes Kleiners\nSecondary: Play sound"
 SWEP.DrawAmmo = false

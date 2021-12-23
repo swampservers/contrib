@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 --if(SERVER)then resource.AddWorkshop(2396963452) end
 SWEP.PrintName = "Return To Monke"
 SWEP.Author = "PYROTEKNIK"

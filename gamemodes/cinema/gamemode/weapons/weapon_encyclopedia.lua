@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- Encyclopedia SWEP by swamponions - STEAM_0:0:38422842
 AddCSLuaFile()
 SWEP.PrintName = "Encyclopedia"

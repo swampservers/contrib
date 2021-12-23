@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 SWEP.PrintName = "Infinity Gauntlet"
 SWEP.Instructions = "*snap*"
 SWEP.Slot = 0

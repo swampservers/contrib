@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 include('shared.lua')
 DEFINE_BASECLASS("base_anim")
 TRASH_LIGHTS = TRASH_LIGHTS or {}

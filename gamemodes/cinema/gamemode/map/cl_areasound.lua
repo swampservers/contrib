@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 timer.Create("AreaMusicController", 0.5, 0, function()
     if not IsValid(Me) or Me.GetLocationName == nil then return end
     local target = ""

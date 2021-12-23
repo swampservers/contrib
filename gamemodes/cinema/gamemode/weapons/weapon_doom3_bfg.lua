@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 if CLIENT then
     SWEP.PrintName = "BFG9K"
     SWEP.Author = "Upset"

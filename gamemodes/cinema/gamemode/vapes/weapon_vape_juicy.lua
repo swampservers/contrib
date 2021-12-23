@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 -- weapon_vape_juicy.lua
 -- Defines a vape with selectable cloud colors
 -- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/

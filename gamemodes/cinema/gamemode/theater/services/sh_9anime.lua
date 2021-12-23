@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 local SERVICE = {}
 SERVICE.Name = "9Anime"
 SERVICE.NeedsCodecs = true
