@@ -121,6 +121,31 @@ function vape_interpolate_arm(ply, mult, mouth_delay)
     end
 end
 
+hook.Add( "OnEntityCreated", "PlayerSetupBones", function( ent )
+	if ent:IsPlayer() then
+        ent:AddCallback("BuildBonePositions", function(ply, numbones) hook.Run("PlayerBuildBonePositions", ply, numbones) end)
+	end
+end )
+
+hook.Add("PlayerBuildBonePositions", "VapePlayerBones", function(ply, nb)
+    -- if ply==Me then
+    --     local head = ply:LookupBone("ValveBiped.Bip01_Head1")
+    --     local hand = ply:LookupBone("ValveBiped.Bip01_R_Hand")
+
+    --     if head and hand then
+    --         local forearm = ply:GetBoneParent(hand)
+    --         local upperarm = ply:GetBoneParent(hand)
+
+
+    --         local p,a = ply:GetBonePosition(forearm)
+
+    --         -- a:RotateAroundAxis(a:Right(), CurTime()*100)
+    --         -- ply:SetBonePosition(forearm, p,a)
+    --     end
+    -- end
+end)
+
+
 function vape_do_pulse(ply, amt, spreadadd, fx)
     if not IsValid(ply) then return end
     if ply:WaterLevel() == 3 then return end
