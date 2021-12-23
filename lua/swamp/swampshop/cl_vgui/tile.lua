@@ -342,8 +342,10 @@ function PANEL:Paint(w, h)
 
             if IsValid(self.Entity) then
                 -- self.colColor = 
-
-                if self.iop.color then print(self.iop.color) print(self.iop.color.a) end
+                if self.iop.color then
+                    print(self.iop.color)
+                    print(self.iop.color.a)
+                end
 
                 self.Entity:SetColor(self.iop.color or color_white)
                 self.Entity.GetPlayerColor = function() return Me:GetPlayerColor() end
