@@ -1,4 +1,17 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+if CLIENT then
+    concommand.Add("getwsid", function(pl, cmd, args, argStr)
+        local ply = Ply(argStr) or player.GetBySteamID(argStr)
+        if IsValid(ply) then
+            print(ply:GetDisplayModel())
+        else
+            print("Player not found!")
+        end
+    end)
+end
+
+
 function Player:GetDisplayModel()
     local st = self:GetNW2String("DisplayModel", "")
     if st == "" then return self:GetModel(), nil end
