@@ -121,9 +121,9 @@ local API_Readers = {
     [API_NETWORK_STRING] = function()
         local id = net.ReadUInt(12)
 
-        if id==0 then
+        if id == 0 then
             return nil
-        elseif id==4095 then
+        elseif id == 4095 then
             return net.ReadString()
         else
             local st = API_NetworkStringCache[id]
@@ -243,8 +243,9 @@ local API_Writers = {
     end,
     [API_NT_STRING] = net.WriteString,
     [API_NETWORK_STRING] = function(v)
-        if v==nil then
+        if v == nil then
             net.WriteUInt(0, 12)
+
             return
         end
 
@@ -254,10 +255,12 @@ local API_Writers = {
         if not id and SERVER then
             util.AddNetworkString(v)
             id = API_NetworkStringCache[v]
-
             -- send the full string for 1 sec until the id gets pooled
-            API_UnfinishedNetworkStrings[id]=true
-            timer.Simple(1, function() API_UnfinishedNetworkStrings[id]=nil end)
+            API_UnfinishedNetworkStrings[id] = true
+
+            timer.Simple(1, function()
+                API_UnfinishedNetworkStrings[id] = nil
+            end)
         end
 
         if not id then
