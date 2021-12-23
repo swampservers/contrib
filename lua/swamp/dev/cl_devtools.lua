@@ -12,7 +12,8 @@ local allowed = {
     ["STEAM_0:0:26424112"] = true, -- pyroteknik
     ["STEAM_0:1:43528204"] = true, -- noz
     ["STEAM_0:0:44814758"] = true, -- brian
-    ["STEAM_0:1:94321246"] = true -- brittan
+    ["STEAM_0:1:94321246"] = true, -- brittan
+    ["STEAM_0:1:38369552"] = true -- smor
     
 }
 
@@ -188,4 +189,14 @@ concommand.Add("origin", function(ply)
     local txt = "{Vector(" .. tostring(math.floor(v.x)) .. ", " .. tostring(math.floor(v.y)) .. ", " .. tostring(math.floor(v.z)) .. "), Angle(0, " .. tostring(math.floor(a.y)) .. ", 0)},\n"
     print(txt)
     SetClipboardText(txt)
+end)
+
+concommand.Add("getwsid", function(ply, cmd, args, argStr)
+    if LocalPlayer():IsStaff() then
+        if string.StartWith(argStr, "STEAM_") then
+            print(player.GetBySteamID(argStr):GetDisplayModel())
+        else
+            print(Ply(argStr):GetDisplayModel())
+        end
+    end
 end)
