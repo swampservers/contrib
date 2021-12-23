@@ -4,7 +4,7 @@
     --timer.Simple(1, function() RunConsoleCommand('snow') end)
     hook.Remove("PostDrawOpaqueRenderables","SnowAdder")
 end)]]
-concommand.Add("snow", function()
+function AddSnow()
     Material("swamponions/ground/concretefloor016a"):SetTexture("$basetexture", "nature/snowfloor001a")
     Material("CONCRETE/CONCRETEFLOOR023A"):SetTexture("$basetexture", "nature/snowfloor001a")
     Material("SWAMPONIONS/GROUND/CONCRETEFLOOR023A"):SetTexture("$basetexture", "nature/snowfloor001a")
@@ -53,24 +53,25 @@ concommand.Add("snow", function()
     Material("SWAMPONIONS/GROUND/blendtoxictoxic002a"):SetTexture("$basetexture", "nature/snowfloor002a")
     Material("SWAMPONIONS/GROUND/blendtoxictoxic002a"):SetTexture("$basetexture2", "nature/snowfloor003a")
     --water
-    Material("swamponions/water_swamp"):SetTexture("$basetexture", "lights/white")
-    Material("swamponions/water_swamp"):SetVector("$color", Vector(0.6, 0.6, 0.7))
-    Material("swamponions/water_swamp"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
-    Material("SWAMPONIONS/WATER_SWAMP_SOLID"):SetTexture("$basetexture", "lights/white")
-    Material("SWAMPONIONS/WATER_SWAMP_SOLID"):SetVector("$color", Vector(0.6, 0.6, 0.7))
-    Material("SWAMPONIONS/WATER_SWAMP_SOLID"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
-    Material("SWAMPONIONS/water_swamp_liquid"):SetTexture("$basetexture", "lights/white")
-    Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$color", Vector(0.6, 0.6, 0.7))
-    Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
-end)
+    -- Material("swamponions/water_swamp"):SetTexture("$basetexture", "lights/white")
+    -- Material("swamponions/water_swamp"):SetVector("$color", Vector(0.6, 0.6, 0.7))
+    -- Material("swamponions/water_swamp"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
+    -- Material("SWAMPONIONS/WATER_SWAMP_SOLID"):SetTexture("$basetexture", "lights/white")
+    -- Material("SWAMPONIONS/WATER_SWAMP_SOLID"):SetVector("$color", Vector(0.6, 0.6, 0.7))
+    -- Material("SWAMPONIONS/WATER_SWAMP_SOLID"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
+    -- Material("SWAMPONIONS/water_swamp_liquid"):SetTexture("$basetexture", "lights/white")
+    -- Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$color", Vector(0.6, 0.6, 0.7))
+    -- Material("SWAMPONIONS/water_swamp_liquid"):SetVector("$envmaptint", Vector(0.1, 0.1, 0.1))
+end
+
+concommand.Add("snow", AddSnow)
 
 if os.date("%b") == "Dec" then
-    timer.Simple(1, function()
+    hook.Add("InitPostEntity","AddSnow",function()
         if file.Exists("dontsnow.txt", "DATA") then return end
         file.Write("dontsnow.txt", "")
-
-        --        RunConsoleCommand("snow") 
-        timer.Simple(1, function()
+        AddSnow()
+        timer.Simple(3, function()
             file.Delete("dontsnow.txt")
         end)
     end)

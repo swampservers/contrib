@@ -45,7 +45,11 @@ setmetatable(vgui, {
 
         return p
     end
+
+    
 })
+
+print("CONTROLTABLE", vgui.GetControlTable("DFrame"))
 
 timer.Simple(0, function()
     --- Makes the DFrame :Close() if escape is pressed
