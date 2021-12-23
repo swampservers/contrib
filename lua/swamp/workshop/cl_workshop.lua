@@ -68,6 +68,8 @@ function require_workshop_info(id)
     end
 end
 
+local messagecolor = Color( 64, 160, 0 )
+
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
 --or: models/props_phx/gears/spur24.mdl
 function require_workshop(id, range)
@@ -109,24 +111,24 @@ function require_workshop(id, range)
     if shouldload then
         if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT < 2 then
             STEAMWS_DOWNLOAD_STARTED[id] = true
-            print("\n\n***DOWNLOADING " .. id .. " OF SIZE " .. STEAMWS_FILEINFO[id].size .. "***\n\n")
+            MsgC( messagecolor, ("Downloading addon %s (%.2fmb)\n" ):format(id, STEAMWS_FILEINFO[id].size/1000000))
             local _id_ = id
             STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
 
             steamworks.DownloadUGC(id, function(name, file)
-                print("\n\n***CALLBACK " .. id .. "***\n\n")
+                -- print("\n\n***CALLBACK " .. id .. "***\n\n")
 
                 timer.Simple(0.1, function()
                     STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT - 1
                 end)
 
+                
+
                 if name then
                     STEAMWS_UNMOUNTED[_id_] = name
                 else
-                    print("Workshop download failed for " .. _id_)
-
+                    MsgC( messagecolor, "Downloading ".._id_.." failed!\n")
                     timer.Simple(60, function()
-                        print("Retrying for " .. _id_)
                         STEAMWS_DOWNLOAD_STARTED[_id_] = nil
                     end)
                 end
@@ -140,11 +142,7 @@ end
 -- Mounts all downloaded GMAs at once downloading is finished
 hook.Add("Tick", "WorkshopMounter", function()
     if STEAM_WORKSHOP_INFLIGHT == 0 and not table.IsEmpty(STEAMWS_UNMOUNTED) then
-        print("MOUNT")
-
-        for _id_, path in pairs(STEAMWS_UNMOUNTED) do
-            print(_id_, path)
-        end
+        
 
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
             local ok, err = GMABlacklist(filename)
@@ -175,7 +173,7 @@ hook.Add("Tick", "WorkshopMounter", function()
         local mounted_ids = {}
 
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
-            print("MOUNTING", wsid)
+            MsgC(messagecolor,  "Mounting "..wsid.."\n" )
             -- NOTE:
             -- Any error models currently loaded that the mounted addon provides will be reloaded.
             -- Any error materials currently loaded that the mounted addon provides will NOT be reloaded.
