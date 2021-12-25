@@ -374,6 +374,8 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
             MVIS_DATA[thekey] = {}
         end
 
+        assert(MVIS_DATA[thekey])
+
         local ts = (YoutubeActualTimestamp() or 0) + 0.02
         local fts = ts * 60
         local vframe = (math.floor(fts) + 1) + MVIS_LOOKAHEAD_FRAMES
@@ -420,9 +422,9 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
         end
 
         MVIS_LASTVFRAME = vframe
-        local drive = Lerp(fts % 1, MVISTAB_LAST.drive, MVISTAB_NEXT.drive)
-        local color = Lerp(fts % 1, MVISTAB_LAST.color, MVISTAB_NEXT.color)
-        local flash = Lerp(fts % 1, MVISTAB_LAST.flash, MVISTAB_NEXT.flash)
+        local drive = Lerp(fts % 1, MVISTAB_LAST.drive or 0, MVISTAB_NEXT.drive or 0)
+        local color = Lerp(fts % 1, MVISTAB_LAST.color or 0, MVISTAB_NEXT.color or 0)
+        local flash = Lerp(fts % 1, MVISTAB_LAST.flash or 0, MVISTAB_NEXT.flash or 0)
 
         if drive > 1 then
             DrawColorModify({

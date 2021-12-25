@@ -678,12 +678,9 @@ function HeyNozFillThisIn(self, cust)
                 function wb:GetWSID(data)
                     _self.wsid = data
 
-                    if IsValid(wsidentry) then
-                        wsidentry:SetValue(data)
-                        modelentry:SetValue("")
+                    if IsValid(label) then
+                        label:SetText("Loading...")
                     end
-
-                    label:SetText("Loading...")
                 end
             end
         end)

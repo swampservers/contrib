@@ -397,6 +397,8 @@ function SWEP:Boof(locl)
     return math.max(0, math.min((ct - pf) * 5, ((pf + 1) - ct) / 0.8))
 end
 
+--NOMINIFY
+
 function SWEP:SecondaryAttack()
     if SERVER then
         if self.REMOVING then return end

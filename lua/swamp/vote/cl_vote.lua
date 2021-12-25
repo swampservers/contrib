@@ -181,6 +181,8 @@ net.Receive("StartVote", function(len)
     ACTIVEVOTESTARTTIME = RealTime()
     ACTIVEVOTEENDTIME = RealTime() + duration
 
+
+    if Me then
     Me:AddPlayerOption(title, duration, function(id)
         if ACTIVEVOTEOPTIONS[id] then
             net.Start("DoVote")
@@ -192,4 +194,5 @@ net.Receive("StartVote", function(len)
     end, function()
         DRAWVOTE()
     end)
+end
 end)

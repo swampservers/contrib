@@ -17,7 +17,7 @@ end
 
 function SS_SanitizeModel(mdl)
     if not isstring(mdl) then return nil end
-    if mdl:len() > 100 then return nil end
+    if mdl:len() > 200 then return nil end
     if not mdl:StartWith("models/") or not mdl:EndsWith(".mdl") then return nil end
 
     return mdl
