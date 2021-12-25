@@ -56,7 +56,7 @@ function Player:SetObesity(obs)
     if obs == 1 and self:Obesity() == 1 then return end
     obs = obs or self:Obesity()
     self:SetNWFloat("garfield", obs)
-    local sc = self:HasWeapon("weapon_garfield") and 0.55 or 1
+    local sc = 1 --self:HasWeapon("weapon_garfield") and 0.55 or 1
     -- if not self:IsBot() then
     self:SetModelScale(self:ObesityScale() * sc)
 
