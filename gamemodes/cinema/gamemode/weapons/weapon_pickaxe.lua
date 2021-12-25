@@ -128,7 +128,7 @@ function SWEP:PrimaryAttack()
         if IsValid(ent) then
             if ent:GetClass() == "cvx_leaf" then
                 sound.Play("swamponions/pickaxe.wav", ent:GetPos(), 80, 100, 1)
-                x, y, z = cvx_get_trace_hit_vox(tr)
+                local x, y, z = cvx_get_trace_hit_vox(tr)
 
                 if x then
                     local ch = 1

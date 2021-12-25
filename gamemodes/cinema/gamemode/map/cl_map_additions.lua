@@ -164,7 +164,7 @@ hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function(depth, sk
         return virtual_hit / 2 + 0.5
     end
 
-    vofs = -0.01
+    local vofs = -0.01
     local v0 = calc_parallax(-to_c0.z, -w_height, v_height) + vofs
     local v1 = calc_parallax(-to_c1.z, w_height, v_height) + vofs
     local u0 = calc_parallax(to_c0:Dot(Vector(1, -1, 0):GetNormalized()), -w_width, v_width)

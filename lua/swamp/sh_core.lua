@@ -213,7 +213,7 @@ end
 
 function vector:Print(round)
     round = round or 1
-    txt = ("Vector(%s, %s, %s)"):format(math.Round(self.x / round) * round, math.Round(self.y / round) * round, math.Round(self.z / round) * round)
+    local txt = ("Vector(%s, %s, %s)"):format(math.Round(self.x / round) * round, math.Round(self.y / round) * round, math.Round(self.z / round) * round)
     SetClipboardText(txt)
     print(txt)
 end

@@ -725,7 +725,7 @@ function SWEP:GunFire()
 
     -- player "shoot" animation
     ply:DoAttackEvent()
-    spread = self:GetSpread()
+    local spread = self:GetSpread()
     -- self:FireCSSBullet(ply:GetAimVector():Angle() + 2 * ply:GetViewPunchAngles(), primarymode, spread)
     -- >1 is good cuz the bullets will always appear below the crosshair otherwise (cuz the kick happens after the shot)
     local recoil_factor = 1.5
@@ -736,7 +736,7 @@ function SWEP:GunFire()
     local r = spread * util.SharedRandom("SpreadRadius", 0, 1) ^ 0.5
     local x = nil
     local y = nil
-    dir = ang:Forward() + math.sin(a) * r * ang:Right() + math.cos(a) * r * ang:Up()
+    local dir = ang:Forward() + math.sin(a) * r * ang:Right() + math.cos(a) * r * ang:Up()
     dir:Normalize()
     -- self:PenetrateBullet(dir, ply:GetShootPos(), self.Range, self.Penetration, self.Damage, self.RangeModifier) --, self:GetPenetrationFromBullet())
     -- flCurrentDistance = flCurrentDistance or 0

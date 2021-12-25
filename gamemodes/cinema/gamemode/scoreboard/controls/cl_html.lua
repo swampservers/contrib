@@ -218,7 +218,7 @@ concommand.Add("cinema_debug_videojavascript", function(ply, cmd, str)
         return
     end
 
-    st = str[1] --string.JavascriptSafe(str[1])
+    local st = str[1] --string.JavascriptSafe(str[1])
     print("javascript (" .. st .. ") sent to " .. ply.theaterPanel:GetURL())
     ply.theaterPanel:RunJavascript(st)
 end)

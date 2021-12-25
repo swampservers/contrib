@@ -27,7 +27,7 @@ function SS_GetColoredMaterialClone(mat, color)
         local clone1 = Material("c" .. tostring(color):gsub("%.", "p"):gsub(" ", "_") .. "/../" .. mat)
         local clone1_name = clone1:GetName()
 
-        if clone1_name == "__error" then
+        if clone1_name == "___error" then
             SwampMaterialIndex = SwampMaterialIndex + 1
             local default = "vertexlitgeneric\n{\n}"
             local data = file.Read("materials/" .. mat .. ".vmt", "GAME")

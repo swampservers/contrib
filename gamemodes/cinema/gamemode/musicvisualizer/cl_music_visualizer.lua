@@ -187,8 +187,8 @@ function MvisInterpolating(k, inc, gen)
         MVIS_TRACKERS[k][3] = gen(frameid + 1)
     end
 
-    v0 = MVIS_TRACKERS[k][2]
-    v1 = MVIS_TRACKERS[k][3]
+    local v0 = MVIS_TRACKERS[k][2]
+    local v1 = MVIS_TRACKERS[k][3]
 
     if isfunction(v0) then
         v0 = v0()
@@ -214,7 +214,7 @@ function MvisNextFrame(...)
     local l, t = MVISTAB_LAST, MVISTAB_NEXT
 
     -- the inputs are MVIS_LOOKAHEAD_FRAMES ahead of time, just correct it for now, but it could be useful
-    col, colchange, amplitude, fft1, fft2, harmonics = unpack(MvisDelay("lookahead_delay", {...}, MVIS_LOOKAHEAD_FRAMES))
+    local col, colchange, amplitude, fft1, fft2, harmonics = unpack(MvisDelay("lookahead_delay", {...}, MVIS_LOOKAHEAD_FRAMES))
 
     t.avgfft1 = table.isum(fft1) / #fft1
     t.maxharmonic = table.imax(harmonics)
@@ -248,8 +248,8 @@ function MvisNextFrame(...)
     t.fft2d = math.max(fft1[2], fft1[3])
     -- MvisDecayingMax("fft1d", fft[1], 0.9, false)
     -- MvisDecayingMax("fft2d", math.max(fft1[2],fft1[3]), 0.9, false)
-    a, b = t.fft1d, t.fft2d
-    wa, wb = math.pow(a, 3), math.pow(b, 3) * 0.75
+    local a, b = t.fft1d, t.fft2d
+    local wa, wb = math.pow(a, 3), math.pow(b, 3) * 0.75
     t.dualbass1 = (b * wb - a * wa) / (wa + wb + 0.001)
     -- t.dualbass1 = t.fft2d*0.75>t.fft1d and t.fft2d or -t.fft1d
     MvisDecayingMax("dualbass_factor", math.abs((l.dualbass2 or 0) - t.dualbass1), 0.2, true)

@@ -163,8 +163,8 @@ function PANEL:Paint(w, h)
     --surface.SetDrawColor( 85, 167, 221, 150 )
     surface.SetDrawColor(Color(0, 0, 0, 100))
     -- surface.DrawRect(3, (self:GetTall() / 2) + 8, self:GetWide() - 6, 3)
-    x, y = self.Slider:GetPos()
-    w2, h2 = self.Slider:GetSize()
+    local x, y = self.Slider:GetPos()
+    local w2, h2 = self.Slider:GetSize()
     surface.DrawRect(x, y + h2 / 2 - 1, w2, 3)
 end
 

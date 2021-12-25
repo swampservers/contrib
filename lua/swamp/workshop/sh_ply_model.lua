@@ -15,7 +15,7 @@ function Player:GetDisplayModel()
     local st = self:GetNW2String("DisplayModel", "")
     if st == "" then return self:GetModel(), nil end
     -- wsid,bodygroups might be nil
-    mdl, wsid, bodygroups = unpack(("@"):Explode(st))
+    local mdl, wsid, bodygroups = unpack(("@"):Explode(st))
 
     return mdl, wsid, bodygroups
 end
