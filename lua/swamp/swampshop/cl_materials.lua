@@ -33,28 +33,43 @@ function SS_GetColoredMaterialClone(mat, color)
             local data = file.Read("materials/" .. mat .. ".vmt", "GAME")
 
             if not data then
-                print("MISSING", mat)
+                if mat~="___error" then print("MISSING", mat) end
                 data = default
             end
 
             data = data:Trim()
-            local lines = ("\n"):Explode(data)
-
-            for i, line in ipairs(lines) do
-                line = line:lower()
-
-                if line:find("color2") then
-                    -- print("MATERIAL "..mat.." HAS COLOR2 ALREADY FIX THIS")
-                    ErrorNoHalt("TELL SWAMP TO FIX " .. mat)
-                end
-            end
 
             if not data:EndsWith("}") then
                 print("INVALID", mat)
                 data = default
             end
 
-            data = data:sub(1, -2) .. '\n"$color2" "[' .. tostring(color) .. ']"\n}'
+            local kvtab = util.KeyValuesToTable( data)
+
+            local c2 = kvtab["$color2"]
+            if c2 then
+                if c2:StartWith("[") or c2:StartWith("{") then
+                    local mul = 1
+                    if c2:StartWith("{") then
+                        mul = 1/255
+                    end
+                    c2 = ("%s+"):Explode(c2:sub(2,-2):Trim(), true)
+                    if #c2 == 3 then
+                        c2 = Vector(tonumber(c2[1]),tonumber(c2[2]),tonumber(c2[3])) * mul * color
+                    else
+                        c2 = color
+                    end
+                else
+                    c2 = color
+                end
+
+                kvtab["$color2"] = "[" .. tostring(c2) .. "]"
+                local parentkey = ("{"):Explode(data)[1]:Trim():Trim('"'):Trim("'")
+                data = util.TableToKeyValues(kvtab, parentkey)
+            else
+                data = data:sub(1, -2) .. '\n"$color2" "[' .. tostring(color) .. ']"\n}'
+            end
+
             file.Write(("swamp_vmtcache/%s.vmt"):format(SwampMaterialIndex), data)
             SS_ClonedMaterials[key] = "../data/swamp_vmtcache/" .. SwampMaterialIndex
         else
