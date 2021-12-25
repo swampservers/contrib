@@ -33,7 +33,10 @@ function SS_GetColoredMaterialClone(mat, color)
             local data = file.Read("materials/" .. mat .. ".vmt", "GAME")
 
             if not data then
-                if mat~="___error" then print("MISSING", mat) end
+                if mat ~= "___error" then
+                    print("MISSING", mat)
+                end
+
                 data = default
             end
 
@@ -44,18 +47,21 @@ function SS_GetColoredMaterialClone(mat, color)
                 data = default
             end
 
-            local kvtab = util.KeyValuesToTable( data)
-
+            local kvtab = util.KeyValuesToTable(data)
             local c2 = kvtab["$color2"]
+
             if c2 then
                 if c2:StartWith("[") or c2:StartWith("{") then
                     local mul = 1
+
                     if c2:StartWith("{") then
-                        mul = 1/255
+                        mul = 1 / 255
                     end
-                    c2 = ("%s+"):Explode(c2:sub(2,-2):Trim(), true)
+
+                    c2 = ("%s+"):Explode(c2:sub(2, -2):Trim(), true)
+
                     if #c2 == 3 then
-                        c2 = Vector(tonumber(c2[1]),tonumber(c2[2]),tonumber(c2[3])) * mul * color
+                        c2 = Vector(tonumber(c2[1]), tonumber(c2[2]), tonumber(c2[3])) * mul * color
                     else
                         c2 = color
                     end
