@@ -299,7 +299,7 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         DermaButton.DoClick = function()
             PPM_UpdateLocalPonyCfg('imgurcmark', SanitizeImgurId(TextEntry:GetValue()))
             --print("imgur cmark:"..Me.ponydata.imgurcmark)
-            TextEntry:SetValue(Me.ponydata.imgurcmark)
+            TextEntry:SetValue(Me.ponydata.imgurcmark or "")
         end
 
         local DermaButton = vgui.Create("DButton", CONTAINER)

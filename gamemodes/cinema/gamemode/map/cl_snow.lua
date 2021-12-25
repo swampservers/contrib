@@ -65,17 +65,21 @@ end
 
 concommand.Add("snow", AddSnow)
 
-if os.date("%b") == "Dec" then
-    hook.Add("InitPostEntity", "AddSnow", function()
-        if file.Exists("dontsnow.txt", "DATA") then return end
-        file.Write("dontsnow.txt", "")
-        AddSnow()
+-- if os.date("%b") == "Dec" then
+--     hook.Add("InitPostEntity", "AddSnow", function()
+--         if file.Exists("dontsnow.txt", "DATA") then return end
+        
+        
+--         timer.Simple(3, function()
+--             file.Write("dontsnow.txt", "")
+--             AddSnow()
 
-        timer.Simple(3, function()
-            file.Delete("dontsnow.txt")
-        end)
-    end)
-end
+--             timer.Simple(3, function()
+--                 file.Delete("dontsnow.txt")
+--             end)
+--         end)
+--     end)
+-- end
 
 --[[
     Material("swamponions/ground/concretefloor016a"):SetString("$surfaceprop","snow")

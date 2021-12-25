@@ -73,10 +73,23 @@ function ENT:AltMod()
     self:CycleInstrument()
 end
 
--- MIDI stuff
-function LOADMIDI()
-    if file.Exists("lua/bin/gmcl_midi_win32.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_win64.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_linux.dll", "MOD") then
-        print("Attempting to load MIDI")
+function MIDI_LOAD()
+-- 
+    -- local extensions = {
+    --     "win32",
+    --     "win64",
+    --     "osx",
+    --     "linux",
+    --     "linux64"
+    -- }
+
+    -- local exist = false
+    -- for i,ex in ipairs(extensions) do
+    --     exist = exist or file.Exists("lua/bin/gmcl_midi_"..ex..".dll", "MOD")
+    -- end
+
+    -- if exist then
+        -- print("Attempting to load MIDI")
         require("midi")
 
         if #midi.GetPorts() > 0 then
@@ -297,10 +310,12 @@ function LOADMIDI()
             end)
             --chat.AddText("PIANO FLOOD DETECTED")
         else
-            print("No MIDI devices found")
+            print(midi.FAILED and 
+            "MIDI binary module (for the piano) wasn't found. Install it from https://github.com/FPtje/gmcl_midi"
+             or "No MIDI devices found")
         end
-    end
+    -- end
 end
 
-concommand.Add("midi_reload", LOADMIDI)
-LOADMIDI()
+concommand.Add("midi_reload", MIDI_LOAD)
+

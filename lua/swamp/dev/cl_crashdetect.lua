@@ -4,8 +4,9 @@ if not CRASH_DATA then
     local crashtime = file.Time("swamp_crashdata.txt", "DATA")
 
     if lastcrash then
-        timer.Simple(0.1, function()
-            timer.Simple(0.1, function()
+        -- timer.Simple(0.1, function()
+        --     timer.Simple(0.1, function()
+        hook.Add("InitPostEntity", "ShowCrashDialog", function()
                 local delta = os.time() - crashtime
 
                 local function plural(x, st)
@@ -43,9 +44,9 @@ if not CRASH_DATA then
                     p:MakePopup()
                     p:DoModal()
 
-                    timer.Simple(0.1, function()
+                    -- timer.Simple(0.1, function()
                         p:CloseOnEscape()
-                    end)
+                    -- end)
 
                     p:SetTitle("Crashed?")
 
@@ -104,7 +105,7 @@ if not CRASH_DATA then
                         end
                     end
                 end)
-            end)
+            -- end)
         end)
     end
 

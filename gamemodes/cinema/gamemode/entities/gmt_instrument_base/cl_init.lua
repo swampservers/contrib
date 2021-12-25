@@ -93,6 +93,12 @@ function ENT:Think()
     end
 
     if not IsValid(Me.Instrument) or Me.Instrument ~= self then return end
+
+    if not MIDI_AUTOLOADED then
+        MIDI_LOAD()
+        MIDI_AUTOLOADED=true
+    end
+
     if self.DelayKey and self.DelayKey > CurTime() then return end
 
     -- Update last pressed
