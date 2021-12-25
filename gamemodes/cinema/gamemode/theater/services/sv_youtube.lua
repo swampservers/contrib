@@ -52,7 +52,7 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
         local info = {}
         info.title = table.Lookup(item, 'snippet.title')
 
-        if (table.Lookup(item, 'snippet.liveBroadcastContent') ~= 'none') then
+        if table.Lookup(item, 'snippet.liveBroadcastContent') ~= 'none' then
             info.duration = 0
         else
             local durStr = table.Lookup(item, 'contentDetails.duration', '')

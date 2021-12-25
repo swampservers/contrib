@@ -48,7 +48,7 @@ function GetMapPropTable()
         },
         {
             class = "prop_physics",
-            pos = Vector(724 + (64 * 40), -436 - 1, -2880 + (32 * 40)),
+            pos = Vector(724 + 64 * 40, -436 - 1, -2880 + 32 * 40),
             ang = Angle(0, 180, 0),
             model = "models/swamponions/mineslimits.mdl",
             noshadows = true

@@ -29,7 +29,7 @@ local anonymousOverlayImage = Material("anonymous/overlay.png")
 
 function SWEP:DrawHUD()
     local shade = 120
-    surface.SetDrawColor(shade, shade, shade, math.max(0, 255 - (math.max(0, EyePos():Distance(Me:GetPos() + Me:GetCurrentViewOffset()) - 20) * 10)))
+    surface.SetDrawColor(shade, shade, shade, math.max(0, 255 - math.max(0, EyePos():Distance(Me:GetPos() + Me:GetCurrentViewOffset()) - 20) * 10))
     surface.SetMaterial(anonymousOverlayImage)
     local imgh = ScrH()
 
@@ -40,7 +40,7 @@ function SWEP:DrawHUD()
     local sizeplus = 0.1
 
     if not Me:InVehicle() then
-        surface.DrawTexturedRectUV(((imgh * 1920 / 1200) - ScrW()) / -2, (imgh - ScrH()) / -2, imgh * 1920 / 1200, imgh, 0 + sizeplus, 0 + sizeplus, 1 - sizeplus, 1 - sizeplus)
+        surface.DrawTexturedRectUV((imgh * 1920 / 1200 - ScrW()) / -2, (imgh - ScrH()) / -2, imgh * 1920 / 1200, imgh, 0 + sizeplus, 0 + sizeplus, 1 - sizeplus, 1 - sizeplus)
     end
 end
 
@@ -79,7 +79,7 @@ end
 --forward left down
 function anonymousmaskrenderat(thematrix, down, forward, left, self, p)
     --move down,move forward,move left
-    local thepos = thematrix:GetTranslation() + (thematrix:GetRight() * down) + (thematrix:GetUp() * forward) + (thematrix:GetForward() * left)
+    local thepos = thematrix:GetTranslation() + thematrix:GetRight() * down + thematrix:GetUp() * forward + thematrix:GetForward() * left
     local theang = thematrix:GetAngles()
     self:SetModelScale(1, 0)
 

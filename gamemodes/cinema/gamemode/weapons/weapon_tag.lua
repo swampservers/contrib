@@ -112,7 +112,7 @@ function SWEP:DrawHUD()
     local displayString = "You have " .. displayTime .. " Seconds to tag someone!"
 
     if displayTime > 30 then
-        displayString = "You are IT and FROZEN for " .. (displayTime - (tagTimer - 5)) .. " seconds!"
+        displayString = "You are IT and FROZEN for " .. displayTime - (tagTimer - 5) .. " seconds!"
     end
 
     local TextWidth = surface.GetTextSize(displayString)
@@ -143,7 +143,7 @@ function SWEP:PrimaryAttack(right)
             local tracepos = self.Owner:GetEyeTrace().HitPos
 
             for k, v in pairs(allply) do
-                if (v:Alive() and v ~= self.Owner) then
+                if v:Alive() and v ~= self.Owner then
                     local otherpos = v:LocalToWorld(v:OBBCenter())
                     local dis = tracepos:Distance(otherpos)
 

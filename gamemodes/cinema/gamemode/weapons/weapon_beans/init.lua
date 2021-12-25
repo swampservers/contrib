@@ -8,7 +8,7 @@ util.AddNetworkString("Beans_Eat_Start")
 if SERVER then
     timer.Create("BeansFart", 1.7, 0, function()
         for k, ply in ipairs(Ents.player) do
-            if (ply.BeansEaten ~= nil and ply.BeansEaten > 0 and math.random(0, 25) < ply.BeansEaten) then
+            if ply.BeansEaten ~= nil and ply.BeansEaten > 0 and math.random(0, 25) < ply.BeansEaten then
                 BeanFart(ply)
                 ply.BeansEaten = math.Clamp(ply.BeansEaten - math.random(0, 25), 0, 100000)
             end
@@ -17,7 +17,7 @@ if SERVER then
 end
 
 function BeanFart(ply)
-    if (not IsValid(ply)) then return end
+    if not IsValid(ply) then return end
     ply:ExtEmitSound("fart/shitpants.wav")
     local pos = ply:GetPos()
 

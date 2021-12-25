@@ -110,7 +110,7 @@ function SWEP:PlayDeploySound()
     self:SetCannotReload(nil)
     local owner = self:GetOwner()
 
-    if (owner and owner:IsValid() and owner:IsPlayer() and owner:Alive()) then
+    if owner and owner:IsValid() and owner:IsPlayer() and owner:Alive() then
         self:EmitSound(self.DeploySound)
     end
 end
@@ -200,7 +200,7 @@ end
 function SWEP:CanPrimaryAttack()
     if not IsValid(self.Owner) then return false end
 
-    if (self:Clip1() <= 0) then
+    if self:Clip1() <= 0 then
         self:DryFire()
         self:SetNextPrimaryFire(CurTime() + 0.3)
         --self:Reload()
@@ -353,7 +353,7 @@ if CLIENT then
         BobTime = BobTime + (RT - BobTimeLast) * (math.min(xyspeed, 400) / 40)
         BobTimeLast = RT
 
-        if (not game.SinglePlayer() and IsFirstTimePredicted()) or game.SinglePlayer() then
+        if not game.SinglePlayer() and IsFirstTimePredicted() or game.SinglePlayer() then
             if self.Owner:IsOnGround() then
                 t = Lerp(FrameTime() * 16, t, 1)
             else
@@ -419,7 +419,7 @@ if CLIENT then
             local pos, ang = self:GetBoneOrientation(self.VElements, v, vm)
             if not pos then continue end
 
-            if (v.type == "Model" and IsValid(model)) then
+            if v.type == "Model" and IsValid(model) then
                 model:SetPos(pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z)
                 ang:RotateAroundAxis(ang:Up(), v.angle.y)
                 ang:RotateAroundAxis(ang:Right(), v.angle.p)
@@ -432,17 +432,17 @@ if CLIENT then
 
                 if v.material == "" then
                     model:SetMaterial("")
-                elseif (model:GetMaterial() ~= v.material) then
+                elseif model:GetMaterial() ~= v.material then
                     model:SetMaterial(v.material)
                 end
 
-                if (v.skin and v.skin ~= model:GetSkin()) then
+                if v.skin and v.skin ~= model:GetSkin() then
                     model:SetSkin(v.skin)
                 end
 
                 if v.bodygroup then
                     for k, v in pairs(v.bodygroup) do
-                        if (model:GetBodygroup(k) ~= v) then
+                        if model:GetBodygroup(k) ~= v then
                             model:SetBodygroup(k, v)
                         end
                     end
@@ -501,7 +501,7 @@ if CLIENT then
                 pos, ang = m:GetTranslation(), m:GetAngles()
             end
 
-            if (IsValid(self.Owner) and self.Owner:IsPlayer() and ent == self.Owner:GetViewModel() and self.ViewModelFlip) then
+            if IsValid(self.Owner) and self.Owner:IsPlayer() and ent == self.Owner:GetViewModel() and self.ViewModelFlip then
                 ang.r = -ang.r -- Fixes mirrored models
             end
         end
@@ -513,7 +513,7 @@ if CLIENT then
     end
 
     function SWEP:ResetBonePositions(vm)
-        if (not vm:GetBoneCount()) then return end
+        if not vm:GetBoneCount() then return end
 
         for i = 0, vm:GetBoneCount() do
             vm:ManipulateBoneScale(i, Vector(1, 1, 1))

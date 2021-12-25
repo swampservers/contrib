@@ -73,7 +73,7 @@ function SWEP:Think()
     if not IsValid(self.Owner) then return end
     if self.Owner:InVehicle() then return end
 
-    if (self.Owner:KeyReleased(IN_ATTACK)) then
+    if self.Owner:KeyReleased(IN_ATTACK) then
         stopairhornsound(self)
         self:SetHoldType("slam")
     end
@@ -99,7 +99,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()

@@ -118,7 +118,7 @@ local DOOM3_STATE_ATTACK = 4
 function SWEP:CanPrimaryAttack()
     if not IsValid(self.Owner) then return false end
 
-    if (self:Ammo1() <= 0) then
+    if self:Ammo1() <= 0 then
         self:DryFire()
         self:SetNextPrimaryFire(CurTime() + 0.3)
         --self:Reload()
@@ -264,7 +264,7 @@ function SWEP:BfgFire(charge)
     if SERVER then
         --strip after firing
         self:TimerSimple(0.5, function()
-            if (SERVER and self:Ammo1() <= 0) then
+            if SERVER and self:Ammo1() <= 0 then
                 if IsValid(self) then
                     self:Remove()
                 end

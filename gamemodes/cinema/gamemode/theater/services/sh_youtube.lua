@@ -34,8 +34,8 @@ if CLIENT then
 	]]
 
     function SERVICE:LoadVideo(Video, panel)
-        if (self:IsMature(Video)) then
-            if (string.StartWith(panel:GetURL(), "http://swamp.sv/s/cinema/youtube.html")) then
+        if self:IsMature(Video) then
+            if string.StartWith(panel:GetURL(), "http://swamp.sv/s/cinema/youtube.html") then
                 theater.LoadVideo(Video, true)
             end
 
@@ -113,7 +113,7 @@ if CLIENT then
                 end
             end)
         else
-            if (string.StartWith(panel:GetURL(), "https://www.youtube.com/embed/")) then
+            if string.StartWith(panel:GetURL(), "https://www.youtube.com/embed/") then
                 theater.LoadVideo(Video, true)
             end
 

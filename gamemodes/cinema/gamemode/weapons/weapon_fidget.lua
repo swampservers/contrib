@@ -38,7 +38,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         self:FidgetThink()
         local bn = ply.IsPony and ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
@@ -110,7 +110,7 @@ if CLIENT then
         end
 
         local spinvel = math.max(0, ((self.FidgetFlick or 0) - t) * 60)
-        self.spinpos = (self.spinpos or 0) + (spinvel * (t - self.LastFidgetThink))
+        self.spinpos = (self.spinpos or 0) + spinvel * (t - self.LastFidgetThink)
         self.LastFidgetThink = t
         self.RPMdisplay = math.floor(spinvel / 6.0)
     end
@@ -249,7 +249,7 @@ else
 
     net.Receive("FidgetUpdateCustomColor", function(len, ply)
         if not ply:HasWeapon("weapon_fidget") then return end
-        if ((ply.LastCustomFidgetColorChange or 0) + 1) > CurTime() then return end
+        if (ply.LastCustomFidgetColorChange or 0) + 1 > CurTime() then return end
         ply.LastCustomFidgetColorChange = CurTime()
         local vec = net.ReadVector()
         net.Start("FidgetUpdateCustomColor")

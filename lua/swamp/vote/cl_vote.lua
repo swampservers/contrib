@@ -36,12 +36,12 @@ function Vote_ShowMenu(kick)
 
         for k2, fram in pairs(framz) do
             local labl = vgui.Create("DLabel", fram)
-            labl:SetText(k == 0 and (fram == frame1 and "Title" or "Reason") or ("Option " .. tostring(k)))
+            labl:SetText(k == 0 and (fram == frame1 and "Title" or "Reason") or "Option " .. tostring(k))
             labl:SetDark(true)
-            labl:SetPos(5, 6 + (k * 28))
+            labl:SetPos(5, 6 + k * 28)
             labl:SetSize(50, 20)
             local TextEntry = vgui.Create("DTextEntry", fram)
-            TextEntry:SetPos(55, 6 + (k * 28))
+            TextEntry:SetPos(55, 6 + k * 28)
             TextEntry:SetSize(150, 20)
             TextEntry:SetText("")
 
@@ -107,7 +107,7 @@ function Vote_ShowMenu(kick)
     end
 
     plylist.OnRowSelected = function(lst, index, pnl)
-        votekickplayer = (pnl.ply)
+        votekickplayer = pnl.ply
     end
 end
 
@@ -145,11 +145,11 @@ function DRAWVOTE()
     local bottom = ScrH() / 2
 
     if SwampChat then
-        bottom = math.min(bottom, (SwampChat.PosY - 16))
+        bottom = math.min(bottom, SwampChat.PosY - 16)
     end
 
     local p1, p2, p3, p4 = 4, 10, 2, 4
-    local h = lh * (#options) + th + p1 + p2 + p3 + p4
+    local h = lh * #options + th + p1 + p2 + p3 + p4
     local y = bottom - h
     draw.GradientShadowRight(0, y, lw * 8, h, 0.8)
     y = y + p1

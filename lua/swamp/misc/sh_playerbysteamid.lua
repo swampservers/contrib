@@ -24,21 +24,21 @@ if SERVER then
     --- Unlike the built-in function, this (along with player.GetBySteamID64 and player.GetByAccountID) is fast.
     function player.GetBySteamID(id)
         local ply = SteamIDToPlayer[string.upper(id)] or false
-        assert(ply == false or (IsValid(ply) and ply:IsPlayer()))
+        assert(ply == false or IsValid(ply) and ply:IsPlayer())
 
         return ply
     end
 
     function player.GetBySteamID64(id64)
         local ply = SteamID64ToPlayer[id64] or false
-        assert(ply == false or (IsValid(ply) and ply:IsPlayer()))
+        assert(ply == false or IsValid(ply) and ply:IsPlayer())
 
         return ply
     end
 
     function player.GetByAccountID(id)
         local ply = AccountIDToPlayer[id] or false
-        assert(ply == false or (IsValid(ply) and ply:IsPlayer()))
+        assert(ply == false or IsValid(ply) and ply:IsPlayer())
 
         return ply
     end

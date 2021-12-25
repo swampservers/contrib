@@ -13,7 +13,7 @@ function DecodeMazePart2D(st, d1, d2)
 
         for id = 1, d2 do
             local bi = bitid % 8
-            local ci = ((bitid - bi) / 8) + 1
+            local ci = (bitid - bi) / 8 + 1
             local char = string.byte(st[ci])
             char = bit.band(1, bit.rshift(char, bi))
             table.insert(row, char == 1)
@@ -175,7 +175,7 @@ function ENT:Initialize()
 
     local side = {false, false}
 
-    for i = 1, #(hwallst[1]) - 2 do
+    for i = 1, #hwallst[1] - 2 do
         table.insert(side, 2, addwall)
     end
 
@@ -183,7 +183,7 @@ function ENT:Initialize()
 
     side = {false, false}
 
-    for i = 1, #(hwallst[1]) - 2 do
+    for i = 1, #hwallst[1] - 2 do
         table.insert(side, 2, addwall)
     end
 
@@ -191,7 +191,7 @@ function ENT:Initialize()
 
     side = {false, false}
 
-    for i = 1, #(vwalls[1]) - 2 do
+    for i = 1, #vwalls[1] - 2 do
         table.insert(side, 2, addwall)
     end
 
@@ -199,7 +199,7 @@ function ENT:Initialize()
 
     side = {false, false}
 
-    for i = 1, #(vwalls[1]) - 2 do
+    for i = 1, #vwalls[1] - 2 do
         table.insert(side, 2, addwall)
     end
 

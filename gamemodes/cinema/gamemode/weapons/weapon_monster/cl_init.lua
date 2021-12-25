@@ -25,27 +25,27 @@ function SWEP:DrawWorldModel()
 
         if ply:IsPony() then
             --pony position
-            opos = opos + (oang:Forward() * 7.5) + (oang:Right() * -2.5) + (oang:Up() * -2.5)
+            opos = opos + oang:Forward() * 7.5 + oang:Right() * -2.5 + oang:Up() * -2.5
             oang:RotateAroundAxis(oang:Right(), 0)
             oang:RotateAroundAxis(oang:Forward(), 5)
             oang:RotateAroundAxis(oang:Up(), -30)
-            opos = opos + (oang:Up() * (2.3 + ((canScale - 1) * -10.25)))
+            opos = opos + oang:Up() * (2.3 + (canScale - 1) * -10.25)
         else
             if ply.monsterArmFullyUp then
                 --head position
-                opos = opos + (oang:Forward() * 2.5) + (oang:Right() * 5) + (oang:Up() * -.5)
+                opos = opos + oang:Forward() * 2.5 + oang:Right() * 5 + oang:Up() * -.5
                 oang:RotateAroundAxis(oang:Forward(), 225)
                 oang:RotateAroundAxis(oang:Right(), -30)
                 oang:RotateAroundAxis(oang:Up(), 130)
-                opos = opos + (oang:Up() * (canScale - 1) * -10.25)
+                opos = opos + oang:Up() * (canScale - 1) * -10.25
             else
                 --hand position
                 oang:RotateAroundAxis(oang:Forward(), 110)
                 oang:RotateAroundAxis(oang:Right(), 100)
-                opos = opos + (oang:Forward() * 2) + (oang:Up() * -2.3) + (oang:Right() * -1)
+                opos = opos + oang:Forward() * 2 + oang:Up() * -2.3 + oang:Right() * -1
                 oang:RotateAroundAxis(oang:Forward(), 110)
                 oang:RotateAroundAxis(oang:Up(), 20)
-                opos = opos + (oang:Up() * (canScale - 1) * -10.25)
+                opos = opos + oang:Up() * (canScale - 1) * -10.25
             end
         end
 
@@ -117,7 +117,7 @@ net.Receive("MonsterZero", function()
     for i = 0, 19 do
         timer.Simple(i / 60, function()
             if IsValid(ply) and ply:Alive() then
-                monster_interpolate_arm(ply, math.abs(m - ((19 - i) / 20)))
+                monster_interpolate_arm(ply, math.abs(m - (19 - i) / 20))
             end
         end)
     end
@@ -127,7 +127,7 @@ function monster_interpolate_arm(ply, mult)
     if not IsValid(ply) then return end
     local b1 = ply:LookupBone("ValveBiped.Bip01_R_Upperarm")
     local b2 = ply:LookupBone("ValveBiped.Bip01_R_Forearm")
-    if (not b1) or (not b2) then return end
+    if not b1 or not b2 then return end
     ply:ManipulateBoneAngles(b1, Angle(20 * mult, -62 * mult, 10 * mult), "monster")
     ply:ManipulateBoneAngles(b2, Angle(-5 * mult, -16 * mult, -50 * mult), "monster")
 

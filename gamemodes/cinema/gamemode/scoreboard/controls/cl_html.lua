@@ -224,15 +224,15 @@ concommand.Add("cinema_debug_videojavascript", function(ply, cmd, str)
 end)
 
 function PANEL:ConsoleMessage(msg, func)
-    if (Me.videoDebug and not isstring(msg)) then
+    if Me.videoDebug and not isstring(msg) then
         print("[JS] " .. tostring(msg), type(msg))
     end
 
-    if (not isstring(msg)) then
+    if not isstring(msg) then
         msg = "*js variable*"
     end
 
-    if (Me.videoDebug and isstring(msg) and not msg:StartWith("HREF:") and not msg:StartWith("T:") and not msg:StartWith("DURATIONTITLE:")) then
+    if Me.videoDebug and isstring(msg) and not msg:StartWith("HREF:") and not msg:StartWith("T:") and not msg:StartWith("DURATIONTITLE:") then
         print(msg)
     end
 
@@ -245,7 +245,7 @@ function PANEL:ConsoleMessage(msg, func)
         end
     end
 
-    if (self.m_bAllowLua and msg:StartWith("RUNLUA:")) then
+    if self.m_bAllowLua and msg:StartWith("RUNLUA:") then
         local strLua = msg:sub(8)
         SELF = self
         --Too much exploit potential here
@@ -264,7 +264,7 @@ function PANEL:ConsoleMessage(msg, func)
         return
     end
 
-    if (msg:StartWith("CLIPBOARD:")) then
+    if msg:StartWith("CLIPBOARD:") then
         local strLua = msg:sub(11)
         SELF = self
         SetClipboardText(strLua)

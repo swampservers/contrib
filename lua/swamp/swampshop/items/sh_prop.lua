@@ -36,7 +36,7 @@
     },
     GetSettings = function(self)
         return {
-            color = (SS_GetRating(self.specs.rating or 0).id >= 5) and {
+            color = SS_GetRating(self.specs.rating or 0).id >= 5 and {
                 max = 5
             } or false,
             imgur = SS_GetRating(self.specs.rating or 0).id >= 7

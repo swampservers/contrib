@@ -30,7 +30,7 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
     self:SetModelScale(0.8)
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -158,7 +158,7 @@ if CLIENT then
             local self = Me:GetActiveWeapon()
             local tr = {}
             tr.start = self.Owner:GetShootPos()
-            tr.endpos = self.Owner:GetShootPos() + (self.Owner:GetAimVector() * 120)
+            tr.endpos = self.Owner:GetShootPos() + self.Owner:GetAimVector() * 120
             tr.filter = self.Owner
             tr.mask = MASK_SHOT
             local trace = util.TraceLine(tr)

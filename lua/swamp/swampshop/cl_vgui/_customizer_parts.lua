@@ -25,7 +25,7 @@ vgui.Register('DSSCustomizerSection', {
         self:SizeToChildren(false, true)
         local p = self:GetParent()
         local p2 = IsValid(p) and p:GetParent()
-        self:DockMargin(0, 0, ((IsValid(p) and IsValid(p.VBar) and p.VBar:IsVisible()) or (IsValid(p2) and IsValid(p2.VBar) and p2.VBar:IsVisible())) and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
+        self:DockMargin(0, 0, (IsValid(p) and IsValid(p.VBar) and p.VBar:IsVisible() or IsValid(p2) and IsValid(p2.VBar) and p2.VBar:IsVisible()) and SS_COMMONMARGIN or 0, SS_COMMONMARGIN)
     end,
 }, "DPanel")
 
@@ -157,11 +157,11 @@ vgui.Register('DSSCustomizerColor', {
             p:Dock(TOP)
         end)
 
-        self.BaseColor.ValueChanged = (function()
+        self.BaseColor.ValueChanged = function()
             if not self.SUPPRESSVALUECHANGED then
                 self:OnValueChanged(self:GetValue())
             end
-        end)
+        end
 
         self.Boost.OnValueChanged = self.BaseColor.ValueChanged
     end,
@@ -262,11 +262,11 @@ vgui.Register('DSSCustomizerVectorSection', {
             p:SetMinMax(min, max)
             p:SetValue(val)
 
-            p.OnValueChanged = valuefunction or (function()
+            p.OnValueChanged = valuefunction or function()
                 if not self.SUPPRESSVALUECHANGED then
                     self:OnValueChanged(self:GetValue())
                 end
-            end)
+            end
         end)
     end,
     GetValue = function(self) return Vector(self.XS:GetValue(), self.YS:GetValue(), self.ZS:GetValue()) end,
@@ -367,7 +367,7 @@ vgui.Register('DSSCustomizerBone', {
                 pnl:SetTextColor(MenuTheme_TX)
             end
 
-            for x = 0, (Me:GetBoneCount() - 1) do
+            for x = 0, Me:GetBoneCount() - 1 do
                 local bn = Me:GetBoneName(x)
                 local cleanname = SS_CleanBoneName(bn)
 

@@ -147,7 +147,7 @@ function PPM_CLONE_MATERIAL(mat, forcename)
         end
 
         if type(v) == "VMatrix" then
-            if not (v:IsIdentity()) then
+            if not v:IsIdentity() then
                 print("NON IDENTITY MATRIX!!!")
             end
 
@@ -164,7 +164,7 @@ function PPM_CLONE_MATERIAL(mat, forcename)
     end
 
     -- add os time because of materials getting saved when you rejoin
-    local clone = CreateMaterial(forcename or ("PPMCLONE" .. tostring(os.time()) .. "/" .. tostring(PPM_NEXT_CLONE_MAT)), mat:GetShader(), kvs)
+    local clone = CreateMaterial(forcename or "PPMCLONE" .. tostring(os.time()) .. "/" .. tostring(PPM_NEXT_CLONE_MAT), mat:GetShader(), kvs)
 
     for k, v in pairs(junk) do
         clone:SetInt(k, v)

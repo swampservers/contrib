@@ -74,12 +74,12 @@ if CLIENT then
             eyeang.y = eyeang.y + FrameTime() * math.sin(SysTime() * 0.5) * drift * 2
             Me:SetEyeAngles(eyeang)
             local coloralpha = alpha ^ 0.33
-            local distortalpha = math.min(1, ((alpha * 1.1) ^ 3))
+            local distortalpha = math.min(1, (alpha * 1.1) ^ 3)
             DrawMotionBlur(0.05, alpha, 0)
             DrawSelfRefract(distortalpha * 0.04)
             local tab = {}
-            tab["$pp_colour_colour"] = 1 + (coloralpha * 0.25)
-            tab["$pp_colour_contrast"] = 1 + (coloralpha * 0.8)
+            tab["$pp_colour_colour"] = 1 + coloralpha * 0.25
+            tab["$pp_colour_contrast"] = 1 + coloralpha * 0.8
             tab["$pp_colour_brightness"] = -0.1 * coloralpha
             DrawColorModify(tab)
         end

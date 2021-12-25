@@ -65,7 +65,7 @@ function SWEP:SecondaryAttack()
             self.juiceID = 0
         end
 
-        self.juiceID = (self.juiceID + 1) % (#JuicyVapeJuices)
+        self.juiceID = (self.juiceID + 1) % #JuicyVapeJuices
         SendVapeJuice(self, JuicyVapeJuices[self.juiceID + 1])
 
         --Client hook isn't called in singleplayer...
@@ -125,6 +125,6 @@ else
         if alpha == 0 then return end
         surface.SetFont("Trebuchet24")
         local w, h = surface.GetTextSize(VapeMessageDisplay)
-        draw.WordBox(8, ((ScrW() - w) / 2) - 8, ScrH() - (h + 24), VapeMessageDisplay, "Trebuchet24", Color(0, 0, 0, 128 * alpha), Color(255, 255, 255, 255 * alpha))
+        draw.WordBox(8, (ScrW() - w) / 2 - 8, ScrH() - (h + 24), VapeMessageDisplay, "Trebuchet24", Color(0, 0, 0, 128 * alpha), Color(255, 255, 255, 255 * alpha))
     end)
 end

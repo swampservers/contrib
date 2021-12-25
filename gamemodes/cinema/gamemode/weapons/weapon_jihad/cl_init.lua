@@ -32,7 +32,7 @@ end
 
 function suicidevestrenderat(thematrix, down, forward, left, self)
     --move down,move forward,move left
-    local thepos = thematrix:GetTranslation() + (thematrix:GetRight() * down) + (thematrix:GetUp() * forward) + (thematrix:GetForward() * left)
+    local thepos = thematrix:GetTranslation() + thematrix:GetRight() * down + thematrix:GetUp() * forward + thematrix:GetForward() * left
     local theang = thematrix:GetAngles()
     theang:RotateAroundAxis(thematrix:GetRight(), -90)
 
@@ -49,7 +49,7 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
     self:SetModelScale(1.6, 0)
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigTorso" or "ValveBiped.Bip01_Spine"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -66,7 +66,7 @@ function SWEP:DrawWorldModel()
 
         if ply:IsPony() then
             --oang:RotateAroundAxis(oang:Forward(),90)
-            opos = opos + (oang:Up() * -13) + (oang:Right() * 6) + (oang:Forward() * 4)
+            opos = opos + oang:Up() * -13 + oang:Right() * 6 + oang:Forward() * 4
         else
             oang:RotateAroundAxis(oang:Right(), -90)
             opos = opos + oang:Up() * -9 + oang:Right() * 5

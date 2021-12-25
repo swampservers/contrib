@@ -136,7 +136,7 @@ SS_WeaponProduct({
 })
 
 function ProtectionShotgunAllowed(v)
-    return (v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner() == v and v:GetTheater()._PermanentOwnerID == nil)
+    return v:GetTheater() and v:GetTheater():IsPrivate() and v:GetTheater():GetOwner() == v and v:GetTheater()._PermanentOwnerID == nil
 end
 
 SS_WeaponProduct({
@@ -155,7 +155,7 @@ SS_Heading("Expensive Toys")
 -- (os.date("%B", os.time()) == "December" and 'models/katharsmodels/present/type-2/big/present2.mdl') or 'models/Items/ammocrate_ar2.mdl', --'models/Items/ammocrate_ar2.mdl','models/katharsmodels/present/type-2/big/present2.mdl'
 SS_Product({
     class = 'mystery',
-    price = (os.date("%B", os.time()) == "December" and 4000) or 5000,
+    price = os.date("%B", os.time()) == "December" and 4000 or 5000,
     name = 'Mystery Present', --'Mystery Box','Present'
     description = "Contains a random weapon or other item.",
     model = "models/pyroteknik/gift.mdl",
@@ -187,7 +187,7 @@ SS_Product({
 
         local e = ents.Create("ent_mysterybox")
         e:SetOwner(ply)
-        local pos = ply:GetPos() + (Vector(ply:GetAimVector().x, ply:GetAimVector().y, 0):GetNormalized() * 50) + Vector(0, 0, 10)
+        local pos = ply:GetPos() + Vector(ply:GetAimVector().x, ply:GetAimVector().y, 0):GetNormalized() * 50 + Vector(0, 0, 10)
         e:SetPos(pos)
         e:SetAngles(Angle(0, math.random(0, 360), 0))
         e:Spawn()

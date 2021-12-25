@@ -9,13 +9,13 @@ function PANEL:PerformLayout()
 
     if self.Button then
         local x, y = self.Button:GetPos()
-        y = (self:GetTall() / 2) - (self.Button:GetTall() / 2)
+        y = self:GetTall() / 2 - self.Button:GetTall() / 2
         self.Button:SetPos(x, y)
     end
 
     if self.Label then
         local x, y = self.Label:GetPos()
-        y = (self:GetTall() / 2) - (self.Label:GetTall() / 2)
+        y = self:GetTall() / 2 - self.Label:GetTall() / 2
         self.Label:SetPos(x, y)
     end
 end

@@ -46,7 +46,7 @@ function getPTProtectionTime(loc)
     -- 	end
     -- end
     -- return 0
-    return ((Locations[loc].Theater or {}).ProtectionTime or 1200)
+    return (Locations[loc].Theater or {}).ProtectionTime or 1200
 end
 
 function getPTProtectionCost(time)
@@ -231,7 +231,7 @@ function SecondsToString(seconds)
 
     if seconds == 1 then
         str = str .. tostring(seconds) .. " second"
-    elseif seconds > 1 or (minutes == 0 and hours == 0) then
+    elseif seconds > 1 or minutes == 0 and hours == 0 then
         str = str .. tostring(seconds) .. " seconds"
     end
 

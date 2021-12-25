@@ -214,7 +214,7 @@ function SS_DrawWornCSModel(itm, cfg, mdl, ent, dontactually)
 end
 
 function SS_PreRender(data, cfg, ent)
-    cfg = (cfg or {})
+    cfg = cfg or {}
     -- local imgur = cfg.imgur
     -- if imgur then
     --     local imat = ImgurMaterial(imgur.url, ent, IsValid(ent) and ent:IsPlayer() and ent:GetPos(), false, "VertexLitGeneric", {

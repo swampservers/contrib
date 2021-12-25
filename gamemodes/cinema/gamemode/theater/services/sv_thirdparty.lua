@@ -17,7 +17,7 @@ sv_GetVideoInfo.thirdparty = function(self, key, ply, onSuccess, onFailure)
         success = function(code, body, headers)
             ply:PrintMessage(HUD_PRINTCONSOLE, "REFERER HEADER " .. code)
 
-            if (string.find(realkey, ".m3u8") and ((not headers["Access-Control-Allow-Origin"]) or headers["Access-Control-Allow-Origin"] and (headers["Access-Control-Allow-Origin"] ~= "*" and headers["Access-Control-Allow-Origin"] ~= referer))) then
+            if string.find(realkey, ".m3u8") and (not headers["Access-Control-Allow-Origin"] or headers["Access-Control-Allow-Origin"] and (headers["Access-Control-Allow-Origin"] ~= "*" and headers["Access-Control-Allow-Origin"] ~= referer)) then
                 ply:PrintMessage(HUD_PRINTCONSOLE, "WRONG ORIGIN")
 
                 if headers["Access-Control-Allow-Origin"] then
@@ -41,7 +41,7 @@ sv_GetVideoInfo.thirdparty = function(self, key, ply, onSuccess, onFailure)
         success = function(code, body, headers)
             ply:PrintMessage(HUD_PRINTCONSOLE, "SWAMP HEADER " .. code)
 
-            if (code == 200 and theater.ExtractURLInfo(realkey) and not string.find(realkey, ".m3u8")) then
+            if code == 200 and theater.ExtractURLInfo(realkey) and not string.find(realkey, ".m3u8") then
                 ply:PrintMessage(HUD_PRINTCONSOLE, "SUCCESS")
             end
         end,

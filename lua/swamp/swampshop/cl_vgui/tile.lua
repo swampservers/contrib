@@ -5,7 +5,7 @@
 function SS_PreviewShopModel(self)
     local min, max = self.Entity:GetRenderBounds()
     local center, radius = (min + max) / 2, min:Distance(max) / 2
-    self:SetCamPos(self.Entity:LocalToWorld(center) + ((radius + 1) * Vector(1, 1, 1)))
+    self:SetCamPos(self.Entity:LocalToWorld(center) + (radius + 1) * Vector(1, 1, 1))
     self:SetLookAt(self.Entity:LocalToWorld(center))
 end
 
@@ -511,7 +511,7 @@ function PANEL:PaintOver(w, h)
     if textfont == "SS_ProductName" then
         draw.WrappedText(text, textfont, self:GetWide() / 2, self:GetTall() - 1, self:GetWide(), textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
     else
-        draw.SimpleText(text, textfont, self:GetWide() / 2, self:GetTall() - (barheight / 2), textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(text, textfont, self:GetWide() / 2, self:GetTall() - barheight / 2, textcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
     if self.item and self.item.auction_end_t then

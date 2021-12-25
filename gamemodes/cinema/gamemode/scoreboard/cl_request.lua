@@ -136,7 +136,7 @@ HISTORY.VidHeight = 32 -- 48
 
 function HISTORY:Init()
     self:SetSize(256, 512)
-    self:SetPos(8, ScrH() / 2 - (self:GetTall() / 2))
+    self:SetPos(8, ScrH() / 2 - self:GetTall() / 2)
     self.Title = Label("HISTORY", self)
     self.Title:SetFont("ScoreboardTitle")
     self.Title:SetColor(Color(255, 255, 255))

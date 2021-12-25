@@ -64,7 +64,7 @@ function SS_GetFrame(pnl)
     local par = pnl
 
     while IsValid(par) do
-        if (par:GetParent() == vgui.GetWorldPanel()) then return par end
+        if par:GetParent() == vgui.GetWorldPanel() then return par end
         par = par:GetParent()
     end
 end
@@ -77,7 +77,7 @@ function SS_DrawPanelShadow(pnl, w, h)
     DisableClipping(true)
     local frame = SS_GetFrame(pnl)
 
-    if (IsValid(frame)) then
+    if IsValid(frame) then
         local wx, wy = frame:LocalToScreen(0, 0)
         local wx2, wy2 = frame:LocalToScreen(frame:GetWide(), frame:GetTall())
         render.SetScissorRect(wx, wy, wx2, wy2, true)
@@ -85,7 +85,7 @@ function SS_DrawPanelShadow(pnl, w, h)
 
     if sx then
         local border = 0
-        draw.BoxShadow(sx - border / 2, sy - border / 2, sw + (border), sh + (border), 12, 0.7)
+        draw.BoxShadow(sx - border / 2, sy - border / 2, sw + border, sh + border, 12, 0.7)
     end
 
     render.SetScissorRect(0, 0, 0, 0, false)
@@ -197,14 +197,14 @@ SS_ROOM_TILES_H = 4
 SS_ROOM_SUBCAT = 1
 SS_CUSTOMIZER_HEADINGSIZE = 64
 SS_MENUWIDTH = SS_RPANEWIDTH * 1
-SS_MENUWIDTH = SS_MENUWIDTH + (SS_TILESIZE * SS_ROOM_TILES_W)
-SS_MENUWIDTH = SS_MENUWIDTH + (SS_COMMONMARGIN * (SS_ROOM_TILES_W))
+SS_MENUWIDTH = SS_MENUWIDTH + SS_TILESIZE * SS_ROOM_TILES_W
+SS_MENUWIDTH = SS_MENUWIDTH + SS_COMMONMARGIN * SS_ROOM_TILES_W
 SS_MENUWIDTH = SS_MENUWIDTH + SS_SCROLL_WIDTH
-SS_MENUWIDTH = SS_MENUWIDTH + (SS_COMMONMARGIN * (3))
+SS_MENUWIDTH = SS_MENUWIDTH + SS_COMMONMARGIN * 3
 SS_MENUHEIGHT = SS_NAVBARHEIGHT * 1
-SS_MENUHEIGHT = SS_MENUHEIGHT + ((SS_SUBCATEGORY_HEIGHT + SS_COMMONMARGIN) * SS_ROOM_SUBCAT)
-SS_MENUHEIGHT = SS_MENUHEIGHT + ((SS_TILESIZE + SS_COMMONMARGIN) * SS_ROOM_TILES_H)
-SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_COMMONMARGIN * 1)
+SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_SUBCATEGORY_HEIGHT + SS_COMMONMARGIN) * SS_ROOM_SUBCAT
+SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_TILESIZE + SS_COMMONMARGIN) * SS_ROOM_TILES_H
+SS_MENUHEIGHT = SS_MENUHEIGHT + SS_COMMONMARGIN * 1
 SS_MENUHEIGHT = SS_MENUHEIGHT + SS_BOTBARHEIGHT
 
 --get the width of usable space in the left side panel
@@ -214,12 +214,12 @@ end
 
 --get the height
 function SS_GetCustomizerHeight()
-    return SS_MENUHEIGHT - SS_BOTBARHEIGHT - SS_NAVBARHEIGHT - SS_CUSTOMIZER_HEADINGSIZE * 2 - (SS_COMMONMARGIN * 4)
+    return SS_MENUHEIGHT - SS_BOTBARHEIGHT - SS_NAVBARHEIGHT - SS_CUSTOMIZER_HEADINGSIZE * 2 - SS_COMMONMARGIN * 4
 end
 
 --get the of 1/div of the usable grid space, taking into account the spaces between
 function SS_GetMainGridDivision(div)
-    return (SS_GetMainGridSpace() - (SS_COMMONMARGIN * math.max(div - 1, 0))) / div
+    return (SS_GetMainGridSpace() - SS_COMMONMARGIN * math.max(div - 1, 0)) / div
 end
 
 -- 24381a
@@ -304,8 +304,8 @@ function draw.BoxShadow(x, y, w, h, blur, alpha)
     local hblur = blur / 2
     x = x - hblur
     y = y - hblur
-    w = (w / 2) + hblur
-    h = (h / 2) + hblur
+    w = w / 2 + hblur
+    h = h / 2 + hblur
     local cx, cy = x + w / 2, y + h / 2
     local wb, hb = w / blur, h / blur
     predrawshadow(alpha)
@@ -364,11 +364,11 @@ function draw.WrappedText(text, font, x, y, w, col, xalign, yalign, prepare_only
     end
 
     if yalign == TEXT_ALIGN_BOTTOM then
-        y = y - (th * (#lines - 1))
+        y = y - th * (#lines - 1)
     end
 
     if yalign == TEXT_ALIGN_CENTER then
-        y = y - (th * (#lines - 1) * 0.5)
+        y = y - th * (#lines - 1) * 0.5
     end
 
     local function finish()
@@ -377,7 +377,7 @@ function draw.WrappedText(text, font, x, y, w, col, xalign, yalign, prepare_only
         end
     end
 
-    local h = (th * (#lines))
+    local h = th * #lines
     if prepare_only then return mw, h, finish end
     finish()
 

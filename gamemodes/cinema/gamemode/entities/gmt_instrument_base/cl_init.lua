@@ -185,7 +185,7 @@ end
 
 function ENT:DrawKey(mainX, mainY, key, keyData, bShiftMode)
     if keyData.Material then
-        if (self.ShiftMode and bShiftMode and input.IsKeyDown(key)) or (not self.ShiftMode and not bShiftMode and input.IsKeyDown(key)) then
+        if self.ShiftMode and bShiftMode and input.IsKeyDown(key) or not self.ShiftMode and not bShiftMode and input.IsKeyDown(key) then
             surface.SetTexture(self.KeyMaterialIDs[keyData.Material])
             surface.DrawTexturedRect(mainX + keyData.X, mainY + keyData.Y, self.DefaultMatWidth, self.DefaultMatHeight)
         end
@@ -197,7 +197,7 @@ function ENT:DrawKey(mainX, mainY, key, keyData, bShiftMode)
         local offsetY = self.DefaultTextY
         local color = self.DefaultTextColor
 
-        if (self.ShiftMode and bShiftMode and input.IsKeyDown(key)) or (not self.ShiftMode and not bShiftMode and input.IsKeyDown(key)) then
+        if self.ShiftMode and bShiftMode and input.IsKeyDown(key) or not self.ShiftMode and not bShiftMode and input.IsKeyDown(key) then
             color = self.DefaultTextColorActive
 
             if keyData.AColor then
@@ -251,14 +251,14 @@ function ENT:DrawHUD()
 
     -- Sheet music help
     if not ValidPanel(self.Browser) and self.BrowserHUD.Show then
-        draw.DrawText("SPACE FOR SHEET MUSIC", "InstrumentKeyLabel", mainX + (mainWidth / 2), mainY + 60, self.DefaultTextInfoColor, TEXT_ALIGN_CENTER)
+        draw.DrawText("SPACE FOR SHEET MUSIC", "InstrumentKeyLabel", mainX + mainWidth / 2, mainY + 60, self.DefaultTextInfoColor, TEXT_ALIGN_CENTER)
     end
 
     -- Advanced mode
     if self.AllowAdvancedMode and not self.AdvancedMode then
-        draw.DrawText("CONTROL FOR ADVANCED MODE", "InstrumentKeyLabel", mainX + (mainWidth / 2), mainY + mainHeight + 30, self.DefaultTextInfoColor, TEXT_ALIGN_CENTER)
+        draw.DrawText("CONTROL FOR ADVANCED MODE", "InstrumentKeyLabel", mainX + mainWidth / 2, mainY + mainHeight + 30, self.DefaultTextInfoColor, TEXT_ALIGN_CENTER)
     elseif self.AllowAdvancedMode and self.AdvancedMode then
-        draw.DrawText("CONTROL FOR BASIC MODE", "InstrumentKeyLabel", mainX + (mainWidth / 2), mainY + mainHeight + 30, self.DefaultTextInfoColor, TEXT_ALIGN_CENTER)
+        draw.DrawText("CONTROL FOR BASIC MODE", "InstrumentKeyLabel", mainX + mainWidth / 2, mainY + mainHeight + 30, self.DefaultTextInfoColor, TEXT_ALIGN_CENTER)
     end
 end
 
@@ -299,7 +299,7 @@ function ENT:OpenSheetMusic()
         url = self.BrowserHUD.URL .. "?&adv=1"
     end
 
-    local x = self.BrowserHUD.X - (width / 2)
+    local x = self.BrowserHUD.X - width / 2
     self.Browser:OpenURL(url)
 
     -- This is delayed because otherwise it will not load at all

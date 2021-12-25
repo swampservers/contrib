@@ -197,7 +197,7 @@ end)
 function SS_ApplyBoneMods(ent, mods)
     local z1, z2, z3 = Vector(1, 1, 1), Vector(0, 0, 0), Angle(0, 0, 0)
 
-    for x = 0, (ent:GetBoneCount() - 1) do
+    for x = 0, ent:GetBoneCount() - 1 do
         ent:ManipulateBoneScale(x, z1)
         ent:ManipulateBonePosition(x, z2)
         ent:ManipulateBoneAngles(x, z3)
@@ -218,7 +218,7 @@ function SS_ApplyBoneMods(ent, mods)
     end
 
     --clamp the amount of stacking
-    for x = 0, (ent:GetBoneCount() - 1) do
+    for x = 0, ent:GetBoneCount() - 1 do
         local old = ent:GetManipulateBoneScale(x)
         local mn = 0.125 --0.5*0.5*0.5
         local mx = 3.375 --1.5*1.5*1.5
@@ -269,7 +269,7 @@ end
 
 -- todo: change IN_SHOP to ent attribute?
 function SS_SetItemMaterialToEntity(item, ent, forceload)
-    local col = (item.GetColor and item:GetColor()) or item.cfg.color or item.color or Vector(1, 1, 1)
+    local col = item.GetColor and item:GetColor() or item.cfg.color or item.color or Vector(1, 1, 1)
 
     if item.cfg.imgur then
         ent:SetWebMaterial({

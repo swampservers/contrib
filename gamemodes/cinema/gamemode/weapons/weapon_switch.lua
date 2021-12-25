@@ -29,7 +29,7 @@ SWEP.AutoIconAngle = Angle(90, 0, 0)
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()

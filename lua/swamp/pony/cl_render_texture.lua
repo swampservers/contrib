@@ -13,7 +13,7 @@
 function FixVertexLitMaterial(Mat)
     local strImage = Mat:GetName()
 
-    if (string.find(Mat:GetShader(), "VertexLitGeneric") or string.find(Mat:GetShader(), "Cable")) then
+    if string.find(Mat:GetShader(), "VertexLitGeneric") or string.find(Mat:GetShader(), "Cable") then
         local t = Mat:GetString("$basetexture")
 
         if t then
@@ -282,11 +282,11 @@ PPM.tex_drawhairfunc = function(pony, UPDN, TAIL)
         end
 
         colorcount = colorcount[2]
-        local backcolor = pony["haircolor" .. (coloroffset + 1)] or PPM.defaultHairColors[coloroffset + 1]
+        local backcolor = pony["haircolor" .. coloroffset + 1] or PPM.defaultHairColors[coloroffset + 1]
         render.Clear(backcolor.x * 255, backcolor.y * 255, backcolor.z * 255, 255, true)
 
         for I = 0, colorcount - 1 do
-            local color = pony["haircolor" .. (I + 2 + coloroffset)] or PPM.defaultHairColors[I + 2 + coloroffset] or Vector(1, 1, 1)
+            local color = pony["haircolor" .. I + 2 + coloroffset] or PPM.defaultHairColors[I + 2 + coloroffset] or Vector(1, 1, 1)
             local material = Material("models/ppm/partrender/" .. prephrase .. hairnum .. "_mask" .. I .. ".png")
             render.SetMaterial(material)
             render.DrawQuadEasy(Vector(256, 256, 0), Vector(0, 0, -1), 512, 512, Color(color.x * 255, color.y * 255, color.z * 255, 255), -90) --position of the rect --direction to face in --size of the rect --color --rotate 90 degrees
@@ -403,8 +403,8 @@ PPM.rendertargettasks.ccmarktex = {
             if ent.ponydata.cmark == nil then return end
             if PPM.m_cmarks[ent.ponydata.cmark] == nil then return end
             if PPM.m_cmarks[ent.ponydata.cmark][2] == nil then return end
-            if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == nil) then return end
-            if (PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == NULL) then return end
+            if PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == nil then return end
+            if PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture") == NULL then return end
             mats[PPMMAT_CMARK]:SetTexture("$basetexture", PPM.m_cmarks[ent.ponydata.cmark][2]:GetTexture("$basetexture"))
         end
     end,

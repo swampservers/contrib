@@ -16,7 +16,7 @@ function PANEL:Init()
 end
 
 function PANEL:Think()
-    local animate = (RealTime() - self.LastInteractionTime > 5) and not (IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible())
+    local animate = RealTime() - self.LastInteractionTime > 5 and not (IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible())
 
     -- self.velocity = math.Clamp((self.velocity or 0) + FrameTime() * (self:IsHovered() and 5 or -2), 0, 1)
     -- self.Yaw = (self.Yaw + self.velocity * FrameTime() * 120) % 360
@@ -44,7 +44,7 @@ end
 
 -- returns model and if its a playermodel (false means its a prop)
 function PANEL:GetDesiredModel()
-    if SS_HoverIOP and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
+    if SS_HoverIOP and not SS_HoverIOP.wear and not SS_HoverIOP.playermodelmod then
         local m, w = SS_HoverIOP:GetModel(), SS_HoverIOP:GetWorkshop()
 
         if w then
@@ -256,7 +256,7 @@ function PANEL:Paint(w, h)
         PPM_SetBodyGroups(self.Entity)
     end
 
-    if SS_HoverIOP and (SS_HoverIOP.PlayerSetModel == nil) and (not SS_HoverIOP.wear) and (not SS_HoverIOP.playermodelmod) then
+    if SS_HoverIOP and SS_HoverIOP.PlayerSetModel == nil and not SS_HoverIOP.wear and not SS_HoverIOP.playermodelmod then
         -- SS_PreviewShopModel(self, SS_HoverIOP)
         -- self:SetCamPos(self:GetCamPos() * 2)
         self.Entity:DrawModel()
@@ -270,7 +270,7 @@ function PANEL:Paint(w, h)
 
         local center = (PrevMaxs + PrevMins) / 2
         local diam = PrevMins:Distance(PrevMaxs)
-        self:SetCamPos(center + (diam * Vector(0.4, 0.4, 0.1)))
+        self:SetCamPos(center + diam * Vector(0.4, 0.4, 0.1))
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return Me:GetPlayerColor() end
         local mods = Me:SS_GetActivePlayermodelMods()

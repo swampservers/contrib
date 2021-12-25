@@ -40,7 +40,7 @@ end)
 
 hook.Add("NotifyShouldTransmit", "ClientForceMaterial3", function(ent, trans)
     ent.CFM_AppearTime = CurTime()
-    watchlist[ent] = ((ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) and trans) or nil
+    watchlist[ent] = (ent.CLIENTFORCEDMATERIAL or ent.CLIENTFORCEDSKIN) and trans or nil
 end)
 
 Entity.BasedGetSkin = Entity.BasedGetSkin or Entity.GetSkin
@@ -75,7 +75,7 @@ function Entity:SetMaterial(mat)
 end
 
 function Entity:SetSubMaterial(idx, mat)
-    if idx == nil or (idx == -1 and mat == nil) then
+    if idx == nil or idx == -1 and mat == nil then
         self.CLIENTFORCEDMATERIAL = nil
         watchlist[self] = nil
     else

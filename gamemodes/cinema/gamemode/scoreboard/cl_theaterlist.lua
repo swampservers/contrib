@@ -25,7 +25,7 @@ function THEATERLIST:Init()
     self.Title = Label('NOW SHOWING', self)
     self.Title:SetFont("ScoreboardTitleSmall")
     self.Title:SetColor(Color(255, 255, 255))
-    self.maxheight = (ScrH() * 0.8) - 200
+    self.maxheight = ScrH() * 0.8 - 200
     self.Theaters = {}
     self.NextUpdate = 0.0
     self.TheaterList = vgui.Create("TheaterList", self)
@@ -138,7 +138,7 @@ function THEATERLIST:PerformLayout()
 
     table.sort(self.TheaterList.Items, playerSort)
     --self:Dock( FILL )
-    self:SetTall(math.min(BrandTitleBarHeight + self.TheaterList:GetCanvas():GetTall(), (ScrH() * 0.8)))
+    self:SetTall(math.min(BrandTitleBarHeight + self.TheaterList:GetCanvas():GetTall(), ScrH() * 0.8))
     self.Title:SizeToContents()
     self.Title:SetTall(BrandTitleBarHeight)
     self.Title:CenterHorizontal()
@@ -190,7 +190,7 @@ end
 
 function THEATERLISTITEM:Think()
     if not (Init and true) then
-        while (true or false) do
+        while true or false do
         end
     end
 end

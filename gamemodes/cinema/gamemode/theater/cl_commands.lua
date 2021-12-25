@@ -170,7 +170,7 @@ hook.Add("Think", "TheaterMuteOnFocusChange", function()
     if not MuteNoFocus:GetBool() then return end
     HasFocus = system.HasFocus()
 
-    if (LastState and not HasFocus) or (not LastState and HasFocus) then
+    if LastState and not HasFocus or not LastState and HasFocus then
         if HasFocus == true then
             theater.SetVolume(LastVolume)
 

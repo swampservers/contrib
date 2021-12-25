@@ -158,10 +158,10 @@ hook.Add("PostDrawOpaqueRenderables", "AFCityParallaxEffect", function(depth, sk
     if adjacent <= 0 then return end
 
     local function calc_parallax(opposite, w_sz, v_sz)
-        local real_hit = (((opposite / adjacent) * v_dist) + (w_sz / 2))
+        local real_hit = (opposite / adjacent) * v_dist + w_sz / 2
         local virtual_hit = real_hit / (v_sz / 2)
 
-        return (virtual_hit / 2) + 0.5
+        return virtual_hit / 2 + 0.5
     end
 
     vofs = -0.01

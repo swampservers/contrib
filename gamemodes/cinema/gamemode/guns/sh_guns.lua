@@ -23,7 +23,7 @@ function ComputeSpray(SWEP, args)
 
         for i = 1, math.floor(shotsto90) + 1 do
             prevspray = spray
-            spray = math.max(0, spray + SWEP.SprayIncrement / (SWEP.SpraySaturation ^ spray) - sdecay)
+            spray = math.max(0, spray + SWEP.SprayIncrement / SWEP.SpraySaturation ^ spray - sdecay)
         end
 
         return Lerp(shotsto90 - math.floor(shotsto90), prevspray, spray)
@@ -273,8 +273,8 @@ function CSParseWeaponInfo(self, str)
         self.Damage = 200
     end
 
-    local definedexponent = (tab.AccuracyQuadratic == 1) and 2 or 3
-    local defineddivider = (tab.AccuracyDivisor and tab.AccuracyDivisor > 0 and tab.AccuracyDivisor) or 20
+    local definedexponent = tab.AccuracyQuadratic == 1 and 2 or 3
+    local defineddivider = tab.AccuracyDivisor and tab.AccuracyDivisor > 0 and tab.AccuracyDivisor or 20
     local shotincrement = (defineddivider * (tab.MaxInaccuracy and tab.MaxInaccuracy > 0 and tab.MaxInaccuracy or 1)) ^ (-1 / definedexponent)
     -- (tab.MaxInaccuracy or 1)  ^ (1/definedexponent)
     -- self.SprayExponent = 2 --(tab.AccuracyQuadratic==1) and 2 or 3

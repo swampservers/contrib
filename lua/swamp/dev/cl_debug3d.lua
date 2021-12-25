@@ -8,7 +8,7 @@ function DrawBox(vecStart, vecEnd, color)
     local min = vecStart
     local max = vecEnd
 
-    if (min:Length() > max:Length()) then
+    if min:Length() > max:Length() then
         local temp = min
         min = max
         max = temp

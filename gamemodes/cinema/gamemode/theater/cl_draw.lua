@@ -63,7 +63,7 @@ function DrawVideoInfo(w, h)
 
     -- Timed video info
     if Video:IsTimed() then
-        local current = (CurTime() - Video:StartTime())
+        local current = CurTime() - Video:StartTime()
         local percent = math.Clamp((current / Video:Duration()) * 100, 0, 100)
         -- Bar
         local bh = h * 1 / 32
@@ -99,7 +99,7 @@ function GM:PostDrawOpaqueRenderables(depth, sky, sky3d)
         LastLocation = Me:GetLocation()
     end
 
-    if (not IsValid(ActivePanel)) or (not ActivePanel:IsLoading()) then
+    if not IsValid(ActivePanel) or not ActivePanel:IsLoading() then
         LoadingStartTime = RealTime()
     end
 
@@ -108,7 +108,7 @@ function GM:PostDrawOpaqueRenderables(depth, sky, sky3d)
         ActivePanel:UpdateHTMLTexture()
     end
 
-    local drawpanel = IsValid(ActivePanel) and ((not ActivePanel:IsLoading()) or (RealTime() - LoadingStartTime) > 1.0)
+    local drawpanel = IsValid(ActivePanel) and (not ActivePanel:IsLoading() or RealTime() - LoadingStartTime > 1.0)
     LastHtmlMaterial = drawpanel and ActivePanel:GetHTMLMaterial() or nil
     -- gets at least to here once each frame
     local Theater = Me:GetTheater()
@@ -132,7 +132,7 @@ function GM:PostDrawOpaqueRenderables(depth, sky, sky3d)
             surface.SetDrawColor(255, 255, 255, 255)
             surface.DrawTexturedRectUV(0, 0, iw, ih, 0, 0, ActivePanel:GetUVMax())
         else
-            local untrusted = CurrentVideo and (not CurrentVideo:ShouldTrust())
+            local untrusted = CurrentVideo and not CurrentVideo:ShouldTrust()
 
             if IsValid(ActivePanel) or untrusted then
                 surface.SetDrawColor(0, 0, 0, 255)
@@ -150,9 +150,9 @@ function GM:PostDrawOpaqueRenderables(depth, sky, sky3d)
                 surface.SetMaterial(NoVideoScreen)
                 surface.SetDrawColor(255, 255, 255, 255)
                 surface.DrawTexturedRect(0, 0, iw, ih)
-                DrawTheaterText("SWAMP CINEMA", "VideoInfoBrand", iw / 2, (ih / 2) - 44, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                DrawTheaterText("To request a video, hold Q", "VideoInfoNV1", iw / 2, (ih / 2) + 30, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                DrawTheaterText("Need help? Say /help", "VideoInfoNV2", iw / 2, (ih / 2) + 96, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                DrawTheaterText("SWAMP CINEMA", "VideoInfoBrand", iw / 2, ih / 2 - 44, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                DrawTheaterText("To request a video, hold Q", "VideoInfoNV1", iw / 2, ih / 2 + 30, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                DrawTheaterText("Need help? Say /help", "VideoInfoNV2", iw / 2, ih / 2 + 96, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
 
@@ -216,7 +216,7 @@ hook.Add("HUDPaint", "DrawFullscreenInfo", function()
         local dlight = DynamicLight(1439)
 
         if dlight then
-            dlight.pos = pos + (ang:Forward() * (w / 2)) + (ang:Right() * (h / 2)) + (ang:Up() * ((w + h) / 4))
+            dlight.pos = pos + ang:Forward() * (w / 2) + ang:Right() * (h / 2) + ang:Up() * ((w + h) / 4)
             dlight.r = sumr / avgc
             dlight.g = sumg / avgc
             dlight.b = sumb / avgc
@@ -232,10 +232,10 @@ hook.Add("HUDPaint", "DrawNoFlashWarning", function()
     local Theater = Me.GetTheater and Me:GetTheater()
 
     if Theater and Theater._Video then
-        if (not EmbeddedIsReady()) then return end
-        local needschromium = Theater._Video:Service().NeedsChromium and (not EmbeddedHasChromium())
-        local needsflash = Theater._Video:Service().NeedsFlash and (not EmbeddedHasFlash())
-        local needscodecs = ((Theater._Video:Duration() == 0 and Theater._Video:Service().LivestreamNeedsCodecs) or Theater._Video:Service().NeedsCodecs) and (not EmbeddedHasCodecs())
+        if not EmbeddedIsReady() then return end
+        local needschromium = Theater._Video:Service().NeedsChromium and not EmbeddedHasChromium()
+        local needsflash = Theater._Video:Service().NeedsFlash and not EmbeddedHasFlash()
+        local needscodecs = (Theater._Video:Duration() == 0 and Theater._Video:Service().LivestreamNeedsCodecs or Theater._Video:Service().NeedsCodecs) and not EmbeddedHasCodecs()
 
         if needschromium or needsflash or needscodecs then
             local plural = (needschromium and 1 or 0) + (needsflash and 1 or 0) + (needscodecs and 1 or 0) > 1 and "them" or "it"
@@ -243,7 +243,7 @@ hook.Add("HUDPaint", "DrawNoFlashWarning", function()
             draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2, "Without " .. plural .. ", you can't watch this video", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
             draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 + 50, "Press F2 to install " .. plural .. "! Then fully reboot Garry's Mod.", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
 
-            if needschromium and (not needsflash) and Theater._Video:Service().NeedsFlash then
+            if needschromium and not needsflash and Theater._Video:Service().NeedsFlash then
                 draw.WordBox(10, ScrW() / 2 - 80, ScrH() / 2 + 100, "This video also requires flash", "CloseCaption_Bold", Color(0, 0, 0, 255), Color(255, 255, 255, 255))
             end
         end

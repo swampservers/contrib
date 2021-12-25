@@ -7,15 +7,15 @@ SERVICE.LivestreamCacheLife = 0
 SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
-    if (util.JSONToTable(url.encoded)) then return false end
-    if string.sub(url.path, -5) == ".m3u8" or (string.find(url.encoded, "streamwat.ch/(.+)") and not string.find(url.path, "%.")) then return url.encoded end
+    if util.JSONToTable(url.encoded) then return false end
+    if string.sub(url.path, -5) == ".m3u8" or string.find(url.encoded, "streamwat.ch/(.+)") and not string.find(url.path, "%.") then return url.encoded end
 
     return false
 end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        if (string.EndsWith(key, ".m3u8")) then
+        if string.EndsWith(key, ".m3u8") then
             Derma_StringRequest("HLS Stream Title", "Name your livestream:", Me:Nick() .. "'s Stream", function(title)
                 callback({
                     title = title
@@ -84,7 +84,7 @@ if CLIENT then
     function SERVICE:GetHost(Video)
         local k = Video:Key()
 
-        if (string.len(Video:Data()) > 1 and Video:Data() ~= "true") then
+        if string.len(Video:Data()) > 1 and Video:Data() ~= "true" then
             k = Video:Data()
         end
 

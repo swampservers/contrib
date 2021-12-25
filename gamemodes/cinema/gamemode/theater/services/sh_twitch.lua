@@ -9,7 +9,7 @@ function SERVICE:GetKey(url)
     --CURRENTLY LIVE ONLY
     local key = string.match(url.path, "^/([%w_]+)$") --string.match(url.path, "^/[%w_]+/(%a/%d+)") or 
 
-    if (not key) or string.len(key) < 1 then
+    if not key or string.len(key) < 1 then
         key = false
     end
 

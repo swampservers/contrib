@@ -161,7 +161,7 @@ function PPM_SetBodyGroups(ent)
     ent:SetBodygroup(PPM.BODYGROUP_MANE_LOW, ponydata.manel - 1)
     ent:SetBodygroup(PPM.BODYGROUP_TAIL, ponydata.tail - 1)
     ent:SetBodygroup(PPM.BODYGROUP_CMARK, ponydata.cmark_enabled - 1)
-    ent:SetBodygroup(PPM.BODYGROUP_EYELASH, (ponydata.gender == 1) and (ponydata.eyelash - 1) or 5)
+    ent:SetBodygroup(PPM.BODYGROUP_EYELASH, ponydata.gender == 1 and ponydata.eyelash - 1 or 5)
 end
 
 if CLIENT then

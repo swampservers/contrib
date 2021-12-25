@@ -6,7 +6,7 @@ SERVICE.NeedsCodecs = true
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey(url)
-    if (util.JSONToTable(url.encoded)) then return false end
+    if util.JSONToTable(url.encoded) then return false end
     if url.scheme == "rtmp" then return url.encoded end
 
     if string.sub(url.path, -4) == ".mp4" then
@@ -20,7 +20,7 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        if (Me.videoDebug and string.match(key, "dropbox.com")) then
+        if Me.videoDebug and string.match(key, "dropbox.com") then
             print("Dropbox Failsafe Activated")
         end
 
@@ -43,7 +43,7 @@ if CLIENT then
                     print(msg)
                 end
 
-                if (msg:StartWith("DURATION:") and msg ~= "DURATION:NaN") then
+                if msg:StartWith("DURATION:") and msg ~= "DURATION:NaN" then
                     local duration = math.ceil(tonumber(string.sub(msg, 10)))
 
                     if duration == 0 then

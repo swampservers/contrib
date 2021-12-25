@@ -7,12 +7,12 @@ SWEP.ViewModelFOV = 85
 --NOMINIFY
 function SWEP:ThrownBallExists()
     local ply = self:GetOwner()
-    if (self:GetThrowState() < 2) then return false end
-    if (IsValid(self:GetThrownBall())) then return true end
-    if (IsValid(self.fakethrownball)) then return true end
+    if self:GetThrowState() < 2 then return false end
+    if IsValid(self:GetThrownBall()) then return true end
+    if IsValid(self.fakethrownball) then return true end
     local lookent = ply:GetEyeTrace().Entity
 
-    if (IsValid(lookent) and lookent:GetClass() == "dodgeball" and lookent:GetPos():Distance(ply:EyePos()) < 128) then
+    if IsValid(lookent) and lookent:GetClass() == "dodgeball" and lookent:GetPos():Distance(ply:EyePos()) < 128 then
         self.fakethrownball = lookent
 
         return true
@@ -22,10 +22,10 @@ function SWEP:ThrownBallExists()
 end
 
 function SWEP:DrawWorldModel()
-    if (self:ThrownBallExists()) then return end
+    if self:ThrownBallExists() then return end
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -43,7 +43,7 @@ function SWEP:DrawWorldModel()
         if ply:IsPony() then
             oang:RotateAroundAxis(oang:Forward(), 90)
             oang:RotateAroundAxis(oang:Up(), -90)
-            opos = opos + (oang:Up() * -12) + (oang:Right() * -12)
+            opos = opos + oang:Up() * -12 + oang:Right() * -12
         else
             opos = opos + oang:Forward() * 6
             opos = opos + oang:Right() * 8
@@ -73,7 +73,7 @@ function SWEP:PreDrawViewModel(vm, wp, ply)
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
-    if (self:ThrownBallExists()) then return Vector(0, 0, -10000), ang end
+    if self:ThrownBallExists() then return Vector(0, 0, -10000), ang end
     local targetpos = Vector(0, 25, -23)
     local state = self:GetThrowState()
     local power = self:GetThrowPower()

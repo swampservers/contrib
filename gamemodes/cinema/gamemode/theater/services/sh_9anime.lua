@@ -5,7 +5,7 @@ SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
-    if (string.match(url.encoded, "9anime.to/watch/(.+)")) then return url.encoded end
+    if string.match(url.encoded, "9anime.to/watch/(.+)") then return url.encoded end
 
     return false
 end
@@ -99,7 +99,7 @@ if CLIENT then
                             end)
                         end
                     elseif self.phase == 2 then
-                        if (msg:StartWith("DURATION:") and msg ~= "DURATION:NaN" and msg ~= "DURATION:0" and msg ~= "DURATION:undefined") then
+                        if msg:StartWith("DURATION:") and msg ~= "DURATION:NaN" and msg ~= "DURATION:0" and msg ~= "DURATION:undefined" then
                             self.duration = math.ceil(tonumber(string.sub(msg, 10)))
                             print("DURATION: " .. self.duration)
 

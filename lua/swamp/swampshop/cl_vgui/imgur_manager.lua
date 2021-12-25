@@ -14,7 +14,7 @@ function THUMB:SetImgur(id)
 end
 
 function THUMB:Paint(w, h)
-    if (self:GetImgur() ~= "") then
+    if self:GetImgur() ~= "" then
         local m = WebMaterial({
             id = self:GetImgur(),
             shader = "UnlitGeneric"
@@ -68,7 +68,7 @@ function CONTENTPICKER:Init()
     local textentry = self.AddField
 
     self.AddButton.DoClick = function(btn)
-        if (self.AddField:GetText() == "") then return end
+        if self.AddField:GetText() == "" then return end
         local img = self.AddField:GetText()
 
         AsyncSanitizeImgurId(img, function(id)
@@ -78,10 +78,10 @@ function CONTENTPICKER:Init()
                 textentry:SetTextColor(Color(255, 0, 0, 255))
 
                 timer.Simple(1, function()
-                    if (IsValid(textentry)) then
+                    if IsValid(textentry) then
                         textentry:SetTextColor(MenuTheme_TX)
 
-                        if (textentry:GetText() == "BAD URL") then
+                        if textentry:GetText() == "BAD URL" then
                             textentry:SetText(prevtext)
                         end
                     end
@@ -116,7 +116,7 @@ function CONTENTPICKER:PerformLayout(w, h)
     local l, u, r, d = self.Tiles:GetDockMargin()
     height = height + self.Tiles:GetTall() + u + d
 
-    if (IsValid(self.Bottom)) then
+    if IsValid(self.Bottom) then
         local l, u, r, d = self.Bottom:GetDockMargin()
         height = height + self.Bottom:GetTall() + u + d
     end
@@ -127,7 +127,7 @@ function CONTENTPICKER:PerformLayout(w, h)
     local col = self:GetColumns() or 5
     local space = w
 
-    if (self.Scroll.VBar:IsVisible()) then
+    if self.Scroll.VBar:IsVisible() then
         space = space - self.Scroll.VBar:GetWide()
         local l, t, r, b = self.Scroll:GetDockMargin()
         space = space - l - r
@@ -142,7 +142,7 @@ function CONTENTPICKER:PerformLayout(w, h)
         v:SetSize(divsize, divsize)
     end
 
-    if (IsValid(self.Bottom)) then
+    if IsValid(self.Bottom) then
         self.Bottom:AlignRight(4)
         self.Bottom:CenterVertical()
     end
@@ -189,7 +189,7 @@ function CONTENTPICKER:Add(url, nsfw)
     local dont
 
     for k, v in pairs(self.Tiles:GetChildren()) do
-        if (v:GetImgur() == url) then
+        if v:GetImgur() == url then
             dont = true
         end
     end

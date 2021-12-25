@@ -98,7 +98,7 @@ function GM:MenuShow()
     GuiQueue:SetVisible(true)
     GAMEMODE:ShowMouse()
 
-    if (Theater:IsPrivate() and Theater:GetOwner() == Me) or (Me:StaffControlTheater()) then
+    if Theater:IsPrivate() and Theater:GetOwner() == Me or Me:StaffControlTheater() then
         if not ValidPanel(GuiAdmin) then
             GuiAdmin = vgui.Create("ScoreboardAdmin")
         end
@@ -122,13 +122,13 @@ function GM:MenuShow()
                     draw.RoundedBox(0, 0, h - bh, w, bh + 1, Color(0, 0, 0, 200))
                     draw.RoundedBox(0, 0, h - bh, w * (percent / 100), bh + 1, Color(255, 255, 255, 255))
 
-                    if GuiSeekBar:IsHovered() and (ScrH() - gui.MouseY()) <= bh then
+                    if GuiSeekBar:IsHovered() and ScrH() - gui.MouseY() <= bh then
                         local mpos = gui.MouseX()
                         self.hovertime = (mpos / w) * Video:Duration()
                         local strSeconds = string.FormatSeconds(math.Clamp(math.Round(self.hovertime), 0, Video:Duration()))
                         surface.SetFont("VideoInfoMedium")
                         local ts = surface.GetTextSize(strSeconds)
-                        local xpos = math.Clamp(mpos - (ts / 2), 0, w - ts)
+                        local xpos = math.Clamp(mpos - ts / 2, 0, w - ts)
                         DrawTheaterText(strSeconds, "VideoInfoMedium", xpos, h - bh, Color(255, 255, 255, 255), nil, TEXT_ALIGN_BOTTOM)
                     end
                 else
@@ -172,11 +172,11 @@ concommand.Add("-menu", GM.MenuHide)
 -- concommand.Add("-menu_context", GM.MenuHide)
 -- Scroll playerlist
 hook.Add("PlayerBindPress", "PlayerListScroll", function(ply, bind, pressed)
-    local guiVisible = (ValidPanel(Gui) and Gui:IsVisible())
+    local guiVisible = ValidPanel(Gui) and Gui:IsVisible()
 
     if bind == "+attack" then
         -- Show mouse if the scoreboard or queue menu are open
-        if not GAMEMODE.MouseEnabled and (guiVisible or (ValidPanel(GuiQueue) and GuiQueue:IsVisible())) then
+        if not GAMEMODE.MouseEnabled and (guiVisible or ValidPanel(GuiQueue) and GuiQueue:IsVisible()) then
             GAMEMODE:ShowMouse()
 
             return true
@@ -305,34 +305,34 @@ function CinemaResourceMonitor(html)
         local col = Color(255, 255, 255)
         local smsg = tostring(msg)
 
-        if (url.parse2(smsg)) then
+        if url.parse2(smsg) then
             local m = smsg
             local pair = nil
 
-            if (string.find(smsg, "|")) then
+            if string.find(smsg, "|") then
                 pair = string.Split(smsg, "|")
                 m = pair[2]
             end
 
-            if (string.StartWith(m, "blob:")) then return end
+            if string.StartWith(m, "blob:") then return end
 
-            if ((string.find(smsg, "|") or theater.ExtractURLInfo(smsg)) and not urls[m]) then
-                if (pair and tonumber(pair[1]) == nil) then return end
-                if (pair and tonumber(pair[1]) < 2) then return end
+            if (string.find(smsg, "|") or theater.ExtractURLInfo(smsg)) and not urls[m] then
+                if pair and tonumber(pair[1]) == nil then return end
+                if pair and tonumber(pair[1]) < 2 then return end
                 local p = LinkList:Add("DButton")
                 p:SetText(m)
                 p:SetTooltip(m)
                 p:Dock(TOP)
                 p:SetContentAlignment(4)
                 p:SetFont("ScoreboardVidDuration")
-                p:SetColor((theater.ExtractURLInfo(m) and Color(0, 255, 0)) or Color(255, 255, 0))
+                p:SetColor(theater.ExtractURLInfo(m) and Color(0, 255, 0) or Color(255, 255, 0))
 
                 if theater.ExtractURLInfo(m) then
                     print(m)
                 end
 
                 function p:DoClick()
-                    if (theater.ExtractURLInfo(m)) then
+                    if theater.ExtractURLInfo(m) then
                         RequestVideoURL(m)
                         html:Remove()
                     else

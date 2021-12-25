@@ -19,7 +19,7 @@ end
 function SWEP:DrawWorldModel(flags)
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -34,11 +34,11 @@ function SWEP:DrawWorldModel(flags)
             oang = ba
         end
 
-        if (ply:IsPony()) then
-            opos = opos + (oang:Forward() * 10) + (oang:Right() * -3) + (oang:Up() * -1.5)
+        if ply:IsPony() then
+            opos = opos + oang:Forward() * 10 + oang:Right() * -3 + oang:Up() * -1.5
         else
             oang:RotateAroundAxis(oang:Forward(), 180)
-            opos = opos + (oang:Forward() * 2.8) + (oang:Right() * -2.5) + (oang:Up() * -0.5)
+            opos = opos + oang:Forward() * 2.8 + oang:Right() * -2.5 + oang:Up() * -0.5
         end
 
         self:SetupBones()
@@ -107,7 +107,7 @@ function SWEP:GetPreviewMat(decal)
     local decalmat = SPRAYPAINT_MATLOOKUP[decal] or util.DecalMaterial(decal)
     if not decalmat then return Material("___error") end
     local mat = Material(decalmat) --let's create a new material
-    if (not mat or (mat and mat:IsError())) then return Material("___error") end
+    if not mat or mat and mat:IsError() then return Material("___error") end
 
     if SPRAYPAINT_DECALPREVIEW_CACHE[decal] == nil then
         local t = mat:GetString("$basetexture")
@@ -145,15 +145,15 @@ hook.Add("PreDrawEffects", "DrawSprayPaintHUD", function()
     local wep = Me:GetActiveWeapon()
 
     --baseclass friendly
-    if (IsValid(wep) and wep.DrawSpraypaintReticle) then
+    if IsValid(wep) and wep.DrawSpraypaintReticle then
         wep:DrawSpraypaintReticle()
     end
 end)
 
 function SWEP:DrawSpraypaintReticle()
-    if (CurTime() < self:GetNextPrimaryFire() - FrameTime()) then return end
+    if CurTime() < self:GetNextPrimaryFire() - FrameTime() then return end
     local trace = self:GetTrace()
-    if (not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance()) then return end
+    if not trace.Hit or trace.HitPos:Distance(EyePos()) > self:GetPaintDistance() then return end
     if trace.HitSky then return end
     local pos = trace.HitPos + trace.HitNormal * 0.1
     local ang = trace.HitNormal:Angle()
@@ -164,7 +164,7 @@ function SWEP:DrawSpraypaintReticle()
         ang:RotateAroundAxis(ang:Up(), 90)
         ang:RotateAroundAxis(ang:Forward(), 90)
 
-        if (math.abs(trace.HitNormal.z) >= 0.95) then
+        if math.abs(trace.HitNormal.z) >= 0.95 then
             ang:RotateAroundAxis(ang:Up(), -90 * trace.HitNormal.z)
         end
 
@@ -234,7 +234,7 @@ function SWEP:SpraypaintOpenPanel()
         local decalmat = self:GetPreviewMat(v)
         local color, size = self:GetDecalColor(v)
 
-        if (decalmat and decalmat:GetName() ~= "___error") then
+        if decalmat and decalmat:GetName() ~= "___error" then
             DButton:SetMaterial(decalmat)
             DButton.m_Image:SetImageColor(color:ToColor())
             local mat = decalmat
@@ -264,6 +264,6 @@ function SWEP:SpraypaintOpenPanel()
     end
 
     Frame:SizeToContents()
-    Frame:SetTall((rows) * (48 + 4) + 30)
+    Frame:SetTall(rows * (48 + 4) + 30)
     Frame:Center()
 end

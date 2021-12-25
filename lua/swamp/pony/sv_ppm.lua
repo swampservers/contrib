@@ -4,7 +4,7 @@ util.AddNetworkString("PonyInvalidate")
 util.AddNetworkString("PonyRequest")
 
 net.Receive("PonyCfg", function(len, ply)
-    if (CurTime() - (ply.LastPonyCfgUpdate or -10)) < 2 then
+    if CurTime() - (ply.LastPonyCfgUpdate or -10) < 2 then
         ply:SendLua([[timer.Simple(1, SendLocalPonyCfg)]])
 
         return

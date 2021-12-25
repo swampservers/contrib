@@ -25,7 +25,7 @@ ENT.KeyMaterials = {
 
 ENT.MainHUD = {
     Material = "gmod_tower/instruments/piano/piano",
-    X = (ScrW() / 2) - (313 / 2),
+    X = ScrW() / 2 - 313 / 2,
     Y = ScrH() - 316,
     TextureWidth = 512,
     TextureHeight = 256,
@@ -35,7 +35,7 @@ ENT.MainHUD = {
 
 ENT.AdvMainHUD = {
     Material = "gmod_tower/instruments/piano/piano_large",
-    X = (ScrW() / 2) - (940 / 2),
+    X = ScrW() / 2 - 940 / 2,
     Y = ScrH() - 316,
     TextureWidth = 1024,
     TextureHeight = 256,
@@ -46,7 +46,7 @@ ENT.AdvMainHUD = {
 ENT.BrowserHUD = {
     URL = "http://www.gmtower.org/apps/instruments/piano.php?",
     Show = true, -- display the sheet music?
-    X = (ScrW() / 2),
+    X = ScrW() / 2,
     Y = ENT.MainHUD.Y - 190,
     Width = 450,
     Height = 250,
@@ -75,7 +75,7 @@ end
 
 -- MIDI stuff
 function LOADMIDI()
-    if (file.Exists("lua/bin/gmcl_midi_win32.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_win64.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_linux.dll", "MOD")) then
+    if file.Exists("lua/bin/gmcl_midi_win32.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_win64.dll", "MOD") or file.Exists("lua/bin/gmcl_midi_linux.dll", "MOD") then
         print("Attempting to load MIDI")
         require("midi")
 

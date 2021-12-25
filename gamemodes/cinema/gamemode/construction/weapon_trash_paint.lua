@@ -30,7 +30,7 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
     self:SetModelScale(0.8)
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -83,7 +83,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 function SWEP:PreDrawViewModel(vm, wp, ply)
-    render.SetColorModulation((TrashPaintColor.x * 0.9) + 0.2, (TrashPaintColor.y * 0.9) + 0.2, (TrashPaintColor.z * 0.9) + 0.2)
+    render.SetColorModulation(TrashPaintColor.x * 0.9 + 0.2, TrashPaintColor.y * 0.9 + 0.2, TrashPaintColor.z * 0.9 + 0.2)
 end
 
 function SWEP:PostDrawViewModel(vm, wp, ply)

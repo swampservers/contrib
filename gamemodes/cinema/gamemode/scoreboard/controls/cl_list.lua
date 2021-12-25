@@ -12,7 +12,7 @@ local PANEL = {}
 PANEL.Scrollbar = {}
 local b = 20
 PANEL.Scrollbar.BackgroundColor = Color(BrandColorGrayDark.r + b, BrandColorGrayDark.g + b, BrandColorGrayDark.b + b)
-PANEL.Scrollbar.HoverColor = Color(BrandColorGrayDark.r + (2 * b), BrandColorGrayDark.g + (2 * b), BrandColorGrayDark.b + (2 * b))
+PANEL.Scrollbar.HoverColor = Color(BrandColorGrayDark.r + 2 * b, BrandColorGrayDark.g + 2 * b, BrandColorGrayDark.b + 2 * b)
 PANEL.Scrollbar.DepressedColor = Color(255, 255, 255)
 PANEL.Scrollbar.DisabledColor = Color(16, 16, 16)
 PANEL.Scrollbar.TextColor = Color(255, 255, 255)
@@ -32,7 +32,7 @@ function PANEL:Init()
         w = w - 4
         h = h - 2
 
-        if (panel:GetDisabled()) then
+        if panel:GetDisabled() then
             draw.RoundedBox(4, 2, 1, w, h, self.Scrollbar.DisabledColor)
 
             return
@@ -69,7 +69,7 @@ function PANEL:Init()
     self.VBar.PerformLayout = function(self)
         local Wide = self:GetWide()
         local Scroll = self:GetScroll() / self.CanvasSize
-        local BarSize = math.max(self:BarScale() * (self:GetTall()), 10)
+        local BarSize = math.max(self:BarScale() * self:GetTall(), 10)
         local Track = self:GetTall() - BarSize
         Track = Track + 1
         Scroll = Scroll * Track

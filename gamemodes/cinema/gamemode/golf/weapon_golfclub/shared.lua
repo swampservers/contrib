@@ -42,7 +42,7 @@ end
 -- Called every frame
 function SWEP:Think()
     -- if SERVER and self:GetOwner()==ME() then print(self:GetStage()) end
-    local ht = (self:GetStage() == 2) and "passive" or "normal"
+    local ht = self:GetStage() == 2 and "passive" or "normal"
 
     if ht ~= self:GetHoldType() then
         self:SetHoldType(ht)

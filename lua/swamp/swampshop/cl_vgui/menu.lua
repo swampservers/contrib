@@ -22,7 +22,7 @@ end
 function PANEL:Init()
     SS_ShopMenu = self
     self:SetSize(math.Clamp(SS_MENUWIDTH, 0, ScrW()), math.Clamp(SS_MENUHEIGHT, 0, ScrH()))
-    self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
+    self:SetPos(ScrW() / 2 - self:GetWide() / 2, ScrH() / 2 - self:GetTall() / 2)
 
     self.topbar = vgui("DPanel", self, function(navbar)
         navbar:SetTall(SS_NAVBARHEIGHT)
@@ -70,7 +70,7 @@ function PANEL:Init()
             p:Dock(RIGHT)
 
             p.DoClick = function()
-                if (IsValid(p.menu)) then
+                if IsValid(p.menu) then
                     p.menu:Remove()
 
                     return
@@ -102,7 +102,7 @@ function PANEL:Init()
                 end
 
                 local w, h = p:GetSize()
-                local x, y = p:LocalToScreen((w / 2) - 12, (h / 2) + 12)
+                local x, y = p:LocalToScreen(w / 2 - 12, h / 2 + 12)
                 menu:Open(x, y)
             end
         end)
@@ -135,7 +135,7 @@ function PANEL:Init()
             local av = vgui("AvatarImage", function(p)
                 p:Dock(LEFT)
                 local grow = 2
-                local sz = SS_BOTBARHEIGHT - ((SS_COMMONMARGIN - grow) * 2)
+                local sz = SS_BOTBARHEIGHT - (SS_COMMONMARGIN - grow) * 2
                 p:DockMargin(-grow, -grow, 0, -grow)
                 p:SetWide(sz)
                 p:SetPlayer(Me, sz) --184
@@ -172,7 +172,7 @@ function PANEL:Init()
                 end)
 
                 p.Paint = function(pnl, w, h)
-                    local x, y = 4, (h / 2)
+                    local x, y = 4, h / 2
                     draw.SimpleText(string.Comma(Me:SS_GetPoints()) .. ' Points', 'SS_POINTSFONT', x, y - 15, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
                     local newoffset = 5
                     local w2, h2 = draw.SimpleText("Income: " .. tostring(Me:SS_Income()) .. ' Points/Minute', 'SS_INCOMEFONT', x, y + 16 + newoffset, MenuTheme_TXAlt, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
@@ -249,8 +249,8 @@ function PANEL:Init()
                 local alpha = 180
                 local mousex, mousey = self:CursorPos()
                 local distscale = 250
-                alpha = math.max(distscale - (Vector(mousex, mousey, 0):Distance(Vector(w / 2, h / 2, 0))), 0) / distscale
-                DollarParticlePoints = DollarParticlePoints + (RealFrameTime() * math.max(alpha, 0.02))
+                alpha = math.max(distscale - Vector(mousex, mousey, 0):Distance(Vector(w / 2, h / 2, 0)), 0) / distscale
+                DollarParticlePoints = DollarParticlePoints + RealFrameTime() * math.max(alpha, 0.02)
                 local ytop = -20
                 local yfade = 32
 
@@ -272,7 +272,7 @@ function PANEL:Init()
                 end
 
                 for k, v in pairs(DollarParticles) do
-                    v.y = v.y + (RealFrameTime() * v.speed)
+                    v.y = v.y + RealFrameTime() * v.speed
 
                     if v.y > h + 50 then
                         table.remove(DollarParticles, k)
@@ -281,7 +281,7 @@ function PANEL:Init()
                         surface.SetMaterial(v.material)
                         local iw = math.floor(8 * v.scale) * 2
                         local ih = math.floor(8 * v.scale) * 2
-                        surface.DrawTexturedRect(math.floor((v.sinmag * math.sin(v.sinofs + (RealTime() * v.sinfreq))) + v.x - (iw / 2)), math.floor(v.y - (ih / 2)), iw, ih)
+                        surface.DrawTexturedRect(math.floor(v.sinmag * math.sin(v.sinofs + RealTime() * v.sinfreq) + v.x - iw / 2), math.floor(v.y - ih / 2), iw, ih)
                     end
                 end
 
@@ -289,8 +289,8 @@ function PANEL:Init()
                 --[[if self:IsHovered() then
                 tc = Color(175,230,69)
             end]]
-                draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, (h / 2) - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-                draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, (h / 2) + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText('Need more points?', 'SS_Donate1', w - 180, h / 2 - 18 + 2, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText('Click here to donate!', 'SS_Donate2', w - 180, h / 2 + 18 + 8, tc, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
         end)
     end)
@@ -525,19 +525,19 @@ function PANEL:PaintOver(w, h)
         render.ClearDepth()
         cam.IgnoreZ(true)
         local frac = 0.8
-        surface.DrawTexturedRectUV(w - (frogsize * frac), h - ofs, (frogsize * frac), frogsize, 0, 0, frac, 1)
+        surface.DrawTexturedRectUV(w - frogsize * frac, h - ofs, frogsize * frac, frogsize, 0, 0, frac, 1)
         cam.IgnoreZ(false)
         DisableClipping(false)
     end
 
     -- draw.SimpleText("SWAMP", "SwampShop1", w - 300, h - 82)
     -- draw.SimpleText("SHOP", "SwampShop2", w - 270, h - 48)
-    local a = math.min(5.0 - ((RealTime() - (SS_INVENTORY_POINT_OUT or -100)) * 1.0), 1.0, (RealTime() - (SS_INVENTORY_POINT_OUT or -100)) * 4.0)
+    local a = math.min(5.0 - (RealTime() - (SS_INVENTORY_POINT_OUT or -100)) * 1.0, 1.0, (RealTime() - (SS_INVENTORY_POINT_OUT or -100)) * 4.0)
 
     if a > 0 then
         surface.DisableClipping(true)
         draw.SimpleText("access new items here", "DermaLarge", w / 2 + 5, h + 12, Color(255, 255, 255, 255 * a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-        draw.SimpleText("↑", "SS_LargeTitle", w / 2 - 20, h + (math.sin(RealTime() * 6.0) * 5.0), Color(255, 255, 255, 255 * a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        draw.SimpleText("↑", "SS_LargeTitle", w / 2 - 20, h + math.sin(RealTime() * 6.0) * 5.0, Color(255, 255, 255, 255 * a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
         surface.DisableClipping(false)
     end
 end

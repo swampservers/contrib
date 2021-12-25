@@ -10,7 +10,7 @@ function SERVICE:GetKey(tbl)
     local t = util.JSONToTable(tbl.encoded)
 
     if t and t["referer"] and t["key"] then
-        if (url.parse2(t["referer"]).scheme and url.parse2(t["key"]).scheme) then return tbl.encoded end
+        if url.parse2(t["referer"]).scheme and url.parse2(t["key"]).scheme then return tbl.encoded end
     end
 
     return false
@@ -72,7 +72,7 @@ if CLIENT then
                 print(smsg)
             end
 
-            if (smsg:StartWith("HREF:") and smsg == "HREF:" .. referer and b) then
+            if smsg:StartWith("HREF:") and smsg == "HREF:" .. referer and b then
                 LoadCustomPage(panel, str, realkey)
                 loaded = true
                 b = false

@@ -425,7 +425,7 @@ function GetAutoIcon(p, mode)
                 ang = Angle(0, -math.deg(math.atan2(v.y, v.x)), 0)
             else
                 -- One of these is usually correct
-                ang = Angle(0, ((max.x - min.x >= max.y - min.y) and 0 or 90), 0)
+                ang = Angle(0, max.x - min.x >= max.y - min.y and 0 or 90, 0)
                 ang:RotateAroundAxis(Vector(1, 0, 0), -11)
             end
         end
@@ -438,7 +438,7 @@ function GetAutoIcon(p, mode)
         mainent:SetAngles(ang)
         mainent:SetupBones()
         local zpd = math.min(max.x - min.x, max.y - min.y)
-        local viewdist = (5 * rad + 1)
+        local viewdist = 5 * rad + 1
         local znear = viewdist - zpd / 2
         local zfar = znear + zpd
         local hw, hh, cx, cy = 0.5, 0.5, 0.5, 0.5
@@ -626,7 +626,7 @@ function GetAutoIcon(p, mode)
             hh = hh * (realhh / hh) / icon_max_height
         end
 
-        local icon_max_area = (mode == AUTOICON_HL2WEAPONSELECT) and 0.15 or 0.5
+        local icon_max_area = mode == AUTOICON_HL2WEAPONSELECT and 0.15 or 0.5
         area = area / (hw * hh * 4)
         local scale = math.sqrt(math.max(area / icon_max_area, 1))
         hw, hh = scale * hw, scale * hh

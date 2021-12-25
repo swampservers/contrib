@@ -70,7 +70,7 @@ function SETTINGS:PerformLayout()
         --curY = curY + panel.Wrap:GetTall()
     end
 
-    self.maxheight = (ScrH() * 0.8)
+    self.maxheight = ScrH() * 0.8
     self:SetTall(math.min(self.maxheight, curY))
     self.Title:SizeToContents()
     self.Title:SetTall(self.TitleHeight)

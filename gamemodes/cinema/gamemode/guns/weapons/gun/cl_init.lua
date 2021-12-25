@@ -28,7 +28,7 @@ function SWEP:DoDrawCrosshair(x, y)
     local barw = 1
     local barwofs = -math.floor(barw / 2)
     local pixelfix = barw % 2
-    local dist = math.Round((EyePos() + EyeAngles():Forward() + EyeAngles():Right() * (self:GetSpread(true) + self.PelletSpread)):ToScreen().x - (ScrW() / 2))
+    local dist = math.Round((EyePos() + EyeAngles():Forward() + EyeAngles():Right() * (self:GetSpread(true) + self.PelletSpread)):ToScreen().x - ScrW() / 2)
     surface.SetDrawColor(255, 224, 48, 255)
     surface.DrawRect(x - (barl + dist) + pixelfix, y + barwofs, barl, barw)
     surface.DrawRect(x + dist, y + barwofs, barl, barw)
@@ -71,14 +71,14 @@ function SWEP:DrawHUDBackground()
         if not self.ScopeDustTexture:IsError() then
             surface.SetDrawColor(Color(255, 255, 255, 128))
             surface.SetMaterial(self.ScopeDustTexture)
-            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH(), ScrH())
+            surface.DrawTexturedRect(x - ScrH() / 2, 0, ScrH(), ScrH())
         end
 
         if self:HasPerk("crackedscope") then
             surface.SetDrawColor(Color(255, 255, 255, 255))
             surface.SetMaterial(crack)
-            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH() * 1.5, ScrH() * 1.5)
-            surface.DrawTexturedRect(x - (ScrH() / 2), 0, ScrH() * 1.5, ScrH() * 1.5)
+            surface.DrawTexturedRect(x - ScrH() / 2, 0, ScrH() * 1.5, ScrH() * 1.5)
+            surface.DrawTexturedRect(x - ScrH() / 2, 0, ScrH() * 1.5, ScrH() * 1.5)
         end
 
         surface.SetDrawColor(color_black)

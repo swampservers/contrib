@@ -31,21 +31,21 @@ end
 function PANEL:Paint(w, h)
     if not self.m_bBackground then return end
 
-    if (self.Depressed or self:IsSelected() or self:GetToggle()) then
+    if self.Depressed or self:IsSelected() or self:GetToggle() then
         surface.SetDrawColor(self.DepressedColor)
         surface.DrawRect(0, 0, w, h)
 
         return
     end
 
-    if (self:GetDisabled()) then
+    if self:GetDisabled() then
         surface.SetDrawColor(self.DisabledColor)
         surface.DrawRect(0, 0, w, h)
 
         return
     end
 
-    if (self:IsMouseOver()) then
+    if self:IsMouseOver() then
         surface.SetDrawColor(self.HoverColor)
         surface.DrawRect(0, 0, w, h)
 

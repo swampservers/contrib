@@ -506,8 +506,8 @@ function NewPresetMenu(parent)
 
     bPSave.DoClick = function(button)
         local selected_fname = nfNInput:GetValue()
-        if (selected_fname == nil or string.Trim(selected_fname) == "") then return end --colorFlash(bPSave, 0.1, Color(200,0,0),Color(255,255,255)) --colorFlash(PPM.button_save, 0.1, Color(200,0,0),Color(255,255,255))
-        if (table.HasValue(PPM.reservedPresetNames, selected_fname)) then return end --colorFlash(bPSave, 0.1, Color(200,0,0),Color(255,255,255)) --colorFlash(PPM.button_save, 0.1, Color(200,0,0),Color(255,255,255))
+        if selected_fname == nil or string.Trim(selected_fname) == "" then return end --colorFlash(bPSave, 0.1, Color(200,0,0),Color(255,255,255)) --colorFlash(PPM.button_save, 0.1, Color(200,0,0),Color(255,255,255))
+        if table.HasValue(PPM.reservedPresetNames, selected_fname) then return end --colorFlash(bPSave, 0.1, Color(200,0,0),Color(255,255,255)) --colorFlash(PPM.button_save, 0.1, Color(200,0,0),Color(255,255,255))
         PPM_Save(selected_fname)
         --colorFlash(PPM.button_save, 0.1, Color(0,200,0),Color(255,255,255))
         LoadFileList(PPM.dPresetList)
@@ -532,7 +532,7 @@ function LoadFileList(CTL)
     local files = file.Find("data/ppm/*.txt", "GAME")
 
     for k, v in pairs(files) do
-        if (not string.match(v, "*/_*", 0)) then
+        if not string.match(v, "*/_*", 0) then
             CTL:AddLine(v)
         end
     end
@@ -620,7 +620,7 @@ PPM.Editor3_presets["menu_save_load"] = {
                 return
             end
 
-            if (table.HasValue(PPM.reservedPresetNames, selected_fname)) then
+            if table.HasValue(PPM.reservedPresetNames, selected_fname) then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(255, 255, 255))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(255, 255, 255))
 
@@ -676,7 +676,7 @@ PPM.Editor3_presets["menu_save_load"] = {
                 return
             end
 
-            if (table.HasValue(PPM.reservedPresetNames, selected_fname)) then
+            if table.HasValue(PPM.reservedPresetNames, selected_fname) then
                 colorFlash(INDICATOR_ONE, 0.1, Color(200, 0, 0), Color(255, 255, 255))
                 colorFlash(INDICATOR_TWO, 0.1, Color(200, 0, 0), Color(255, 255, 255))
 

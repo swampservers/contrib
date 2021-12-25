@@ -17,7 +17,7 @@ vgui.Register('DScrollPanelPaddable', {
         self.pnlCanvas:SetWide(Wide)
         self:Rebuild()
 
-        if (Tall ~= self.pnlCanvas:GetTall()) then
+        if Tall ~= self.pnlCanvas:GetTall() then
             self.VBar:SetScroll(self.VBar:GetScroll())
         end
     end,
@@ -25,7 +25,7 @@ vgui.Register('DScrollPanelPaddable', {
         self:GetCanvas():SizeToChildren(false, true)
         self:GetCanvas():SetTall(self:GetCanvas():GetTall() + self:GetPadding() * 2)
 
-        if (self.m_bNoSizing and self:GetCanvas():GetTall() < self:GetTall()) then
+        if self.m_bNoSizing and self:GetCanvas():GetTall() < self:GetTall() then
             self:GetCanvas():SetPos(0, (self:GetTall() - self:GetCanvas():GetTall()) * 0.5)
         end
     end

@@ -177,7 +177,7 @@ function ENT:DestroyTheater()
     local i = self:GetMobileLocationIndex()
 
     if i == 0 then
-        i = (self.LastMobileLocationIndex or 0)
+        i = self.LastMobileLocationIndex or 0
     end
 
     if i > 0 then
@@ -203,7 +203,7 @@ function ENT:CannotTape(userid)
     for k, v in pairs(FindAllTrash()) do
         if v:GetTaped() then
             if v:GetPos():WithinAABox(mn, mx) then
-                badcount = badcount + ((v:GetOwnerID() == self:GetOwnerID()) and -1 or 1)
+                badcount = badcount + (v:GetOwnerID() == self:GetOwnerID() and -1 or 1)
             end
 
             if v:GetTrashClass() == "prop_trash_zone" and v:GetOwnerID() ~= self:GetOwnerID() then

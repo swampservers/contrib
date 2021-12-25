@@ -24,7 +24,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
         local timed = false
 
         for k, v in ipairs(string.Split(body, "\n")) do
-            if (v:StartWith("#EXTINF:")) then
+            if v:StartWith("#EXTINF:") then
                 duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1]) --split because it can be 1.0000,live instead of just 1.0000,
             end
 
@@ -33,7 +33,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
             end
         end
 
-        if (string.TrimRight(string.Split(body, "\n")[1]) == "#EXTM3U") then
+        if string.TrimRight(string.Split(body, "\n")[1]) == "#EXTM3U" then
             ply:PrintMessage(HUD_PRINTCONSOLE, "#EXTM3U") --debug
 
             --use player to get the title
@@ -88,12 +88,12 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
             local urlindex = nil
 
             for k, v in ipairs(string.Split(body, "\n")) do
-                if (string.find(v, ".m3u8") and not urlindex) then
+                if string.find(v, ".m3u8") and not urlindex then
                     urlindex = v
                 end
             end
 
-            if (urlindex and not string.find(urlindex, "http.://")) then
+            if urlindex and not string.find(urlindex, "http.://") then
                 local backcount = #string.Split(urlindex, "..") - 1
 
                 for _ = 1, backcount do
@@ -102,7 +102,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 
                 newurl[#newurl] = string.sub(urlindex, backcount * 3 + 1) or newurl[#newurl]
                 newurl = table.concat(newurl, "/")
-            elseif (urlindex and string.find(urlindex, "http.://")) then
+            elseif urlindex and string.find(urlindex, "http.://") then
                 newurl = urlindex
             else
                 newurl = key

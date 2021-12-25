@@ -3,7 +3,7 @@
 function render.DrawingScreen()
     local t = render.GetRenderTarget()
 
-    return (t == nil) or (tostring(t) == "[NULL Texture]")
+    return t == nil or tostring(t) == "[NULL Texture]"
 end
 
 render.BaseSetColorModulation = render.BaseSetColorModulation or render.SetColorModulation

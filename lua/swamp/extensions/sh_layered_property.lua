@@ -6,7 +6,7 @@ local function CreateLayeredProperty(getter, setter, id_argument, additive, defa
     Player[basedsetter] = Player[basedsetter] or Player[setter]
     local settable = setter .. "Tab"
 
-    local accumulate = additive and (function(t)
+    local accumulate = additive and function(t)
         local v
         local k, accum = next(t)
 
@@ -17,7 +17,7 @@ local function CreateLayeredProperty(getter, setter, id_argument, additive, defa
         end
 
         return accum
-    end) or (function(t)
+    end or function(t)
         local v
         local k, accum = next(t)
 
@@ -28,9 +28,9 @@ local function CreateLayeredProperty(getter, setter, id_argument, additive, defa
         end
 
         return accum
-    end)
+    end
 
-    Player[setter] = id_argument and (function(self, id, val, key)
+    Player[setter] = id_argument and function(self, id, val, key)
         local s = self[settable]
 
         if not s then
@@ -59,7 +59,7 @@ local function CreateLayeredProperty(getter, setter, id_argument, additive, defa
 
         t[key] = val
         self[basedsetter](self, id, accumulate(t))
-    end) or (function(self, val, key)
+    end or function(self, val, key)
         local t = self[settable]
 
         if not t then
@@ -81,7 +81,7 @@ local function CreateLayeredProperty(getter, setter, id_argument, additive, defa
 
         t[key] = val
         self[basedsetter](self, accumulate(t))
-    end)
+    end
 end
 
 Player.GetManipulateBonePosition = Entity.GetManipulateBonePosition

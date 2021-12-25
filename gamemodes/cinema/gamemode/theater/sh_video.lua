@@ -3,7 +3,7 @@ module("theater", package.seeall)
 VIDEO = istable(VIDEO) and VIDEO or {}
 
 function VIDEO:Init(info, ply)
-    if (not info) or ((info.type or "") == "") then return end
+    if not info or (info.type or "") == "" then return end
     local o = {}
     setmetatable(o, self)
     self.__index = self
@@ -148,7 +148,7 @@ if SERVER then
 
     function VIDEO:SetVote(ply, value)
         if not IsValid(ply) then return end
-        self._Votes[ply] = (value ~= 0) and value or nil
+        self._Votes[ply] = value ~= 0 and value or nil
     end
 
     function VIDEO:RequestInfo(callback)
@@ -172,7 +172,7 @@ if SERVER then
                     callback(true)
                 else
                     local function loadFailure(code)
-                        callback((type(code) == 'string') and code or false)
+                        callback(type(code) == 'string' and code or false)
                     end
 
                     -- Query info from API

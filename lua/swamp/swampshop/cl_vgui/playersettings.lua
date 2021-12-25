@@ -148,7 +148,7 @@ vgui.Register('DSSPlayerSettingsMode', {
                     end
                 end
 
-                p:SetText("Titles (WIP) - " .. u .. "/" .. (u + l) .. " unlocked")
+                p:SetText("Titles (WIP) - " .. u .. "/" .. u + l .. " unlocked")
             end
 
             vgui("DButton", function(p)

@@ -19,7 +19,7 @@ do
         local z, i, j = 0, 1
 
         for j = 0, 31 do
-            if (mod(x, 2) == 1 and mod(y, 2) == 1) then
+            if mod(x, 2) == 1 and mod(y, 2) == 1 then
                 z = z + i
             end
 
@@ -267,7 +267,7 @@ function MDL:Validate(filesize)
     local size = self.dataLength
     local f = self.file
     --TODO: can be wrong
-    local fsize = filesize or (f:Size() - self.initial_offset)
+    local fsize = filesize or f:Size() - self.initial_offset
     if fsize ~= size then return nil, "size" end
     --local checksum = from_int(self.checksum,true)
     --local crc = util.CRC(dat)

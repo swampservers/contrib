@@ -29,7 +29,7 @@ function ENT:Initialize()
         self:DrawShadow(false)
         local phys = self:GetPhysicsObject()
 
-        if (phys:IsValid()) then
+        if phys:IsValid() then
             phys:Wake()
         end
     end
@@ -54,7 +54,7 @@ function ENT:Think()
     self.BaseClass.Think(self)
 
     if CLIENT then
-        if (not self:GetOn()) then return end
+        if not self:GetOn() then return end
         local dlight = DynamicLight(self:EntIndex())
 
         if dlight then
@@ -85,7 +85,7 @@ function ENT:DrawTranslucent()
     ViewNormal:Normalize()
     local Visibile = util.PixelVisible(LightPos, 4, self.PixVis)
     if not Visibile or Visibile < 0.1 then return end
-    if (not self:GetOn()) then return end
+    if not self:GetOn() then return end
     local c = self:GetColor()
     local Alpha = 255 * Visibile
     render.DrawSprite(LightPos - up * 2, 8, 8, Color(255, 255, 255, Alpha), Visibile)

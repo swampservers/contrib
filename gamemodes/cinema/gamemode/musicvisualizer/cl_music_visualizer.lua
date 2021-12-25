@@ -11,7 +11,7 @@ BYTES_PER_FRAME = 43 + 19
 function MvisGetFrame(data, fn)
     local m = math.floor(fn / 3600)
     data = data[m]
-    fn = fn - (3600 * m)
+    fn = fn - 3600 * m
     local t
 
     if not data or fn < 0 or fn * BYTES_PER_FRAME + BYTES_PER_FRAME > data:len() then
@@ -89,7 +89,7 @@ function MvisMedian(k, val, frames, bilateral_maxdiff)
     end
 
     table.sort(tab)
-    MVISTAB_NEXT[k] = tab[math.ceil((#tab) / 2)]
+    MVISTAB_NEXT[k] = tab[math.ceil(#tab / 2)]
 
     return MVISTAB_NEXT[k]
 end
@@ -145,7 +145,7 @@ function MvisMean(k, val, framecount, initial)
     table.insert(tab, val)
     sum = sum + val
     MVIS_TRACKERS[k][2] = sum
-    MVISTAB_NEXT[k] = sum / (#tab)
+    MVISTAB_NEXT[k] = sum / #tab
 
     return MVISTAB_NEXT[k]
 end
@@ -155,7 +155,7 @@ function MvisMeanStd(k, val, framecount)
     local k2 = k .. "_sqr"
     MvisMean(k2, val * val, framecount)
     local var = MVISTAB_NEXT[k2] - MVISTAB_NEXT[k] * MVISTAB_NEXT[k]
-    MVISTAB_NEXT[k .. "_std"] = (isnumber(var) and math.sqrt(var) or var:Max(Vector(0, 0, 0)):Pow(0.5))
+    MVISTAB_NEXT[k .. "_std"] = isnumber(var) and math.sqrt(var) or var:Max(Vector(0, 0, 0)):Pow(0.5)
 
     return MVISTAB_NEXT[k], MVISTAB_NEXT[k .. "_std"]
 end
@@ -216,9 +216,9 @@ function MvisNextFrame(...)
     -- the inputs are MVIS_LOOKAHEAD_FRAMES ahead of time, just correct it for now, but it could be useful
     col, colchange, amplitude, fft1, fft2, harmonics = unpack(MvisDelay("lookahead_delay", {...}, MVIS_LOOKAHEAD_FRAMES))
 
-    t.avgfft1 = table.isum(fft1) / (#fft1)
+    t.avgfft1 = table.isum(fft1) / #fft1
     t.maxharmonic = table.imax(harmonics)
-    t.avgharmonic = table.isum(harmonics) / (#harmonics)
+    t.avgharmonic = table.isum(harmonics) / #harmonics
     t.harmonicpower = t.maxharmonic - t.avgharmonic
     local fftdelta = {}
 
@@ -263,7 +263,7 @@ function MvisNextFrame(...)
 
         if i % 2 == 1 then
             local sc_h, sc_s, sc_v = ColorToHSV(t.col1:ToColor())
-            hsv.x = ((sc_h / 360) + hsv.x * 0.1 - 0.05) % 1
+            hsv.x = (sc_h / 360 + hsv.x * 0.1 - 0.05) % 1
         end
 
         return hsv
@@ -273,9 +273,9 @@ function MvisNextFrame(...)
     MvisDecayingMax("minsaturation", t.harmonicpower, 0.98)
     local antiflickerframes = UsingMusicVis("dynamic") and 40 or 4
     local mean, meanvol = MvisMean("col", col, antiflickerframes), MvisMean("vol", amplitude, antiflickerframes)
-    local normvol = (t.vol - t.v05) --not actual std
+    local normvol = t.vol - t.v05 --not actual std
     -- TODO: use long color mean for extra darkness, short color mean for extra flash
-    t.normalized_color = (mean - t.col4) --mean1:Max(mean1)) -- / (std1+0.006)  --max of 2 running means to prefer a lower normalized value
+    t.normalized_color = mean - t.col4 --mean1:Max(mean1)) -- / (std1+0.006)  --max of 2 running means to prefer a lower normalized value
     -- local finalpower = 1 - t.fft2d*2  -- 0.85- (norm_avg * 1 + mean:Mean() * 0.8 + (meanvol-0.5) * 5) --math.sin(SysTime()*10)*0.5+0.5
     -- 1 = default light, 0 = squared light with color. it can go above 1 but not below 0 (it should have dark non-flickery parts.. maybe bright nonflicker when the image is bright? )
     t.drive = -0.4 + t.dualbass + t.v05 * 1.5 + t.normalized_color:Mean() * 2

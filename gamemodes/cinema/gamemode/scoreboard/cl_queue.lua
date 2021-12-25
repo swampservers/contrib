@@ -24,7 +24,7 @@ QUEUE.VidHeight = 32 -- 48
 function QUEUE:Init()
     self:SetZPos(1)
     self:SetSize(288, 512)
-    self:SetPos(8, ScrH() / 2 - (self:GetTall() / 2))
+    self:SetPos(8, ScrH() / 2 - self:GetTall() / 2)
     self.Title = Label('QUEUE', self)
     self.Title:SetFont("ScoreboardTitle")
     self.Title:SetColor(Color(255, 255, 255))
@@ -232,7 +232,7 @@ function VIDEOVOTE:Init()
 
     self.VoteUp.DoClick = function()
         local last = self.Video.vlo
-        self.Video.vlo = (last ~= 1) and 1
+        self.Video.vlo = last ~= 1 and 1
         self.Video.vto = self.Video.vto + (self.Video.vlo or 0) - (last or 0)
         RunConsoleCommand("cinema_vote", self.Video.id, self.Video.vlo or 0)
         self:Update()
@@ -253,7 +253,7 @@ function VIDEOVOTE:Init()
 
     self.VoteDown.DoClick = function()
         local last = self.Video.vlo
-        self.Video.vlo = (last ~= -1) and -1
+        self.Video.vlo = last ~= -1 and -1
         self.Video.vto = self.Video.vto + (self.Video.vlo or 0) - (last or 0)
         RunConsoleCommand("cinema_vote", self.Video.id, self.Video.vlo or 0)
         self:Update()
@@ -315,7 +315,7 @@ end
 
 function VIDEOVOTE:Update()
     if not self.Video then return end
-    local prefix = (self.Video.vto > 0) and "+" or ""
+    local prefix = self.Video.vto > 0 and "+" or ""
     self.Votes:SetText(prefix .. self.Video.vto)
 
     if self.Video.vlo == 1 then
@@ -328,7 +328,7 @@ function VIDEOVOTE:Update()
 
     local Theater = Me:GetTheater()
 
-    if self.Video.own or Me:StaffControlTheater() or (Theater and Theater:IsPrivate() and Theater:GetOwner() == Me) then
+    if self.Video.own or Me:StaffControlTheater() or Theater and Theater:IsPrivate() and Theater:GetOwner() == Me then
         self:AddRemoveButton()
         self:SetWide(84)
     else

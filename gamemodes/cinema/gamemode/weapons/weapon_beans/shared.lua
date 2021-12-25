@@ -34,7 +34,7 @@ end
 function SWEP:Think()
     if (self.Owner.ChewScale or 0) > 0 then
         if SERVER then
-            if (CurTime() >= (self.Owner.BiteStart or 0) + 0.625 and (self.Owner.BitesRem or 0) > 0) then
+            if CurTime() >= (self.Owner.BiteStart or 0) + 0.625 and (self.Owner.BitesRem or 0) > 0 then
                 self.Owner.BiteStart = CurTime()
                 self.Owner.BitesRem = self.Owner.BitesRem - 1
                 net.Start("Beans_Eat")

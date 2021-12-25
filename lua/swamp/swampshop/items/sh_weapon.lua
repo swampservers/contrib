@@ -323,7 +323,7 @@ SS_Item({
                     r_roll = 1 - r_roll
                 end
 
-                if r_roll > (1 - SS_WeaponPerkChance[r.id]) then
+                if r_roll > 1 - SS_WeaponPerkChance[r.id] then
                     specs.perk = table.Random(table.GetKeys(validperks))
 
                     -- reroll if non specific perk (todo remove this after a while)

@@ -83,29 +83,29 @@ function SWEP:PrimaryAttack()
     local origin = self.SprayStartOrigin
     local gap = math.max(size / 5, 1)
 
-    if (self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < gap) then
+    if self.LastPaintPos and trace.HitPos:Distance(self.LastPaintPos) < gap then
         trace.Invalid = true
     end
 
-    if (origin:Distance(originref) > self.MaxMovementDistance or self.SprayMovementBad) then
+    if origin:Distance(originref) > self.MaxMovementDistance or self.SprayMovementBad then
         self.SprayMovementBad = true
         trace.Invalid = true
     end
 
     if not trace.Invalid then
-        self:MakePaint(trace, (self.PaintDelay))
+        self:MakePaint(trace, self.PaintDelay)
         self.LastPaintPos = trace.HitPos
     end
 
     timer.Create("paintorigin_reset" .. self:EntIndex(), self.PaintDelay * 2, 1, function()
-        if (IsValid(self)) then
+        if IsValid(self) then
             self.SprayMovementBad = nil
             self.SprayStartOrigin = nil
             self.LastPaintPos = nil
         end
     end)
 
-    self:SetNextPrimaryFire(CurTime() + (self.PaintDelay))
+    self:SetNextPrimaryFire(CurTime() + self.PaintDelay)
 end
 
 if CLIENT then
@@ -119,7 +119,7 @@ if CLIENT then
 end
 
 function SWEP:SecondaryAttack()
-    if (CLIENT and IsFirstTimePredicted()) then
+    if CLIENT and IsFirstTimePredicted() then
         self:SpraypaintOpenPanel()
     end
 
@@ -185,7 +185,7 @@ function SWEP:GetTrace()
     local trace = util.TraceLine(tr)
     if trace.HitTexture == "**displacement**" or trace.HitTexture == "**studio**" then end --trace.Invalid = true
 
-    if (trace.HitPos:Distance(org) > 128) then
+    if trace.HitPos:Distance(org) > 128 then
         trace.Invalid = true
     end
 
@@ -199,13 +199,13 @@ SPRAYPAINT_DECALSIZE_CACHE = {}
 --i think this will function serverside as long as the materials are installed there
 function SWEP:GetDecalColor(decal)
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return Vector(1, 1, 1), 1 end
+    if not IsValid(ply) then return Vector(1, 1, 1), 1 end
     decal = decal or self:GetCurrentDecal()
     if SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal] then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
     local mat = Material(SPRAYPAINT_MATLOOKUP[decal] or util.DecalMaterial(decal))
     local maintex
 
-    if (mat:GetTexture("$basetexture")) then
+    if mat:GetTexture("$basetexture") then
         maintex = mat:GetTexture("$basetexture")
     end
 
@@ -256,9 +256,9 @@ function SWEP:MakePaint(trace, delay)
 end
 
 function SWEP:DoSound(delay)
-    if (not self.SpraySound) and CinemaGameVolumeSetting() > 0 then
+    if not self.SpraySound and CinemaGameVolumeSetting() > 0 then
         sound.PlayFile("sound/spraypaint/spraypaint.wav", "3d mono noblock", function(sound)
-            if (IsValid(sound)) then
+            if IsValid(sound) then
                 self.SpraySound = sound
                 sound:SetVolume(CinemaGameVolumeSetting())
                 sound:SetPos(self:GetPos())
@@ -269,11 +269,11 @@ function SWEP:DoSound(delay)
     if self.SpraySound then
         self.SpraySound:SetPos(self:GetPos())
 
-        if (self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING) then
+        if self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING then
             self.SpraySound:Play()
         end
 
-        if (self.SpraySound:GetTime() >= 0.6) then
+        if self.SpraySound:GetTime() >= 0.6 then
             self.SpraySound:SetTime(0.055 + math.Rand(0, 0.4))
         end
 
@@ -285,7 +285,7 @@ function SWEP:DoSound(delay)
         self.SpraySound:SetVolume(globvol)
 
         timer.Create(self:EntIndex() .. "spraysoundend", delay * 1.04, 1, function()
-            if (IsValid(self.SpraySound)) then
+            if IsValid(self.SpraySound) then
                 self.SpraySound:SetTime(0.665)
             end
         end)

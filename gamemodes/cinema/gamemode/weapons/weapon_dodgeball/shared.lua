@@ -37,13 +37,13 @@ function SWEP:OnChangeThrowState(name, old, new)
     end
 
     if new == 1 and old == 0 then
-        if (IsValid(self:GetOwner())) then
+        if IsValid(self:GetOwner()) then
             local gest = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE
             self:GetOwner():AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, gest, true)
         end
     end
 
-    if (self:GetHoldType() ~= holdtype) then
+    if self:GetHoldType() ~= holdtype then
         self:SetHoldType(holdtype)
     end
 end
@@ -53,7 +53,7 @@ function SWEP:GetThrowing()
 end
 
 function SWEP:BeginThrow(power)
-    if (self:GetThrowing() or self:GetStateTime() > CurTime()) then return true end
+    if self:GetThrowing() or self:GetStateTime() > CurTime() then return true end
     self:SetThrowPower(power)
     self:AdvanceState()
 end
@@ -75,7 +75,7 @@ function SWEP:Reload()
 end
 
 function SWEP:Think()
-    if (self:GetThrowing() and CurTime() >= self:GetStateTime()) then
+    if self:GetThrowing() and CurTime() >= self:GetStateTime() then
         self:AdvanceState()
     end
 end
@@ -87,7 +87,7 @@ function SWEP:AdvanceState()
 
     --change to throw pose
     if curstate == 0 then
-        self:SetStateTime(CurTime() + 0.15 - (delaytweak))
+        self:SetStateTime(CurTime() + 0.15 - delaytweak)
         self:SetThrowState(1)
 
         return
@@ -122,7 +122,7 @@ function SWEP:ThrowBall(force)
 
         if IsValid(self) and IsValid(self.Owner) then
             local p1 = self.Owner:GetPos() + self.Owner:GetCurrentViewOffset()
-            local p2 = p1 + (self.Owner:GetAimVector() * outie)
+            local p2 = p1 + self.Owner:GetAimVector() * outie
 
             local tr = util.TraceLine({
                 start = p1,
@@ -134,8 +134,8 @@ function SWEP:ThrowBall(force)
                 p2 = tr.HitPos
             end
 
-            p2 = p2 - (self.Owner:GetAimVector() * innie)
-            local ball = makeDodgeball(p2, (self.Owner:GetAimVector() * force) + self.Owner:GetVelocity(), self.Owner)
+            p2 = p2 - self.Owner:GetAimVector() * innie
+            local ball = makeDodgeball(p2, self.Owner:GetAimVector() * force + self.Owner:GetVelocity(), self.Owner)
             self:SetThrownBall(ball)
         end
     end

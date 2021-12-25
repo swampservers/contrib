@@ -16,7 +16,7 @@ end
 
 function PANEL:GetCameraTransform()
     local p, d = self:FocalPointAndDistance()
-    d = d * (2 ^ (self.ZoomOffset or 0))
+    d = d * 2 ^ (self.ZoomOffset or 0)
     local ang = Angle(self.Pitch, 225, 0)
 
     return self.Entity:LocalToWorld(p) + ang:Forward() * -d, ang

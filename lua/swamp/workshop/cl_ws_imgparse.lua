@@ -4,14 +4,14 @@ end
 
 local function unpack_msb_uint32(s)
     local a, b, c, d = s:byte(1, #s)
-    local num = (((a * 256) + b) * 256 + c) * 256 + d
+    local num = ((a * 256 + b) * 256 + c) * 256 + d
 
     return num
 end
 
 local function unpack_msb_uint32_r(s)
     local d, c, b, a = s:byte(1, #s)
-    local num = (((a * 256) + b) * 256 + c) * 256 + d
+    local num = ((a * 256 + b) * 256 + c) * 256 + d
 
     return num
 end
@@ -212,8 +212,8 @@ function file.ParseVTF(file)
     local headerSize = unpack_msb_uint32_r(file:Read(4))
     if ver1 > 100 or ver2 > 900 then return nil, 'invalid version' end
     local w, h = ushort(file:Read(2)), ushort(file:Read(2))
-    if not (IsPowerOfTwo(w)) or w == 0 then return nil, "invalid power" end
-    if not (IsPowerOfTwo(h)) or h == 0 then return nil, "invalid power" end
+    if not IsPowerOfTwo(w) or w == 0 then return nil, "invalid power" end
+    if not IsPowerOfTwo(h) or h == 0 then return nil, "invalid power" end
 
     return {
         width = w,

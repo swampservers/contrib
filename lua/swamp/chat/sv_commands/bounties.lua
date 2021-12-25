@@ -62,7 +62,7 @@ end
 RegisterChatCommand({'bounty', 'setbounty'}, function(ply, arg)
     local t = string.Explode(" ", arg)
     local p = tonumber(table.remove(t))
-    p = (p ~= nil and math.floor(p) or nil)
+    p = p ~= nil and math.floor(p) or nil
 
     if p == nil then
         ply:ChatPrint("[orange]!bounty player points")
@@ -86,7 +86,7 @@ end, {
 
 RegisterChatCommand({'bountyall', 'setbountyall'}, function(ply, arg)
     local p = tonumber(arg)
-    p = (p ~= nil and math.floor(p) or nil)
+    p = p ~= nil and math.floor(p) or nil
 
     if p == nil then
         ply:ChatPrint("[orange]!bountyall points")
@@ -104,7 +104,7 @@ end, {
 
 RegisterChatCommand({'bountyrandom', 'setbountyrandom', 'randombounty', 'setrandombounty'}, function(ply, arg)
     local p = tonumber(arg)
-    p = (p ~= nil and math.floor(p) or nil)
+    p = p ~= nil and math.floor(p) or nil
 
     if p == nil then
         ply:ChatPrint("[orange]!bountyrandom points")

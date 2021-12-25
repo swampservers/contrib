@@ -30,7 +30,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -47,7 +47,7 @@ function SWEP:DrawWorldModel()
 
         if ply:IsPony() then
             oang:RotateAroundAxis(oang:Forward(), -90)
-            opos = opos + (oang:Up() * 10) + (oang:Right() * -1) + oang:Forward() * 7
+            opos = opos + oang:Up() * 10 + oang:Right() * -1 + oang:Forward() * 7
         else
             oang:RotateAroundAxis(oang:Forward(), 30)
             opos = opos + oang:Right() * 7 + oang:Up() * 3 + oang:Forward() * -4
@@ -96,7 +96,7 @@ net.Receive("Popcorn_Eat", function()
 
         if particle then
             local dir = VectorRand():GetNormalized()
-            kernel_init(particle, ((fwd) + dir):GetNormalized() * math.Rand(0, 40))
+            kernel_init(particle, (fwd + dir):GetNormalized() * math.Rand(0, 40))
         end
     end
 end)

@@ -146,7 +146,7 @@ function SS_Item(item)
 
             for k, v in pairs(self.owner.SS_Items) do
                 if v.eq and (SS_Items[v.class] or {}).accessory_slot then
-                    c = c + (1 / (SS_Items[v.class].perslot or 1))
+                    c = c + 1 / (SS_Items[v.class].perslot or 1)
                 end
             end
 

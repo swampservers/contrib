@@ -132,8 +132,8 @@ vgui.Register('DSSAuctionMode', {
         items = SS_MakeItems(SS_SAMPLE_ITEM_OWNER, items)
 
         for _, item in pairs(items) do
-            local mine = (item.seller == Me:SteamID64())
-            local mybid = (item.auction_bidder == Me:SteamID64())
+            local mine = item.seller == Me:SteamID64()
+            local mybid = item.auction_bidder == Me:SteamID64()
             local sn = item.seller_name
             local bn = item.bidder_name
 

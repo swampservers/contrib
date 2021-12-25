@@ -60,8 +60,8 @@ function ENT:PhysicsCollide(data)
         end
     end
 
-    local p1 = data.HitPos + (data.HitNormal * 2)
-    local p2 = data.HitPos - (data.HitNormal * 2)
+    local p1 = data.HitPos + data.HitNormal * 2
+    local p2 = data.HitPos - data.HitNormal * 2
     util.Decal("Splash.Large", p1, p2)
     effectdata:SetOrigin(pos)
     effectdata:SetScale(1.5)

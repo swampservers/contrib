@@ -318,7 +318,7 @@ function ImageGetterPanel()
         DLButton.DoClick = function()
             local function DownloadTexture(mat, callback)
                 hook.Add("PostRender", "SS_TexDownload", function()
-                    if (mat and not mat:IsError()) then
+                    if mat and not mat:IsError() then
                         local matcopy = CreateMaterial(mat:GetName() .. "copy", "UnlitGeneric", {
                             ["$basetexture"] = mat:GetString("$basetexture")
                         })

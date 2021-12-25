@@ -34,13 +34,13 @@ SWEP.SoundsSecondaryLength = {5.466, 4.875}
 --NOMINIFY
 --i was going to use SoundDuration but it appears to be fucked
 function SWEP:CanPrimaryAttack()
-    if (self:GetNextPrimaryFire() > CurTime()) then return false end
+    if self:GetNextPrimaryFire() > CurTime() then return false end
 
     return true
 end
 
 function SWEP:CanSecondaryAttack()
-    if (self:GetNextSecondaryFire() > CurTime()) then return false end
+    if self:GetNextSecondaryFire() > CurTime() then return false end
 
     return true
 end
@@ -54,11 +54,11 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Reload(networked)
-    if (not self:CanPrimaryAttack() or not self:CanSecondaryAttack()) then return end
-    if (self.BananaEatNext and self.BananaEatNext > CurTime()) then return end
+    if not self:CanPrimaryAttack() or not self:CanSecondaryAttack() then return end
+    if self.BananaEatNext and self.BananaEatNext > CurTime() then return end
     self:NetworkTaunt(3)
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return end
+    if not IsValid(ply) then return end
 
     if SERVER then
         ply:SetHealth(math.min(self.Owner:Health() + math.random(8, 30), self.Owner:GetMaxHealth()))
@@ -86,7 +86,7 @@ end
 
 function SWEP:GetMonkeyTaunt(sec)
     local ply = self:GetOwner()
-    if (ply.IsPony and ply:IsPony()) then return ACT_LAND end
+    if ply.IsPony and ply:IsPony() then return ACT_LAND end
     local choice = math.Round(util.SharedRandom("MonkeyTaunt" .. ply:UserID(), 1, #self.TauntsPrimary, self:GetRandomSeed()), 0)
 
     return self.TauntsPrimary[choice] or ACT_GMOD_GESTURE_RANGE_FRENZY
@@ -94,22 +94,22 @@ end
 
 function SWEP:GetMonkeyTaunt2(sec)
     local ply = self:GetOwner()
-    if (ply.IsPony and ply:IsPony()) then return ACT_LAND end
+    if ply.IsPony and ply:IsPony() then return ACT_LAND end
     local choice = math.Round(util.SharedRandom("MonkeyTaunt2" .. ply:UserID(), 1, #self.TauntsSecondary, self:GetRandomSeed()), 0)
 
     return self.TauntsSecondary[choice] or ACT_GMOD_GESTURE_TAUNT_ZOMBIE
 end
 
 local function SoundMul()
-    return (SERVER and 2 or CLIENT and 4.3)
+    return SERVER and 2 or CLIENT and 4.3
 end
 
 if CLIENT then
     net.Receive("MonkyTaunt", function(len)
         local wep = net.ReadEntity()
-        if (not IsValid(wep)) then return end
-        if (wep:GetClass() ~= "weapon_monke") then return end
-        if (not IsValid(wep:GetOwner())) then return end
+        if not IsValid(wep) then return end
+        if wep:GetClass() ~= "weapon_monke" then return end
+        if not IsValid(wep:GetOwner()) then return end
         local state = net.ReadInt(8)
 
         if state == 1 and wep.PrimaryAttack then
@@ -132,7 +132,7 @@ end
 
 function SWEP:NetworkTaunt(tt)
     if SERVER then
-        if (not IsValid(self:GetOwner()) or not IsValid(self)) then return end
+        if not IsValid(self:GetOwner()) or not IsValid(self) then return end
         net.Start("MonkyTaunt")
         net.WriteEntity(self)
         net.WriteInt(tt, 8)
@@ -142,7 +142,7 @@ end
 
 function SWEP:GetPlayerCurrentTauntActivity()
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return end
+    if not IsValid(ply) then return end
     local seq = ply:GetLayerSequence(0)
     if seq == nil then return end
     local seqinfo = ply:GetSequenceInfo(seq)
@@ -156,7 +156,7 @@ end
 function SWEP:PrimaryAttack(networked)
     self:NetworkTaunt(1)
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return end
+    if not IsValid(ply) then return end
     local soundindex = math.Round(util.SharedRandom("MonkeyPrimary" .. ply:UserID(), 1, #self.SoundsPrimary, self:GetRandomSeed()), 0)
     local sound = self.SoundsPrimary[soundindex]
     local delay = self.SoundsPrimaryLength[soundindex]
@@ -166,7 +166,7 @@ function SWEP:PrimaryAttack(networked)
     end
 
     if ply.ExtEmitSound then
-        if (IsFirstTimePredicted() or networked) then
+        if IsFirstTimePredicted() or networked then
             ply:ExtEmitSound(sound, {
                 speech = 0.1,
                 shared = true,
@@ -186,15 +186,15 @@ function SWEP:PrimaryAttack(networked)
 
     local DesiredTaunt = self:GetMonkeyTaunt()
 
-    if (self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt) then
+    if self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt then
         ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt, false)
     end
 
     timer.Create(ply:EntIndex() .. "stopmonkeyingaround", delay + 0.1, 1, function()
-        if (IsValid(self)) then
+        if IsValid(self) then
             self.MonkeyingAround = nil
 
-            if (IsValid(ply)) then
+            if IsValid(ply) then
                 ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
             end
         end
@@ -211,7 +211,7 @@ end
 function SWEP:SecondaryAttack(networked)
     self:NetworkTaunt(2)
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return end
+    if not IsValid(ply) then return end
     local soundindex = math.Round(util.SharedRandom("MonkeySecondary" .. ply:UserID(), 1, #self.SoundsSecondary, self:GetRandomSeed()), 0)
     local sound = self.SoundsSecondary[soundindex]
     local delay = self.SoundsSecondaryLength[soundindex]
@@ -221,7 +221,7 @@ function SWEP:SecondaryAttack(networked)
     end
 
     if ply.ExtEmitSound then
-        if (IsFirstTimePredicted() or networked) then
+        if IsFirstTimePredicted() or networked then
             ply:ExtEmitSound(sound, {
                 speech = 0.1,
                 shared = true,
@@ -235,33 +235,33 @@ function SWEP:SecondaryAttack(networked)
 
     local DesiredTaunt = self:GetMonkeyTaunt2()
 
-    if (self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt) then
+    if self:GetPlayerCurrentTauntActivity() ~= DesiredTaunt then
         self.Owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, DesiredTaunt, false)
     end
 
     self.BeatingChest = true
 
     timer.Create(ply:EntIndex() .. "stopmonkeyingaround", delay, 1, function()
-        if (IsValid(self)) then
+        if IsValid(self) then
             self.MonkeyingAround = nil
             self.BeatingChest = false
             self.BeatChestValue = 0
         end
 
-        if (IsValid(ply)) then
+        if IsValid(ply) then
             ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
         end
     end)
 
     for i = 1, 10 do
-        timer.Create(ply:EntIndex() .. "monkeybeatchest-" .. i, 0.2 + (i * 0.15), 1, function()
-            if (IsValid(self) and IsValid(ply) and ply:GetActiveWeapon() == self) then
+        timer.Create(ply:EntIndex() .. "monkeybeatchest-" .. i, 0.2 + i * 0.15, 1, function()
+            if IsValid(self) and IsValid(ply) and ply:GetActiveWeapon() == self then
                 self:SlapChest()
             end
         end)
     end
 
-    if (IsFirstTimePredicted() or networked) then
+    if IsFirstTimePredicted() or networked then
         self:DropBanana(delay)
     end
 
@@ -275,11 +275,11 @@ end
 
 function SWEP:SlapChest()
     local ply = self:GetOwner()
-    if (not IsValid(ply)) then return end
+    if not IsValid(ply) then return end
     local val = self.BeatChestValue == 1 and 2 or 1
 
     if val ~= self.BeatChestValue then
-        if (IsValid(ply)) then
+        if IsValid(ply) then
             local ang1 = Angle(30, -90, 0)
             local ang2 = Angle(-30, -90, 0)
 
@@ -300,11 +300,11 @@ function SWEP:SlapChest()
             end
 
             if CLIENT then
-                if (ply:LookupBone("ValveBiped.Bip01_L_Forearm")) then
+                if ply:LookupBone("ValveBiped.Bip01_L_Forearm") then
                     ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), ang1, "monke")
                 end
 
-                if (ply:LookupBone("ValveBiped.Bip01_R_Forearm")) then
+                if ply:LookupBone("ValveBiped.Bip01_R_Forearm") then
                     ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), ang2, "monke")
                 end
             end
@@ -318,7 +318,7 @@ function SWEP:SlapChest()
     end
 
     timer.Create(ply:EntIndex() .. "resetmonkeychestslap", 0.3, 1, function()
-        if (IsValid(ply) and IsValid(self)) then
+        if IsValid(ply) and IsValid(self) then
             self:ResetChest()
         end
     end)
@@ -328,12 +328,12 @@ function SWEP:ResetChest()
     self.BeatChestValue = 0
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
-        if (ply:LookupBone("ValveBiped.Bip01_L_Forearm")) then
+    if IsValid(ply) then
+        if ply:LookupBone("ValveBiped.Bip01_L_Forearm") then
             ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), Angle(), "monke")
         end
 
-        if (ply:LookupBone("ValveBiped.Bip01_R_Forearm")) then
+        if ply:LookupBone("ValveBiped.Bip01_R_Forearm") then
             ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), Angle(), "monke")
         end
     end
@@ -343,7 +343,7 @@ function SWEP:OnRemove()
     self:ResetChest()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
     end
 end
@@ -351,9 +351,9 @@ end
 function SWEP:DropBanana(delay)
     delay = delay or 1
     local ply = self:GetOwner()
-    if (not IsFirstTimePredicted()) then return end
+    if not IsFirstTimePredicted() then return end
 
-    if (self.BananaNextRender and self.BananaNextRender > CurTime()) then
+    if self.BananaNextRender and self.BananaNextRender > CurTime() then
         self.BananaNextRender = CurTime() + delay
 
         return
@@ -361,15 +361,15 @@ function SWEP:DropBanana(delay)
 
     if SERVER then return end
 
-    if (IsValid(self.BananaGib)) then
+    if IsValid(self.BananaGib) then
         self.BananaGib:Remove()
     end
 
     self.BananaGib = ents.CreateClientProp(self.WorldModel)
-    if (not IsValid(self.BananaGib)) then return end
+    if not IsValid(self.BananaGib) then return end
     local matrix = self:DrawWorldModel(nil, true)
 
-    if (not IsValid(matrix)) then
+    if not IsValid(matrix) then
         matrix = Matrix()
         matrix:SetTranslation(ply:EyePos())
         matrix:SetAngles(ply:EyeAngles())
@@ -383,13 +383,13 @@ function SWEP:DropBanana(delay)
     self.BananaGib:SetModelScale(0.01, 4)
     self.BananaNextRender = CurTime() + delay
 
-    if (IsValid(self.BananaGib:GetPhysicsObject())) then
+    if IsValid(self.BananaGib:GetPhysicsObject()) then
         self.BananaGib:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 500) + VectorRand() * 500)
         self.BananaGib:GetPhysicsObject():AddAngleVelocity(VectorRand() * 500)
     end
 
     timer.Simple(4, function()
-        if (IsValid(self.BananaGib)) then
+        if IsValid(self.BananaGib) then
             self.BananaGib:Remove()
         end
     end)
@@ -442,7 +442,7 @@ function SWEP:DrawWorldModel(flags, check)
             end
 
             if not check then
-                if (self.BananaNextRender == nil or (self.BananaNextRender ~= nil and banscale > 0)) then
+                if self.BananaNextRender == nil or self.BananaNextRender ~= nil and banscale > 0 then
                     self:DrawModel()
                 end
             end

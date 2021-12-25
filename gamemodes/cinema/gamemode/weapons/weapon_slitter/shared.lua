@@ -112,7 +112,7 @@ end
 
 local function sinlerp(lrp)
     --*math.pi
-    return 0.5 - (0.5 * math.cos(lrp * 2.9))
+    return 0.5 - 0.5 * math.cos(lrp * 2.9)
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
@@ -165,7 +165,7 @@ function SWEP:DrawWorldModel()
     -- self:DrawModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -183,7 +183,7 @@ function SWEP:DrawWorldModel()
         if ply:IsPony() then
             oang:RotateAroundAxis(oang:Forward(), 180)
             oang:RotateAroundAxis(oang:Up(), -90)
-            opos = opos + (oang:Up() * -0.5) + (oang:Right() * -8.3) + (oang:Forward() * -0.2)
+            opos = opos + oang:Up() * -0.5 + oang:Right() * -8.3 + oang:Forward() * -0.2
         else
             opos = opos -- + oang:Right()*12.5
         end
@@ -228,7 +228,7 @@ function SWEP:TraceSphere(vp, vr, sp, radius, maxdist)
     vp = vp - sp
     vr:Normalize()
     local b = 2.0 * vp:Dot(vr)
-    local c = vp:Dot(vp) - (radius * radius)
+    local c = vp:Dot(vp) - radius * radius
     local thing = b * b - 4 * c
     if thing <= 0 then return end
     thing = math.sqrt(thing)
@@ -377,7 +377,7 @@ function SWEP:DrawHUD()
     surface.SetDrawColor(Color(255, 255, 255, 150))
     local hitplayer = self:TargetedPlayer()
 
-    if hitplayer and (hitplayer ~= justslitplayer or (CurTime() - lastkillslit) >= 0.35) then
+    if hitplayer and (hitplayer ~= justslitplayer or CurTime() - lastkillslit >= 0.35) then
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, 16, Color(0, 0, 0, 100))
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, 15, Color(255, 255, 255, 60))
     end

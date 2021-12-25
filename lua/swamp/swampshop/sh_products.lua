@@ -8,7 +8,7 @@ function SS_Product(product)
     function product:CannotBuy(ply)
         if ply.SQLCreatingItem then return "Database lock, try again." end
 
-        return product:SS_Product_CannotBuy(ply) or (not ply:SS_HasPoints(self.price) and SS_CANNOTBUY_AFFORD)
+        return product:SS_Product_CannotBuy(ply) or not ply:SS_HasPoints(self.price) and SS_CANNOTBUY_AFFORD
     end
 
     assert(product.OnBuy)
@@ -72,7 +72,7 @@ function SS_ItemProduct(item)
     product.sample_item = SS_GenerateItem(SS_SAMPLE_ITEM_OWNER, product.itemclass or product.class, table.Copy(product.defaultspecs or {}))
 
     function product:CannotBuy(ply)
-        local maxcount = (self.accessory_slot and ply:SS_AccessorySlots() * (self.perslot or 1)) or self.maxowned or 1
+        local maxcount = self.accessory_slot and ply:SS_AccessorySlots() * (self.perslot or 1) or self.maxowned or 1
         if ply:SS_CountItem(self.class) >= maxcount then return self.accessory_slot and "Buy more accessory slots (in Upgrades) first." or (maxcount > 1 and SS_CANNOTBUY_OWNEDMULTI or SS_CANNOTBUY_OWNED) end
     end
 
@@ -117,7 +117,7 @@ end
 function SS_WeaponAndAmmoProduct(product)
     -- used by buyammo system
     function product:AmmoTypeAndAmount(wep)
-        local ammotype, ammogive = (self.ammotype or game.GetAmmoName(self.clip2 and wep:GetSecondaryAmmoType() or wep:GetPrimaryAmmoType())), (self.amount or math.max(1, (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) or 0))
+        local ammotype, ammogive = self.ammotype or game.GetAmmoName(self.clip2 and wep:GetSecondaryAmmoType() or wep:GetPrimaryAmmoType()), self.amount or math.max(1, (self.clip2 and wep:GetMaxClip2() or wep:GetMaxClip1()) or 0)
         assert(ammotype ~= nil and ammogive > 0, self.class .. " " .. ammogive .. " " .. (ammotype or "nil"))
 
         return ammotype, ammogive
@@ -189,7 +189,7 @@ function SS_UniqueModelProduct(product)
         if s then return s end
 
         for k, v in pairs(player.GetAll()) do
-            if v:GetNWString("uniqmodl") == self:GetName() and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or (v:Nick() .. " is using this - kill them.") end
+            if v:GetNWString("uniqmodl") == self:GetName() and v:Alive() then return v == ply and SS_CANNOTBUY_OWNED or v:Nick() .. " is using this - kill them." end
         end
     end
 

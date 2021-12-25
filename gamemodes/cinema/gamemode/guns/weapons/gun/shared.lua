@@ -200,13 +200,13 @@ end
 
 -- movespeed and moving spread
 function SWEP:GetMobility()
-    return (self.nwspecs.mobility or 1)
+    return self.nwspecs.mobility or 1
 end
 
 function CalculateRolledSpread(accuracy_roll, spreadbase)
     accuracy_roll = accuracy_roll * 2
 
-    return (2 - accuracy_roll) * spreadbase + (math.max(1 - accuracy_roll, 0) ^ 2) * 0.001
+    return (2 - accuracy_roll) * spreadbase + math.max(1 - accuracy_roll, 0) ^ 2 * 0.001
 end
 
 function SWEP:GetBasedSpread()
@@ -328,7 +328,7 @@ function SWEP:DoKickBack()
     angle.y = angle.y + (self:GetKickLeft() and flKickLateral or -flKickLateral)
 
     -- vel.x = vel.x - flKickUp
-    if spraymodifier > self.KickDanceMinSpray and util.SharedRandom("KickBack", 0, 1) < ((self:GetInterval() * self.KickDance) * Lerp(mfac, 1, self.MoveKickDanceMultiplier) * Lerp(sfac, self.CrouchKickDanceMultiplier, 1)) then
+    if spraymodifier > self.KickDanceMinSpray and util.SharedRandom("KickBack", 0, 1) < (self:GetInterval() * self.KickDance) * Lerp(mfac, 1, self.MoveKickDanceMultiplier) * Lerp(sfac, self.CrouchKickDanceMultiplier, 1) then
         self:SetKickLeft(not self:GetKickLeft())
     end
 
@@ -441,8 +441,8 @@ function SWEP:Deploy()
     self:SetInReload(false)
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
     self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
-    self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
-    self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+    self:SetNextPrimaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
+    self:SetNextSecondaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
 
     if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
         self:GetOwner():SetFOV(0)
@@ -549,7 +549,7 @@ function SWEP:Reload()
         -- vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
         self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
         owner:DoReloadEvent()
-        local endtime = CurTime() + (self:SequenceDuration() / self:GetHandling())
+        local endtime = CurTime() + self:SequenceDuration() / self:GetHandling()
         self:SetNextPrimaryFire(endtime)
         self:SetNextSecondaryFire(endtime)
         self:SetInReload(true)
@@ -733,7 +733,7 @@ function SWEP:GunFire()
     --use "special1" for silenced m4 and usp
     self:WeaponSound("single_shot")
     local a = util.SharedRandom("SpreadAngle", 0, 2 * math.pi)
-    local r = spread * (util.SharedRandom("SpreadRadius", 0, 1) ^ 0.5)
+    local r = spread * util.SharedRandom("SpreadRadius", 0, 1) ^ 0.5
     local x = nil
     local y = nil
     dir = ang:Forward() + math.sin(a) * r * ang:Right() + math.cos(a) * r * ang:Up()
@@ -880,7 +880,7 @@ function SWEP:GunFire()
     -- TODO: change to self:GetSpray() + (self.SprayIncrement * (1-self:GetSpray()))
     -- self:SetLastShotSpray(math.min(1, self:GetSpray() + self.SprayIncrement))
     -- self:SetLastShotSpray(math.min(1, curspray + (self.SprayIncrement * (1-self:GetSpray()))  ))
-    self:SetLastShotSpray(curspray + (self.SprayIncrement / (self.SpraySaturation ^ curspray)))
+    self:SetLastShotSpray(curspray + self.SprayIncrement / self.SpraySaturation ^ curspray)
     self:SetLastFire(correctedcurtime) --CurTime())
     self:SetActualLastFire(CurTime())
 
@@ -888,14 +888,14 @@ function SWEP:GunFire()
         self.LastFireSysTime = SysTime()
     end
 
-    if self:HasPerk("alwaysjam") or (self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < (1.0 / self:GetMaxClip1())) then
+    if self:HasPerk("alwaysjam") or self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < 1.0 / self:GetMaxClip1() then
         self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
         self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
-        self:SetNextPrimaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
-        self:SetNextSecondaryFire(CurTime() + (self:SequenceDuration() / self:GetHandling()))
+        self:SetNextPrimaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
+        self:SetNextSecondaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
     end
 
-    if SERVER and self:HasPerk("unstable") and math.random() < (1 / self:GetMaxClip1()) then
+    if SERVER and self:HasPerk("unstable") and math.random() < 1 / self:GetMaxClip1() then
         local p = self:GetPos()
         local effectdata = EffectData()
         effectdata:SetOrigin(p)
@@ -950,7 +950,7 @@ function SWEP:MovementPenalty(clientsmoothing)
             sum = sum + v[1]
         end
 
-        return sum / (#self.RunningAverageMovementPenalties)
+        return sum / #self.RunningAverageMovementPenalties
     end
 
     return x
@@ -970,7 +970,7 @@ function SWEP:GetSpread(clientsmoothing)
     local spray = clientsmoothing and self:GetSpray(SysTime(), self.LastFireSysTime or 0) or self:GetSpray()
     -- crouch spread multiplier is NOT applied to spray, because spray decay handles it
 
-    return (Lerp(self:Standingness(), self.CrouchSpreadMultiplier, 1) * spread) + (self.Spray * (spray ^ self.SprayExponent))
+    return Lerp(self:Standingness(), self.CrouchSpreadMultiplier, 1) * spread + self.Spray * spray ^ self.SprayExponent
 end
 
 function SWEP:GetSpeedRatio()
@@ -980,9 +980,9 @@ function SWEP:GetSpeedRatio()
         spd = spd * (self.ScopedSpeedRatio or 0.5)
     end
 
-    local mobilityloss = 2 * (1 - (self:GetMobility() ^ (self.MobilityExponent or 1)))
+    local mobilityloss = 2 * (1 - self:GetMobility() ^ (self.MobilityExponent or 1))
 
-    return 1 - ((1 - spd) * mobilityloss)
+    return 1 - (1 - spd) * mobilityloss
 end
 
 function SWEP:SetupMove(ply, mv, cmd)

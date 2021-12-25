@@ -4,7 +4,7 @@ GM.TauntCam = TauntCamera()
 function UseThirdperson()
     local wc = IsValid(Me) and IsValid(Me:GetActiveWeapon()) and Me:GetActiveWeapon():GetClass()
 
-    return THIRDPERSON or Me:GetActiveWeapon().AlwaysThirdPerson or wc == "weapon_fists" or Me:HasWeapon("weapon_goohulk") or (wc == "weapon_garfield" and IsValid(Me) and not Me:InVehicle())
+    return THIRDPERSON or Me:GetActiveWeapon().AlwaysThirdPerson or wc == "weapon_fists" or Me:HasWeapon("weapon_goohulk") or wc == "weapon_garfield" and IsValid(Me) and not Me:InVehicle()
 end
 
 local wasf4down = false
@@ -38,7 +38,7 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
     if UseThirdperson() then
         local trace = {
             start = origin,
-            endpos = origin - (angles:Forward() * 100),
+            endpos = origin - angles:Forward() * 100,
             mask = MASK_SOLID_BRUSHONLY
         }
 
@@ -46,9 +46,9 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
         local view = {}
 
         if trace.Hit then
-            view.origin = origin - (angles:Forward() * ((100 * trace.Fraction) - 5))
+            view.origin = origin - angles:Forward() * (100 * trace.Fraction - 5)
         else
-            view.origin = origin - (angles:Forward() * 100)
+            view.origin = origin - angles:Forward() * 100
         end
 
         view.angles = angles

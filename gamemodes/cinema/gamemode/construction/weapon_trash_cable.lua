@@ -90,7 +90,7 @@ if CLIENT then
 
         if trashcablestartdata and IsValid(trashcablestartdata[1]) then
             render.SetMaterial(beem)
-            local p1, p2 = trashcablestartdata[1]:LocalToWorld(trashcablestartdata[2]), PropTrashLookedAtPos or WorldLookedAtPos or (EyePos() + EyeAngles():Forward() * 80)
+            local p1, p2 = trashcablestartdata[1]:LocalToWorld(trashcablestartdata[2]), PropTrashLookedAtPos or WorldLookedAtPos or EyePos() + EyeAngles():Forward() * 80
             local c = trashcablestartdata[3] and Color(255, 255, 255) or Color(255, 255, 0)
 
             if trashcablestartdata[1] ~= PropTrashLookedAt and (PropTrashLookedAtPos or WorldLookedAtPos) then
@@ -119,7 +119,7 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
     self:SetModelScale(0.8)
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()

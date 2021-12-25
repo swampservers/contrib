@@ -3,7 +3,7 @@ function time_function(func)
     local t = SysTime()
     func()
 
-    return (SysTime() - t)
+    return SysTime() - t
 end
 
 --- Prints how long it takes to run a function, averaging over a large number of samples with minimal overhead
@@ -20,7 +20,7 @@ function bench(func)
         end) / calls
     else
         repeat
-            calls = (calls and calls * 2) or 1
+            calls = calls and calls * 2 or 1
 
             t = time_function(function()
                 for i = 1, calls do

@@ -84,7 +84,7 @@ if CLIENT then
 end
 
 function SWEP:DrawGlow(pos, ang, flags)
-    if (not self:GetHoly() or pos:Distance(EyePos()) > 500) then return end
+    if not self:GetHoly() or pos:Distance(EyePos()) > 500 then return end
     local steps = 30
     local length = 52
     local color = Color(255, 230, 128)
@@ -102,7 +102,7 @@ function SWEP:DrawWorldModelTranslucent()
     ang:RotateAroundAxis(ang:Right(), -95)
     ang:RotateAroundAxis(ang:Up(), -4)
 
-    if (self:GetChargeEnd() > CurTime()) then
+    if self:GetChargeEnd() > CurTime() then
         ang:RotateAroundAxis(ang:Right(), 90)
     end
 
@@ -113,14 +113,14 @@ function SWEP:DrawWorldModelTranslucent()
 end
 
 function SWEP:PreDrawViewModel(vm, ply, wep)
-    if (self:GetHoly()) then
+    if self:GetHoly() then
         render.SuppressEngineLighting(true)
         render.ResetModelLighting(1, 0.8, 0.3)
     end
 end
 
 function SWEP:PostDrawViewModel(vm, ply, wep)
-    if (self:GetHoly()) then
+    if self:GetHoly() then
         local pos, ang = vm:GetBonePosition(vm:LookupBone("ValveBiped.Bip01_R_Hand") or 0)
         ang:RotateAroundAxis(ang:Right(), -85)
         ang:RotateAroundAxis(ang:Up(), 2)
@@ -144,7 +144,7 @@ end
 function SWEP:DrawWorldModel()
     self:ManipulateBoneAngles(1, self:IsCharging() and Angle(-90, 0, 0) or Angle())
 
-    if (self:GetHoly()) then
+    if self:GetHoly() then
         render.SuppressEngineLighting(true)
         render.ResetModelLighting(1, 0.8, 0.3)
     end
@@ -209,7 +209,7 @@ function SWEP:OnVarChanged(name, old, new)
     if name == "Holy" then
         local ent = self
 
-        if (IsValid(self:GetOwner())) then
+        if IsValid(self:GetOwner()) then
             ent = self:GetOwner()
         end
 
@@ -218,9 +218,9 @@ function SWEP:OnVarChanged(name, old, new)
 end
 
 function SWEP:Reload()
-    if (self:GetNextTaunt() > CurTime() or not self:GetOwner():KeyPressed(IN_RELOAD)) then return end
+    if self:GetNextTaunt() > CurTime() or not self:GetOwner():KeyPressed(IN_RELOAD) then return end
 
-    if (SERVER or IsFirstTimePredicted()) then
+    if SERVER or IsFirstTimePredicted() then
         local taunt = "deus_vult_infidel"
         self:GetOwner():EmitSound("aof/weapons/" .. taunt .. ".wav")
     end
@@ -258,7 +258,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SetupMove(ply, mv, cmd)
-    if (self.GetChargeEnd and self:GetChargeEnd() > CurTime()) then
+    if self.GetChargeEnd and self:GetChargeEnd() > CurTime() then
         mv:SetMaxClientSpeed(self.ChargeAttackVelocity * 155)
         mv:SetForwardSpeed(self.ChargeAttackVelocity * 155)
         mv:SetVelocity(Angle(0, ply:EyeAngles().yaw, 0):Forward() * self.ChargeAttackVelocity)
@@ -277,13 +277,13 @@ function SWEP:Think()
     local vm = ply:GetViewModel()
     local charging = self:IsCharging()
 
-    if (overhead and ply:OnGround()) then
+    if overhead and ply:OnGround() then
         --vm:SendViewModelMatchingSequence( vm:LookupSequence( "swing1" ) )
         vm:SetPlaybackRate(1.7)
     end
 
     if charging then
-        if (not ply:OnGround()) then
+        if not ply:OnGround() then
             ply:SetFOV(0, 0.5)
             self.Weapon:SetNextSecondaryFire(CurTime() + 2)
             self:SetChargeEnd(CurTime() - 1)
@@ -327,7 +327,7 @@ function SWEP:Think()
         end
     end
 
-    while (IsValid(self:GetOwner()) and self:GetHitCount() > 0 and CurTime() >= self:GetHitNext()) do
+    while IsValid(self:GetOwner()) and self:GetHitCount() > 0 and CurTime() >= self:GetHitNext() do
         self.Owner:LagCompensation(true)
         local tr = {}
         local trace
@@ -385,7 +385,7 @@ function SWEP:Think()
                 ply:SetVelocity(trace.HitNormal * 450)
                 local vm = ply:GetViewModel()
 
-                if (trace.Fraction < self.Primary.SlashRatio and trace.HitWorld and math.abs(trace.HitNormal.z) < 0.99 and not holy) then
+                if trace.Fraction < self.Primary.SlashRatio and trace.HitWorld and math.abs(trace.HitNormal.z) < 0.99 and not holy then
                     self:SetHitCount(0)
                     ply:ViewPunch(overhead and Angle(-15, 0, 0) or Angle(0, -15, 0))
                     self:EmitSound(self.WallSound, 80, 100, 1, CHAN_WEAPON)
@@ -428,7 +428,7 @@ end
 function SWEP:SecondaryAttack()
     local ply = self:GetOwner()
 
-    if (not ply:OnGround()) then
+    if not ply:OnGround() then
         self.Weapon:SetNextSecondaryFire(CurTime() + 0.1)
 
         return
@@ -439,7 +439,7 @@ function SWEP:SecondaryAttack()
     ply:SetFOV(self.ChargeFOV, 0.5)
 
     timer.Simple(1, function()
-        if (IsValid(ply)) then
+        if IsValid(ply) then
             ply:SetFOV(0, 0.5)
         end
     end)
@@ -449,7 +449,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnRemove()
-    if (IsValid(self:GetOwner())) then
+    if IsValid(self:GetOwner()) then
         self:GetOwner():SetFOV(0, 0.5)
     end
 end
@@ -473,7 +473,7 @@ end
 hook.Add("DoPlayerDeath", "Holiness", function(ply, attacker, dmg)
     local wep = dmg:GetInflictor()
 
-    if (wep:GetClass() == "weapon_crusadersword") then
+    if wep:GetClass() == "weapon_crusadersword" then
         attacker:SetHealth(math.max(math.min(attacker:Health() + 3, attacker:GetMaxHealth()), attacker:Health()))
         wep.KillChain = (wep.KillChain or 0) + 1
 
@@ -482,10 +482,10 @@ hook.Add("DoPlayerDeath", "Holiness", function(ply, attacker, dmg)
         end
 
         timer.Create(wep:EntIndex() .. "crusader_chain", 5, 1, function()
-            if (IsValid(wep)) then
+            if IsValid(wep) then
                 wep.KillChain = 0
 
-                if (wep:GetHoly()) then
+                if wep:GetHoly() then
                     wep:SetHoly(false)
                 end
             end

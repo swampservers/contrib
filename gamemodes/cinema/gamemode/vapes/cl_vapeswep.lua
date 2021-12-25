@@ -41,12 +41,12 @@ net.Receive("Vape", function()
     elseif amt >= 35 then
         ply:EmitSound("vapebreath2.wav", 75, 100, 0.7)
     elseif amt >= 10 then
-        ply:EmitSound("vapebreath1.wav", 70, 130 - math.min(100, amt * 2), 0.4 + (amt * 0.005))
+        ply:EmitSound("vapebreath1.wav", 70, 130 - math.min(100, amt * 2), 0.4 + amt * 0.005)
     end
 
     for i = 1, amt * 2 do
         timer.Simple((i - 1) * 0.02, function()
-            vape_do_pulse(ply, math.floor(((amt * 2) - i) / 10), fx == 2 and 100 or 0, fx)
+            vape_do_pulse(ply, math.floor((amt * 2 - i) / 10), fx == 2 and 100 or 0, fx)
         end)
     end
 end)
@@ -79,7 +79,7 @@ net.Receive("VapeArm", function()
 
         for i = 0, 19 do
             timer.Simple(i / 60, function()
-                vape_interpolate_arm(ply, math.abs(m - ((19 - i) / 20)), z and 0 or 0.2)
+                vape_interpolate_arm(ply, math.abs(m - (19 - i) / 20), z and 0 or 0.2)
             end)
         end
     end
@@ -109,7 +109,7 @@ function vape_interpolate_arm(ply, mult, mouth_delay)
 
     local b1 = ply:LookupBone("ValveBiped.Bip01_R_Upperarm")
     local b2 = ply:LookupBone("ValveBiped.Bip01_R_Forearm")
-    if (not b1) or (not b2) then return end
+    if not b1 or not b2 then return end
     ply:ManipulateBoneAngles(b1, Angle(20 * mult, -62 * mult, 10 * mult), "vape")
     ply:ManipulateBoneAngles(b2, Angle(-5 * mult, -10 * mult, 0), "vape")
 
@@ -151,7 +151,7 @@ function vape_do_pulse(ply, amt, spreadadd, fx)
 
     if ply ~= Me then
         fwd = (angpos.Ang:Forward() - angpos.Ang:Up()):GetNormalized()
-        pos = angpos.Pos + (fwd * 3.5)
+        pos = angpos.Pos + fwd * 3.5
     else
         fwd = ply:GetAimVector():GetNormalized()
         pos = ply:GetShootPos() + fwd * 1.5 + gui.ScreenToVector(ScrW() / 2, ScrH()) * 5
@@ -175,7 +175,7 @@ function vape_do_pulse(ply, amt, spreadadd, fx)
 
         if particle then
             local dir = VectorRand():GetNormalized() * ((amt + 5) / 10)
-            vape_do_particle(particle, (ply:GetVelocity() * 0.25) + (((fwd * 9) + dir):GetNormalized() * math.Rand(50, 80) * (amt + 1) * 0.2), fx)
+            vape_do_particle(particle, ply:GetVelocity() * 0.25 + (fwd * 9 + dir):GetNormalized() * math.Rand(50, 80) * (amt + 1) * 0.2, fx)
         end
     end
 end
@@ -304,13 +304,13 @@ matproxy.Add({
         self.ResultTo = values.resultvar
     end,
     bind = function(self, mat, ent)
-        if (not IsValid(ent)) then return end
+        if not IsValid(ent) then return end
 
         if ent:GetClass() == "viewmodel" then
             ent = ent:GetOwner()
-            if (not IsValid(ent) or not ent:IsPlayer()) then return end
+            if not IsValid(ent) or not ent:IsPlayer() then return end
             ent = ent:GetActiveWeapon()
-            if (not IsValid(ent)) then return end
+            if not IsValid(ent) then return end
         end
 
         local v = ent.VapeTankColor or Vector(0.3, 0.3, 0.3)
@@ -335,13 +335,13 @@ matproxy.Add({
         self.ResultTo = values.resultvar
     end,
     bind = function(self, mat, ent)
-        if (not IsValid(ent)) then return end
+        if not IsValid(ent) then return end
         local o = ent:GetOwner()
 
         if ent:GetClass() == "viewmodel" then
-            if (not IsValid(o)) or (not o:IsPlayer()) then return end
+            if not IsValid(o) or not o:IsPlayer() then return end
             ent = o:GetActiveWeapon()
-            if (not IsValid(ent)) then return end
+            if not IsValid(ent) then return end
         end
 
         local col = ent.VapeAccentColor or Vector(1, 1, 1)

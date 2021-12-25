@@ -83,10 +83,10 @@ function ReleaseVape(ply)
 
             local loc = ply:GetLocationName():lower()
 
-            if (ply:InTheater() and not (ply:GetTheater()._AllowItems)) or loc == "trump lobby" or loc == "golf" then
+            if ply:InTheater() and not ply:GetTheater()._AllowItems or loc == "trump lobby" or loc == "golf" then
                 ply:PrintMessage(HUD_PRINTTALK, "[red] Take it outside, degenerate filth. ;authority;")
             else
-                if (math.random(1, 1000) == 1) then
+                if math.random(1, 1000) == 1 then
                     local exp = ents.Create("env_explosion")
                     exp:SetPos(ply:EyePos())
                     exp:Spawn()

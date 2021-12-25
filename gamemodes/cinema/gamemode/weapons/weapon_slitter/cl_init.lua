@@ -59,7 +59,7 @@ net.Receive("SlitThroatneck", function(len)
     end
 
     for i = 1, 15 do
-        local nextscale = 14 - ((i - 1) * 0.6)
+        local nextscale = 14 - (i - 1) * 0.6
 
         timer.Simple(0.15 * i, function()
             if IsValid(ent) and IsValid(ent:GetRagdollEntity()) then

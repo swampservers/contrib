@@ -35,7 +35,7 @@ net.Receive("Beans_Eat", function()
     local fwd
     local pos
 
-    if (ply ~= Me and IsValid(angpos)) then
+    if ply ~= Me and IsValid(angpos) then
         fwd = (angpos.Ang:Forward() - angpos.Ang:Up()):GetNormalized()
         pos = angpos.Pos + fwd * 3
     else
@@ -49,7 +49,7 @@ net.Receive("Beans_Eat", function()
 
         if particle then
             local dir = VectorRand():GetNormalized()
-            bean_init(particle, ((fwd) + dir):GetNormalized() * math.Rand(0, 40))
+            bean_init(particle, (fwd + dir):GetNormalized() * math.Rand(0, 40))
         end
     end
 end)

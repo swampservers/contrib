@@ -183,7 +183,7 @@ SS_Product({
     GetModel = function(self)
         local options = self:Options()
 
-        return options[(math.floor(SysTime() * 2.5) % #options) + 1].WorldModel
+        return options[math.floor(SysTime() * 2.5) % #options + 1].WorldModel
     end,
     OnBuy = function(self, ply)
         local options = self:Options()

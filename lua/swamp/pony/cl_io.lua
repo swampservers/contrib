@@ -25,11 +25,11 @@ function PPM_Load(filename)
         local args = string.Split(string.Trim(v), " ")
         local name = string.Replace(args[1], "pny_", "")
 
-        if (table.Count(args) == 2) then
+        if table.Count(args) == 2 then
             ponydata[name] = tonumber(args[2])
-        elseif (table.Count(args) == 4) then
+        elseif table.Count(args) == 4 then
             ponydata[name] = Vector(tonumber(args[2]), tonumber(args[3]), tonumber(args[4]))
-        elseif (table.Count(args) == 3) then
+        elseif table.Count(args) == 3 then
             if args[2] == "b" then
                 ponydata[name] = tobool(args[3])
             elseif args[2] == "s" then
@@ -110,7 +110,7 @@ function PPM_Save(filename)
 end
 
 function ReloadCurrentPony()
-    if (file.Exists("ppm/_current.txt", "DATA")) then
+    if file.Exists("ppm/_current.txt", "DATA") then
         PPM_Load("_current.txt")
     else
         PPM_Randomize()

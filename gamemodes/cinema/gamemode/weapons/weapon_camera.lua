@@ -54,7 +54,7 @@ end
 -- Reload resets the FOV and Roll
 --
 function SWEP:Reload()
-    if (not self.Owner:KeyDown(IN_ATTACK2)) then
+    if not self.Owner:KeyDown(IN_ATTACK2) then
         self:SetZoom(self.Owner:IsBot() and 75 or self.Owner:GetInfoNum("fov_desired", 75))
     end
 
@@ -67,8 +67,8 @@ end
 function SWEP:PrimaryAttack()
     self:DoShootEffect()
     -- If we're multiplayer this can be done totally clientside
-    if (not game.SinglePlayer() and SERVER) then return end
-    if (CLIENT and not IsFirstTimePredicted()) then return end
+    if not game.SinglePlayer() and SERVER then return end
+    if CLIENT and not IsFirstTimePredicted() then return end
     self.Owner:ConCommand("jpeg")
 end
 
@@ -84,7 +84,7 @@ end
 function SWEP:Tick()
     if CLIENT and self.Owner ~= Me then return end -- If someone is spectating a player holding this weapon, bail
     local cmd = self.Owner:GetCurrentCommand()
-    if (not cmd:KeyDown(IN_ATTACK2)) then return end -- Not holding Mouse 2, bail
+    if not cmd:KeyDown(IN_ATTACK2) then return end -- Not holding Mouse 2, bail
     self:SetZoom(math.Clamp(self:GetZoom() + cmd:GetMouseY() * 0.1, 0.1, 175)) -- Handles zooming
     self:SetRoll(self:GetRoll() + cmd:GetMouseX() * 0.025) -- Handles rotation
 end
@@ -107,7 +107,7 @@ end
 -- Set FOV to players desired FOV
 --
 function SWEP:Equip()
-    if (self:GetZoom() == 70 and self.Owner:IsPlayer() and not self.Owner:IsBot()) then
+    if self:GetZoom() == 70 and self.Owner:IsPlayer() and not self.Owner:IsBot() then
         self:SetZoom(self.Owner:GetInfoNum("fov_desired", 75))
     end
 end
@@ -145,13 +145,13 @@ end
 
 function SWEP:FreezeMovement()
     -- Don't aim if we're holding the right mouse button
-    if (self.Owner:KeyDown(IN_ATTACK2) or self.Owner:KeyReleased(IN_ATTACK2)) then return true end
+    if self.Owner:KeyDown(IN_ATTACK2) or self.Owner:KeyReleased(IN_ATTACK2) then return true end
 
     return false
 end
 
 function SWEP:CalcView(ply, origin, angles, fov)
-    if (self:GetRoll() ~= 0) then
+    if self:GetRoll() ~= 0 then
         angles.Roll = self:GetRoll()
     end
 
@@ -159,7 +159,7 @@ function SWEP:CalcView(ply, origin, angles, fov)
 end
 
 function SWEP:AdjustMouseSensitivity()
-    if (self.Owner:KeyDown(IN_ATTACK2)) then return 1 end
+    if self.Owner:KeyDown(IN_ATTACK2) then return 1 end
 
     return self:GetZoom() / 80
 end
@@ -167,7 +167,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply) and ply:IsPony()) then
+    if IsValid(ply) and ply:IsPony() then
         local bn = "LrigScull"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -185,7 +185,7 @@ function SWEP:DrawWorldModel()
         if ply:IsPony() then
             oang:RotateAroundAxis(oang:Forward(), 90)
             --oang:RotateAroundAxis(oang:Up(),-90)
-            opos = opos + (oang:Up() * 1) + (oang:Right() * -2) + (oang:Forward() * 10.5)
+            opos = opos + oang:Up() * 1 + oang:Right() * -2 + oang:Forward() * 10.5
             oang:RotateAroundAxis(oang:Right(), 10)
         end
 

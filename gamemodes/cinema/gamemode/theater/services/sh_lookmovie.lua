@@ -8,7 +8,7 @@ SERVICE.CacheLife = 0
 local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com", "bestalltimemovies.xyz", "contentforall.xyz", "watchmorestuff.xyz", "lookmovie100.xyz"}
 
 function SERVICE:GetKey(url)
-    if (util.JSONToTable(url.encoded)) then return false end
+    if util.JSONToTable(url.encoded) then return false end
     if string.match(url.encoded, "lookmovie.io/movies/view/(.+)") or string.match(url.encoded, "lookmovie.io/shows/view/(.+)#.+%-(%d+)$") then return url.encoded end
 
     for _, v in pairs(domains) do
@@ -62,7 +62,7 @@ if CLIENT then
                     local duration = 0
 
                     for k, v in ipairs(string.Split(sbody, "\n")) do
-                        if (v:StartWith("#EXTINF:")) then
+                        if v:StartWith("#EXTINF:") then
                             duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
                         end
                     end
@@ -114,7 +114,7 @@ if CLIENT then
                 end
 
                 if string.StartWith(msg, "CAPTCHA:") then
-                    if (msg:sub(9, -1) == 'Thread Defence') then
+                    if msg:sub(9, -1) == 'Thread Defence' then
                         self:Remove()
                         chat.AddText("[red]Visit lookmovie.io, fill out the captcha, and then request the " .. (isTV and "tv show" or "movie") .. " again.")
                         callback()

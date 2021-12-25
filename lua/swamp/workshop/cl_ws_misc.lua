@@ -168,7 +168,7 @@ do
         local z, i, j = 0, 1
 
         for j = 0, 31 do
-            if (mod(x, 2) == 1 and mod(y, 2) == 1) then
+            if mod(x, 2) == 1 and mod(y, 2) == 1 then
                 z = z + i
             end
 

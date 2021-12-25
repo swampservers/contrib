@@ -61,7 +61,7 @@ function ENT:Draw()
             filter = self
         })
 
-        if IsValid(self:GetOwner()) and IsValid(tr.Entity) and tr.Entity:IsPlayer() and (not tr.Entity:InVehicle()) and tr.Entity ~= self:GetOwner() then
+        if IsValid(self:GetOwner()) and IsValid(tr.Entity) and tr.Entity:IsPlayer() and not tr.Entity:InVehicle() and tr.Entity ~= self:GetOwner() then
             local ct = CurTime()
             render.SetMaterial(bfgboltarc)
             render.DrawBeam(tr.StartPos, tr.HitPos, 24, ct * 1.5, ct * 1.5 - 1, Color(255, 255, 255, 255))

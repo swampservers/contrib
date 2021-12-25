@@ -9,10 +9,10 @@ end)
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
-    if (not Me:IsStaff()) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
+    if not Me:IsStaff() and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
     local dist = EyePos():Distance(ply:EyePos())
     if dist >= 800 then return end
-    local opacity = math.Clamp(310.526 - (0.394737 * dist), 0, 150)
+    local opacity = math.Clamp(310.526 - 0.394737 * dist, 0, 150)
     opacity = opacity * opacityScale
     if opacity <= 0 then return end
     local pos = ply:EyePos() - Vector(0, 0, 4)
@@ -37,7 +37,7 @@ local function DrawName(ply, opacityScale)
     -- render.OverrideDepthEnable(false, true)
     if SHOWNPSET then
         local inset = InGroupSet(Me.NWP[SHOWNPSET] or "", ply)
-        DrawTheaterText(inset and (SHOWNPSETVERB[1]:upper() .. SHOWNPSETVERB:sub(2)) or ("Not " .. SHOWNPSETVERB), "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity * 1.5))
+        DrawTheaterText(inset and SHOWNPSETVERB[1]:upper() .. SHOWNPSETVERB:sub(2) or "Not " .. SHOWNPSETVERB, "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity * 1.5))
     end
 
     DrawTheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
@@ -116,7 +116,7 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
         local dot = fwd:Dot(to)
 
         if tv then
-            DrawName(ply, 0.5 * math.min(1, ((dot - 0.85) * 6.66 + math.max(-0.5, (1 - dist) * 0.01))))
+            DrawName(ply, 0.5 * math.min(1, (dot - 0.85) * 6.66 + math.max(-0.5, (1 - dist) * 0.01)))
         else
             DrawName(ply, math.min(1, (dot - 0.8) * 5 + math.max(0, (200 - dist) * 0.01)))
         end

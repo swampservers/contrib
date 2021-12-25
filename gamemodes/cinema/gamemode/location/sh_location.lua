@@ -53,7 +53,7 @@ Locations = {
             Thumb = "m_thumb",
             ProtectionTime = 7200,
         },
-        Filter = function(pos) return (pos.x < -1538 and pos.z < 328) or pos.y > 1280 end
+        Filter = function(pos) return pos.x < -1538 and pos.z < 328 or pos.y > 1280 end
     },
     {
         Name = "West Hallway",
@@ -173,7 +173,7 @@ Locations = {
             AllowItems = true,
             ProtectionTime = 3600,
         },
-        Filter = function(pos) return pos.x < 2560 or (pos.y > 560 and pos.y < 688 and pos.z < 128) end
+        Filter = function(pos) return pos.x < 2560 or pos.y > 560 and pos.y < 688 and pos.z < 128 end
     },
     {
         Name = "Furnace",
@@ -228,7 +228,7 @@ Locations = {
             Pos = Vector(-285, 1213, -214),
             Ang = Angle(0, 180, 0),
             Width = 60,
-            Height = (60 * 9 / 16)
+            Height = 60 * 9 / 16
         }
     },
     {

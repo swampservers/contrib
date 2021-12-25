@@ -1,8 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local function AppropriateNavArea(ply, area)
-    if (not IsValid(area)) then return false end
+    if not IsValid(area) then return false end
     local mins, maxs = ply:GetCollisionBounds()
-    if (area:GetSizeX() < maxs.x * 2 or area:GetSizeY() < maxs.z * 2) then return false end
+    if area:GetSizeX() < maxs.x * 2 or area:GetSizeY() < maxs.z * 2 then return false end
     local mins, maxs = ply:GetCollisionBounds()
     local tr = {}
     tr.start = area:GetCenter() + Vector(0, 0, 1)
@@ -25,11 +25,11 @@ end
 
 -- multiply disance along an axis, so we can  
 local function biasdist(pos1, pos2, biasvec)
-    return (pos1 * biasvec):Distance((pos2 * biasvec))
+    return (pos1 * biasvec):Distance(pos2 * biasvec)
 end
 
 function Player:IsStuck()
-    if (self:InVehicle()) then return false end
+    if self:InVehicle() then return false end
     local mins, maxs = self:GetCollisionBounds()
     local tr = {}
     tr.start = self:GetPos()
@@ -52,14 +52,14 @@ end
 
 function Player:UnStick()
     --reuse the last spot they were placed if this happens frequently
-    if (self.LastUnstickSpot and self:GetPos():Distance(self.LastUnstickSpot) < 200) then
+    if self.LastUnstickSpot and self:GetPos():Distance(self.LastUnstickSpot) < 200 then
         self:SetPos(self.LastUnstickSpot)
         self.LastUnstickSpot = nil
 
         return true
     end
 
-    if (not self:IsStuck()) then return end
+    if not self:IsStuck() then return end
     local areas
     local testedareas = 0
     local bestarea
@@ -67,17 +67,17 @@ function Player:UnStick()
     --least aggressive
     bestarea = navmesh.GetNearestNavArea(self:GetPos(), false, 1000, true, true)
 
-    if (IsValid(bestarea) and not AppropriateNavArea(self, bestarea)) then
+    if IsValid(bestarea) and not AppropriateNavArea(self, bestarea) then
         bestarea = nil
     end
 
     --more aggressive
-    if (not IsValid(bestarea)) then
+    if not IsValid(bestarea) then
         areas = navmesh.Find(self:GetPos(), 512, 512, 64)
 
         for k, area in pairs(areas) do
-            if (AppropriateNavArea(self, area)) then
-                if (bestarea == nil or biasdist(self:GetPos(), area:GetCenter(), Vector(1, 1, 8)) < biasdist(self:GetPos(), bestareapos, Vector(1, 1, 8))) then
+            if AppropriateNavArea(self, area) then
+                if bestarea == nil or biasdist(self:GetPos(), area:GetCenter(), Vector(1, 1, 8)) < biasdist(self:GetPos(), bestareapos, Vector(1, 1, 8)) then
                     bestarea = area
                     bestareapos = area:GetCenter()
                 end
@@ -88,12 +88,12 @@ function Player:UnStick()
     end
 
     --most aggressive
-    if (not IsValid(bestarea)) then
+    if not IsValid(bestarea) then
         areas = navmesh.GetAllNavAreas()
 
         for k, area in pairs(areas) do
-            if (AppropriateNavArea(self, area)) then
-                if (bestarea == nil or self:GetPos():Distance(area:GetCenter()) < self:GetPos():Distance(bestareapos)) then
+            if AppropriateNavArea(self, area) then
+                if bestarea == nil or self:GetPos():Distance(area:GetCenter()) < self:GetPos():Distance(bestareapos) then
                     bestarea = area
                     bestareapos = area:GetCenter()
                 end
@@ -117,7 +117,7 @@ end
 RegisterChatCommand({'stuck', 'unstuck', 'unstick'}, function(ply, arg)
     if IsValid(ply) and not ply:InVehicle() and ply:Alive() then
         local worked = ply:UnStick()
-        local msg = (worked == true and "Unstuck!") or (worked == false and "Couldn't Unstick! Try to /tp to another player!") or (worked == nil and "You don't appear to be stuck.")
+        local msg = worked == true and "Unstuck!" or worked == false and "Couldn't Unstick! Try to /tp to another player!" or worked == nil and "You don't appear to be stuck."
         ply:ChatPrint(msg)
     end
 end, {

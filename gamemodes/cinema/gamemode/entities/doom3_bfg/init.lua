@@ -98,7 +98,7 @@ function ENT:Think()
             filter = self
         })
 
-        if IsValid(self:GetOwner()) and IsValid(tr.Entity) and tr.Entity:IsPlayer() and (not tr.Entity:InVehicle()) and tr.Entity ~= self:GetOwner() then
+        if IsValid(self:GetOwner()) and IsValid(tr.Entity) and tr.Entity:IsPlayer() and not tr.Entity:InVehicle() and tr.Entity ~= self:GetOwner() then
             local dmginfo = DamageInfo()
             dmginfo:SetDamage(10)
             dmginfo:SetDamageType(DMG_ENERGYBEAM)

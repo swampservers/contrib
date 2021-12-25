@@ -173,7 +173,7 @@ function SWEP:Initialize()
 end
 
 local function issafe(v)
-    return v:IsProtected() or (v:InTheater() and v:InVehicle())
+    return v:IsProtected() or v:InTheater() and v:InVehicle()
 end
 
 if SERVER then
@@ -384,7 +384,7 @@ end
 function SWEP:ValidTarget(v)
     if self.Owner:GetNW2Entity("EATER") == v and not self:IsTooBig(v) then return true end
     if issafe(v) or self:IsTooBig(v) then return false end
-    if CylinderDist(v:GetPos(), self.Owner:GetPos()) > (self:MaxRange() * 1.5 + 60) then return false end
+    if CylinderDist(v:GetPos(), self.Owner:GetPos()) > self:MaxRange() * 1.5 + 60 then return false end
 
     return true
 end
@@ -415,7 +415,7 @@ function SWEP:GetTargetPlayer()
         local pp = v:GetPos()
         local pcp = v:LocalToWorld(v:OBBCenter())
         local cyldist = CylinderDist(op, pp)
-        local cylalpha = math.Clamp(2 - (cyldist / maxdist), 0, 1)
+        local cylalpha = math.Clamp(2 - cyldist / maxdist, 0, 1)
         local offset = pcp - ap
         local offsetlength = offset:Length()
         local aimdot = math.max(0, (offset / offsetlength):Dot(av))
@@ -588,7 +588,7 @@ function SWEP:DrawHUD()
             if alpha >= 1 then
                 local glo = (math.sin(CurTime() * 10) + 1) * 4 - 1
                 surface.SetDrawColor(0, 255, 0, 255)
-                surface.DrawTexturedRect(data2D.x - 80 - (glo), data2D.y - 80 - (glo), 160 + glo * 2, 160 + glo * 2)
+                surface.DrawTexturedRect(data2D.x - 80 - glo, data2D.y - 80 - glo, 160 + glo * 2, 160 + glo * 2)
                 surface.SetDrawColor(0, 0, 0, 255)
                 surface.DrawTexturedRect(data2D.x - 72, data2D.y - 72, 144, 144)
             end

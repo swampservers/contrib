@@ -36,7 +36,7 @@ RegisterChatConsoleCommand({'drop', 'dropweapon'}, "drop")
 
 concommand.Add("drop", function(ply, cmd, args)
     ply.LastWepDropTime = ply.LastWepDropTime or 0
-    if (CurTime() - ply.LastWepDropTime) < 2 then return end
+    if CurTime() - ply.LastWepDropTime < 2 then return end
     ply.LastWepDropTime = CurTime()
     local w = ply:GetActiveWeapon()
 
@@ -63,7 +63,7 @@ RegisterChatConsoleCommand('dropall', "dropall")
 
 concommand.Add("dropall", function(ply, cmd, args)
     ply.LastWepDropTime = ply.LastWepDropTime or 0
-    if (CurTime() - ply.LastWepDropTime) < 2 then return end
+    if CurTime() - ply.LastWepDropTime < 2 then return end
     ply.LastWepDropTime = CurTime()
 
     for k, v in pairs(ply:GetWeapons()) do

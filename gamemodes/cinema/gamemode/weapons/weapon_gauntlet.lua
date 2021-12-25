@@ -38,7 +38,7 @@ end
 
 function Player:Fizzle(attacker, inflictor, damage)
     if SERVER then
-        if (self:InVehicle()) then
+        if self:InVehicle() then
             self:ExitVehicle()
         end
 
@@ -66,12 +66,12 @@ function SWEP:Snap(target)
         util.ScreenShake(self:GetOwner():GetPos(), 1, 2, 0.2, 300)
     end
 
-    if (IsValid(target)) then
+    if IsValid(target) then
         target:Fizzle(self:GetOwner(), self)
         self:GetOwner():RemoveAmmo(1, "infinitygauntlet")
 
         self:TimerSimple(0.5, function()
-            if (SERVER and self:Ammo1() <= 0) then
+            if SERVER and self:Ammo1() <= 0 then
                 if IsValid(self) then
                     self:Remove()
                 end
@@ -81,10 +81,10 @@ function SWEP:Snap(target)
 end
 
 function SWEP:CanTarget(v)
-    if (not v:IsPlayer()) then return false end
-    if (not v:Alive()) then return false end
-    if (v == self:GetOwner()) then return false end
-    if (not self:GetTargetNearness(v)) then return false end
+    if not v:IsPlayer() then return false end
+    if not v:Alive() then return false end
+    if v == self:GetOwner() then return false end
+    if not self:GetTargetNearness(v) then return false end
     if v:IsProtected(self.Owner) then return false end
 
     return true
@@ -120,7 +120,7 @@ function SWEP:FindTarget()
         local otherpos = v:LocalToWorld(v:OBBCenter())
         local ofs = v:InVehicle() and Vector(0, 0, -maxs.z / 2) or Vector()
         otherpos = otherpos + ofs
-        if (not self:CanTarget(v)) then continue end
+        if not self:CanTarget(v) then continue end
         local near = self:GetTargetNearness(v)
 
         if near and near < target[2] then
@@ -138,11 +138,11 @@ function SWEP:FindTarget()
 
             local wmins, wmaxs = mins + v:GetPos() + ofs, maxs + v:GetPos() + ofs
 
-            if (tr.Hit and tr.HitPos:WithinAABox(wmins, wmaxs)) then
+            if tr.Hit and tr.HitPos:WithinAABox(wmins, wmaxs) then
                 tr.Hit = false
             end
 
-            if (tr2.Hit and tr2.HitPos:WithinAABox(wmins, wmaxs)) then
+            if tr2.Hit and tr2.HitPos:WithinAABox(wmins, wmaxs) then
                 tr2.Hit = false
             end
 
@@ -156,14 +156,14 @@ function SWEP:FindTarget()
 end
 
 hook.Add("PreDrawHalos", "InfinityGauntletHalo", function()
-    if (Me:UsingWeapon("weapon_gauntlet")) then
+    if Me:UsingWeapon("weapon_gauntlet") then
         local wep = Me:GetWeapon("weapon_gauntlet")
         local ply = wep:FindTarget()
 
-        if (IsValid(ply)) then
+        if IsValid(ply) then
             local tb = {ply}
 
-            if (ply.GetActiveWeapon and IsValid(ply:GetActiveWeapon())) then
+            if ply.GetActiveWeapon and IsValid(ply:GetActiveWeapon()) then
                 tb[2] = ply:GetActiveWeapon()
             end
 
@@ -180,13 +180,13 @@ if SERVER then end
 
 function SWEP:PrimaryAttack()
     local target = self:FindTarget()
-    if (not self:CanPrimaryAttack()) then return end
+    if not self:CanPrimaryAttack() then return end
 
     if SERVER then
         SuppressHostEvents(self:GetOwner())
     end
 
-    if (IsValid(target)) then
+    if IsValid(target) then
         self:Snap(target)
         self:SetNextPrimaryFire(CurTime() + 0.5)
     else
@@ -220,7 +220,7 @@ function SWEP:CreateWorldModel()
 end
 
 function SWEP:DrawWorldModel()
-    if (not IsValid(self:GetOwner())) then
+    if not IsValid(self:GetOwner()) then
         local pos = self:GetPos()
         local ang = Angle(0, 0, 0)
         self.Spin = self.Spin or math.Rand(0, 360)

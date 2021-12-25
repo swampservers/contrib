@@ -34,31 +34,31 @@ function SWEP:DrawWorldModel()
 
         if isPony then
             --pony position
-            opos = opos + (oang:Forward() * 19.4) + (oang:Right() * -4.36) + (oang:Up() * -2.5)
+            opos = opos + oang:Forward() * 19.4 + oang:Right() * -4.36 + oang:Up() * -2.5
             oang:RotateAroundAxis(oang:Right(), 80)
             oang:RotateAroundAxis(oang:Forward(), 12)
             oang:RotateAroundAxis(oang:Up(), 20)
-            opos = opos + (oang:Up() * (2.3 + ((vapeScale - 1) * -10.25)))
+            opos = opos + oang:Up() * (2.3 + (vapeScale - 1) * -10.25)
         else
             if ply.vapeArmFullyUp then
                 --head position
-                opos = opos + (oang:Forward() * 0.74) + (oang:Right() * 15) + (oang:Up() * 2)
+                opos = opos + oang:Forward() * 0.74 + oang:Right() * 15 + oang:Up() * 2
                 oang:RotateAroundAxis(oang:Forward(), -100)
                 oang:RotateAroundAxis(oang:Up(), 100)
-                opos = opos + (oang:Up() * (vapeScale - 1) * -10.25)
+                opos = opos + oang:Up() * (vapeScale - 1) * -10.25
             else
                 --hand position
                 oang:RotateAroundAxis(oang:Forward(), 90)
                 oang:RotateAroundAxis(oang:Right(), 90)
-                opos = opos + (oang:Forward() * 2) + (oang:Up() * -4.5) + (oang:Right() * -2)
+                opos = opos + oang:Forward() * 2 + oang:Up() * -4.5 + oang:Right() * -2
                 oang:RotateAroundAxis(oang:Forward(), 69)
                 oang:RotateAroundAxis(oang:Up(), 10)
-                opos = opos + (oang:Up() * (vapeScale - 1) * -10.25)
+                opos = opos + oang:Up() * (vapeScale - 1) * -10.25
 
                 if self:GetClass() == "weapon_vape_butterfly" then
-                    opos = opos + (oang:Up() * 6)
+                    opos = opos + oang:Up() * 6
                     oang:RotateAroundAxis(oang:Right(), Lerp(ply.vapeArmUpAmt or 0, 0, -360))
-                    opos = opos + (oang:Up() * -6)
+                    opos = opos + oang:Up() * -6
                 end
             end
         end

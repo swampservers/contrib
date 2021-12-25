@@ -50,7 +50,7 @@ local BoltForward = Sound("weapons/kar98/boltforward.wav")
 
 -- Override function for displaying ammo count
 function SWEP:CustomAmmoDisplay()
-    if (InGarandZone(self.Owner)) then
+    if InGarandZone(self.Owner) then
         return {
             PrimaryAmmo = self.Primary.ClipSize * 999
         }
@@ -73,7 +73,7 @@ game.AddAmmoType({
 })
 
 function SWEP:SprintMod()
-    return ((math.cos(((self.SprintNess or 0) + 1) * math.pi) + 1) * 0.5)
+    return (math.cos(((self.SprintNess or 0) + 1) * math.pi) + 1) * 0.5
 end
 
 function SWEP:IsSprinting()
@@ -88,10 +88,10 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
-    pos = pos + (0 * ang:Up()) + (1 * ang:Right()) + (0 * ang:Forward())
+    pos = pos + 0 * ang:Up() + 1 * ang:Right() + 0 * ang:Forward()
     ang:RotateAroundAxis(ang:Right(), -2)
     local sm = self:SprintMod()
-    pos = pos + (0 * sm * ang:Up()) + (1 * sm * ang:Right())
+    pos = pos + 0 * sm * ang:Up() + 1 * sm * ang:Right()
     ang:RotateAroundAxis(ang:Up(), sm * 20)
     ang:RotateAroundAxis(ang:Right(), sm * -20)
 
@@ -133,7 +133,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:GetCone()
-    local mc = math.max((self.Owner:GetVelocity():LengthSqr() * 0.000005) - 0.01, 0)
+    local mc = math.max(self.Owner:GetVelocity():LengthSqr() * 0.000005 - 0.01, 0)
     -- (self:GetNWInt("sc",0)==0 and 0.04 or 0)
 
     return mc + 0.005
@@ -150,7 +150,7 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    if (not self:CanPrimaryAttack()) then
+    if not self:CanPrimaryAttack() then
         self:EmitSound("Weapon_SMG1.Empty")
         self:SendWeaponAnim(ACT_VM_DRYFIRE)
         self:SetNextPrimaryFire(CurTime() + 0.5)
@@ -197,7 +197,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    if (not self:CanPrimaryAttack()) then return end
+    if not self:CanPrimaryAttack() then return end
 end
 
 function SWEP:Reload()

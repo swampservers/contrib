@@ -32,8 +32,8 @@ end)
 SS_Item({
     class = 'accessory',
     GetName = function(self) return (SS_AccessoryModels[self.specs.model] or {}).name or string.sub(table.remove(string.Explode("/", self.specs.model)), 1, -5) end,
-    GetDescription = function(self) return ((SS_AccessoryModels[self.specs.model] or {}).description or "You can wear it.") end,
-    ScaleLimitOffset = function(self) return (SS_AccessoryModels[self.specs.model] or {}).scaleoffset or (12 / ((self.dspecs or {})[1] or 12)) end,
+    GetDescription = function(self) return (SS_AccessoryModels[self.specs.model] or {}).description or "You can wear it." end,
+    ScaleLimitOffset = function(self) return (SS_AccessoryModels[self.specs.model] or {}).scaleoffset or 12 / ((self.dspecs or {})[1] or 12) end,
     GetModel = function(self) return self.specs.model end,
     SanitizeSpecs = function(self)
         local specs, ch = self.specs, false
@@ -186,7 +186,7 @@ SS_Product({
     price = 100000,
     name = 'Random Accessory',
     description = "A random prop that you can WEAR. No ratings - all props fully customizable.",
-    GetModel = function(self) return previews[(math.floor(SysTime() * 2.5) % #previews) + 1] end,
+    GetModel = function(self) return previews[math.floor(SysTime() * 2.5) % #previews + 1] end,
     CannotBuy = function(self, ply) end,
     -- if ply:SS_CountItem("prop") >= 200 then return "Max 200 props, please sell some!" end
     OnBuy = function(self, ply)
@@ -213,7 +213,7 @@ function SS_AccessoryProduct(data)
         name = data.name,
         description = data.description,
         value = math.floor((data.price or data.value) * 0.8),
-        scaleoffset = data.maxscale and (data.maxscale / 2) or nil,
+        scaleoffset = data.maxscale and data.maxscale / 2 or nil,
         wear = data.wear
     }
 

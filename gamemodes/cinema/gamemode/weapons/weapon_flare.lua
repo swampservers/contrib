@@ -81,7 +81,7 @@ end
 
 function SWEP:Think()
     if CLIENT then
-        if (not IsValid(self.Owner)) or self.Owner:GetActiveWeapon() ~= self then return end
+        if not IsValid(self.Owner) or self.Owner:GetActiveWeapon() ~= self then return end
         local dlight = DynamicLight(self:EntIndex())
 
         if dlight then
@@ -100,7 +100,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -144,7 +144,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos2 = pos2 + ang:Forward() * 44
     pos2 = pos2 + ang:Up() * -15
     ang2:RotateAroundAxis(ang2:Right(), -90)
-    local thrustv = (self:GetNextPrimaryFire() - 0.3) > CurTime() and 1 or 0
+    local thrustv = self:GetNextPrimaryFire() - 0.3 > CurTime() and 1 or 0
     local spd = thrustv == 1 and 1.5 or 1
     self.ThrustLerp = math.Approach(self.ThrustLerp or 0, thrustv, FrameTime() * spd)
     self.ThrustLerp2 = math.Approach(self.ThrustLerp2 or 0, thrustv, FrameTime() * spd * 0.5)

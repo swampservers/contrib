@@ -49,7 +49,7 @@ function AddTitle(thresholds, description, nwp_vars, args)
                     cutoff = NWGlobal[cutoff] or 999999999
                 end
 
-                return i, cutoff, v[2], (v[3] or 0)
+                return i, cutoff, v[2], v[3] or 0
             end
         end
     end

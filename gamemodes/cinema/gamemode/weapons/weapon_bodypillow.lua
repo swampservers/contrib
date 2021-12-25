@@ -95,7 +95,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "Lrig_LEG_FR_Humerus" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -112,13 +112,13 @@ function SWEP:DrawWorldModel()
 
         if ply:IsPony() then
             local pf = self:Boof()
-            opos = opos + oang:Right() * (3 - (pf * 7))
+            opos = opos + oang:Right() * (3 - pf * 7)
             opos = opos + oang:Forward() * -8
-            opos = opos + oang:Up() * (8 - (pf * 4))
-            oang:RotateAroundAxis(oang:Forward(), -90 + (pf * 120))
+            opos = opos + oang:Up() * (8 - pf * 4)
+            oang:RotateAroundAxis(oang:Forward(), -90 + pf * 120)
             oang:RotateAroundAxis(oang:Right(), 100)
-            oang:RotateAroundAxis(oang:Forward(), 5 + (pf * -30))
-            oang:RotateAroundAxis(oang:Up(), (self:GetNWBool('flip') and 0 or 180))
+            oang:RotateAroundAxis(oang:Forward(), 5 + pf * -30)
+            oang:RotateAroundAxis(oang:Up(), self:GetNWBool('flip') and 0 or 180)
         else
             opos = opos + oang:Right() * -2
             opos = opos + oang:Forward() * 4
@@ -172,7 +172,7 @@ function SWEP:DrawWorldModel()
 end
 
 function HardenedPillowArgs(hsh)
-    return string.format([[{["$detail"]="decals/decalstain%03da",["$detailscale"]="1",["$detailblendfactor"]="2"}]], (hsh % 15) + 1)
+    return string.format([[{["$detail"]="decals/decalstain%03da",["$detailscale"]="1",["$detailblendfactor"]="2"}]], hsh % 15 + 1)
 end
 
 function SWEP:PreDrawViewModel(vm, ply, wep)
@@ -214,7 +214,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         ang = LerpAngle(0.5, va, ang)
     end
 
-    pos = pos - (self.Owner:GetCurrentViewOffset() * 0.5)
+    pos = pos - self.Owner:GetCurrentViewOffset() * 0.5
     local pf = self:Boof(true)
     local v = ang:Forward()
 
@@ -226,9 +226,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     ang = v:Angle()
     local angr = ang:Right()
     local angu = ang:Up()
-    pos = pos + ang:Right() * (15 - (pf * 15))
-    pos = pos + ang:Up() * (10 + (pf * 6))
-    pos = pos + ang:Forward() * (24 + (pf * 4))
+    pos = pos + ang:Right() * (15 - pf * 15)
+    pos = pos + ang:Up() * (10 + pf * 6)
+    pos = pos + ang:Forward() * (24 + pf * 4)
 
     if self.Owner:InVehicle() then
         pos = pos - Vector(0, 0, 30) + ang:Right() * 10 + ang:Forward() * -10
@@ -236,7 +236,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     ang:RotateAroundAxis(ang:Up(), self:GetNWBool('flip') and 90 or -90)
     ang:RotateAroundAxis(ang:Forward(), 0)
-    ang:RotateAroundAxis(ang:Up(), ((1 - pf) * -50) + (pf * 60))
+    ang:RotateAroundAxis(ang:Up(), (1 - pf) * -50 + pf * 60)
     ang:RotateAroundAxis(angr, pf * -70)
     ang:RotateAroundAxis(angu, pf * 40)
     --ang:RotateAroundAxis(ang:Forward(), pf*-40)
@@ -290,7 +290,7 @@ else
         if not emitter then return end
 
         for i = 1, math.random(2, 12) do
-            local particle = emitter:Add("particle/pillow-feather", pos + (VectorRand() * 10))
+            local particle = emitter:Add("particle/pillow-feather", pos + VectorRand() * 10)
 
             if particle then
                 particle:SetColor(255, 255, 255, 255)
@@ -312,7 +312,7 @@ else
 end
 
 function SWEP:PrimaryAttack()
-    self:SetNextPrimaryFire(CurTime() + (0.6 / self:TimeScale()))
+    self:SetNextPrimaryFire(CurTime() + 0.6 / self:TimeScale())
     if CLIENT and not IsFirstTimePredicted() then return end
 
     if CLIENT then
@@ -326,7 +326,7 @@ function SWEP:PrimaryAttack()
     if SERVER then
         timer.Simple(0.1 / self:TimeScale(), function()
             if IsValid(self) and IsValid(self.Owner) then
-                local boof = self.Owner:EyePos() + (self.Owner:EyeAngles():Forward() * 50)
+                local boof = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 50
                 local aim = self.Owner:EyeAngles():Forward()
 
                 if math.abs(aim.z) == 1 then
@@ -342,7 +342,7 @@ function SWEP:PrimaryAttack()
                     local bcenter = v:LocalToWorld(v:OBBCenter())
 
                     if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then
-                        bcenter = bcenter + (VectorRand() * 16)
+                        bcenter = bcenter + VectorRand() * 16
                         bcenter.z = bcenter.z + 8
                         local sound2play = self:GetHardened() and "physics/plastic/plastic_barrel_impact_hard" .. tostring(math.random(1, 3)) .. ".wav" or "bodypillow/hit" .. tostring(math.random(1, 2)) .. ".wav"
                         sound.Play(sound2play, bcenter, 80, math.random(100, 115) + (self:GetHardened() and -20 or 0), 1)
@@ -350,7 +350,7 @@ function SWEP:PrimaryAttack()
                         net.WriteVector(bcenter)
                         net.SendPVS(bcenter)
 
-                        if not v:IsProtected() and (not v:InVehicle()) and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") and not (self.Owner.hvp and self.Owner.hvp == v.hvp) then
+                        if not v:IsProtected() and not v:InVehicle() and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") and not (self.Owner.hvp and self.Owner.hvp == v.hvp) then
                             if v:IsOnGround() then
                                 v:SetPos(v:GetPos() + Vector(0, 0, 2))
                             end

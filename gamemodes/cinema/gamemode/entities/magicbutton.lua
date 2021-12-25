@@ -23,10 +23,10 @@ if SERVER then
     MAGICBUTTON_ENT_DESIRED_NUMBER = 2
 
     timer.Create("magicbutton_ent_spawner", 5, 0, function()
-        if #(Ents.magicbutton) < MAGICBUTTON_ENT_DESIRED_NUMBER then
+        if #Ents.magicbutton < MAGICBUTTON_ENT_DESIRED_NUMBER then
             local button = ents.Create("magicbutton")
 
-            if (IsValid(button)) then
+            if IsValid(button) then
                 button:Spawn()
                 button:Activate()
             end
@@ -53,12 +53,12 @@ local MAGICBUTTON_HULLSIZE = Vector(32, 32, 72) --Vector(32,32,36)
 
 function ENT:IsTraceValid(trace, final)
     local surprop = util.GetSurfacePropName(trace.SurfaceProps)
-    if (table.HasValue(self.PlacementSettings.SurfacePropBlacklist, surprop)) then return false end
-    if (table.HasValue(self.PlacementSettings.TextureBlacklist, trace.HitTexture)) then return false end
+    if table.HasValue(self.PlacementSettings.SurfacePropBlacklist, surprop) then return false end
+    if table.HasValue(self.PlacementSettings.TextureBlacklist, trace.HitTexture) then return false end
     if not trace.Hit then return false end
     if trace.HitSky then return false end
     if trace.HitNoDraw then return false end
-    if (IsValid(trace.Entity)) then return false end
+    if IsValid(trace.Entity) then return false end
     if trace.AllSolid then return false end
     if trace.StartSolid and trace.FractionLeftSolid == 0 then return false end
 
@@ -72,7 +72,7 @@ end
 --MAGICBUTTON_CACHED_ORIGINPOINTS = nil
 function ENT:FindSuitableCastOrigin()
     local hull = MAGICBUTTON_HULLSIZE
-    if (IsValid(self:GetOwner())) then end --return self:GetPos() + Vector(0,0,64)
+    if IsValid(self:GetOwner()) then end --return self:GetPos() + Vector(0,0,64)
     local navareas = navmesh.GetAllNavAreas()
     local picks
 
@@ -82,7 +82,7 @@ function ENT:FindSuitableCastOrigin()
         for _, area in pairs(navareas) do
             local extent = area:GetExtentInfo()
             local toosmall = extent.SizeX < 32 or extent.SizeY < 32
-            if (area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or toosmall) then continue end
+            if area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or toosmall then continue end
             local tr = {}
             tr.start = area:GetCenter() + Vector(0, 0, hull.z / 4)
             tr.endpos = tr.start + Vector(0, 0, -64)
@@ -90,7 +90,7 @@ function ENT:FindSuitableCastOrigin()
             tr.mins = hull * Vector(1, 1, 0.1) * -0.5
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             local trace = util.TraceHull(tr)
-            if (not self:IsTraceValid(trace)) then continue end
+            if not self:IsTraceValid(trace) then continue end
             local tr = {}
             tr.start = trace.HitPos
             tr.endpos = tr.start + Vector(0, 0, self.PlacementSettings.CeilingHeight)
@@ -99,7 +99,7 @@ function ENT:FindSuitableCastOrigin()
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             trace = util.TraceHull(tr)
 
-            if ((not self.PlacementSettings.RequireCeiling or (trace.Hit and self:IsTraceValid(trace))) and not trace.StartSolid or (trace.StartSolid and trace.FractionLeftSolid < 1)) then
+            if (not self.PlacementSettings.RequireCeiling or trace.Hit and self:IsTraceValid(trace)) and not trace.StartSolid or trace.StartSolid and trace.FractionLeftSolid < 1 then
                 table.insert(origins, trace)
                 -- local ext = area:GetExtentInfo()
                 -- local bnds = Vector(ext.SizeX, ext.SizeY, ext.SizeZ + 1)
@@ -115,7 +115,7 @@ function ENT:FindSuitableCastOrigin()
         picks = MAGICBUTTON_CACHED_ORIGINPOINTS
     end
 
-    if (table.Count(picks) > 0) then return table.Random(picks) end
+    if table.Count(picks) > 0 then return table.Random(picks) end
 end
 
 function ENT:FindCastBox(casttrace)
@@ -145,16 +145,16 @@ function ENT:FindCastBox(casttrace)
     tr2.mask = MASK_PLAYERSOLID
     local trace2 = util.TraceHull(tr2)
 
-    if (self:IsTraceValid(trace2)) then
+    if self:IsTraceValid(trace2) then
         local navareas = navmesh.Find(trace2.HitPos, 128, 256, 256)
 
         for k, v in pairs(navareas) do
-            if (v:IsUnderwater() or not v:Contains(trace2.HitPos)) then
+            if v:IsUnderwater() or not v:Contains(trace2.HitPos) then
                 navareas[k] = nil
             end
         end
 
-        if (table.Count(navareas) > 0) then return trace2 end -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 255, 0, 0)) -- else -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
+        if table.Count(navareas) > 0 then return trace2 end -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 255, 0, 0)) -- else -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
     else
     end
     -- debugoverlay.SweptBox(tr2.start, trace2.HitPos, tr2.mins, tr2.maxs, Angle(), 60, Color(0, 128, 0, 0))
@@ -176,7 +176,7 @@ function ENT:FindCastFinal(trace, index)
     tr3.endpos = tr3.start + dir * hull * 4
     tr3.mask = MASK_PLAYERSOLID
     local trace3 = util.TraceLine(tr3)
-    if (self:IsTraceValid(trace3, true)) then return trace3 end -- debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 255, 0)) -- else --     debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 128, 0))
+    if self:IsTraceValid(trace3, true) then return trace3 end -- debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 255, 0)) -- else --     debugoverlay.SweptBox(tr3.start, trace3.HitPos, Vector(1, 1, 1) * -1, Vector(1, 1, 1), Angle(), 60, Color(0, 0, 128, 0))
 end
 
 function ENT:FindHidingSpot()
@@ -189,7 +189,7 @@ function ENT:FindHidingSpot()
     local trace1
     local trace2
 
-    while (trace2 == nil and ATTEMPTS_TOTAL < 10000) do
+    while trace2 == nil and ATTEMPTS_TOTAL < 10000 do
         ATTEMPTS_TOTAL = ATTEMPTS_TOTAL + 1
 
         if startpoint == nil or ORIGIN_FAILURES > 10 then
@@ -246,7 +246,7 @@ function ENT:Initialize()
         self:SetColor(HSVToColor(math.Rand(0, 360), 1, 1))
         local phys = self:GetPhysicsObject()
 
-        if (IsValid(phys)) then
+        if IsValid(phys) then
             phys:EnableMotion(false)
         end
 
@@ -257,7 +257,7 @@ function ENT:Initialize()
         end
 
         timer.Simple(60 * 60, function()
-            if (IsValid(self)) then
+            if IsValid(self) then
                 self:Remove()
             end
         end)
@@ -287,7 +287,7 @@ end
 function ENT:Draw()
     local pos = self:GetPos() + self:GetUp() * 3
     local c = self:GetColor()
-    local cvector = (Vector(c.r, c.g, c.b) / 255)
+    local cvector = Vector(c.r, c.g, c.b) / 255
     local lc = render.ComputeLighting(pos, self:GetUp())
     local light1 = {}
     light1.type = MATERIAL_LIGHT_POINT
@@ -339,7 +339,7 @@ local function MagicOutcomeBountyAll(ply)
     if SetPlayerBounty == nil or GetPlayerBounty == nil then return nil end
     local amount = 1000
 
-    if (math.random(1, 20) == 1) then
+    if math.random(1, 20) == 1 then
         amount = math.random(2, 45)
     end
 
@@ -352,10 +352,10 @@ local function MagicOutcomeBountyAll(ply)
 end
 
 local function MagicOutcomeKleinerFanclub(ply)
-    if (KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0) then
+    if KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0 then
         local someoneelse
 
-        if (math.random(1, 20) == 1) then
+        if math.random(1, 20) == 1 then
             ply = table.Random(player.GetAll())
             someoneelse = true
         end
@@ -385,7 +385,7 @@ end
 local function MagicOutcomeDecals(ply, button)
     Sound("coomer/splort.ogg")
 
-    local decal = SPRAYPAINT_STENCILS ~= nil and ("stencil_decal" .. math.random(36, 40)) or (table.Random({"Eye", "Smile", "beersplash"}))
+    local decal = SPRAYPAINT_STENCILS ~= nil and "stencil_decal" .. math.random(36, 40) or table.Random({"Eye", "Smile", "beersplash"})
 
     local navareas = navmesh.GetAllNavAreas()
     local spamcounter = 0
@@ -394,7 +394,7 @@ local function MagicOutcomeDecals(ply, button)
 
     timer.Create("Splats", 0.01, 10, function()
         for g = 1, 100 do
-            util.Decal(decal, pos, pos + ((VectorRand() * Vector(1, 1, 0.3)):GetNormalized() * 3000), ply)
+            util.Decal(decal, pos, pos + (VectorRand() * Vector(1, 1, 0.3)):GetNormalized() * 3000, ply)
         end
 
         pos = table.Random(navareas):GetCenter() + Vector(0, 0, 40)
@@ -404,10 +404,10 @@ local function MagicOutcomeDecals(ply, button)
 end
 
 local function MagicOutcomeKleinerSlur(ply)
-    if (KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0) then
+    if KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0 then
         local someoneelse
 
-        if (math.random(1, 20) == 1) then
+        if math.random(1, 20) == 1 then
             ply = table.Random(player.GetAll())
             someoneelse = true
         end
@@ -420,10 +420,10 @@ local function MagicOutcomeKleinerSlur(ply)
 end
 
 local function MagicOutcomeKleinerTeleported(ply)
-    if (KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0) then
+    if KLEINER_NPCS and table.Count(KLEINER_NPCS) > 0 then
         local someoneelse
 
-        if (math.random(1, 20) == 1) then
+        if math.random(1, 20) == 1 then
             ply = table.Random(player.GetAll())
             someoneelse = true
         end
@@ -463,7 +463,7 @@ local function MagicOutcomeButtonSpawn(ply)
         button:MoveToTraceResult(trace)
     end
 
-    if (IsValid(button)) then
+    if IsValid(button) then
         local loc = button:GetLocation()
         local locd = Locations[loc]
         local locname = locd.Name
@@ -474,7 +474,7 @@ local function MagicOutcomeButtonSpawn(ply)
             local secondnearestname
 
             for k, v in pairs(landmarks) do
-                if (v:Distance(button:GetPos()) < nearest) then
+                if v:Distance(button:GetPos()) < nearest then
                     secondnearestname = nearestname
                     nearestname = k
                     nearest = v:Distance(button:GetPos())
@@ -547,7 +547,7 @@ local function MagicOutcomeOverlay(ply, button)
     ply:ConCommand("pp_mat_overlay " .. table.Random(overlays))
 
     timer.Simple(30, function()
-        if (IsValid(ply)) then
+        if IsValid(ply) then
             ply:ConCommand("pp_mat_overlay ''")
         end
     end)
@@ -671,11 +671,11 @@ function ENT:Use(activator)
         self.Pressed = true
 
         timer.Simple(5, function()
-            if (IsValid(self)) then
+            if IsValid(self) then
                 self:SetModelScale(0.01, 3)
 
                 timer.Simple(3, function()
-                    if (IsValid(self)) then
+                    if IsValid(self) then
                         self:Remove()
                     end
                 end)

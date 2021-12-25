@@ -31,7 +31,7 @@ timer.Simple(1, function()
     local MATURE_RESET_INTERVAL = 24 * 3600 * 14
     local resetter = SwampMatureResetter:GetInt()
 
-    if resetter > -1 and resetter < (os.time() - MATURE_RESET_INTERVAL) then
+    if resetter > -1 and resetter < os.time() - MATURE_RESET_INTERVAL then
         RunConsoleCommand("swamp_mature_content", "0")
         RunConsoleCommand("swamp_mature_chatbox", "0")
         RunConsoleCommand("swamp_mature_last_reset", tostring(os.time()))
@@ -47,14 +47,14 @@ hook.Add("Think", "SwampMatureToggler", function()
 
     if isf6down and not wasf6down then
         local last = SwampMatureContent:GetBool()
-        RunConsoleCommand("swamp_mature_content", (last and "0" or "1"))
+        RunConsoleCommand("swamp_mature_content", last and "0" or "1")
         LocalPlayerNotify("Mature " .. (GAMEMODE.FolderName == "cinema" and "Videos & " or "") .. "Images " .. (last and "Disabled" or "Enabled"))
     end
 
     if GAMEMODE.FolderName == "cinema" then
         if isf7down and not wasf7down then
             local last = SwampMatureChatbox:GetBool()
-            RunConsoleCommand("swamp_mature_chatbox", (last and "0" or "1"))
+            RunConsoleCommand("swamp_mature_chatbox", last and "0" or "1")
             LocalPlayerNotify("Mature Chatbox Images " .. (last and "Disabled" or "Enabled"))
         end
     end

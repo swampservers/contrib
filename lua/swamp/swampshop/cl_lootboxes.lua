@@ -165,7 +165,7 @@ function LootBoxAnimation(itemid, othermdls)
                 local t1 = SysTime()
 
                 function p:PreDrawModel(ent)
-                    boxmodel:SetPos(Vector(0, 0, ((SysTime() - t1) ^ 2) * -40))
+                    boxmodel:SetPos(Vector(0, 0, (SysTime() - t1) ^ 2 * -40))
                     boxmodel:SetAngles(Angle(0, 90, 0))
                     -- render.ModelM
                     boxmodel:DrawModel()
@@ -190,7 +190,7 @@ function LootBoxAnimation(itemid, othermdls)
                     -- self.Entity:SetModelScale(0.5)
                     -- print(radius)
                     -- (radius + 1)
-                    self:SetCamPos((60 * Vector(math.cos((SysTime() - t1) * 1.5) * 0.2, 1, 0.2))) --(radius + 1) *
+                    self:SetCamPos(60 * Vector(math.cos((SysTime() - t1) * 1.5) * 0.2, 1, 0.2)) --(radius + 1) *
                     self:SetLookAt(Vector(0, 0, 0))
                 end
 
@@ -248,7 +248,7 @@ function LootBoxAnimation(itemid, othermdls)
                                 appeartime = SysTime()
                             end
                         else
-                            otheri = (otheri % (#othermdls)) + 1
+                            otheri = otheri % #othermdls + 1
                             p:SetModel(othermdls[otheri])
                         end
                     end)
@@ -274,7 +274,7 @@ local skull = Material("HUD/killicons/default")
 local skullwhitetime = SysTime()
 
 hook.Add("HUDPaint", "DeathNotice", function()
-    if not IsValid(Me) or Me:Alive() or (not killdata) then
+    if not IsValid(Me) or Me:Alive() or not killdata then
         if CurTime() > killdatarecipt + 2 then
             killdata = nil
         end
@@ -288,7 +288,7 @@ hook.Add("HUDPaint", "DeathNotice", function()
     surface.SetMaterial(skull)
     surface.SetDrawColor(255, 255 * (1 - redness), 255 * (1 - redness), 255)
     local s = 128
-    surface.DrawTexturedRect((ScrW() - s) / 2, (ScrH()) / 2 - s, s, s)
+    surface.DrawTexturedRect((ScrW() - s) / 2, ScrH() / 2 - s, s, s)
     draw.SimpleText(killdata[1], "DermaLarge", ScrW() / 2, ScrH() / 2, color_white, TEXT_ALIGN_CENTER)
     draw.SimpleText(killdata[2], "Trebuchet24", ScrW() / 2, ScrH() / 2 + 38, color_white, TEXT_ALIGN_CENTER)
 end)

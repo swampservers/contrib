@@ -33,7 +33,7 @@ function Entity:IsProtected(att)
             end
 
             local v = self:GetVehicle()
-            if (v.SeatData ~= nil) and (v.SeatData.Ent ~= nil) and IsValid(v.SeatData.Ent) and v.SeatData.Ent:GetName() == "rocketseat" then return true end
+            if v.SeatData ~= nil and v.SeatData.Ent ~= nil and IsValid(v.SeatData.Ent) and v.SeatData.Ent:GetName() == "rocketseat" then return true end
         end
     end
 

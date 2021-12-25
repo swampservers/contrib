@@ -111,7 +111,7 @@ hook.Add("Think", "golfswinger2", function()
 
         if (v1 - v3):Length() > GOLFBALLRADIUS then
             local hit1 = (v2 - v3):Length() <= GOLFBALLRADIUS
-            local hit2 = ((closestpoint - v3):Length() < GOLFBALLRADIUS and closestdist > 0 and closestdist < v1v2l)
+            local hit2 = (closestpoint - v3):Length() < GOLFBALLRADIUS and closestdist > 0 and closestdist < v1v2l
 
             if hit1 or hit2 then
                 local localvel = v1v2 / (SysTime() - GOLFSWINGFRAMES[1][3])
@@ -148,7 +148,7 @@ end)
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_L_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -165,7 +165,7 @@ function SWEP:DrawWorldModel()
 
         if ply:IsPony() then
             oang:RotateAroundAxis(oang:Up(), -90)
-            opos = opos + (oang:Up() * -9) + (oang:Right() * -6.7) + (oang:Forward() * -1.9)
+            opos = opos + oang:Up() * -9 + oang:Right() * -6.7 + oang:Forward() * -1.9
         else
             oang:RotateAroundAxis(oang:Up(), 150)
             oang:RotateAroundAxis(oang:Forward(), 25)
@@ -194,9 +194,9 @@ GOLFBALLRADIUS = 2
 
 function SWEP:GetViewModelPosition(pos, ang)
     if self:GetHoldType() == "passive" then
-        GolfClubPositionLerp = math.min(1, GolfClubPositionLerp + (FrameTime() * 0.5))
+        GolfClubPositionLerp = math.min(1, GolfClubPositionLerp + FrameTime() * 0.5)
     else
-        GolfClubPositionLerp = math.max(0, GolfClubPositionLerp - (FrameTime() * 2))
+        GolfClubPositionLerp = math.max(0, GolfClubPositionLerp - FrameTime() * 2)
     end
 
     pos = pos + ang:Right() * 7 + ang:Up() * -20 + ang:Forward() * 15
@@ -204,7 +204,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     oang:Set(ang)
     ang:RotateAroundAxis(oang:Up(), 90)
     ang:RotateAroundAxis(oang:Forward(), 10)
-    ang:RotateAroundAxis(oang:Right(), -30 + (-100 * GolfClubPositionLerp))
+    ang:RotateAroundAxis(oang:Right(), -30 + -100 * GolfClubPositionLerp)
     self.ViewModelFOV = 62
 
     if GOLFCAMVECTOR then
@@ -273,7 +273,7 @@ function SWEP:DrawHUD()
     local stage = self:GetStage()
     local strk = self:GetStroke()
 
-    if (IsValid(self:GetBall())) then
+    if IsValid(self:GetBall()) then
         cam.Start3D()
         local ball = self:GetBall()
         local trace = Me:GetEyeTrace()
@@ -284,9 +284,9 @@ function SWEP:DrawHUD()
             p1 = p2
         end
 
-        if (p1:Distance(p2) > 200) then
-            p1 = (p1 - p2)
-            p1 = p2 + (p1:GetNormalized() * 200)
+        if p1:Distance(p2) > 200 then
+            p1 = p1 - p2
+            p1 = p2 + p1:GetNormalized() * 200
         end
 
         local dist = p1:Distance(p2)
@@ -344,7 +344,7 @@ function SWEP:DrawHUD()
                 tv = Vector(-5, 5, 0)
                 tv:Rotate(a2)
                 cam.Start3D2D(cpos + tv, a2, 1)
-                local c = HSVToColor(120 - ((dist / 200) * 120), 1, 1)
+                local c = HSVToColor(120 - (dist / 200) * 120, 1, 1)
                 surface.SetDrawColor(c.r, c.g, c.b, 100)
                 draw.NoTexture()
                 local off = 5
@@ -492,7 +492,7 @@ function SWEP:DrawHUD()
         stg = "Ball is moving..."
     end
 
-    if (stage == 2 and IsValid(self:GetBall())) then
+    if stage == 2 and IsValid(self:GetBall()) then
         local trace = Me:GetEyeTrace()
         local ball = self:GetBall()
         local p1 = util.IntersectRayWithPlane(EyePos(), EyeAngles():Forward(), ball:GetPos(), Vector(0, 0, 1))
@@ -504,14 +504,14 @@ function SWEP:DrawHUD()
             p1 = p2
         end
 
-        if (p1:Distance(p2) > 200) then
-            p1 = (p1 - p2)
-            p1 = p2 + (p1:GetNormalized() * 200)
+        if p1:Distance(p2) > 200 then
+            p1 = p1 - p2
+            p1 = p2 + p1:GetNormalized() * 200
         end
 
         local dist = math.Clamp(p1:Distance(p2), 0, 200)
         stg = "Power: " .. math.ceil(dist / 2) .. "%"
-        clr = HSVToColor(120 - ((dist / 200) * 120), 1, 1)
+        clr = HSVToColor(120 - (dist / 200) * 120, 1, 1)
 
         if self:WeirdGolf() then
             stg = "Click to start swinging"

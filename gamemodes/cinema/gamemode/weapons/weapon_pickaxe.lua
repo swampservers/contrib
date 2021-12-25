@@ -25,7 +25,7 @@ if CLIENT then
             ["$basetexture"] = "swamponions/meinkraft/cracks",
             ["$alphatest"] = 1,
             -- ["$allowalphatocoverage"] = 1,
-            ["$alphatestreference"] = 0.38 - (0.035 * k),
+            ["$alphatestreference"] = 0.38 - 0.035 * k,
         }))
     end
 end
@@ -273,7 +273,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     dt = math.pow(dt, 0.3)
     dt = 1 - math.cos(dt * 2 * math.pi)
     ang:RotateAroundAxis(ang:Up(), 180)
-    ang:RotateAroundAxis(ang:Right(), (30 * dt))
+    ang:RotateAroundAxis(ang:Right(), 30 * dt)
 
     return pos, ang
 end
@@ -284,7 +284,7 @@ function SWEP:DrawHUD()
     local ptlrp = CurTime() - pickaxepointtime
 
     if ptlrp < 0.9 then
-        draw.DrawText("+" .. tostring(pickaxepointamount), "TargetID", (ScrW() * 0.5) + (pickaxepointdirx * ptlrp * 100), (ScrH() * 0.5) - (50 + (ptlrp * 100)), Color(255, 200, 50, 255 * (0.9 - ptlrp)), TEXT_ALIGN_CENTER)
+        draw.DrawText("+" .. tostring(pickaxepointamount), "TargetID", ScrW() * 0.5 + pickaxepointdirx * ptlrp * 100, ScrH() * 0.5 - (50 + ptlrp * 100), Color(255, 200, 50, 255 * (0.9 - ptlrp)), TEXT_ALIGN_CENTER)
     end
 end
 

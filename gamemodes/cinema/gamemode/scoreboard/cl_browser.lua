@@ -39,7 +39,7 @@ function PANEL:Init()
     self.BrowserContainer = vgui.Create("DPanel", self)
     self.Browser = vgui.Create("TheaterHTML", self.BrowserContainer)
 
-    if (system.IsLinux() and GetConVar("linuxinputfix"):GetInt() == 1) then
+    if system.IsLinux() and GetConVar("linuxinputfix"):GetInt() == 1 then
         self.PanelInput = vgui.Create("TextEntry", self)
         self.PanelInput:SetText("")
         self.PanelInput:SetVisible(false)

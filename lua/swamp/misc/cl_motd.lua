@@ -62,11 +62,11 @@ function ShowMotd(url)
     MOTDWINDOW.maketime = RealTime()
 
     function MOTDWINDOW:Alpha()
-        return math.min(20 + ((RealTime() - self.maketime) * 250), 128)
+        return math.min(20 + (RealTime() - self.maketime) * 250, 128)
     end
 
     function MOTDWINDOW:Paint(w, h)
-        draw.RoundedBox(12, 0, 0, w, (padd * 2) + MOTDWINDOW.html:GetTall(), Color(0, 0, 0, self:Alpha()))
+        draw.RoundedBox(12, 0, 0, w, padd * 2 + MOTDWINDOW.html:GetTall(), Color(0, 0, 0, self:Alpha()))
         --draw.RoundedBoxEx(10,0,0,w,(padd*2)+MOTDWINDOW.html:GetTall(),Color(0,0,0,self:Alpha()),true,true,false,false)
         --local y2 = (padd*2)+MOTDWINDOW.html:GetTall()+4
         --draw.RoundedBoxEx(10,0,y2,w,h-y2,Color(0,0,0,self:Alpha()),false,false,true,true)
@@ -96,7 +96,7 @@ function ShowMotd(url)
         self:SetTextColor(Color(255, 255, 255))
     end
 
-    html:SetSize(MOTDWINDOW:GetWide() - (padd * 2), MOTDWINDOW:GetTall() - button:GetTall() - (padd * 3.3))
+    html:SetSize(MOTDWINDOW:GetWide() - padd * 2, MOTDWINDOW:GetTall() - button:GetTall() - padd * 3.3)
     html:SetPos(padd, padd)
     html:OpenURL(url)
     local button2 = vgui.Create("DButton", MOTDWINDOW)

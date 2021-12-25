@@ -80,7 +80,7 @@ else
 
     net.Receive("VapeUpdateCustomColor", function(len, ply)
         if not ply:HasWeapon("weapon_vape_custom") then return end
-        if ((ply.LastCustomVapeColorChange or 0) + 1) > CurTime() then return end
+        if (ply.LastCustomVapeColorChange or 0) + 1 > CurTime() then return end
         ply.LastCustomVapeColorChange = CurTime()
         local vec = net.ReadVector()
         net.Start("VapeUpdateCustomColor")

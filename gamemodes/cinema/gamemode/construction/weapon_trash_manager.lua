@@ -30,7 +30,7 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
-    if (IsValid(ply)) then
+    if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
         local opos = self:GetPos()
@@ -331,7 +331,7 @@ but you need a nearby theater/field to respawn them.]])
 
                                 function p:OnRowSelected(index, pnl)
                                     if IsValid(pnl.player) then
-                                        Me.TrashFriends[pnl.player] = (not Me.TrashFriends[pnl.player]) and true or nil
+                                        Me.TrashFriends[pnl.player] = not Me.TrashFriends[pnl.player] and true or nil
                                         pnl:SetColumnText(2, Me.TrashFriends[pnl.player] and "X" or "")
                                     end
 

@@ -19,8 +19,8 @@ SWEP.VapeTankColor = Vector(0.2, 0.3, 0.5)
 hook.Add("HUDPaint", "VapeHeliumBar", function()
     if vapeHelium or 0 > 0 then
         local alpha = math.min(1, vapeHelium / 10)
-        draw.RoundedBox(8, (ScrW() / 2) - 64, ScrH() - 48, 128, 32, Color(0, 0, 0, 128 * alpha))
-        draw.RoundedBox(0, (ScrW() / 2) - 58, ScrH() - 42, 1.16 * vapeHelium, 20, Color(0, 100, 200, 255 * alpha))
-        draw.DrawText("He", "DermaLarge", (ScrW() / 2), ScrH() - 84, Color(255, 255, 255, 255 * alpha), TEXT_ALIGN_CENTER)
+        draw.RoundedBox(8, ScrW() / 2 - 64, ScrH() - 48, 128, 32, Color(0, 0, 0, 128 * alpha))
+        draw.RoundedBox(0, ScrW() / 2 - 58, ScrH() - 42, 1.16 * vapeHelium, 20, Color(0, 100, 200, 255 * alpha))
+        draw.DrawText("He", "DermaLarge", ScrW() / 2, ScrH() - 84, Color(255, 255, 255, 255 * alpha), TEXT_ALIGN_CENTER)
     end
 end)

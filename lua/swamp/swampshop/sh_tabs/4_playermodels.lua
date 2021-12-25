@@ -262,7 +262,7 @@ SS_BoneModItem({
         -- make sure the bones dont like change or something idk
         local allthebones = {}
 
-        for x = 0, (Me:GetBoneCount() - 1) do
+        for x = 0, Me:GetBoneCount() - 1 do
             if Me:GetBoneParent(x) ~= -1 then
                 local bn = Me:GetBoneName(x)
 
@@ -407,7 +407,7 @@ SS_Product({
     price = 100000,
     name = 'Random Playermodel',
     description = "There are a lot of possibilities.",
-    GetModel = function(self) return previews[(math.floor(SysTime() * 2.5) % #previews) + 1] end,
+    GetModel = function(self) return previews[math.floor(SysTime() * 2.5) % #previews + 1] end,
     CannotBuy = function(self, ply) end,
     OnBuy = function(self, ply)
         local m = SS_ValidRandomPlayermodels[math.random(#SS_ValidRandomPlayermodels)]
@@ -509,7 +509,7 @@ SS_PlayermodelItem({
         Derma_Query("Once this playermodel is set, you won't be able to change it! (unless you buy a new one)\n\nCheck the preview to ensure it looks correct.", "Finalize playermodel?", "Go back", nil, "Confirm", callback)
     end,
     Sanitize = function(self)
-        local dw, dm = (tonumber(self.specs.wsid) and tostring(tonumber(self.specs.wsid)) or nil), SS_SanitizeModel(self.specs.model)
+        local dw, dm = tonumber(self.specs.wsid) and tostring(tonumber(self.specs.wsid)) or nil, SS_SanitizeModel(self.specs.model)
 
         if not dm or self.specs.wsid ~= dw or self.specs.model ~= dm then
             dw, dm = nil, nil
@@ -533,7 +533,7 @@ SS_PlayermodelItem({
                 end
             else
                 -- user set models must have both
-                local cdw, cdm = (tonumber(self.cfg.wsid) and tostring(tonumber(self.cfg.wsid)) or nil), SS_SanitizeModel(self.cfg.model)
+                local cdw, cdm = tonumber(self.cfg.wsid) and tostring(tonumber(self.cfg.wsid)) or nil, SS_SanitizeModel(self.cfg.model)
 
                 if cdw and cdm then
                     dw, dm = cdw, cdm

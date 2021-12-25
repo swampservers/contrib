@@ -174,7 +174,7 @@ if CLIENT then
                 self.camangadd = Angle(math.Clamp(self.camang.p - y + self.mdy, -89, 13) - self.camang.p, -x + self.mdx, 0)
             end
 
-            local camvec = (Vector(1, 0, 0) * 120)
+            local camvec = Vector(1, 0, 0) * 120
             camvec:Rotate(self.camang + self.camangadd)
             self:SetCamPos(self.vLookatPos + camvec) --Vector(90,0,60))
             self.camvec = camvec
@@ -203,7 +203,7 @@ if CLIENT then
         -- mdl.backgroundmodel_ground:SetPos(Vector(0, 0, -15))
         --//////////////////////////////////
         mdl.Paint = function()
-            if (not IsValid(mdl.Entity)) then return end
+            if not IsValid(mdl.Entity) then return end
             local x, y = mdl:LocalToScreen(0, 0)
             mdl:LayoutEntity(mdl.Entity)
             -- PPM.PrePonyDraw(mdl.Entity, true)
@@ -245,7 +245,7 @@ if CLIENT then
             render.SetMaterial(Material("gui/editor/group_circle.png"))
 
             for k = 0, 10 do
-                local div = (10 - k)
+                local div = 10 - k
                 local dim = 25 + 10 - k
                 --render.SetBlend( k/10 )
                 --render.SetColorModulation( k/10, k/10,k/10 )
@@ -296,7 +296,7 @@ if CLIENT then
                     surface.SetDrawColor(255, 255, 255, 255)
 
                     if v == PPM.ed3_selectedNode then
-                        if (false and x > ScrW() / 2) then
+                        if false and x > ScrW() / 2 then
                             surface.DrawLine(x - tt / 2, y - tt / 2, x + minim, y - minim)
                             surface.SetDrawColor(255, 255, 255, 100)
                         else
@@ -337,7 +337,7 @@ if CLIENT then
                         surface.SetTextColor(30, 30, 30, 255)
                         surface.DrawText(v.name)
                         surface.SetTextPos(x - tt / 2 * 2 - 1 + 15, y - tt / 2 - 5)
-                        surface.SetTextColor(255, 55 + (dist * 40), 155 + (dist * 20), 255)
+                        surface.SetTextColor(255, 55 + dist * 40, 155 + dist * 20, 255)
                         surface.DrawText(v.name)
                     end
 
@@ -400,7 +400,7 @@ if CLIENT then
         local TABBUTTON = vgui.Create("DImageButton", PPM.Editor3)
         TABBUTTON.node = nodename
         TABBUTTON:SetSize(64, 128)
-        TABBUTTON.eyemode = (pfx == "h")
+        TABBUTTON.eyemode = pfx == "h"
         TABBUTTON:SetPos(ScrW() / 2 + taboffset, -64)
         TABBUTTON:SetImage("gui/editor/gui_tab_" .. pfx .. ".png")
 
@@ -420,7 +420,7 @@ if CLIENT then
 
         TABBUTTON.DoClick = function()
             if selected_tab ~= TABBUTTON then
-                if (IsValid(selected_tab)) then
+                if IsValid(selected_tab) then
                     local px, py = selected_tab:GetPos()
                     selected_tab:SetPos(px, -64)
                 end
@@ -471,7 +471,7 @@ if CLIENT then
 
     function cleanButtons()
         for k, v in pairs(PPM.nodebuttons) do
-            if (IsValid(v)) then
+            if IsValid(v) then
                 v:Remove()
             end
         end

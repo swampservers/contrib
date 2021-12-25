@@ -72,7 +72,7 @@ else
                 local alpha = 1 - drift
                 drift = drift + 0.1
                 -- ..marker.dmg..""
-                draw.SimpleText(marker.kill and ("KILL " .. marker.dmg) or tostring(marker.dmg), "HitDamageFont", ScrW() / 2 + drift * 100 * marker.x, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(marker.kill and "KILL " .. marker.dmg or tostring(marker.dmg), "HitDamageFont", ScrW() / 2 + drift * 100 * marker.x, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
             end
         end
     end)

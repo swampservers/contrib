@@ -56,9 +56,9 @@ if CLIENT then
         local bs = 15
         surface.SetFont("DermaLarge")
         local w, h = surface.GetTextSize(GlobAnnce)
-        draw.WordBox(bs, ((ScrW() - w) / 2) - bs, ((ScrH() - h) / 2) - bs, GlobAnnce, "DermaLarge", Color(255, 0, 0), Color(255, 255, 255))
+        draw.WordBox(bs, (ScrW() - w) / 2 - bs, (ScrH() - h) / 2 - bs, GlobAnnce, "DermaLarge", Color(255, 0, 0), Color(255, 255, 255))
         bs = bs - 5
-        draw.WordBox(bs, ((ScrW() - w) / 2) - bs, ((ScrH() - h) / 2) - bs, GlobAnnce, "DermaLarge", Color(0, 0, 0), Color(255, 255, 255))
+        draw.WordBox(bs, (ScrW() - w) / 2 - bs, (ScrH() - h) / 2 - bs, GlobAnnce, "DermaLarge", Color(0, 0, 0), Color(255, 255, 255))
     end)
 else
     util.AddNetworkString('Notify')

@@ -4,7 +4,7 @@ CoinFlips = CoinFlips or {}
 RegisterChatCommand({'coin', 'coinflip'}, function(ply, arg)
     local t = string.Explode(" ", arg)
     local p = tonumber(t[#t])
-    p = (p ~= nil and math.floor(p) or nil)
+    p = p ~= nil and math.floor(p) or nil
 
     if t[1]:lower() == "accept" and p ~= nil then
         checkCoinFlipRequest(ply, p)
@@ -44,7 +44,7 @@ timer.Create("CoinFlip", 1, 0, function()
     local NewCoinFlips = {}
 
     for fromID, j in pairs(CoinFlips) do
-        if ((j[3] + 30) <= CurTime()) then
+        if j[3] + 30 <= CurTime() then
             local fromPlayer = player.GetBySteamID(fromID)
             local toPlayer = player.GetBySteamID(j[1])
 
@@ -118,7 +118,7 @@ function finishCoinFlip(fromID, toPlayer)
         -- Final Check, make sure they have funds still
         CoinFlips[fromID] = nil
         local heads = math.random() < 0.5 -- the "request from" player is always Heads.
-        BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. string.Comma((amount * 2)) .. "[fbc] against [gold]" .. toPlayer:Nick() .. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .. "[fbc]!")
+        BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. string.Comma(amount * 2) .. "[fbc] against [gold]" .. toPlayer:Nick() .. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .. "[fbc]!")
         local fromcol = heads and "green" or "edgy"
         fromPlayer:ChatPrint("[" .. fromcol .. "]You " .. (heads and "won" or "lost") .. " [gold]" .. string.Comma(amount) .. "[" .. fromcol .. "] points.")
         local tocol = heads and "edgy" or "green"

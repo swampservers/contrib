@@ -59,7 +59,7 @@ end)
 function UpdateMutes()
     for k, v in pairs(player.GetAll()) do
         if v ~= Me then
-            v:SetMuted((v.ClickMuted or false) or (v:IsAFK() and MuteVoiceConVar:GetInt() >= 2))
+            v:SetMuted((v.ClickMuted or false) or v:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
         end
     end
 end
@@ -67,7 +67,7 @@ end
 timer.Create("updatemutes", 1, 0, UpdateMutes)
 
 function PLAYERLIST:Init()
-    if (IsValid(LASTSCOREBOARD)) then
+    if IsValid(LASTSCOREBOARD) then
         LASTSCOREBOARD:Remove()
     end
 
@@ -92,21 +92,21 @@ function PLAYERLIST:Init()
             for ply, listitem in pairs(self.Players) do
                 local start = tostring(string.upper(string.sub(ply:Nick(), 1, 1)))
 
-                if (string.byte(start) < 65) then
+                if string.byte(start) < 65 then
                     start = "?"
                 end
 
-                if (string.byte(start) > 90) then
+                if string.byte(start) > 90 then
                     start = string.char(126)
                 end
 
-                if (lettertab[start] == nil or lettertab[start] == false or ply:Nick() < (lettertab[start].Player and IsValid(lettertab[start].Player) and lettertab[start].Player:Nick() or "")) then
+                if lettertab[start] == nil or lettertab[start] == false or ply:Nick() < (lettertab[start].Player and IsValid(lettertab[start].Player) and lettertab[start].Player:Nick() or "") then
                     lettertab[start] = listitem
                 end
             end
 
             for letter, first in SortedPairs(lettertab) do
-                if (first ~= false or (string.byte(letter) >= 65 and string.byte(letter) <= 90)) then
+                if first ~= false or string.byte(letter) >= 65 and string.byte(letter) <= 90 then
                     if letter == "?" then
                         letter = "Top"
                     end
@@ -395,7 +395,7 @@ function PLAYER:SetPlayer(ply)
             RunConsoleCommand("say", "/tp " .. self.Player:Nick())
         end):SetIcon("icon16/world.png")
 
-        if (Me:IsStaff()) then
+        if Me:IsStaff() then
             menu:AddOption("Copy SteamID", function()
                 SetClipboardText(self.Player:SteamID())
             end):SetIcon("icon16/user_red.png")
@@ -448,7 +448,7 @@ function PLAYER:Paint(w, h)
     surface.SetDrawColor(255, 255, 255, 255)
     local xp = 364
 
-    if (IsValid(self.Player) and IsValid(self.AFK)) then
+    if IsValid(self.Player) and IsValid(self.AFK) then
         self.AFK:SetVisible(self.Player:GetNWBool("afk"))
         -- else
         --     self:SetVisible(false)
@@ -489,11 +489,11 @@ function PLAYERPING:SetPlayer(ply)
 end
 
 function PLAYERPING:Paint(w, h)
-    if (not self:IsHovered()) then
+    if not self:IsHovered() then
         local maxh = self.Heights[#self.Heights]
         local bar = 5
         local total = #self.Heights * bar
-        local x = w / 2 - (total / 2)
+        local x = w / 2 - total / 2
 
         for i, height in pairs(self.Heights) do
             if self.PingVal < self.PingAmounts[i] then
@@ -502,7 +502,7 @@ function PLAYERPING:Paint(w, h)
                 surface.SetDrawColor(255, 255, 255, 10)
             end
 
-            surface.DrawRect(x, (h / 2) - (maxh / 2) + (maxh - height), bar - 2, height)
+            surface.DrawRect(x, h / 2 - maxh / 2 + (maxh - height), bar - 2, height)
             x = x + bar
         end
 
@@ -568,7 +568,7 @@ function SERVERNAME:Update()
             if v:GetNWBool("afk") then
                 count = count + 1
 
-                if not (v:InTheater()) then
+                if not v:InTheater() then
                     count2 = count2 + 1
                 end
             end

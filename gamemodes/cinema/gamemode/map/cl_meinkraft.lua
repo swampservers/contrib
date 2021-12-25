@@ -138,7 +138,7 @@ CVX_SORTABLE_DLIGHTS = {}
 DynamicLight = function(idx, elight)
     CVX_TRACKED_DLIGHTS[idx] = setmetatable({
         _data = {
-            dietime = (CurTime() + 1)
+            dietime = CurTime() + 1
         },
         -- traceback = debug.traceback()
         _light = BASE_DYNAMIC_LIGHT(idx, elight),
@@ -281,7 +281,7 @@ hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
 
                     for face = 1, 6 do
                         local normal = CVX_QUAD_NORMALS[face]
-                        local even = (face % 2 == 0)
+                        local even = face % 2 == 0
                         mesh.Position(origin + CVX_QUAD_VERTEX0[face])
                         mesh.TexCoord(0, 0, 0)
                         mesh.Normal(normal)

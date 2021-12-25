@@ -64,13 +64,13 @@ function SWEP:PrimaryAttack()
     self.Owner:EmitSound("ambient/voices/cough" .. tostring(math.random(1, 4)) .. ".wav")
 
     if SERVER then
-        local coughcenter = self.Owner:GetPos() + (self.Owner:GetAimVector() * 20)
+        local coughcenter = self.Owner:GetPos() + self.Owner:GetAimVector() * 20
 
         for k, v in ipairs(Ents.player) do
             if v:IsProtected() or v:InVehicle() then continue end
             if v:GetNWBool("spacehat") then continue end
 
-            if v:GetPos():DistToSqr(coughcenter) < (60 * 60) then
+            if v:GetPos():DistToSqr(coughcenter) < 60 * 60 then
                 if not v:HasWeapon("weapon_ebola") then
                     v:Give("weapon_ebola")
                     v:SelectWeapon("weapon_ebola")

@@ -14,8 +14,8 @@ function THEATER:Init(locId, info)
     o._PermanentOwnerID = info.PermanentOwnerID
     o._DefaultAllowItems = info.AllowItems or false
     o._AllowItems = o._DefaultAllowItems
-    o._Width = (info.Width or 128)
-    o._Height = (info.Height or math.Round(o._Width * (9.0 / 16.0)))
+    o._Width = info.Width or 128
+    o._Height = info.Height or math.Round(o._Width * (9.0 / 16.0))
     o._Video = nil
 
     if SERVER then
@@ -294,7 +294,7 @@ if SERVER then
                 curVotes = vid:GetNumVotes()
 
                 -- first index
-                if ((not Video) or (curVotes > topVotes) or ((curVotes == topVotes) and (vid:RequestTime() < Video:RequestTime()))) then
+                if not Video or curVotes > topVotes or curVotes == topVotes and vid:RequestTime() < Video:RequestTime() then
                     -- more votes
                     -- earlier request
                     Video = vid
@@ -391,7 +391,7 @@ if SERVER then
 
             -- Failed to grab video info, etc.
             if success ~= true then
-                self:AnnounceToPlayer(ply, (success == false) and 'Theater_RequestFailed' or tostring(success))
+                self:AnnounceToPlayer(ply, success == false and 'Theater_RequestFailed' or tostring(success))
 
                 return
             end
@@ -485,7 +485,7 @@ if SERVER then
     end
 
     function THEATER:IsQueueEmpty()
-        return #(self._Queue) == 0
+        return #self._Queue == 0
     end
 
     function THEATER:QueueVideo(video)
@@ -513,10 +513,10 @@ if SERVER then
         for k, vid in pairs(self._Queue) do
             if vid.id == id then
                 -- Remove video if player is video owner, theater owner, or an admin
-                if (vid:GetOwner() == ply) or (self:GetOwner() == ply) or (ply:StaffControlTheater()) then
+                if vid:GetOwner() == ply or self:GetOwner() == ply or ply:StaffControlTheater() then
                     -- private theater
                     if vid:GetOwner() ~= ply then
-                        if IsValid(vid:GetOwner()) and (vid:GetOwner():GetLocation() == ply:GetLocation()) then
+                        if IsValid(vid:GetOwner()) and vid:GetOwner():GetLocation() == ply:GetLocation() then
                             vid:GetOwner():ChatPrint("[red]" .. ply:Nick() .. " unqueued \"" .. vid:Title() .. "\"")
                         end
                     end
@@ -611,7 +611,7 @@ if SERVER then
 		Players
 	]]
     function THEATER:NumPlayers()
-        return #(self.Players)
+        return #self.Players
     end
 
     function THEATER:HasPlayer(ply)
@@ -712,7 +712,7 @@ if SERVER then
         if not IsValid(ply) then return end
         -- Toggle theater queue lock
         self._QueueLocked = not self._QueueLocked
-        local staffaction = (self:GetOwner() == ply) and "" or " [STAFF ACTION]"
+        local staffaction = self:GetOwner() == ply and "" or " [STAFF ACTION]"
 
         -- Notify theater players of change
         self:AnnounceToPlayers({self:IsQueueLocked() and 'Theater_LockedQueue' or 'Theater_UnlockedQueue', ply:Nick() .. staffaction})

@@ -91,7 +91,7 @@ list.Set("DesktopWindows", "PlayerEditor", {
             local newname = {}
 
             for _, s in pairs(string.Explode("_", str)) do
-                if (string.len(s) == 1) then
+                if string.len(s) == 1 then
                     table.insert(newname, string.upper(s))
                     continue
                 end
@@ -103,7 +103,7 @@ list.Set("DesktopWindows", "PlayerEditor", {
         end
 
         local function PlayPreviewAnimation(panel, playermodel)
-            if (not panel or not IsValid(panel.Entity)) then return end
+            if not panel or not IsValid(panel.Entity) then return end
             local anims = list.Get("PlayerOptionsAnimations")
             local anim = default_animations[math.random(1, #default_animations)]
 
@@ -306,7 +306,7 @@ concommand.Add("customize", function()
     if SERVER then return end
     local newv = list.Get("DesktopWindows")["PlayerEditor"]
 
-    if (IsValid(SwampPlayerModelWindow)) then
+    if IsValid(SwampPlayerModelWindow) then
         SwampPlayerModelWindow:Center()
 
         return

@@ -266,7 +266,7 @@ timer.Create("TrashLights", 0.1, 0, function()
             dlight.b = c.z
             dlight.brightness = l.brightness
             dlight.Size = l.size
-            dlight.style = (l.style == -1) and e:EntIndex() % 12 or l.style
+            dlight.style = l.style == -1 and e:EntIndex() % 12 or l.style
 
             if l.dir then
                 local d = Vector(0, 0, 0)
