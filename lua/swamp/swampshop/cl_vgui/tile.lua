@@ -141,7 +141,7 @@ function PANEL:Select()
         local ln = 4
 
         local function addline(txt)
-            p = vgui.Create("DLabel", SS_DescriptionPanel)
+            local p = vgui.Create("DLabel", SS_DescriptionPanel)
             p:SetFont("SS_DESCFONT")
             p:SetText(txt)
 
@@ -176,7 +176,7 @@ function PANEL:Select()
         local typetext = nil
 
         if self.product.keepnotice then
-            p = vgui.Create("DLabel", SS_DescriptionPanel)
+            local p = vgui.Create("DLabel", SS_DescriptionPanel)
             p:SetFont("SS_DESCFONT")
             p:SetText(self.product.keepnotice)
             local long = string.len(self.product.keepnotice) > 25

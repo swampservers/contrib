@@ -95,7 +95,7 @@ hook.Add("PostDrawTranslucentRenderables", "EntityUseMenu", function(d, sky, sky
         end
 
         if hit then
-            hit, _ = WorldToLocal(hit, Angle(), c, a)
+            hit = WorldToLocal(hit, Angle(), c, a)
             hit = hit / scl
             hit.y = -hit.y
             -- if hit.x < -200 or hit.x > 200 or hit.y < -100 or hit.y > 200 then

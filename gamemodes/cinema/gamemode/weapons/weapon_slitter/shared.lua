@@ -385,7 +385,7 @@ function SWEP:DrawHUD()
     local killeffect = math.min(CurTime() - lastkillslit, .15) / .15
 
     if killeffect < 0.98 then
-        size = Lerp(killeffect, 16, 48)
+        local size = Lerp(killeffect, 16, 48)
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, size, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 100, 0)))
         surface.DrawCircle(ScrW() / 2, ScrH() / 2, size - 1, Color(255, 255, 255, Lerp((killeffect - 0.5) * 2, 60, 0)))
     end

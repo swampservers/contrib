@@ -295,7 +295,7 @@ SS_Product({
             end
         end
 
-        e = makeTrashWheelchair(ply, false)
+        makeTrashWheelchair(ply, false)
     end
 })
 
@@ -313,7 +313,7 @@ SS_Product({
             end
         end
 
-        e = makeTrashWheelchair(ply, true)
+        local e = makeTrashWheelchair(ply, true)
         e.FrontWheel:SetColor(Color(255, 0, 0))
         e.BackWheel:SetColor(Color(255, 0, 0))
     end
@@ -352,8 +352,7 @@ if CLIENT then
                 local attacht = ply:GetAttachment(attach_id)
 
                 if attacht then
-                    pos = attacht.Pos
-                    ang = attacht.Ang
+                    local pos, ang = attacht.Pos, attacht.Ang
                     SpaceHatCSModel:SetAngles(ang)
 
                     if ply:IsPony() then

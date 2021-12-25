@@ -46,6 +46,8 @@ GOLFCAMLERPTIME = 0.6
 function SWEP:GolfCamViewTargets(vec)
     local p = self:GetBall()
     if not IsValid(p) then return end
+
+    local a
     p, a = LocalToWorld(Vector(0, 24, 64), Angle(60, -80, 0), p:GetPos(), vec:Angle())
     a:RotateAroundAxis(a:Up(), 20)
 
@@ -60,7 +62,7 @@ function SWEP:CalcView(ply, pos, ang, fov)
     end
 
     if GOLFCAMVECTOR then
-        p, a = self:GolfCamViewTargets(GOLFCAMVECTOR)
+        local p, a = self:GolfCamViewTargets(GOLFCAMVECTOR)
         if not p then return end
         local lerp = math.Clamp((SysTime() - GOLFCAMINTTIME) / GOLFCAMLERPTIME, 0, 1)
         p = LerpVector(lerp, GOLFCAMINTPOS, p)
@@ -68,7 +70,7 @@ function SWEP:CalcView(ply, pos, ang, fov)
 
         return p, a, Lerp(lerp, fov, GOLFCAMFOV)
     elseif OLDGOLFCAMVECTOR then
-        p, a = self:GolfCamViewTargets(OLDGOLFCAMVECTOR)
+        local p, a = self:GolfCamViewTargets(OLDGOLFCAMVECTOR)
         if not p then return end
         local lerp = math.Clamp((SysTime() - GOLFCAMINTTIME) / GOLFCAMLERPTIME, 0, 1)
         p = LerpVector(lerp, p, pos)

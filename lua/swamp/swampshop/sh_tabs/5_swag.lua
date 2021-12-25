@@ -936,7 +936,7 @@ local primitives = {
 }
 
 for k, v in pairs(primitives) do
-    kl = k:lower()
+    local kl = k:lower()
 
     local itm = {
         class = 'primitive_' .. kl,

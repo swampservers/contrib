@@ -103,7 +103,7 @@ SS_Product({
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         local nxt = GetSpecialTrashModelsByClass("light")
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+        makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
 
@@ -116,7 +116,7 @@ SS_Product({
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         local nxt = GetSpecialTrashModelsByClass("button")
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+        makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
 
@@ -129,7 +129,7 @@ SS_Product({
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
         local nxt = GetSpecialTrashModelsByClass("door")
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+        makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
 
@@ -141,7 +141,7 @@ SS_Product({
     model = 'models/maxofs2d/lamp_flashlight.mdl',
     CannotBuy = CannotBuyTrash,
     OnBuy = function(self, ply)
-        e = makeTrash(ply, "models/maxofs2d/lamp_flashlight.mdl")
+        makeTrash(ply, "models/maxofs2d/lamp_flashlight.mdl")
     end
 })
 
@@ -257,7 +257,7 @@ SS_Product({
             end
         end
 
-        e = makeTrash(ply, nxt[math.random(1, #nxt)])
+        makeTrash(ply, nxt[math.random(1, #nxt)])
     end
 })
 

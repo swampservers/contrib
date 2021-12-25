@@ -115,7 +115,6 @@ end
 
 if CLIENT then
     function SWEP:Think()
-        ply = self.Owner
         if Me:GetActiveWeapon() ~= self then return end
         local changesprintness = 2.2 * RealFrameTime()
 

@@ -21,8 +21,8 @@ net.Receive("BoneModReset", function()
 end)
 
 net.Receive("BoneSequence", function()
-    ply = net.ReadEntity()
-    command = net.ReadString()
+    local ply = net.ReadEntity()
+    local command = net.ReadString()
 
     if command == "heil" then
         timer.Simple(1, function()

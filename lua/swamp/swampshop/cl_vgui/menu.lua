@@ -425,7 +425,7 @@ function PANEL:Init()
     end
 
     if not in_steamgroup then
-        p = vgui.Create("DButton", self)
+        local p = vgui.Create("DButton", self)
         p:SetZPos(1000)
         p:SetPos(-20, self:GetTall() - (76 + SS_BOTBARHEIGHT))
         p:SetSize(360, 72 + 50)
@@ -516,7 +516,7 @@ function PANEL:PaintOver(w, h)
     BrandUpGradient(0, h - bottom, w)
     local frogsize = 212 --208
     local edge = 308
-    ofs = (edge / 512) * frogsize
+    local ofs = (edge / 512) * frogsize
     surface.SetDrawColor(Color(255, 255, 255, 255))
 
     if not froggy:IsError() then

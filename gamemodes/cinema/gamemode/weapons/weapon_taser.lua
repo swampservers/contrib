@@ -127,7 +127,7 @@ end
 
 function SWEP:TasePlayer()
     if not IsValid(self.AttachedPlayer) then return end
-    ply = self.AttachedPlayer
+    local ply = self.AttachedPlayer
 
     -- if the player is already tasered
     if IsValid(ply.IsTaseredBy) then
@@ -156,7 +156,7 @@ end
 
 function SWEP:UnTasePlayer()
     if not IsValid(self.AttachedPlayer) then return end
-    ply = self.AttachedPlayer
+    local ply = self.AttachedPlayer
     ply.IsTaseredBy = nil
 
     for i = 0, ply:GetBoneCount() do

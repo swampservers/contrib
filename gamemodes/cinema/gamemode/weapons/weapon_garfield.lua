@@ -56,9 +56,9 @@ function Player:SetObesity(obs)
     if obs == 1 and self:Obesity() == 1 then return end
     obs = obs or self:Obesity()
     self:SetNWFloat("garfield", obs)
-    local sc = 1 --self:HasWeapon("weapon_garfield") and 0.55 or 1
+    local sc = 0.55 --self:HasWeapon("weapon_garfield") and 0.55 or 1
     -- if not self:IsBot() then
-    self:SetModelScale(self:ObesityScale() * sc)
+    self:SetModelScale(math.max(1, self:ObesityScale() * sc))
 
     -- else
     --     self:SetModelScale(0.75)
@@ -566,7 +566,7 @@ function SWEP:DrawHUD()
     draw.DrawText(txt, "DermaDefault", 10, 10, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT)
     surface.SetDrawColor(255, 255, 255, 255)
     surface.SetMaterial(lasagnaMat)
-    GARFIELDOUTLINEPLY, alpha, blocked = self:GetTargetPlayer()
+    local GARFIELDOUTLINEPLY, alpha, blocked = self:GetTargetPlayer()
     local eatin = self:GetNW2Entity("EATINGp")
 
     if IsValid(eatin) then
@@ -609,7 +609,3 @@ function SWEP:DrawHUD()
         end
     end
 end
-
-hook.Add("CanOutfit", "garffafasd", function(ply, mdl, wsid)
-    if ply:HasWeapon('weapon_garfield') then return false end
-end)

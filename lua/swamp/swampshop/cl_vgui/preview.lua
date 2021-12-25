@@ -97,39 +97,38 @@ function PANEL:LayoutEntity(thisEntity)
         if self.PressButton == MOUSE_RIGHT then
             if SS_CustomizerPanel:IsVisible() then
                 if ValidPanel(SS_CustomizerPanel.Angle) and IsValid(SS_HoverCSModel) then
-                    clang = SS_CustomizerPanel.Angle:GetValueAngle()
-                    clangm = Matrix()
+                    local clang = SS_CustomizerPanel.Angle:GetValueAngle()
+                    local clangm = Matrix()
                     clangm:SetAngles(clang)
                     clangm:Invert()
-                    clangi = clangm:GetAngles()
-                    cgang = SS_HoverCSModel:GetAngles()
-                    crangm = Matrix()
+                    local clangi = clangm:GetAngles()
+                    local cgang = SS_HoverCSModel:GetAngles()
+                    local crangm = Matrix()
                     crangm:SetAngles(cgang)
                     crangm:Rotate(clangi)
-                    ngang = Angle()
+                    local ngang = Angle()
                     ngang:Set(cgang)
                     -- local ang = (self:GetLookAt() - self:GetCamPos()):Angle()
                     local _, ang = self:GetCameraTransform()
                     ngang:RotateAroundAxis(ang:Up(), (mx - (self.PressX or mx)) * 0.3)
                     ngang:RotateAroundAxis(ang:Right(), (my - (self.PressY or my)) * 0.3)
-                    ngangm = Matrix()
+                    local ngangm = Matrix()
                     ngangm:SetAngles(ngang)
                     crangm:Invert()
-                    nlangm = crangm * ngangm
-                    nlang = nlangm:GetAngles()
-                    SS_CustomizerPanel.Angle:SetValue(nlang)
+                    local nlangm = crangm * ngangm
+                    SS_CustomizerPanel.Angle:SetValue(nlangm:GetAngles())
                 end
             end
         end
 
         if self.PressButton == MOUSE_MIDDLE and SS_CustomizerPanel:IsVisible() and ValidPanel(SS_CustomizerPanel.Position) and IsValid(SS_HoverCSModel) then
-            clang = SS_CustomizerPanel.Angle:GetValueAngle()
-            clangm = Matrix()
+            local clang = SS_CustomizerPanel.Angle:GetValueAngle()
+            local clangm = Matrix()
             clangm:SetAngles(clang)
             clangm:Invert()
-            clangi = clangm:GetAngles()
-            cgang = SS_HoverCSModel:GetAngles()
-            crangm = Matrix()
+            local clangi = clangm:GetAngles()
+            local cgang = SS_HoverCSModel:GetAngles()
+            local crangm = Matrix()
             crangm:SetAngles(cgang)
             crangm:Rotate(clangi)
             local _, ang = self:GetCameraTransform()
@@ -169,7 +168,7 @@ function PANEL:FocalPointAndDistance()
             -- local p2, a2 = SS_GetItemWorldPos(SS_HoverItem, self.Entity)
             -- local p2 = SS_HoverCSModel:GetPos()
             -- pos = p2 - (ang:Forward() * 50)
-            center, radius = model_center_radius(SS_HoverCSModel)
+            local center, radius = model_center_radius(SS_HoverCSModel)
             center = self.Entity:WorldToLocal(SS_HoverCSModel:LocalToWorld(center))
 
             return center, (radius + 1) * 2

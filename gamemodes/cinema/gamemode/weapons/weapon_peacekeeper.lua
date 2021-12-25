@@ -110,13 +110,6 @@ function SWEP:DrawHUD()
     surface.DrawLine(mx, my + (spread + len), mx, my + spread)
 end
 
-if CLIENT then
-    function SWEP:Think()
-        ply = self.Owner
-        if Me:GetActiveWeapon() ~= self then return end
-    end
-end
-
 function SWEP:Initialize()
     self:SetWeaponHoldType(self.HoldType)
     self:SetHoldType(self.HoldType)

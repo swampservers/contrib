@@ -69,7 +69,7 @@ function SWEP:DrawWorldModel()
         oang:RotateAroundAxis(oang:Forward(), self:GetFlippage())
         oang:RotateAroundAxis(oang:Right(), self.spinpos or 0)
         self:SetupBones()
-        oscl = Vector(0.8, 0.8, 0.8)
+        local oscl = Vector(0.8, 0.8, 0.8)
         local mrt = self:GetBoneMatrix(0)
 
         if mrt then
