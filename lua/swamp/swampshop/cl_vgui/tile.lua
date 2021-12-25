@@ -345,7 +345,6 @@ function PANEL:Paint(w, h)
                 --     print(self.iop.color)
                 --     print(self.iop.color.a)
                 -- end
-
                 -- self.Entity:SetColor(self.iop.color or color_white)
                 self.Entity.GetPlayerColor = function() return Me:GetPlayerColor() end
                 local item = self.item or self.product.sample_item

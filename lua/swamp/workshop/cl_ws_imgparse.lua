@@ -148,9 +148,8 @@ function file.ParseJPG(file)
     file:Seek(0)
     dimheader[1] = string.char(255) .. string.char(192)
     dimheader[2] = string.char(255) .. string.char(194)
-    
 
-    if file:Read(2) ==  (string.char(255) .. string.char(216)) then
+    if file:Read(2) == string.char(255) .. string.char(216) then
         while foundheader == 0 do
             if file:Tell() + 2 < endofjpg then
                 readheader = file:Read(2)
