@@ -344,7 +344,6 @@ function MvisNextFrame(...)
 end
 
 --NOMINIFY
-
 hook.Add("RenderScreenspaceEffects", "MusicVis", function()
     local th = (IsValid(Me) and Me:GetLocationName() == "Vapor Lounge") and Me:GetTheater()
 

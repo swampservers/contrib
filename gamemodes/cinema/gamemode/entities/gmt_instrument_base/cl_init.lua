@@ -96,7 +96,7 @@ function ENT:Think()
 
     if not MIDI_AUTOLOADED then
         MIDI_LOAD()
-        MIDI_AUTOLOADED=true
+        MIDI_AUTOLOADED = true
     end
 
     if self.DelayKey and self.DelayKey > CurTime() then return end
