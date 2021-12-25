@@ -398,7 +398,6 @@ function SWEP:Boof(locl)
 end
 
 --NOMINIFY
-
 function SWEP:SecondaryAttack()
     if SERVER then
         if self.REMOVING then return end

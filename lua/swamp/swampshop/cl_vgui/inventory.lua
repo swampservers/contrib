@@ -74,11 +74,15 @@ vgui.Register('DSSInventoryMode', {
             self:InvalidateLayout()
 
             timer.Simple(0, function()
-                if self.VBar then self.VBar:SetScroll(scroll2) end
+                if self.VBar then
+                    self.VBar:SetScroll(scroll2)
+                end
             end)
 
             timer.Simple(0.1, function()
-                if self.VBar then self.VBar:SetScroll(scroll2) end
+                if self.VBar then
+                    self.VBar:SetScroll(scroll2)
+                end
             end)
         end
     end

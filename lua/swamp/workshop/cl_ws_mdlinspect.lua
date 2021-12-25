@@ -2,7 +2,6 @@
 module(Tag, package.seeall)
 
 --NOMINIFY
-
 -- binfuncs
 if SERVER then
     AddCSLuaFile()

@@ -375,7 +375,6 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
         end
 
         assert(MVIS_DATA[thekey])
-
         local ts = (YoutubeActualTimestamp() or 0) + 0.02
         local fts = ts * 60
         local vframe = (math.floor(fts) + 1) + MVIS_LOOKAHEAD_FRAMES
