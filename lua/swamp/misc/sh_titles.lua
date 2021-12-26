@@ -156,23 +156,20 @@ AddTitle({
 
 -- {1000, "Saint Nick", 1000000}
 AddTitle({
-    {100, "Gift Giver", 1000000},
+    {100, "Gift Giver", 200000},
     {"s_giftgiver_size_place10", "Elf", 0},
-    {"s_giftgiver_size_place4", "Frosty The Snowman", 0},
     {"s_giftgiver_size_place3", "Santa's Little Helper", 0},
     {"s_giftgiver_size_place2", "The Red-Nosed Pony", 0},
     {"s_giftgiver_size_place1", "Saint Nick", 0}
-}, {"Give a present (from shop) to %s different players", "Give a present (from shop) to %s different players (top 10)\n2m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#4)\n5m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#3)\n10m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#2)\n15m reward if this is your title on Christmas!", "Give a present (from shop) to %s different players (#1)\n25m reward + special prop if this is your title on Christmas!",}, "s_giftgiver_size", {
+}, {"Give a present (from shop) to %s different players", "Give a present (from shop) to %s different players (top 10)", "Give a present (from shop) to %s different players (#3)", "Give a present (from shop) to %s different players (#2)", "Give a present (from shop) to %s different players (#1)"}, "s_giftgiver_size", {
     reward_id = "giftgiver",
-    group_view = {"s_giftgiver", "gifted"},
-    showall = true
+    group_view = {"s_giftgiver", "gifted"}
 })
 
 AddTitle({
     {"s_grinch_place5", "Naughty"},
     {"s_grinch_place1", "The Grinch"}
-}, {"Destroy %s presents using the knife (top 5)\n2m reward if this is your title on Christmas!", "Destroy %s presents using the knife (#1)\n10m reward if this is your title on Christmas!"}, "s_grinch", {
-    showall = true
+}, {"Destroy %s presents using the knife (top 5)", "Destroy %s presents using the knife (#1)"}, "s_grinch", {
 })
 
 FORCEDTITLES = {"The Grinch", "Naughty", "Saint Nick", "The Red-Nosed Pony", "Santa's Little Helper", "Frosty The Snowman", "Elf"}
