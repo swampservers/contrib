@@ -169,8 +169,7 @@ AddTitle({
 AddTitle({
     {"s_grinch_place5", "Naughty"},
     {"s_grinch_place1", "The Grinch"}
-}, {"Destroy %s presents using the knife (top 5)", "Destroy %s presents using the knife (#1)"}, "s_grinch", {
-})
+}, {"Destroy %s presents using the knife (top 5)", "Destroy %s presents using the knife (#1)"}, "s_grinch", {})
 
 FORCEDTITLES = {"The Grinch", "Naughty", "Saint Nick", "The Red-Nosed Pony", "Santa's Little Helper", "Frosty The Snowman", "Elf"}
 
