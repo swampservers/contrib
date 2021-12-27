@@ -47,34 +47,6 @@ function SS_AngleGen(func)
     return ang
 end
 
-print("HERE")
-
-function SS_WeaponBlueprintItem(item)
-    item.CraftingPrice = function(self) return 5000 end
-
-    item.actions = {
-        {
-            name = "craft",
-            text = function(self) return "Craft - " .. tostring(self:CraftingPrice()) .. " points" end,
-            server = function(self)
-                print("OLD ONSERVER CALL")
-
-                if self.owner:HasWeapon(self.class) then
-                    self.owner:SelectWeapon(self.class)
-                else
-                    self.owner:SS_TryTakePoints(self:CraftingPrice(), function()
-                        self.owner:Give(self.class)
-                        self.owner:SelectWeapon(self.class)
-                    end)
-                end
-            end
-        }
-    }
-
-    item.invcategory = "Blueprints"
-    SS_Item(item)
-end
-
 --NOMINIFY
 --todo move this
 function SS_ItemOrProduct(iop)

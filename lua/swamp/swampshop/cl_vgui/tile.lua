@@ -350,7 +350,7 @@ function PANEL:Paint(w, h)
                 local item = self.item or self.product.sample_item
 
                 if item then
-                    SS_SetItemMaterialToEntity(item, self.Entity, true)
+                    SS_SetItemMaterialToEntity(item, self.Entity)
                 elseif self.product.material then
                     self.Entity:SetMaterial(self.product.material)
                 end

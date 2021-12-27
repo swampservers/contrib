@@ -26,9 +26,12 @@ function PPM_PrePonyDraw(ent)
     end
 
     PPM_PONIES_NEARBY[ply] = true
-    if ent:IsPlayer() and SS_ApplyMaterialMods then return end
+
+    -- players will get set in SS_ApplyMods
+    if ent:IsPlayer() then return end
+
     ent:SetSubMaterial()
-    PPM_SetPonyMaterials(ent)
+    ent:SetPonyMaterials()
 
     -- Only applies to editor models; ragdolls are handled in hook below and players are handled serverside
     if ent:EntIndex() == -1 then
@@ -41,15 +44,17 @@ hook.Add("PrePlayerDraw", "PPM_PrePlayerDraw", function(ply)
     PPM_PrePonyDraw(ply)
 end)
 
-hook.Add("SetPlayerModelMaterials", "ponymaterials", function(ent, ply)
-    if ent:IsPPMPony() then
-        PPM_SetPonyMaterials(ent)
-    end
-end)
+-- hook.Add("SetPlayerModelMaterials", "ponymaterials", function(ent, ply)
+--     if ent:IsPPMPony() then
+--         PPM_SetPonyMaterials(ent)
+--     end
+-- end)
 
-function PPM_SetPonyMaterials(ent)
+function Entity:SetPonyMaterials()
+
+    if not self:IsPPMPony() then return end
     -- print("PONYMAT", ent)
-    local ply = ent:PonyPlayer()
+    local ply = self:PonyPlayer()
     -- if ent ~= ply then
     --     print("THISS", ply, ent)
     -- end
@@ -60,7 +65,7 @@ function PPM_SetPonyMaterials(ent)
             -- big TODO: make imgur materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
             v = WebMaterial({
                 id = ply.ponydata.imgurcmark,
-                owner = ent,
+                owner = ply,
                 -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
                 stretch = false,
                 shader = "VertexLitGeneric",
@@ -68,7 +73,7 @@ function PPM_SetPonyMaterials(ent)
             })
         end
 
-        ent:SetSubMaterial(k - 1, "!" .. v:GetName())
+        self:SetSubMaterial(k - 1, "!" .. v:GetName())
     end
 end
 

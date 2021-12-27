@@ -83,6 +83,17 @@ function table.Inverse(tab)
     return s
 end
 
+--- Copy table at the first layer only
+function table.ShallowCopy(tab)
+    local s = {}
+
+    for k, v in pairs(tab) do
+        s[k] = v
+    end
+
+    return s
+end
+
 --- Selects a range of an ordered table similar to string.sub
 function table.sub(tab, startpos, endpos)
     local out = {}
@@ -196,14 +207,17 @@ function vector:Pow(y)
 end
 
 function vector:Max(o)
+    if isnumber(o) then return Vector(math.max(self.x, o), math.max(self.y, o), math.max(self.z, o)) end
     return Vector(math.max(self.x, o.x), math.max(self.y, o.y), math.max(self.z, o.z))
 end
 
 function vector:Min(o)
+    if isnumber(o) then return Vector(math.min(self.x, o), math.min(self.y, o), math.min(self.z, o)) end
     return Vector(math.min(self.x, o.x), math.min(self.y, o.y), math.min(self.z, o.z))
 end
 
 function vector:Clamp(min, max)
+    if isnumber(min) then return Vector(math.Clamp(self.x, min, max), math.Clamp(self.y, min, max), math.Clamp(self.z, min, max)) end
     return Vector(math.Clamp(self.x, min.x, max.x), math.Clamp(self.y, min.y, max.y), math.Clamp(self.z, min.z, max.z))
 end
 

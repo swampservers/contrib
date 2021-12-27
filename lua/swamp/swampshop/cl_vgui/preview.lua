@@ -209,7 +209,7 @@ function PANEL:Paint(w, h)
             local item = SS_HoverItem or SS_HoverProduct.sample_item
 
             if item then
-                SS_SetItemMaterialToEntity(item, self.Entity, true)
+                SS_SetItemMaterialToEntity(item, self.Entity)
             elseif SS_HoverProduct and SS_HoverProduct.material then
                 self.Entity:SetMaterial(SS_HoverProduct.material)
             end
@@ -272,21 +272,19 @@ function PANEL:Paint(w, h)
         self:SetCamPos(center + diam * Vector(0.4, 0.4, 0.1))
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return Me:GetPlayerColor() end
-        local mods = Me:SS_GetActivePlayermodelMods()
-        local hoveritem = SS_HoverItem
-
+        local mods = Me.SS_ShownItems
+        
         -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
-        if IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() then
-            hoveritem = SS_CustomizerPanel.item
-        end
-
+        local hoveritem = (IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() and SS_CustomizerPanel.item) or SS_HoverItem
+        
         if hoveritem and hoveritem.playermodelmod then
             -- local add = true
-            for i, v in ipairs(mods) do
-                if v.id == hoveritem.id then
-                    -- add = false
-                    table.remove(mods, i)
-                    break
+            local mods1 = mods
+            
+            mods = {}
+            for i, v in pairs(mods1) do
+                if v.id ~= hoveritem.id then
+                    table.insert(mods, v)
                 end
             end
 
@@ -296,8 +294,7 @@ function PANEL:Paint(w, h)
         end
 
         if not SS_HoverIOP or not SS_HoverIOP.PlayerSetModel then
-            SS_ApplyBoneMods(self.Entity, mods)
-            SS_ApplyMaterialMods(self.Entity, Me)
+            SS_ApplyMods(self.Entity, mods)
         end
 
         self.Entity:SetEyeTarget(self:GetCamPos())

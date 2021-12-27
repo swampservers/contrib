@@ -218,6 +218,11 @@ Convert an ordered table {a,b,c} into a set {[a]=true,[b]=true,[c]=true}
 \
 *file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
 
+### function table.ShallowCopy(tab)
+Copy table at the first layer only
+\
+*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+
 ### function table.SortedInsertIndex(tab, val)
 Returns the largest index such that tab[index] > val (or is the end)
 \
