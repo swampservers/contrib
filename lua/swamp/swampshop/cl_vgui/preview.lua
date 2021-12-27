@@ -273,15 +273,14 @@ function PANEL:Paint(w, h)
         self:SetLookAt(center)
         self.Entity.GetPlayerColor = function() return Me:GetPlayerColor() end
         local mods = Me.SS_ShownItems
-        
         -- retarded stopgap fix for customizer, for some reason hoveritem and customizer's item are different tables referring to the same item
-        local hoveritem = (IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() and SS_CustomizerPanel.item) or SS_HoverItem
-        
+        local hoveritem = IsValid(SS_CustomizerPanel) and SS_CustomizerPanel:IsVisible() and SS_CustomizerPanel.item or SS_HoverItem
+
         if hoveritem and hoveritem.playermodelmod then
             -- local add = true
             local mods1 = mods
-            
             mods = {}
+
             for i, v in pairs(mods1) do
                 if v.id ~= hoveritem.id then
                     table.insert(mods, v)

@@ -104,9 +104,6 @@ if CLIENT then
         end
     end)
 
-
-
-
     -- RAGDOLL STUFF
     local function enforce_ragdoll(rag)
         -- not having this causes crashes?
@@ -114,12 +111,12 @@ if CLIENT then
         rag:SetModel(rag.enforce_model)
         rag:InvalidateBoneCache()
     end
-        
+
     local enforce_models = {}
 
     hook.Add("Think", "EnforceRagdoll", function()
-        for rag,count in next,enforce_models do
-            if IsValid(rag) and count>0 then
+        for rag, count in next, enforce_models do
+            if IsValid(rag) and count > 0 then
                 enforce_ragdoll(rag)
                 enforce_models[rag] = count - 1
             else
@@ -128,9 +125,7 @@ if CLIENT then
         end
     end)
 
-    local OversizeRagdoll = defaultdict(function(mdl) 
-        return (file.Size(mdl:gsub("%.mdl$",'.phy'),'GAME') or 999999) > 100000
-    end)
+    local OversizeRagdoll = defaultdict(function(mdl) return (file.Size(mdl:gsub("%.mdl$", '.phy'), 'GAME') or 999999) > 100000 end)
 
     -- Setting display model has to be done in this hook or it breaks!
     hook.Add("NetworkEntityCreated", "ragdoll1", function(rag)
@@ -139,26 +134,23 @@ if CLIENT then
         if not IsValid(ply) then return end
         local mdl, dw, bg = ply:GetDisplayModel()
         if not mdl or not IsValidPlayermodel(mdl) then return end
-
         if OversizeRagdoll[mdl] then return end
-
         rag.enforce_model = mdl
-
         enforce_models[rag] = 8
         enforce_ragdoll(rag)
 
         -- TODO: set bodygroups
-        
-        rag.RenderOverride=function(rag)
+        rag.RenderOverride = function(rag)
             rag:SetModel(rag.enforce_model)
+
             if enforce_models[rag] then
                 rag:InvalidateBoneCache()
             end
+
             rag:DrawModel()
         end
-
-        -- timer.Simple(0.5, function()
-        --     if IsValid(rag) then rag.RenderOverride=nil end
-        -- end)
     end)
+    -- timer.Simple(0.5, function()
+    --     if IsValid(rag) then rag.RenderOverride=nil end
+    -- end)
 end

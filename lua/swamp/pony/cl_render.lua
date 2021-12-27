@@ -26,10 +26,8 @@ function PPM_PrePonyDraw(ent)
     end
 
     PPM_PONIES_NEARBY[ply] = true
-
     -- players will get set in SS_ApplyMods
     if ent:IsPlayer() then return end
-
     ent:SetSubMaterial()
     ent:SetPonyMaterials()
 
@@ -49,9 +47,7 @@ end)
 --         PPM_SetPonyMaterials(ent)
 --     end
 -- end)
-
 function Entity:SetPonyMaterials()
-
     if not self:IsPPMPony() then return end
     -- print("PONYMAT", ent)
     local ply = self:PonyPlayer()
