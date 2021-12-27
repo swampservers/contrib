@@ -47,6 +47,8 @@ function SS_AngleGen(func)
     return ang
 end
 
+print("HERE")
+
 function SS_WeaponBlueprintItem(item)
     item.CraftingPrice = function(self) return 5000 end
 
@@ -55,6 +57,7 @@ function SS_WeaponBlueprintItem(item)
             name = "craft",
             text = function(self) return "Craft - " .. tostring(self:CraftingPrice()) .. " points" end,
             server = function(self)
+                print("OLD ONSERVER CALL")
                 if self.owner:HasWeapon(self.class) then
                     self.owner:SelectWeapon(self.class)
                 else
