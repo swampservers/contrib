@@ -58,6 +58,7 @@ function SS_WeaponBlueprintItem(item)
             text = function(self) return "Craft - " .. tostring(self:CraftingPrice()) .. " points" end,
             server = function(self)
                 print("OLD ONSERVER CALL")
+
                 if self.owner:HasWeapon(self.class) then
                     self.owner:SelectWeapon(self.class)
                 else
