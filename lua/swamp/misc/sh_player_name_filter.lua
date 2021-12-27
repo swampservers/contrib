@@ -31,7 +31,7 @@ function Player:ComputeName()
     tn = StripNameAdvert(tn, "sups.gg")
     tn = StripNameAdvert(tn, "moat.gg") --lol rip
     tn = StripNameAdvert(tn, "velk.ca")
-    tn = tn:gsub("DADG", "RETARD")
+    tn = tn:gsub("DADG", "FURRY")
 
     return tn
 end

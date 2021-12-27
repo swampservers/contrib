@@ -43,13 +43,15 @@ AUTOICONS = {{}, {}}
 
 -- The game likes to black out our textures sometimes (eg. when changing screen res). Make a little 1x1 square that is white when the textures still exist, so if the game blacks it out we'll know, without having to capture an entire large texture.
 -- Still takes about 0.5ms to check it though.
-AUTOICON_INDICATOR_TEXTURE = GetRenderTargetEx(UniqueName(), 1, 1, 0, 2, 1, 0, IMAGE_FORMAT_RGB888)
+AUTOICON_INDICATOR_TEXTURE = GetRenderTargetEx(UniqueName(), 2, 2, 0, 2, 1, 0, IMAGE_FORMAT_RGB888)
 
 AUTOICON_INDICATOR_MATERIAL = CreateMaterial(UniqueName(), "VertexLitGeneric", {
     ["$basetexture"] = "metal6",
 })
 
 local ValidCheckTime = 0
+
+--NOMINIFY
 
 local function CheckTexturesValid()
     if SysTime() - ValidCheckTime < 5 then return end

@@ -128,9 +128,6 @@ vgui.Register("DSSTitleInfo", {
     end
 }, "DSSCustomizerSection")
 
-SHOWNPSET = "s_giftgiver"
-SHOWNPSETVERB = "gifted"
-
 vgui.Register('DSSPlayerSettingsMode', {
     Init = function(self)
         SS_TitlesPanel = self

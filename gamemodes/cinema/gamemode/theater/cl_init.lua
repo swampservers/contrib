@@ -204,14 +204,14 @@ net.Receive("TheaterVideo", function()
     end
 
     -- Private theater owner
-    local Theater = Me.GetTheater and Me:GetTheater()
+    local Theater = Me and Me.GetTheater and Me:GetTheater()
 
     if Theater then
         Theater:SetVideo(Video)
         LoadVideo(Video)
     else
         timer.Simple(0.1, function()
-            Theater = Me.GetTheater and Me:GetTheater()
+            Theater = Me and Me.GetTheater and Me:GetTheater()
 
             if Theater then
                 Theater:SetVideo(Video)

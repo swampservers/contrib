@@ -139,6 +139,8 @@ end
 -- Mounts all downloaded GMAs at once downloading is finished
 hook.Add("Tick", "WorkshopMounter", function()
     if STEAM_WORKSHOP_INFLIGHT == 0 and not table.IsEmpty(STEAMWS_UNMOUNTED) then
+        SetCrashData("PREMOUNT", table.Count(STEAMWS_UNMOUNTED), 0.1)
+
         for wsid, filename in pairs(STEAMWS_UNMOUNTED) do
             local ok, err = GMABlacklist(filename)
 
