@@ -28,7 +28,6 @@ function _SetupEnts1()
 end
 
 --NOMINIFY
-
 function _SetupEnts2()
     local _Ents = defaultdict(function() return {} end)
 

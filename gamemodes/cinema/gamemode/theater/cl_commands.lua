@@ -4,7 +4,6 @@ GameVolumeConVar = CreateClientConVar("cinema_game_volume", 100, true, false, ""
 VoiceVolumeConVar = CreateClientConVar("cinema_voice_volume", 100, true, false, "", 0, 100)
 
 --NOMINIFY
-
 --reset it
 if GameVolumeConVar:GetInt() == 1 then
     RunConsoleCommand("cinema_game_volume", "100")

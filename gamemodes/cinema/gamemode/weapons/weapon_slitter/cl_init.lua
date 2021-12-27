@@ -10,7 +10,6 @@ surface.CreateFont("CSKillIcons", {
 })
 
 --NOMINIFY
-
 killicon.AddFont("weapon_slitter", "CSKillIcons", "j", Color(255, 80, 0, 255))
 local BloodMaterials = {}
 

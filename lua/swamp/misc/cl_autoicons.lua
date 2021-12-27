@@ -52,7 +52,6 @@ AUTOICON_INDICATOR_MATERIAL = CreateMaterial(UniqueName(), "VertexLitGeneric", {
 local ValidCheckTime = 0
 
 --NOMINIFY
-
 local function CheckTexturesValid()
     if SysTime() - ValidCheckTime < 5 then return end
     ValidCheckTime = SysTime()
