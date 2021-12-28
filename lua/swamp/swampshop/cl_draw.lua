@@ -9,20 +9,16 @@ function TryRequestShownItems(ply)
 end
 
 --NOMINIFY
-
 hook.Add("PrePlayerDraw", "SS_PrePlayerDraw", function(ply)
     if not ply:Alive() then return end
-
     if EyePos():DistToSqr(ply:GetPos()) > 2000000 then return end
-
     TryRequestShownItems(ply)
-
     local m = ply:GetActualModel()
 
     -- check if player is setup, but skip this check if we already setup this playermodel
     if ply.SS_SetupPlayermodel ~= m then
         m = ply:GetBoneContents(0) ~= 0 and m
-    end 
+    end
 
     if ply.SS_SetupPlayermodel ~= m then
         SS_ApplyMods(ply, ply.SS_ShownItems)
@@ -47,13 +43,11 @@ function SS_ApplyMods(ent, mods)
     end
 
     if HumanTeamName then return end
-
     local pone = IsPonyModel(ent:GetModel())
     local suffix = pone and "_p" or "_h"
     --if pelvis has no children, it's not ready!
     local pelvis = ent:LookupBone(pone and "LrigPelvis" or "ValveBiped.Bip01_Pelvis")
     if pelvis then end -- assert(#ent:GetChildBones(pelvis) > 0, ent:GetModel() ) 
-
     ent:SetSubMaterial()
     ent:SetPonyMaterials()
 
@@ -74,14 +68,13 @@ function SS_ApplyMods(ent, mods)
         end
     end
 
-    local maxscale = ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" and 1 or  2.25*1.5
+    local maxscale = ent:GetModel() == "models/milaco/minecraft_pm/minecraft_pm.mdl" and 1 or 2.25 * 1.5
+
     for i = 0, ent:GetBoneCount() - 1 do
         ent:ManipulateBoneScale(i, ent:GetManipulateBoneScale(i):Clamp(0.125, maxscale))
-        ent:ManipulateBonePosition(i, ent:GetManipulateBonePosition(i):Clamp(-8,8))
+        ent:ManipulateBonePosition(i, ent:GetManipulateBonePosition(i):Clamp(-8, 8))
     end
 end
-
-
 
 -- todo: change IN_SHOP to ent attribute?
 function SS_SetItemMaterialToEntity(item, ent, owner)
@@ -91,7 +84,7 @@ function SS_SetItemMaterialToEntity(item, ent, owner)
         ent:SetWebMaterial({
             id = item.cfg.imgur.url,
             owner = owner,
-            forceload = (owner==nil),
+            forceload = owner == nil,
             params = [[{["$alphatest"]=1,["$color2"]="[]] .. tostring(col) .. [[]"}]]
         })
     elseif item.material then
@@ -211,7 +204,6 @@ function Entity:SS_AttachAccessories(items)
 
         for k, item in pairs(items) do
             if item.AccessoryTransform then
-
                 local function make()
                     local rmodels = recycle[item:GetModel()]
                     local mdl
@@ -221,22 +213,22 @@ function Entity:SS_AttachAccessories(items)
                     else
                         mdl = ClientsideModel(item:GetModel(), RENDERGROUP_OPAQUE)
                     end
-                
+
                     mdl.item = item
                     local pone = IsPonyModel(EntityGetModel(self))
                     local attach, translate, rotate, scale = item:AccessoryTransform(pone)
-                
+
                     if attach == "eyes" then
                         local attach_id = self:LookupAttachment("eyes")
                         local head_bone_id = self:LookupBone(SS_Attachments["head"][pone and 2 or 1])
                         local attach_angpos = self:GetAttachment(attach_id)
-                
+
                         if attach_id < 1 or not head_bone_id or not attach_angpos then
                             mdl:Remove()
-                
+
                             return nil
                         end
-                
+
                         local bpos, bang = self:GetBonePosition(head_bone_id)
                         translate, rotate = LocalToWorld(translate, rotate, attach_angpos.Pos, attach_angpos.Ang)
                         translate, rotate = WorldToLocal(translate, rotate, bpos, bang)
@@ -245,16 +237,16 @@ function Entity:SS_AttachAccessories(items)
                         -- mdl:SetParent(self, attach_id)
                     else
                         local bone_id = self:LookupBone(SS_Attachments[attach][pone and 2 or 1])
-                
+
                         if not bone_id then
                             mdl:Remove()
-                
+
                             return nil
                         end
-                
+
                         mdl:FollowBone(self, bone_id)
                     end
-                
+
                     -- just added
                     -- mdl:SetPredictable(true)
                     -- if scale ~= e.appliedscale then
@@ -269,7 +261,7 @@ function Entity:SS_AttachAccessories(items)
                         {0, 0, scale.z, 0},
                         {0, 0, 0, 1}
                     })
-                
+
                     -- TODO: do we need to adjust renderbounds?
                     mdl:EnableMatrix("RenderMultiply", mdl.matrix)
                     -- e.appliedscale = scale
@@ -280,13 +272,10 @@ function Entity:SS_AttachAccessories(items)
                     mdl.follow = bone_id
                     mdl.translate = translate
                     mdl.rotate = rotate
-
                     SS_SetItemMaterialToEntity(item, mdl, self:IsPlayer() and self or nil)
-
                     mdl:SetPredictable(true)
-                
-                    return mdl
 
+                    return mdl
                 end
 
                 table.insert(SS_CreatedAccessories[self], make())
