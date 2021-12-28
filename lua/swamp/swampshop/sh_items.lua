@@ -10,6 +10,10 @@ SS_SAMPLE_ITEM_OWNER = SS_SAMPLE_ITEM_OWNER or {}
 -- }
 -- convert sql loaded data, or network data, to item
 -- still needs to be sanitized on server, left out of here to deal with prop slots
+
+
+-- TODO make items associative, and make id and owner in separate tables, and GetID GetOwner functions
+
 function SS_MakeItem(ply, itemdata)
     local class = SS_Items[itemdata.class] or SS_Items["unknown"]
     -- if not class then
