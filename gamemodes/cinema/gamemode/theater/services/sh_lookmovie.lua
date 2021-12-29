@@ -5,7 +5,7 @@ SERVICE.Name = "LookMovie"
 SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
-local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com", "bestalltimemovies.xyz", "contentforall.xyz", "watchmorestuff.xyz", "lookmovie100.xyz"}
+local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com", "bestalltimemovies.xyz", "contentforall.xyz", "watchmorestuff.xyz", "lookmovie%d+.xyz"}
 
 function SERVICE:GetKey(url)
     if util.JSONToTable(url.encoded) then return false end
@@ -60,6 +60,11 @@ if CLIENT then
 
                 theater.Services.base:Fetch(url, function(sbody)
                     local duration = 0
+
+                    if #string.Split(sbody, "\n") < 2 then
+                        callback()
+                        return
+                    end
 
                     for k, v in ipairs(string.Split(sbody, "\n")) do
                         if v:StartWith("#EXTINF:") then
@@ -140,8 +145,20 @@ if CLIENT then
                 end
             end
         end
+        if string.match(key,"lookmovie.io/") then
+            theater.Services.base:Fetch(string.Explode("#",key)[1], function(body)
+                local nkey = string.match(body, '[a|"] href="(https://.+/s)" class="round%-button')
 
-        vpanel:OpenURL(key)
+                if not nkey then
+                    callback()
+                    return
+                end
+
+                vpanel:OpenURL(nkey)
+            end, callback)
+        else
+            vpanel:OpenURL(key)
+        end
     end
 
     function SERVICE:LoadVideo(Video, panel)
