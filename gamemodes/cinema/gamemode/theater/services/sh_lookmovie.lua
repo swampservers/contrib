@@ -63,6 +63,7 @@ if CLIENT then
 
                     if #string.Split(sbody, "\n") < 2 then
                         callback()
+
                         return
                     end
 
@@ -145,12 +146,14 @@ if CLIENT then
                 end
             end
         end
-        if string.match(key,"lookmovie.io/") then
-            theater.Services.base:Fetch(string.Explode("#",key)[1], function(body)
+
+        if string.match(key, "lookmovie.io/") then
+            theater.Services.base:Fetch(string.Explode("#", key)[1], function(body)
                 local nkey = string.match(body, '[a|"] href="(https://.+/s)" class="round%-button')
 
                 if not nkey then
                     callback()
+
                     return
                 end
 
