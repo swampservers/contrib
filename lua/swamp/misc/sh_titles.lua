@@ -171,7 +171,7 @@ AddTitle({
     {"s_grinch_place1", "The Grinch"}
 }, {"Destroy %s presents using the knife (top 5)", "Destroy %s presents using the knife (#1)"}, "s_grinch", {})
 
-FORCEDTITLES = {"The Grinch", "Naughty", "Saint Nick", "The Red-Nosed Pony", "Santa's Little Helper", "Frosty The Snowman", "Elf"}
+--FORCEDTITLES = {"The Grinch", "Naughty", "Saint Nick", "The Red-Nosed Pony", "Santa's Little Helper", "Frosty The Snowman", "Elf"}
 
 AddTitle("Newfriend", "Welcome to the Swamp", {}, {
     progress_fn = function() return true end
@@ -185,7 +185,7 @@ AddTitle({
 AddTitle({
     {200, "Gift Receiver", 10000},
     {1000, "Greedy", 100000},
-    {10000, "Spoiled Child", 1000000},
+    {10000, "Spoiled Child", 1000000}
 }, "Open %s presents which you didn't buy yourself", "s_giftopener")
 
 TitleCategory("Fun")
@@ -203,7 +203,7 @@ AddTitle({
     {10, "Goofball", 2000},
     {200, "Troll", 10000},
     {1000, "Minge", 50000},
-    {100000, "Retard", 0}
+    {100000, "Retard"}
 }, "Throw popcorn in someone's face %s times", "s_popcornhit", {
     reward_id = "popcornhit"
 })
@@ -238,14 +238,16 @@ AddTitle({
     {1, "Quick Maffs"},
     {10, "Nerd"},
     {100, "Whiz Kid"},
-    {1000, "Brainiac"},
-    {10000, "Megamind"}
+    {500, "Brainiac"},
+    {1000, "Megamind"}
 }, "Win %s quick math minigames (where you type the answer in chat)", "s_quickmath")
 
 AddTitle({
+--	{1, "Typewriter Ape"},
     {10, "Fast Fingers"},
     {100, "Typist"},
-    {1000, "Trump's Speech Writer"},
+	{500, "Wordsmith"},
+    {1000, "Trump's Speech Writer"}
 }, "Win %s quick typing minigames (where you type text in chat)", "s_quicktype")
 
 TitleCategory("Exploration")
@@ -259,11 +261,11 @@ AddTitle({
 }, "Find the mega vape and hit it", "s_megavape")
 
 AddTitle({
-    {1, "Curious"},
+    {1, "Curious", 5000},
     {10, "Sharp Eye"},
     {100, "Seeker"},
     {1000, "Button Hunter"}
-}, "Find and press %s buttons.", "s_buttonfind")
+}, "Find and press %s hidden buttons.", "s_buttonfind")
 
 AddTitle({
     {20, "Digger", 10000},
@@ -291,15 +293,17 @@ AddTitle({
 }, {"Kill a total of %s players by jihading theaters", "Be among the top 5 theater jihaders"}, "s_theaterjihad")
 
 AddTitle({
-    {10, "Snap", 0},
-    {50, "Perfectly Balanced", 0}
+    {10, "Snap"},
+    {50, "Perfectly Balanced"},
+	{"s_gauntletkill_place1", "Thanos"}
 }, "Snap and kill %s seated players with the Thanos Gauntlet.", "s_gauntletkill")
 
 AddTitle({
     {10, "Steady Hand", 10000},
     {100, "Boom, Headshot!"},
     {500, "American Sniper"},
-    {1000, "HEADBANGER"}
+    {1000, "HEADBANGER"},
+	{10000, "Headshot Enjoyer"}
 }, "Kill %s active players with headshots.", "s_headshotkill")
 
 AddTitle({
@@ -310,22 +314,22 @@ AddTitle({
 }, "Kill %s Kleiners.", "s_kleinerkill")
 
 AddTitle({
-    {100, "Shanker", 0},
-    {1000, "Edge Lord", 0},
-    {5000, "Throat-Neck Slitter", 0},
-    {10000, "American Psycho", 0}
+    {100, "Shanker"},
+    {1000, "Edge Lord"},
+    {5000, "Throat-Neck Slitter"},
+    {10000, "American Psycho", 2000}
 }, "Kill %s active players with a throatneck slitter.", "s_knifekill")
 
 AddTitle({
-    {20, "Protector", 0},
-    {100, "Guardian", 0},
-    {500, "Homeland Security", 0},
-    {2000, "The Law", 0}
+    {20, "Protector"},
+    {100, "Guardian"},
+    {500, "Homeland Security"},
+    {2000, "The Law"}
 }, "Kill %s players while protecting your private theater.", "s_theaterdefend")
 
 AddTitle({
     {25, "Fightclub Member", 5000},
-    {100, "Chad", 1000},
+    {100, "Chad", 10000},
     {500, "Giga Chad", 25000},
     {1000, "Billy's Disciple", 100000}
 }, "Get %s kills with the fists.", "s_fistkill")
@@ -333,13 +337,15 @@ AddTitle({
 AddTitle({
     {25, "Jock", 2500},
     {100, "Bully", 10000},
-    {500, "Dodgeball Pro", 50000},
+	{500, "Underdog", 25000},
+    {1000, "Dodgeball Pro", 50000}
 }, "Get %s kills with the dodgeball.", "s_dodgeballkill")
 
 AddTitle({
     {5, "Bounty Hunter", 100000},
     {50, "Hitman", 100000},
-    {200, "The Cleaner", 100000}
+    {200, "The Cleaner", 100000},
+	{400, "John Wick", 100000}
 }, "Collect bounties (funded by others) of at least 100,000 points on %s different players.", "s_bountyhunt_size", {
     reward_id = "bountyhunt",
     group_view = {"s_bountyhunt", "slayed"}
@@ -350,7 +356,8 @@ TitleCategory("Misc")
 AddTitle({
     {5, "Funposter"},
     {50, "Meme Freak"},
-    {200, "Artist"}
+    {200, "Artist"},
+	{400, "da Vinci"}
 }, "Spray %s different images.", "s_uniquespray_size")
 
 AddTitle({
