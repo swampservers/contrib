@@ -209,7 +209,7 @@ AddTitle({
 })
 
 -- AddTitle({
---     {100, "Frosty The Snowman"}
+--  {100, "Frosty The Snowman"}
 -- }, "Hit %s active players with a snowball.", "s_snowballhit")
 -- Quake Was A Good Game
 AddTitle({
@@ -243,10 +243,10 @@ AddTitle({
 }, "Win %s quick math minigames (where you type the answer in chat)", "s_quickmath")
 
 AddTitle({
---	{1, "Typewriter Ape"},
+--  {1, "Typewriter Ape"},
     {10, "Fast Fingers"},
     {100, "Typist"},
-	{500, "Wordsmith"},
+    {500, "Wordsmith"},
     {1000, "Trump's Speech Writer"}
 }, "Win %s quick typing minigames (where you type text in chat)", "s_quicktype")
 
@@ -295,7 +295,7 @@ AddTitle({
 AddTitle({
     {10, "Snap"},
     {50, "Perfectly Balanced"},
-	{"s_gauntletkill_place1", "Thanos"}
+    {"s_gauntletkill_place1", "Thanos"}
 }, "Snap and kill %s seated players with the Thanos Gauntlet.", "s_gauntletkill")
 
 AddTitle({
@@ -303,7 +303,7 @@ AddTitle({
     {100, "Boom, Headshot!"},
     {500, "American Sniper"},
     {1000, "HEADBANGER"},
-	{10000, "Headshot Enjoyer"}
+    {10000, "Headshot Enjoyer"}
 }, "Kill %s active players with headshots.", "s_headshotkill")
 
 AddTitle({
@@ -337,7 +337,7 @@ AddTitle({
 AddTitle({
     {25, "Jock", 2500},
     {100, "Bully", 10000},
-	{500, "Underdog", 25000},
+    {500, "Underdog", 25000},
     {1000, "Dodgeball Pro", 50000}
 }, "Get %s kills with the dodgeball.", "s_dodgeballkill")
 
@@ -345,7 +345,7 @@ AddTitle({
     {5, "Bounty Hunter", 100000},
     {50, "Hitman", 100000},
     {200, "The Cleaner", 100000},
-	{400, "John Wick", 100000}
+    {400, "John Wick", 100000}
 }, "Collect bounties (funded by others) of at least 100,000 points on %s different players.", "s_bountyhunt_size", {
     reward_id = "bountyhunt",
     group_view = {"s_bountyhunt", "slayed"}
@@ -357,7 +357,7 @@ AddTitle({
     {5, "Funposter"},
     {50, "Meme Freak"},
     {200, "Artist"},
-	{400, "da Vinci"}
+    {400, "da Vinci"}
 }, "Spray %s different images.", "s_uniquespray_size")
 
 AddTitle({
