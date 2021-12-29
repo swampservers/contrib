@@ -83,45 +83,14 @@ if CLIENT then
         weapon_pickaxe = true,
         weapon_pickaxe_diamond = true,
         weapon_fists = true,
-        weapon_crusadersword = true,
-        gun_44magnum = true,
-        gun_ak47 = true,
-        gun_aug = true,
-        gun_awp = true,
-        gun_deagle = true,
-        gun_elite = true,
-        gun_famas = true,
-        gun_fiveseven = true,
-        gun_g3sg1 = true,
-        gun_galil = true,
-        gun_garand = true,
-        gun_glock = true,
-        gun_m3 = true,
-        gun_m4a1 = true,
-        gun_m4a1s = true,
-        gun_m249 = true,
-        gun_mac10 = true,
-        gun_mg42 = true,
-        gun_mp5navy = true,
-        gun_mp7 = true,
-        gun_p90 = true,
-        gun_p228 = true,
-        gun_scout = true,
-        gun_sg550 = true,
-        gun_sg552 = true,
-        gun_spas12 = true,
-        gun_tmp = true,
-        gun_ump45 = true,
-        gun_usp = true,
-        gun_uspmatch = true,
-        gun_usps = true,
-        gun_xm1014 = true
+        weapon_crusadersword = true
     }
 
     hook.Add("HUDPaint", "drawSAFENOTIFY", function()
         if not Me:InVehicle() and Me:IsProtected() then
             if IsValid(Me:GetActiveWeapon()) then
-                if notifyWeapons[Me:GetActiveWeapon():GetClass()] then
+                local wpn_class = Me:GetActiveWeapon():GetClass()
+                if notifyWeapons[wpn_class] or wpn_class:StartsWith("gun_") then
                     local col = Color(255, 255, 255, 255)
                     local cy = ScrH() * 0.7
                     local pt = protectedTheaterTable and protectedTheaterTable[Me:GetLocation()]
