@@ -90,7 +90,7 @@ if CLIENT then
         if not Me:InVehicle() and Me:IsProtected() then
             if IsValid(Me:GetActiveWeapon()) then
                 local wpn_class = Me:GetActiveWeapon():GetClass()
-                if notifyWeapons[wpn_class] or wpn_class:StartsWith("gun_") then
+                if notifyWeapons[wpn_class] or wpn_class:StartWith("gun_") then
                     local col = Color(255, 255, 255, 255)
                     local cy = ScrH() * 0.7
                     local pt = protectedTheaterTable and protectedTheaterTable[Me:GetLocation()]
