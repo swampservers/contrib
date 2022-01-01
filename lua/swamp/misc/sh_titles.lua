@@ -417,7 +417,6 @@ if SERVER then
     end)
 end
 
-print("HERE")
 -- AddTitle("vandal", {
 --     {200, "Tagger", 10000},
 --     {1000, "Vandal", 100000}
