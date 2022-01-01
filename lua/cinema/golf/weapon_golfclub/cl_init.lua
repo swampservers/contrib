@@ -46,7 +46,6 @@ GOLFCAMLERPTIME = 0.6
 function SWEP:GolfCamViewTargets(vec)
     local p = self:GetBall()
     if not IsValid(p) then return end
-
     local a
     p, a = LocalToWorld(Vector(0, 24, 64), Angle(60, -80, 0), p:GetPos(), vec:Angle())
     a:RotateAroundAxis(a:Up(), 20)

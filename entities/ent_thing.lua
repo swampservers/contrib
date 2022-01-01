@@ -1,1 +1,1 @@
-print("THING")
+﻿print("THING")

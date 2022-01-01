@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
 --- Shorthand for gamemode name
 gm = engine.ActiveGamemode()
 
@@ -12,13 +11,11 @@ gm = engine.ActiveGamemode()
     - sh_init will be loaded first, followed by cl_init and sv_init, followed by all other files
     - special cases for loading ents/sweps in folders titled "entities" and "weapons"
 ]]
-
 -- has to be copied to swamp_ents to make autorefresh work
 Include = function(fn)
     -- print("INCLUDE1",fn)
     include(fn)
 end
-
 
 -- seems to not be necessary
 local function try(func, fn)
@@ -56,6 +53,7 @@ end
 
 function load_ent(name, callback)
     if not LoadingEnts then return end
+
     _G.ENT = {
         Folder = "entities/" .. name
     }
@@ -202,8 +200,8 @@ local function Load(dir)
             load_effect(basefn, function()
                 try(cl_file, dir .. "/" .. d .. "/init.lua")
             end)
+        elseif not (dir == gm and d == "gamemode") then
             -- the gamemode lua gets mounted here
-        elseif not (dir==gm and d=="gamemode") then
             Load(dir .. "/" .. d)
         end
         -- end
@@ -213,12 +211,11 @@ end
 local function LoadAll(ents)
     LoadingEnts = ents
     Load("swamp")
-
     -- TODO: traverse gamemode hierarchy? engine.GetGamemodes()
     Load(gm)
 end
 
-GM = GAMEMODE 
+GM = GAMEMODE
 
 if not GM then
     GM = {}
@@ -239,65 +236,44 @@ function LoadSwampEntities()
     GM = GAMEMODE
     LoadAll(true)
 end
-
-
 -- Load("swamp")
-
 -- GM = GAMEMODE
-
 -- Load(engine.ActiveGamemode())
 -- -- the rest of this code just loads "cinemalua" and makes the global GM work
-
 -- -- at loadtime, GAMEMODE wont be defined yet, so make a new table and put it in later
 -- -- if this file is reloaded, just edit the gamemode table directly
 -- GM = GAMEMODE or {}
-
 -- -- the gamemode loading later messes with global namespace so save this table
 -- local localgm = GM
-
 -- local loadearly = false
-
 -- print("load1")
-
 -- -- append "lua" because the gamemode folder gets mounted there
 -- if loadearly then Load(engine.ActiveGamemode()) else
-
 -- hook.Add("OnGamemodeLoaded", "swampfiles", function() 
 --     print("GM", GM)
 --     PrintTable(GM)
 --     -- GM = GAMEMODE
 --     Load(engine.ActiveGamemode()) 
 -- end)
-
 -- --try using entities folder, encapsulate everything in an entity
-
 -- end
-
 -- print("load3")
-
 -- hook.Add("PostGamemodeLoaded", "swampfiles", function()
 --     table.Merge(GAMEMODE, localgm)
-
 --     -- set this global again so we can reload files
 --     GM = GAMEMODE
-
 --     -- if not loadearly then
 --     -- Load(engine.ActiveGamemode())
 --     -- end
-
 --     -- drop this table
 --     localgm = nil
 -- end)
-
-
 -- -- TO LOAD FROM THE GAMEMODE ITSELF, PUT THIS IN shared.lua:
 -- -- -- This has to be here for autorefresh to work
 -- -- Include = function(fn)
 -- --     include(fn)
 -- -- end
-
 -- -- local files, dirs = file.Find("cinema/gamemode/*", "LUA", "namedesc")
-
 -- -- for i, d in ipairs(dirs) do
 -- --     Load("cinema/gamemode/" .. d)
 -- -- end

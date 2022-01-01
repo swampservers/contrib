@@ -416,7 +416,6 @@ if SERVER then
         end
     end)
 end
-
 -- AddTitle("vandal", {
 --     {200, "Tagger", 10000},
 --     {1000, "Vandal", 100000}

@@ -1,14 +1,14 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 include("shared.lua")
 
-KLEINERPORTALMATERIAL1 = CreateMaterial("kleinerportalmaterial1_"..os.time(), "UnlitGeneric", {
+KLEINERPORTALMATERIAL1 = CreateMaterial("kleinerportalmaterial1_" .. os.time(), "UnlitGeneric", {
     ["$basetexture"] = "effects/bluemuzzle",
     ["$translucent"] = 1,
     ["$alpha"] = 0.7,
     ["$color2"] = "[ 0.3 0.5 0.3 ]",
 })
 
-KLEINERPORTALMATERIAL = CreateMaterial("kleinerportalmaterial_"..os.time(), "UnlitTwoTexture", {
+KLEINERPORTALMATERIAL = CreateMaterial("kleinerportalmaterial_" .. os.time(), "UnlitTwoTexture", {
     ["$basetexture"] = "brian/models/flare1c",
     ["$texture2"] = "lights/white",
     ["$additive"] = 1,
@@ -33,4 +33,3 @@ function ENT:DrawTranslucent()
     render.SetMaterial(KLEINERPORTALMATERIAL)
     render.DrawQuadEasy(self:GetPos(), EyePos() - self:GetPos(), 110, 110, Color(255, 255, 255))
 end
-
