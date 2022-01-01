@@ -28,6 +28,55 @@ Shorthand for gamemode name
 \
 *file: [lua/autorun/swamp.lua](https://github.com/swampservers/contrib/blob/master/lua/autorun/swamp.lua)*
 
+### function Entity:GetLocation()
+Int location ID
+\
+*file: [lua/cinema/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/location/sh_location.lua)*
+
+### function Entity:GetLocationName()
+String
+\
+*file: [lua/cinema/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/location/sh_location.lua)*
+
+### function Entity:GetLocationTable()
+Location table
+\
+*file: [lua/cinema/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/location/sh_location.lua)*
+
+### function Entity:GetTheater()
+Theater table
+\
+*file: [lua/cinema/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/location/sh_location.lua)*
+
+### function Entity:InTheater()
+Bool
+\
+*file: [lua/cinema/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/location/sh_location.lua)*
+
+### function FindLocation(ent_or_pos)
+Global function to compute a location ID (avoid this, it doesn't cache)
+\
+*file: [lua/cinema/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/location/sh_location.lua)*
+
+### function Player:ExtEmitSound(sound, options)
+Will probably be deprecated\
+ possible options:\
+ pitch\
+ crouchpitch\
+ level\
+ volume\
+ channel\
+ ent: emit from this ent instead of player\
+ shared: emit on client without networking, assuming called in shared function\
+ speech: move player lips (time to move lips, or auto if < 0)
+\
+*file: [lua/cinema/sound/sh_extsound.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/cinema/sound/sh_extsound.lua)*
+
+### function Entity:IsProtected(att)
+If we are "protected" from this attacker by theater protection. `att` doesn't need to be passed, it's only used to let theater owners override protection and prevent killing out of a protected area.
+\
+*file: [lua/cinema/theater/sh_protection.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/theater/sh_protection.lua)*
+
 ### function Player:IsTyping()
 Bool (typing a chat message)
 \
@@ -355,55 +404,6 @@ Converts an imgur id or url to an imgur id (nil if it doesn't work)
 Like AsyncSanitizeImgurId but won't spam requests (waits until the previous request finished, and only the latest request can stay in the queue)
 \
 *file: [lua/swamp/webmaterials/sh_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/sh_webmaterials.lua)*
-
-### function Entity:GetLocation()
-Int location ID
-\
-*file: [gamemodes/cinema/gamemode/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/location/sh_location.lua)*
-
-### function Entity:GetLocationName()
-String
-\
-*file: [gamemodes/cinema/gamemode/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/location/sh_location.lua)*
-
-### function Entity:GetLocationTable()
-Location table
-\
-*file: [gamemodes/cinema/gamemode/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/location/sh_location.lua)*
-
-### function Entity:GetTheater()
-Theater table
-\
-*file: [gamemodes/cinema/gamemode/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/location/sh_location.lua)*
-
-### function Entity:InTheater()
-Bool
-\
-*file: [gamemodes/cinema/gamemode/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/location/sh_location.lua)*
-
-### function FindLocation(ent_or_pos)
-Global function to compute a location ID (avoid this, it doesn't cache)
-\
-*file: [gamemodes/cinema/gamemode/location/sh_location.lua](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/location/sh_location.lua)*
-
-### function Player:ExtEmitSound(sound, options)
-Will probably be deprecated\
- possible options:\
- pitch\
- crouchpitch\
- level\
- volume\
- channel\
- ent: emit from this ent instead of player\
- shared: emit on client without networking, assuming called in shared function\
- speech: move player lips (time to move lips, or auto if < 0)
-\
-*file: [gamemodes/cinema/gamemode/sound/sh_extsound.lua (hidden)](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/sound/sh_extsound.lua)*
-
-### function Entity:IsProtected(att)
-If we are "protected" from this attacker by theater protection. `att` doesn't need to be passed, it's only used to let theater owners override protection and prevent killing out of a protected area.
-\
-*file: [gamemodes/cinema/gamemode/theater/sh_protection.lua](https://github.com/swampservers/contrib/blob/master/gamemodes/cinema/gamemode/theater/sh_protection.lua)*
 
 
 *Note: docs above are generated from luadoc-style code comments. README.md is autogenerated from readme_format.md*
