@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 protectedTheaterTable = protectedTheaterTable or {}
 
 timer.Create("iteratePTs", 1, 0, function()
@@ -77,13 +77,20 @@ if CLIENT then
         weapon_physgun = true,
         weapon_slitter = true,
         weapon_gauntlet = true,
-        weapon_peacekeeper = true
+        weapon_peacekeeper = true,
+        weapon_magicmissile = true,
+        weapon_garand = true,
+        weapon_pickaxe = true,
+        weapon_pickaxe_diamond = true,
+        weapon_fists = true,
+        weapon_crusadersword = true
     }
 
     hook.Add("HUDPaint", "drawSAFENOTIFY", function()
         if not Me:InVehicle() and Me:IsProtected() then
             if IsValid(Me:GetActiveWeapon()) then
-                if notifyWeapons[Me:GetActiveWeapon():GetClass()] then
+                local wpn_class = Me:GetActiveWeapon():GetClass()
+                if notifyWeapons[wpn_class] or wpn_class:StartWith("gun_") then
                     local col = Color(255, 255, 255, 255)
                     local cy = ScrH() * 0.7
                     local pt = protectedTheaterTable and protectedTheaterTable[Me:GetLocation()]
