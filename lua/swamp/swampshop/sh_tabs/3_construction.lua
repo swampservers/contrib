@@ -42,11 +42,14 @@ SS_Product({
     end
 })
 
-
 if SERVER then
     timer.Simple(0, function()
-        local props={}
-        for i=1,30 do table.insert(props,GetSandboxProp()) end
+        local props = {}
+
+        for i = 1, 30 do
+            table.insert(props, GetSandboxProp())
+        end
+
         NWGlobal.sandboxprops = props
     end)
 end

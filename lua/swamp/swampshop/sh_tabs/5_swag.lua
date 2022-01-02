@@ -172,8 +172,12 @@ SS_Item({
 
 if SERVER then
     timer.Simple(0, function()
-        local props={}
-        for i=1,30 do table.insert(props,SelectAccessoryModel()) end
+        local props = {}
+
+        for i = 1, 30 do
+            table.insert(props, SelectAccessoryModel())
+        end
+
         NWGlobal.accessoryprops = props
     end)
 end

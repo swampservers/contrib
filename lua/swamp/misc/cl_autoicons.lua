@@ -322,9 +322,7 @@ end
 function GetAutoIcon(p, mode)
     CheckTexturesValid()
     if AUTOICONS[mode][p.cachekey] then return AUTOICONS[mode][p.cachekey] end
-
     SetCrashData("AUTOICON", p.mainmodel, 0.05)
-
     local mainent = ClientsideModel(p.mainmodel)
     assert(IsValid(mainent))
     local extraents = {}
