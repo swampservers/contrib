@@ -5,5 +5,4 @@ GM.Email = "swampservers@gmail.com"
 GM.Website = "swamp.sv"
 GM.Version = "swamp"
 GM.TeamBased = false
-
 -- THE GAMEMODE CODE IS NOW IN lua/cinema

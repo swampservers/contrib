@@ -1,4 +1,5 @@
-﻿﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿"someString"
 protectedTheaterTable = protectedTheaterTable or {}
 
 timer.Create("iteratePTs", 1, 0, function()
@@ -90,6 +91,7 @@ if CLIENT then
         if not Me:InVehicle() and Me:IsProtected() then
             if IsValid(Me:GetActiveWeapon()) then
                 local wpn_class = Me:GetActiveWeapon():GetClass()
+
                 if notifyWeapons[wpn_class] or wpn_class:StartWith("gun_") then
                     local col = Color(255, 255, 255, 255)
                     local cy = ScrH() * 0.7
