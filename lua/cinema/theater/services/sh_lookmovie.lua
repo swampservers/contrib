@@ -6,7 +6,6 @@ SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
 --NOMINIFY
-
 local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com", "bestalltimemovies.xyz", "contentforall.xyz", "watchmorestuff.xyz", "lookmovie%d+.xyz"}
 
 function SERVICE:GetKey(url)
