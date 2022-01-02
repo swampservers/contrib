@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-﻿"someString"
 protectedTheaterTable = protectedTheaterTable or {}
 
 timer.Create("iteratePTs", 1, 0, function()
