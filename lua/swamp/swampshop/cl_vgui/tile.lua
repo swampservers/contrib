@@ -165,7 +165,7 @@ function PANEL:Select()
 
         if cannot ~= SS_CANNOTBUY_OWNED then
             if self.product.sample_item then
-                local count = Me:SS_CountItem(self.product.sample_item.class)
+                local count = Me:SS_CountItem(self.product.sample_item)
 
                 if count > 0 then
                     addline("You own " .. tostring(count) .. " of these")
@@ -392,7 +392,7 @@ function PANEL:PaintOver(w, h)
             barcolor = Color(20, 100, 20, 255) --Color(0, 112, 0, 160)
         end
 
-        local c = self.product.sample_item and Me:SS_CountItem(self.product.sample_item.class) or 0
+        local c = self.product.sample_item and Me:SS_CountItem(self.product.sample_item) or 0
 
         if c > 0 then
             icon = ownedcheckmark

@@ -65,12 +65,18 @@ function Player:SS_HasItem(item_class)
     return self:SS_CountItem(item_class) > 0
 end
 
-function Player:SS_CountItem(item_class)
+function Player:SS_CountItem(item)
     local c = 0
 
     for k, v in pairs(self.SS_Items or {}) do
-        if v.class == item_class then
-            c = c + 1
+        if item.class == 'accessory' then
+            if v.specs.model == item.specs.model then
+                c = c + 1
+            end
+        else
+            if v.class == item.class then
+                c = c + 1
+            end
         end
     end
 
