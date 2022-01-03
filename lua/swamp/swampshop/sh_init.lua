@@ -61,8 +61,8 @@ function Player:SS_FindItem(item_id)
     return false
 end
 
-function Player:SS_HasItem(item_class)
-    return self:SS_CountItem(item_class) > 0
+function Player:SS_HasItem(item)
+    return self:SS_CountItem(item) > 0
 end
 
 function Player:SS_CountItem(item)
