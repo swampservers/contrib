@@ -16,7 +16,7 @@ vgui.Register('DSSInventoryMode', {
 
             local itemstemp = {}
 
-            for _, item in ipairs(Me.SS_Items or {}) do
+            for _, item in pairs(Me.SS_Items or {}) do
                 table.insert(itemstemp, item)
             end
 
