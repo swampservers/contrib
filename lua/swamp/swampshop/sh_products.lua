@@ -73,7 +73,7 @@ function SS_ItemProduct(item)
 
     function product:CannotBuy(ply)
         local maxcount = self.accessory_slot and ply:SS_AccessorySlots() * (self.perslot or 1) or self.maxowned or 1
-        if ply:SS_CountItem(self.class) >= maxcount then return self.accessory_slot and "Buy more accessory slots (in Upgrades) first." or (maxcount > 1 and SS_CANNOTBUY_OWNEDMULTI or SS_CANNOTBUY_OWNED) end
+        if ply:SS_CountItem(self) >= maxcount then return self.accessory_slot and "Buy more accessory slots (in Upgrades) first." or (maxcount > 1 and SS_CANNOTBUY_OWNEDMULTI or SS_CANNOTBUY_OWNED) end
     end
 
     function product:OnBuy(ply)
