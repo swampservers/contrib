@@ -38,11 +38,11 @@ if CLIENT then
             if t == nil then
                 callback()
             else
-                local url = --[[t["streams"]["1080p"] or]] t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+                local url = t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"] --[[t["streams"]["1080p"] or]]
                 local subs = ""
 
                 if isTV then
-                    url = --[[t["streams"][1080] or]] t["streams"][720] or t["streams"][480] or t["streams"][360]
+                    url = t["streams"][720] or t["streams"][480] or t["streams"][360] --[[t["streams"][1080] or]]
                 end
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
@@ -63,6 +63,7 @@ if CLIENT then
 
                     if #string.Split(sbody, "\n") < 2 then
                         callback()
+
                         return
                     end
 
@@ -146,6 +147,7 @@ if CLIENT then
                 end
             end
         end
+
         --[[if string.match(key,"lookmovie.io/") then
             theater.Services.base:Fetch(string.Explode("#",key)[1], function(body)
                 local nkey = string.match(body, '[a|"] href="(https://.+/s)" class="round%-button')
@@ -160,47 +162,59 @@ if CLIENT then
         else
             vpanel:OpenURL(key)
         end]]
-		vpanel:OpenURL(key)
+        vpanel:OpenURL(key)
     end
 
     cachedURL = cachedURL or {}
 
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
-		local key = Video:Key()
-		cachedURL[key] = cachedURL[key] or util.JSONToTable(Video:Data()).url
+        local key = Video:Key()
+        cachedURL[key] = cachedURL[key] or util.JSONToTable(Video:Data()).url
 
-		self:Fetch(cachedURL[key], function(b)
-			local aesurl = string.match(b, 'URI="(https://.+)"')
-			HTTP({
-				method = "GET",
-				url = aesurl or cachedURL[key],
-				headers = {
-					["Cache-Control"] = "no-cache"
-				},
-				success = function(code, body, headers)
-					if IsValid(panel) and Me:GetTheater() then
-						if code == 200 and body ~= "WRONG HASH!" then
-							panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
-						else
-							self:Fetch(string.Split(key, "#")[1], function(body)
-								local movieid = string.match(body, 'id_movie: (%d+),')
-								local showid = string.match(key, "#.+%-(%d+)$")
-								self:Fetch("https://lmplayer.xyz/api/v1/security/" .. (showid and "episode" or "movie") .. "-access?id_" .. (showid and "episode" or "movie") .. "=" .. (showid or movieid), function(body)
-									local t = util.JSONToTable(body)
-									cachedURL[key] = t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
-									if showid then
-										cachedURL[key] = t["streams"][720] or t["streams"][480] or t["streams"][360]
-									end
-									panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
-								end, function(err) print("4",err) end)
-							end, function(err) print("3",err) end)
-						end
-					end
-				end,
-				failed = function(err) print("2",err) end
-			})
-		end, function(err) print("1",err) end)
+        self:Fetch(cachedURL[key], function(b)
+            local aesurl = string.match(b, 'URI="(https://.+)"')
+
+            HTTP({
+                method = "GET",
+                url = aesurl or cachedURL[key],
+                headers = {
+                    ["Cache-Control"] = "no-cache"
+                },
+                success = function(code, body, headers)
+                    if IsValid(panel) and Me:GetTheater() then
+                        if code == 200 and body ~= "WRONG HASH!" then
+                            panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
+                        else
+                            self:Fetch(string.Split(key, "#")[1], function(body)
+                                local movieid = string.match(body, 'id_movie: (%d+),')
+                                local showid = string.match(key, "#.+%-(%d+)$")
+
+                                self:Fetch("https://lmplayer.xyz/api/v1/security/" .. (showid and "episode" or "movie") .. "-access?id_" .. (showid and "episode" or "movie") .. "=" .. (showid or movieid), function(body)
+                                    local t = util.JSONToTable(body)
+                                    cachedURL[key] = t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+
+                                    if showid then
+                                        cachedURL[key] = t["streams"][720] or t["streams"][480] or t["streams"][360]
+                                    end
+
+                                    panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
+                                end, function(err)
+                                    print("4", err)
+                                end)
+                            end, function(err)
+                                print("3", err)
+                            end)
+                        end
+                    end
+                end,
+                failed = function(err)
+                    print("2", err)
+                end
+            })
+        end, function(err)
+            print("1", err)
+        end)
     end
 end
 
