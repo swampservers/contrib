@@ -98,13 +98,13 @@ function PANEL:Init()
         end
     end
 
-    self.Browser:AddFunction("gmod", "detect", function(url)
+    --[[self.Browser:AddFunction("gmod", "detect", function(url)
         updateAddressBar(url)
-    end)
+    end)]]
 
     self.Browser.OnDocumentReady = function(panel, url)
         updateAddressBar(url)
-        self.Browser:RunJavascript("if(window.location.host!='lookmovie.io')if(window.movie_storage){gmod.detect('https://lookmovie.io/movies/view/'+window.__reportSlug)}else if(window.show_storage){gmod.detect('https://lookmovie.io/shows/view/'+window.__reportSlug+window.location.hash)}")
+        --self.Browser:RunJavascript("if(window.location.host!='lookmovie.io')if(window.movie_storage){gmod.detect('https://lookmovie.io/movies/view/'+window.__reportSlug)}else if(window.show_storage){gmod.detect('https://lookmovie.io/shows/view/'+window.__reportSlug+window.location.hash)}")
     end
 end
 

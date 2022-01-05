@@ -5,7 +5,6 @@ SERVICE.Name = "LookMovie"
 SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
---NOMINIFY
 local domains = {"lmplayer.xyz", "contentmatserishere.com", "thisistheplacetowatch.com", "watchthesestuff.com", "bestofworldcontent.com", "wehaveallcontent.com", "bestalltimemovies.xyz", "contentforall.xyz", "watchmorestuff.xyz", "lookmovie%d+.xyz"}
 
 function SERVICE:GetKey(url)
@@ -26,7 +25,7 @@ if CLIENT then
         end
 
         vpanel = vgui.Create("DHTML")
-        vpanel:SetSize(1920, 1800)
+        vpanel:SetSize(ScrW(), ScrH())
         vpanel:SetAlpha(0)
         vpanel:SetMouseInputEnabled(false)
         vpanel.response = ""
@@ -39,11 +38,11 @@ if CLIENT then
             if t == nil then
                 callback()
             else
-                local url = t["streams"]["1080p"] or t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+                local url = --[[t["streams"]["1080p"] or]] t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
                 local subs = ""
 
                 if isTV then
-                    url = t["streams"][1080] or t["streams"][720] or t["streams"][480] or t["streams"][360]
+                    url = --[[t["streams"][1080] or]] t["streams"][720] or t["streams"][480] or t["streams"][360]
                 end
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
@@ -59,12 +58,11 @@ if CLIENT then
                     subs = subs
                 })
 
-                theater.Services.base:Fetch(url, function(sbody)
+                self:Fetch(url, function(sbody)
                     local duration = 0
 
                     if #string.Split(sbody, "\n") < 2 then
                         callback()
-
                         return
                     end
 
@@ -85,7 +83,7 @@ if CLIENT then
             end
         end
 
-        timer.Simple(10, function()
+        timer.Simple(20, function()
             if IsValid(vpanel) then
                 vpanel:Remove()
                 print("Failed")
@@ -97,6 +95,7 @@ if CLIENT then
             if IsValid(vpanel) then
                 vpanel:RunJavascript("console.log('CAPTCHA:'+document.title);")
                 vpanel:RunJavascript("var stor = window['" .. (isTV and "show" or "movie") .. "_storage" .. "'];")
+                vpanel:RunJavascript("document.getElementsByClassName('recaptcha-checkbox')[0].click();")
 
                 if not info.title or not info.thumb then
                     if isTV then
@@ -147,14 +146,12 @@ if CLIENT then
                 end
             end
         end
-
-        if string.match(key, "lookmovie.io/") then
-            theater.Services.base:Fetch(string.Explode("#", key)[1], function(body)
+        --[[if string.match(key,"lookmovie.io/") then
+            theater.Services.base:Fetch(string.Explode("#",key)[1], function(body)
                 local nkey = string.match(body, '[a|"] href="(https://.+/s)" class="round%-button')
 
                 if not nkey then
                     callback()
-
                     return
                 end
 
@@ -162,30 +159,48 @@ if CLIENT then
             end, callback)
         else
             vpanel:OpenURL(key)
-        end
+        end]]
+		vpanel:OpenURL(key)
     end
 
+    cachedURL = cachedURL or {}
+
     function SERVICE:LoadVideo(Video, panel)
-        local t = util.JSONToTable(Video:Data())
-        local url = "http://swamp.sv/s/cinema/file.html"
-        panel:EnsureURL(url)
+        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+		local key = Video:Key()
+		cachedURL[key] = cachedURL[key] or util.JSONToTable(Video:Data()).url
 
-        HTTP({
-            method = "HEAD",
-            url = t.url,
-            headers = {
-                ["Cache-Control"] = "no-cache"
-            },
-            success = function(code, body, headers) end,
-            failed = function(err)
-                chat.AddText("[red]The " .. (string.find(Video:Key(), "lookmovie.io/shows/view") and "tv show" or "movie") .. " link is expired, try requesting it again.")
-            end
-        })
-
-        if IsValid(panel) then
-            local str = string.format("th_video('%s','%s');", string.JavascriptSafe(t.url), t.subs or "")
-            panel:QueueJavascript(str)
-        end
+		self:Fetch(cachedURL[key], function(b)
+			local aesurl = string.match(b, 'URI="(https://.+)"')
+			HTTP({
+				method = "GET",
+				url = aesurl or cachedURL[key],
+				headers = {
+					["Cache-Control"] = "no-cache"
+				},
+				success = function(code, body, headers)
+					if IsValid(panel) and Me:GetTheater() then
+						if code == 200 and body ~= "WRONG HASH!" then
+							panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
+						else
+							self:Fetch(string.Split(key, "#")[1], function(body)
+								local movieid = string.match(body, 'id_movie: (%d+),')
+								local showid = string.match(key, "#.+%-(%d+)$")
+								self:Fetch("https://lmplayer.xyz/api/v1/security/" .. (showid and "episode" or "movie") .. "-access?id_" .. (showid and "episode" or "movie") .. "=" .. (showid or movieid), function(body)
+									local t = util.JSONToTable(body)
+									cachedURL[key] = t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"]
+									if showid then
+										cachedURL[key] = t["streams"][720] or t["streams"][480] or t["streams"][360]
+									end
+									panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
+								end, function(err) print("4",err) end)
+							end, function(err) print("3",err) end)
+						end
+					end
+				end,
+				failed = function(err) print("2",err) end
+			})
+		end, function(err) print("1",err) end)
     end
 end
 
