@@ -51,10 +51,32 @@ concommand.Add("mute", function(ply, cmd, args, argss)
 
     if v then
         v.ClickMuted = not v.ClickMuted
-        print(v.ClickMuted and "Muted" or "Unmuted", v)
-        UpdateMutes()
+        UpdateMuteHistory(v)
+        print(v.ClickMuted and " Muted" or " Unmuted", v)
     end
 end)
+
+function UpdateMuteHistory(ply)
+    local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
+
+    if ply then
+        plyid = ply:SteamID()
+        history[plyid] = {}
+        history[plyid].mute = ply.ClickMuted
+        history[plyid].chatmute = ply.IsChatMuted
+        if (not history[plyid].mute and not history[plyid].chatmute) then history[plyid] = nil end
+    end
+
+    for k,v in pairs(history) do
+        local p = player.GetBySteamID(k)
+        if p then
+            if v.mute then p.ClickMuted = true end
+            if v.chatmute then p.IsChatMuted = true end
+        end
+    end
+    UpdateMutes()
+    file.Write("swamp_mutehistory.txt", util.TableToJSON(history))
+end
 
 function UpdateMutes()
     for k, v in pairs(player.GetAll()) do
@@ -64,7 +86,7 @@ function UpdateMutes()
     end
 end
 
-timer.Create("updatemutes", 1, 0, UpdateMutes)
+timer.Create("updatemutes", 1, 0, UpdateMuteHistory)
 
 function PLAYERLIST:Init()
     if IsValid(LASTSCOREBOARD) then
@@ -335,18 +357,20 @@ function PLAYER:UpdatePlayer()
             self.Mute:SetImage("icon32/unmuted.png")
         end
 
-        UpdateMutes()
+        UpdateMuteHistory(self.Player)
     end
 
     self.ChatMute.DoClick = function()
         self.Player.IsChatMuted = not self.Player.IsChatMuted
-        print("muted" .. self.Player:Nick() .. "'s chat")
+        print("muted " .. self.Player:Nick() .. "'s chat")
 
         if self.Player.IsChatMuted then
             self.ChatMute:SetImage("theater/chatmuted.png")
         else
             self.ChatMute:SetImage("theater/chatunmuted.png")
         end
+
+        UpdateMuteHistory(self.Player)
     end
 
     local code = self.Player:GetNetworkedString("cntry")
