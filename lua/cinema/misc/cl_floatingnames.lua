@@ -45,6 +45,10 @@ local function DrawName(ply, opacityScale)
     local chy = 58
     local title = ply:GetTitle()
 
+    if ply.ClickMuted then
+        DrawTheaterText("[MUTED]", "TheaterDermaSmall", 65, -10, Color(255, 255, 255, opacity))
+    end
+
     if ply:IsAFK() then
         title = "[AFK] " .. title
     end
