@@ -56,15 +56,10 @@ concommand.Add("mute", function(ply, cmd, args, argss)
     end
 end)
 
+local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
 function UpdateMuteHistory(ply)
-    local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
-
     if ply then
-        plyid = ply:SteamID()
-        history[plyid] = {}
-        history[plyid].mute = ply.ClickMuted
-        history[plyid].chatmute = ply.IsChatMuted
-        if (not history[plyid].mute and not history[plyid].chatmute) then history[plyid] = nil end
+        history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {mute=ply.ClickMuted, chatmute=ply.IsChatMuted} or nil
     end
 
     for k,v in pairs(history) do
@@ -86,7 +81,11 @@ function UpdateMutes()
     end
 end
 
-timer.Create("updatemutes", 1, 0, UpdateMuteHistory)
+hook.Add( "NetworkEntityCreated", "UpdateMuteHistory", function(ent)
+    if ent:IsPlayer() then UpdateMuteHistory() end
+end)
+
+timer.Create("updatemutes", 1, 0, UpdateMutes)
 
 function PLAYERLIST:Init()
     if IsValid(LASTSCOREBOARD) then
