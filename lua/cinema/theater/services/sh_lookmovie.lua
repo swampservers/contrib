@@ -197,7 +197,7 @@ if CLIENT then
                                         cachedURL[key] = t["streams"][720] or t["streams"][480] or t["streams"][360]
                                     end
 
-                                    panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
+                                    if IsValid(panel) and Me:GetTheater() then panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true))) end
                                 end, function(err)
                                     print("4", err)
                                 end)
