@@ -58,17 +58,7 @@ end)
 
 local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
 function UpdateMuteHistory(ply)
-    if ply then
-        history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {mute=ply.ClickMuted, chatmute=ply.IsChatMuted} or nil
-    end
-
-    for k,v in pairs(history) do
-        local p = player.GetBySteamID(k)
-        if p then
-            if v.mute then p.ClickMuted = true end
-            if v.chatmute then p.IsChatMuted = true end
-        end
-    end
+    history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {mute=ply.ClickMuted, chatmute=ply.IsChatMuted} or nil
     UpdateMutes()
     file.Write("swamp_mutehistory.txt", util.TableToJSON(history))
 end
@@ -82,7 +72,13 @@ function UpdateMutes()
 end
 
 hook.Add( "NetworkEntityCreated", "UpdateMuteHistory", function(ent)
-    if ent:IsPlayer() then UpdateMuteHistory() end
+    if ent:IsPlayer() then
+		local p = history[ent:SteamID()]
+		if p then
+			if p.mute then ent.ClickMuted = true end
+			if p.chatmute then ent.IsChatMuted = true end
+		end
+	end
 end)
 
 timer.Create("updatemutes", 1, 0, UpdateMutes)
