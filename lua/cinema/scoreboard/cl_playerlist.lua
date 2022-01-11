@@ -459,7 +459,7 @@ function PLAYER:Paint(w, h)
     local xp = 364
 
     if IsValid(self.Player) and IsValid(self.AFK) then
-        self.AFK:SetVisible(self.Player:GetNWBool("afk"))
+        self.AFK:SetVisible(self.Player:IsAFK())
         -- else
         --     self:SetVisible(false)
     end
@@ -575,7 +575,7 @@ function SERVERNAME:Update()
         local count2 = 0
 
         for k, v in pairs(player.GetHumans()) do
-            if v:GetNWBool("afk") then
+            if v:IsAFK() then
                 count = count + 1
 
                 if not v:InTheater() then
