@@ -16,6 +16,7 @@ LastHtmlMaterial = nil
 TheaterCustomRT = GetRenderTarget("ThLights2", THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, true)
 LastLocation = LastLocation or -1
 
+
 function DrawVideoInfo(w, h)
     local Video = CurrentVideo
     if not Video then return end
