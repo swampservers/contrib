@@ -41,7 +41,6 @@ local function DrawName(ply, opacityScale)
     end
 
     DrawTheaterText((ply.ClickMuted and "[MUTED]" or "") .. (ply.IsChatMuted and "[CHATMUTED]" or ""), "TheaterDermaSmall", 65, -10, Color(255, 255, 255, opacity))
-
     DrawTheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
     local ch = ply:TypingChars()
     local chy = 58

@@ -57,18 +57,30 @@ concommand.Add("mute", function(ply, cmd, args, argss)
 end)
 
 local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
+
 function UpdateMuteHistory(ply)
-    history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {mute=ply.ClickMuted, chatmute=ply.IsChatMuted} or nil
+    history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {
+        mute = ply.ClickMuted,
+        chatmute = ply.IsChatMuted
+    } or nil
+
     ply:SetMuted((ply.ClickMuted or false) or ply:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
     file.Write("swamp_mutehistory.txt", util.TableToJSON(history))
 end
 
-hook.Add( "NetworkEntityCreated", "UpdateMuteHistory", function(ent)
+hook.Add("NetworkEntityCreated", "UpdateMuteHistory", function(ent)
     if ent:IsPlayer() then
         local p = history[ent:SteamID()]
+
         if p then
-            if p.mute then ent.ClickMuted = true end
-            if p.chatmute then ent.IsChatMuted = true end
+            if p.mute then
+                ent.ClickMuted = true
+            end
+
+            if p.chatmute then
+                ent.IsChatMuted = true
+            end
+
             ent:SetMuted((ent.ClickMuted or false) or ent:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
         end
     end

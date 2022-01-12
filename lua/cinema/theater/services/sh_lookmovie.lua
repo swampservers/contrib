@@ -96,8 +96,8 @@ if CLIENT then
             if IsValid(vpanel) then
                 vpanel:RunJavascript("console.log('CAPTCHA:'+document.title);")
                 vpanel:RunJavascript("var stor = window['" .. (isTV and "show" or "movie") .. "_storage" .. "'];")
-                --vpanel:RunJavascript("document.getElementsByClassName('recaptcha-checkbox')[0].click();")
 
+                --vpanel:RunJavascript("document.getElementsByClassName('recaptcha-checkbox')[0].click();")
                 if not info.title or not info.thumb then
                     if isTV then
                         vpanel:RunJavascript("if(stor){x=stor['seasons'];for(var i in x){if(x[i].id_episode==" .. string.match(key, "#.+%-(%d+)$") .. ")console.log('TITLE:'+stor.title+' ('+stor.year+') S'+x[i].season+' E'+x[i].episode+(x[i].title ? ' | '+x[i].title : ''));}console.log('THUMB:'+stor.poster_medium);}")
@@ -148,12 +148,13 @@ if CLIENT then
             end
         end
 
-        if string.match(key,"lookmovie.io/") then
-            theater.Services.base:Fetch(string.Explode("#",key)[1], function(body)
+        if string.match(key, "lookmovie.io/") then
+            theater.Services.base:Fetch(string.Explode("#", key)[1], function(body)
                 local nkey = string.match(body, '[a|"] href="(https://.+/s)" class="round%-button')
 
                 if not nkey then
                     callback()
+
                     return
                 end
 
@@ -197,7 +198,9 @@ if CLIENT then
                                         cachedURL[key] = t["streams"][720] or t["streams"][480] or t["streams"][360]
                                     end
 
-                                    if IsValid(panel) and Me:GetTheater() then panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true))) end
+                                    if IsValid(panel) and Me:GetTheater() then
+                                        panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
+                                    end
                                 end, function(err)
                                     print("4", err)
                                 end)
