@@ -205,18 +205,14 @@ function PLAYERLIST:Think()
 end
 
 -- local t = 0
-
 -- timer.Create("x", 1, 0, function()
 --     print(t)
 --     t = 0
 -- end)
-
-
-
 function PLAYERLIST:PerformLayout()
     if RealTime() < self.NextUpdate then return end
-    -- local t1 = SysTime()
 
+    -- local t1 = SysTime()
     table.sort(self.PlayerList.Items, function(a, b)
         if not a or not a.Player or not IsValid(a.Player) then return false end
         if not b or not b.Player or not IsValid(b.Player) then return true end
