@@ -5,7 +5,6 @@ timer.Simple(1, function()
     net.SendToServer()
 end)
 
-
 surface.CreateFont("ScoreboardTitle", {
     font = "Righteous",
     size = 52,
@@ -41,7 +40,6 @@ surface.CreateFont("ScoreboardPing", {
     size = 18,
     weight = 200
 })
-
 
 local PLAYERLIST = {}
 PLAYERLIST.TitleHeight = BrandTitleBarHeight
