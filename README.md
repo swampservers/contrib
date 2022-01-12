@@ -242,7 +242,7 @@ Shorthand timer.Simple(0, callback) and also passes args
 \
 *file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
 
-### function defaultdict(constructor)
+### function defaultdict(constructor, init)
 Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
 \
 *file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
@@ -368,6 +368,11 @@ Like `WebMaterial` but sets it to an entity (only needs to be called once)\
 
 ### function Entity:SetWebSubMaterial(idx, args)
 Like `Entity:SetWebMaterial`
+\
+*file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
+
+### function RenderTarget(args)
+Like CreateRenderTargetEx, but the args are a table with good defaults, you don't need a name, and if the ITexture gets garbage collected it can reuse the rendertarget for another call (since you can't delete RTs)
 \
 *file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
 
