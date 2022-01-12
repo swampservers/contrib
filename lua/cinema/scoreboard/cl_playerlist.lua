@@ -206,12 +206,18 @@ end
 
 function PLAYERLIST:PerformLayout()
     if RealTime() < self.NextUpdate then return end
-
     table.sort(self.PlayerList.Items, function(a, b)
         if not a or not a.Player or not IsValid(a.Player) then return false end
         if not b or not b.Player or not IsValid(b.Player) then return true end
-
-        return string.lower(a.Player:Nick()) < string.lower(b.Player:Nick())
+        if (a.Player.ClickMuted or a.Player.IsChatMuted) and (b.Player.ClickMuted or b.Player.IsChatMuted) then
+            return string.lower(a.Player:Nick()) < string.lower(b.Player:Nick())
+        elseif (a.Player.ClickMuted or a.Player.IsChatMuted) then
+            return true
+        elseif (b.Player.ClickMuted or b.Player.IsChatMuted) then
+            return false
+        else
+            return string.lower(a.Player:Nick()) < string.lower(b.Player:Nick())
+        end
     end)
 
     local curY = PLAYERLIST.TitleHeight + PLAYERLIST.ServerHeight
