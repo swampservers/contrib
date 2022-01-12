@@ -204,16 +204,18 @@ function PLAYERLIST:Think()
     end
 end
 
-local t = 0
+-- local t = 0
 
-timer.Create("x", 0, 1, function()
-    print(t)
-    t = 0
-end)
+-- timer.Create("x", 1, 0, function()
+--     print(t)
+--     t = 0
+-- end)
+
+
 
 function PLAYERLIST:PerformLayout()
     if RealTime() < self.NextUpdate then return end
-    local t1 = SysTime()
+    -- local t1 = SysTime()
 
     table.sort(self.PlayerList.Items, function(a, b)
         if not a or not a.Player or not IsValid(a.Player) then return false end
@@ -222,7 +224,7 @@ function PLAYERLIST:PerformLayout()
         return string.lower(a.Player:Nick()) < string.lower(b.Player:Nick())
     end)
 
-    t = t + SysTime() - t1
+    -- t = t + SysTime() - t1
     local curY = PLAYERLIST.TitleHeight + PLAYERLIST.ServerHeight
 
     for _, panel in pairs(self.PlayerList.Items) do

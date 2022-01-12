@@ -401,6 +401,11 @@ To use web materials, just call in your draw hook:\
 \
 *file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
 
+### function weaktable(kv, initial)
+a weak table is like a table that has paper hands and keeps dropping key/value pairs
+\
+*file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
+
 ### function AsyncSanitizeImgurId(id, callback)
 Like SanitizeImgurId, but more powerful (if a url to an gallery is passed we'll try to look it up)
 \
