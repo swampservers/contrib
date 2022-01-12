@@ -51,20 +51,28 @@ concommand.Add("mute", function(ply, cmd, args, argss)
 
     if v then
         v.ClickMuted = not v.ClickMuted
-        print(v.ClickMuted and "Muted" or "Unmuted", v)
-        UpdateMutes()
+        UpdateMuteHistory(v)
+        print(v.ClickMuted and " Muted" or " Unmuted", v)
     end
 end)
 
-function UpdateMutes()
-    for k, v in pairs(player.GetAll()) do
-        if v ~= Me then
-            v:SetMuted((v.ClickMuted or false) or v:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
-        end
-    end
+local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
+function UpdateMuteHistory(ply)
+    history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {mute=ply.ClickMuted, chatmute=ply.IsChatMuted} or nil
+    ply:SetMuted((ply.ClickMuted or false) or ply:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
+    file.Write("swamp_mutehistory.txt", util.TableToJSON(history))
 end
 
-timer.Create("updatemutes", 1, 0, UpdateMutes)
+hook.Add( "NetworkEntityCreated", "UpdateMuteHistory", function(ent)
+    if ent:IsPlayer() then
+        local p = history[ent:SteamID()]
+        if p then
+            if p.mute then ent.ClickMuted = true end
+            if p.chatmute then ent.IsChatMuted = true end
+            ent:SetMuted((ent.ClickMuted or false) or ent:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
+        end
+    end
+end)
 
 function PLAYERLIST:Init()
     if IsValid(LASTSCOREBOARD) then
@@ -335,18 +343,20 @@ function PLAYER:UpdatePlayer()
             self.Mute:SetImage("icon32/unmuted.png")
         end
 
-        UpdateMutes()
+        UpdateMuteHistory(self.Player)
     end
 
     self.ChatMute.DoClick = function()
         self.Player.IsChatMuted = not self.Player.IsChatMuted
-        print("muted" .. self.Player:Nick() .. "'s chat")
+        print("muted " .. self.Player:Nick() .. "'s chat")
 
         if self.Player.IsChatMuted then
             self.ChatMute:SetImage("theater/chatmuted.png")
         else
             self.ChatMute:SetImage("theater/chatunmuted.png")
         end
+
+        UpdateMuteHistory(self.Player)
     end
 
     local code = self.Player:GetNetworkedString("cntry")
@@ -449,7 +459,7 @@ function PLAYER:Paint(w, h)
     local xp = 364
 
     if IsValid(self.Player) and IsValid(self.AFK) then
-        self.AFK:SetVisible(self.Player:GetNWBool("afk"))
+        self.AFK:SetVisible(self.Player:IsAFK())
         -- else
         --     self:SetVisible(false)
     end
@@ -565,7 +575,7 @@ function SERVERNAME:Update()
         local count2 = 0
 
         for k, v in pairs(player.GetHumans()) do
-            if v:GetNWBool("afk") then
+            if v:IsAFK() then
                 count = count + 1
 
                 if not v:InTheater() then

@@ -96,7 +96,7 @@ if CLIENT then
             if IsValid(vpanel) then
                 vpanel:RunJavascript("console.log('CAPTCHA:'+document.title);")
                 vpanel:RunJavascript("var stor = window['" .. (isTV and "show" or "movie") .. "_storage" .. "'];")
-                vpanel:RunJavascript("document.getElementsByClassName('recaptcha-checkbox')[0].click();")
+                --vpanel:RunJavascript("document.getElementsByClassName('recaptcha-checkbox')[0].click();")
 
                 if not info.title or not info.thumb then
                     if isTV then
@@ -148,7 +148,7 @@ if CLIENT then
             end
         end
 
-        --[[if string.match(key,"lookmovie.io/") then
+        if string.match(key,"lookmovie.io/") then
             theater.Services.base:Fetch(string.Explode("#",key)[1], function(body)
                 local nkey = string.match(body, '[a|"] href="(https://.+/s)" class="round%-button')
 
@@ -161,8 +161,7 @@ if CLIENT then
             end, callback)
         else
             vpanel:OpenURL(key)
-        end]]
-        vpanel:OpenURL(key)
+        end
     end
 
     cachedURL = cachedURL or {}
@@ -198,7 +197,7 @@ if CLIENT then
                                         cachedURL[key] = t["streams"][720] or t["streams"][480] or t["streams"][360]
                                     end
 
-                                    panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
+                                    if IsValid(panel) and Me:GetTheater() then panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true))) end
                                 end, function(err)
                                     print("4", err)
                                 end)
