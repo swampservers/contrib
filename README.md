@@ -371,6 +371,12 @@ Like `Entity:SetWebMaterial`
 \
 *file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
 
+### function ITexture:Paint(callback)
+Assign a function to this ITexture which will be called(width,height) on the next PreDrawHUD and with the rendertarget/viewport stuff setup.\
+ Finishes all painting in order on one frame and can be called recursively.
+\
+*file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
+
 ### function RenderTarget(args)
 Like CreateRenderTargetEx, but the args are a table with good defaults, you don't need a name, and if the ITexture gets garbage collected it can reuse the rendertarget for another call (since you can't delete RTs)
 \
