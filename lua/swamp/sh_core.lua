@@ -255,8 +255,8 @@ BLACK = Color(0, 0, 0, 255)
 WHITE = Color(255, 255, 255, 255)
 
 --- Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
-function defaultdict(constructor, mode)
-    return setmetatable({}, {
+function defaultdict(constructor, init)
+    return setmetatable(init or {}, {
         __index = function(tab, key)
             local d = constructor(key)
             tab[key] = d

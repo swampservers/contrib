@@ -331,3 +331,10 @@ surface.CreateFont("TheaterDermaLarge", {
     weight = 500,
     extended = true
 })
+
+surface.CreateFont("TheaterDermaSmall", {
+    font = "Roboto",
+    size = 16,
+    weight = 500,
+    extended = true
+})

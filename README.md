@@ -242,7 +242,7 @@ Shorthand timer.Simple(0, callback) and also passes args
 \
 *file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
 
-### function defaultdict(constructor)
+### function defaultdict(constructor, init)
 Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
 \
 *file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
@@ -371,6 +371,17 @@ Like `Entity:SetWebMaterial`
 \
 *file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
 
+### function ITexture:Redraw(callback)
+Assign a function to this ITexture which will be called(width,height) on the next PreDrawHUD and with the rendertarget/viewport stuff setup.\
+ Finishes all painting in order on one frame and can be called recursively.
+\
+*file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
+
+### function RenderTarget(args)
+Like CreateRenderTargetEx, but the args are a table with good defaults, you don't need a name, and if the ITexture gets garbage collected it can reuse the rendertarget for another call (since you can't delete RTs)
+\
+*file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
+
 ### function WebMaterial(args)
 To use web materials, just call in your draw hook:\
 \
@@ -387,6 +398,11 @@ To use web materials, just call in your draw hook:\
  - params: str = "{}" - A "table" of material parameters for CreateMaterial (NOT A TABLE, A STRING THAT CAN BE PARSED AS A TABLE)\
  - pointsample: bool = false\
  - nsfw: bool = false - (can be false, true, or "?")
+\
+*file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
+
+### function weaktable(kv, initial)
+a weak table is like a table that has paper hands and keeps dropping key/value pairs
 \
 *file: [lua/swamp/webmaterials/cl_webmaterials.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/webmaterials/cl_webmaterials.lua)*
 
