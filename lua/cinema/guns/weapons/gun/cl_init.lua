@@ -98,11 +98,11 @@ function SWEP:DrawHUDBackground()
 end
 
 function SWEP:PrintWeaponInfo(x, y, alpha)
-    self.PrintName = self:GetNWString("PrintName", self.PrintName or "unknown")
-
+    -- self.PrintName = self:GunItem():GetName()self:GetNWString("PrintName", self.PrintName or "unknown")
     -- surface.SetDrawColor(255,255,255,255)
     -- surface.DrawRect(x,y, 100, 100)
-    if self.specs and self.dspecs then
-        SS_DrawSpecInfo(self, x, y + 50, 250, Color(255, 255, 255, 255), alpha / 255)
+    if self:GunItem() then
+        -- self.PrintName = self:GunItem():GetName()
+        SS_DrawSpecInfo(self:GunItem(), x, y + 50, 250, Color(255, 255, 255, 255), alpha / 255)
     end
 end

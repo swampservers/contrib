@@ -66,7 +66,7 @@ end
 
 --- Show a notification (bottow center screen popup)
 function Player:Notify(...)
-    local st = table.concat({...}, '')
+    local st = table.concat({...}, ' ')
 
     if SERVER then
         net.Start('Notify')

@@ -5,6 +5,8 @@ function RefreshWorkshop()
     STEAMWS_FILEINFO_STARTED = {}
     STEAMWS_DOWNLOAD_STARTED = {}
     STEAMWS_FILEINFO = {}
+    STEAMWS_PREVIEWICON = {}
+    STEAMWS_PREVIEWICON_STARTED = {}
     -- id -> gma file path, only contains downloaded but unmounted stuff
     STEAMWS_UNMOUNTED = {}
     -- id -> file table, for mounted stuff
@@ -67,6 +69,25 @@ function require_workshop_info(id)
     end
 end
 
+-- todo: asyncdefaultdict?
+
+function require_workshop_preview(id)
+    if STEAMWS_PREVIEWICON[id] then 
+        return STEAMWS_PREVIEWICON[id] 
+    else
+        local info = require_workshop_info(id)
+        
+        if info and not STEAMWS_PREVIEWICON_STARTED[id] then
+            STEAMWS_PREVIEWICON_STARTED[id] = true
+
+            local _id_ = id
+            steamworks.Download( info.previewid, true, function( name )
+                STEAMWS_PREVIEWICON[_id_] = AddonMaterial(name)
+            end)
+        end
+    end
+end
+
 local messagecolor = Color(64, 160, 0)
 
 --placeholder: models/maxofs2d/logo_gmod_b.mdl
@@ -74,7 +95,7 @@ local messagecolor = Color(64, 160, 0)
 function require_workshop(id, range)
     if STEAMWS_MOUNTED[id] then return true end
     if STEAMWS_UNMOUNTED[id] then return false end
-    local shouldload = true
+    local shouldload = range~=false
 
     if range then
         local info = require_workshop_info(id)

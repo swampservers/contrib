@@ -319,16 +319,16 @@ end
 
 local function MagicOutcomePrize(ply)
     local amount = ButtonMoneyPrize()
-    if ply.SS_GivePoints == nil then return nil end
-    ply:SS_GivePoints(amount)
+    if ply.GivePoints == nil then return nil end
+    ply:GivePoints(amount)
 
     return "and won [white]" .. string.Comma(amount) .. " points![fbc];coins;"
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
     local amount = ButtonMoneyPrize()
-    if ply.SS_GivePoints == nil or SetPlayerBounty == nil or GetPlayerBounty == nil then return nil end
-    ply:SS_GivePoints(amount)
+    if ply.GivePoints == nil or SetPlayerBounty == nil or GetPlayerBounty == nil then return nil end
+    ply:GivePoints(amount)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
 

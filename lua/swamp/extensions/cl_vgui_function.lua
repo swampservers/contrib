@@ -47,10 +47,18 @@ setmetatable(vgui, {
     end
 })
 
-timer.Simple(0, function()
-    --- Makes the DFrame :Close() if escape is pressed
-    --- function DFrame:CloseOnEscape()
-    vgui.GetControlTable("DFrame").CloseOnEscape = function(self)
+function vgui.Parent()
+    return vgui_stack[#vgui_stack]
+end
+
+-- DFrame isnt registered yet, so add the new function when we try to create something
+RealVguiCreate = RealVguiCreate or vgui.Create
+
+vgui.Create = function(...)
+    local DFrame = vgui.GetControlTable("DFrame")
+
+    --- Call this to make a DFrame dissapear if the user hits escape
+    function DFrame:CloseOnEscape()
         VGUI_CLOSE_ON_ESCAPE = (VGUI_CLOSE_ON_ESCAPE or 0) + 1
         local p = self
         local hookname = "CloseOnEscape" .. tostring(VGUI_CLOSE_ON_ESCAPE)
@@ -59,19 +67,29 @@ timer.Simple(0, function()
             gui.HideGameUI()
         end
 
-        hook.Add("Think", hookname, function()
-            -- and p:HasHierarchicalFocus() then
-            if IsValid(p) then
-                if gui.IsGameUIVisible() then
-                    gui.HideGameUI()
-                    p:Close()
+        timer.Simple(0.1, function()
+            hook.Add("Think", hookname, function()
+                -- and p:HasHierarchicalFocus() then
+                if IsValid(p) then
+                    if gui.IsGameUIVisible() then
+                        gui.HideGameUI()
+                        p:Close()
+                    end
+                else
+                    hook.Remove("Think", hookname)
                 end
-            else
-                hook.Remove("Think", hookname)
-            end
+            end)
         end)
     end
-end)
+
+    vgui.Create = RealVguiCreate
+
+    return vgui.Create(...)
+end
+-- timer.Simple(0, function()
+--     --- Makes the DFrame :Close() if escape is pressed
+--     --- function DFrame:CloseOnEscape()
+-- end)
 -- function vgui_example()
 --     vgui("DFrame", function(p)
 --         p:SetSize(400, 400)

@@ -1,4 +1,14 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+if SERVER then
+    util.AddNetworkString("Print")
+else
+    net.Receive("Print", function()
+        for i, v in ipairs(("\n"):Explode(net.ReadString())) do
+            print(v)
+        end
+    end)
+end
+
 function time_function(func)
     local t = SysTime()
     func()
@@ -8,6 +18,31 @@ end
 
 --- Prints how long it takes to run a function, averaging over a large number of samples with minimal overhead
 function bench(func)
+    if istable(func) then
+        print("Benchmarking " .. table.Count(func) .. " functions...")
+
+        local function pop()
+            if table.IsEmpty(func) then
+                print("Done")
+
+                return
+            end
+
+            for k, v in pairs(func) do
+                func[k] = nil
+                print(k .. ":")
+                bench(v)
+                break
+            end
+
+            timer.Simple(0.5, pop)
+        end
+
+        timer.Simple(0.5, pop)
+
+        return
+    end
+
     -- TODO pass ... if that is possible
     -- , calls
     local t, calls

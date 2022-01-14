@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+include("swamp/sh_core.lua")
 --- Shorthand for gamemode name
 gm = engine.ActiveGamemode()
 
@@ -17,6 +18,7 @@ Include = function(fn)
     include(fn)
 end
 
+-- local sub=sub 
 -- seems to not be necessary
 local function try(func, fn)
     -- print(fn)
@@ -95,124 +97,168 @@ function load_effect(name, callback)
     end
 end
 
-local function auto_file(fn)
-    local pathparts = ("/"):Explode(fn)
-    local class = nil
+local find, sub = string.find, string.sub
 
-    for i, v in ipairs(pathparts) do
-        if v:StartWith("cl_") then
-            assert(class == nil)
-            class = "cl"
+-- TODO optimize format thing sub!
+local function findfiles(dir)
+    local files, dirs = file.Find(dir .. "*", "LUA", "namedesc")
+    local initdirs = list()
+
+    list(dirs):Map(function(d)
+        if sub(d, 1, 1) ~= "_" then
+            if sub(d, 1, 4) == "init" then
+                initdirs:Append(d)
+            else
+                return d
+            end
         end
+    end)
 
-        if v:StartWith("sh_") then
-            assert(class == nil)
-            class = "sh"
-        end
-
-        if v:StartWith("sv_") then
-            assert(class == nil)
-            class = "sv"
-        end
+    if initdirs[1] then
+        dirs = initdirs:Extend(dirs)
     end
 
-    local basefn = table.remove(pathparts):sub(1, -5)
-    local topdir = table.remove(pathparts)
-
-    -- if basefn:StartWith("_") then return end
-    if basefn:StartWith("ent_") or topdir == "entities" then
-        assert(class == nil)
-        class = "ent"
-    end
-
-    if basefn:StartWith("weapon_") or topdir == "weapons" then
-        assert(class == nil)
-        class = "swep"
-    end
-
-    if topdir == "effects" then
-        assert(class == nil)
-        class = "effect"
-    end
-
-    if class == "cl" then
-        if LoadingEnts then return end
-        try(cl_file, fn)
-    elseif class == "sh" then
-        if LoadingEnts then return end
-        try(sh_file, fn)
-    elseif class == "sv" then
-        if LoadingEnts then return end
-        try(sv_file, fn)
-    elseif class == "ent" then
-        load_ent(basefn, function()
-            try(sh_file, fn)
-        end)
-    elseif class == "swep" then
-        load_swep(basefn, function()
-            try(sh_file, fn)
-        end)
-    elseif class == "effect" then
-        load_effect(basefn, function()
-            try(cl_file, fn)
-        end)
-    else
-        print("\n***IGNORING UNQUALIFIED FILE", fn)
-    end
-end
-
-local function sortluafiles(files)
-    local idx = {}
-
-    for i, v in ipairs(files) do
-        idx[v] = i
-    end
-
-    idx["sh_init.lua"] = -5
-    idx["sv_init.lua"] = -3
-    idx["cl_init.lua"] = -1
-    table.sort(files, function(a, b) return idx[a] < idx[b] end)
-end
-
-local function Load(dir)
-    local files, dirs = file.Find(dir .. "/*", "LUA", "namedesc")
-    sortluafiles(files)
+    local groups = defaultdict(function() return list() end)
 
     for i, f in ipairs(files) do
-        if f:EndsWith(".lua") then
-            auto_file(dir .. "/" .. f)
+        if sub(f, -4) == ".lua" then
+            local s = find(f, "_", 1, true)
+
+            if s ~= 1 then
+                local ext = s and sub(f, 1, s - 1) or ""
+
+                local v = {f, ext}
+
+                if sub(f, (s or 0) + 1, (s or 0) + 4) == "init" then
+                    groups[ext == "sh" and 1 or 2]:Append(v)
+                else
+                    groups[ext == "sh" and 3 or (ext == "cl" or ext == "sv") and 4 or 5]:Append(v)
+                end
+            else
+                -- still download the files but dont autorun them
+                if SERVER and (startswith(f, "_cl_") or startswith(f, "_sh_")) then
+                    AddCSLuaFile(dir .. f)
+                end
+            end
+        end
+    end
+
+    files = nil
+
+    for i = 1, 5 do
+        local nxt = rawget(groups, i)
+
+        if nxt then
+            if files == nil then
+                files = nxt
+            else
+                files:Extend(nxt)
+            end
+        end
+    end
+
+    if files == nil then
+        files = list()
+    end
+    -- local x = ""
+    -- for i,v in ipairs(files) do x=x.." "..v[1] end
+    -- print("FILES",dir,x)
+
+    return files, dirs
+end
+
+local prefixes = {
+    sh = true,
+    sv = true,
+    cl = true,
+    ent = true,
+    weapon = true
+}
+
+local function Load(dir, path, upcontext)
+    local nextpath = path .. dir .. "/"
+    local files, dirs = findfiles(nextpath)
+    local context = dir == "entities" and "ent" or dir == "weapons" and "weapon" or dir == "effects" and "effect" or startswith(dir, "sh_") and "sh" or startswith(dir, "cl_") and "cl" or startswith(dir, "sv_") and "sv" or nil
+
+    if upcontext then
+        assert(context == nil)
+        context = upcontext
+    end
+
+    for i, f in ipairs(files) do
+        local fn, pfx = unpack(f)
+        local fullname = nextpath .. fn
+        local class = context
+
+        if prefixes[pfx] then
+            assert(context == nil or context == pfx, "invalid " .. fullname)
+            class = pfx
+        end
+
+        -- print("FILE", class, fullname)
+        if class == "cl" then
+            if not LoadingEnts then
+                try(cl_file, fullname)
+            end
+        elseif class == "sh" then
+            if not LoadingEnts then
+                try(sh_file, fullname)
+            end
+        elseif class == "sv" then
+            if not LoadingEnts then
+                try(sv_file, fullname)
+            end
+        else
+            if LoadingEnts then
+                local entname = f[1]:sub(1, -5)
+
+                if class == "ent" then
+                    load_ent(entname, function()
+                        try(sh_file, fullname)
+                    end)
+                elseif class == "weapon" then
+                    load_swep(entname, function()
+                        try(sh_file, fullname)
+                    end)
+                elseif class == "effect" then
+                    load_effect(entname, function()
+                        try(cl_file, fullname)
+                    end)
+                else
+                    print("\n***IGNORING UNQUALIFIED FILE", fn)
+                end
+            end
         end
     end
 
     for i, d in ipairs(dirs) do
-        -- if not d:StartWith("_") then 
-        if d:StartWith("ent_") or dir:EndsWith("/entities") then
+        -- print("DIR", nextpath, d, context)
+        if startswith(d, "ent_") or context == "ent" then
             load_ent(d, function()
-                try(sv_file, dir .. "/" .. d .. "/init.lua")
-                try(cl_file, dir .. "/" .. d .. "/cl_init.lua")
+                try(sv_file, nextpath .. d .. "/init.lua")
+                try(cl_file, nextpath .. d .. "/cl_init.lua")
             end)
-        elseif d:StartWith("weapon_") or dir:EndsWith("/weapons") then
+        elseif startswith(d, "weapon_") or context == "weapon" then
             load_swep(d, function()
-                try(sv_file, dir .. "/" .. d .. "/init.lua")
-                try(cl_file, dir .. "/" .. d .. "/cl_init.lua")
+                try(sv_file, nextpath .. d .. "/init.lua")
+                try(cl_file, nextpath .. d .. "/cl_init.lua")
             end)
-        elseif dir:EndsWith("/effects") then
+        elseif context == "effect" then
             load_effect(basefn, function()
-                try(cl_file, dir .. "/" .. d .. "/init.lua")
+                try(cl_file, nextpath .. d .. "/init.lua")
             end)
         elseif not (dir == gm and d == "gamemode") then
             -- the gamemode lua gets mounted here
-            Load(dir .. "/" .. d)
+            Load(d, nextpath, context)
         end
-        -- end
     end
 end
 
 local function LoadAll(ents)
     LoadingEnts = ents
-    Load("swamp")
+    Load("swamp", "")
     -- TODO: traverse gamemode hierarchy? engine.GetGamemodes()
-    Load(gm)
+    Load(gm, "")
 end
 
 GM = GAMEMODE
@@ -235,6 +281,8 @@ function LoadSwampEntities()
 
     GM = GAMEMODE
     LoadAll(true)
+    scripted_ents.OnLoaded()
+    weapons.OnLoaded()
 end
 -- Load("swamp")
 -- GM = GAMEMODE

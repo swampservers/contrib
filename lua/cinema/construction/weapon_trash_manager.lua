@@ -222,7 +222,7 @@ but you need a nearby theater/field to respawn them.]])
                             d = d.props or d
                             local items = {}
 
-                            for k, v in pairs(Me.SS_Items or {}) do
+                            for k, v in pairs(Me.items or {}) do
                                 items[v.id] = v
                             end
 
@@ -397,7 +397,7 @@ function SWEP:GetSaveEntities()
     local saves = {}
     local itemids = {}
 
-    for k, v in pairs(self.Owner.SS_Items or {}) do
+    for k, v in pairs(self.Owner.items or {}) do
         itemids[v.id] = v
     end
 

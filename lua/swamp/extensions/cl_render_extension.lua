@@ -1,4 +1,71 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+
+
+-- makes material a table that caches things
+Material = setmetatable(isfunction(Material) and {[0]=Material} or Material,{
+    __call = function(tab, mn, png)
+        return tab[0](mn, png)
+    end,
+    __index = function(tab, k)
+        local v = tab[0](k)
+        tab[k]=v
+        return v
+    end
+})
+
+
+Color = setmetatable(isfunction(Color) and {[0]=Color} or Color,{
+    __call = function(tab, ...)
+        return tab[0](...)
+    end,
+    __index = function(tab, k)
+        if isstring(k) then
+            local len = #k
+            local double = (len==2 or len==6 or len==8)
+
+            
+            local function dv(d)
+                return tonumber(d) or string.byte(d)-87
+            end
+
+            local a = {}
+
+            local i = 1
+            while i<=len do
+                local dig = dv(sub(k,i,i))
+                i=i+1
+                if double then
+                    dig = dig*16 + dv(sub(k,i,i))
+                    i=i+1
+                else
+                    dig = dig*17
+                end
+                table.insert(a,dig)
+            end
+
+            if len<3 then
+                a[2]=a[1]
+                a[3]=a[1]
+            end
+
+            PrintTable(a)
+
+            a= tab[0](unpack(a))
+            tab[k] =a
+            return a
+        end
+    end
+})
+
+table.Merge(Color, {
+    black = Color["0"],
+    white = Color["0"],
+    red = Color["f00"],
+})
+
+
+
 --- Bool if we are currently drawing to the screen.
 function render.DrawingScreen()
     local t = render.GetRenderTarget()

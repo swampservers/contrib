@@ -52,6 +52,53 @@ function SWEP:Standingness()
     return math.Clamp((cur.z - duck.z) / (stand.z - duck.z), 0, 1)
 end
 
+API_Request("GunItem", {API_ENTITY}, function(ply, ent)
+    if IsValid(ent) and ent.GunItem and ent:GunItem() then
+        ent.sentitemto = ent.sentitemto or setmetatable({}, {
+            __mode = "kv"
+        })
+
+        if not ent.sentitemto[ply] then
+            ent.sentitemto[ply] = true
+            ply:CommandGunItem(ent, ent:GunItem())
+        end
+    end
+end)
+
+API_Command("GunItem", {API_ENTITY, API_SHOWN_ITEM}, function(ent, item)
+    ent:SetGunItem(item)
+end)
+
+function SWEP:GunItem()
+    if self.item then return self.item end
+
+    if CLIENT and not self.requesteditem then
+        self.requesteditem = true
+        RequestGunItem(self)
+    end
+end
+
+function SWEP:SetGunItem(item)
+    self.item = item
+    self.PrintName = item.name
+
+    if self.perk then
+        ErrorNoHalt("RESETTING PERK")
+    end
+
+    self.perk = item.perk
+
+    for k, v in pairs(GunPerkOverrides(self, self.perk)) do
+        self[k] = v
+    end
+
+    for i, v in ipairs(info.spec_info) do
+        if istable(v) then
+            self.nwspecs[v[1]] = v[2]
+        end
+    end
+end
+
 -- SWEP.SpreadBase = 0.001
 -- SWEP.SpreadUnscoped = 0
 -- SWEP.SpreadStand = 0.001
@@ -351,39 +398,34 @@ function SWEP:Initialize()
     self.nwspecs = {}
 
     if CLIENT then
-        self:SetupNWData()
-    else
+    else -- self:SetupNWData()
         timer.Simple(0, function()
             if IsValid(self) then
-                self:SetupNWData()
+                -- self:SetupNWData()
                 self:SetClip1(self.Primary.ClipSize)
             end
         end)
     end
 end
 
-function SWEP:SetupNWData()
-    if self.perk then
-        ErrorNoHalt("RESETTING PERK")
-    end
-
-    for k, v in pairs(GunPerkOverrides(self, self:GetNW2String("perk"))) do
-        self[k] = v
-    end
-
-    self.perk = self:GetNW2String("perk")
-    self.PrintName = self:GetNW2String("PrintName", self.PrintName)
-    self.specs = util.JSONToTable(self:GetNW2String("specs_json", "{}")) or {}
-    self.dspecs = util.JSONToTable(self:GetNW2String("dspecs_json", "{}")) or {}
-
-    for i, v in ipairs(self.dspecs) do
-        if istable(v) then
-            self.nwspecs[v[1]] = v[2]
-            -- wep:SetNWFloat(v[1], v[2])
-        end
-    end
-end
-
+-- function SWEP:SetupNWData()
+--     if self.perk then
+--         ErrorNoHalt("RESETTING PERK")
+--     end
+--     for k, v in pairs(GunPerkOverrides(self, self:GetNW2String("perk"))) do
+--         self[k] = v
+--     end
+--     self.perk = self:GetNW2String("perk")
+--     self.PrintName = self:GetNW2String("PrintName", self.PrintName)
+--     self.specs = util.JSONToTable(self:GetNW2String("specs_json", "{}")) or {}
+--     self.dspecs = util.JSONToTable(self:GetNW2String("dspecs_json", "{}")) or {}
+--     for i, v in ipairs(self.dspecs) do
+--         if istable(v) then
+--             self.nwspecs[v[1]] = v[2]
+--             -- wep:SetNWFloat(v[1], v[2])
+--         end
+--     end
+-- end
 function SWEP:SetupDataTables()
     self:NetworkVar("Float", 0, "LastShotSpray")
     self:NetworkVar("Float", 1, "SprayUpdateTime")

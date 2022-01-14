@@ -44,6 +44,7 @@ function ShowMotd(url)
     MOTDWINDOW:SetSize(ScrW() * 0.85, ScrH() * 0.9)
     MOTDWINDOW:Center()
     MOTDWINDOW:SetTitle("")
+    MOTDWINDOW:CloseOnEscape()
     MOTDWINDOW:ShowCloseButton(false)
     MOTDWINDOW:SetVisible(true)
     MOTDWINDOW:MakePopup()
@@ -111,22 +112,17 @@ function ShowMotd(url)
 
     button2:SetSize(400, 20)
     button2:SetPos(padd, 0)
-
     --button2:SetPos( MOTDWINDOW:GetWide() - (padd*2) - (16+button2:GetWide()), html:GetTall() + padd - 18)
-    if gui.IsGameUIVisible() then
-        gui.HideGameUI()
-    end
-
-    hook.Add("Think", "MOTDCloser", function()
-        if IsValid(MOTDWINDOW) then
-            if gui.IsGameUIVisible() then
-                gui.HideGameUI()
-                MOTDWINDOW:Close()
-            end
-        else
-            hook.Remove("Think", "MOTDCloser")
-        end
-    end)
+    -- hook.Add("Think", "MOTDCloser", function()
+    --     if IsValid(MOTDWINDOW) then
+    --         if gui.IsGameUIVisible() then
+    --             gui.HideGameUI()
+    --             MOTDWINDOW:Close()
+    --         end
+    --     else
+    --         hook.Remove("Think", "MOTDCloser")
+    --     end
+    -- end)
 end
 
 function SetFatKidMotd()

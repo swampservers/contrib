@@ -421,6 +421,18 @@ function API_Struct(value_type)
     return API_Dict(API_NETWORK_STRING, value_type or API_STRUCT_ANY)
 end
 
+API_PLAYER = {
+    Read = function()
+        local ply = net.ReadEntity()
+        assert(IsValid(ply) and ply:IsPlayer())
+
+        return ply
+    end,
+    Write = function(v)
+        net.WriteEntity(v)
+    end
+}
+
 function API_Read(typ)
     if istable(typ) then
         return typ.Read()
@@ -458,11 +470,21 @@ if CLIENT then
         end)
     end
 
-    function API_Request(name, argtypes, unreliable)
+    API_OnRequests = API_OnRequests or {}
+
+    function API_Request(name, argtypes, handler, unreliable)
+        if not isfunction(handler) then
+            unreliable, handler = handler, nil
+        end
+
         unreliable = unreliable or false
         local nargs = #argtypes
 
         _G["Request" .. name] = function(...)
+            if API_OnRequests[name] then
+                API_OnRequests[name](...)
+            end
+
             local argvals = {...}
 
             net.Start(name, unreliable)
@@ -473,6 +495,10 @@ if CLIENT then
 
             net.SendToServer()
         end
+    end
+
+    function API_OnRequest(name, func)
+        API_OnRequests[name] = func
     end
 end
 

@@ -19,7 +19,8 @@ function GibClientProp(mdl, pos, ang, vel, scale, t)
 
     if not IsValid(ent:GetPhysicsObject()) then
         local ofs = Vector(0.8, 0.8, 0.8)
-        ent:PhysicsInitBox(ent:OBBMins() + ofs, ent:OBBMaxs() - ofs)
+        -- ent:PhysicsInitBox(ent:OBBMins() + ofs, ent:OBBMaxs() - ofs)
+        print("BADPHY", mdl)
     end
 
     --ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)

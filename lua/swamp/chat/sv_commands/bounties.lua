@@ -11,7 +11,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
         end
 
         ply.BountyFunders = nil
-        atk:SS_GivePoints(bounty)
+        atk:GivePoints(bounty)
         BotSayGlobal("[edgy]" .. atk:Nick() .. " [fbc]has claimed [gold]" .. ply:Nick() .. "'s [fbc]bounty of [rainbow]" .. bounty .. " [fbc]points!")
     end
 end)
@@ -34,7 +34,7 @@ function AddBounty(ply, targets, amount)
     local needed = amount * #targets
 
     -- local total = (BountyLimit[ply:SteamID()] or 0) + needed
-    ply:SS_TryTakePoints(needed, function()
+    ply:TryTakePoints(needed, function()
         if not IsValid(ply) then return end
 
         for k, v in ipairs(targets) do

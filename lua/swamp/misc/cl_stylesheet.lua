@@ -34,32 +34,6 @@ SS_ColorWhite = Color(255, 255, 255)
 SS_ColorBlack = Color(0, 0, 0)
 SS_CORNERCOMMON = 4
 
---returns the rendered portion of a panel or nothing if its completely culled
-function SS_CullPanel(pnl)
-    local x, y = pnl:LocalToScreen(0, 0)
-    local w, h = pnl:GetSize()
-    local x2, y2 = pnl:LocalToScreen(w, h)
-    local par = pnl:GetParent()
-
-    while IsValid(par) do
-        local px, py = par:LocalToScreen(0, 0)
-        local pw, ph = par:GetSize()
-        local px2, py2 = par:LocalToScreen(pw, ph)
-        x = math.max(x, px)
-        y = math.max(y, py)
-        x2 = math.min(x2, px2)
-        y2 = math.min(y2, py2)
-        par = par:GetParent()
-    end
-
-    if x >= x2 then return end
-    if y >= y2 then return end
-    x, y = pnl:ScreenToLocal(x, y)
-    x2, y2 = pnl:ScreenToLocal(x2, y2)
-
-    return x, y, x2 - x, y2 - y
-end
-
 function SS_GetFrame(pnl)
     local par = pnl
 
@@ -69,28 +43,6 @@ function SS_GetFrame(pnl)
     end
 end
 
-function SS_DrawPanelShadow(pnl, w, h)
-    local sx, sy, sw, sh = SS_CullPanel(pnl)
-    if not sx then return end
-    local par = pnl:GetParent()
-    local betterpar
-    DisableClipping(true)
-    local frame = SS_GetFrame(pnl)
-
-    if IsValid(frame) then
-        local wx, wy = frame:LocalToScreen(0, 0)
-        local wx2, wy2 = frame:LocalToScreen(frame:GetWide(), frame:GetTall())
-        render.SetScissorRect(wx, wy, wx2, wy2, true)
-    end
-
-    if sx then
-        local border = 0
-        draw.BoxShadow(sx - border / 2, sy - border / 2, sw + border, sh + border, 12, 0.7)
-    end
-
-    render.SetScissorRect(0, 0, 0, 0, false)
-    DisableClipping(false)
-end
 
 --if you want to change how every single rectangle is drawn
 SS_GLOBAL_RECT = function(x, y, w, h, color)
@@ -113,7 +65,7 @@ end
 --     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_BrandDark)
 -- end
 SS_PaintButtonBrandHL = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, w, h)
+    SS_DrawPanelShadow(pnl, 0,0, w, h)
 
     if pnl.Depressed then
         pnl:SetTextColor(SS_ColorWhite)
@@ -128,7 +80,7 @@ end
 SS_PaintFG = function(pnl, w, h)
     --surface.SetDrawColor(MenuTheme_FG)
     --surface.DrawRect(0, 0, w, h)
-    SS_DrawPanelShadow(pnl, w, h)
+    SS_DrawPanelShadow(pnl, 0,0, w, h)
     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_FG)
 end
 
@@ -141,7 +93,7 @@ SS_PaintTileInset = function(pnl, w, h)
 end
 
 SS_PaintMD = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, w, h)
+    SS_DrawPanelShadow(pnl,0,0, w, h)
     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_MD)
 end
 
@@ -164,24 +116,12 @@ SS_PaintFGAlpha = function(pnl, w, h, alpha)
 end
 
 SS_PaintBrandStripes = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, w, h)
+    SS_DrawPanelShadow(pnl, 0,0,w, h)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(0, 0, w, h)
     BrandBackgroundPattern(0, 0, w, h, 0)
 end
 
-SS_SetupVBar = function(vbar)
-    vbar:SetHideButtons(true)
-    vbar.btnGrip.Paint = SS_PaintBrand
-    vbar:DockMargin(SS_COMMONMARGIN, 0, 0, 0)
-    vbar.btnUp:SetTall(1)
-    vbar.btnDown:SetTall(1)
-
-    vbar.Paint = function(pnl, w, h)
-        SS_DrawPanelShadow(pnl, w, h)
-        SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_FG)
-    end
-end
 
 SS_COMMONMARGIN = 8
 SS_SMALLMARGIN = 2
