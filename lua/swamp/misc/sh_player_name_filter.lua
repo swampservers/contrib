@@ -4,9 +4,9 @@
 Player.TrueName = Player.TrueName or Player.Nick
 local decor_pattern = "[%[%]%{%}%(%)%<%>%-%|%=% ]+"
 
-function StripNameAdvert(name, advert)
+-- todo: create memo() which is like this but uses call interface and takes multiple args (memoization)
+local advertpattern = defaultdict(function(advert)
     local pat = {decor_pattern}
-
     for i = 1, #advert do
         local ch = advert[i]
 
@@ -16,11 +16,22 @@ function StripNameAdvert(name, advert)
             table.insert(pat, "[" .. ch:upper() .. ch .. "]")
         end
     end
-
     table.insert(pat, decor_pattern)
-    local n2 = (" " .. name .. " "):gsub(table.concat(pat, ""), ""):Trim()
-    if #n2 < 2 then return name end
+    return table.concat(pat, "")
+end)
 
+
+function StripNameAdvert(name, advert)
+    local n2, replaces = (" " .. name .. " "):gsub( advertpattern[advert] , "")
+
+    n2 = n2:Trim()
+
+    if replaces>0 and advert=="DADG" then
+        n2 = "🐾"..n2.."🐾"
+    end
+
+    
+    if #n2 < 2 then return name end
     return n2
 end
 
@@ -31,7 +42,10 @@ function Player:ComputeName()
     tn = StripNameAdvert(tn, "sups.gg")
     tn = StripNameAdvert(tn, "moat.gg") --lol rip
     tn = StripNameAdvert(tn, "velk.ca")
-    tn = tn:gsub("DADG", "FURRY")
+    if tn:find("DADG") then
+        tn = tn:gsub("DADG", "FURRY")
+
+    end
 
     return tn
 end
