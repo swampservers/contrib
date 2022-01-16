@@ -46,26 +46,36 @@ PLAYERLIST.TitleHeight = BrandTitleBarHeight
 PLAYERLIST.ServerHeight = 32
 PLAYERLIST.PlyHeight = 48
 
-concommand.Add("mute", function(ply, cmd, args, argss)
+local function cmdmute(ply, cmd, args, argss)
     local v = Ply(argss)
 
     if v then
-        v.ClickMuted = not v.ClickMuted
-        UpdateMuteHistory(v)
-        print(v.ClickMuted and " Muted" or " Unmuted", v)
+        if cmd == "mute" then
+            v.ClickMuted = not v.ClickMuted
+            print(v.ClickMuted and "Muted" or "Unmuted", v)
+        else
+            v.IsChatMuted = not v.IsChatMuted
+            print(v.IsChatMuted and "Chatmuted" or "Unchatmuted", v)
+        end
+        UpdateMuteHistory(v,true)
     end
-end)
+end
+
+concommand.Add("mute", cmdmute)
+concommand.Add("chatmute", cmdmute)
 
 local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
 
-function UpdateMuteHistory(ply)
-    history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {
-        mute = ply.ClickMuted,
-        chatmute = ply.IsChatMuted
-    } or nil
-
+function UpdateMuteHistory(ply,manual)
     ply:SetMuted((ply.ClickMuted or false) or ply:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
-    file.Write("swamp_mutehistory.txt", util.TableToJSON(history))
+
+    if manual or (history[ply:SteamID()] and not manual) then
+        history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {
+            mute = ply.ClickMuted,
+            chatmute = ply.IsChatMuted
+        } or nil
+        file.Write("swamp_mutehistory.txt", util.TableToJSON(history))
+    end
 end
 
 hook.Add("NetworkEntityCreated", "UpdateMuteHistory", function(ent)
