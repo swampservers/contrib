@@ -57,23 +57,24 @@ local function cmdmute(ply, cmd, args, argss)
             v.IsChatMuted = not v.IsChatMuted
             print(v.IsChatMuted and "Chatmuted" or "Unchatmuted", v)
         end
-        UpdateMuteHistory(v,true)
+
+        UpdateMuteHistory(v, true)
     end
 end
 
 concommand.Add("mute", cmdmute)
 concommand.Add("chatmute", cmdmute)
-
 local history = util.JSONToTable(file.Read("swamp_mutehistory.txt", "DATA") or "") or {}
 
-function UpdateMuteHistory(ply,manual)
+function UpdateMuteHistory(ply, manual)
     ply:SetMuted((ply.ClickMuted or false) or ply:IsAFK() and MuteVoiceConVar:GetInt() >= 2)
 
-    if manual or (history[ply:SteamID()] and not manual) then
+    if manual or history[ply:SteamID()] and not manual then
         history[ply:SteamID()] = (ply.ClickMuted or ply.IsChatMuted) and {
             mute = ply.ClickMuted,
             chatmute = ply.IsChatMuted
         } or nil
+
         file.Write("swamp_mutehistory.txt", util.TableToJSON(history))
     end
 end
