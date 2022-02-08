@@ -95,7 +95,7 @@ function CONTENTPICKER:Init()
         end)
     end
 
-    SS_SetupVBar(self.Scroll.VBar)
+    -- SS_SetupVBar(self.Scroll.VBar)
     self.Tiles = vgui.Create("DIconLayout", self.Scroll)
     self.Tiles:Dock(FILL)
     self.Tiles:DockMargin(0, 0, SS_COMMONMARGIN, 0)

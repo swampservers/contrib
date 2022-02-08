@@ -238,7 +238,8 @@ end
 
 SS_AccessoryProduct({
     class = 'trumphatfree',
-    price = 0,
+    price = 1000,
+    SellValue = function() return 0 end,
     name = 'Unstumpable',
     description = "Bold, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
     model = 'models/swamponions/colorabletrumphat.mdl',
