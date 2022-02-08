@@ -238,7 +238,7 @@ end
 
 SS_AccessoryProduct({
     class = 'trumphatfree',
-    price = 1000,
+    price = 100,
     SellValue = function() return 0 end,
     name = 'Unstumpable',
     description = "Bold, vibrant, and exuberates power, much like Trump himself. Does not show blood.",
