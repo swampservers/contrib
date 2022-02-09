@@ -7,7 +7,7 @@ function SS_Product(product)
 
     function product:CannotBuy(ply)
         if ply.SQLCreatingItem then return "Database lock, try again." end
-        if self.class == "prop_physics" or weapons.Get(self.class) or weapons:StartsWith("weapon_") then ply:Notify('Cannot buy ', self:GetName(), ' while dead.') return end
+        if self.class == "prop_physics" then ply:Notify('Cannot spawn props while dead.') return end
 
         return product:SS_Product_CannotBuy(ply) or not ply:SS_HasPoints(self.price) and SS_CANNOTBUY_AFFORD
     end
