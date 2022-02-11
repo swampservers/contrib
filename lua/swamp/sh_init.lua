@@ -515,7 +515,7 @@ end
 -- local meta = getmetatable( "" )
 -- function meta:__index( key )
 -- 	local val = string[ key ]
--- 	if ( val ~= nil ) then
+-- 	if  val ~= nil  then
 -- 		return val
 -- 	elseif ( tonumber( key ) ) then
 -- 		return self:sub( key, key )

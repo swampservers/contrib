@@ -5,8 +5,8 @@ local currentfont = "Default"
 
 function surface.SetFont(font)
     -- if currentfont ~= font then
-        currentfont = font
-        DefaultSetFont(font)
+    currentfont = font
+    DefaultSetFont(font)
     -- end
 end
 
@@ -74,13 +74,14 @@ function GetTextSize(font, text)
 end
 
 function GetTextWidth(font, text)
-    local w,h = GetTextSize(font, text)
+    local w, h = GetTextSize(font, text)
+
     return w
 end
 
-
 function GetTextHeight(font)
-    local w,h = GetTextSize(font, "")
+    local w, h = GetTextSize(font, "")
+
     return h
 end
 

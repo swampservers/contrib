@@ -218,7 +218,6 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
 end, {
     throttle = true
 })
-
 -- function autistic_random()
 --     local start,deltas = SysTime(),{}
 --     local t = start

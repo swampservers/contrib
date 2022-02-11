@@ -94,9 +94,7 @@ local messagecolor = Color(64, 160, 0)
 function require_workshop(id, range)
     if STEAMWS_MOUNTED[id] then return true end
     if STEAMWS_UNMOUNTED[id] then return false end
-
     local shouldload = range ~= false
-
     local info = require_workshop_info(id)
 
     if info and info.size then
@@ -127,7 +125,6 @@ function require_workshop(id, range)
     else
         shouldload = false
     end
-
 
     if shouldload then
         if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT < 2 then

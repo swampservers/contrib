@@ -8,25 +8,18 @@ BrandColorGrayLighterer = Color(216, 216, 216)
 BrandColorWhite = Color(255, 255, 255)
 BrandColorPrimary = Color(104, 28, 25)
 BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104)
-
-
 -- Color(104, 28, 25)
-
 local red = Color(96, 28, 25) --Color(104, 28, 25)
 BrandColors = {}
-for i=0,11 do
-    local h,s,v = ColorToHSV(red)
 
-    table.insert(BrandColors,HSVToColor( (h + i*30)%360 ,s,v))
+for i = 0, 11 do
+    local h, s, v = ColorToHSV(red)
+    table.insert(BrandColors, HSVToColor((h + i * 30) % 360, s, v))
 end
 
-table.Add(BrandColors, {
-    Color(0,0,0),
-    Color(36, 36, 36)
-})
+table.Add(BrandColors, {Color(0, 0, 0), Color(36, 36, 36)})
 
 --{Color(104, 28, 25), Color(120, 60, 0), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
-
 CreateClientConVar("ps_themecolor", "1", true)
 
 function ReloadStyle(color)
@@ -249,7 +242,7 @@ local cornerMat = Material("vgui/corner_gradient")
 
 local function predrawshadow(alpha)
     cornerMat:SetFloat("$alpha", alpha)
-    surface.SetDrawColor(0,0,0)
+    surface.SetDrawColor(0, 0, 0)
     surface.SetMaterial(cornerMat)
 end
 

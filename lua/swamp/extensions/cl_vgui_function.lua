@@ -51,7 +51,6 @@ function vgui_parent(parent, callback)
     end)
 
     table.remove(vgui_stack)
-
 end
 
 function vgui.Parent()
