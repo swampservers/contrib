@@ -77,10 +77,31 @@ If we are "protected" from this attacker by theater protection. `att` doesn't ne
 \
 *file: [lua/cinema/theater/sh_protection.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/theater/sh_protection.lua)*
 
+### function Player:GetRank()
+Numeric player ranking (all players are zero, staff are 1+)
+\
+*file: [lua/swamp/admin/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/admin/sh_init.lua)*
+
+### function Player:IsStaff()
+Boolean
+\
+*file: [lua/swamp/admin/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/admin/sh_init.lua)*
+
 ### function Player:IsTyping()
 Bool (typing a chat message)
 \
 *file: [lua/swamp/chat/sh_swampchat.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/chat/sh_swampchat.lua)*
+
+### Font = defaultdict(function(setting_str)
+Generates a font quickly. Caches so it can be used in paint hooks.\
+ Example input: draw.DrawText("based", Font.Arial24)
+\
+*file: [lua/swamp/cl_font.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/cl_font.lua)*
+
+### function GetTextSize(font, text)
+surface.GetTextSize with cached result
+\
+*file: [lua/swamp/cl_font.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/cl_font.lua)*
 
 ### function Player:IsAFK()
 Boolean
@@ -124,7 +145,7 @@ Sets the color modulation, calls your callback, then sets it back to what it was
 *file: [lua/swamp/extensions/cl_render_extension.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/cl_render_extension.lua)*
 
 ### function DFrame:CloseOnEscape()
-Makes the DFrame :Close() if escape is pressed
+Call this to make a DFrame dissapear if the user hits escape
 \
 *file: [lua/swamp/extensions/cl_vgui_function.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/cl_vgui_function.lua)*
 
@@ -145,6 +166,11 @@ This defines the function vgui(classname, parent (optional), constructor) which 
     end)\
  end)\
  ```
+\
+*file: [lua/swamp/extensions/cl_vgui_function.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/cl_vgui_function.lua)*
+
+### function vgui_parent(parent, callback)
+Push a panel to the vgui parent stack, run callback, and pop it
 \
 *file: [lua/swamp/extensions/cl_vgui_function.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/cl_vgui_function.lua)*
 
@@ -235,73 +261,105 @@ Register a function which is called on the server and executed on the client. Se
 ### function call(func, ...)
 Just calls the function with the args
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function call_async(callback, ...)
 Shorthand timer.Simple(0, callback) and also passes args
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function defaultdict(constructor, init)
 Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function math.nextpow2(n)
 Returns next power of 2 >= n
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function noop()
 Shorthand for empty function
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
+
+### function table.Equal(a, b)
+Check if tables contain the same data, even if they are different tables (deep copy OK)
+\
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function table.Inverse(tab)
 Convert a table of {k=v} to {v=k}
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function table.Set(tab)
 Convert an ordered table {a,b,c} into a set {[a]=true,[b]=true,[c]=true}
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function table.ShallowCopy(tab)
 Copy table at the first layer only
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function table.SortedInsertIndex(tab, val)
 Returns the largest index such that tab[index] > val (or is the end)
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function table.imax(tab)
 Selects the maximum value of an ordered table. See also: table.imin
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function table.isum(tab)
 Sums an ordered table.
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function table.sub(tab, startpos, endpos)
 Selects a range of an ordered table similar to string.sub
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### function try(func, catch)
 Calls the function and if it fails, calls catch (default: ErrorNoHaltWithStack) with the error. Doesn't return anything
 \
-*file: [lua/swamp/sh_core.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_core.lua)*
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
 ### Player, Entity, Weapon  (global variables)
 Omit FindMetaTable from your code because these globals always refer to their respective metatables.\
  Player/Entity are still callable and function the same as the default global functions.
 \
 *file: [lua/swamp/sh_meta.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_meta.lua)*
+
+### function Entity:OrthoBounds(angle, offset)
+Returns min,max such that the rotated bbox render.DrawWireframeBox(Vector(0,0,0), angle, min, max) tightly bounds the entity's model in world space. no angle means Angle(0,0,0). if offset it gets applied in world space
+\
+*file: [lua/swamp/shop/cl_modelbounds.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/cl_modelbounds.lua)*
+
+### function Player:GetPoints()
+Number of points
+\
+*file: [lua/swamp/shop/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sh_init.lua)*
+
+### function Player:HasPoints(points)
+If the player has at least this many points. Don't use it on the server if you are about to buy something; just do TryTakePoints
+\
+*file: [lua/swamp/shop/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sh_init.lua)*
+
+### function Player:GivePoints(points, callback, fcallback)
+Give points. `callback` happens once the points are written. `fcallback` = failed to write
+\
+*file: [lua/swamp/shop/sv_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sv_init.lua)*
+
+### function Player:TryTakePoints(points, callback, fcallback)
+Take points, but only if they have enough.\
+ `callback` runs once the points have been taken.\
+ `fcallback` runs if they don't have enough points or it otherwise fails to take them
+\
+*file: [lua/swamp/shop/sv_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sv_init.lua)*
 
 ### function Player:GetStat(name, default)
 Get the value of the stat with the given name. If default isn't given it is 0
@@ -327,38 +385,6 @@ Adds the other player to the "partner set" by the given name. This way you can m
 Sets the stat with the given name to the max of its previous value and the record
 \
 *file: [lua/swamp/sql/sv_stats.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sv_stats.lua)*
-
-### function Player:GetRank()
-Numeric player ranking (all players are zero, staff are 1+)
-\
-*file: [lua/swamp/swampcop/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/swampcop/sh_init.lua)*
-
-### function Player:IsStaff()
-Boolean
-\
-*file: [lua/swamp/swampcop/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/swampcop/sh_init.lua)*
-
-### function Player:SS_GetPoints()
-Number of points
-\
-*file: [lua/swamp/swampshop/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/swampshop/sh_init.lua)*
-
-### function Player:SS_HasPoints(points)
-If the player has at least this many points. Don't use it on the server if you are about to buy something; just do SS_TryTakePoints
-\
-*file: [lua/swamp/swampshop/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/swampshop/sh_init.lua)*
-
-### function Player:SS_GivePoints(points, callback, fcallback)
-Give points. `callback` happens once the points are written. `fcallback` = failed to write
-\
-*file: [lua/swamp/swampshop/sv_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/swampshop/sv_init.lua)*
-
-### function Player:SS_TryTakePoints(points, callback, fcallback)
-Take points, but only if they have enough.\
- `callback` runs once the points have been taken.\
- `fcallback` runs if they don't have enough points or it otherwise fails to take them
-\
-*file: [lua/swamp/swampshop/sv_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/swampshop/sv_init.lua)*
 
 ### function Entity:SetWebMaterial(args)
 Like `WebMaterial` but sets it to an entity (only needs to be called once)\
