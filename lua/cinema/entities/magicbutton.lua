@@ -36,16 +36,15 @@ else
     -- keep painting it so it always appears in mat_texture_list
     local buttonmat = Material("models/pyroteknik/button_diffuse")
 
-    hook.Add("HUDPaint", "ButtonMaterialHide", function()
+    hook.Add("PostDrawTranslucentRenderables", "ButtonMaterialHide", function(d, s, s3)
+        if s3 then return end
+
         if DREWBUTTONTHISFRAME then
             DREWBUTTONTHISFRAME = false
-
-            return
+        else
+            render.SetMaterial(buttonmat)
+            render.DrawQuad(Vector(0, 0, 0), Vector(0, 0, 0), Vector(0, 0, 0), Vector(0, 0, 0))
         end
-
-        --         surface.SetDrawColor(255,255,255,1)
-        surface.SetMaterial(buttonmat)
-        surface.DrawTexturedRect(0, 0, 0, 0)
     end)
 end
 
