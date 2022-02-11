@@ -1,37 +1,32 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- BountyLimit = BountyLimit or {}
+util.AddNetworkString("SetBounty")
 
+net.Receive("SetBounty", function(len, ply)
+    if ply:RateLimit("SetBounty", 5) then
+        ply:Notify("Please wait!!!")
 
-
-
-    
-    util.AddNetworkString("SetBounty")
- 
-    net.Receive("SetBounty", function(len, ply)
-        if ply:RateLimit("SetBounty", 5) then ply:Notify("Please wait!!!") return end
-        local target = net.ReadEntity()
-        if not IsValid(target) or not target:IsPlayer() then return end
-        TryAddBounty(ply,{target},net.ReadUInt(32))
-    end)
- 
-    hook.Add("PlayerInitialSpawn", "LoadBounty", function(ply)
-        ply.NW.bounty = tonumber(ply:GetPData("bounty", 0))
-    end)
-    
-    function Player:GetBounty()
-        return self.NW.bounty or 0
+        return
     end
 
-    function Player:SetBounty(bounty)
-        self:SetPData("bounty", bounty)
-        self.NW.bounty = bounty
-    end
-    
+    local target = net.ReadEntity()
+    if not IsValid(target) or not target:IsPlayer() then return end
 
+    TryAddBounty(ply, {target}, net.ReadUInt(32))
+end)
 
+hook.Add("PlayerInitialSpawn", "LoadBounty", function(ply)
+    ply.NW.bounty = tonumber(ply:GetPData("bounty", 0))
+end)
 
+function Player:GetBounty()
+    return self.NW.bounty or 0
+end
 
-
+function Player:SetBounty(bounty)
+    self:SetPData("bounty", bounty)
+    self.NW.bounty = bounty
+end
 
 hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     local bounty = GetPlayerBounty(ply)
@@ -49,10 +44,14 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     end
 end)
 
-
 function TryAddBounty(ply, targets, amount)
     amount = math.floor(tonumber(amount) or 0)
-    if amount < 1000 then ply:ChatPrint("[red]You must add a minimum of 1,000 points to the bounty") return end
+
+    if amount < 1000 then
+        ply:ChatPrint("[red]You must add a minimum of 1,000 points to the bounty")
+
+        return
+    end
 
     local needed = amount * #targets
 
@@ -86,12 +85,12 @@ RegisterChatCommand({'bounty', 'setbounty'}, function(ply, arg)
     arg = string.Explode(" ", arg)
     local p = tonumber(table.remove(arg))
     arg = string.Implode(" ", arg)
-    
+
     if p then
         local found = FindSinglePlayer(arg)
-        
+
         if isnumber(found) then
-            ply:ChatPrint("[red]Player " .. arg .. (found==0 and " not found" or " matched "..found.." players"))
+            ply:ChatPrint("[red]Player " .. arg .. (found == 0 and " not found" or " matched " .. found .. " players"))
         else
             TryAddBounty(ply, {to}, found)
         end
@@ -105,8 +104,8 @@ end, {
 
 RegisterChatCommand({'bountyall', 'setbountyall'}, function(ply, arg)
     local p = tonumber(arg)
- 
-    if p  then
+
+    if p then
         TryAddBounty(ply, player.GetHumans(), p)
     else
         ply:ChatPrint("[orange]!bountyall points")
@@ -118,8 +117,8 @@ end, {
 
 RegisterChatCommand({'bountyrandom', 'setbountyrandom', 'randombounty', 'setrandombounty'}, function(ply, arg)
     local p = tonumber(arg)
-  
-    if p  then
+
+    if p then
         local ranply = {}
 
         for k, v in ipairs(player.GetHumans()) do
@@ -131,9 +130,6 @@ RegisterChatCommand({'bountyrandom', 'setbountyrandom', 'randombounty', 'setrand
         TryAddBounty(ply, {ranply[math.random(#ranply)]}, p)
     else
         ply:ChatPrint("[orange]!bountyrandom points")
-     
-           
-
     end
 end, {
     global = true,
@@ -144,9 +140,9 @@ RegisterChatCommand({'showbounty'}, function(ply, arg)
     local found = FindSinglePlayer(arg)
 
     if isnumber(found) then
-        ply:ChatPrint("[orange]!showbounty player (found "..found.." players)")
+        ply:ChatPrint("[orange]!showbounty player (found " .. found .. " players)")
     else
-        ply:ChatPrint("[orange]" .. to:Nick() .. ( (found:GetBounty() > 0) and  ("'s bounty is [edgy]" .. found:GetBounty() .. " [orange]points") or " has no bounty" ) )
+        ply:ChatPrint("[orange]" .. to:Nick() .. (found:GetBounty() > 0 and "'s bounty is [edgy]" .. found:GetBounty() .. " [orange]points" or " has no bounty"))
     end
 end, {
     global = false,
@@ -168,8 +164,8 @@ RegisterChatCommand({'bounties', 'showbounties'}, function(ply, arg)
         ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
 
         for k, v in ipairs(t) do
-            ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. (v[1]:IsProtected() and " - Protected)" or ")") )
-            if k>=10 then break end
+            ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. (v[1]:IsProtected() and " - Protected)" or ")"))
+            if k >= 10 then break end
         end
     else
         ply:ChatPrint("[fbc]There are currently no bounties!")
