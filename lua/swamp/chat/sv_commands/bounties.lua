@@ -1,10 +1,43 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- BountyLimit = BountyLimit or {}
+
+
+
+
+    
+    util.AddNetworkString("SetBounty")
+ 
+    net.Receive("SetBounty", function(len, ply)
+        if ply:RateLimit("SetBounty", 5) then ply:Notify("Please wait!!!") return end
+        local target = net.ReadEntity()
+        if not IsValid(target) or not target:IsPlayer() then return end
+        TryAddBounty(ply,{target},net.ReadUInt(32))
+    end)
+ 
+    hook.Add("PlayerInitialSpawn", "LoadBounty", function(ply)
+        ply.NW.bounty = tonumber(ply:GetPData("bounty", 0))
+    end)
+    
+    function Player:GetBounty()
+        return self.NW.bounty or 0
+    end
+
+    function Player:SetBounty(bounty)
+        self:SetPData("bounty", bounty)
+        self.NW.bounty = bounty
+    end
+    
+
+
+
+
+
+
 hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     local bounty = GetPlayerBounty(ply)
 
     if bounty > 0 and ply ~= atk and atk:IsPlayer() then
-        SetPlayerBounty(ply, 0)
+        ply:SetBounty(0)
 
         if not (ply.BountyFunders or {})[atk] and bounty >= 100000 then
             atk:GroupStat("bountyhunt", ply)
@@ -16,21 +49,11 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     end
 end)
 
-function GetPlayerBounty(ply)
-    if ply.bounty == nil then
-        ply.bounty = tonumber(ply:GetPData("bounty", 0))
-    end
 
-    return ply.bounty
-end
+function TryAddBounty(ply, targets, amount)
+    amount = math.floor(tonumber(amount) or 0)
+    if amount < 1000 then ply:ChatPrint("[red]You must add a minimum of 1,000 points to the bounty") return end
 
-function SetPlayerBounty(ply, bounty)
-    ply:SetPData("bounty", bounty)
-    ply.bounty = bounty
-end
-
-function AddBounty(ply, targets, amount)
-    amount = amount > 0 and amount or 0
     local needed = amount * #targets
 
     -- local total = (BountyLimit[ply:SteamID()] or 0) + needed
@@ -39,7 +62,7 @@ function AddBounty(ply, targets, amount)
 
         for k, v in ipairs(targets) do
             if IsValid(v) then
-                SetPlayerBounty(v, GetPlayerBounty(v) + amount)
+                v:SetBounty(v:GetBounty() + amount)
                 v.BountyFunders = v.BountyFunders or {}
                 v.BountyFunders[ply] = true
             end
@@ -47,37 +70,33 @@ function AddBounty(ply, targets, amount)
 
         if #targets == 1 then
             if IsValid(targets[1]) then
-                BotSayGlobal("[fbc]" .. targets[1]:Nick() .. "'s bounty is now [rainbow]" .. GetPlayerBounty(targets[1]) .. " [fbc]points")
+                BotSayGlobal("[fbc]" .. targets[1]:Nick() .. "'s bounty is now [rainbow]" .. targets[1]:GetBounty() .. " [fbc]points")
             end
         else
             BotSayGlobal("[fbc]" .. ply:Nick() .. " has increased everyone's bounty by [rainbow]" .. amount .. " [fbc]points!")
         end
     end, function()
-        if not IsValid(ply) then return end
-        ply:ChatPrint("[red]You don't have enough points")
+        if IsValid(ply) then
+            ply:ChatPrint("[red]You don't have enough points")
+        end
     end)
-    -- BountyLimit[ply:SteamID()] = (BountyLimit[ply:SteamID()] or 0) + amount
 end
 
 RegisterChatCommand({'bounty', 'setbounty'}, function(ply, arg)
-    local t = string.Explode(" ", arg)
-    local p = tonumber(table.remove(t))
-    p = p ~= nil and math.floor(p) or nil
-
-    if p == nil then
-        ply:ChatPrint("[orange]!bounty player points")
-    else
-        local to, c = PlyCount(string.Implode(" ", t))
-
-        if c == 1 then
-            if p >= 1000 then
-                AddBounty(ply, {to}, p)
-            else
-                ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
-            end
+    arg = string.Explode(" ", arg)
+    local p = tonumber(table.remove(arg))
+    arg = string.Implode(" ", arg)
+    
+    if p then
+        local found = FindSinglePlayer(arg)
+        
+        if isnumber(found) then
+            ply:ChatPrint("[red]Player " .. arg .. (found==0 and " not found" or " matched "..found.." players"))
         else
-            ply:ChatPrint("[red]Player " .. string.Implode(" ", t) .. " not found")
+            TryAddBounty(ply, {to}, found)
         end
+    else
+        ply:ChatPrint("[orange]!bounty player points")
     end
 end, {
     global = true,
@@ -86,16 +105,11 @@ end, {
 
 RegisterChatCommand({'bountyall', 'setbountyall'}, function(ply, arg)
     local p = tonumber(arg)
-    p = p ~= nil and math.floor(p) or nil
-
-    if p == nil then
-        ply:ChatPrint("[orange]!bountyall points")
+ 
+    if p  then
+        TryAddBounty(ply, player.GetHumans(), p)
     else
-        if p >= 1000 then
-            AddBounty(ply, player.GetHumans(), p)
-        else
-            ply:ChatPrint("[red]You must add a minimum of 1000 points to the each bounty")
-        end
+        ply:ChatPrint("[orange]!bountyall points")
     end
 end, {
     global = true,
@@ -104,24 +118,22 @@ end, {
 
 RegisterChatCommand({'bountyrandom', 'setbountyrandom', 'randombounty', 'setrandombounty'}, function(ply, arg)
     local p = tonumber(arg)
-    p = p ~= nil and math.floor(p) or nil
+  
+    if p  then
+        local ranply = {}
 
-    if p == nil then
-        ply:ChatPrint("[orange]!bountyrandom points")
-    else
-        if p >= 1000 then
-            local ranply = {}
-
-            for k, v in ipairs(player.GetHumans()) do
-                if not v:IsProtected() then
-                    table.insert(ranply, v)
-                end
+        for k, v in ipairs(player.GetHumans()) do
+            if not v:IsProtected() then
+                table.insert(ranply, v)
             end
-
-            AddBounty(ply, {ranply[math.random(#ranply)]}, p)
-        else
-            ply:ChatPrint("[red]You must add a minimum of 1000 points to the bounty")
         end
+
+        TryAddBounty(ply, {ranply[math.random(#ranply)]}, p)
+    else
+        ply:ChatPrint("[orange]!bountyrandom points")
+     
+           
+
     end
 end, {
     global = true,
@@ -129,18 +141,12 @@ end, {
 })
 
 RegisterChatCommand({'showbounty'}, function(ply, arg)
-    local to, c = PlyCount(arg)
+    local found = FindSinglePlayer(arg)
 
-    if c == 1 then
-        local bounty = GetPlayerBounty(to)
-
-        if bounty > 0 then
-            ply:ChatPrint("[orange]" .. to:Nick() .. "'s bounty is [edgy]" .. bounty .. " [orange]points")
-        else
-            ply:ChatPrint("[orange]" .. to:Nick() .. " has no bounty")
-        end
+    if isnumber(found) then
+        ply:ChatPrint("[orange]!showbounty player (found "..found.." players)")
     else
-        ply:ChatPrint("[orange]!showbounty player")
+        ply:ChatPrint("[orange]" .. to:Nick() .. ( (found:GetBounty() > 0) and  ("'s bounty is [edgy]" .. found:GetBounty() .. " [orange]points") or " has no bounty" ) )
     end
 end, {
     global = false,
@@ -151,26 +157,19 @@ RegisterChatCommand({'bounties', 'showbounties'}, function(ply, arg)
     local t = {}
 
     for k, v in pairs(player.GetHumans()) do
-        local bounty = GetPlayerBounty(v)
-
-        if bounty > 0 then
-            table.insert(t, {v, bounty})
+        if v:GetBounty() > 0 then
+            table.insert(t, {v, v:GetBounty()})
         end
     end
 
     table.sort(t, function(a, b) return a[2] > b[2] end)
 
-    if #t >= 1 then
+    if t[1] then
         ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
 
         for k, v in ipairs(t) do
-            if k <= 10 then
-                if not v[1]:IsProtected() then
-                    ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. ")")
-                else
-                    ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. " - Protected)")
-                end
-            end
+            ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. (v[1]:IsProtected() and " - Protected)" or ")") )
+            if k>=10 then break end
         end
     else
         ply:ChatPrint("[fbc]There are currently no bounties!")

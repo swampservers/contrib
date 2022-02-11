@@ -1,22 +1,22 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-function Ply(name)
-    local ply, c = PlyCount(name)
 
-    return ply
-end
-
---- Find a player whose name contains some text. Returns any found player as well as the count of found players.
-function PlyCount(name)
+--- Find a player whose name contains some text. If it finds exactly one matching player, returns that player. Otherwise, returns the number of found players (0 or >=2). To use this check isnumber() on the return.
+function FindSinglePlayer(name)
     name = name:lower()
-    local rply = nil
-    local c = 0
+    local count,ply = 0,nil
 
     for _, v in ipairs(player.GetHumans()) do
-        if string.lower(v:Name()):find(name, 1, true) then
-            rply = v
-            c = c + 1
+        local plyname = v:Name():lower()
+        
+        -- exact match cancels any substring matches
+        if name==plyname then return v end
+
+        if plyname:find(name, 1, true) then
+            ply=v
+            count=count+1
         end
     end
 
-    return rply, c
+    return count==1 and ply or count
 end
+

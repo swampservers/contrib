@@ -118,6 +118,11 @@ Prints how long it takes to run a function, averaging over a large number of sam
 \
 *file: [lua/swamp/dev/sh_bench.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/dev/sh_bench.lua)*
 
+### function Ply(name)
+For hacking/debugging. FindSinglePlayer but just returns nil if matches multiple.
+\
+*file: [lua/swamp/dev/sh_util.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/dev/sh_util.lua)*
+
 ### Me  (global variable)
 Use this global instead of LocalPlayer()\
  It will be either nil or a valid entity. Don't write `if IsValid(Me)`... , just write `if Me`...
@@ -208,8 +213,8 @@ Faster than writing `IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():Ge
 \
 *file: [lua/swamp/extensions/sh_player_extension.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/sh_player_extension.lua)*
 
-### function PlyCount(name)
-Find a player whose name contains some text. Returns any found player as well as the count of found players.
+### function FindSinglePlayer(name)
+Find a player whose name contains some text. If it finds exactly one matching player, returns that player. Otherwise, returns the number of found players (0 or >=2). To use this check isnumber() on the return.
 \
 *file: [lua/swamp/extensions/sh_playerbyname.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/sh_playerbyname.lua)*
 
@@ -242,6 +247,13 @@ Unlike the built-in function, this (along with player.GetBySteamID64 and player.
 Get current title string or ""
 \
 *file: [lua/swamp/misc/sh_titles.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/misc/sh_titles.lua)*
+
+### function Player:RateLimit(name, interval, burst)
+Rate limiter for net recievers and commands and whatnot. Interval is how many seconds between each action. Burst is how many we can do fast (default 1).\
+ The function returns TRUE if the action should be blocked, FALSE if it should be ALLOWED. So do like `if ply:RateLimit("thing", 1, 1) then return end` to rate limit everything after it.\
+ Call it with no arguments to use a default reasonable value for clickable actions or whatever.
+\
+*file: [lua/swamp/misc/sv_swamp_misc.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/misc/sv_swamp_misc.lua)*
 
 ### function Entity:IsPony()
 Boolean, mostly for players
