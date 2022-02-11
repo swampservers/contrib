@@ -9,7 +9,23 @@ BrandColorWhite = Color(255, 255, 255)
 BrandColorPrimary = Color(104, 28, 25)
 BrandColorAlternate = Color(40, 96, 104) --Color(36, 56, 26) --Color(40, 96, 104)
 
-BrandColors = {Color(104, 28, 25), Color(120, 60, 0), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
+
+-- Color(104, 28, 25)
+
+local red = Color(96, 28, 25) --Color(104, 28, 25)
+BrandColors = {}
+for i=0,11 do
+    local h,s,v = ColorToHSV(red)
+
+    table.insert(BrandColors,HSVToColor( (h + i*30)%360 ,s,v))
+end
+
+table.Add(BrandColors, {
+    Color(0,0,0),
+    Color(36, 36, 36)
+})
+
+--{Color(104, 28, 25), Color(120, 60, 0), Color(36, 68, 24), Color(40, 96, 104), Color(91, 40, 104), Color(192, 90, 23), Color(187, 162, 78), Color(36, 36, 41), Color(197, 58, 77),}
 
 CreateClientConVar("ps_themecolor", "1", true)
 
@@ -43,7 +59,6 @@ function SS_GetFrame(pnl)
     end
 end
 
-
 --if you want to change how every single rectangle is drawn
 SS_GLOBAL_RECT = function(x, y, w, h, color)
     surface.SetDrawColor(color)
@@ -65,7 +80,7 @@ end
 --     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_BrandDark)
 -- end
 SS_PaintButtonBrandHL = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, 0,0, w, h)
+    SS_DrawPanelShadow(pnl, 0, 0, w, h)
 
     if pnl.Depressed then
         pnl:SetTextColor(SS_ColorWhite)
@@ -80,7 +95,7 @@ end
 SS_PaintFG = function(pnl, w, h)
     --surface.SetDrawColor(MenuTheme_FG)
     --surface.DrawRect(0, 0, w, h)
-    SS_DrawPanelShadow(pnl, 0,0, w, h)
+    SS_DrawPanelShadow(pnl, 0, 0, w, h)
     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_FG)
 end
 
@@ -93,7 +108,7 @@ SS_PaintTileInset = function(pnl, w, h)
 end
 
 SS_PaintMD = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl,0,0, w, h)
+    SS_DrawPanelShadow(pnl, 0, 0, w, h)
     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_MD)
 end
 
@@ -116,16 +131,15 @@ SS_PaintFGAlpha = function(pnl, w, h, alpha)
 end
 
 SS_PaintBrandStripes = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, 0,0,w, h)
+    SS_DrawPanelShadow(pnl, 0, 0, w, h)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(0, 0, w, h)
     BrandBackgroundPattern(0, 0, w, h, 0)
 end
 
-
 SS_COMMONMARGIN = 8
 SS_SMALLMARGIN = 2
-SS_TILESIZE = 156
+SS_TILE_SIZE = 156
 SS_RPANEWIDTH = 344
 SS_SCROLL_WIDTH = 16
 SS_SUBCATEGORY_HEIGHT = 36
@@ -136,14 +150,14 @@ SS_ROOM_TILES_W = 5
 SS_ROOM_TILES_H = 4
 SS_ROOM_SUBCAT = 1
 SS_CUSTOMIZER_HEADINGSIZE = 64
-SS_MENUWIDTH = SS_RPANEWIDTH * 1
-SS_MENUWIDTH = SS_MENUWIDTH + SS_TILESIZE * SS_ROOM_TILES_W
+SS_MENUWIDTH = SS_RPANEWIDTH
+SS_MENUWIDTH = SS_MENUWIDTH + SS_TILE_SIZE * SS_ROOM_TILES_W
 SS_MENUWIDTH = SS_MENUWIDTH + SS_COMMONMARGIN * SS_ROOM_TILES_W
 SS_MENUWIDTH = SS_MENUWIDTH + SS_SCROLL_WIDTH
 SS_MENUWIDTH = SS_MENUWIDTH + SS_COMMONMARGIN * 3
 SS_MENUHEIGHT = SS_NAVBARHEIGHT * 1
 SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_SUBCATEGORY_HEIGHT + SS_COMMONMARGIN) * SS_ROOM_SUBCAT
-SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_TILESIZE + SS_COMMONMARGIN) * SS_ROOM_TILES_H
+SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_TILE_SIZE + SS_COMMONMARGIN) * SS_ROOM_TILES_H
 SS_MENUHEIGHT = SS_MENUHEIGHT + SS_COMMONMARGIN * 1
 SS_MENUHEIGHT = SS_MENUHEIGHT + SS_BOTBARHEIGHT
 
@@ -231,11 +245,11 @@ surface.CreateFont("SmallFont", {
     weight = 200
 })
 
-local cornerMat = Material("vgui/box_corner_shadow")
+local cornerMat = Material("vgui/corner_gradient")
 
 local function predrawshadow(alpha)
     cornerMat:SetFloat("$alpha", alpha)
-    surface.SetDrawColor(Color(255, 255, 255))
+    surface.SetDrawColor(0,0,0)
     surface.SetMaterial(cornerMat)
 end
 
@@ -253,6 +267,14 @@ function draw.BoxShadow(x, y, w, h, blur, alpha)
     surface.DrawTexturedRectUV(x, y + h, w, h, 0, hb, wb, 0)
     surface.DrawTexturedRectUV(x + w, y, w, h, wb, 0, 0, hb)
     surface.DrawTexturedRectUV(x + w, y + h, w, h, wb, hb, 0, 0)
+end
+
+function draw.VerticalGradient(col, x, y, w, h, a_top, a_bottom)
+    if cornerMat:IsError() then return end
+    cornerMat:SetFloat("$alpha", 1)
+    surface.SetDrawColor(col)
+    surface.SetMaterial(cornerMat)
+    surface.DrawTexturedRectUV(x, y, w, h, 1, a_top, 1, a_bottom)
 end
 
 function draw.GradientShadowDown(x, y, w, h, alpha)
@@ -451,18 +473,6 @@ surface.CreateFont("SS_ItemText", {
     size = 11,
     weight = 500,
     antialias = true,
-})
-
-surface.CreateFont("SS_LargeTitle", {
-    font = "Righteous",
-    size = 48,
-    weight = 900,
-    antialias = true,
-})
-
-surface.CreateFont("SS_SubCategory", {
-    font = "Righteous",
-    size = 36,
 })
 
 surface.CreateFont('SS_ProductName', {

@@ -77,10 +77,10 @@ function SWEP:SetupDataTables()
     if SERVER then
         timer.Simple(0, function()
             if IsValid(self) and IsValid(self.Owner) then
-                for k, v in pairs(self.Owner.items or {}) do
-                    if v.class == "knifeskin" and v.eq then
-                        self:SetForceModel(v:Model() or "")
-                        self.WorldModel = v:Model()
+                for k, v in pairs(self.Owner.items.knifeskin or {}) do
+                    if v.eq then
+                        self:SetForceModel(v.model or "")
+                        self.WorldModel = v.model
                         self:SetModel(self.WorldModel)
                         self:Deploy()
                     end

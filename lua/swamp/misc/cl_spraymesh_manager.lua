@@ -1,281 +1,285 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-surface.CreateFont("DermaMedium", {
-    font = "Roboto",
-    size = 22,
-    weight = 0,
-    extended = true
-})
 
-local almostwhite = Color(224, 224, 224)
-local succgreen = Color(64, 224, 64)
-local warnyellow = Color(224, 224, 64)
+print("cl_spraymesh_manager.lua empty")
 
--- Delay so convars get initialized by other files
-timer.Simple(0, function()
-    local basedpanel
-    local urlconvar, nsfwconvar = GetConVar("spraymesh_url"), GetConVar("spraymesh_nsfw")
+-- surface.CreateFont("DermaMedium", {
+--     font = "Roboto",
+--     size = 22,
+--     weight = 0,
+--     extended = true
+-- })
 
-    if not file.Exists("swamp_sprays.txt", "DATA") and file.Exists("sprays/savedsprays.txt", "DATA") then
-        file.Rename("sprays/savedsprays.txt", "swamp_sprays.txt")
-    end
+-- local almostwhite = Color(224, 224, 224)
+-- local succgreen = Color(64, 224, 64)
+-- local warnyellow = Color(224, 224, 64)
 
-    local filetxt = file.Read("swamp_sprays.txt", "DATA")
-    local SprayList = util.JSONToTable(filetxt or "") or {}
+-- -- Delay so convars get initialized by other files
+-- timer.Simple(0, function()
+--     if true then return end
+--     local basedpanel
+--     local urlconvar, nsfwconvar = GetConVar("spraymesh_url"), GetConVar("spraymesh_nsfw")
 
-    local function RemoveId(id)
-        for i, v in ipairs(SprayList) do
-            if v[1] == id then return table.remove(SprayList, i) end
-        end
-    end
+--     if not file.Exists("swamp_sprays.txt", "DATA") and file.Exists("sprays/savedsprays.txt", "DATA") then
+--         file.Rename("sprays/savedsprays.txt", "swamp_sprays.txt")
+--     end
 
-    local function UpdateList()
-        -- Sanitize
-        for i, v in ipairs(SprayList) do
-            if not istable(v) then
-                v = {v}
+--     local filetxt = file.Read("swamp_sprays.txt", "DATA")
+--     local SprayList = util.JSONToTable(filetxt or "") or {}
 
-                SprayList[i] = v
-            end
+--     local function RemoveId(id)
+--         for i, v in ipairs(SprayList) do
+--             if v[1] == id then return table.remove(SprayList, i) end
+--         end
+--     end
 
-            if v[2] == 1 then
-                v[2] = true
-            end
+--     local function UpdateList()
+--         -- Sanitize
+--         for i, v in ipairs(SprayList) do
+--             if not istable(v) then
+--                 v = {v}
 
-            if v[2] == 0 then
-                v[2] = false
-            end
-        end
+--                 SprayList[i] = v
+--             end
 
-        local i = 1
-        local found = {}
+--             if v[2] == 1 then
+--                 v[2] = true
+--             end
 
-        while i <= #SprayList do
-            local id = SanitizeImgurId(SprayList[i][1])
+--             if v[2] == 0 then
+--                 v[2] = false
+--             end
+--         end
 
-            if id and not found[id] then
-                SprayList[i][1] = id
-                i = i + 1
-                found[id] = true
-            else
-                table.remove(SprayList, i)
-            end
-        end
+--         local i = 1
+--         local found = {}
 
-        -- Force current url to the end, and update nsfw
-        local cur_id = SanitizeImgurId(urlconvar:GetString())
+--         while i <= #SprayList do
+--             local id = SanitizeImgurId(SprayList[i][1])
 
-        if cur_id then
-            local latest = RemoveId(cur_id) or {cur_id}
+--             if id and not found[id] then
+--                 SprayList[i][1] = id
+--                 i = i + 1
+--                 found[id] = true
+--             else
+--                 table.remove(SprayList, i)
+--             end
+--         end
 
-            local nsfwsetting = GetSprayMeshNSFW(cur_id, nsfwconvar:GetString())
+--         -- Force current url to the end, and update nsfw
+--         local cur_id = SanitizeImgurId(urlconvar:GetString())
 
-            if nsfwsetting ~= nil then
-                latest[2] = nsfwsetting
-            end
+--         if cur_id then
+--             local latest = RemoveId(cur_id) or {cur_id}
 
-            table.insert(SprayList, latest)
-        end
+--             local nsfwsetting = GetSprayMeshNSFW(cur_id, nsfwconvar:GetString())
 
-        local newfiletxt = util.TableToJSON(SprayList)
+--             if nsfwsetting ~= nil then
+--                 latest[2] = nsfwsetting
+--             end
 
-        if newfiletxt ~= filetxt then
-            filetxt = newfiletxt
-            file.Write("swamp_sprays.txt", filetxt)
-        end
+--             table.insert(SprayList, latest)
+--         end
 
-        if IsValid(basedpanel) then
-            SprayMeshManagerThumbnails()
-        end
-    end
+--         local newfiletxt = util.TableToJSON(SprayList)
 
-    UpdateList()
-    cvars.AddChangeCallback("spraymesh_url", UpdateList)
-    cvars.AddChangeCallback("spraymesh_nsfw", UpdateList)
+--         if newfiletxt ~= filetxt then
+--             filetxt = newfiletxt
+--             file.Write("swamp_sprays.txt", filetxt)
+--         end
 
-    function SprayMeshManagerThumbnails()
-        for _, v in ipairs(basedpanel.thumbnails:GetChildren()) do
-            v:Remove()
-        end
+--         if IsValid(basedpanel) then
+--             SprayMeshManagerThumbnails()
+--         end
+--     end
 
-        for k, v in pairs(table.Reverse(SprayList)) do
-            vgui("DButton", basedpanel.thumbnails, function(p)
-                basedpanel.thumbnails:Add(p)
-                local thumb = p
-                p.id = v[1]
-                p.url = "i.imgur.com/" .. v[1]
-                p.nsfw = v[2]
-                local s = 139
-                p:SetSize(s, s)
-                -- p:SetPos(x, y)
-                p:SetText("")
+--     UpdateList()
+--     cvars.AddChangeCallback("spraymesh_url", UpdateList)
+--     cvars.AddChangeCallback("spraymesh_nsfw", UpdateList)
 
-                function p:Paint(w, h)
-                    -- draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
-                    local this = self.url == urlconvar:GetString()
+--     function SprayMeshManagerThumbnails()
+--         for _, v in ipairs(basedpanel.thumbnails:GetChildren()) do
+--             v:Remove()
+--         end
 
-                    if this or self:IsHovered() then
-                        surface.SetDrawColor(this and succgreen or almostwhite)
-                        surface.DrawRect(0, 0, w, h)
-                        surface.SetDrawColor(0, 0, 0, 255)
-                        surface.DrawRect(2, 2, w - 4, h - 4)
-                    else
-                        surface.SetDrawColor(0, 0, 0, 255)
-                        surface.DrawRect(0, 0, w, h)
-                    end
+--         for k, v in pairs(table.Reverse(SprayList)) do
+--             vgui("DButton", basedpanel.thumbnails, function(p)
+--                 basedpanel.thumbnails:Add(p)
+--                 local thumb = p
+--                 p.id = v[1]
+--                 p.url = "i.imgur.com/" .. v[1]
+--                 p.nsfw = v[2]
+--                 local s = 139
+--                 p:SetSize(s, s)
+--                 -- p:SetPos(x, y)
+--                 p:SetText("")
 
-                    local m = WebMaterial({
-                        id = self.id,
-                        shader = "UnlitGeneric",
-                        nsfw = p.nsfw
-                    })
+--                 function p:Paint(w, h)
+--                     -- draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
+--                     local this = self.url == urlconvar:GetString()
 
-                    surface.SetDrawColor(255, 255, 255, 255)
-                    surface.SetMaterial(m)
-                    surface.DrawTexturedRect(2, 2, w - 4, h - 4)
-                end
+--                     if this or self:IsHovered() then
+--                         surface.SetDrawColor(this and succgreen or almostwhite)
+--                         surface.DrawRect(0, 0, w, h)
+--                         surface.SetDrawColor(0, 0, 0, 255)
+--                         surface.DrawRect(2, 2, w - 4, h - 4)
+--                     else
+--                         surface.SetDrawColor(0, 0, 0, 255)
+--                         surface.DrawRect(0, 0, w, h)
+--                     end
 
-                function p:DoClick()
-                    urlconvar:SetString(self.url)
+--                     local m = WebMaterial({
+--                         id = self.id,
+--                         shader = "UnlitGeneric",
+--                         nsfw = p.nsfw
+--                     })
 
-                    if self.nsfw ~= nil then
-                        nsfwconvar:SetString(self.id .. (self.nsfw and "=1" or "=0"))
-                    end
+--                     surface.SetDrawColor(255, 255, 255, 255)
+--                     surface.SetMaterial(m)
+--                     surface.DrawTexturedRect(2, 2, w - 4, h - 4)
+--                 end
 
-                    basedpanel.inputholder:ApplyText()
-                end
+--                 function p:DoClick()
+--                     urlconvar:SetString(self.url)
 
-                function p:DoRightClick()
-                    local menu = DermaMenu()
+--                     if self.nsfw ~= nil then
+--                         nsfwconvar:SetString(self.id .. (self.nsfw and "=1" or "=0"))
+--                     end
 
-                    menu:AddOption("Remove", function()
-                        RemoveId(self.id)
-                        UpdateList()
-                    end)
+--                     basedpanel.inputholder:ApplyText()
+--                 end
 
-                    menu:AddOption("Copy link to clipboard", function()
-                        SetClipboardText("https://" .. self.url)
-                    end)
+--                 function p:DoRightClick()
+--                     local menu = DermaMenu()
 
-                    menu:Open()
-                end
+--                     menu:AddOption("Remove", function()
+--                         RemoveId(self.id)
+--                         UpdateList()
+--                     end)
 
-                local nsfw = p.nsfw
+--                     menu:AddOption("Copy link to clipboard", function()
+--                         SetClipboardText("https://" .. self.url)
+--                     end)
 
-                if nsfw ~= nil then
-                    vgui("DImage", function(p)
-                        p:SetSize(16, 16)
-                        local x, y = thumb:GetSize()
-                        p:SetPos(x - 20, y - 20)
-                        p:SetImage(nsfw and "icon16/flag_red.png" or "icon16/flag_green.png")
-                    end)
-                end
-            end)
-        end
-    end
+--                     menu:Open()
+--                 end
 
-    function SprayMeshManager()
-        print("To open the spray manager quickly, run: bind <key> spray")
+--                 local nsfw = p.nsfw
 
-        if IsValid(basedpanel) then
-            basedpanel:Remove()
-        end
+--                 if nsfw ~= nil then
+--                     vgui("DImage", function(p)
+--                         p:SetSize(16, 16)
+--                         local x, y = thumb:GetSize()
+--                         p:SetPos(x - 20, y - 20)
+--                         p:SetImage(nsfw and "icon16/flag_red.png" or "icon16/flag_green.png")
+--                     end)
+--                 end
+--             end)
+--         end
+--     end
 
-        vgui("DFrame", function(p)
-            basedpanel = p
-            p:SetSize(480, 568)
-            p:SetTitle("")
-            p:Center()
-            p:MakePopup()
-            p:CloseOnEscape()
+--     function SprayMeshManager()
+--         print("To open the spray manager quickly, run: bind <key> spray")
 
-            function p:Paint(w, h)
-                draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 192))
-                local x, y = self.inputholder:GetPos()
-                local w2, h2 = self.inputholder:GetSize()
-                draw.RoundedBox(0, 0, y - 2, w, h2 + 4, Color(64, 64, 64, 255))
-                draw.RoundedBox(0, 0, y, w, h2, Color(0, 0, 0, 255))
-                -- draw.RoundedBox(0, 0, 0, w, y+h2, Color(0, 0, 0, 224))
-                draw.DrawText("Spray Manager", "DermaLarge", 20, 4, almostwhite, TEXT_ALIGN_LEFT)
-                -- draw.DrawText("Recent Sprays", "DermaMedium", 20, y+h2 + 4, Color(255, 255, 255), TEXT_ALIGN_LEFT)
-            end
+--         if IsValid(basedpanel) then
+--             basedpanel:Remove()
+--         end
 
-            basedpanel.inputholder = vgui("Panel", function(p)
-                p:SetTall(56)
-                p:Dock(TOP)
-                p:DockMargin(0, 16 + 8, 0, 8 + 8)
+--         vgui("DFrame", function(p)
+--             basedpanel = p
+--             p:SetSize(480, 568)
+--             p:SetTitle("")
+--             p:Center()
+--             p:MakePopup()
+--             p:CloseOnEscape()
 
-                function p:ApplyText()
-                    p.Text = "Spray applied! Press ESC to close."
-                    p.TextColor = succgreen
-                end
+--             function p:Paint(w, h)
+--                 draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 192))
+--                 local x, y = self.inputholder:GetPos()
+--                 local w2, h2 = self.inputholder:GetSize()
+--                 draw.RoundedBox(0, 0, y - 2, w, h2 + 4, Color(64, 64, 64, 255))
+--                 draw.RoundedBox(0, 0, y, w, h2, Color(0, 0, 0, 255))
+--                 -- draw.RoundedBox(0, 0, 0, w, y+h2, Color(0, 0, 0, 224))
+--                 draw.DrawText("Spray Manager", "DermaLarge", 20, 4, almostwhite, TEXT_ALIGN_LEFT)
+--                 -- draw.DrawText("Recent Sprays", "DermaMedium", 20, y+h2 + 4, Color(255, 255, 255), TEXT_ALIGN_LEFT)
+--             end
 
-                function p:ResetText()
-                    p.Text = "To set your spray, upload it to imgur.com, then\npaste the URL here ➔"
-                    p.TextColor = almostwhite
-                end
+--             basedpanel.inputholder = vgui("Panel", function(p)
+--                 p:SetTall(56)
+--                 p:Dock(TOP)
+--                 p:DockMargin(0, 16 + 8, 0, 8 + 8)
 
-                p:ResetText()
+--                 function p:ApplyText()
+--                     p.Text = "Spray applied! Press ESC to close."
+--                     p.TextColor = succgreen
+--                 end
 
-                function p:Paint(w, h)
-                    -- draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 200))
-                    draw.DrawText(self.Text, "DermaMedium", 40, 4, self.TextColor)
-                end
+--                 function p:ResetText()
+--                     p.Text = "To set your spray, upload it to imgur.com, then\npaste the URL here ➔"
+--                     p.TextColor = almostwhite
+--                 end
 
-                basedpanel.input = vgui("DTextEntry", function(p)
-                    -- p:Dock(TOP)
-                    p:SetSize(160, 20)
-                    p:SetPos(230, 28)
+--                 p:ResetText()
 
-                    function p:OnChange()
-                        local val = self:GetValue()
+--                 function p:Paint(w, h)
+--                     -- draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 200))
+--                     draw.DrawText(self.Text, "DermaMedium", 40, 4, self.TextColor)
+--                 end
 
-                        SingleAsyncSanitizeImgurId(val, function(id)
-                            if not IsValid(self) then return end
+--                 basedpanel.input = vgui("DTextEntry", function(p)
+--                     -- p:Dock(TOP)
+--                     p:SetSize(160, 20)
+--                     p:SetPos(230, 28)
 
-                            -- self.SanitizedInput = id
-                            if id then
-                                urlconvar:SetString("i.imgur.com/" .. id)
-                                basedpanel.inputholder:ApplyText()
-                            else
-                                if val ~= "" then
-                                    basedpanel.inputholder.Text = "Invalid imgur URL. GIFs aren't supported!"
-                                    basedpanel.inputholder.TextColor = warnyellow
-                                else
-                                    basedpanel.inputholder:ResetText()
-                                end
-                            end
-                        end)
-                    end
-                end)
-            end)
+--                     function p:OnChange()
+--                         local val = self:GetValue()
 
-            basedpanel.scrollzone = vgui("DLabel", function(p)
-                p:Dock(BOTTOM)
-                p:SetText("To open this panel quickly, run in console: bind <key> spray")
-                p:SetContentAlignment(5)
-            end)
+--                         SingleAsyncSanitizeImgurId(val, function(id)
+--                             if not IsValid(self) then return end
 
-            basedpanel.scrollzone = vgui("DScrollPanel", function(p)
-                p:Dock(FILL)
+--                             -- self.SanitizedInput = id
+--                             if id then
+--                                 urlconvar:SetString("i.imgur.com/" .. id)
+--                                 basedpanel.inputholder:ApplyText()
+--                             else
+--                                 if val ~= "" then
+--                                     basedpanel.inputholder.Text = "Invalid imgur URL. GIFs aren't supported!"
+--                                     basedpanel.inputholder.TextColor = warnyellow
+--                                 else
+--                                     basedpanel.inputholder:ResetText()
+--                                 end
+--                             end
+--                         end)
+--                     end
+--                 end)
+--             end)
 
-                basedpanel.thumbnails = vgui("DIconLayout", function(p)
-                    p:Dock(FILL)
-                    p:SetSpaceX(10)
-                    p:SetSpaceY(10)
-                end)
-            end)
-        end)
+--             basedpanel.scrollzone = vgui("DLabel", function(p)
+--                 p:Dock(BOTTOM)
+--                 p:SetText("To open this panel quickly, run in console: bind <key> spray")
+--                 p:SetContentAlignment(5)
+--             end)
 
-        SprayMeshManagerThumbnails()
-    end
+--             basedpanel.scrollzone = vgui("DScrollPanel", function(p)
+--                 p:Dock(FILL)
 
-    concommand.Add("spraymesh_manager", SprayMeshManager)
-    concommand.Add("spray", SprayMeshManager)
-    concommand.Add("+spray", SprayMeshManager)
+--                 basedpanel.thumbnails = vgui("DIconLayout", function(p)
+--                     p:Dock(FILL)
+--                     p:SetSpaceX(10)
+--                     p:SetSpaceY(10)
+--                 end)
+--             end)
+--         end)
 
-    concommand.Add("-spray", function()
-        if IsValid(basedpanel) then
-            basedpanel:Remove()
-        end
-    end)
-end)
+--         SprayMeshManagerThumbnails()
+--     end
+
+--     concommand.Add("spraymesh_manager", SprayMeshManager)
+--     concommand.Add("spray", SprayMeshManager)
+--     concommand.Add("+spray", SprayMeshManager)
+
+--     concommand.Add("-spray", function()
+--         if IsValid(basedpanel) then
+--             basedpanel:Remove()
+--         end
+--     end)
+-- end)

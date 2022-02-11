@@ -1,58 +1,56 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
-
 -- makes material a table that caches things
-Material = setmetatable(isfunction(Material) and {[0]=Material} or Material,{
-    __call = function(tab, mn, png)
-        return tab[0](mn, png)
-    end,
+Material = setmetatable(isfunction(Material) and {
+    [0] = Material
+} or Material, {
+    __call = function(tab, mn, png) return tab[0](mn, png) end,
     __index = function(tab, k)
         local v = tab[0](k)
-        tab[k]=v
+        tab[k] = v
+
         return v
     end
 })
 
-
-Color = setmetatable(isfunction(Color) and {[0]=Color} or Color,{
-    __call = function(tab, ...)
-        return tab[0](...)
-    end,
+Color = setmetatable(isfunction(Color) and {
+    [0] = Color
+} or Color, {
+    __call = function(tab, ...) return tab[0](...) end,
     __index = function(tab, k)
         if isstring(k) then
             local len = #k
-            local double = (len==2 or len==6 or len==8)
+            local double = len == 2 or len == 6 or len == 8
 
-            
             local function dv(d)
-                return tonumber(d) or string.byte(d)-87
+                return tonumber(d) or string.byte(d) - 87
             end
 
             local a = {}
-
             local i = 1
-            while i<=len do
-                local dig = dv(sub(k,i,i))
-                i=i+1
+
+            while i <= len do
+                local dig = dv(sub(k, i, i))
+                i = i + 1
+
                 if double then
-                    dig = dig*16 + dv(sub(k,i,i))
-                    i=i+1
+                    dig = dig * 16 + dv(sub(k, i, i))
+                    i = i + 1
                 else
-                    dig = dig*17
+                    dig = dig * 17
                 end
-                table.insert(a,dig)
+
+                table.insert(a, dig)
             end
 
-            if len<3 then
-                a[2]=a[1]
-                a[3]=a[1]
+            if len < 3 then
+                a[2] = a[1]
+                a[3] = a[1]
             end
 
             PrintTable(a)
+            a = tab[0](unpack(a))
+            tab[k] = a
 
-            a= tab[0](unpack(a))
-            tab[k] =a
             return a
         end
     end
@@ -60,11 +58,45 @@ Color = setmetatable(isfunction(Color) and {[0]=Color} or Color,{
 
 table.Merge(Color, {
     black = Color["0"],
-    white = Color["0"],
+    white = Color["f"],
     red = Color["f00"],
 })
 
+BaseSurfaceSetDrawColor = BaseSurfaceSetDrawColor or surface.SetDrawColor
+local sdc = BaseSurfaceSetDrawColor
 
+-- it is faster
+function surface.SetDrawColor(r, g, b, a)
+    if isnumber(r) then
+        sdc(r, g, b, a)
+    else
+        sdc(r.r, r.g, r.b, r.a)
+    end
+end
+
+-- local t=type(r)
+-- if t=="number" then
+--     sdc(r,g,b,a)
+-- elseif t=="table" then
+--     sdc(r.r,r.g,r.b,r.a)
+-- else
+--     sdc(255,255,255)
+-- end
+function render.BlendAdd()
+    render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD)
+end
+
+function render.BlendSubtract()
+    render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_REVERSE_SUBTRACT)
+end
+
+function render.BlendMultiply()
+    render.OverrideBlend(true, BLEND_DST_COLOR, BLEND_ZERO, BLENDFUNC_ADD)
+end
+
+function render.BlendReset()
+    render.OverrideBlend(false)
+end
 
 --- Bool if we are currently drawing to the screen.
 function render.DrawingScreen()

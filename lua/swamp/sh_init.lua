@@ -177,6 +177,7 @@ end
 --     end
 --     return out  
 -- end
+-- note: v[1] is a teeny bit faster than v.x
 local vector = FindMetaTable("Vector")
 local vec__baseadd = vec__baseadd or vector.__add
 local vec__basesub = vec__basesub or vector.__sub
@@ -185,7 +186,7 @@ local vec__baseNormalize = vec__baseNormalize or vector.Normalize
 
 vector.__add = function(a, b)
     if isnumber(b) then
-        return Vector(a.x + b, a.y + b, a.z + b)
+        return Vector(a[1] + b, a[2] + b, a[3] + b)
     else
         return vec__baseadd(a, b)
     end
@@ -193,7 +194,7 @@ end
 
 vector.__sub = function(a, b)
     if isnumber(b) then
-        return Vector(a.x - b, a.y - b, a.z - b)
+        return Vector(a[1] - b, a[2] - b, a[3] - b)
     else
         return vec__basesub(a, b)
     end
@@ -201,7 +202,7 @@ end
 
 vector.__div = function(a, b)
     if isvector(b) then
-        return Vector(a.x / b.x, a.y / b.y, a.z / b.z)
+        return Vector(a[1] / b[1], a[2] / b[2], a[3] / b[3])
     else
         return vec__basediv(a, b)
     end
@@ -214,40 +215,99 @@ function vector:Normalize()
 end
 
 function vector:Mean()
-    return (self.x + self.y + self.z) / 3
+    return (self[1] + self[2] + self[3]) / 3
 end
 
+vector.MeanVal = vector.Mean
+
 function vector:Pow(y)
-    return Vector(math.pow(self.x, y), math.pow(self.y, y), math.pow(self.z, y))
+    return Vector(math.pow(self[1], y), math.pow(self[2], y), math.pow(self[3], y))
 end
 
 function vector:Max(o)
-    if isnumber(o) then return Vector(math.max(self.x, o), math.max(self.y, o), math.max(self.z, o)) end
+    if isnumber(o) then return Vector(math.max(self[1], o), math.max(self[2], o), math.max(self[3], o)) end
 
-    return Vector(math.max(self.x, o.x), math.max(self.y, o.y), math.max(self.z, o.z))
+    return Vector(math.max(self[1], o[1]), math.max(self[2], o[2]), math.max(self[3], o[3]))
 end
 
 function vector:Min(o)
-    if isnumber(o) then return Vector(math.min(self.x, o), math.min(self.y, o), math.min(self.z, o)) end
+    if isnumber(o) then return Vector(math.min(self[1], o), math.min(self[2], o), math.min(self[3], o)) end
 
-    return Vector(math.min(self.x, o.x), math.min(self.y, o.y), math.min(self.z, o.z))
+    return Vector(math.min(self[1], o[1]), math.min(self[2], o[2]), math.min(self[3], o[3]))
+end
+
+function vector:MaxWith(o)
+    if o[1] > self[1] then
+        self[1] = o[1]
+    end
+
+    if o[2] > self[2] then
+        self[2] = o[2]
+    end
+
+    if o[3] > self[3] then
+        self[3] = o[3]
+    end
+end
+
+function vector:MinWith(o)
+    if o[1] < self[1] then
+        self[1] = o[1]
+    end
+
+    if o[2] < self[2] then
+        self[2] = o[2]
+    end
+
+    if o[3] < self[3] then
+        self[3] = o[3]
+    end
+end
+
+function vector:MaxVal()
+    return math.max(self[1], self[2], self[3])
+end
+
+function vector:MinVal()
+    return math.min(self[1], self[2], self[3])
 end
 
 function vector:Clamp(min, max)
-    if isnumber(min) then return Vector(math.Clamp(self.x, min, max), math.Clamp(self.y, min, max), math.Clamp(self.z, min, max)) end
+    if isnumber(min) then return Vector(math.Clamp(self[1], min, max), math.Clamp(self[2], min, max), math.Clamp(self[3], min, max)) end
 
-    return Vector(math.Clamp(self.x, min.x, max.x), math.Clamp(self.y, min.y, max.y), math.Clamp(self.z, min.z, max.z))
+    return Vector(math.Clamp(self[1], min[1], max[1]), math.Clamp(self[2], min[2], max[2]), math.Clamp(self[3], min[3], max[3]))
 end
 
 function vector:InBox(vec1, vec2)
-    return self.x >= vec1.x and self.x <= vec2.x and self.y >= vec1.y and self.y <= vec2.y and self.z >= vec1.z and self.z <= vec2.z
+    return self[1] >= vec1[1] and self[1] <= vec2[1] and self[2] >= vec1[2] and self[2] <= vec2[2] and self[3] >= vec1[3] and self[3] <= vec2[3]
 end
 
 function vector:Print(round)
     round = round or 1
-    local txt = ("Vector(%s, %s, %s)"):format(math.Round(self.x / round) * round, math.Round(self.y / round) * round, math.Round(self.z / round) * round)
+    local txt = ("Vector(%s, %s, %s)"):format(math.Round(self[1] / round) * round, math.Round(self[2] / round) * round, math.Round(self[3] / round) * round)
     SetClipboardText(txt)
     print(txt)
+end
+
+function vector:Approach(target, change)
+    local delta = target - self
+    local r2 = delta:LengthSqr()
+
+    if r2 > change * change then
+        self:Add((delta / math.sqrt(r2)) * change)
+    else
+        self:Set(target)
+    end
+end
+
+local angle = FindMetaTable("Angle")
+
+function angle:GetInverse()
+    local m = Matrix()
+    m:Rotate(self)
+    m:Invert()
+
+    return m:GetAngles()
 end
 
 -- COLOR
@@ -265,6 +325,10 @@ function defaultdict(constructor, init)
         end,
         __mode = mode
     })
+end
+
+-- multi arg version of defaultdict that should be called
+function memo(func, weak)
 end
 
 function bit.packu32(i)
@@ -327,17 +391,16 @@ function list3(tab)
     return setmetatable({}, list3meta)
 end
 
-
 -- self[0] is faster than self.len ... TODO: try self[true]
 local listmeta = {
     Append = function(self, obj)
-        if obj==nil then return end
+        if obj == nil then return end
         local len = self[0] + 1
         self[len] = obj
         self[0] = len
     end,
     Push = function(self, obj)
-        if obj==nil then return end
+        if obj == nil then return end
         local len = self[0] + 1
         self[len] = obj
         self[0] = len

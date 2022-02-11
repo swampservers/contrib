@@ -70,18 +70,17 @@ function require_workshop_info(id)
 end
 
 -- todo: asyncdefaultdict?
-
 function require_workshop_preview(id)
-    if STEAMWS_PREVIEWICON[id] then 
-        return STEAMWS_PREVIEWICON[id] 
+    if STEAMWS_PREVIEWICON[id] then
+        return STEAMWS_PREVIEWICON[id]
     else
         local info = require_workshop_info(id)
-        
-        if info and not STEAMWS_PREVIEWICON_STARTED[id] then
-            STEAMWS_PREVIEWICON_STARTED[id] = true
 
+        if info and info.previewid and not STEAMWS_PREVIEWICON_STARTED[id] then
+            STEAMWS_PREVIEWICON_STARTED[id] = true
             local _id_ = id
-            steamworks.Download( info.previewid, true, function( name )
+
+            steamworks.Download(info.previewid, true, function(name)
                 STEAMWS_PREVIEWICON[_id_] = AddonMaterial(name)
             end)
         end
@@ -95,12 +94,13 @@ local messagecolor = Color(64, 160, 0)
 function require_workshop(id, range)
     if STEAMWS_MOUNTED[id] then return true end
     if STEAMWS_UNMOUNTED[id] then return false end
-    local shouldload = range~=false
 
-    if range then
-        local info = require_workshop_info(id)
+    local shouldload = range ~= false
 
-        if info then
+    local info = require_workshop_info(id)
+
+    if info and info.size then
+        if range then
             local setting = loadrange:GetInt()
             local mb = info.size / 1000000
 
@@ -123,15 +123,16 @@ function require_workshop(id, range)
             if setting == 1 and mb * 50 > 3000 - range then
                 shouldload = false
             end
-        else
-            shouldload = false
         end
+    else
+        shouldload = false
     end
+
 
     if shouldload then
         if not STEAMWS_DOWNLOAD_STARTED[id] and STEAM_WORKSHOP_INFLIGHT < 2 then
             STEAMWS_DOWNLOAD_STARTED[id] = true
-            MsgC(messagecolor, ("Downloading addon %s (%.2fmb)\n"):format(id, STEAMWS_FILEINFO[id].size / 1000000))
+            MsgC(messagecolor, ("Downloading addon %s (%.2fmb)\n"):format(id, info.size / 1000000))
             local _id_ = id
             STEAM_WORKSHOP_INFLIGHT = STEAM_WORKSHOP_INFLIGHT + 1
 

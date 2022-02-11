@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-include("swamp/sh_core.lua")
+include("swamp/sh_init.lua")
 --- Shorthand for gamemode name
 gm = engine.ActiveGamemode()
 

@@ -92,7 +92,7 @@ function SWEP:SetGunItem(item)
         self[k] = v
     end
 
-    for i, v in ipairs(info.spec_info) do
+    for i, v in ipairs(item.spec_info) do
         if istable(v) then
             self.nwspecs[v[1]] = v[2]
         end

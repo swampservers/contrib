@@ -382,6 +382,19 @@ function API_List(value_type)
     }
 end
 
+-- write as table of values, read as list
+function API_Values(value_type)
+    local rw = API_List(value_type)
+    rw.Write = function(v)
+        API_Write(API_DATALEN, table.Count(v))
+
+        for k,vi in pairs(v) do
+            API_Write(value_type, vi)
+        end
+    end 
+    return rw
+end
+
 function API_Dict(key_type, value_type)
     key_type = key_type or API_ANY
     value_type = value_type or API_ANY

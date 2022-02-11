@@ -34,18 +34,25 @@ setmetatable(vgui, {
         local p = isstring(classname_or_element) and vgui.Create(classname_or_element, parent_or_constructor) or classname_or_element
 
         if constructor then
-            table.insert(vgui_stack, p)
-
-            ProtectedCall(function()
-                constructor(p)
-            end)
-
-            table.remove(vgui_stack)
+            vgui_parent(p, constructor)
         end
 
         return p
     end
 })
+
+--- Push a panel to the vgui parent stack, run callback, and pop it
+function vgui_parent(parent, callback)
+    parent = parent or vgui.GetWorldPanel()
+    table.insert(vgui_stack, parent)
+
+    ProtectedCall(function()
+        callback(parent)
+    end)
+
+    table.remove(vgui_stack)
+
+end
 
 function vgui.Parent()
     return vgui_stack[#vgui_stack]
