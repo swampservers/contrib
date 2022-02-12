@@ -25,6 +25,10 @@ end
 function GM:EntityTakeDamage(target, dmginfo)
     local att, inf = dmginfo:GetAttacker(), dmginfo:GetInflictor()
 
+    if target:IsPlayer() and target:InVehicle() and IsValid(inf) and inf:GetClass() == "prop_physics" then
+        dmginfo:ScaleDamage(0)
+    end
+
     if IsValid(inf) and inf:GetClass() == "npc_grenade_frag" then
         dmginfo:ScaleDamage(2)
     end
