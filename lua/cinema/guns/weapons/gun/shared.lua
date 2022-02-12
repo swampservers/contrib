@@ -463,7 +463,6 @@ end
 --     return BaseClass.SetHoldType(self, ht)
 -- end
 function SWEP:Deploy()
-
     -- request gun item so the value overrides get set
     if CLIENT then
         self:GunItem()

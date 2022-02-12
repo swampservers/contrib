@@ -5,7 +5,6 @@ function GetMapPropTable()
     local arcadeyposrnd = 4
     math.randomseed(1337)
 
-    
     local stuff = {
         {
             class = "gmt_instrument_piano",
