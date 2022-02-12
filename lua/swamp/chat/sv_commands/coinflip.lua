@@ -20,14 +20,14 @@ RegisterChatCommand({'coin', 'coinflip'}, function(ply, arg)
         end
     else
         table.remove(t)
-        local to, c = PlyCount(string.Implode(" ", t))
+        local found = FindSinglePlayer(string.Implode(" ", t))
 
-        if c == 1 then
-            if ply == to then
+        if isnumber(found) then
+            if ply == found then
                 ply:ChatPrint("[red]You can't coinflip yourself!")
             elseif p >= 1000 then
                 -- minimum 1000 point coinflip
-                initCoinFlip(ply, to, p)
+                initCoinFlip(ply, found, p)
             else
                 ply:ChatPrint("[red]A coinflip must be a minimum of 1000 points.")
             end
