@@ -52,8 +52,6 @@ function SWEP:Standingness()
     return math.Clamp((cur.z - duck.z) / (stand.z - duck.z), 0, 1)
 end
 
-
-
 function SWEP:SetItem(item)
     self.item = item
     self.PrintName = item.name
@@ -74,8 +72,6 @@ function SWEP:SetItem(item)
         end
     end
 end
-
-
 
 -- SWEP.SpreadBase = 0.001
 -- SWEP.SpreadUnscoped = 0
@@ -366,9 +362,10 @@ function SWEP:DoKickBack()
     -- if CLIENT and IsFirstTimePredicted() then self:GetOwner():SetEyeAngles(self:GetOwner():EyeAngles() + angle - orig) end
 end
 
-
 function SWEP:OwnerChanged()
-    if CLIENT and self.Owner == Me then self:GetItem() end
+    if CLIENT and self.Owner == Me then
+        self:GetItem()
+    end
 end
 
 function SWEP:Initialize()
@@ -381,10 +378,7 @@ function SWEP:Initialize()
     self.nwspecs = {}
 
     if CLIENT then
-        -- request it
-        -- if self.Owner==Me then self:GetItem() end
-        -- print("ginit", self, self.Owner)
-    else -- self:SetupNWData()
+    else -- request it -- if self.Owner==Me then self:GetItem() end -- print("ginit", self, self.Owner) -- self:SetupNWData()
         timer.Simple(0, function()
             if IsValid(self) then
                 -- self:SetupNWData()
@@ -448,13 +442,9 @@ end
 --     self.keepht = ht
 --     return BaseClass.SetHoldType(self, ht)
 -- end
-
-
-
 function SWEP:Deploy()
     -- request gun item so the value overrides get set
     -- self:GetItem()
-
     self:SetHoldType(self.HoldType)
     self:SetDelayFire(false)
     -- self:SetZoomFullyActiveTime(-1)
