@@ -4,7 +4,7 @@
 local function should_tape_on_click()
     local w = Me and Me:GetActiveWeapon()
     -- print(1)
-    if IsValid(w) and w:GetClass()=="weapon_trash_tape" then
+    if IsValid(w) and w:GetClass():StartWith("weapon_trash") then
         -- print(2)
         -- print(PropTrashLookedAt==HandledEntity, CanTapeWhileHandling(HandledEntity))
         return PropTrashLookedAt==HandledEntity and CanTapeWhileHandling(HandledEntity)
@@ -17,11 +17,11 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
     if IsValid(HandledEntity) and cmd:KeyDown(IN_ATTACK) and should_tape_on_click(HandledEntity) then
         
         if not TapeHandledEntityCooldown then
-            Me:GetWeapon("weapon_trash_tape"):PrimaryAttack(true)
+            TapeLookedAtTrash()
             TapeHandledEntityCooldown=true
             timer.Simple(0.5, function() TapeHandledEntityCooldown=nil end)
         end
-        
+
         cmd:RemoveKey(IN_ATTACK)
         -- HandledEntity = nil
         return
@@ -61,7 +61,7 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
 
     if CurTime() > (EntityHandlingLastSendTime or 0) + 0.2 and EntityHandlingTargetAngle ~= EntityHandlingLastSentAngle then
         EntityHandlingLastSentAngle = Angle(EntityHandlingTargetAngle)
-        net.Start("RotateHeldEnt", true)
+        net.Start("HandleEntity", true)
         net.WriteAngle(EntityHandlingTargetAngle)
         net.SendToServer()
         EntityHandlingLastSendTime = CurTime()
