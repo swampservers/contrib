@@ -92,7 +92,7 @@ RegisterChatCommand({'bounty', 'setbounty'}, function(ply, arg)
         if isnumber(found) then
             ply:ChatPrint("[red]Player " .. arg .. (found == 0 and " not found" or " matched " .. found .. " players"))
         else
-            TryAddBounty(ply, {to}, found)
+            TryAddBounty(ply, {found}, p)
         end
     else
         ply:ChatPrint("[orange]!bounty player points")
@@ -142,7 +142,7 @@ RegisterChatCommand({'showbounty'}, function(ply, arg)
     if isnumber(found) then
         ply:ChatPrint("[orange]!showbounty player (found " .. found .. " players)")
     else
-        ply:ChatPrint("[orange]" .. to:Nick() .. (found:GetBounty() > 0 and "'s bounty is [edgy]" .. found:GetBounty() .. " [orange]points" or " has no bounty"))
+        ply:ChatPrint("[orange]" .. found:Nick() .. (found:GetBounty() > 0 and "'s bounty is [edgy]" .. found:GetBounty() .. " [orange]points" or " has no bounty"))
     end
 end, {
     global = false,
