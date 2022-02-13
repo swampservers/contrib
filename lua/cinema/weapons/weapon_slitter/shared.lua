@@ -73,46 +73,79 @@ SlitterModels = {
 function SWEP:SetupDataTables()
     self:NetworkVar("String", 0, "ForceModel")
 
-    -- self:NetworkVarNotify( "ForceModel", self.Deploy )
+    if CLIENT and self:GetForceModel()~="" then print("NIA") self:ApplySkin(self:GetForceModel()) end
+end
+
+-- -- determines the knife model; this is used so it works with viewmdoel fixer script
+-- function SWEP:GetViewModel()
+--     return self.ViewModel
+-- --     return self:GetForceModel() == "" and "models/weapons/w_knife_t.mdl" or self:GetForceModel()
+-- end
+
+function SWEP:ApplySkin(model)
+    self:SetForceModel(model)
+    self.WorldModel = model
+    self.ViewModel = model
+    self.PrintName = SlitterModels[model].name
+end
+
+
+-- do i really wanna do this? or find a way to encode everything in a data table string so its sync?
+function SWEP:SetItem(item)
+    self.item = item
+
     if SERVER then
-        timer.Simple(0, function()
-            if IsValid(self) and IsValid(self.Owner) then
-                for k, v in pairs(self.Owner.items.knifeskin or {}) do
-                    if v.eq then
-                        self:SetForceModel(v.model or "")
-                        self.WorldModel = v.model
-                        self:SetModel(self.WorldModel)
-                        self:Deploy()
-                    end
-                end
-            end
-        end)
-        -- print(self.Owner)
-        -- self:SetForceModel(table.Random(table.GetKeys(SlitterModels))) 
+        self:ApplySkin(item.model)
+    else
+        item:SetEntityMaterial(self)
     end
 end
 
--- determines the knife model; this is used so it works with viewmdoel fixer script
-function SWEP:GetViewModel()
-    return self:GetForceModel() == "" and "models/weapons/w_knife_t.mdl" or self:GetForceModel()
-end
 
 function SWEP:Deploy()
-    if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
-        self.Owner:GetViewModel():SetModel(self:GetViewModel())
+    -- print("deploy",self, self.Owner)
+
+    if SERVER and not self.AppliedSkin then
+        self.AppliedSkin = true
+
+        if IsValid(self) and IsValid(self.Owner) then
+            for k, v in pairs(self.Owner.items.knifeskin or {}) do
+                if v.eq then
+                    print("IMs",v)
+                    self:SetItem(v)
+                    -- self:SetModel(self.WorldModel)
+
+                end
+            end
+        end
     end
 
+
+    -- if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
+    --     self.Owner:GetViewModel():SetModel(self:GetViewModel())
+    -- end
+
     -- self:SetModel(self:GetViewModel())
-    self.PrintName = SlitterModels[self:GetViewModel()].name
+    -- self.PrintName = SlitterModels[self:GetViewModel()].name
 end
 
 function SWEP:Initialize()
     self:SetHoldType("knife")
+
+
+    -- print("init",self, self.Owner, self:GetForceModel())
 end
 
 local function sinlerp(lrp)
     --*math.pi
     return 0.5 - 0.5 * math.cos(lrp * 2.9)
+end
+
+function SWEP:ModelOffset(pos, ang)
+    local basemodelstuff = SlitterModels["models/weapons/w_knife_t.mdl"]
+    local modelstuff = SlitterModels[self.WorldModel]
+    local mp, ma = WorldToLocal(modelstuff.pos, modelstuff.ang, basemodelstuff.pos, basemodelstuff.ang)
+    return LocalToWorld(mp, ma, pos, ang)
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
@@ -128,97 +161,75 @@ function SWEP:GetViewModelPosition(pos, ang)
     ang:RotateAroundAxis(r, ang2.x)
     ang:RotateAroundAxis(f, ang2.y)
     ang:RotateAroundAxis(u, ang2.z)
-    local basemodelstuff = SlitterModels["models/weapons/w_knife_t.mdl"]
-    local modelstuff = SlitterModels[self:GetViewModel()]
-    local mp, ma = WorldToLocal(modelstuff.pos, modelstuff.ang, basemodelstuff.pos, basemodelstuff.ang)
-    pos, ang = LocalToWorld(mp, ma, pos, ang)
 
-    return pos, ang
+    return self:ModelOffset(pos, ang)
 end
 
 function SWEP:PreDrawViewModel(vm)
+    local item = self:GetItem()
+    if item then  item:SetEntityMaterial(vm) end
+
     local m = Matrix()
-    m:SetScale(SlitterModels[self:GetViewModel()].scale)
+    m:SetScale(SlitterModels[self.WorldModel].scale) --self:GetViewModel()].scale)
     vm:EnableMatrix("RenderMultiply", m)
 end
 
 function SWEP:PostDrawViewModel(vm)
     vm:DisableMatrix("RenderMultiply")
+    vm:SetMaterial("")
+    vm:SetSubMaterial()
 end
 
-function SlitterBuildBonePositions(self, nbones)
-end
+
 
 function SWEP:DrawWorldModel()
-    if self.WorldModel ~= self:GetViewModel() then
-        self.WorldModel = self:GetViewModel()
-        self:SetModel(self.WorldModel)
-    end
+    self:GetItem()
 
-    -- if not self.BBPCallback then 
-    --     self.BBPCallback=true
-    --     self:AddCallback( "BuildBonePositions", function( ent, numbones )
-    --         SlitterBuildBonePositions( ent, numbones )
-    --     end )
-    -- end
-    -- self:SetupBones()
-    -- self:DrawModel()
     local ply = self:GetOwner()
 
     if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
         local bon = ply:LookupBone(bn) or 0
-        local opos = self:GetPos()
-        local oang = self:GetAngles()
+        local pos = self:GetPos()
+        local ang = self:GetAngles()
         local bp, ba = ply:GetBonePosition(bon)
 
         if bp then
-            opos = bp
-        end
-
-        if ba then
-            oang = ba
+            pos,ang = bp,ba
         end
 
         if ply:IsPony() then
-            oang:RotateAroundAxis(oang:Forward(), 180)
-            oang:RotateAroundAxis(oang:Up(), -90)
-            opos = opos + oang:Up() * -0.5 + oang:Right() * -8.3 + oang:Forward() * -0.2
+            ang:RotateAroundAxis(ang:Forward(), 180)
+            ang:RotateAroundAxis(ang:Up(), -90)
+            pos = pos + ang:Up() * -0.5 + ang:Right() * -8.3 + ang:Forward() * -0.2
         else
-            opos = opos -- + oang:Right()*12.5
+            pos = pos -- + ang:Right()*12.5
         end
 
-        local modelstuff = SlitterModels[self:GetViewModel()]
-        -- if not modelstuff.csmodel then
-        --     print("GEN")
-        --     modelstuff.csmodel = ClientsideModel(self:GetViewModel())
-        --     modelstuff.csmodel:SetNoDraw(true)
+        local modelstuff = SlitterModels[self.WorldModel] --self:GetViewModel()]
         local mat = Matrix()
         mat:SetTranslation(modelstuff.pos)
         mat:SetAngles(modelstuff.ang)
         mat:SetScale(modelstuff.scale)
         self:EnableMatrix("RenderMultiply", mat)
-        --     modelstuff.csmodel:EnableMatrix("RenderMultiply", mat)
-        -- end
-        -- opos, oang = LocalToWorld(modelstuff.pos, modelstuff.ang, opos, oang)
-        -- print(self:GetBoneCount())
+
         self:InvalidateBoneCache()
         self:SetupBones()
+
+
         local mrt = Matrix() --self:GetBoneMatrix(0)
 
-        if mrt then
-            --     print("MRT", nbones )
-            mrt:SetTranslation(opos)
-            mrt:SetAngles(oang)
-            -- mrt:SetScale(modelstuff.scale)
-            -- modelstuff.csmodel:SetPos(opos)
-            -- modelstuff.csmodel:SetAngles(oang)
-            -- modelstuff.csmodel:SetupBones()
-            -- -- modelstuff.csmodel:SetBoneMatrix(0, mrt)
-            -- modelstuff.csmodel:DrawModel()
-            self:SetBoneMatrix(0, mrt)
-            -- self:SetBonePosition(0, opos, oang)
-        end
+            -- pos,ang = self:ModelOffset(pos, ang)
+        
+            -- mrt:SetTranslation(pos)
+            -- mrt:SetAngles(ang)
+            -- -- mrt:SetScale(modelstuff.scale)
+
+            -- self:SetBoneMatrix(0, mrt)
+            -- print(self:GetModel(), self:GetBoneCount())
+            self:SetBonePosition(0, pos, ang) --self:ModelOffset(pos, ang))
+            
+        
     end
 
     self:DrawModel()

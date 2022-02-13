@@ -52,33 +52,9 @@ function SWEP:Standingness()
     return math.Clamp((cur.z - duck.z) / (stand.z - duck.z), 0, 1)
 end
 
-API_Request("GunItem", {API_ENTITY}, function(ply, ent)
-    if IsValid(ent) and ent.GunItem and ent:GunItem() then
-        ent.sentitemto = ent.sentitemto or setmetatable({}, {
-            __mode = "kv"
-        })
 
-        if not ent.sentitemto[ply] then
-            ent.sentitemto[ply] = true
-            ply:CommandGunItem(ent, ent:GunItem())
-        end
-    end
-end)
 
-API_Command("GunItem", {API_ENTITY, API_SHOWN_ITEM}, function(ent, item)
-    ent:SetGunItem(item)
-end)
-
-function SWEP:GunItem()
-    if self.item then return self.item end
-
-    if CLIENT and not self.requesteditem then
-        self.requesteditem = true
-        RequestGunItem(self)
-    end
-end
-
-function SWEP:SetGunItem(item)
+function SWEP:SetItem(item)
     self.item = item
     self.PrintName = item.name
 
@@ -98,6 +74,8 @@ function SWEP:SetGunItem(item)
         end
     end
 end
+
+
 
 -- SWEP.SpreadBase = 0.001
 -- SWEP.SpreadUnscoped = 0
@@ -388,6 +366,11 @@ function SWEP:DoKickBack()
     -- if CLIENT and IsFirstTimePredicted() then self:GetOwner():SetEyeAngles(self:GetOwner():EyeAngles() + angle - orig) end
 end
 
+
+function SWEP:OwnerChanged()
+    if CLIENT and self.Owner == Me then self:GetItem() end
+end
+
 function SWEP:Initialize()
     self:SetHoldType(self.HoldType)
     self:SetDelayFire(true)
@@ -398,6 +381,9 @@ function SWEP:Initialize()
     self.nwspecs = {}
 
     if CLIENT then
+        -- request it
+        -- if self.Owner==Me then self:GetItem() end
+        -- print("ginit", self, self.Owner)
     else -- self:SetupNWData()
         timer.Simple(0, function()
             if IsValid(self) then
@@ -462,11 +448,12 @@ end
 --     self.keepht = ht
 --     return BaseClass.SetHoldType(self, ht)
 -- end
+
+
+
 function SWEP:Deploy()
     -- request gun item so the value overrides get set
-    if CLIENT then
-        self:GunItem()
-    end
+    -- self:GetItem()
 
     self:SetHoldType(self.HoldType)
     self:SetDelayFire(false)
