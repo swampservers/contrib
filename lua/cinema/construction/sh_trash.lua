@@ -1,12 +1,22 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-API_Command("SetHandledEntity", {API_ANY, API_ANY}, function(ent, touchpos)
+
+
+function CanTapeWhileHandling(ent)
+    return ent.AnchorTouchPos and ent:GetPos():Distance(ent.AnchorTouchPos) < 8
+end
+
+API_Command("HandleEntity", {API_ANY, API_ANY}, function(ent, touchpos)
     if not ent and IsValid(HandledEntity) then
+        HandledEntity.AnchorTouchPos = nil
         HandledEntity:SetRenderAngles()
     end
 
+    print(touchpos)
     HandledEntity = ent
-    HandledEntityTouchPos = touchpos
+    if ent then HandledEntity.AnchorTouchPos = touchpos end
 end)
+
+
 
 function FindAllTrash()
     local tab = {}

@@ -82,9 +82,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     return pos, ang
 end
 
-function SWEP:PrimaryAttack()
+function SWEP:PrimaryAttack(force)
     self:SetNextPrimaryFire(CurTime() + 0.3)
-    if not IsFirstTimePredicted() then return end
+    if not IsFirstTimePredicted() and not force then return end
 
     if CLIENT then
         if PropTrashLookedAt then
@@ -175,6 +175,8 @@ if CLIENT then
                     WorldLookedAtPos = trace.HitPos
                 end
             end
+
+            if not PropTrashLookedAt  and IsValid(HandledEntity) and HandledEntity:GetTrashClass() then PropTrashLookedAt=HandledEntity PropTrashLookedAtPos = HandledEntity:GetPos() end
         end
     end)
 end
