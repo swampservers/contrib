@@ -22,7 +22,7 @@ RegisterChatCommand({'coin', 'coinflip'}, function(ply, arg)
         table.remove(t)
         local found = FindSinglePlayer(string.Implode(" ", t))
 
-        if isnumber(found) then
+        if not isnumber(found) then
             if ply == found then
                 ply:ChatPrint("[red]You can't coinflip yourself!")
             elseif p >= 1000 then
@@ -32,7 +32,7 @@ RegisterChatCommand({'coin', 'coinflip'}, function(ply, arg)
                 ply:ChatPrint("[red]A coinflip must be a minimum of 1000 points.")
             end
         else
-            ply:ChatPrint("[red]Player " .. string.Implode(" ", t) .. " not found.")
+            ply:ChatPrint("[red]Player " .. string.Implode(" ", t) .. (found == 0 and " not found" or " matched " .. found .. " players"))
         end
     end
 end, {
