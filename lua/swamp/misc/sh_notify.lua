@@ -64,14 +64,16 @@ else
     util.AddNetworkString('Notify')
 end
 
---- Show a notification (bottow center screen popup)
+--- Show a notification (bottow center screen popup). OK to call on invalid players (does nothing).
 function Player:Notify(...)
     local st = table.concat({...}, ' ')
 
     if SERVER then
-        net.Start('Notify')
-        net.WriteString(st)
-        net.Send(self)
+        if IsValid(self) then 
+            net.Start('Notify')
+            net.WriteString(st)
+            net.Send(self)
+        end
     else
         assert(self == Me)
         LocalPlayerNotify(st)

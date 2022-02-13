@@ -229,7 +229,7 @@ Pop up the MOTD browser thing with this URL
 *file: [lua/swamp/misc/cl_motd.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/misc/cl_motd.lua)*
 
 ### function Player:Notify(...)
-Show a notification (bottow center screen popup)
+Show a notification (bottow center screen popup). OK to call on invalid players (does nothing).
 \
 *file: [lua/swamp/misc/sh_notify.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/misc/sh_notify.lua)*
 
