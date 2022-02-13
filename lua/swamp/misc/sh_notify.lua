@@ -69,7 +69,7 @@ function Player:Notify(...)
     local st = table.concat({...}, ' ')
 
     if SERVER then
-        if IsValid(self) then 
+        if IsValid(self) then
             net.Start('Notify')
             net.WriteString(st)
             net.Send(self)
