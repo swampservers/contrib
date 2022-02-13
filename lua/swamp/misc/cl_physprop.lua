@@ -10,6 +10,7 @@ net.Receive("ClientPhysProp", function()
 end)
 
 function GibClientProp(mdl, pos, ang, vel, scale, t)
+    if not Me then return end
     local ent = ents.CreateClientProp()
     if not IsValid(ent) then return end
     ent:SetModel(mdl)
