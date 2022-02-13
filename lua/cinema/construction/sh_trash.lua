@@ -1,4 +1,18 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+
+
+API_Command("SetHandledEntity", {API_ANY, API_ANY}, function(ent, touchpos)
+    if not ent and IsValid(HandledEntity) then
+        HandledEntity:SetRenderAngles()
+    end
+
+    HandledEntity = ent
+    HandledEntityTouchPos = touchpos
+end)
+
+
+
 function FindAllTrash()
     local tab = {}
 

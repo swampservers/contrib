@@ -167,7 +167,7 @@ function SETTINGS:Create()
 
     addDropdown("Video quality", "cinema_quality", "Video playback quality; affects FPS.\nSettings are 256p/512p/1024p", {"Low (best FPS)", "Medium", "High"})
 
-    addDropdown("Playermodels", "swamp_workshop", "When to download playermodels?", {"Don't Download", "Small (<10mb) only", "Medium (<30mb) only", "All (<60mb) - Short range", "All (<60mb) - Long range"}, 100, 100, -3)
+    addDropdown("Playermodels", "swamp_workshop", "When to download playermodels?", {"Don't Download", "Small (≤10mb) only", "Medium (≤30mb) only", "All (≤60mb) - Short range", "All (≤60mb) - Long range"}, 100, 100, -3)
 
     addCheckbox('Dynamic theater lighting', "cinema_lightfx", 'Exclusive lighting effects (reduces fps)')
     addCheckbox('Turbo button (increase FPS)', "swamp_fps_boost", "Put your gaymergear PC into overdrive")
