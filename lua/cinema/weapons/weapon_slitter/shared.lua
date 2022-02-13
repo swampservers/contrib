@@ -73,7 +73,10 @@ SlitterModels = {
 function SWEP:SetupDataTables()
     self:NetworkVar("String", 0, "ForceModel")
 
-    if CLIENT and self:GetForceModel()~="" then print("NIA") self:ApplySkin(self:GetForceModel()) end
+    if CLIENT and self:GetForceModel() ~= "" then
+        print("NIA")
+        self:ApplySkin(self:GetForceModel())
+    end
 end
 
 -- -- determines the knife model; this is used so it works with viewmdoel fixer script
@@ -81,14 +84,12 @@ end
 --     return self.ViewModel
 -- --     return self:GetForceModel() == "" and "models/weapons/w_knife_t.mdl" or self:GetForceModel()
 -- end
-
 function SWEP:ApplySkin(model)
     self:SetForceModel(model)
     self.WorldModel = model
     self.ViewModel = model
     self.PrintName = SlitterModels[model].name
 end
-
 
 -- do i really wanna do this? or find a way to encode everything in a data table string so its sync?
 function SWEP:SetItem(item)
@@ -101,38 +102,30 @@ function SWEP:SetItem(item)
     end
 end
 
-
 function SWEP:Deploy()
     -- print("deploy",self, self.Owner)
-
     if SERVER and not self.AppliedSkin then
         self.AppliedSkin = true
 
         if IsValid(self) and IsValid(self.Owner) then
             for k, v in pairs(self.Owner.items.knifeskin or {}) do
                 if v.eq then
-                    print("IMs",v)
+                    print("IMs", v)
                     self:SetItem(v)
                     -- self:SetModel(self.WorldModel)
-
                 end
             end
         end
     end
-
-
     -- if IsValid(self.Owner) and IsValid(self.Owner:GetViewModel()) then
     --     self.Owner:GetViewModel():SetModel(self:GetViewModel())
     -- end
-
     -- self:SetModel(self:GetViewModel())
     -- self.PrintName = SlitterModels[self:GetViewModel()].name
 end
 
 function SWEP:Initialize()
     self:SetHoldType("knife")
-
-
     -- print("init",self, self.Owner, self:GetForceModel())
 end
 
@@ -145,6 +138,7 @@ function SWEP:ModelOffset(pos, ang)
     local basemodelstuff = SlitterModels["models/weapons/w_knife_t.mdl"]
     local modelstuff = SlitterModels[self.WorldModel]
     local mp, ma = WorldToLocal(modelstuff.pos, modelstuff.ang, basemodelstuff.pos, basemodelstuff.ang)
+
     return LocalToWorld(mp, ma, pos, ang)
 end
 
@@ -167,7 +161,10 @@ end
 
 function SWEP:PreDrawViewModel(vm)
     local item = self:GetItem()
-    if item then  item:SetEntityMaterial(vm) end
+
+    if item then
+        item:SetEntityMaterial(vm)
+    end
 
     local m = Matrix()
     m:SetScale(SlitterModels[self.WorldModel].scale) --self:GetViewModel()].scale)
@@ -180,11 +177,8 @@ function SWEP:PostDrawViewModel(vm)
     vm:SetSubMaterial()
 end
 
-
-
 function SWEP:DrawWorldModel()
     self:GetItem()
-
     local ply = self:GetOwner()
 
     if IsValid(ply) then
@@ -195,7 +189,7 @@ function SWEP:DrawWorldModel()
         local bp, ba = ply:GetBonePosition(bon)
 
         if bp then
-            pos,ang = bp,ba
+            pos, ang = bp, ba
         end
 
         if ply:IsPony() then
@@ -212,27 +206,18 @@ function SWEP:DrawWorldModel()
         mat:SetAngles(modelstuff.ang)
         mat:SetScale(modelstuff.scale)
         self:EnableMatrix("RenderMultiply", mat)
-
         self.matrix = Matrix()
         self.matrix:SetScale(modelstuff.scale)
-
         self:InvalidateBoneCache()
         self:SetupBones()
-
-
         local mrt = Matrix() --self:GetBoneMatrix(0)
-
-            -- pos,ang = self:ModelOffset(pos, ang)
-        
-            -- mrt:SetTranslation(pos)
-            -- mrt:SetAngles(ang)
-            -- -- mrt:SetScale(modelstuff.scale)
-
-            -- self:SetBoneMatrix(0, mrt)
-            -- print(self:GetModel(), self:GetBoneCount())
-            self:SetBonePosition(0, pos, ang) --self:ModelOffset(pos, ang))
-            
-        
+        -- pos,ang = self:ModelOffset(pos, ang)
+        -- mrt:SetTranslation(pos)
+        -- mrt:SetAngles(ang)
+        -- -- mrt:SetScale(modelstuff.scale)
+        -- self:SetBoneMatrix(0, mrt)
+        -- print(self:GetModel(), self:GetBoneCount())
+        self:SetBonePosition(0, pos, ang) --self:ModelOffset(pos, ang))
     end
 
     self:DrawModel()
