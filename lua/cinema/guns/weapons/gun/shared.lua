@@ -53,6 +53,7 @@ function SWEP:Standingness()
 end
 
 function SWEP:SetItem(item)
+    print(item)
     self.item = item
     self.PrintName = item.name
 
