@@ -85,7 +85,6 @@ end
 function SWEP:PrimaryAttack(force)
     self:SetNextPrimaryFire(CurTime() + 0.3)
     if not IsFirstTimePredicted() and not force then return end
-
     TapeLookedAtTrash()
 end
 
@@ -103,22 +102,20 @@ function TapeLookedAtTrash()
     end
 end
 
-
 function SWEP:SecondaryAttack()
     self:SetNextSecondaryFire(CurTime() + 0.3)
     if not IsFirstTimePredicted() then return end
 
     if CLIENT and PropTrashLookedAt then
-            net.Start("TrashAction")
+        net.Start("TrashAction")
 
-            net.WriteTable({
-                ent = PropTrashLookedAt,
-                act = TRASHACT_UNTAPE,
-                hitpos = PropTrashLookedAtPos
-            })
+        net.WriteTable({
+            ent = PropTrashLookedAt,
+            act = TRASHACT_UNTAPE,
+            hitpos = PropTrashLookedAtPos
+        })
 
-            net.SendToServer()
-       
+        net.SendToServer()
     end
 end
 
@@ -178,7 +175,10 @@ if CLIENT then
                 end
             end
 
-            if not PropTrashLookedAt  and IsValid(HandledEntity) and HandledEntity:GetTrashClass() then PropTrashLookedAt=HandledEntity PropTrashLookedAtPos = HandledEntity:GetPos() end
+            if not PropTrashLookedAt and IsValid(HandledEntity) and HandledEntity:GetTrashClass() then
+                PropTrashLookedAt = HandledEntity
+                PropTrashLookedAtPos = HandledEntity:GetPos()
+            end
         end
     end)
 end

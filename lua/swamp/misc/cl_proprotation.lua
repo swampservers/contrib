@@ -1,29 +1,26 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 local function should_tape_on_click()
     local w = Me and Me:GetActiveWeapon()
     -- print(1)
-    if IsValid(w) and w:GetClass():StartWith("weapon_trash") then
-        -- print(2)
-        -- print(PropTrashLookedAt==HandledEntity, CanTapeWhileHandling(HandledEntity))
-        return PropTrashLookedAt==HandledEntity and CanTapeWhileHandling(HandledEntity)
-    end
+    if IsValid(w) and w:GetClass():StartWith("weapon_trash") then return PropTrashLookedAt == HandledEntity and CanTapeWhileHandling(HandledEntity) end -- print(2) -- print(PropTrashLookedAt==HandledEntity, CanTapeWhileHandling(HandledEntity))
 end
 
 hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
     if not IsValid(Me) then return end
 
     if IsValid(HandledEntity) and cmd:KeyDown(IN_ATTACK) and should_tape_on_click(HandledEntity) then
-        
         if not TapeHandledEntityCooldown then
             TapeLookedAtTrash()
-            TapeHandledEntityCooldown=true
-            timer.Simple(0.5, function() TapeHandledEntityCooldown=nil end)
+            TapeHandledEntityCooldown = true
+
+            timer.Simple(0.5, function()
+                TapeHandledEntityCooldown = nil
+            end)
         end
 
         cmd:RemoveKey(IN_ATTACK)
         -- HandledEntity = nil
+
         return
     end
 
@@ -78,7 +75,7 @@ hook.Add("HUDPaint", "RotateHeldEntsHint", function()
         -- print(HandledEntity)
         draw.SimpleText("Hold RMB to rotate", "DermaLarge", ScrW() / 2, ScrH() * 5 / 6, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
-        if should_tape_on_click(HandledEntity) then 
+        if should_tape_on_click(HandledEntity) then
             draw.SimpleText("Press LMB to tape!", "DermaLarge", ScrW() / 2, ScrH() * 4 / 6, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
     end
