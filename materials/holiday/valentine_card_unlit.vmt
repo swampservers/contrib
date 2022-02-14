@@ -1,4 +1,5 @@
 "UnlitGeneric"
 {
 	"$basetexture" "holiday/valentine_card"
+	"$translucent" "1"
 }

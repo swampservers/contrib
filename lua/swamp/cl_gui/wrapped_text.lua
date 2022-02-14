@@ -70,7 +70,7 @@ end
 vgui.Register("SLabel", {
     Init = function(self)
         self.text = ""
-        self.font = "Default"
+        self.font = "DermaDefault"
         self.color = color_white
         self.xalign = TEXT_ALIGN_CENTER
         self.yalign = TEXT_ALIGN_CENTER

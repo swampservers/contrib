@@ -31,34 +31,30 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
     if IsValid(ply) then
-        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-        local bon = ply:LookupBone(bn) or 0
-        local opos = self:GetPos()
-        local oang = self:GetAngles()
-        local bp, ba = ply:GetBonePosition(bon)
 
+        local bp, ba = ply:GetBonePosition(ply:LookupBone(ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand") or 0)
+
+        local pos,ang
         if bp then
-            opos = bp
-        end
-
-        if ba then
-            oang = ba
+            pos,ang = bp,ba
+        else
+            pos,ang = self:GetPos(),self:GetAngles()
         end
 
         if ply:IsPony() then
-            oang:RotateAroundAxis(oang:Forward(), -90)
-            opos = opos + oang:Up() * 10 + oang:Right() * -1 + oang:Forward() * 7
+            ang:RotateAroundAxis(ang:Forward(), -90)
+            pos = pos + ang:Up() * 10 + ang:Right() * -1 + ang:Forward() * 7
         else
-            oang:RotateAroundAxis(oang:Forward(), 30)
-            opos = opos + oang:Right() * 7 + oang:Up() * 3 + oang:Forward() * -4
+            ang:RotateAroundAxis(ang:Forward(), 30)
+            pos = pos + ang:Right() * 7 + ang:Up() * 3 + ang:Forward() * -4
         end
 
         self:SetupBones()
         local mrt = self:GetBoneMatrix(0)
 
         if mrt then
-            mrt:SetTranslation(opos)
-            mrt:SetAngles(oang)
+            mrt:SetTranslation(pos)
+            mrt:SetAngles(ang)
             mrt:SetScale(Vector(0.8, 0.8, 0.8))
             self:SetBoneMatrix(0, mrt)
         end
