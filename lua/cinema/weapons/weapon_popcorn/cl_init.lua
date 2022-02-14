@@ -31,14 +31,13 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
     if IsValid(ply) then
-
         local bp, ba = ply:GetBonePosition(ply:LookupBone(ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand") or 0)
+        local pos, ang
 
-        local pos,ang
         if bp then
-            pos,ang = bp,ba
+            pos, ang = bp, ba
         else
-            pos,ang = self:GetPos(),self:GetAngles()
+            pos, ang = self:GetPos(), self:GetAngles()
         end
 
         if ply:IsPony() then
