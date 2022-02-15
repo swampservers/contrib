@@ -3,13 +3,16 @@ local Player = FindMetaTable("Player")
 
 --- Get current title string or ""
 function Player:GetTitle()
-    return self:GetNWString("title", "")
+    local title = self:GetNWString("title", "")
+    return TitleDisplayFn[title] and TitleDisplayFn[title](self) or title
 end
 
 --NOMINIFY
 Titles = {}
 TitleRefreshDir = defaultdict(function() return {} end)
 RewardIdTitleDir = defaultdict(function() return {} end)
+
+TitleDisplayFn = {}
 
 -- not implemented lol
 function TitleCategory(name)
@@ -149,10 +152,33 @@ end
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --group_view: optional, pset id and verb to track with
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
+
+
+
+
+
+
+
+AddTitle({
+    {1, "Lover", 25000},
+}, "On Valentine's Day, accept a valentine from another player, or give one to someone and have them accept it", "s_valentine")
+
+AddTitle({
+    {1, "Incel"},
+}, "Offer a valentine to someone and have them reject it", "s_rejection")
+
+AddTitle("valentine", "Show who your valentine is!", {}, {
+    progress_fn = function(ply) return ply.NWP.valentine_n~=nil end,
+})
+
+TitleDisplayFn.valentine = function(ply) return "❤ "..ply.NWP.valentine_n end
+    
+
 --jolly
 AddTitle({
     {1, "Festive", 25000},
 }, "During December, give a present (from shop) to another player", "s_christmas")
+
 
 -- {1000, "Saint Nick", 1000000}
 AddTitle({
