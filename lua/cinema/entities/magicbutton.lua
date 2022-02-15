@@ -243,6 +243,7 @@ function ENT:Initialize()
         self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
         self:SetUseType(SIMPLE_USE)
         self:SetColor(HSVToColor(math.Rand(0, 360), 1, 1))
+        self.Entity:DrawShadow(false)
         local phys = self:GetPhysicsObject()
 
         if IsValid(phys) then
@@ -306,8 +307,6 @@ function ENT:Draw()
     --render.SuppressEngineLighting( true )
     if util.IsValidModel("models/pyroteknik/secretbutton.mdl") then
         self:DrawModel()
-    else
-        self:SetNoDraw(true)
     end
     render.SuppressEngineLighting(false)
     DREWBUTTONTHISFRAME = true
