@@ -74,7 +74,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("String", 0, "ForceModel")
 
     if CLIENT and self:GetForceModel() ~= "" then
-        print("NIA")
+
         self:ApplySkin(self:GetForceModel())
     end
 end
@@ -110,7 +110,7 @@ function SWEP:Deploy()
         if IsValid(self) and IsValid(self.Owner) then
             for k, v in pairs(self.Owner.items.knifeskin or {}) do
                 if v.eq then
-                    print("IMs", v)
+
                     self:SetItem(v)
                     -- self:SetModel(self.WorldModel)
                 end
