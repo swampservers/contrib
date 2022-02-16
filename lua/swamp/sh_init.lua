@@ -54,7 +54,6 @@ function For(tab, callback)
     return out
 end
 
-
 --- Returns next power of 2 >= n
 function math.nextpow2(n)
     return math.pow(2, math.ceil(math.log(n) / math.log(2)))

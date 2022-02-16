@@ -151,7 +151,6 @@ local ColorSquareMaterial = CreateMaterial("ScreenSpaceSquare", "UnlitGeneric", 
     ["$color"] = "[1 1 1]"
 })
 
-
 function DrawSquareColor(blend, color2, skipcopy)
     --WE NEED A RT WITHOUT ALPHA OR IT BUGS OUT
     if not DRAWSQUARECOLORRT or DRAWSQUARECOLORRT:Width() < ScrW() or DRAWSQUARECOLORRT:Height() < ScrH() then
