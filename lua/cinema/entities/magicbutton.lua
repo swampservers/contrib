@@ -304,10 +304,12 @@ function ENT:Draw()
     render.SetLocalModelLights({light1})
 
     render.SetAmbientLight(0.05, 0.05, 0.05)
+
     --render.SuppressEngineLighting( true )
     if util.IsValidModel("models/pyroteknik/secretbutton.mdl") then
         self:DrawModel()
     end
+
     render.SuppressEngineLighting(false)
     DREWBUTTONTHISFRAME = true
 end
