@@ -396,7 +396,7 @@ AddTitle({
     {100, "Dev Server Proponent"}
 }, "Experience %s different Lua errors", "s_clienterror_size")
 
-if SERVER then
+if SERVER and gm=="cinema" then
     local weaponcallbacks = {
         weapon_gauntlet = function(atk, vic)
             if vic:InVehicle() then
