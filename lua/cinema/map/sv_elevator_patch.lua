@@ -11,3 +11,19 @@ end)
 hook.Add("PlayerShouldTakeDamage", "elevattorfix", function(ply, att)
     if att:GetClass() == "func_movelinear" and att:GetPos().y == -624 then return false end
 end)
+
+hook.Add("FindUseEntity", "ELEVATORBUTTONZ", function(ply, ent)
+    if IsValid(ent) and ent:GetName():StartWith("tt_elevator_button_") then
+        local tr = ply:GetEyeTrace()
+
+        if tr.Hit then
+            for k, v in pairs(ents.FindByClass("func_button")) do
+                if v:GetName():StartWith("tt_elevator_button_") and v:GetPos():Distance(tr.HitPos) < ent:GetPos():Distance(tr.HitPos) then
+                    ent = v
+                end
+            end
+
+            return ent
+        end
+    end
+end)

@@ -151,9 +151,6 @@ local ColorSquareMaterial = CreateMaterial("ScreenSpaceSquare", "UnlitGeneric", 
     ["$color"] = "[1 1 1]"
 })
 
-function math.power2(n)
-    return math.pow(2, math.ceil(math.log(n) / math.log(2)))
-end
 
 function DrawSquareColor(blend, color2, skipcopy)
     --WE NEED A RT WITHOUT ALPHA OR IT BUGS OUT
