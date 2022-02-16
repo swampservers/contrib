@@ -256,10 +256,14 @@ function PLAYERLIST:PerformLayout()
 end
 
 vgui.Register("ScoreboardPlayerList", PLAYERLIST)
-local PLAYER = {}
-PLAYER.Padding = SS_COMMONMARGIN
 
-function PLAYER:Init()
+
+
+
+vgui.Register("ScoreboardPlayer", {
+    Padding = SS_COMMONMARGIN,
+
+Init =function(self)
     self:SetTall(PLAYERLIST.PlyHeight)
     self.Name = Label("Unknown", self)
     self.Name:SetFont("ScoreboardName")
@@ -335,9 +339,10 @@ function PLAYER:Init()
             p:CenterVertical()
         end)
     end)
-end
+end,
 
-function PLAYER:UpdatePlayer()
+
+UpdatePlayer =function(self)
     if not IsValid(self.Player) then
         local parent = self:GetParent()
 
@@ -410,9 +415,9 @@ function PLAYER:UpdatePlayer()
     self.Name:SetText(self.Player:Name())
     self.Location:SetText(string.upper(self.Player:GetLocationName() or "Unknown"))
     self.Ping:Update()
-end
+end,
 
-function PLAYER:SetPlayer(ply)
+SetPlayer =function(self,ply)
     self.Player = ply
 
     self.AvatarButton.DoClick = function()
@@ -460,9 +465,9 @@ function PLAYER:SetPlayer(ply)
 
     self.Ping:SetPlayer(ply)
     self:UpdatePlayer()
-end
+end,
 
-function PLAYER:PerformLayout()
+PerformLayout =function(self)
     self.Name:SizeToContents()
     self.Name:AlignTop(self.Padding - 4)
     --if self.Player:GetNWBool("afk") then
@@ -480,9 +485,9 @@ function PLAYER:PerformLayout()
     self.Avatar:AlignTop(self.Padding)
     self.Avatar:AlignLeft(self.Padding)
     self.Avatar:CenterVertical()
-end
+end,
 
-function PLAYER:Paint(w, h)
+Paint =function(self,w, h)
     surface.SetDrawColor(BrandColorGrayDark)
     surface.DrawRect(0, 0, self:GetSize())
     surface.SetDrawColor(255, 255, 255, 255)
@@ -508,87 +513,95 @@ function PLAYER:Paint(w, h)
     end
 end
 
-vgui.Register("ScoreboardPlayer", PLAYER)
-local PLAYERPING = {}
-PLAYERPING.Padding = 0
 
-function PLAYERPING:Init()
-    self.Heights = {3, 6, 9, 12}
+})
 
-    self.PingAmounts = {300, 225, 150, 75}
-end
 
-function PLAYERPING:Update()
-    local ping = self.Player:Ping()
-    self.PingVal = ping
-end
+vgui.Register("ScoreboardPlayerPing", {
 
-function PLAYERPING:SetPlayer(ply)
-    self.Player = ply
-    self:Update()
-end
 
-function PLAYERPING:Paint(w, h)
-    if not self:IsHovered() then
-        local maxh = self.Heights[#self.Heights]
-        local bar = 5
-        local total = #self.Heights * bar
-        local x = w / 2 - total / 2
+    Padding = 0,
 
-        for i, height in pairs(self.Heights) do
-            if self.PingVal < self.PingAmounts[i] then
-                surface.SetDrawColor(255, 255, 255, 255)
-            else
-                surface.SetDrawColor(255, 255, 255, 10)
-            end
-
-            surface.DrawRect(x, h / 2 - maxh / 2 + (maxh - height), bar - 2, height)
-            x = x + bar
-        end
-
-        -- Lit/Main
-        x = 0
-        surface.SetDrawColor(255, 255, 255, 255)
-    else
-        surface.SetTextColor(255, 255, 255, 10)
-        surface.SetFont("ScoreboardPing")
-        local zeros = "000"
-
-        if self.PingVal >= 1 then
-            zeros = "00"
-        end
-
-        if self.PingVal >= 10 then
-            zeros = "0"
-        end
-
-        if self.PingVal >= 100 then
-            zeros = ""
-        end
-
-        local tw, th = surface.GetTextSize(zeros)
-        surface.SetTextPos(0, h / 2 - th / 2)
-        surface.DrawText(zeros)
-        surface.SetTextColor(255, 255, 255, 255)
-        surface.SetTextPos(tw, h / 2 - th / 2)
-        surface.DrawText(self.PingVal)
+    Init = function(self)
+        self.Heights = {3, 6, 9, 12}
+    
+        self.PingAmounts = {300, 225, 150, 75}
     end
-end
+    
+    ,Update = function(self)
+        local ping = self.Player:Ping()
+        self.PingVal = ping
+    end
+    
+    ,SetPlayer = function(self,ply)
+        self.Player = ply
+        self:Update()
+    end
+    
+    ,Paint = function(self,w, h)
+        if not self:IsHovered() then
+            local maxh = self.Heights[#self.Heights]
+            local bar = 5
+            local total = #self.Heights * bar
+            local x = w / 2 - total / 2
+    
+            for i, height in pairs(self.Heights) do
+                if self.PingVal < self.PingAmounts[i] then
+                    surface.SetDrawColor(255, 255, 255, 255)
+                else
+                    surface.SetDrawColor(255, 255, 255, 10)
+                end
+    
+                surface.DrawRect(x, h / 2 - maxh / 2 + (maxh - height), bar - 2, height)
+                x = x + bar
+            end
+    
+            -- Lit/Main
+            x = 0
+            surface.SetDrawColor(255, 255, 255, 255)
+        else
+            surface.SetTextColor(255, 255, 255, 10)
+            surface.SetFont("ScoreboardPing")
+            local zeros = "000"
+    
+            if self.PingVal >= 1 then
+                zeros = "00"
+            end
+    
+            if self.PingVal >= 10 then
+                zeros = "0"
+            end
+    
+            if self.PingVal >= 100 then
+                zeros = ""
+            end
+    
+            local tw, th = surface.GetTextSize(zeros)
+            surface.SetTextPos(0, h / 2 - th / 2)
+            surface.DrawText(zeros)
+            surface.SetTextColor(255, 255, 255, 255)
+            surface.SetTextPos(tw, h / 2 - th / 2)
+            surface.DrawText(self.PingVal)
+        end
+    end
 
-vgui.Register("ScoreboardPlayerPing", PLAYERPING)
-local SERVERNAME = {}
-SERVERNAME.Padding = 8
 
-function SERVERNAME:Init()
+})
+
+vgui.Register("ScoreboardServerName", {
+    Padding = 8,
+
+
+Init=function(self)
     self.Name = Label("Unknown", self)
     self.Name:SetFont("ScoreboardServerName")
     self.Name:SetColor(Color(255, 255, 255))
     self.MapName = Label("Unknown", self)
     self.MapName:SetFont("ScoreboardServerName")
     self.MapName:SetColor(Color(255, 255, 255))
-end
+end,
 
-function SERVERNAME:Update()
+Update=function(self)
     self.Name:SetText(game.GetMap())
     local players = SV_PLYCOUNT or table.Count(player.GetHumans())
     local ttext = tostring(players) .. " Players Online"
@@ -619,9 +632,9 @@ function SERVERNAME:Update()
 
     self.MapName:SetText(ttext)
     self:PerformLayout()
-end
+end,
 
-function SERVERNAME:PerformLayout()
+PerformLayout=function(self)
     self.Name:SizeToContents()
     self.Name:AlignLeft(self.Padding)
     self.Name:AlignTop(3)
@@ -629,5 +642,4 @@ function SERVERNAME:PerformLayout()
     self.MapName:AlignRight(self.Padding)
     self.MapName:AlignTop(3)
 end
-
-vgui.Register("ScoreboardServerName", SERVERNAME)
+})
