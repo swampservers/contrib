@@ -257,120 +257,95 @@ end
 
 vgui.Register("ScoreboardPlayerList", PLAYERLIST)
 
-
-
-
 vgui.Register("ScoreboardPlayer", {
     Padding = SS_COMMONMARGIN,
+    Init = function(self)
+        self:SetTall(PLAYERLIST.PlyHeight)
+        self.Name = Label("Unknown", self)
+        self.Name:SetFont("ScoreboardName")
+        self.Name:SetColor(Color(255, 255, 255, 255))
+        self.AvatarButton = vgui.Create("DButton", self)
+        self.AvatarButton:SetSize(32, 32)
+        self.Avatar = vgui.Create("AvatarImage", self)
+        self.Avatar:SetSize(32, 32)
+        self.Avatar:SetZPos(1)
+        self.Avatar:SetVisible(false)
+        self.Avatar:SetMouseInputEnabled(false)
+        self.Location = Label("Unknown", self)
+        self.Location:SetFont("ScoreboardLocation")
+        self.Location:SetColor(Color(255, 255, 255, 80))
+        self.Location:SetPos(0, 8)
 
-Init =function(self)
-    self:SetTall(PLAYERLIST.PlyHeight)
-    self.Name = Label("Unknown", self)
-    self.Name:SetFont("ScoreboardName")
-    self.Name:SetColor(Color(255, 255, 255, 255))
-    self.AvatarButton = vgui.Create("DButton", self)
-    self.AvatarButton:SetSize(32, 32)
-    self.Avatar = vgui.Create("AvatarImage", self)
-    self.Avatar:SetSize(32, 32)
-    self.Avatar:SetZPos(1)
-    self.Avatar:SetVisible(false)
-    self.Avatar:SetMouseInputEnabled(false)
-    self.Location = Label("Unknown", self)
-    self.Location:SetFont("ScoreboardLocation")
-    self.Location:SetColor(Color(255, 255, 255, 80))
-    self.Location:SetPos(0, 8)
-
-    self.FriendIcon = vgui("DImage", self, function(p)
-        p:SetSize(16, 16)
-        p:SetPos(30, 27)
-        p:SetZPos(2)
-        p:SetImage("chev/icon/friend.png")
-    end)
-
-    --holder for all these little buttons so we can dock them away from the edge
-    vgui("DPanel", self, function(p)
-        p.Paint = noop
-        p:SetWide(256)
-        p:SetTall(24)
-        p:Dock(RIGHT)
-        local dockv = (p:GetParent():GetTall() - 24) / 2
-        p:DockMargin(0, dockv, SS_COMMONMARGIN, dockv)
-
-        --p.PerformLayout = function(pnl,w,h)
-        --p:SizeToChildren(true,false)
-        --end
-        self.Mute = vgui("DImageButton", function(p)
-            p:SetSize(22, 22)
-            p:DockMargin(1, 1, 1, 1)
-            p:Dock(RIGHT)
-            p:SetStretchToFit(true)
-            p:SetImage("icon32/unmuted.png")
-            p:SetToolTip("Toggle Voice Mute")
-        end)
-
-        self.ChatMute = vgui("DImageButton", function(p)
-            p:SetSize(22, 22)
-            p:DockMargin(1, 1, 1, 1)
-            p:Dock(RIGHT)
-            p:SetStretchToFit(true)
-            p:SetImage("theater/chatunmuted.png")
-            p:SetToolTip("Toggle Chat Mute")
-        end)
-
-        self.Ping = vgui("ScoreboardPlayerPing", function(p)
-            p:Dock(RIGHT)
-            p:DockMargin(2, 0, 2, 0)
-            p:SetSize(28, 16)
-        end)
-
-        self.Country = vgui("DImageButton", function(p)
-            p:SetSize(16, 12)
-            p:DockMargin(2, 6, 2, 7)
-            p:Dock(RIGHT)
-            p:SetImage("countries/us.png")
-        end)
-
-        self.AFK = vgui("DImage", function(p)
+        self.FriendIcon = vgui("DImage", self, function(p)
             p:SetSize(16, 16)
-            p:DockMargin(2, 4, 2, 4)
-            p:Dock(RIGHT)
-            p:SetImage("icon16/time.png")
-            p:SetTooltip("AFK")
-            p:CenterVertical()
+            p:SetPos(30, 27)
+            p:SetZPos(2)
+            p:SetImage("chev/icon/friend.png")
         end)
-    end)
-end,
 
+        --holder for all these little buttons so we can dock them away from the edge
+        vgui("DPanel", self, function(p)
+            p.Paint = noop
+            p:SetWide(256)
+            p:SetTall(24)
+            p:Dock(RIGHT)
+            local dockv = (p:GetParent():GetTall() - 24) / 2
+            p:DockMargin(0, dockv, SS_COMMONMARGIN, dockv)
 
-UpdatePlayer =function(self)
-    if not IsValid(self.Player) then
-        local parent = self:GetParent()
+            --p.PerformLayout = function(pnl,w,h)
+            --p:SizeToChildren(true,false)
+            --end
+            self.Mute = vgui("DImageButton", function(p)
+                p:SetSize(22, 22)
+                p:DockMargin(1, 1, 1, 1)
+                p:Dock(RIGHT)
+                p:SetStretchToFit(true)
+                p:SetImage("icon32/unmuted.png")
+                p:SetToolTip("Toggle Voice Mute")
+            end)
 
-        if ValidPanel(parent) and parent.RemovePlayer then
-            parent:RemovePlayer(self.Player)
+            self.ChatMute = vgui("DImageButton", function(p)
+                p:SetSize(22, 22)
+                p:DockMargin(1, 1, 1, 1)
+                p:Dock(RIGHT)
+                p:SetStretchToFit(true)
+                p:SetImage("theater/chatunmuted.png")
+                p:SetToolTip("Toggle Chat Mute")
+            end)
+
+            self.Ping = vgui("ScoreboardPlayerPing", function(p)
+                p:Dock(RIGHT)
+                p:DockMargin(2, 0, 2, 0)
+                p:SetSize(28, 16)
+            end)
+
+            self.Country = vgui("DImageButton", function(p)
+                p:SetSize(16, 12)
+                p:DockMargin(2, 6, 2, 7)
+                p:Dock(RIGHT)
+                p:SetImage("countries/us.png")
+            end)
+
+            self.AFK = vgui("DImage", function(p)
+                p:SetSize(16, 16)
+                p:DockMargin(2, 4, 2, 4)
+                p:Dock(RIGHT)
+                p:SetImage("icon16/time.png")
+                p:SetTooltip("AFK")
+                p:CenterVertical()
+            end)
+        end)
+    end,
+    UpdatePlayer = function(self)
+        if not IsValid(self.Player) then
+            local parent = self:GetParent()
+
+            if ValidPanel(parent) and parent.RemovePlayer then
+                parent:RemovePlayer(self.Player)
+            end
+
+            return
         end
-
-        return
-    end
-
-    if self.Player.ClickMuted then
-        self.Mute:SetImage("icon32/muted.png")
-    else
-        self.Mute:SetImage("icon32/unmuted.png")
-    end
-
-    if self.Player.IsChatMuted then
-        self.ChatMute:SetImage("theater/chatmuted.png")
-    else
-        self.ChatMute:SetImage("theater/chatunmuted.png")
-    end
-
-    self.Mute.DoClick = function()
-        self.Player.ClickMuted = not (self.Player.ClickMuted or false)
-        net.Start("SetMuted")
-        net.WriteEntity(self.Player)
-        net.WriteBool(self.Player.ClickMuted)
-        net.SendToServer()
 
         if self.Player.ClickMuted then
             self.Mute:SetImage("icon32/muted.png")
@@ -378,184 +353,191 @@ UpdatePlayer =function(self)
             self.Mute:SetImage("icon32/unmuted.png")
         end
 
-        UpdateMuteHistory(self.Player)
-    end
-
-    self.ChatMute.DoClick = function()
-        self.Player.IsChatMuted = not self.Player.IsChatMuted
-        print("muted " .. self.Player:Nick() .. "'s chat")
-
         if self.Player.IsChatMuted then
             self.ChatMute:SetImage("theater/chatmuted.png")
         else
             self.ChatMute:SetImage("theater/chatunmuted.png")
         end
 
-        UpdateMuteHistory(self.Player)
-    end
+        self.Mute.DoClick = function()
+            self.Player.ClickMuted = not (self.Player.ClickMuted or false)
+            net.Start("SetMuted")
+            net.WriteEntity(self.Player)
+            net.WriteBool(self.Player.ClickMuted)
+            net.SendToServer()
 
-    local code = self.Player:GetNetworkedString("cntry")
+            if self.Player.ClickMuted then
+                self.Mute:SetImage("icon32/muted.png")
+            else
+                self.Mute:SetImage("icon32/unmuted.png")
+            end
 
-    if code == "" then
-        if self.Country ~= nil and self.Country.Remove ~= nil then
-            self.Country:Remove()
+            UpdateMuteHistory(self.Player)
         end
-    else
-        if self.Country ~= nil and self.Country.SetImage ~= nil then
-            self.Country:SetImage("countries/" .. string.lower(code) .. ".png")
-            self.Country:SetToolTip("Click to learn about: " .. string.upper(code))
-            self.Country.isocode = code
 
-            self.Country.DoClick = function(pnl)
-                ShowMotd("https://en.wikipedia.org/wiki/ISO_3166-1:" .. string.upper(pnl.isocode))
+        self.ChatMute.DoClick = function()
+            self.Player.IsChatMuted = not self.Player.IsChatMuted
+            print("muted " .. self.Player:Nick() .. "'s chat")
+
+            if self.Player.IsChatMuted then
+                self.ChatMute:SetImage("theater/chatmuted.png")
+            else
+                self.ChatMute:SetImage("theater/chatunmuted.png")
+            end
+
+            UpdateMuteHistory(self.Player)
+        end
+
+        local code = self.Player:GetNetworkedString("cntry")
+
+        if code == "" then
+            if self.Country ~= nil and self.Country.Remove ~= nil then
+                self.Country:Remove()
+            end
+        else
+            if self.Country ~= nil and self.Country.SetImage ~= nil then
+                self.Country:SetImage("countries/" .. string.lower(code) .. ".png")
+                self.Country:SetToolTip("Click to learn about: " .. string.upper(code))
+                self.Country.isocode = code
+
+                self.Country.DoClick = function(pnl)
+                    ShowMotd("https://en.wikipedia.org/wiki/ISO_3166-1:" .. string.upper(pnl.isocode))
+                end
             end
         end
-    end
 
-    self.Name:SetText(self.Player:Name())
-    self.Location:SetText(string.upper(self.Player:GetLocationName() or "Unknown"))
-    self.Ping:Update()
-end,
+        self.Name:SetText(self.Player:Name())
+        self.Location:SetText(string.upper(self.Player:GetLocationName() or "Unknown"))
+        self.Ping:Update()
+    end,
+    SetPlayer = function(self, ply)
+        self.Player = ply
 
-SetPlayer =function(self,ply)
-    self.Player = ply
+        self.AvatarButton.DoClick = function()
+            local menu = DermaMenu()
 
-    self.AvatarButton.DoClick = function()
-        local menu = DermaMenu()
+            local prof = menu:AddOption("View Profile", function()
+                self.Player:ShowProfile()
+            end)
 
-        local prof = menu:AddOption("View Profile", function()
-            self.Player:ShowProfile()
-        end)
+            prof:SetIcon("icon16/user.png")
 
-        prof:SetIcon("icon16/user.png")
+            menu:AddOption("Give Points", function()
+                local gp = vgui.Create('DPointShopGivePoints')
+                gp.playerselect:ChooseOption(self.Player:Nick(), self.Player:UniqueID())
+                gp.selected_uid = self.Player:UniqueID()
+                gp:Update()
+            end):SetIcon("icon16/coins.png")
 
-        menu:AddOption("Give Points", function()
-            local gp = vgui.Create('DPointShopGivePoints')
-            gp.playerselect:ChooseOption(self.Player:Nick(), self.Player:UniqueID())
-            gp.selected_uid = self.Player:UniqueID()
-            gp:Update()
-        end):SetIcon("icon16/coins.png")
+            menu:AddOption("Request Teleport To", function()
+                RunConsoleCommand("say", "/tp " .. self.Player:Nick())
+            end):SetIcon("icon16/world.png")
 
-        menu:AddOption("Request Teleport To", function()
-            RunConsoleCommand("say", "/tp " .. self.Player:Nick())
-        end):SetIcon("icon16/world.png")
+            if Me:IsStaff() then
+                menu:AddOption("Copy SteamID", function()
+                    SetClipboardText(self.Player:SteamID())
+                end):SetIcon("icon16/user_red.png")
 
-        if Me:IsStaff() then
-            menu:AddOption("Copy SteamID", function()
-                SetClipboardText(self.Player:SteamID())
-            end):SetIcon("icon16/user_red.png")
+                menu:AddOption("Copy SteamID64", function()
+                    SetClipboardText(self.Player:SteamID64())
+                end):SetIcon("icon16/user_red.png")
+            end
 
-            menu:AddOption("Copy SteamID64", function()
-                SetClipboardText(self.Player:SteamID64())
-            end):SetIcon("icon16/user_red.png")
+            menu:Open()
         end
 
-        menu:Open()
-    end
+        self.AvatarButton.DoRightClick = self.AvatarButton.DoClick
+        self.Avatar:SetPlayer(ply, 64)
+        self.Avatar:SetVisible(true)
 
-    self.AvatarButton.DoRightClick = self.AvatarButton.DoClick
-    self.Avatar:SetPlayer(ply, 64)
-    self.Avatar:SetVisible(true)
+        if ply:GetFriendStatus() == "friend" then
+            self.FriendIcon:Show()
+        else
+            self.FriendIcon:Hide()
+        end
 
-    if ply:GetFriendStatus() == "friend" then
-        self.FriendIcon:Show()
-    else
-        self.FriendIcon:Hide()
-    end
-
-    self.Ping:SetPlayer(ply)
-    self:UpdatePlayer()
-end,
-
-PerformLayout =function(self)
-    self.Name:SizeToContents()
-    self.Name:AlignTop(self.Padding - 4)
-    --if self.Player:GetNWBool("afk") then
-    --self.Name:AlignLeft( self.Avatar:GetWide() + 16 + 16 )
-    --else
-    self.Name:AlignLeft(self.Avatar:GetWide() + 16)
-    --end
-    self.Location:SizeToContents()
-    self.Location:AlignTop(self.Name:GetTall() + 5)
-    self.Location:AlignLeft(self.Avatar:GetWide() + 16)
-    self.AvatarButton:AlignTop(self.Padding)
-    self.AvatarButton:AlignLeft(self.Padding)
-    self.AvatarButton:CenterVertical()
-    self.Avatar:SizeToContents()
-    self.Avatar:AlignTop(self.Padding)
-    self.Avatar:AlignLeft(self.Padding)
-    self.Avatar:CenterVertical()
-end,
-
-Paint =function(self,w, h)
-    surface.SetDrawColor(BrandColorGrayDark)
-    surface.DrawRect(0, 0, self:GetSize())
-    surface.SetDrawColor(255, 255, 255, 255)
-    local xp = 364
-
-    if IsValid(self.Player) and IsValid(self.AFK) then
-        self.AFK:SetVisible(self.Player:IsAFK())
-        -- else
-        --     self:SetVisible(false)
-    end
-
-    if self.Player:IsStaff() then
-        --local xp = ({self.Name:GetPos()})[1] + self.Name:GetWide() + 4
-        local str = self.Player:GetRankName()
+        self.Ping:SetPlayer(ply)
+        self:UpdatePlayer()
+    end,
+    PerformLayout = function(self)
+        self.Name:SizeToContents()
+        self.Name:AlignTop(self.Padding - 4)
+        --if self.Player:GetNWBool("afk") then
+        --self.Name:AlignLeft( self.Avatar:GetWide() + 16 + 16 )
+        --else
+        self.Name:AlignLeft(self.Avatar:GetWide() + 16)
+        --end
+        self.Location:SizeToContents()
+        self.Location:AlignTop(self.Name:GetTall() + 5)
+        self.Location:AlignLeft(self.Avatar:GetWide() + 16)
+        self.AvatarButton:AlignTop(self.Padding)
+        self.AvatarButton:AlignLeft(self.Padding)
+        self.AvatarButton:CenterVertical()
+        self.Avatar:SizeToContents()
+        self.Avatar:AlignTop(self.Padding)
+        self.Avatar:AlignLeft(self.Padding)
+        self.Avatar:CenterVertical()
+    end,
+    Paint = function(self, w, h)
+        surface.SetDrawColor(BrandColorGrayDark)
+        surface.DrawRect(0, 0, self:GetSize())
         surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetFont("DermaDefault")
+        local xp = 364
 
-        xp = xp - ({surface.GetTextSize(str)})[1]
+        if IsValid(self.Player) and IsValid(self.AFK) then
+            self.AFK:SetVisible(self.Player:IsAFK())
+            -- else
+            --     self:SetVisible(false)
+        end
 
-        surface.DrawRect(xp, 17, ({surface.GetTextSize(str)})[1] + 4, 13)
+        if self.Player:IsStaff() then
+            --local xp = ({self.Name:GetPos()})[1] + self.Name:GetWide() + 4
+            local str = self.Player:GetRankName()
+            surface.SetDrawColor(255, 255, 255, 255)
+            surface.SetFont("DermaDefault")
 
-        draw.SimpleText(str, "DermaDefault", xp + 2, 17, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            xp = xp - ({surface.GetTextSize(str)})[1]
+
+            surface.DrawRect(xp, 17, ({surface.GetTextSize(str)})[1] + 4, 13)
+
+            draw.SimpleText(str, "DermaDefault", xp + 2, 17, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        end
     end
-end
-
-
 })
 
-
 vgui.Register("ScoreboardPlayerPing", {
-
-
     Padding = 0,
-
     Init = function(self)
         self.Heights = {3, 6, 9, 12}
-    
+
         self.PingAmounts = {300, 225, 150, 75}
-    end
-    
-    ,Update = function(self)
+    end,
+    Update = function(self)
         local ping = self.Player:Ping()
         self.PingVal = ping
-    end
-    
-    ,SetPlayer = function(self,ply)
+    end,
+    SetPlayer = function(self, ply)
         self.Player = ply
         self:Update()
-    end
-    
-    ,Paint = function(self,w, h)
+    end,
+    Paint = function(self, w, h)
         if not self:IsHovered() then
             local maxh = self.Heights[#self.Heights]
             local bar = 5
             local total = #self.Heights * bar
             local x = w / 2 - total / 2
-    
+
             for i, height in pairs(self.Heights) do
                 if self.PingVal < self.PingAmounts[i] then
                     surface.SetDrawColor(255, 255, 255, 255)
                 else
                     surface.SetDrawColor(255, 255, 255, 10)
                 end
-    
+
                 surface.DrawRect(x, h / 2 - maxh / 2 + (maxh - height), bar - 2, height)
                 x = x + bar
             end
-    
+
             -- Lit/Main
             x = 0
             surface.SetDrawColor(255, 255, 255, 255)
@@ -563,19 +545,19 @@ vgui.Register("ScoreboardPlayerPing", {
             surface.SetTextColor(255, 255, 255, 10)
             surface.SetFont("ScoreboardPing")
             local zeros = "000"
-    
+
             if self.PingVal >= 1 then
                 zeros = "00"
             end
-    
+
             if self.PingVal >= 10 then
                 zeros = "0"
             end
-    
+
             if self.PingVal >= 100 then
                 zeros = ""
             end
-    
+
             local tw, th = surface.GetTextSize(zeros)
             surface.SetTextPos(0, h / 2 - th / 2)
             surface.DrawText(zeros)
@@ -584,62 +566,56 @@ vgui.Register("ScoreboardPlayerPing", {
             surface.DrawText(self.PingVal)
         end
     end
-
-
 })
 
 vgui.Register("ScoreboardServerName", {
     Padding = 8,
+    Init = function(self)
+        self.Name = Label("Unknown", self)
+        self.Name:SetFont("ScoreboardServerName")
+        self.Name:SetColor(Color(255, 255, 255))
+        self.MapName = Label("Unknown", self)
+        self.MapName:SetFont("ScoreboardServerName")
+        self.MapName:SetColor(Color(255, 255, 255))
+    end,
+    Update = function(self)
+        self.Name:SetText(game.GetMap())
+        local players = SV_PLYCOUNT or table.Count(player.GetHumans())
+        local ttext = tostring(players) .. " Players Online"
 
-
-Init=function(self)
-    self.Name = Label("Unknown", self)
-    self.Name:SetFont("ScoreboardServerName")
-    self.Name:SetColor(Color(255, 255, 255))
-    self.MapName = Label("Unknown", self)
-    self.MapName:SetFont("ScoreboardServerName")
-    self.MapName:SetColor(Color(255, 255, 255))
-end,
-
-Update=function(self)
-    self.Name:SetText(game.GetMap())
-    local players = SV_PLYCOUNT or table.Count(player.GetHumans())
-    local ttext = tostring(players) .. " Players Online"
-
-    if players == 1 then
-        ttext = "One Player Online"
-    end
-
-    local x, y = self:LocalCursorPos()
-    local xs, ys = self:GetSize()
-
-    if x > 0 and y > 0 and x < xs and y < ys then
-        local count = 0
-        local count2 = 0
-
-        for k, v in pairs(player.GetHumans()) do
-            if v:IsAFK() then
-                count = count + 1
-
-                if not v:InTheater() then
-                    count2 = count2 + 1
-                end
-            end
+        if players == 1 then
+            ttext = "One Player Online"
         end
 
-        ttext = tostring(count) .. " / " .. tostring(players) .. " AFK (" .. tostring(count2) .. " AFK + !InTheater)	"
+        local x, y = self:LocalCursorPos()
+        local xs, ys = self:GetSize()
+
+        if x > 0 and y > 0 and x < xs and y < ys then
+            local count = 0
+            local count2 = 0
+
+            for k, v in pairs(player.GetHumans()) do
+                if v:IsAFK() then
+                    count = count + 1
+
+                    if not v:InTheater() then
+                        count2 = count2 + 1
+                    end
+                end
+            end
+
+            ttext = tostring(count) .. " / " .. tostring(players) .. " AFK (" .. tostring(count2) .. " AFK + !InTheater)	"
+        end
+
+        self.MapName:SetText(ttext)
+        self:PerformLayout()
+    end,
+    PerformLayout = function(self)
+        self.Name:SizeToContents()
+        self.Name:AlignLeft(self.Padding)
+        self.Name:AlignTop(3)
+        self.MapName:SizeToContents()
+        self.MapName:AlignRight(self.Padding)
+        self.MapName:AlignTop(3)
     end
-
-    self.MapName:SetText(ttext)
-    self:PerformLayout()
-end,
-
-PerformLayout=function(self)
-    self.Name:SizeToContents()
-    self.Name:AlignLeft(self.Padding)
-    self.Name:AlignTop(3)
-    self.MapName:SizeToContents()
-    self.MapName:AlignRight(self.Padding)
-    self.MapName:AlignTop(3)
-end
 })
