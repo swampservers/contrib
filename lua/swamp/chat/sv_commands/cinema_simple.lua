@@ -36,58 +36,61 @@ RegisterChatConsoleCommand({'drop', 'dropweapon'}, "drop")
 
 concommand.Add("drop", function(ply, cmd, args)
     -- if ply:RateLimit("dropweapon",0.1,3) then return end
-    
     local w = ply:GetActiveWeapon()
 
     if IsValid(w) then
-        if w.CannotDrop then ply:Notify("You can't drop this!") return end
+        if w.CannotDrop then
+            ply:Notify("You can't drop this!")
 
-        if w:GetModel()=="" then 
+            return
+        end
+
+        if w:GetModel() == "" then
             ply:StripWeapon(w:GetClass())
         else
             ply.DroppedWeapons = ply.DroppedWeapons or {}
             local i = 1
+
             while ply.DroppedWeapons[i] do
                 local dropped = ply.DroppedWeapons[i]
+
                 if IsValid(dropped) and not IsValid(dropped.Owner) then
-                    i=i+1
+                    i = i + 1
                 else
                     table.remove(ply.DroppedWeapons, i)
                 end
             end
 
-            if i>3 then
+            if i > 3 then
                 table.remove(ply.DroppedWeapons, 1):Remove()
             end
 
             ply:DropWeapon(w)
             w.DroppedWeapon = true
             table.insert(ply.DroppedWeapons, w)
+
             w:TimerCreate("DropRemove", 5, 1, function()
-                if not IsValid(w.Owner) then w:Remove() end
+                if not IsValid(w.Owner) then
+                    w:Remove()
+                end
             end)
         end
     end
 end)
 
-
-hook.Add("PlayerCanPickupWeapon", "NoDropAutoPickup", function( ply, weapon )
+hook.Add("PlayerCanPickupWeapon", "NoDropAutoPickup", function(ply, weapon)
     if weapon.DroppedWeapon then return false end
 end)
 
-
-hook.Add("PlayerUse", "DropManualPickup", function( ply, ent )
-	if ent.DroppedWeapon then 
-        ply:PickupWeapon(ent) 
+hook.Add("PlayerUse", "DropManualPickup", function(ply, ent)
+    if ent.DroppedWeapon then
+        ply:PickupWeapon(ent)
         ply:SelectWeapon(ent:GetClass())
     end
 end)
 
 -- Player.BaseDropWeapon = Player.BaseDropWeapon or Player.DropWeapon
-
 -- function Player
-
-
 RegisterChatConsoleCommand('dropall', "dropall")
 
 concommand.Add("dropall", function(ply, cmd, args)
