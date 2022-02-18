@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local gm = engine.ActiveGamemode()
 
-if gm == "cinema" or gm == "gungame" then
+-- if gm == "cinema" or gm == "gungame" then
     -- shards of contrib
     resource.AddWorkshop("2453150484")
     resource.AddWorkshop("2453150686")
@@ -25,7 +25,7 @@ if gm == "cinema" or gm == "gungame" then
     -- resource.AddWorkshop( "822232922" ) -- UXmas model pack
     -- resource.AddWorkshop( "1783952608" ) --HEV KLEINER
     resource.AddSingleFile("gamemodes/cinema/logo.png")
-end
+-- end
 
 if gm == "fatkid" then
     resource.AddWorkshop("625476776") -- Fat Kid playermodel
