@@ -23,6 +23,9 @@ SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = false
 SWEP.HitDistance = 58
+
+SWEP.CannotDrop = true
+
 local justReloaded = 0
 local tagTimer = 35
 

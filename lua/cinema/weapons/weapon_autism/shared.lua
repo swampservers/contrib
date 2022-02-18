@@ -1,7 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 SWEP.PrintName = "Autistic Outbursts"
 SWEP.Slot = 2
-SWEP.WorldModel = "models/props_junk/TrafficCone001a.mdl"
+SWEP.WorldModel = ""
+SWEP.ViewModel = ""
 lastAutism = 0
 
 autisticTwitches = {0, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, ACT_HL2MP_GESTURE_RANGE_ATTACK_DUEL, ACT_HL2MP_GESTURE_RANGE_ATTACK_PHYSGUN, ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN, ACT_HL2MP_GESTURE_RANGE_ATTACK_RPG, ACT_HL2MP_GESTURE_RANGE_ATTACK_REVOLVER}

@@ -35,41 +35,64 @@ end, {
 RegisterChatConsoleCommand({'drop', 'dropweapon'}, "drop")
 
 concommand.Add("drop", function(ply, cmd, args)
-    ply.LastWepDropTime = ply.LastWepDropTime or 0
-    if CurTime() - ply.LastWepDropTime < 2 then return end
-    ply.LastWepDropTime = CurTime()
+    -- if ply:RateLimit("dropweapon",0.1,3) then return end
+    
     local w = ply:GetActiveWeapon()
 
     if IsValid(w) then
-        local cl = w:GetClass()
-        if cl == "weapon_ebola" then return end
-        if cl == "weapon_tag" then return end
+        if w.CannotDrop then ply:Notify("You can't drop this!") return end
 
-        if w.DropOnGround then
-            ply:DropWeapon(wep)
-
-            timer.Simple(5, function()
-                if IsValid(wep) and not IsValid(wep.Owner) then
-                    wep:Remove()
-                end
-            end)
+        if w:GetModel()=="" then 
+            ply:StripWeapon(w:GetClass())
         else
-            ply:StripWeapon(cl)
+            ply.DroppedWeapons = ply.DroppedWeapons or {}
+            local i = 1
+            while ply.DroppedWeapons[i] do
+                local dropped = ply.DroppedWeapons[i]
+                if IsValid(dropped) and not IsValid(dropped.Owner) then
+                    i=i+1
+                else
+                    table.remove(ply.DroppedWeapons, i)
+                end
+            end
+
+            if i>3 then
+                table.remove(ply.DroppedWeapons, 1):Remove()
+            end
+
+            ply:DropWeapon(w)
+            w.DroppedWeapon = true
+            table.insert(ply.DroppedWeapons, w)
+            w:TimerCreate("DropRemove", 5, 1, function()
+                if not IsValid(w.Owner) then w:Remove() end
+            end)
         end
     end
 end)
 
+
+hook.Add("PlayerCanPickupWeapon", "NoDropAutoPickup", function( ply, weapon )
+    if weapon.DroppedWeapon then return false end
+end)
+
+
+hook.Add("PlayerUse", "DropManualPickup", function( ply, ent )
+	if ent.DroppedWeapon then 
+        ply:PickupWeapon(ent) 
+        ply:SelectWeapon(ent:GetClass())
+    end
+end)
+
+-- Player.BaseDropWeapon = Player.BaseDropWeapon or Player.DropWeapon
+
+-- function Player
+
+
 RegisterChatConsoleCommand('dropall', "dropall")
 
 concommand.Add("dropall", function(ply, cmd, args)
-    ply.LastWepDropTime = ply.LastWepDropTime or 0
-    if CurTime() - ply.LastWepDropTime < 2 then return end
-    ply.LastWepDropTime = CurTime()
-
     for k, v in pairs(ply:GetWeapons()) do
-        local cl = v:GetClass()
-
-        if cl ~= "weapon_ebola" or cl ~= "weapon_tag" then
+        if not v.CannotDrop then
             ply:StripWeapon(cl)
         end
     end
