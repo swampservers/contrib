@@ -158,13 +158,24 @@ end
 --     return "ValveBiped.Bip01_R_Hand", pos, ang
 -- end
 
+print("BASED WEP", weapons.GetStored("weapon_base"))
 
 
-local setup = {}
-hook.Add("PreRender","GetWorldModelPositionSetup",function()
-    for wep,v in pairs(setup) do
-        setup[wep]=nil
-        if IsValid(wep) and wep.GetWorldModelPosition then
+hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep) 
+    -- "NetworkEntityCreated" "NotifyShouldTransmit"
+    if wep:IsWeapon() then 
+        -- have to delay a little for initialization
+        
+
+
+
+
+        hook.Add("PreRender",wep,function()
+            hook.Remove("PreRender", wep)
+        
+    
+
+            if wep.GetWorldModelPosition then
 
                 -- works but cant use another renderoverride
                 function wep:RenderOverride(mode)
@@ -227,17 +238,17 @@ hook.Add("PreRender","GetWorldModelPositionSetup",function()
                 --     return opos, oang
                 --     end
                 -- end
-           
-        end
-    end
-end)
+                
+            end
+        
+        end)
+        
+        
 
 
-hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep) 
-    -- "NetworkEntityCreated" "NotifyShouldTransmit"
-    if wep:IsWeapon() then 
-        -- have to delay a little for initialization
-        setup[wep]=true
+
+
+
     end
 end)
 
