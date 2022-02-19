@@ -148,89 +148,98 @@ function cam.Culled3D2D(pos, ang, scale, callback)
     end
 end
 
+
+
+
 -- in SHARED (NOT CLIENT), return bone name, LOCAL pos, LOCAL ang, for example:
 -- local pos, ang = Vector(1,2,3), Angle(0,0,0)
 -- function SWEP:GetWorldModelPosition(ply)
---     self:RemoveEffects(EF_BONEMERGE) --this is necessary if the model is supposed to bonemerge
+--     -- if CLIENT then self:RemoveEffects(EF_BONEMERGE) end
 --     return "ValveBiped.Bip01_R_Hand", pos, ang
 -- end
+
+
+
 local setup = {}
-
-hook.Add("Think", "GetWorldModelPositionSetup", function()
-    for wep, v in pairs(setup) do
-        setup[wep] = nil
-
+hook.Add("PreRender","GetWorldModelPositionSetup",function()
+    for wep,v in pairs(setup) do
+        setup[wep]=nil
         if IsValid(wep) and wep.GetWorldModelPosition then
-            -- works but cant use another renderoverride
-            function wep:RenderOverride(mode)
-                local ply = self.Owner
 
-                if IsValid(ply) then
-                    local bone, pos, ang = self:GetWorldModelPosition(ply)
-                    bone = ply:LookupBone(bone)
-
-                    if bone then
-                        local mat = ply:GetBoneMatrix(bone)
-
-                        if mat then
-                            pos, ang = LocalToWorld(pos, ang, mat:GetTranslation(), mat:GetAngles())
-                            self:SetRenderOrigin(pos)
-                            self:SetRenderAngles(ang)
-                            self:DrawModel()
-
-                            return
-                        end
+                -- works but cant use another renderoverride
+                function wep:RenderOverride(mode)
+                    local ply = self.Owner
+                    if IsValid(ply) then
+                        local bone,pos,ang = self:GetWorldModelPosition(ply)
+                        bone = ply:LookupBone(bone)
+                        if bone then
+                            local mat = ply:GetBoneMatrix(bone)
+                            if mat then 
+                                pos,ang= LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
+                                self:SetRenderOrigin(pos)
+                                self:SetRenderAngles(ang)
+                                self:DrawModel()
+                                return
+                            end
+                        end                    
                     end
+
+                    self:SetRenderOrigin()
+                    self:SetRenderAngles()
+                    self:DrawModel()
                 end
 
-                self:SetRenderOrigin()
-                self:SetRenderAngles()
-                self:DrawModel()
-            end
-            -- works but 1 frame delayed
-            -- if wep.WMPCallback then wep:RemoveCallback("BuildBonePositions",wep.WMPCallback) end
-            -- wep.WMPCallback = wep:AddCallback("BuildBonePositions", function(wep, nbones)
-            --     local ply = wep.Owner
-            --     if IsValid(ply) then
-            --         local bone,pos,ang = wep:GetWorldModelPosition(ply)
-            --         bone = ply:LookupBone(bone)
-            --         if bone then
-            --         local mat = ply:GetBoneMatrix(bone)
-            --         if mat then 
-            --             pos,ang= LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
-            --             wep:SetRenderOrigin(pos)
-            --             wep:SetRenderAngles(ang)
-            --         end
-            --     end
-            -- else
-            --     wep:SetRenderOrigin()
-            --     wep:SetRenderAngles()
-            --     end
-            -- end)
-            -- works on localplayer, laggy on other players
-            -- function wep:CalcAbsolutePosition( opos, oang)
-            --     local ply = self.Owner
-            --     if IsValid(ply) then
-            --         local bone,pos,ang = self:GetWorldModelPosition(ply)
-            --         bone = ply:LookupBone(bone)
-            --         if bone then
-            --         local mat = ply:GetBoneMatrix(bone)
-            --         if mat then 
-            --             return LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
-            --         end
-            --     end
-            --     return opos, oang
-            --     end
-            -- end
+
+                -- works but 1 frame delayed
+                -- if wep.WMPCallback then wep:RemoveCallback("BuildBonePositions",wep.WMPCallback) end
+                -- wep.WMPCallback = wep:AddCallback("BuildBonePositions", function(wep, nbones)
+                --     local ply = wep.Owner
+                --     if IsValid(ply) then
+                --         local bone,pos,ang = wep:GetWorldModelPosition(ply)
+                --         bone = ply:LookupBone(bone)
+                --         if bone then
+                --         local mat = ply:GetBoneMatrix(bone)
+                --         if mat then 
+                --             pos,ang= LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
+                --             wep:SetRenderOrigin(pos)
+                --             wep:SetRenderAngles(ang)
+                --         end
+                --     end
+                -- else
+                --     wep:SetRenderOrigin()
+                --     wep:SetRenderAngles()
+                --     end
+                -- end)
+
+                -- works on localplayer, laggy on other players
+                -- function wep:CalcAbsolutePosition( opos, oang)
+                --     local ply = self.Owner
+                --     if IsValid(ply) then
+                --         local bone,pos,ang = self:GetWorldModelPosition(ply)
+                --         bone = ply:LookupBone(bone)
+                --         if bone then
+                --         local mat = ply:GetBoneMatrix(bone)
+                --         if mat then 
+                --             return LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
+                --         end
+                --     end
+
+                --     return opos, oang
+                --     end
+                -- end
+           
         end
     end
 end)
 
-hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep)
-    if wep:IsWeapon() then
-        setup[wep] = true
+
+hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep) 
+    -- "NetworkEntityCreated" "NotifyShouldTransmit"
+    if wep:IsWeapon() then 
+        -- have to delay a little for initialization
+        setup[wep]=true
     end
 end)
 
-hook.Add("NetworkEntityCreated", "GetWorldModelPosition", function(wep) end)
-hook.Add("NotifyShouldTransmit", "GetWorldModelPosition", function(wep, trans) end)
+    
+
