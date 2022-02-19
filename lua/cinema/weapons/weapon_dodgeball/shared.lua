@@ -1,8 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 SWEP.PrintName = "Dodgeball"
 SWEP.Slot = 0
-SWEP.ViewModel = Model("models/pyroteknik/dodgeball.mdl")
-SWEP.WorldModel = Model("models/pyroteknik/dodgeball.mdl")
+SWEP.ViewModel = "models/pyroteknik/dodgeball.mdl"
+SWEP.WorldModel = "models/pyroteknik/dodgeball.mdl"
 SWEP.Primary.Automatic = true
 SWEP.Secondary.Automatic = true
 SWEP.Primary.Ammo = "none"
@@ -11,6 +11,7 @@ SWEP.Spawnable = true
 SWEP.Category = "Swamp Cinema" --todo remove these later i just need  this for testing 
 local outie = 64
 local innie = 28
+
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "ThrowState")
@@ -24,6 +25,13 @@ function SWEP:Initialize()
     self:SetHoldType("physgun")
     self:SetModelScale(0.5)
 end
+
+local pos,ppos,ang = Vector(6,-8,0.5), Vector(12,8,0), Angle(0,0,0)
+function SWEP:GetWorldModelPosition(ply)
+    if ply:IsPony() then return "LrigScull", ppos,ang end
+    return "ValveBiped.Bip01_R_Hand", pos,ang
+end
+
 
 function SWEP:OnChangeThrowState(name, old, new)
     local holdtype = "melee"

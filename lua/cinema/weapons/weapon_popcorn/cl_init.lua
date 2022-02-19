@@ -11,57 +11,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     return pos, ang
 end
 
-local function kernel_init(particle, vel)
-    particle:SetColor(255, 255, 255, 255)
-    particle:SetVelocity(vel or VectorRand():GetNormalized() * 15)
-    particle:SetGravity(Vector(0, 0, -200))
-    particle:SetLifeTime(0)
-    particle:SetDieTime(math.Rand(5, 10))
-    particle:SetStartSize(1)
-    particle:SetEndSize(0)
-    particle:SetStartAlpha(255)
-    particle:SetEndAlpha(0)
-    particle:SetCollide(true)
-    particle:SetBounce(0.25)
-    particle:SetRoll(math.pi * math.Rand(0, 1))
-    particle:SetRollDelta(math.pi * math.Rand(-4, 4))
-end
-
-function SWEP:DrawWorldModel()
-    local ply = self:GetOwner()
-
-    if IsValid(ply) then
-        local bp, ba = ply:GetBonePosition(ply:LookupBone(ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand") or 0)
-        local pos, ang
-
-        if bp then
-            pos, ang = bp, ba
-        else
-            pos, ang = self:GetPos(), self:GetAngles()
-        end
-
-        if ply:IsPony() then
-            ang:RotateAroundAxis(ang:Forward(), -90)
-            pos = pos + ang:Up() * 10 + ang:Right() * -1 + ang:Forward() * 7
-        else
-            ang:RotateAroundAxis(ang:Forward(), 30)
-            pos = pos + ang:Right() * 7 + ang:Up() * 3 + ang:Forward() * -4
-        end
-
-        self:SetupBones()
-        local mrt = self:GetBoneMatrix(0)
-
-        if mrt then
-            mrt:SetTranslation(pos)
-            mrt:SetAngles(ang)
-            mrt:SetScale(Vector(0.8, 0.8, 0.8))
-            self:SetBoneMatrix(0, mrt)
-        end
-    end
-
-    self:DrawModel()
-end
-
 --NOMINIFY
 net.Receive("EatPopcorn", function()
     local ply = net.ReadEntity()
@@ -85,11 +34,25 @@ net.Receive("EatPopcorn", function()
         end
 
         for i = 1, amt + math.random(0, 10) do
-            if not IsValid(ply) then return end
             local particle = emitter:Add("particle/popcorn-kernel", pos)
 
             if particle then
-                kernel_init(particle, (fwd + VectorRand():GetNormalized()):GetNormalized() * math.Rand(0, 40))
+                local vel= (fwd + VectorRand():GetNormalized()):GetNormalized() * math.Rand(0, 40)
+
+                particle:SetColor(255, 255, 255, 255)
+                particle:SetVelocity(vel or VectorRand():GetNormalized() * 15)
+                particle:SetGravity(Vector(0, 0, -200))
+                particle:SetLifeTime(0)
+                particle:SetDieTime(math.Rand(5, 10))
+                particle:SetStartSize(1)
+                particle:SetEndSize(0)
+                particle:SetStartAlpha(255)
+                particle:SetEndAlpha(0)
+                particle:SetCollide(true)
+                particle:SetBounce(0.25)
+                particle:SetRoll(math.pi * math.Rand(0, 1))
+                particle:SetRollDelta(math.pi * math.Rand(-4, 4))
+
             end
         end
     end
