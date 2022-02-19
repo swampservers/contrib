@@ -315,6 +315,7 @@ local matrixscale = FindMetaTable("VMatrix").Scale
 function ScaleMatrix(scale)
     local m = Matrix()
     matrixscale(m, isnumber(scale) and Vector(scale, scale, scale) or scale)
+
     return m
 end
 

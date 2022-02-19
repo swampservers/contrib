@@ -148,59 +148,48 @@ function cam.Culled3D2D(pos, ang, scale, callback)
     end
 end
 
-
-
-
 -- in SHARED (NOT CLIENT), return bone name, LOCAL pos, LOCAL ang, for example:
 -- local pos, ang = Vector(1,2,3), Angle(0,0,0)
 -- function SWEP:GetWorldModelPosition(ply)
 --     -- if CLIENT then self:RemoveEffects(EF_BONEMERGE) end
 --     return "ValveBiped.Bip01_R_Hand", pos, ang
 -- end
-
 print("BASED WEP", weapons.GetStored("weapon_base"))
 
-
-hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep) 
+hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep)
     -- "NetworkEntityCreated" "NotifyShouldTransmit"
-    if wep:IsWeapon() then 
+    if wep:IsWeapon() then
         -- have to delay a little for initialization
-        
-
-
-
-
-        hook.Add("PreRender",wep,function()
+        hook.Add("PreRender", wep, function()
             hook.Remove("PreRender", wep)
-        
-    
 
             if wep.GetWorldModelPosition then
-
                 -- works but cant use another renderoverride
                 function wep:RenderOverride(mode)
                     local ply = self.Owner
+
                     if IsValid(ply) then
-                        local bone,pos,ang = self:GetWorldModelPosition(ply)
+                        local bone, pos, ang = self:GetWorldModelPosition(ply)
                         bone = ply:LookupBone(bone)
+
                         if bone then
                             local mat = ply:GetBoneMatrix(bone)
-                            if mat then 
-                                pos,ang= LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
+
+                            if mat then
+                                pos, ang = LocalToWorld(pos, ang, mat:GetTranslation(), mat:GetAngles())
                                 self:SetRenderOrigin(pos)
                                 self:SetRenderAngles(ang)
                                 self:DrawModel()
+
                                 return
                             end
-                        end                    
+                        end
                     end
 
                     self:SetRenderOrigin()
                     self:SetRenderAngles()
                     self:DrawModel()
                 end
-
-
                 -- works but 1 frame delayed
                 -- if wep.WMPCallback then wep:RemoveCallback("BuildBonePositions",wep.WMPCallback) end
                 -- wep.WMPCallback = wep:AddCallback("BuildBonePositions", function(wep, nbones)
@@ -221,7 +210,6 @@ hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep)
                 --     wep:SetRenderAngles()
                 --     end
                 -- end)
-
                 -- works on localplayer, laggy on other players
                 -- function wep:CalcAbsolutePosition( opos, oang)
                 --     local ply = self.Owner
@@ -234,23 +222,10 @@ hook.Add("OnEntityCreated", "GetWorldModelPosition", function(wep)
                 --             return LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
                 --         end
                 --     end
-
                 --     return opos, oang
                 --     end
                 -- end
-                
             end
-        
         end)
-        
-        
-
-
-
-
-
     end
 end)
-
-    
-
