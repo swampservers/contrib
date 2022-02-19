@@ -12,7 +12,6 @@ SWEP.Category = "Swamp Cinema" --todo remove these later i just need  this for t
 local outie = 64
 local innie = 28
 
-
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "ThrowState")
     self:NetworkVar("Int", 1, "ThrowPower")
@@ -26,12 +25,13 @@ function SWEP:Initialize()
     self:SetModelScale(0.5)
 end
 
-local pos,ppos,ang = Vector(6,-8,0.5), Vector(12,8,0), Angle(0,0,0)
-function SWEP:GetWorldModelPosition(ply)
-    if ply:IsPony() then return "LrigScull", ppos,ang end
-    return "ValveBiped.Bip01_R_Hand", pos,ang
-end
+local pos, ppos, ang = Vector(6, -8, 0.5), Vector(12, 8, 0), Angle(0, 0, 0)
 
+function SWEP:GetWorldModelPosition(ply)
+    if ply:IsPony() then return "LrigScull", ppos, ang end
+
+    return "ValveBiped.Bip01_R_Hand", pos, ang
+end
 
 function SWEP:OnChangeThrowState(name, old, new)
     local holdtype = "melee"

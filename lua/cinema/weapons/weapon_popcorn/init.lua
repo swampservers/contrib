@@ -4,7 +4,6 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 util.AddNetworkString("EatPopcorn")
 
-
 function SWEP:SecondaryAttack()
     local bucket, att, phys, tr
     self.Weapon:SetNextSecondaryFire(CurTime() + 0.15)

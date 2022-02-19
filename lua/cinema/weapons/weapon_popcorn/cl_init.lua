@@ -37,8 +37,7 @@ net.Receive("EatPopcorn", function()
             local particle = emitter:Add("particle/popcorn-kernel", pos)
 
             if particle then
-                local vel= (fwd + VectorRand():GetNormalized()):GetNormalized() * math.Rand(0, 40)
-
+                local vel = (fwd + VectorRand():GetNormalized()):GetNormalized() * math.Rand(0, 40)
                 particle:SetColor(255, 255, 255, 255)
                 particle:SetVelocity(vel or VectorRand():GetNormalized() * 15)
                 particle:SetGravity(Vector(0, 0, -200))
@@ -52,7 +51,6 @@ net.Receive("EatPopcorn", function()
                 particle:SetBounce(0.25)
                 particle:SetRoll(math.pi * math.Rand(0, 1))
                 particle:SetRollDelta(math.pi * math.Rand(-4, 4))
-
             end
         end
     end

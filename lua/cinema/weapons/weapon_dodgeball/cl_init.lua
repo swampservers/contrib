@@ -21,11 +21,9 @@ function SWEP:ThrownBallExists()
     return false
 end
 
-
-
 function SWEP:DrawWorldModel()
     if self:ThrownBallExists() then return end
-    render.SetColorModulation(1, 0, 0)    
+    render.SetColorModulation(1, 0, 0)
     self:DrawModel()
     render.SetColorModulation(1, 1, 1)
 end

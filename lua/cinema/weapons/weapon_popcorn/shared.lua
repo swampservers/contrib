@@ -14,19 +14,18 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
-
 function SWEP:Initialize()
     self:SetHoldType("slam")
     self:SetModelScale(0.9)
 end
 
+local pos, ppos, ang, pang = Vector(2.5, -6, -2), Vector(13, 8, 0), Angle(0, 0, 190), Angle(0, 0, 90)
 
-local pos,ppos,ang,pang = Vector(2.5,-6,-2), Vector(13,8,0), Angle(0,0,190), Angle(0,0,90)
 function SWEP:GetWorldModelPosition(ply)
-    if ply:IsPony() then return "LrigScull", ppos,pang end
-    return "ValveBiped.Bip01_R_Hand", pos,ang
-end
+    if ply:IsPony() then return "LrigScull", ppos, pang end
 
+    return "ValveBiped.Bip01_R_Hand", pos, ang
+end
 
 function SWEP:PrimaryAttack()
     if IsFirstTimePredicted() then
@@ -42,5 +41,3 @@ function SWEP:PrimaryAttack()
 
     self.Weapon:SetNextPrimaryFire(CurTime() + 12)
 end
-
-
