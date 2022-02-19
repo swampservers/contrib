@@ -21,78 +21,58 @@ function SWEP:ThrownBallExists()
     return false
 end
 
+hook.Add("OnEntityCreated", "SetupWeaponTransform", function(wep) end)
 
-hook.Add("OnEntityCreated", "SetupWeaponTransform", function(wep)
-
-end)
 hook.Add("NetworkEntityCreated", "SetupWeaponTransform", function(wep)
     if not wep:IsWeapon() then return end
-    
-    wep:TimerSimple(0,function()
 
+    wep:TimerSimple(0, function()
         -- if wep.GetWorldModelPosition not self.WMPCallback then
         --     if wep.GetWorldModelPosition then
         --         self.WMPCallback = self:AddCallback("BuildBonePositions", function(wep, numbones)
-                
-
-
         --         end)
         --     end
         -- end
-
         if wep.GetWorldModelPosition then
-            function wep:CalcAbsolutePosition( pos, ang)
+            function wep:CalcAbsolutePosition(pos, ang)
                 local ply = self.Owner
+
                 if IsValid(ply) then
-                    local bone,pos,ang = self:GetWorldModelPosition(ply)
+                    local bone, pos, ang = self:GetWorldModelPosition(ply)
                     bone = ply:LookupBone(bone)
+
                     if bone then
-
-                    local mat = ply:GetBoneMatrix(bone)
-                    if mat then 
-                        return LocalToWorld(pos,ang,mat:GetTranslation(),mat:GetAngles())
+                        local mat = ply:GetBoneMatrix(bone)
+                        if mat then return LocalToWorld(pos, ang, mat:GetTranslation(), mat:GetAngles()) end
                     end
-
-                end
-                    
                 end
             end
         end
-    
     end)
-
-    
 end)
-
 
 -- returns bone name, LOCAL pos, LOCAL ang
 function SWEP:GetWorldModelPosition(ply)
-    if ply:IsPony() then return "LrigScull", Vector(12,8,0), Angle(0,0,0) end
-    return "ValveBiped.Bip01_R_Hand", Vector(6,-8,0.5), Angle(0,0,0)
+    if ply:IsPony() then return "LrigScull", Vector(12, 8, 0), Angle(0, 0, 0) end
+
+    return "ValveBiped.Bip01_R_Hand", Vector(6, -8, 0.5), Angle(0, 0, 0)
 end
 
-
 function SWEP:DrawWorldModel()
-
-
     if self:ThrownBallExists() then return end
     -- local ply = self:GetOwner()
-
     -- if IsValid(ply) then
     --     local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
     --     local bon = ply:LookupBone(bn) or 0
     --     local opos = self:GetPos()
     --     local oang = self:GetAngles()
     --     local bp, ba = ply:GetBonePosition(bon)
-
     --     if bp then
     --         opos = bp
     --     end
-
     --     if ba then
     --         oang = ba
     --     end
-
     --     if ply:IsPony() then
     --         oang:RotateAroundAxis(oang:Forward(), 90)
     --         oang:RotateAroundAxis(oang:Up(), -90)
@@ -102,11 +82,9 @@ function SWEP:DrawWorldModel()
     --         opos = opos + oang:Right() * 8
     --         opos = opos + oang:Up() * -0.5
     --     end
-
     --     self:SetupBones()
     --     -- self:SetModelScale(0.5, 0)
     --     local mrt = self:GetBoneMatrix(0)
-
     --     if mrt then
     --         mrt:Scale(Vector(0.5, 0.5, 0.5))
     --         mrt:SetTranslation(opos)
@@ -114,8 +92,6 @@ function SWEP:DrawWorldModel()
     --         self:SetBoneMatrix(0, mrt)
     --     end
     -- end
-
-
     render.SetColorModulation(1, 0, 0)
     -- self:SetColor(Color(255, 0, 0))
     self:DrawModel()

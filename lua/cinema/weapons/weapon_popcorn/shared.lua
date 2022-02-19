@@ -14,14 +14,12 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
-
 function SWEP:PrimaryAttack()
     if IsFirstTimePredicted() then
         self.Owner:EmitSound("crisps/eat.wav", 60)
     end
 
     if SERVER then
-        
         net.Start("EatPopcorn")
         net.WriteEntity(self.Owner)
         net.Broadcast()

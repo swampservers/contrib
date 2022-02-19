@@ -12,7 +12,6 @@ SWEP.Category = "Swamp Cinema" --todo remove these later i just need  this for t
 local outie = 64
 local innie = 28
 
-
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "ThrowState")
     self:NetworkVar("Int", 1, "ThrowPower")

@@ -8,13 +8,10 @@ function SWEP:Initialize()
     self:SetHoldType("slam")
 end
 
-
 function SWEP:SecondaryAttack()
-    
-
     local bucket, att, phys, tr
     self.Weapon:SetNextSecondaryFire(CurTime() + 0.15)
-    
+
     if self:GetClass() == "weapon_popcorn_spam" then
         local t = self.Owner:GetTheater()
         if t and t:Name() == "Movie Theater" then return end

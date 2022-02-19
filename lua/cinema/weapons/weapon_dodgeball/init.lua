@@ -12,7 +12,6 @@ function makeDodgeball(pos, vel, player)
     e:GetPhysicsObject():AddVelocity(vel)
 end
 
-
 timer.Create("dodgeballcontroller", 1, 0, function()
     local ingymcount = 0
     local outgymcount = 0

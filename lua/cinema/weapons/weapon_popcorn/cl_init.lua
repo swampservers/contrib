@@ -62,51 +62,41 @@ function SWEP:DrawWorldModel()
     self:DrawModel()
 end
 
-
 --NOMINIFY
 net.Receive("EatPopcorn", function()
     local ply = net.ReadEntity()
     if not IsValid(ply) then return end
-    
     ply.ChewScale = 1
     ply.ChewStart = CurTime()
     ply.ChewDur = SoundDuration("crisps/eat.wav")
-
     local amt = 15
 
     local function eat()
-            amt=amt-5
-    
-            local fwd,pos
-    
-            if ply ~= Me then
-                local attach = ply:GetAttachment(ply:LookupAttachment("eyes"))
-                if not attach then return end
-        
-                fwd = (attach.Ang:Forward() - attach.Ang:Up()):GetNormalized()
-                pos =  attach.Pos + fwd * 3
-            else
-                fwd,pos = ply:GetAimVector():GetNormalized(),ply:GetShootPos() + gui.ScreenToVector(ScrW() / 2, ScrH() / 4 * 3) * 10
-            end
-    
-            for i = 1, amt+math.random(0,10) do
-                if not IsValid(ply) then return end
-                local particle = emitter:Add("particle/popcorn-kernel", pos)
-        
-                if particle then
-                    kernel_init(particle, (fwd + VectorRand():GetNormalized()):GetNormalized() * math.Rand(0, 40))
-                end
-            end
-    
+        amt = amt - 5
+        local fwd, pos
+
+        if ply ~= Me then
+            local attach = ply:GetAttachment(ply:LookupAttachment("eyes"))
+            if not attach then return end
+            fwd = (attach.Ang:Forward() - attach.Ang:Up()):GetNormalized()
+            pos = attach.Pos + fwd * 3
+        else
+            fwd, pos = ply:GetAimVector():GetNormalized(), ply:GetShootPos() + gui.ScreenToVector(ScrW() / 2, ScrH() / 4 * 3) * 10
         end
-    
-        eat()
+
+        for i = 1, amt + math.random(0, 10) do
+            if not IsValid(ply) then return end
+            local particle = emitter:Add("particle/popcorn-kernel", pos)
+
+            if particle then
+                kernel_init(particle, (fwd + VectorRand():GetNormalized()):GetNormalized() * math.Rand(0, 40))
+            end
+        end
+    end
+
+    eat()
     ply:TimerCreate("EatPopcorn", 1, 3, eat)
-
-   
 end)
-
-
 
 function SWEP:SecondaryAttack()
 end
