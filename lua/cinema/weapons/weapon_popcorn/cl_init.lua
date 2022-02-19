@@ -62,43 +62,51 @@ function SWEP:DrawWorldModel()
     self:DrawModel()
 end
 
-net.Receive("Popcorn_Eat", function()
+
+--NOMINIFY
+net.Receive("EatPopcorn", function()
     local ply = net.ReadEntity()
     if not IsValid(ply) then return end
-    local size = net.ReadFloat()
-    local attachid = ply:LookupAttachment("eyes")
-    emitter:SetPos(Me:GetPos())
-
-    local angpos = ply:GetAttachment(attachid) or {
-        ["Pos"] = ply:EyePos(),
-        ["Ang"] = Angle(0, 0, 0)
-    }
-
-    local fwd
-    local pos
-
-    if ply ~= Me then
-        fwd = (angpos.Ang:Forward() - angpos.Ang:Up()):GetNormalized()
-        pos = angpos.Pos + fwd * 3
-    else
-        fwd = ply:GetAimVector():GetNormalized()
-        pos = ply:GetShootPos() + gui.ScreenToVector(ScrW() / 2, ScrH() / 4 * 3) * 10
-    end
-
-    for i = 1, size do
-        if not IsValid(ply) then return end
-        local particle = emitter:Add("particle/popcorn-kernel", pos)
-
-        if particle then
-            local dir = VectorRand():GetNormalized()
-            kernel_init(particle, (fwd + dir):GetNormalized() * math.Rand(0, 40))
-        end
-    end
-end)
-
-net.Receive("Popcorn_Eat_Start", function()
-    local ply = net.ReadEntity()
+    
     ply.ChewScale = 1
     ply.ChewStart = CurTime()
     ply.ChewDur = SoundDuration("crisps/eat.wav")
+
+    local amt = 15
+
+    local function eat()
+            amt=amt-5
+    
+            local fwd,pos
+    
+            if ply ~= Me then
+                local attach = ply:GetAttachment(ply:LookupAttachment("eyes"))
+                if not attach then return end
+        
+                fwd = (attach.Ang:Forward() - attach.Ang:Up()):GetNormalized()
+                pos =  attach.Pos + fwd * 3
+            else
+                fwd,pos = ply:GetAimVector():GetNormalized(),ply:GetShootPos() + gui.ScreenToVector(ScrW() / 2, ScrH() / 4 * 3) * 10
+            end
+    
+            for i = 1, amt+math.random(0,10) do
+                if not IsValid(ply) then return end
+                local particle = emitter:Add("particle/popcorn-kernel", pos)
+        
+                if particle then
+                    kernel_init(particle, (fwd + VectorRand():GetNormalized()):GetNormalized() * math.Rand(0, 40))
+                end
+            end
+    
+        end
+    
+        eat()
+    ply:TimerCreate("EatPopcorn", 1, 3, eat)
+
+   
 end)
+
+
+
+function SWEP:SecondaryAttack()
+end
