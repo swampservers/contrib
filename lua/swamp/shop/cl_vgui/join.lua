@@ -1,7 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
-
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 vgui.Register("DSSJoinMenu", {
     Init = function(self)
         if IsValid(SS_JoinMenu) then
@@ -12,14 +9,9 @@ vgui.Register("DSSJoinMenu", {
         self:SetText("")
         self:SetZPos(100)
         self:SetMouseInputEnabled(true)
-
-
-
         self:NoClipping(true)
         self.Expansion = 0
         DSS_Anim(self, "Expansion", 50)
-        
-
         self:SetVisible(false)
 
         hook.Add("Think", SS_JoinMenu, function()
@@ -31,39 +23,33 @@ vgui.Register("DSSJoinMenu", {
         vgui_parent(self, function(p)
             self.info = vgui("DSSTransitionPanel", function(p)
                 p:Dock(FILL)
+
                 -- p:SetMouseInputEnabled(false)
-
                 p:SwapTo(vgui("Panel", function(p)
-
                     local function button(txt)
                         return vgui("DButton", function(p)
-                                p:Dock(FILL)
-                                p:SetText(txt)
-                                p:SetTextColor(Color.white)
-                                p:SetFont(Font.Calibri24_800)
+                            p:Dock(FILL)
+                            p:SetText(txt)
+                            p:SetTextColor(Color.white)
+                            p:SetFont(Font.Calibri24_800)
+                            p.Hover = 0
+                            DSS_Anim(p, "Hover", 10)
 
-                                p.Hover = 0
-                                DSS_Anim(p, "Hover", 10)
-
-                                function p:Paint(w,h)
-                                    PaintOutlineRect(Color.white, 0,0, w, h, 3)
-                                end
-                            end)
-                        
+                            function p:Paint(w, h)
+                                PaintOutlineRect(Color.white, 0, 0, w, h, 3)
+                            end
+                        end)
                     end
 
-
-                    
                     vgui("DSSEqualWidthLayout", function(p)
                         p:Dock(TOP)
-                        p:DockMargin(0,70,0,0)
+                        p:DockMargin(0, 70, 0, 0)
                         p:SetTall(52)
-
 
                         vgui("Panel", function(p)
                             p:DockPadding(20, 0, 20, 0)
+                            local b = button("Join for 20,000 points")
 
-                            local b =  button("Join for 20,000 points")
                             function b:DoClick()
                                 gui.OpenURL('https://steamcommunity.com/groups/swampservers')
                             end
@@ -76,8 +62,8 @@ vgui.Register("DSSJoinMenu", {
 
                         vgui("Panel", function(p)
                             p:DockPadding(20, 0, 20, 0)
+                            local b = button("Join for 2x income")
 
-                            local b =  button("Join for 2x income")
                             function b:DoClick()
                                 gui.OpenURL('https://swamp.sv/discord')
                             end
@@ -89,21 +75,18 @@ vgui.Register("DSSJoinMenu", {
                                 p:SetText("(Requires joining Steam too)")
                             end)
                         end)
-
                     end)
-
-
 
                     vgui("DButton", function(p)
                         p:SetText('r')
                         p:SetColor(Color.white)
-                        p:SetSize(40,40)
+                        p:SetSize(40, 40)
 
                         p.DoClick = function()
                             SS_JoinMenu.ExpansionAnim:SetTarget(0)
                         end
 
-                        p.Paint=noop
+                        p.Paint = noop
 
                         p.Think = function(self)
                             local font = self:IsHovered() and Font.Marlett40_symbol or Font.Marlett32_symbol
@@ -112,12 +95,11 @@ vgui.Register("DSSJoinMenu", {
                                 self:SetFont(font)
                             end
 
-                            self:SetPos(self:GetParent():GetWide()-self:GetWide(),0)
+                            self:SetPos(self:GetParent():GetWide() - self:GetWide(), 0)
                         end
 
                         p:Think()
                     end)
-
 
                     vgui("DSSEqualWidthLayout", function(p)
                         p:Dock(BOTTOM)
@@ -146,7 +128,9 @@ vgui.Register("DSSJoinMenu", {
         end)
     end,
     DoClick = function(self)
-        if self.Expansion <0.5 then self.ExpansionAnim:SetTarget(1) end
+        if self.Expansion < 0.5 then
+            self.ExpansionAnim:SetTarget(1)
+        end
     end,
     ThinkAlways = function(self)
         if not IsValid(SS_ShopMenu) then
@@ -182,10 +166,9 @@ function ppp(self, w, h)
     -- local c = Color(Lerp(l, 27, 255), Lerp(l, 40, 255), Lerp(l, 56, 255))
     local c = Color(Lerp(l, 40, 255), Lerp(l, 60, 255), Lerp(l, 30, 255))
     surface.SetDrawColor(c)
-    
-    
     draw.NoTexture()
     local x1, y1 = 100, 40
+
     surface.DrawPoly({
         {
             x = x1,
@@ -202,12 +185,7 @@ function ppp(self, w, h)
     })
 
     surface.DrawRect(0, 0, w, h)
-    draw.VerticalGradient(Color.black, 0, 0, w, h, e*0.5, 0)
-
-
-
-
-
+    draw.VerticalGradient(Color.black, 0, 0, w, h, e * 0.5, 0)
     surface.SetDrawColor(255, 255, 255, 255)
     local s = 64 --Lerp(e, 64, 80)
     local m = Material["swamp/join/steam_text.png"]
@@ -239,4 +217,3 @@ function ppp(self, w, h)
         draw.SimpleText("for 2x income & 20,000 points!", 'SS_JOINFONT', w / 2, h / 2 + s, Color(255, 255, 255, 255 * s), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 end
-
