@@ -1,6 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 protectedTheaterTable = protectedTheaterTable or {}
 
+--NOMINIFY
+
 timer.Create("iteratePTs", 1, 0, function()
     for k, v in pairs(protectedTheaterTable) do
         protectedTheaterTable[k]["time"] = math.max(protectedTheaterTable[k]["time"] - 1, 0)
