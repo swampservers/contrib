@@ -1,6 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 function CanTapeWhileHandling(ent)
     return ent.AnchorTouchPos and ent:GetPos():Distance(ent.AnchorTouchPos) < 8
 end
@@ -13,10 +11,11 @@ API_Command("HandleEntity", {API_ANY, API_ANY}, function(ent, touchpos)
 
     print(touchpos)
     HandledEntity = ent
-    if ent then HandledEntity.AnchorTouchPos = touchpos end
+
+    if ent then
+        HandledEntity.AnchorTouchPos = touchpos
+    end
 end)
-
-
 
 function FindAllTrash()
     local tab = {}
