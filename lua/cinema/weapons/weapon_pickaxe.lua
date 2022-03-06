@@ -15,6 +15,7 @@ local DIAMONDMAT = Material("models/props_mining/pickaxe01_diamond")
 
 function SWEP:Initialize()
     self:SetHoldType("melee2")
+    self:SetModelScale(0.8)
 end
 
 if CLIENT then
@@ -201,46 +202,19 @@ function SWEP:IsDiamond()
     return false
 end
 
-print(1)
 
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
     if IsValid(ply) then
-        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-        local bon = ply:LookupBone(bn) or 0
-        local opos = self:GetPos()
-        local oang = self:GetAngles()
-        local bp, ba = ply:GetBonePosition(bon)
-
-        if bp then
-            opos = bp
-        end
-
-        if ba then
-            oang = ba
-        end
-
-        opos = opos + oang:Right() * 1
-        opos = opos + oang:Forward() * 3
-        opos = opos + oang:Up() * 8
-
+        local mat = ply:GetBoneMatrix(ply:LookupBone(ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand") or 0)
+        local pos, ang = mat:GetTranslation(), mat:GetAngles()
+        pos, ang = LocalToWorld(Vector(3, -1, 8), Angle(180,0,0), pos, ang)
         if ply:IsPony() then
-            opos = opos + oang:Forward() * 4
-            opos = opos + oang:Up() * 8
-            opos = opos + oang:Right() * -3.5
+            pos, ang = LocalToWorld(Vector(-4, 3.5, -8), Angle(0,0,0), pos, ang)
         end
-
-        oang:RotateAroundAxis(oang:Right(), 180)
-        self:SetupBones()
-        self:SetModelScale(0.8, 0)
-        local mrt = self:GetBoneMatrix(0)
-
-        if mrt then
-            mrt:SetTranslation(opos)
-            mrt:SetAngles(oang)
-            self:SetBoneMatrix(0, mrt)
-        end
+        self:SetRenderOrigin(pos)
+        self:SetRenderAngles(ang)
     end
 
     if self:IsDiamond() then
