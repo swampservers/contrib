@@ -202,17 +202,18 @@ function SWEP:IsDiamond()
     return false
 end
 
-
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
     if IsValid(ply) then
         local mat = ply:GetBoneMatrix(ply:LookupBone(ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand") or 0)
         local pos, ang = mat:GetTranslation(), mat:GetAngles()
-        pos, ang = LocalToWorld(Vector(3, -1, 8), Angle(180,0,0), pos, ang)
+        pos, ang = LocalToWorld(Vector(3, -1, 8), Angle(180, 0, 0), pos, ang)
+
         if ply:IsPony() then
-            pos, ang = LocalToWorld(Vector(-4, 3.5, -8), Angle(0,0,0), pos, ang)
+            pos, ang = LocalToWorld(Vector(-4, 3.5, -8), Angle(0, 0, 0), pos, ang)
         end
+
         self:SetRenderOrigin(pos)
         self:SetRenderAngles(ang)
     end
