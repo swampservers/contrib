@@ -201,6 +201,9 @@ function SWEP:IsDiamond()
     return false
 end
 
+print(1)
+
+
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
