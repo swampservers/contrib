@@ -26,7 +26,7 @@ end, {
 })
 
 RegisterChatCommand({'playtime', 'showplaytime', 'hours'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has played for [rainbow]" .. math.floor(ply:GetStat("minutes_legacy") / 60 + ply:GetStat("sec")/3600) .. "[fbc] hours!")
+    BotSayGlobal(ply:Nick() .. " has played for [rainbow]" .. math.floor(ply:GetStat("minutes_legacy") / 60 + ply:GetStat("sec") / 3600) .. "[fbc] hours!")
 end, {
     global = true,
     throttle = true
@@ -35,7 +35,6 @@ end, {
 RegisterChatConsoleCommand({'drop', 'dropweapon'}, "drop")
 
 RegisterChatConsoleCommand('dropall', "dropall")
-
 
 RegisterChatCommand({'rent', 'protect'}, function(ply, arg)
     TryProtectTheater(ply)
@@ -48,5 +47,3 @@ timer.Create("steamspam", 100, 0, function()
         end
     end
 end)
-
-
