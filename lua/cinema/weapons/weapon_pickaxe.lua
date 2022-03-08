@@ -207,6 +207,7 @@ function SWEP:DrawWorldModel()
 
     if IsValid(ply) then
         local mat = ply:GetBoneMatrix(ply:LookupBone(ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand") or 0)
+
         if mat then
             local pos, ang = mat:GetTranslation(), mat:GetAngles()
             pos, ang = LocalToWorld(Vector(3, -1, 8), Angle(180, 0, 0), pos, ang)
