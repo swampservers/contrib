@@ -227,7 +227,8 @@ if CLIENT then
         ["www.dropbox.com"] = true,
         ["www.puu.sh"] = true,
         ["cdn.discordapp.com"] = true,
-        ["files.catbox.moe"] = true
+        ["files.catbox.moe"] = true,
+        ["horatio.tube"] = true
     }
 
     function VIDEO:ShouldTrust()
