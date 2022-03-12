@@ -23,12 +23,9 @@ if CLIENT then
             local v = notifications[i]
             v.time = v.time or t
             local dt = SysTime() - v.time
-
             -- pos converges to i (todo make fps independent)
             v.pos = math.min(i, v.pos + FrameTime() + (i - v.pos) * 0.05)
-
-            local a = math.Clamp(math.min(dt * 4, 5 - dt), 0, 1) - (v.pos^2)*0.01
-            
+            local a = math.Clamp(math.min(dt * 4, 5 - dt), 0, 1) - v.pos ^ 2 * 0.01
 
             if a > 0 then
                 surface.SetFont("ChatFont")
