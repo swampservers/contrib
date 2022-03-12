@@ -161,7 +161,7 @@ if CLIENT then
         else
             vpanel:OpenURL(key)
         end]]
-		vpanel:OpenURL(key)
+        vpanel:OpenURL(key)
     end
 
     cachedURL = cachedURL or {}
@@ -220,7 +220,7 @@ if CLIENT then
                                 if IsValid(vpanel) and IsValid(panel) then
                                     vpanel.Browser:RunJavascript("console.log('URL:'+window.location);")
                                     vpanel.Browser:RunJavascript("var stor = window['movie_storage'] || window['show_storage'];")
-									vpanel.Browser:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id" .. (isTV and "" or "_movie") .. "='+" .. (isTV and "document.getElementsByClassName('playing-now')[0].dataset.idEpisode" or "stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
+                                    vpanel.Browser:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id" .. (isTV and "" or "_movie") .. "='+" .. (isTV and "document.getElementsByClassName('playing-now')[0].dataset.idEpisode" or "stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
                                 end
                             end)
 
