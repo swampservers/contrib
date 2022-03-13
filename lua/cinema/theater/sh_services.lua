@@ -119,7 +119,7 @@ if CLIENT then
     local seekahead = CreateClientConVar("cinema_seekahead", "0", true, false)
 
     function SERVICE:SeekTo(time, panel)
-        local str = string.format("th_seek(%s);", time + seekahead:GetFloat())
+        local str = string.format("th_seek(%s);", time+seekahead:GetFloat())
         panel:QueueJavascript(str)
     end
 end
