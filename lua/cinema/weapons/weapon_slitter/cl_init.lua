@@ -5,7 +5,6 @@ surface.CreateFont("CSKillIcons", {
     font = "csd",
     size = ScreenScale(30),
     weight = 500,
-    antialias = true,
     additive = true
 })
 
