@@ -6,10 +6,13 @@ SWEP.ViewModelFOV = 85
 
 --NOMINIFY
 function SWEP:ThrownBallExists()
-    local ply = self:GetOwner()
+    
     if self:GetThrowState() < 2 then return false end
     if IsValid(self:GetThrownBall()) then return true end
     if IsValid(self.fakethrownball) then return true end
+
+    local ply = self:GetOwner()
+    if IsValid(ply) then
     local lookent = ply:GetEyeTrace().Entity
 
     if IsValid(lookent) and lookent:GetClass() == "dodgeball" and lookent:GetPos():Distance(ply:EyePos()) < 128 then
@@ -17,6 +20,7 @@ function SWEP:ThrownBallExists()
 
         return true
     end
+end
 
     return false
 end
