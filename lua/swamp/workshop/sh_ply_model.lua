@@ -32,8 +32,8 @@ if CLIENT then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
 
-                if bodygroups then
-                    ply:SetBodyGroups(bodygroups)
+                if dbodygroups then
+                    ply:SetBodyGroups(dbodygroups)
                 end
 
                 mdl = dmdl
