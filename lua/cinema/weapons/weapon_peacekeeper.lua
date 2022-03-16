@@ -30,7 +30,7 @@ SWEP.Primary.Ammo = "peaceshot"
 SWEP.Primary.ClipSize = 2
 SWEP.Primary.DefaultClip = 2
 SWEP.Primary.Automatic = false
-SWEP.Primary.TakeAmmo = 1
+-- SWEP.Primary.TakeAmmo = 1
 SWEP.Primary.Force = 2000
 SWEP.Primary.Spread = 0
 SWEP.Primary.Recoil = 2
@@ -188,7 +188,7 @@ function SWEP:Reload()
     if timer.Exists("ShotgunReload_" .. self.Owner:UniqueID()) or (self.Owner.NextReload or 0) > CurTime() or maxcap == spaceavail then return end
 
     if self.Owner:IsPlayer() then
-        if self.Owner:GetAmmoCount(self.Primary.Ammo) == 0 then return end
+        -- if self.Owner:GetAmmoCount(self.Primary.Ammo) == 0 then return end
         local TIMESCALE = (self.Owner:GetNWBool("HVP_EVOLVED") and self.Owner:GetNWInt("hvp") == 1) and 0.5 or 1
         local DLY = 2 * TIMESCALE
 
@@ -237,11 +237,11 @@ function SWEP:InsertShell()
             return
         end
 
-        if self:Clip1() >= self.Primary.ClipSize or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+        if self:Clip1() >= self.Primary.ClipSize then -- or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
             -- if clip is full or ammo is out, then...
             self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH) -- send the pump anim
             timer.Destroy(timerName) -- kill the timer
-        elseif self:Clip1() <= self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0 then
+        elseif self:Clip1() <= self.Primary.ClipSize then --and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0 then
             self.InsertingShell = true --well, I tried!
 
             timer.Simple(.05, function()
@@ -249,9 +249,9 @@ function SWEP:InsertShell()
                 self:ShellAnimCaller()
             end)
 
-            if not self.Owner.HVP_EVOLVED then
-                self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
-            end
+            -- if not self.Owner.HVP_EVOLVED then
+            --     self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
+            -- end
 
             self:SetClip1(self:Clip1() + 1)
         end
