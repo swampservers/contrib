@@ -237,11 +237,13 @@ function SWEP:InsertShell()
             return
         end
 
-        if self:Clip1() >= self.Primary.ClipSize then -- or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+        -- or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+        if self:Clip1() >= self.Primary.ClipSize then
             -- if clip is full or ammo is out, then...
             self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH) -- send the pump anim
             timer.Destroy(timerName) -- kill the timer
-        elseif self:Clip1() <= self.Primary.ClipSize then --and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0 then
+        elseif self:Clip1() <= self.Primary.ClipSize then
+            --and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0 then
             self.InsertingShell = true --well, I tried!
 
             timer.Simple(.05, function()
@@ -252,7 +254,6 @@ function SWEP:InsertShell()
             -- if not self.Owner.HVP_EVOLVED then
             --     self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
             -- end
-
             self:SetClip1(self:Clip1() + 1)
         end
     else
