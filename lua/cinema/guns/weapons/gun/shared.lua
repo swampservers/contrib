@@ -732,6 +732,8 @@ function SWEP:GunFire()
         self:EmitSound((self.GunType == "pistol" or self.GunType == "heavypistol") and "Default.ClipEmpty_Pistol" or "Default.ClipEmpty_Rifle", nil, nil, nil, CHAN_AUTO)
         self:SetNextPrimaryFire(CurTime() + 0.2)
 
+        -- self:Reload()
+
         return false
     end
 

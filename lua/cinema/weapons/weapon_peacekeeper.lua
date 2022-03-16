@@ -1,4 +1,80 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+
+DEFINE_BASECLASS("gun")
+SWEP.GunType = "shotgun"
+SWEP.PrintName = "Peacekeeper"
+SWEP.Purpose = "Keep the peace."
+SWEP.HoldType = "shotgun"
+SWEP.Slot = 0
+
+if CLIENT then
+    killicon.AddAlias("gun_spas12", "weapon_shotgun")
+end
+
+--
+SWEP.WorldModel = "models/weapons/w_sawed-off.mdl"
+SWEP.ViewModel = "models/weapons/v_sawed.mdl"
+SWEP.ShootSound = "weapons/peacekeeper/peacekeeper_fire.wav"
+SWEP.CSMuzzleFlashes = true
+SWEP.CSMuzzleX = false
+SWEP.CSMuzzleFlashScale = 1.30
+--
+SWEP.Primary.Ammo = "peaceshot"
+SWEP.Primary.ClipSize = 2
+SWEP.Primary.DefaultClip = 2
+SWEP.Primary.Automatic = false
+SWEP.Damage = 15
+SWEP.CycleTime = 0.26
+SWEP.HalfDamageDistance = 512
+--
+SWEP.SpreadBase = 0.006
+SWEP.SpreadMove = 0.02
+SWEP.Spray = 0.12
+SWEP.SprayExponent = 2
+
+ComputeSpray(SWEP, {
+    TapFireInterval = 0.7,
+    ShotsTo90Spray = 5
+})
+
+--
+SWEP.NumPellets = 15
+SWEP.PelletSpread = 0.1
+SWEP.UseShellReload = true
+SWEP.KickUBase = 2.5
+SWEP.KickUSpray = 1.5
+SWEP.KickLBase = 0.2
+SWEP.KickLSpray = 0.3
+SWEP.MoveSpeed = 230 / 250
+
+
+
+game.AddAmmoType({
+    name = "peaceshot",
+    dmgtype = DMG_BULLET,
+    tracer = TRACER_LINE,
+    plydmg = 100,
+    npcdmg = 100,
+    force = 200,
+    minsplash = 10,
+    maxsplash = 5
+})
+
+function SWEP:Think()
+    BaseClass.Think(self)
+    print(self)
+    if SERVER then 
+        if ((not IsValid(self.Owner)) or (not ProtectionShotgunAllowed(self.Owner))) then
+            self:Remove()
+        else
+            if self.Owner:GetAmmoCount("peaceshot") < 2 then self.Owner:SetAmmo(2, "peaceshot") end
+        end
+    end
+end
+
+
+--[[
 AddCSLuaFile()
 SWEP.PrintName = "Peacekeeper"
 SWEP.Instructions = "Keep the peace"
@@ -237,23 +313,21 @@ function SWEP:InsertShell()
             return
         end
 
-        -- or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
-        if self:Clip1() >= self.Primary.ClipSize then
+        if self:Clip1() >= self.Primary.ClipSize then -- or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
             -- if clip is full or ammo is out, then...
             self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH) -- send the pump anim
             timer.Destroy(timerName) -- kill the timer
-        elseif self:Clip1() <= self.Primary.ClipSize then
-            --and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0 then
+        elseif self:Clip1() <= self.Primary.ClipSize then --and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0 then
             self.InsertingShell = true --well, I tried!
 
-            timer.Simple(.05, function()
-                if not IsValid(self) then return end
+            self:TimerSimple(0.05, function()
                 self:ShellAnimCaller()
             end)
 
             -- if not self.Owner.HVP_EVOLVED then
             --     self.Owner:RemoveAmmo(1, self.Primary.Ammo, false)
             -- end
+
             self:SetClip1(self:Clip1() + 1)
         end
     else
@@ -264,3 +338,13 @@ end
 function SWEP:ShellAnimCaller()
     self:SendWeaponAnim(ACT_VM_RELOAD)
 end
+
+if SERVER then function SWEP:Think()
+
+    if (not IsValid(self.Owner)) or (not ProtectionShotgunAllowed(self.Owner)) then
+        self:Remove()
+            end
+end
+end
+
+]]
