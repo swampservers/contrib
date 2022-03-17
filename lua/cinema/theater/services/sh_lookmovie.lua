@@ -125,7 +125,7 @@ if CLIENT then
                 if string.StartWith(msg, "CAPTCHA:") then
                     if msg:sub(9, -1) == 'Thread Defence' then
                         self:Remove()
-                        chat.AddText("[red]Visit lookmovie.io, fill out the captcha, and then request the " .. (isTV and "tv show" or "movie") .. " again.")
+                        chat.AddText("[red]Visit lookmovie.site, fill out the captcha, and then request the " .. (isTV and "tv show" or "movie") .. " again.")
                         callback()
                     end
                 end
@@ -165,7 +165,7 @@ if CLIENT then
         else
             vpanel:OpenURL(key)
         end]]
-		vpanel:OpenURL(key)
+        vpanel:OpenURL(key)
     end
 
     cachedURL = cachedURL or {}
