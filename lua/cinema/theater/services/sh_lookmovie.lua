@@ -15,7 +15,8 @@ function SERVICE:GetKey(url)
     --for _, v in pairs(domains) do
     --    if string.match(url.encoded, v .. "/m/./(.+)/s") or string.match(url.encoded, v .. "/s/./(.+)/s#") then return url.encoded end
     --end
-    if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return url.encoded end
+    if string.match(url.encoded, "lookmovie%d*%.%w+/m/.+/(.+)/s") or string.match(url.encoded, "lookmovie%d*%.%w+/s/.+/(.+)/s#") then return url.encoded end
+    --if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return url.encoded end
 
     return false
 end
@@ -32,7 +33,7 @@ if CLIENT then
         vpanel:SetMouseInputEnabled(false)
         vpanel.response = ""
         local info = {}
-        local isTV = string.match(key, "shows/play/(.+)")
+        local isTV = string.match(key, "/s/.+/(.+)/s#")
 
         local function onFetchReceive(body)
             local t = util.JSONToTable(body)
@@ -42,6 +43,10 @@ if CLIENT then
             else
                 local url = t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"] or t["streams"]["1080p"]
                 local subs = ""
+
+                if isTV then
+                    url = t["streams"][720] or t["streams"][480] or t["streams"][360] or t["streams"][1080]
+                end
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
                 --[[for k,v in pairs(t["subtitles"]) do
@@ -97,15 +102,14 @@ if CLIENT then
 
                 if not info.title or not info.thumb then
                     if isTV then
-                        --vpanel:RunJavascript("if(stor){x=stor['seasons'];for(var i in x){if(x[i].id_episode==" .. string.match(key, "#.+%-(%d+)$") .. ")console.log('TITLE:'+stor.title+' ('+stor.year+') S'+x[i].season+' E'+x[i].episode+(x[i].title ? ' | '+x[i].title : ''));}console.log('THUMB:'+stor.poster_medium);}")
-                        vpanel:RunJavascript("if(stor){t=document.getElementsByClassName('playing-now')[0];console.log('TITLE:'+stor.title+' ('+stor.year+') S'+t.dataset.season+' E'+t.dataset.episode+(t.children[1].textContent ? ' | '+t.children[1].textContent : ''));console.log('THUMB:'+stor.movie_poster);}")
+                        vpanel:RunJavascript("if(stor){x=stor['seasons'];for(var i in x){if(x[i].id_episode==" .. string.match(key, "#.+%-(%d+)$") .. ")console.log('TITLE:'+stor.title+' ('+stor.year+') S'+x[i].season+' E'+x[i].episode+(x[i].title ? ' | '+x[i].title : ''));}console.log('THUMB:'+stor.poster_medium);}")
                     else
                         vpanel:RunJavascript("if(stor){console.log('TITLE:'+stor.title+' ('+stor.year+')');console.log('THUMB:'+stor.movie_poster);}")
                     end
                 end
 
                 if vpanel.response == "" then
-                    vpanel:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id" .. (isTV and "" or "_movie") .. "='+" .. (isTV and "document.getElementsByClassName('playing-now')[0].dataset.idEpisode" or "stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
+                    vpanel:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id_" .. (isTV and "episode" or "movie") .. "=" .. (isTV and string.match(key, "#.+%-(%d+)$") .. "'" or "'+stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
                 end
             end
         end)
@@ -121,7 +125,7 @@ if CLIENT then
                 if string.StartWith(msg, "CAPTCHA:") then
                     if msg:sub(9, -1) == 'Thread Defence' then
                         self:Remove()
-                        chat.AddText("[red]Visit lookmovie.site, fill out the captcha, and then request the " .. (isTV and "tv show" or "movie") .. " again.")
+                        chat.AddText("[red]Visit lookmovie.io, fill out the captcha, and then request the " .. (isTV and "tv show" or "movie") .. " again.")
                         callback()
                     end
                 end
@@ -161,7 +165,7 @@ if CLIENT then
         else
             vpanel:OpenURL(key)
         end]]
-        vpanel:OpenURL(key)
+		vpanel:OpenURL(key)
     end
 
     cachedURL = cachedURL or {}
@@ -214,13 +218,13 @@ if CLIENT then
                                 surface.DrawRect(0, 0, w, h)
                             end
 
-                            local isTV = string.match(key, "shows/play/(.+)")
+                            local isTV = string.match(key, "/s/.+/(.+)/s#")
 
                             timer.Create("lookmovieupdate" .. tostring(math.random(1, 100000)), 1, 60, function()
                                 if IsValid(vpanel) and IsValid(panel) then
                                     vpanel.Browser:RunJavascript("console.log('URL:'+window.location);")
                                     vpanel.Browser:RunJavascript("var stor = window['movie_storage'] || window['show_storage'];")
-                                    vpanel.Browser:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id" .. (isTV and "" or "_movie") .. "='+" .. (isTV and "document.getElementsByClassName('playing-now')[0].dataset.idEpisode" or "stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
+                                    vpanel.Browser:RunJavascript("if(stor){xmlHttp=new XMLHttpRequest();xmlHttp.open('GET',window.location.origin+'/api/v1/security/" .. (isTV and "episode" or "movie") .. "-access?id_" .. (isTV and "episode" or "movie") .. "=" .. (isTV and string.match(key, "#.+%-(%d+)$") .. "'" or "'+stor.id_movie") .. ",false);xmlHttp.send(null);console.log('JSON:'+xmlHttp.responseText);}")
                                 end
                             end)
 
@@ -241,6 +245,10 @@ if CLIENT then
                                     if string.StartWith(msg, "JSON:") then
                                         local t = util.JSONToTable(msg:sub(6, -1))
                                         cachedURL[key] = t["streams"]["720p"] or t["streams"]["480p"] or t["streams"]["360p"] or t["streams"]["1080p"]
+
+                                        if isTV then
+                                            cachedURL[key] = t["streams"][720] or t["streams"][480] or t["streams"][360] or t["streams"][1080]
+                                        end
 
                                         if IsValid(panel) and Me:GetTheater() then
                                             panel:QueueJavascript(string.format("th_video('%s');th_seek(%s);", string.JavascriptSafe(cachedURL[key]), Me:GetTheater():VideoCurrentTime(true)))
