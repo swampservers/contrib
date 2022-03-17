@@ -11,14 +11,12 @@ ENT.PageTurnSound = Sound("GModTower/inventory/move_paper.wav")
 surface.CreateFont("InstrumentKeyLabel", {
     size = 22,
     weight = 400,
-    antialias = true,
     font = "Impact"
 })
 
 surface.CreateFont("InstrumentNotice", {
     size = 30,
     weight = 400,
-    antialias = true,
     font = "Impact"
 })
 

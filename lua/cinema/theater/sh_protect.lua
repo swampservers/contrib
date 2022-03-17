@@ -96,8 +96,8 @@ if CLIENT then
                     local col = Color(255, 255, 255, 255)
                     local cy = ScrH() * 0.7
                     local pt = protectedTheaterTable and protectedTheaterTable[Me:GetLocation()]
-                    local protected = pt ~= nil and pt["time"] > 1
-                    local owner = Me:InTheater() and protected and Me:GetTheater():GetOwner() and Me:GetTheater():GetOwner() == Me
+                    local protected = pt and pt["time"] > 1
+                    local owner = Me:GetTheater() and protected and Me:GetTheater():GetOwner() and Me:GetTheater():GetOwner() == Me
                     local m0 = "This is " .. (owner and "your" or "a") .. " Safe Space"
                     local m1 = owner and "You can defend this area from players you don't want inside" or "You can't harm anyone here."
                     draw.WordBox(8, ScrW() / 2, cy, m0, "Trebuchet24", Color(0, 0, 0, 100), col, TEXT_ALIGN_CENTER)

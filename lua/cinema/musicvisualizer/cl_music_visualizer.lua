@@ -388,7 +388,7 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
 
                 http.Fetch("http://swamp.sv/fft/data/" .. thekey .. "/" .. tostring(theminute) .. "?" .. tostring(os.time()), function(b, l, h, c)
                     if c == 200 then
-                        print("DATASIZE", b:len())
+                        -- print("DATASIZE", b:len())
                         MVIS_DATA[thekey][theminute] = b
                     else
                         timer.Simple(3, function()
@@ -406,7 +406,7 @@ hook.Add("RenderScreenspaceEffects", "MusicVis", function()
         local data = MVIS_DATA[thekey]
 
         if not data[vminute] then
-            draw.DrawText("Generating FX...", "DermaLarge", ScrW() * 0.5, ScrH() * 0.1, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+            draw.DrawText("Generating FX...", "Trebuchet24", ScrW() * 0.5, 20, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
             return
         end
