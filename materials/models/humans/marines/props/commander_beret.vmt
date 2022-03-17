@@ -1,0 +1,10 @@
+VertexLitGeneric
+{
+	"$basetexture" "models/humans/marines/props/commander_beret"
+	"$model" 1
+	"$detailscale" 5
+	"$detailblendfactor" 0.0
+	"$detailblendmode" 0
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+}

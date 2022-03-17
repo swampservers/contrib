@@ -236,10 +236,6 @@ hook.Add("HUDPaint", "SwampHealthAmmo", function()
     local alpha = AMMO_ALPHA
     local drawammo = ply:Alive() and IsValid(wep) and (wep.DrawAmmo ~= nil and wep.DrawAmmo or wep.DrawAmmo == nil and true)
 
-    if IsValid(wep) and wep:GetClass() == "weapon_shotgun" then
-        drawammo = false
-    end
-
     if drawammo then
         -- local clip = wep:Clip1()
         local clipsize = wep.Primary and wep.Primary.ClipSize or wep:GetMaxClip1()

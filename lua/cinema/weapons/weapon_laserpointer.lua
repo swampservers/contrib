@@ -547,43 +547,12 @@ if CLIENT then
     end
 end
 
-if CLIENT then
-    surface.CreateFont("laserpointer_display15", {
-        font = "Coolvetica", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
-        extended = false,
-        size = 25,
-        weight = 1500,
-        blursize = 0,
-        scanlines = 0,
-        antialias = true,
-        underline = false,
-        italic = false,
-        strikeout = false,
-        symbol = false,
-        rotary = false,
-        shadow = false,
-        additive = false,
-        outline = false,
-    })
-end
 
 if CLIENT then
     surface.CreateFont("laserpointer_display15", {
-        font = "Roboto", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
-        extended = false,
+        font = "Roboto", 
         size = 20,
         weight = 1500,
-        blursize = 0,
-        scanlines = 0,
-        antialias = true,
-        underline = false,
-        italic = false,
-        strikeout = false,
-        symbol = false,
-        rotary = false,
-        shadow = false,
-        additive = false,
-        outline = false,
     })
 end
 

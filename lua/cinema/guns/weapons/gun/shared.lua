@@ -53,7 +53,6 @@ function SWEP:Standingness()
 end
 
 function SWEP:SetItem(item)
-    print(item)
     self.item = item
     self.PrintName = item.name
 
@@ -161,6 +160,8 @@ function GunPerkOverrides(swep, perk)
         t.NumPellets = 1
         t.PelletSpread = 0
         t.HalfDamageDistance = swep.HalfDamageDistance * 2
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.8
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
         t.UnscopeOnShoot = false
@@ -730,6 +731,8 @@ function SWEP:GunFire()
     if self:Clip1() <= 0 then
         self:EmitSound((self.GunType == "pistol" or self.GunType == "heavypistol") and "Default.ClipEmpty_Pistol" or "Default.ClipEmpty_Rifle", nil, nil, nil, CHAN_AUTO)
         self:SetNextPrimaryFire(CurTime() + 0.2)
+
+        -- self:Reload()
 
         return false
     end
