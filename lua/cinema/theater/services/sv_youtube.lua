@@ -8,39 +8,6 @@
 -- end
 sv_GetVideoInfo = sv_GetVideoInfo or {}
 
-local function convertISO8601Time(duration)
-    local a = {}
-
-    for part in string.gmatch(duration, "%d+") do
-        table.insert(a, part)
-    end
-
-    if duration:find('H') or duration:find('M') or duration:find('S') then
-        a[1] = string.match(duration, "(%d+)H") or 0
-        a[2] = string.match(duration, "(%d+)M") or 0
-        a[3] = string.match(duration, "(%d+)S") or 0
-    end
-
-    duration = 0
-
-    if #a == 3 then
-        duration = duration + tonumber(a[1]) * 3600
-        duration = duration + tonumber(a[2]) * 60
-        duration = duration + tonumber(a[3])
-    end
-
-    if #a == 2 then
-        duration = duration + tonumber(a[1]) * 60
-        duration = duration + tonumber(a[2])
-    end
-
-    if #a == 1 then
-        duration = duration + tonumber(a[1])
-    end
-
-    return duration
-end
-
 sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
     local onReceive = function(body, length, headers, code)
         local resp = util.JSONToTable(body)
@@ -56,7 +23,10 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
             info.duration = 0
         else
             local durStr = table.Lookup(item, 'contentDetails.duration', '')
-            info.duration = math.max(1, convertISO8601Time(durStr))
+            local hours = tonumber(string.match(durStr, "(%d+)[Hh]")) or 0
+            local mins = tonumber(string.match(durStr, "(%d+)[Mm]")) or 0
+            local secs = tonumber(string.match(durStr, "(%d+)[Ss]")) or 0
+            info.duration = math.max(1, (hours * 3600) + (mins * 60) + secs)
         end
 
         if table.Lookup(item, "status.privacyStatus") == "unlisted" or table.Lookup(item, "contentDetails.contentRating.ytRating") == "ytAgeRestricted" then
