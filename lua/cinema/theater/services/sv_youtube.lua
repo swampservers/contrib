@@ -26,7 +26,7 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
             local hours = tonumber(string.match(durStr, "(%d+)[Hh]")) or 0
             local mins = tonumber(string.match(durStr, "(%d+)[Mm]")) or 0
             local secs = tonumber(string.match(durStr, "(%d+)[Ss]")) or 0
-            info.duration = math.max(1, (hours * 3600) + (mins * 60) + secs)
+            info.duration = math.max(1, hours * 3600 + mins * 60 + secs)
         end
 
         if table.Lookup(item, "status.privacyStatus") == "unlisted" or table.Lookup(item, "contentDetails.contentRating.ytRating") == "ytAgeRestricted" then
