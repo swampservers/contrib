@@ -1,9 +1,9 @@
-﻿SS_Tab({
-    name = "GPoser",
-    icon = "hand-peace",
-    pos = "bottom",
-    class = "DSSGPoserMode",
-})
+﻿-- SS_Tab({
+--     name = "GPoser",
+--     icon = "hand-peace",
+--     pos = "bottom",
+--     class = "DSSGPoserMode",
+-- })
 
 vgui.Register('DSSGPoserMode', {
     Init = function(self)
