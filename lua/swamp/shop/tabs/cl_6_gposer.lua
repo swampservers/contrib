@@ -7,7 +7,7 @@
 
 vgui.Register('DSSGPoserMode', {
     Init = function(self)
-        local mode=self
+        local mode = self
         self:DockPadding(100, 100, 100, 100)
 
         -- vgui("Panel", self, function(p)
@@ -55,7 +55,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(40)
         end)
 
-        local exists,existstime = false,-100
+        local exists, existstime = false, -100
 
         vgui("DButton", self, function(p)
             p:SetFont("DermaLarge")
@@ -63,16 +63,23 @@ vgui.Register('DSSGPoserMode', {
             p:SetTextColor(Color.black)
             p:Dock(TOP)
             p:SetTall(40)
+
             function p:Think()
                 if GPoserVersion then
                     self:SetVisible(false)
                 else
                     if mode.FileExists then
                         self:SetText("Start GPoser")
-                        function self:DoClick() RunConsoleCommand("gposer") end
+
+                        function self:DoClick()
+                            RunConsoleCommand("gposer")
+                        end
                     else
                         self:SetText("Download Now!")
-                        function self:DoClick() gui.OpenURL("https://github.com/swampservers/gposer") end
+
+                        function self:DoClick()
+                            gui.OpenURL("https://github.com/swampservers/gposer")
+                        end
                     end
                 end
             end
@@ -83,9 +90,10 @@ vgui.Register('DSSGPoserMode', {
             p:SetContentAlignment(5)
             p:Dock(TOP)
             p:SetTall(80)
+
             function p:Think()
                 if GPoserVersion then
-                    self:SetText("Running GPoser v"..GPoserVersion.."\nMay take a few minutes to load")
+                    self:SetText("Running GPoser v" .. GPoserVersion .. "\nMay take a few minutes to load")
                 else
                     self:SetText("")
                 end
@@ -99,18 +107,16 @@ vgui.Register('DSSGPoserMode', {
             p:SetTextColor(Color.black)
             p:Dock(TOP)
             p:SetTall(32)
+
             function p:DoClick()
                 RunConsoleCommand("gposer", "preview")
             end
         end)
-
-
     end,
     Think = function(self)
-        if (self.FileExistsTime or -100) > CurTime()-5 then return end
+        if (self.FileExistsTime or -100) > CurTime() - 5 then return end
         self.FileExists = file.Exists("lua/bin/gmcl_gposer_win64.dll", "MOD")
         self.FileExistsTime = CurTime()
-
         self.PreviewButton:SetVisible(GPoserVersion and true or false)
     end,
     Paint = function(self) end
