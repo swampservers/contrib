@@ -59,9 +59,8 @@ game.AddAmmoType({
 
 function SWEP:Think()
     BaseClass.Think(self)
-    print(self)
 
-    if SERVER then
+    if SERVER and not self:GetItem() then
         if (not IsValid(self.Owner)) or (not ProtectionShotgunAllowed(self.Owner)) then
             self:Remove()
         else

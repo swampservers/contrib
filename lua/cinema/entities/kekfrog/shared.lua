@@ -83,5 +83,5 @@ function ENT:IncomeSuppression()
         end
     end
 
-    return inc
+    return inc * 0.5
 end
