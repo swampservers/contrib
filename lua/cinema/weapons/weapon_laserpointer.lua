@@ -547,10 +547,9 @@ if CLIENT then
     end
 end
 
-
 if CLIENT then
     surface.CreateFont("laserpointer_display15", {
-        font = "Roboto", 
+        font = "Roboto",
         size = 20,
         weight = 1500,
     })

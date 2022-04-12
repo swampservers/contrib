@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
- function crashwindow(delta)
+function crashwindow(delta)
     vgui("DFrame", function(p)
         local popup = p
         p:SetSize(440, 210)

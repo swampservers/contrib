@@ -1,6 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "shotgun"
 SWEP.PrintName = "Peacekeeper"
@@ -48,8 +46,6 @@ SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
 SWEP.MoveSpeed = 230 / 250
 
-
-
 game.AddAmmoType({
     name = "peaceshot",
     dmgtype = DMG_BULLET,
@@ -64,16 +60,17 @@ game.AddAmmoType({
 function SWEP:Think()
     BaseClass.Think(self)
     print(self)
-    if SERVER then 
-        if ((not IsValid(self.Owner)) or (not ProtectionShotgunAllowed(self.Owner))) then
+
+    if SERVER then
+        if (not IsValid(self.Owner)) or (not ProtectionShotgunAllowed(self.Owner)) then
             self:Remove()
         else
-            if self.Owner:GetAmmoCount("peaceshot") < 2 then self.Owner:SetAmmo(2, "peaceshot") end
+            if self.Owner:GetAmmoCount("peaceshot") < 2 then
+                self.Owner:SetAmmo(2, "peaceshot")
+            end
         end
     end
 end
-
-
 --[[
 AddCSLuaFile()
 SWEP.PrintName = "Peacekeeper"
