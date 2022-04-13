@@ -68,7 +68,7 @@ function ENT:Income()
             break
         end
     end
-    -- inc = inc * 0.5
+    inc = inc * 0.5
 
     return math.ceil(inc * self:IncomeSuppression())
 end
@@ -83,5 +83,5 @@ function ENT:IncomeSuppression()
         end
     end
 
-    return inc * 0.5
+    return inc
 end
