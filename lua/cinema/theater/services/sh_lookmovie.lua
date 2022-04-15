@@ -13,14 +13,17 @@ function SERVICE:GetKey(url)
     --for _, v in pairs(domains) do
     --    if string.match(url.encoded, v .. "/m/./(.+)/s") or string.match(url.encoded, v .. "/s/./(.+)/s#") then return url.encoded end
     --end
-    if string.match(url.encoded, "lookmovie%d*%.%w+/m/.+/(.+)/s") or string.match(url.encoded, "lookmovie%d*%.%w+/s/.+/(.+)/s#") then return url.encoded end
-    --if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return url.encoded end
+    --if string.match(url.encoded, "lookmovie%d*%.%w+/m/.+/(.+)/s") or string.match(url.encoded, "lookmovie%d*%.%w+/s/.+/(.+)/s#") then return url.encoded end
+    if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return string.Explode("?",url.encoded)[1] end
 
     return false
 end
 
 if CLIENT then
+    local url2 = url
+
     function SERVICE:GetVideoInfoClientside(key, callback)
+
         if vpanel then
             vpanel:Remove()
         end
@@ -31,7 +34,8 @@ if CLIENT then
         vpanel:SetMouseInputEnabled(false)
         vpanel.response = ""
         local info = {}
-        local isTV = string.match(key, "/s/.+/(.+)/s#")
+        --local isTV = string.match(key, "/s/.+/(.+)/s#")
+        local isTV = string.match(key, "/shows/play/(.+)#")
 
         local function onFetchReceive(body)
             local t = util.JSONToTable(body)
@@ -45,6 +49,9 @@ if CLIENT then
                 if isTV then
                     url = t["streams"][720] or t["streams"][480] or t["streams"][360] or t["streams"][1080]
                 end
+
+                local nk = url2.parse(url)
+                url = nk.scheme .. "://" .. nk.host .. string.Replace(nk.path, ".", "%2e") --gmod's http library can't handle periods in the url path unless it's the file for some retarded reason
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality
                 --[[for k,v in pairs(t["subtitles"]) do
@@ -163,7 +170,11 @@ if CLIENT then
         else
             vpanel:OpenURL(key)
         end]]
-        vpanel:OpenURL(key)
+        
+        vpanel:OpenURL("https://lookmovie2.to")
+        timer.Simple(1, function()
+            vpanel:RunJavascript("document.location='"..key.."'")
+        end)
     end
 
     cachedURL = cachedURL or {}
@@ -216,7 +227,8 @@ if CLIENT then
                                 surface.DrawRect(0, 0, w, h)
                             end
 
-                            local isTV = string.match(key, "/s/.+/(.+)/s#")
+                            --local isTV = string.match(key, "/s/.+/(.+)/s#")
+                            local isTV = string.match(key, "/shows/play/(.+)#")
 
                             timer.Create("lookmovieupdate" .. tostring(math.random(1, 100000)), 1, 60, function()
                                 if IsValid(vpanel) and IsValid(panel) then
