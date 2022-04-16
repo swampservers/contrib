@@ -14,7 +14,7 @@ function SERVICE:GetKey(url)
     --    if string.match(url.encoded, v .. "/m/./(.+)/s") or string.match(url.encoded, v .. "/s/./(.+)/s#") then return url.encoded end
     --end
     --if string.match(url.encoded, "lookmovie%d*%.%w+/m/.+/(.+)/s") or string.match(url.encoded, "lookmovie%d*%.%w+/s/.+/(.+)/s#") then return url.encoded end
-    if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return string.Explode("?",url.encoded)[1] end
+    if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return string.Explode("?", url.encoded)[1] end
 
     return false
 end
@@ -23,7 +23,6 @@ if CLIENT then
     local url2 = url
 
     function SERVICE:GetVideoInfoClientside(key, callback)
-
         if vpanel then
             vpanel:Remove()
         end
@@ -170,10 +169,10 @@ if CLIENT then
         else
             vpanel:OpenURL(key)
         end]]
-        
         vpanel:OpenURL("https://lookmovie2.to")
+
         timer.Simple(1, function()
-            vpanel:RunJavascript("document.location='"..key.."'")
+            vpanel:RunJavascript("document.location='" .. key .. "'")
         end)
     end
 
