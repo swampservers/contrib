@@ -14,7 +14,7 @@ function SERVICE:GetKey(url)
     --    if string.match(url.encoded, v .. "/m/./(.+)/s") or string.match(url.encoded, v .. "/s/./(.+)/s#") then return url.encoded end
     --end
     --if string.match(url.encoded, "lookmovie%d*%.%w+/m/.+/(.+)/s") or string.match(url.encoded, "lookmovie%d*%.%w+/s/.+/(.+)/s#") then return url.encoded end
-    if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return url.scheme .. "://" .. url.host .. url.path .. (string.match(url.encoded,"(#.+%-%d+)") or "") end --it's apparently fine for sites to just violate URI grammar set by RFC 2396 (putting fragments before queries)
+    if string.match(url.encoded, "lookmovie%d*%.%w+/%w+/play/(.+)") then return url.scheme .. "://" .. url.host .. url.path .. (string.match(url.encoded, "(#.+%-%d+)") or "") end --it's apparently fine for sites to just violate URI grammar set by RFC 2396 (putting fragments before queries)
 
     return false
 end
