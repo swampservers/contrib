@@ -366,7 +366,7 @@ function parse2(url, default)
 
         for i = 1, #prmarr do
             local tmparr = string.Explode("=", prmarr[i])
-            params[tmparr[1]] = tmparr[2]
+            params[tmparr[1]] = tmparr[2] or ""
         end
 
         parsed.query = params
@@ -379,7 +379,7 @@ function parse2(url, default)
 
         for i = 1, #prmarr do
             local tmparr = string.Explode("=", prmarr[i])
-            params[tmparr[1]] = tmparr[2]
+            params[tmparr[1]] = tmparr[2] or ""
         end
 
         parsed.fragment = params
