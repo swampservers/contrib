@@ -61,7 +61,7 @@ function SWEP:Think()
     BaseClass.Think(self)
 
     if SERVER and not self:GetItem() then
-        if (not IsValid(self.Owner)) or (not ProtectionShotgunAllowed(self.Owner)) then
+        if not IsValid(self.Owner) or not ProtectionShotgunAllowed(self.Owner) then
             self:Remove()
         else
             if self.Owner:GetAmmoCount("peaceshot") < 2 then
