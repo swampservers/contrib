@@ -125,7 +125,7 @@ PPM.Editor3_nodes.pony_normal_face = {
         name = "Eyes",
         pos = Vector(15, -5, 40),
         controlls = {
-            --[[
+                        --[[
 
 		{
 
@@ -203,7 +203,7 @@ PPM.Editor3_nodes.pony_normal_body = {
         name = "Body",
         pos = Vector(10, 0, 20),
         controlls = {
-            --[[{
+                        --[[{
 
 				name = "Weight" ,
 
@@ -238,7 +238,7 @@ PPM.Editor3_nodes.pony_normal_body = {
                 name = "Custom Ponymark",
                 type = "edit_imgur_cmark"
             },
-            --[[	{
+                        --[[	{
 
 				name = "Ponymark",
 
@@ -271,7 +271,7 @@ PPM.Editor3_nodes.pony_normal_body = {
                 param = "tail",
                 choises = {"MAILCALL", "FLOOFEH", "ADVENTUROUS", "SHOWBOAT", "ASSERTIVE", "BOLD", "STUMPY", "SPEEDSTER", "EDGY", "RADICAL", "BOOKWORM", "BUMPKIN", "POOFEH", "CURLY", "NONE"}
             },
-            --[[ {
+                        --[[ {
 
 				name = "Tail size" ,
 
