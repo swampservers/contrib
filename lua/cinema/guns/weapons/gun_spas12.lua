@@ -23,7 +23,7 @@ SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
 SWEP.Damage = 14
-SWEP.CycleTime = 0.34
+SWEP.CycleTime = 0.44
 SWEP.HalfDamageDistance = 1024
 --
 SWEP.SpreadBase = 0.006
@@ -32,7 +32,7 @@ SWEP.Spray = 0.12
 SWEP.SprayExponent = 2
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 0.7,
+    TapFireInterval = 0.8,
     ShotsTo90Spray = 5
 })
 
