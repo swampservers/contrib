@@ -1,10 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-timer.Simple(1, function()
-    net.Start("setcntry")
-    net.WriteString(string.lower(system.GetCountry()))
-    net.SendToServer()
-end)
-
 surface.CreateFont("ScoreboardTitle", {
     font = "Righteous",
     size = 52,
@@ -580,7 +574,7 @@ vgui.Register("ScoreboardServerName", {
     end,
     Update = function(self)
         self.Name:SetText(game.GetMap())
-        local players = SV_PLYCOUNT or table.Count(player.GetHumans())
+        local players = IsValid(game.GetWorld()) and game.GetWorld():GetNWInt("pl",nil) or table.Count(player.GetHumans())
         local ttext = tostring(players) .. " Players Online"
 
         if players == 1 then

@@ -50,8 +50,41 @@ function net.Incoming(len, client)
     func(len - 16, client)
 end
 
-API_Request("NetReady", {})
+
+API_Request("NetReady", {API_TABLE})
+API_Request("Fingerprint", {API_STRING})
 
 if CLIENT then
-    hook.Add("InitPostEntity", "NetReady", RequestNetReady)
+
+    --  net.Start("guid") net.WriteString(r and r[1].value or "x") net.SendToServer()
+
+    hook.Add("InitPostEntity", "NetReady", function() 
+        
+        RequestNetReady({
+            -- os = system.IsWindows() and "win" or (system.IsOSX() and "osx" or (system.IsLinux() and "linux" or "unknown")),
+            -- battery = system.BatteryPower()<255,
+            -- w=ScrW(),
+            -- h=ScrH(),
+            country = system.GetCountry(),
+            guid = (sql.Query("select value from playerpdata where infoid='GUID'") or {{}})[1].value
+        }) 
+
+        
+        -- browser fingerprint
+        do
+            local p = vgui.Create("DHTML")
+            p:SetSize(ScrW(), ScrH())
+            p:SetAlpha(0)
+            p:OpenURL("https://swamp.sv/fingerprint.php")
+            function p:ConsoleMessage(msg)
+                RequestFingerprint(msg)
+                p:Remove()
+            end
+            timer.Simple(60, function()
+                if IsValid(p) then
+                    p:Remove()
+                end
+            end)
+        end
+    end)
 end
