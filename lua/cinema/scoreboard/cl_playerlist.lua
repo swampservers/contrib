@@ -574,7 +574,7 @@ vgui.Register("ScoreboardServerName", {
     end,
     Update = function(self)
         self.Name:SetText(game.GetMap())
-        local players = IsValid(game.GetWorld()) and game.GetWorld():GetNWInt("pl",nil) or table.Count(player.GetHumans())
+        local players = IsValid(game.GetWorld()) and game.GetWorld():GetNWInt("pl", nil) or table.Count(player.GetHumans())
         local ttext = tostring(players) .. " Players Online"
 
         if players == 1 then
