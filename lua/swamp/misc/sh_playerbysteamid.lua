@@ -42,4 +42,18 @@ if SERVER then
 
         return ply
     end
+
+    --- 
+    function util.AccountIDFrom64( id )
+        assert(id:sub(1,7)=="7656119")
+        id = tonumber(id:sub(8)) - 7960265728
+        assert(id>0 and id < 4294967296)
+        return id
+    end
+
+    --- 
+    function util.SteamIDFromAccountID( id )
+        return "STEAM_0:"..(id%2)..":"..math.floor(id/2)
+    end
+
 end
