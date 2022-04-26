@@ -35,9 +35,9 @@ function SWEP:DoDrawCrosshair(x, y)
     surface.DrawRect(x + barwofs, y - (barl + dist) + pixelfix, barw, barl)
     surface.DrawRect(x + barwofs, y + dist, barw, barl)
 
-    if self.Owner:SteamID() == "STEAM_0:0:38422842" then
-        draw.SimpleText("Spray: " .. math.floor(self:GetSpray(SysTime(), self.LastFireSysTime or 0) * 100), "DermaDefault", x, y + 100, color_white)
-    end
+    -- if self.Owner:SteamID() == "STEAM_0:0:38422842" then
+    --     draw.SimpleText("Spray: " .. math.floor(self:GetSpray(SysTime(), self.LastFireSysTime or 0) * 100), "DermaDefault", x, y + 100, color_white)
+    -- end
 
     return true
 end
