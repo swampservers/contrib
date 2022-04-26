@@ -355,7 +355,15 @@ function API_Union(...)
 end
 
 function API_Optional(typ)
-    return API_Union(API_NIL, typ)
+    return {
+        Read = function() return net.ReadBool() and API_Read(typ) or nil end,
+        Write = function(v)
+            net.WriteBool(v~=nil)
+            if v~=nil then
+                API_Write(typ, v)
+            end
+        end
+    }
 end
 
 function API_List(value_type)

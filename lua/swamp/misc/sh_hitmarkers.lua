@@ -1,85 +1,100 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- damage indicator shit
-if SERVER then
-    util.AddNetworkString("HitMarker")
-    HITMARKERCACHE = {}
-    KILLCACHE = {}
 
-    hook.Add("PostEntityTakeDamage", "DamageMarker", function(ent, dmg, took)
-        local att = dmg:GetAttacker()
+local hitmarkers = {}
 
-        --and (ent:IsBot() or (HumanTeamName and att.hvp ~= ent.hvp)) then
-        if ent:IsPlayer() then
-            if IsValid(att) and att:IsPlayer() then
-                HITMARKERCACHE[att] = (HITMARKERCACHE[att] or 0) + dmg:GetDamage()
-                -- if not ent:Alive() then
-                --     KILLCACHE[att] = true
-                -- end
-            end
-        end
-    end)
+local timeoffset = nil
 
-    hook.Add("PlayerDeath", "KillMarker", function(victim, inflictor, attacker)
-        if IsValid(attacker) and attacker:IsPlayer() then
-            KILLCACHE[attacker] = true
-        end
-    end)
+API_Command("HitMarker", {API_COMP_VECTOR, API_FLOAT, API_UINT16, API_BOOL}, function(pos, time, dmg, kill)
+    local offset = SysTime() - time
+    timeoffset = timeoffset and math.min(timeoffset, offset)  or offset
 
-    hook.Add("Tick", "FlushHitMarkers", function()
-        for k, v in pairs(HITMARKERCACHE) do
-            if IsValid(k) then
-                net.Start("HitMarker")
-                net.WriteUInt(v, 16)
-                net.WriteBool(KILLCACHE[k] or false)
-                net.Send(k)
-            end
-        end
-
-        HITMARKERCACHE = {}
-        KILLCACHE = {}
-    end)
-else
-    local hitmarkers = {}
-
-    net.Receive("HitMarker", function(len)
-        local dmg = net.ReadUInt(16)
-        local kill = net.ReadBool()
-
-        table.insert(hitmarkers, {
-            dmg = dmg,
-            kill = kill,
-            t = SysTime(),
-            x = 0.1, --math.Rand(-0.5,0.5),
-            
-        })
-    end)
-
-    hook.Add("PostDrawHUD", "DrawHitMarkers", function() end)
-
-    hook.Add("HUDDrawScoreBoard", "DrawHitMarkers", function()
-        local duration = 1
-        local t = SysTime()
-        local i = 1
-
-        while i <= #hitmarkers do
-            local marker = hitmarkers[i]
-
-            if marker.t + duration < t then
-                table.remove(hitmarkers, i)
-            else
-                i = i + 1
-                local drift = (t - marker.t) / duration
-                local alpha = 1 - drift
-                drift = drift + 0.1
-                -- ..marker.dmg..""
-                draw.SimpleText(marker.kill and "KILL " .. marker.dmg or tostring(marker.dmg), "HitDamageFont", ScrW() / 2 + drift * 100 * marker.x, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            end
-        end
-    end)
-
-    surface.CreateFont("HitDamageFont", {
-        font = "Trebuchet",
-        size = 24,
-        weight = 1000
+    table.insert(hitmarkers, {
+        dmg = dmg,
+        kill = kill,
+        t = time+timeoffset,
+        pos = pos
     })
-end
+
+end)
+
+
+
+local duration = 1
+
+hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function()
+    
+    local i,t = 1,SysTime()
+
+    while i <= #hitmarkers do
+        local mark = hitmarkers[i]
+
+        local life = (t - mark.t) / duration
+
+        if life>1 then
+            table.remove(hitmarkers, i)
+            continue
+        end
+        i = i + 1
+
+
+        -- if not mark.sx1 then mark.sx1 = (mark.pos:ToScreen().x or ScrW()/2)/ScrW() - 0.5 end
+
+        local scale = (EyePos():Distance(mark.pos) + 150 )/150
+
+        if not mark.motion1 then
+
+            local function trianglewave(x)
+                return 4*(math.abs(x-math.floor(x+0.5))-0.25)
+            end
+            
+            local x = math.Clamp( ( (mark.pos:ToScreen().x or ScrW()/2)/ScrW() - 0.5) * 10 + trianglewave(mark.t)*1.5, -1, 1)
+
+            mark.motion1 = (EyeAngles():Up() - EyeAngles():Forward()) *scale * 5
+            mark.motion2 = EyeAngles():Right() * scale * x*5 -- math.Rand(-2,2)
+        end
+
+        
+
+        render.DepthRange(0,0)
+        local a = EyeAngles()
+        a:RotateAroundAxis(a:Right(),90)
+        a:RotateAroundAxis(a:Up(),-90)
+        cam.Start3D2D( mark.pos + life*mark.motion1 + life^2*mark.motion2, a, (life+1)*scale*125/(ScrH()+1000) )
+
+        local txt = (mark.kill and "KILL " or "") .. mark.dmg
+        
+        draw.SimpleText( txt, Font.Roboto24, 1,1, Color(0, 0, 0, 255 * math.sqrt(1-life)), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText( txt, Font.Roboto24, 0,0, Color(255, 0,0, 255 * math.sqrt(1-life)), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        
+        
+        cam.End3D2D()
+        render.DepthRange(0,1)
+
+
+    end
+end)
+
+
+
+hook.Add("HUDDrawScoreBoard", "DrawHitMarkers", function()
+    -- local duration = 1
+    -- local t = SysTime()
+    -- local i = 1
+
+    -- while i <= #hitmarkers do
+    --     local marker = hitmarkers[i]
+
+    --     if marker.t + duration < t then
+    --         table.remove(hitmarkers, i)
+    --     else
+    --         i = i + 1
+    --         local drift = (t - marker.t) / duration
+    --         local alpha = 1 - drift
+    --         drift = drift + 0.1
+    --         -- ..marker.dmg..""
+    --         draw.SimpleText(marker.kill and "KILL " .. marker.dmg or tostring(marker.dmg), Font.Trebuchet24_1000, ScrW() / 2 + drift * 100 * marker.x, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    --     end
+    -- end
+end)
+

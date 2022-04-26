@@ -18,31 +18,79 @@ function SWEP:FireAnimationEvent(pos, ang, event, options)
     end
 end
 
---NOMINIFY
-SWEP.ScopeArcTexture = Material("sprites/scope_arc")
-SWEP.ScopeDustTexture = Material("overlays/scope_lens.vmt")
+local color_cvar = CreateClientConVar("crosshair_color", "default", true, false, "For Swamp guns. Enter 3 numbers with spaces in between or 'default'.") 
+local additive_cvar =CreateClientConVar("crosshair_additive", "0.33", true, false, "For Swamp guns. Can be a fraction to blend", 0, 1)
+local dotw_cvar = CreateClientConVar("crosshair_dot_scale", "1", true, false, "For Swamp guns.", 0, 10) 
+local barw_cvar =CreateClientConVar("crosshair_bar_scale", "1", true, false, "For Swamp guns.", 0, 10)
+local barl_cvar =CreateClientConVar("crosshair_bar_length_scale", "1", true, false, "For Swamp guns.", 0, 10)
+local gap_cvar =CreateClientConVar("crosshair_static_gap", "-1", true, false, "For Swamp guns. If > 0 the crosshair bars will not move to show spread.", -1, 100)
+local shadow_cvar = CreateClientConVar("crosshair_shadow", "0.33", true, false, "For Swamp guns. Opacity 0-1", 0, 1) 
+local shadowsize_cvar = CreateClientConVar("crosshair_shadow_padding", "0", true, false, "For Swamp guns.", 0, 1) 
+local shadowpos_cvar = CreateClientConVar("crosshair_shadow_offset", "1", true, false, "For Swamp guns. Move the shadow diagonally", 0, 1) 
+
 
 function SWEP:DoDrawCrosshair(x, y)
     if self:IsScoped() then return true end --and (self.GunType=="sniper" or self.GunType=="autosniper") then return true end
-    local barl = math.ceil(10 + ScrH() / 80)
-    local barw = 1
+    
+    local basew = ScrH()/1500
+
+    local barl = math.ceil( (10 + ScrH() / 80) * barl_cvar:GetFloat() )
+    local barw = math.ceil(basew * barw_cvar:GetFloat())
+    local dotw = math.ceil(basew * dotw_cvar:GetFloat())
+
     local barwofs = -math.floor(barw / 2)
     local pixelfix = barw % 2
-    local dist = math.Round((EyePos() + EyeAngles():Forward() + EyeAngles():Right() * (self:GetSpread(true) + self.PelletSpread)):ToScreen().x - ScrW() / 2)
-    surface.SetDrawColor(255, 224, 48, 255)
-    surface.DrawRect(x - (barl + dist) + pixelfix, y + barwofs, barl, barw)
-    surface.DrawRect(x + dist, y + barwofs, barl, barw)
-    surface.DrawRect(x + barwofs, y - (barl + dist) + pixelfix, barw, barl)
-    surface.DrawRect(x + barwofs, y + dist, barw, barl)
-    -- if self.Owner:SteamID() == "STEAM_0:0:38422842" then
-    --     draw.SimpleText("Spray: " .. math.floor(self:GetSpray(SysTime(), self.LastFireSysTime or 0) * 100), "DermaDefault", x, y + 100, color_white)
-    -- end
+    local dist = math.ceil(gap_cvar:GetFloat()*basew)
+    if dist<=0 then dist= math.Round((EyePos() + EyeAngles():Forward() + EyeAngles():Right() * (self:GetSpread(true) + self.PelletSpread)):ToScreen().x - ScrW() / 2) end
 
+    local col = color_cvar:GetString()
+    col = col=="default" and Vector(255, 224, 48) or Vector(col)*255
+
+
+    local function draw(p, e2)
+
+        if barw>0 then
+        surface.DrawRect(x - (barl + dist) + pixelfix +p, y + barwofs +p, barl+e2, barw+e2)
+        surface.DrawRect(x + dist +p, y + barwofs +p, barl+e2, barw+e2)
+        surface.DrawRect(x + barwofs +p, y - (barl + dist) + pixelfix +p, barw+e2, barl+e2)
+        surface.DrawRect(x + barwofs +p, y + dist +p, barw+e2, barl+e2)
+        end
+
+        
+        if dotw>0 then
+            local dotwofs = -math.floor(barw / 2)
+            surface.DrawRect(x + dotwofs +p, y + dotwofs +p, dotw +e2, dotw+e2)
+        end
+    end
+
+    -- black backing
+    local alpha = 1-additive_cvar:GetFloat()
+    if alpha>0 then
+        surface.SetDrawColor(0,0,0, alpha*255)
+        draw(0,0)
+    end
+
+    -- extra shadow
+    local alpha = shadow_cvar:GetFloat()
+    if alpha>0 then
+        surface.SetDrawColor(0,0,0, alpha*255)
+        local pad = math.ceil(shadowsize_cvar:GetFloat() * basew)
+        draw(shadowpos_cvar:GetInt() - math.floor(pad/2), pad)
+    end
+
+    render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD)
+    surface.SetDrawColor(col.x,col.y,col.z, 255)
+    draw(0,0)
+    render.OverrideBlend(false)
+
+    -- draw.SimpleText("Spray: " .. math.floor(self:GetSpray(SysTime(), self.LastFireSysTime or 0) * 100), "DermaDefault", x, y + 100, color_white)
     return true
 end
 
 local hblurredcrosshair = Material("vgui/gradient-u")
 local vblurredcrosshair = Material("vgui/gradient-l")
+local scope_arc_tex = Material("sprites/scope_arc")
+local scope_dust_tex = Material("overlays/scope_lens.vmt")
 local crack = Material("decals/glass/shot1")
 
 function SWEP:DrawHUDBackground()
@@ -67,9 +115,9 @@ function SWEP:DrawHUDBackground()
             surface.DrawTexturedRectUV(x, 0, boxsize, ScrH(), 0, 0, 1, 1)
         end
 
-        if not self.ScopeDustTexture:IsError() then
+        if not scope_dust_tex:IsError() then
             surface.SetDrawColor(Color(255, 255, 255, 128))
-            surface.SetMaterial(self.ScopeDustTexture)
+            surface.SetMaterial(scope_dust_tex)
             surface.DrawTexturedRect(x - ScrH() / 2, 0, ScrH(), ScrH())
         end
 
@@ -82,8 +130,8 @@ function SWEP:DrawHUDBackground()
 
         surface.SetDrawColor(color_black)
 
-        if not self.ScopeArcTexture:IsError() then
-            surface.SetMaterial(self.ScopeArcTexture)
+        if not scope_arc_tex:IsError() then
+            surface.SetMaterial(scope_arc_tex)
             surface.DrawTexturedRectUV(x, 0, ScrH() / 2, ScrH() / 2, 0, 1, 1, 0)
             surface.DrawTexturedRectUV(x - ScrH() / 2, 0, ScrH() / 2, ScrH() / 2, 1, 1, 0, 0)
             surface.DrawTexturedRectUV(x - ScrH() / 2, ScrH() / 2, ScrH() / 2, ScrH() / 2, 1, 0, 0, 1)
