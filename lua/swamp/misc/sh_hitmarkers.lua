@@ -24,19 +24,19 @@ local duration = 1
 
 hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function()
     
-    local i,t = 1,SysTime()
+    local i,t = #hitmarkers,SysTime()
 
-    while i <= #hitmarkers do
+    while i > 0 do
         local mark = hitmarkers[i]
+        i = i - 1
 
         local life = (t - mark.t) / duration
 
         if life>1 then
-            table.remove(hitmarkers, i)
+            table.remove(hitmarkers, i+1)
             continue
         end
-        i = i + 1
-
+        
 
         -- if not mark.sx1 then mark.sx1 = (mark.pos:ToScreen().x or ScrW()/2)/ScrW() - 0.5 end
 
@@ -56,7 +56,7 @@ hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function()
 
         
 
-        render.DepthRange(0,0)
+        render.DepthRange(0,1)
         local a = EyeAngles()
         a:RotateAroundAxis(a:Right(),90)
         a:RotateAroundAxis(a:Up(),-90)
