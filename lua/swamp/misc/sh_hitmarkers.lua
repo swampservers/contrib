@@ -20,7 +20,9 @@ end)
 
 
 
-local duration = 1
+
+
+local badskull = Material("swamp/icon48/skull.png")
 
 hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function()
     
@@ -30,7 +32,10 @@ hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function()
         local mark = hitmarkers[i]
         i = i - 1
 
-        local life = (t - mark.t) / duration
+
+        local epicness = 1 + (mark.kill and math.sqrt(mark.dmg)/20 or 0)
+
+        local life = (t - mark.t) / epicness
 
         if life>1 then
             table.remove(hitmarkers, i+1)
@@ -60,31 +65,35 @@ hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function()
         local a = EyeAngles()
         a:RotateAroundAxis(a:Right(),90)
         a:RotateAroundAxis(a:Up(),-90)
-        cam.Start3D2D( mark.pos + life*mark.motion1 + life^2*mark.motion2, a, (life+1)*scale*125/(ScrH()+1000) )
+        cam.Start3D2D( mark.pos + life*mark.motion1 + life^2*mark.motion2, a, epicness*(life+1)*scale*60/(ScrH()+1000) )
 
 
         local function drawtxt(txt, font, color)
-            draw.SimpleText( txt, font, 1,1, Color(0, 0, 0, color.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            draw.SimpleText( txt, font, 0,0, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText( txt, font, 2,2, Color(0, 0, 0, color.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            return draw.SimpleText( txt, font, 0,0, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
 
-        -- todo skull icon
-        local txt = (mark.kill and "KILL " or "") .. mark.dmg
+        local alpha = 255 * math.sqrt(1-life)
+        local redfade = 255*(1-math.sqrt(life))
 
+        -- Font.Roboto24
+        local w = drawtxt(tostring(mark.dmg), Font["Lucida Console48"], Color(255, redfade,redfade, alpha) )
 
+        if mark.kill and not badskull:IsError() then
+            local sz = 60
+            surface.SetMaterial(badskull)
 
-        drawtxt(txt, Font.Roboto24, Color(255, 0,0, 255 * math.sqrt(1-life)) )
+            surface.SetDrawColor(0,0, 0, alpha)
+            surface.DrawTexturedRect( w/2 + 6 +2, -sz/2 , sz, sz )
 
-        -- if mark.kill then
-        --     drawtxt("X", Font.Roboto40, Color(0,0,0, 255 * math.sqrt(1-life)) )
-        -- else
-        --     -- drawtxt(tostring(mark.dmg), Font.Roboto24, Color(255, 0,0, 255 * math.sqrt(1-life)) )
-        -- end
+            surface.SetDrawColor(255,redfade, redfade, alpha)
+            surface.DrawTexturedRect( w/2 + 6, -sz/2 -2, sz, sz )
+        end
+
+        
         
         cam.End3D2D()
         render.DepthRange(0,1)
-
-
     end
 end)
 
