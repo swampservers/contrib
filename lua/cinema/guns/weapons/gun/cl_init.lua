@@ -58,7 +58,7 @@ function SWEP:DoDrawCrosshair(x, y)
 
         
         if dotw>0 then
-            local dotwofs = -math.floor(barw / 2)
+            local dotwofs = -math.floor(dotw / 2)
             surface.DrawRect(x + dotwofs +p, y + dotwofs +p, dotw +e2, dotw+e2)
         end
     end
