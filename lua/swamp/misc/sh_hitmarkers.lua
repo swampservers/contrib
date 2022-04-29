@@ -17,7 +17,9 @@ end)
 
 local badskull = Material("swamp/icon48/skull.png")
 
-hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function()
+
+hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function(d,s,s3)
+    if d or s or s3 then return end
     local i, t = #hitmarkers, SysTime()
 
     while i > 0 do
