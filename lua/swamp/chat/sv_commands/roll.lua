@@ -124,13 +124,11 @@ end
 
 function ProvableRandom(max_or_txt, txt)
     ProvableGenerator.multiplayer.Ledger() -- stopgap
-
     return ProvableGenerator.multiplayer(max_or_txt, txt)
 end
 
 function Player:ProvableRandom(max_or_txt, txt)
     ProvableGenerator[self:SteamID()].Ledger() -- stopgap
-
     return ProvableGenerator[self:SteamID()].Next(max_or_txt, txt)
 end
 
