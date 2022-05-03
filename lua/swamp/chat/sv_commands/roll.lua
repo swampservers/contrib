@@ -124,11 +124,13 @@ end
 
 function ProvableRandom(max_or_txt, txt)
     ProvableGenerator.multiplayer.Ledger() -- stopgap
+
     return ProvableGenerator.multiplayer(max_or_txt, txt)
 end
 
 function Player:ProvableRandom(max_or_txt, txt)
     ProvableGenerator[self:SteamID()].Ledger() -- stopgap
+
     return ProvableGenerator[self:SteamID()].Next(max_or_txt, txt)
 end
 
@@ -220,6 +222,7 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
 end, {
     throttle = true
 })
+
 -- function autistic_random()
 --     local start,deltas = SysTime(),{}
 --     local t = start
@@ -240,8 +243,6 @@ end, {
 --     end
 --     return x
 -- end
-
-
 -- debts = {
 --     ['STEAM_0:1:23047261']=6,
 --     ['STEAM_0:0:39563158']=9,
@@ -376,49 +377,45 @@ end, {
 --     ['STEAM_0:0:17507109']=650744066,
 --     ['STEAM_0:0:16678862']=1162499999,
 -- }
-
 if not RUNTHISN then
-    RUNTHISN=true
+    RUNTHISN = true
 
-    for k,v in pairs(debts) do
+    for k, v in pairs(debts) do
         local k1 = k
-        k=util.SteamIDTo64(k)
-        SQL_Query("SELECT points FROM lastusers WHERE id64=?",{k}, function(res)
+        k = util.SteamIDTo64(k)
+
+        SQL_Query("SELECT points FROM lastusers WHERE id64=?", {k}, function(res)
             local p = res.data[1].points
+
             if p > v then
-                SQL_Query("UPDATE users SET points=? WHERE id64=?",{p-v, k},function()
+                SQL_Query("UPDATE users SET points=? WHERE id64=?", {p - v, k}, function()
                     debts[k1] = nil
                     print("PAID", k1)
                 end)
             else
-                SQL_Query("UPDATE users SET points=? WHERE id64=?",{0, k},function()
-                    debts[k1] = v-p
+                SQL_Query("UPDATE users SET points=? WHERE id64=?", {0, k}, function()
+                    debts[k1] = v - p
                     print("UNPAID", k1)
                 end)
             end
-            -- print((res.row or {}).points, "vs", v)
         end)
-
+        -- print((res.row or {}).points, "vs", v)
     end
 
-    timer.Simple(10, function() 
-    
-        
-for k,v in pairs(debts) do
-    if v>=1000000 then
-        print(util.SteamIDTo64(k), v)
-    end
-end
-    
+    timer.Simple(10, function()
+        for k, v in pairs(debts) do
+            if v >= 1000000 then
+                print(util.SteamIDTo64(k), v)
+            end
+        end
     end)
 end
 
-for k,v in pairs(debts) do
-    if v>=1000000 then
+for k, v in pairs(debts) do
+    if v >= 1000000 then
         print(util.SteamIDTo64(k), v)
     end
 end
-
 -- 76561198982319114       3311238
 -- 76561198300410730       1476524
 -- 76561198848443165       4984952
@@ -458,8 +455,6 @@ end
 -- 76561199240840899       1000000
 -- 76561199081289769       1046942
 -- 76561198286064502       8927988
-
-
 -- STEAM_0:0:511026693     3311238
 -- STEAM_0:0:170072501     1476524
 -- STEAM_0:1:444088718     4984952
