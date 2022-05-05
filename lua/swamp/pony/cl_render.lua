@@ -59,7 +59,7 @@ function Entity:SetPonyMaterials()
     for k, v in ipairs(ply.ponymaterials or {}) do
         if k == 10 and ((ply.ponydata or {}).imgurcmark or "") ~= "" then
             -- big TODO: make imgur materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
-            v = WebMaterial({
+            self:SetWebSubMaterial(k-1, {
                 id = ply.ponydata.imgurcmark,
                 owner = ply,
                 -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
@@ -67,9 +67,10 @@ function Entity:SetPonyMaterials()
                 shader = "VertexLitGeneric",
                 params = [[{["$translucent"]=1}]]
             })
+            
+        else
+            self:SetSubMaterial(k - 1, "!" .. v:GetName())
         end
-
-        self:SetSubMaterial(k - 1, "!" .. v:GetName())
     end
 end
 
