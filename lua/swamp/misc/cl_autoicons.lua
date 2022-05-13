@@ -558,7 +558,6 @@ function GetAutoIcon(p, mode)
 
             cam.End2D()
             render.PopRenderTarget()
-
             assert(not canglert:IsError())
             -- A mask of just the top edge of the gun
             render.PushRenderTarget(canglert)
