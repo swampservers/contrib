@@ -55,6 +55,7 @@ local ValidCheckTime = 0
 local function CheckTexturesValid()
     if SysTime() - ValidCheckTime < 5 then return end
     ValidCheckTime = SysTime()
+    assert(not AUTOICON_INDICATOR_TEXTURE:IsError())
     render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
     render.CapturePixels()
     local r, g, b = render.ReadPixel(0, 0)
@@ -557,6 +558,8 @@ function GetAutoIcon(p, mode)
 
             cam.End2D()
             render.PopRenderTarget()
+
+            assert(not canglert:IsError())
             -- A mask of just the top edge of the gun
             render.PushRenderTarget(canglert)
             render.Clear(0, 0, 0, 0)
