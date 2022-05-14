@@ -12,14 +12,14 @@ RegisterChatLUACommand({'global', 'globalchat', 'ooc'}, [[chat.AddText("[orange]
 RegisterChatLUACommand({'golf', 'golfclub'}, [[chat.AddText("[orange]Walk up to a golf rack to grab a golf club!")]])
 
 RegisterChatCommand({'kills', 'showkills'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has gotten [edgy]" .. ply:GetStat("kills_legacy") .. "[fbc] lifetime kills! (" .. ply:GetStat("kill_active_cinema") .. " active player kills 2022)")
+    BotSayGlobal(ply:Nick() .. " has gotten [edgy]" .. ply:GetStat("kill") .. "[fbc] kills!")
 end, {
     global = true,
     throttle = true
 })
 
 RegisterChatCommand({'deaths', 'showdeaths'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has died [edgy]" .. ply:GetStat("deaths_legacy") .. "[fbc] times!")
+    BotSayGlobal(ply:Nick() .. " has died [edgy]" .. ply:GetStat("death") .. "[fbc] times!")
 end, {
     global = true,
     throttle = true
