@@ -197,7 +197,7 @@ function Open(f)
     end
 
     if not f then
-        error"invalid file"
+        return nil, "invalid file", "invalid file"
     end
 
     local initial_offset = f:Tell()
