@@ -1,74 +1,74 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-function crashwindow(delta)
-    vgui("DFrame", function(p)
-        local popup = p
-        p:SetSize(440, 210)
-        p:Center()
-        p:SetBackgroundBlur(true)
-        p:SetDrawOnTop(true)
-        p:MakePopup()
-        p:DoModal()
-        -- timer.Simple(0.1, function()
-        p:CloseOnEscape()
-        -- end)
-        p:SetTitle("Crashed?")
+-- function crashwindow(delta)
+    -- vgui("DFrame", function(p)
+    --     local popup = p
+    --     p:SetSize(440, 210)
+    --     p:Center()
+    --     p:SetBackgroundBlur(true)
+    --     p:SetDrawOnTop(true)
+    --     p:MakePopup()
+    --     p:DoModal()
+    --     -- timer.Simple(0.1, function()
+    --     p:CloseOnEscape()
+    --     -- end)
+    --     p:SetTitle("Crashed?")
 
-        for i, line in ipairs({"It looks like your game crashed last time you played (" .. delta .. " ago).", "If so, please send a crash report to help us fix it.", "If you send a crash report, you may optionally include comments below:", "BUTTONS", "Don't send a crash report if your game closed for another reason (eg. power outage).", "If you keep crashing, try disabling playermodel downloads and the\n  \"turbo button\" in the tab menu. If you still crash, ask for help."}) do
-            if line == "BUTTONS" then
-                local comments
+    --     for i, line in ipairs({"It looks like your game crashed last time you played (" .. delta .. " ago).", "If so, please send a crash report to help us fix it.", "If you send a crash report, you may optionally include comments below:", "BUTTONS", "Don't send a crash report if your game closed for another reason (eg. power outage).", "If you keep crashing, try disabling playermodel downloads and the\n  \"turbo button\" in the tab menu. If you still crash, ask for help."}) do
+    --         if line == "BUTTONS" then
+    --             local comments
 
-                comments = vgui("DTextEntry", function(p)
-                    p:Dock(TOP)
-                    p:DockMargin(0, 0, 0, 8)
-                    p:SetPlaceholderText(" what were you doing when it crashed? does anything seem to cause the crash?")
+    --             comments = vgui("DTextEntry", function(p)
+    --                 p:Dock(TOP)
+    --                 p:DockMargin(0, 0, 0, 8)
+    --                 p:SetPlaceholderText(" what were you doing when it crashed? does anything seem to cause the crash?")
 
-                    p.OnEnter = function()
-                        net.Start("ReportCrash")
-                        net.WriteDouble(crashtime)
-                        net.WriteString(lastcrash)
-                        net.WriteString(comments:GetValue())
-                        net.SendToServer()
-                        popup:Close()
-                    end
-                end)
+    --                 p.OnEnter = function()
+    --                     net.Start("ReportCrash")
+    --                     net.WriteDouble(crashtime)
+    --                     net.WriteString(lastcrash)
+    --                     net.WriteString(comments:GetValue())
+    --                     net.SendToServer()
+    --                     popup:Close()
+    --                 end
+    --             end)
 
-                vgui("DPanel", function(p)
-                    p:Dock(TOP)
-                    p:DockMargin(0, 0, 0, 8)
-                    p:SetTall(24)
-                    p.Paint = noop
+    --             vgui("DPanel", function(p)
+    --                 p:Dock(TOP)
+    --                 p:DockMargin(0, 0, 0, 8)
+    --                 p:SetTall(24)
+    --                 p.Paint = noop
 
-                    vgui("DButton", function(p)
-                        p:DockMargin(70, 0, 0, 0)
-                        p:SetWide(125)
-                        p:Dock(LEFT)
-                        p:SetText("Send crash report")
-                        p.DoClick = comments.OnEnter
-                    end)
+    --                 vgui("DButton", function(p)
+    --                     p:DockMargin(70, 0, 0, 0)
+    --                     p:SetWide(125)
+    --                     p:Dock(LEFT)
+    --                     p:SetText("Send crash report")
+    --                     p.DoClick = comments.OnEnter
+    --                 end)
 
-                    vgui("DButton", function(p)
-                        p:DockMargin(0, 0, 70, 0)
-                        p:SetWide(125)
-                        p:Dock(RIGHT)
-                        p:SetText("Don't send")
+    --                 vgui("DButton", function(p)
+    --                     p:DockMargin(0, 0, 70, 0)
+    --                     p:SetWide(125)
+    --                     p:Dock(RIGHT)
+    --                     p:SetText("Don't send")
 
-                        p.DoClick = function()
-                            popup:Close()
-                        end
-                    end)
-                end)
-            else
-                vgui("DLabel", function(p)
-                    p:Dock(TOP)
-                    p:SetText(line)
-                    p:SizeToContents()
-                    p:DockMargin(0, 0, 0, 8)
-                    p:SetContentAlignment(5)
-                end)
-            end
-        end
-    end)
-end
+    --                     p.DoClick = function()
+    --                         popup:Close()
+    --                     end
+    --                 end)
+    --             end)
+    --         else
+    --             vgui("DLabel", function(p)
+    --                 p:Dock(TOP)
+    --                 p:SetText(line)
+    --                 p:SizeToContents()
+    --                 p:DockMargin(0, 0, 0, 8)
+    --                 p:SetContentAlignment(5)
+    --             end)
+    --         end
+    --     end
+    -- end)
+-- end
 
 if not CRASH_DATA then
     local lastcrash = file.Read("swamp_crashdata.txt", "DATA")
@@ -106,7 +106,12 @@ if not CRASH_DATA then
                 delta = plural(delta, " second")
             end
 
-            crashwindow(delta)
+            -- crashwindow(delta)
+            net.Start("ReportCrash")
+            net.WriteDouble(crashtime)
+            net.WriteString(lastcrash)
+            net.WriteString("")
+            net.SendToServer()
         end)
         -- end)
     end

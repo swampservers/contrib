@@ -320,9 +320,32 @@ local function SCKLocalToWorld(ipos, iang, pos, ang)
     return pos, ang
 end
 
+local AutoIconsToMake = {}
+hook.Add("PostRender","MakeAutoIcons",function()
+    for mode,modetable in pairs(AutoIconsToMake) do
+        for cachekey,p in pairs(modetable) do
+            MakeAutoIcon(p, mode)
+        end
+        AutoIconsToMake[mode]=nil
+    end
+end)
+
+
 function GetAutoIcon(p, mode)
     CheckTexturesValid()
-    if AUTOICONS[mode][p.cachekey] then return AUTOICONS[mode][p.cachekey] end
+    if not AUTOICONS[mode][p.cachekey] then 
+        AUTOICONS[mode][p.cachekey] = CreateMaterial(UniqueName(), "UnlitGeneric", {
+            ["$basetexture"] = "tools/toolsblack",
+        })
+        AutoIconsToMake[mode] = AutoIconsToMake[mode] or {}
+        AutoIconsToMake[mode][p.cachekey] = p
+    end
+
+    return AUTOICONS[mode][p.cachekey]
+end
+
+function MakeAutoIcon(p, mode)
+    -- print("MAKE",p.mainmodel)
     SetCrashData("AUTOICON", p.mainmodel, 0.05)
     local mainent = ClientsideModel(p.mainmodel)
     assert(IsValid(mainent))
@@ -804,11 +827,12 @@ function GetAutoIcon(p, mode)
         end
 
         -- color2 gets overridden by killicons
-        local m = CreateMaterial(UniqueName(), "UnlitGeneric", {
-            ["$basetexture"] = finalrt:GetName(),
-        })
+        -- local m = CreateMaterial(UniqueName(), "UnlitGeneric", {
+        --     ["$basetexture"] = finalrt:GetName(),
+        -- })
 
-        AUTOICONS[mode][p.cachekey] = m
+        -- AUTOICONS[mode][p.cachekey] = m
+        AUTOICONS[mode][p.cachekey]:SetTexture("$basetexture", finalrt)
         render.SuppressEngineLighting(false)
         render.OverrideBlend(false)
 
