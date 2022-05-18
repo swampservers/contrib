@@ -1,4 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
 SERVICE.Name = "Oligopoly"
 --SERVICE.Mature = true
@@ -35,15 +35,16 @@ if CLIENT then
             end
         end)
 
-        self:Fetch("https://api.themoviedb.org/3/"..(isTV and "tv" or "movie").."/" .. string.match(key, "olgply.com/.-/(%d+)") .. "?api_key=29b951a1229cc0c9dc81df66d6f81ec7&language=en-US&append_to_response=external_ids",function(body)
+        self:Fetch("https://api.themoviedb.org/3/" .. (isTV and "tv" or "movie") .. "/" .. string.match(key, "olgply.com/.-/(%d+)") .. "?api_key=29b951a1229cc0c9dc81df66d6f81ec7&language=en-US&append_to_response=external_ids", function(body)
             local t = util.JSONToTable(body)
+
             if t == nil then
                 callback()
             else
-                self:Fetch("https://olgply.com/api/?imdb="..t["external_ids"]["imdb_id"] .. (isTV and "&season="..season.."&episode="..episode or ""),function(body)
-                    info.data = string.match(body,'file: "(.-)",')
-                    info.title = (t["original_title"] or t["original_name"]) .. (isTV and " S"..season.." E"..episode or " (" .. string.match(t["release_date"],'(%d%d%d%d)') .. ")")
-                    info.thumb = "https://image.tmdb.org/t/p/w370_and_h556_bestv2"..t["poster_path"]
+                self:Fetch("https://olgply.com/api/?imdb=" .. t["external_ids"]["imdb_id"] .. (isTV and "&season=" .. season .. "&episode=" .. episode or ""), function(body)
+                    info.data = string.match(body, 'file: "(.-)",')
+                    info.title = (t["original_title"] or t["original_name"]) .. (isTV and " S" .. season .. " E" .. episode or " (" .. string.match(t["release_date"], '(%d%d%d%d)') .. ")")
+                    info.thumb = "https://image.tmdb.org/t/p/w370_and_h556_bestv2" .. t["poster_path"]
 
                     function vpanel:ConsoleMessage(msg)
                         if Me.videoDebug then
