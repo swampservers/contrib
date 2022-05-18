@@ -196,10 +196,7 @@ function Open(f)
         f = file.Open(f, 'rb', 'GAME')
     end
 
-    if not f then
-        return nil, "invalid file", "invalid file"
-    end
-
+    if not f then return nil, "invalid file", "invalid file" end
     local initial_offset = f:Tell()
     local hdr = f:Read(4)
     if hdr ~= 'IDST' then return nil, "notmdl" end
