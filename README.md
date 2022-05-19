@@ -75,7 +75,7 @@ Will probably be deprecated\
 ### function Entity:IsProtected(att)
 If we are "protected" from this attacker by theater protection. `att` doesn't need to be passed, it's only used to let theater owners override protection and prevent killing out of a protected area.
 \
-*file: [lua/cinema/theater/sh_protection.lua](https://github.com/swampservers/contrib/blob/master/lua/cinema/theater/sh_protection.lua)*
+*file: [lua/cinema/theater/sh_protection.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/cinema/theater/sh_protection.lua)*
 
 ### function Player:GetRank()
 Numeric player ranking (all players are zero, staff are 1+)
