@@ -1,4 +1,144 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+
+function SaveCrashData()
+    file.Write("swamp_crashdata.txt", util.TableToJSON(CRASH_DATA or {}))
+end
+
+
+function SetCrashData(k, v, fortime)
+    if CRASH_DATA[k] ~= v then
+        CRASH_DATA[k] = v
+        SaveCrashData()
+    end
+
+    if fortime then
+        timer.Simple(fortime, function()
+            if CRASH_DATA[k] == v then
+                SetCrashData(k, nil)
+            end
+        end)
+    end
+end
+
+-- possibly would it be useful to save the current hook name?
+function CrashDataScope(callback, data)
+    local lastscope,lastdata = CRASH_DATA.scope,CRASH_DATA.scope_data
+
+    data=data or {}
+    for k,v in pairs(lastdata or {}) do
+        if data[k]==nil then data[k]=v end
+    end
+    CRASH_DATA.scope, CRASH_DATA.scope_data = debug.traceback(), data
+    SaveCrashData()
+
+    local ok, a,b,c,d,e,f = pcall(callback)
+
+    CRASH_DATA.scope, CRASH_DATA.scope_data = lastscope,lastdata
+    SaveCrashData()
+    if not ok then error(a) end
+    return a,b,c,d,e,f
+end
+
+if not RealGetModelMeshes then
+    RealGetModelMeshes = util.GetModelMeshes
+
+    function util.GetModelMeshes(model, lod, mask)
+        return CrashDataScope(function()
+            return RealGetModelMeshes(model, lod, mask)
+        end, {
+            GetModelMeshes=model,
+            lod=lod,
+            mask=mask
+        })
+    end
+end
+
+if not RealCapturePixels then
+    RealCapturePixels = render.CapturePixels
+
+    function render.CapturePixels()
+        return CrashDataScope(function()
+            return RealCapturePixels()
+        end, {
+            CapturePixels=true
+        })
+    end
+end
+
+hook.Add("InitPostEntity", "CrashInit", function()
+    timer.Simple(3, function()
+        SetCrashData("initializing", nil)
+    end)
+end)
+
+hook.Add("ShutDown", "CrashClear", function()
+    file.Delete("swamp_crashdata.txt")
+end)
+
+
+if not CRASH_DATA then
+    local lastcrash = file.Read("swamp_crashdata.txt", "DATA")
+    local crashtime = file.Time("swamp_crashdata.txt", "DATA")
+
+    if lastcrash then
+        timer.Simple(1, function()
+            net.Start("ReportCrash")
+            net.WriteDouble(crashtime)
+            net.WriteString(lastcrash)
+            net.WriteString("")
+            net.SendToServer()
+        end)
+    end
+
+    CRASH_DATA = {
+        osx = system.IsOSX() or nil,
+        linux = system.IsLinux() or nil,
+        initializing = true,
+        uptime = 0
+    }
+
+    local uptime = 0
+
+    timer.Create("CrashDataUptime", 10, 0, function()
+        uptime = uptime + 10
+        SetCrashData("uptime", uptime)
+    end)
+
+    SaveCrashData()
+end
+
+
+-- hook.Add("MOTDClose", "ShowCrashDialog", function()
+-- local delta = os.time() - crashtime
+
+-- local function plural(x, st)
+--     if x == 1 then
+--         return x .. st
+--     else
+--         return x .. st .. "s"
+--     end
+-- end
+
+-- if delta > 60 then
+--     delta = math.floor(delta / 60)
+
+--     if delta > 60 then
+--         delta = math.floor(delta / 60)
+
+--         if delta > 24 then
+--             delta = plural(math.floor(delta / 24), " day")
+--         else
+--             delta = plural(delta, " hour")
+--         end
+--     else
+--         delta = plural(delta, " minute")
+--     end
+-- else
+--     delta = plural(delta, " second")
+-- end
+
+-- -- crashwindow(delta)
+
 -- function crashwindow(delta)
     -- vgui("DFrame", function(p)
     --     local popup = p
@@ -69,91 +209,3 @@
     --     end
     -- end)
 -- end
-
-if not CRASH_DATA then
-    local lastcrash = file.Read("swamp_crashdata.txt", "DATA")
-    local crashtime = file.Time("swamp_crashdata.txt", "DATA")
-
-    if lastcrash then
-        -- timer.Simple(0.1, function()
-        --     timer.Simple(0.1, function()
-        hook.Add("MOTDClose", "ShowCrashDialog", function()
-            local delta = os.time() - crashtime
-
-            local function plural(x, st)
-                if x == 1 then
-                    return x .. st
-                else
-                    return x .. st .. "s"
-                end
-            end
-
-            if delta > 60 then
-                delta = math.floor(delta / 60)
-
-                if delta > 60 then
-                    delta = math.floor(delta / 60)
-
-                    if delta > 24 then
-                        delta = plural(math.floor(delta / 24), " day")
-                    else
-                        delta = plural(delta, " hour")
-                    end
-                else
-                    delta = plural(delta, " minute")
-                end
-            else
-                delta = plural(delta, " second")
-            end
-
-            -- crashwindow(delta)
-            net.Start("ReportCrash")
-            net.WriteDouble(crashtime)
-            net.WriteString(lastcrash)
-            net.WriteString("")
-            net.SendToServer()
-        end)
-        -- end)
-    end
-
-    CRASH_DATA = {
-        osx = system.IsOSX() or nil,
-        linux = system.IsLinux() or nil,
-        initializing = true,
-        uptime = 0
-    }
-
-    local uptime = 0
-
-    timer.Create("CrashDataUptime", 10, 0, function()
-        uptime = uptime + 10
-        SetCrashData("uptime", uptime)
-    end)
-
-    file.Write("swamp_crashdata.txt", util.TableToJSON(CRASH_DATA))
-end
-
-function SetCrashData(k, v, fortime)
-    if CRASH_DATA[k] ~= v then
-        CRASH_DATA[k] = v
-        file.Write("swamp_crashdata.txt", util.TableToJSON(CRASH_DATA))
-    end
-
-    if fortime then
-        timer.Simple(fortime, function()
-            if CRASH_DATA[k] == v then
-                SetCrashData(k, nil)
-            end
-        end)
-    end
-end
-
-hook.Add("InitPostEntity", "CrashInit", function()
-    timer.Simple(2, function()
-        SetCrashData("initializing", nil)
-    end)
-end)
-
-hook.Add("ShutDown", "CrashClear", function()
-    file.Delete("swamp_crashdata.txt")
-end)
