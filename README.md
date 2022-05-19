@@ -213,7 +213,7 @@ Faster than writing `IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():Ge
 \
 *file: [lua/swamp/extensions/sh_player_extension.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/sh_player_extension.lua)*
 
-### function FindSinglePlayer(name)
+### function FindSinglePlayer(name, exact_overrides_multiple)
 Find a player whose name contains some text. If it finds exactly one matching player, returns that player. Otherwise, returns the number of found players (0 or >=2). To use this check isnumber() on the return.
 \
 *file: [lua/swamp/extensions/sh_playerbyname.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/sh_playerbyname.lua)*
