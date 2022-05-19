@@ -6,7 +6,7 @@ function string.FormatSeconds(sec)
     local minutes = math.floor((sec % 3600) / 60)
     local seconds = sec % 60
 
-    if minutes < 10 then
+    if hours > 0 and minutes < 10 then
         minutes = "0" .. tostring(minutes)
     end
 

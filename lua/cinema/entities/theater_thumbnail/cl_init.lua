@@ -3,7 +3,7 @@ include('sh_init.lua')
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 local ThumbWidth = 512 -- Expected to be PO2
 local ThumbHeight = 384 -- Expected <= width
-local DefaultThumbnail = Material("theater/static.vmt")
+
 
 function ENT:Draw()
     self:DrawModel()
@@ -40,12 +40,12 @@ function ENT:DrawThumbnail()
 
     if self:GetService() == "" then
         surface.SetDrawColor(80, 80, 80)
-        surface.SetMaterial(DefaultThumbnail)
+        surface.SetMaterial(Material["theater/static.vmt"])
         surface.DrawTexturedRect(0, 0, ThumbWidth - 1, ThumbHeight - 1)
         background = ""
     elseif IsValid(Me) and Me:FlashlightIsOn() then
         surface.SetDrawColor(80, 80, 80)
-        surface.SetMaterial(DefaultThumbnail) --FIX WEIRD BUG
+        surface.SetMaterial(Material["theater/static.vmt"]) --FIX WEIRD BUG
         surface.DrawTexturedRect(0, 0, 1, 1)
     end
 
@@ -81,6 +81,10 @@ function ENT:DrawThumbnail()
                 <link rel="preconnect" href="https://fonts.gstatic.com">
                 <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
                 <style>
+                @font-face {
+                    font-family: 'Circular Std Medium';
+                    src: url(https://swamp.sv/fonts/circular.ttf);
+                  }
                 body {
                     margin:0;
                     ]] .. background .. [[
@@ -92,27 +96,35 @@ function ENT:DrawThumbnail()
                     background-color: rgba(0,0,0,0.5);
                 }
                 #div1 {
-                    font-family: 'Open Sans Condensed', sans-serif; /*'Righteous', sans-serif;*/
+                    font-family: 'Circular Std Medium', sans-serif; /*'Righteous', sans-serif;*/
                     text-transform: uppercase;
                     font-size: 10vw;
                 }
                 #div2 {
-                    font-family: 'Open Sans Condensed', sans-serif; /*'Times New Roman', serif;*/
+                    font-family: 'Circular Std Medium', sans-serif; /*'Times New Roman', serif;*/
                     position:absolute;
                     bottom:0;left:0;right:0;
-                    font-size:5vw;
+                }
+                span {
+                    white-space:nowrap;
                 }
                 </style>
                 </head>
                 <body>
-                    <div id="div1">]] .. theatername_esc .. [[</div>
-                    <div id="div2">]] .. videotitle:gsub("<", "&lt;") .. [[</div>
+                    <div id="div1"><span id="span1">]] .. theatername_esc .. [[</span></div>
+                    <div id="div2"><span id="span2">]] .. videotitle:gsub("<", "&lt;") .. [[</span></div>
                     <script>
-                    function autofont(div) {
-                        div.style.fontSize = Math.min(10,((div.innerText.length > 45 ? 440 : 220)/div.innerText.length))+"vw";
+                    function autofont(el) {
+                        //div.style.fontSize = Math.min(10,((div.innerText.length > 45 ? 440 : 220)/div.innerText.length))+"vw";
+                        for(var i=10.0; i>0; i-=0.5) {
+                            el.style.fontSize = i+"vw";    
+                            if (el.getBoundingClientRect().width < 512) {
+                                break;
+                            }
+                        }
                     }
-                    autofont(document.getElementById("div1"));
-                    autofont(document.getElementById("div2"));
+                    autofont(document.getElementById("span1"));
+                    autofont(document.getElementById("span2"));
                     </script>
                 </body>
                 </html>

@@ -23,25 +23,29 @@ vgui.Register("Scoreboard", {
     end
 })
 
-if ValidPanel(Gui) then
-    Gui:Remove()
-    Gui = nil
-end
+function ResetUI()
+    if ValidPanel(Gui) then
+        Gui:Remove()
+        Gui = nil
+    end
 
-if ValidPanel(GuiQueue) then
-    GuiQueue:Remove()
-    GuiQueue = nil
-end
+    if ValidPanel(GuiQueue) then
+        GuiQueue:Remove()
+        GuiQueue = nil
+    end
 
-if ValidPanel(GuiAdmin) then
-    GuiAdmin:Remove()
-    GuiAdmin = nil
-end
+    if ValidPanel(GuiAdmin) then
+        GuiAdmin:Remove()
+        GuiAdmin = nil
+    end
 
-if ValidPanel(GuiSeekBar) then
-    GuiSeekBar:Remove()
-    GuiSeekBar = nil
+    if ValidPanel(GuiSeekBar) then
+        GuiSeekBar:Remove()
+        GuiSeekBar = nil
+    end
 end
+ResetUI()
+_G.ResetUI = ResetUI
 
 function GM:ScoreboardShow()
     if not ValidPanel(Gui) then

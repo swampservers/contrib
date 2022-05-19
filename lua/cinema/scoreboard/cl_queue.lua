@@ -1,27 +1,12 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-surface.CreateFont("ScoreboardVidTitle", {
-    font = "Open Sans Condensed",
-    size = 20,
-    weight = 200
-})
 
-surface.CreateFont("ScoreboardVidDuration", {
-    font = "Open Sans",
-    size = 14,
-    weight = 200
-})
 
-surface.CreateFont("ScoreboardVidVotes", {
-    font = "Open Sans Condensed",
-    size = 18,
-    weight = 200
-})
+vgui.Register("ScoreboardQueue", {
+    
+TitleHeight = 64
 
-local QUEUE = {}
-QUEUE.TitleHeight = 64
-QUEUE.VidHeight = 32 -- 48
 
-function QUEUE:Init()
+,Init = function(self)
     self:SetZPos(1)
     self:SetSize(288, 512)
     self:SetPos(8, ScrH() / 2 - self:GetTall() / 2)
@@ -84,7 +69,7 @@ function QUEUE:Init()
     self.Options:AddItem(RefreshButton)
 end
 
-function QUEUE:AddVideo(vid)
+,AddVideo = function(self,vid)
     if self.Videos[vid.id] then
         self.Videos[vid.id]:SetVideo(vid)
     else
@@ -96,7 +81,7 @@ function QUEUE:AddVideo(vid)
     end
 end
 
-function QUEUE:RemoveVideo(vid)
+,RemoveVideo = function(self,vid)
     if ValidPanel(self.Videos[vid.id]) then
         self.VideoList:RemoveItem(self.Videos[vid.id])
         self.Videos[vid.id]:Remove()
@@ -104,13 +89,13 @@ function QUEUE:RemoveVideo(vid)
     end
 end
 
-function QUEUE:Update()
+,Update = function(self)
     local Theater = Me:GetTheater()
     if not Theater then return end
     theater.PollServer()
 end
 
-function QUEUE:UpdateList()
+,UpdateList = function(self)
     local ids = {}
 
     for _, vid in pairs(theater.GetQueue()) do
@@ -133,7 +118,7 @@ function QUEUE:UpdateList()
     end)
 end
 
-function QUEUE:Think()
+,Think = function(self)
     if RealTime() > self.NextUpdate then
         self:Update()
         self:InvalidateLayout()
@@ -141,15 +126,16 @@ function QUEUE:Think()
     end
 end
 
-function QUEUE:Paint(w, h)
-    surface.SetDrawColor(BrandColorGrayDarker)
-    surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+,Paint = function(self,w, h)
+    -- surface.SetDrawColor(BrandColorGrayDarker)
+    -- surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+    SS_BackgroundPattern(self, 0, 0, w, h, false)
     local xp, _ = self:GetPos()
     BrandBackgroundPattern(0, 0, self:GetWide(), self.Title:GetTall(), xp)
     BrandDropDownGradient(0, self.Title:GetTall(), self:GetWide())
 end
 
-function QUEUE:PerformLayout()
+,PerformLayout = function(self)
     self.Title:SizeToContents()
     self.Title:SetTall(self.TitleHeight)
     self.Title:CenterHorizontal()
@@ -162,36 +148,35 @@ function QUEUE:PerformLayout()
     self.Options:Dock(BOTTOM)
     self.Options:SizeToContents()
 end
+})
 
-vgui.Register("ScoreboardQueue", QUEUE)
-local VIDEO = {}
-VIDEO.Padding = 8
-
-function VIDEO:Init()
-    self:SetTall(QUEUE.VidHeight)
+vgui.Register("ScoreboardVideo", {
+    Padding = 8,
+Init = function(self)
+    self:SetTall(32)
     self.Title = Label("Unknown", self)
-    self.Title:SetFont("ScoreboardVidTitle")
+    self.Title:SetFont(Font.sans20)
     self.Title:SetColor(Color(255, 255, 255))
     self.Duration = Label("0:00/0:00", self)
-    self.Duration:SetFont("ScoreboardVidDuration")
+    self.Duration:SetFont(Font.sans16)
     self.Duration:SetColor(Color(255, 255, 255))
     self.Controls = vgui.Create("ScoreboardVideoVote", self)
 end
 
-function VIDEO:Update()
+,Update = function(self)
     self.Title:SetText(self.Video.ttl)
     self:SetTooltip(self.Video.ttl)
     self.Duration:SetText(string.FormatSeconds(self.Video.dur))
     self.Controls:Update()
 end
 
-function VIDEO:SetVideo(vid)
+,SetVideo = function(self,vid)
     self.Video = vid
     self.Controls:SetVideo(vid)
     self:Update()
 end
 
-function VIDEO:PerformLayout()
+,PerformLayout = function(self)
     self.Controls:SizeToContents()
     self.Controls:CenterVertical()
     self.Controls:AlignRight(self.Padding)
@@ -207,14 +192,12 @@ function VIDEO:PerformLayout()
     self.Duration:AlignLeft(self.Padding)
 end
 
-function VIDEO:Paint(w, h)
+,Paint = function(self,w, h)
     surface.SetDrawColor(BrandColorGrayDark)
     surface.DrawRect(0, 0, self:GetSize())
 end
+})
 
-vgui.Register("ScoreboardVideo", VIDEO)
-local VIDEOVOTE = {}
-VIDEOVOTE.Padding = 8
 
 function IsMouseOver(self)
     local x, y = self:CursorPos()
@@ -222,9 +205,13 @@ function IsMouseOver(self)
     return x >= 0 and y >= 0 and x <= self:GetWide() and y <= self:GetTall()
 end
 
-function VIDEOVOTE:Init()
+
+vgui.Register("ScoreboardVideoVote", {
+Padding = 8
+
+,Init = function(self)
     self.Votes = Label("+99", self)
-    self.Votes:SetFont("ScoreboardVidVotes")
+    self.Votes:SetFont(Font.sans16)
     self.Votes:SetColor(Color(255, 255, 255))
     self.VoteUp = vgui.Create("DImageButton", self)
     self.VoteUp:SetSize(16, 16)
@@ -269,7 +256,8 @@ function VIDEOVOTE:Init()
     end
 end
 
-function VIDEOVOTE:AddRemoveButton()
+
+,AddRemoveButton = function(self)
     if ValidPanel(self.RemoveBtn) then return end
     self.RemoveBtn = vgui.Create("DImageButton", self)
     self.RemoveBtn:SetSize(16, 16)
@@ -294,7 +282,7 @@ function VIDEOVOTE:AddRemoveButton()
     end
 end
 
-function VIDEOVOTE:Vote(up)
+,Vote = function(self,up)
     if up then
         self.VoteUp:SetColor(Color(0, 255, 0))
         self.VoteUp.Voted = true
@@ -313,7 +301,7 @@ function VIDEOVOTE:Vote(up)
     end
 end
 
-function VIDEOVOTE:Update()
+,Update = function(self)
     if not self.Video then return end
     local prefix = self.Video.vto > 0 and "+" or ""
     self.Votes:SetText(prefix .. self.Video.vto)
@@ -336,7 +324,7 @@ function VIDEOVOTE:Update()
     end
 end
 
-function VIDEOVOTE:SetVideo(vid)
+,SetVideo = function(self,vid)
     --keeps network delay from overwriting us
     if self.Video and (self.vlo_hold or 0) > RealTime() then
         local off = (self.Video.vlo or 0) - (vid.vlo or 0)
@@ -348,7 +336,7 @@ function VIDEOVOTE:SetVideo(vid)
     self:Update()
 end
 
-function VIDEOVOTE:PerformLayout()
+,PerformLayout = function(self)
     self.VoteUp:Center()
     self.VoteUp:AlignLeft()
     self.Votes:SizeToContents()
@@ -367,5 +355,4 @@ function VIDEOVOTE:PerformLayout()
         self.Votes:Center()
     end
 end
-
-vgui.Register("ScoreboardVideoVote", VIDEOVOTE)
+})

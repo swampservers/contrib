@@ -1,27 +1,9 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-surface.CreateFont("ScoreboardVidTitle", {
-    font = "Open Sans Condensed",
-    size = 20,
-    weight = 200
-})
 
-surface.CreateFont("ScoreboardVidDuration", {
-    font = "Open Sans",
-    size = 14,
-    weight = 200
-})
+vgui.Register("ScoreboardAdmin", {
+    TitleHeight = 64,
 
-surface.CreateFont("ScoreboardVidVotes", {
-    font = "Open Sans Condensed",
-    size = 18,
-    weight = 200
-})
-
-local ADMIN = {}
-ADMIN.TitleHeight = 64
-ADMIN.VidHeight = 32 -- 48
-
-function ADMIN:Init()
+Init = function(self)
     local Theater = Me:GetTheater()
     self:SetZPos(1)
     self:SetSize(256, 512)
@@ -132,9 +114,9 @@ function ADMIN:Init()
             self.extendRent:SetVisible(false)
         end
     end
-end
+end,
 
-function ADMIN:Update()
+Update = function(self)
     local Theater = Me:GetTheater() -- get player's theater from their location
     if not Theater then return end
 
@@ -168,25 +150,27 @@ function ADMIN:Update()
             self.MuteMode:SetVisible(false)
         end
     end
-end
+end,
 
-function ADMIN:Think()
+Think = function(self)
     if RealTime() > self.NextUpdate then
         self:Update()
         self:InvalidateLayout()
         self.NextUpdate = RealTime() + 3.0
     end
 end
+,Paint = function(self, w, h)
+    -- surface.SetDrawColor(BrandColorGrayDarker)
+    -- surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
 
-function ADMIN:Paint(w, h)
-    surface.SetDrawColor(BrandColorGrayDarker)
-    surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+    SS_BackgroundPattern(self, 0, 0, w, h, false)
+
     local xp, _ = self:GetPos()
     BrandBackgroundPattern(0, 0, self:GetWide(), self.Title:GetTall(), xp)
     BrandDropDownGradient(0, self.Title:GetTall(), self:GetWide())
 end
 
-function ADMIN:PerformLayout()
+,PerformLayout = function(self)
     self.Title:SizeToContents()
     self.Title:SetTall(self.TitleHeight)
     self.Title:CenterHorizontal()
@@ -199,4 +183,4 @@ function ADMIN:PerformLayout()
     self.Options:SizeToContents()
 end
 
-vgui.Register("ScoreboardAdmin", ADMIN)
+})
