@@ -3,8 +3,6 @@ module("theater", package.seeall)
 local gradientDown = surface.GetTextureID("VGUI/gradient_down")
 local refreshTexture = surface.GetTextureID("gui/html/refresh")
 local NoVideoScreen = Material("theater/static.vmt")
-local THLIGHT_CANVAS_XS = 16
-local THLIGHT_CANVAS_YS = 16
 local LocationChangeTime = 0
 local LoadingStartTime = 0
 local LastTitle = ""
@@ -13,7 +11,7 @@ local WasFullscreen = false
 LastInfoDraw = LastInfoDraw or 0
 InfoDrawDelay = 3
 LastHtmlMaterial = nil
-TheaterCustomRT = GetRenderTarget("ThLights2", THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, true)
+
 LastLocation = LastLocation or -1
 
 function DrawVideoInfo(w, h)
@@ -181,52 +179,167 @@ hook.Add("HUDPaint", "DrawFullscreenInfo", function()
         end
 
         DrawVideoInfo(ScrW(), ScrH())
-    else
-        local Theater = Me.GetTheater and Me:GetTheater() or nil
+
+    end
+end)
+
+local THLIGHT_CANVAS_XS = 16
+local THLIGHT_CANVAS_YS = 16
+-- TheaterCustomRT = GetRenderTarget("ThLights2", THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, true)
+
+local lighttexsize = 128
+TheaterLightRT = GetRenderTargetEx("TheaterProjection", lighttexsize,lighttexsize, 	RT_SIZE_NO_CHANGE,MATERIAL_RT_DEPTH_NONE,bit.bor(2, 4,8, 256),0, IMAGE_FORMAT_BGR888)
+
+
+local projections = {
+    {Vector(-0.3,0,0),Angle(0,0,0)},
+    {Vector(5,0,1),Angle(10,180,0)}
+    -- {Vector(4,2,0.5),Angle(10,210,0)},
+    -- {Vector(4,-2,0.5),Angle(10,150,0)}
+}
+
+local skip1=true
+
+hook.Add("PostRender", "TheaterLighting", function()
+
+    local use_projection = true
+
+    local function run()
+        if skip1 then skip1=false return end
+        if not IsValid(ActivePanel) then return end
+        if Fullscreen then return end
+
+        local Theater = Me:GetTheater()
         if not Theater or Theater:Name() == "Vapor Lounge" then return end
+
         if LastHtmlMaterial == nil then return end
         if GetConVar("cinema_lightfx"):GetInt() < 1 then return end
+
         -- Dynamic lighting from screen colors (Swamp Cinema)
-        local ang = Angle(Theater:GetAngles()) -- makes copy
-        ang:RotateAroundAxis(ang:Forward(), 90)
-        local pos = Theater:GetPos() + ang:Right() * 0.01
-        local w, h = Theater:GetSize()
+        
+
+        local t = SysTime()
+
         local OldRT = render.GetRenderTarget()
         local ow, oh = ScrW(), ScrH()
-        render.SetRenderTarget(TheaterCustomRT)
-        render.SetViewPort(0, 0, THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS)
+        render.SetRenderTarget(TheaterLightRT)
+        render.SetViewPort(0, 0, lighttexsize, lighttexsize)
+        render.Clear(0,0,0,0)
         cam.Start2D()
         surface.SetMaterial(LastHtmlMaterial)
         surface.SetDrawColor(255, 255, 255, 255)
-        surface.DrawTexturedRectUV(0, 0, THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, 0, 0, ActivePanel:GetUVMax())
-        render.CapturePixels()
+
+        local um,vm = ActivePanel:GetUVMax()
+
+        local blurscale = 24
+        surface.DrawTexturedRectUV(blurscale, blurscale, lighttexsize-(2*blurscale), lighttexsize-(2*blurscale), um, 0, 0,vm)
+
         local sumr, sumg, sumb = 0, 0, 0
 
-        for x = 0, THLIGHT_CANVAS_XS - 1 do
-            for y = 0, THLIGHT_CANVAS_YS - 1 do
-                local r, g, b = render.ReadPixel(x, y)
-                sumr, sumg, sumb = sumr + r, sumg + g, sumb + b
+        -- NOTE this is about 25% faster than capturepixels
+        -- local data = render.Capture( {
+        -- 	format = "png",
+        -- 	x = 0,
+        -- 	y = 0,
+        -- 	w = ScrW(),
+        -- 	h = ScrH()
+        -- } )
+
+        if not use_projection then
+            render.CapturePixels()   
+            for x = 0, THLIGHT_CANVAS_XS - 1 do
+                for y = 0, THLIGHT_CANVAS_YS - 1 do
+                    local r, g, b = render.ReadPixel(x, y)
+                    sumr, sumg, sumb = sumr + r, sumg + g, sumb + b
+                end
             end
         end
 
         cam.End2D()
+
+        local blurbase = 2
+        render.BlurRenderTarget(TheaterLightRT, blurscale*blurbase,blurscale*blurbase, 2)
+
+
         render.SetViewPort(0, 0, ow, oh)
         render.SetRenderTarget(OldRT)
-        local avgc = THLIGHT_CANVAS_XS * THLIGHT_CANVAS_YS
-        local dlight = DynamicLight(1439)
+        
+        -- print(SysTime()-t, FLIPFLOP)
 
-        if dlight then
-            dlight.pos = pos + ang:Forward() * (w / 2) + ang:Right() * (h / 2) + ang:Up() * ((w + h) / 4)
-            dlight.r = sumr / avgc
-            dlight.g = sumg / avgc
-            dlight.b = sumb / avgc
-            dlight.brightness = 2
-            dlight.Decay = 100
-            dlight.Size = (w + h) * 2.5
-            dlight.DieTime = CurTime() + 1
+        
+        local tw, th = Theater:GetSize()
+        local scale = tw+th
+
+
+        local ang = Angle(Theater:GetAngles()) 
+        ang:RotateAroundAxis(ang:Up(),-90)
+        
+        
+        local pos = Theater:GetPos() + ang:Right() * (-tw / 2) + ang:Up() * (-th / 2)
+            
+        if use_projection then
+
+            -- print(ang:Forward(), ang:Up())
+
+            if not TheaterAmbientProjections then
+
+                TheaterAmbientProjections = {}
+                for i,v in ipairs(projections) do
+                    local p = ProjectedTexture()
+                    TheaterAmbientProjections[i]=p
+
+                    local ppos,pang = LocalToWorld(v[1] * scale,v[2],pos,ang)
+
+                    p:SetPos(ppos) 
+                    p:SetAngles(pang)
+
+                    if i==1 then 
+                        p:SetHorizontalFOV(150)
+                        p:SetVerticalFOV(140)
+                        p:SetBrightness(1)
+                        p:SetLinearAttenuation(0)
+                        p:SetQuadraticAttenuation(scale*100)
+                        -- print(scale)
+                    else
+                        p:SetFOV(150)
+                        p:SetBrightness(0) --.5)
+                        p:SetLinearAttenuation(scale)
+                    end
+                    p:SetFarZ(scale*10)
+                    p:SetTexture(TheaterLightRT)
+                    
+                    p:Update()
+                end
+            end
+        else
+
+
+            -- local avgc = THLIGHT_CANVAS_XS * THLIGHT_CANVAS_YS
+            -- local dlight = DynamicLight(1439)
+    
+            -- if dlight then
+            --     dlight.pos = pos + ang:Forward() * (w / 2) + ang:Right() * (h / 2) + ang:Up() * ((w + h) / 4)
+            --     dlight.r = sumr / avgc
+            --     dlight.g = sumg / avgc
+            --     dlight.b = sumb / avgc
+            --     dlight.brightness = 2
+            --     dlight.Decay = 100
+            --     dlight.Size = (w + h) * 2.5
+            --     dlight.DieTime = CurTime() + 1
+            -- end
+    
         end
+
+        return true
     end
+        
+    if not run() then
+        if TheaterAmbientProjections then for i,v in ipairs(TheaterAmbientProjections) do v:Remove() end TheaterAmbientProjections=nil end
+    end
+
 end)
+
+AVGZZ= {}
 
 hook.Add("HUDPaint", "DrawNoFlashWarning", function()
     local Theater = Me.GetTheater and Me:GetTheater()

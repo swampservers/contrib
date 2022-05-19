@@ -42,8 +42,10 @@ else
         if DREWBUTTONTHISFRAME then
             DREWBUTTONTHISFRAME = false
         else
-            render.SetMaterial(buttonmat)
-            render.DrawQuad(Vector(0, 0, 0), Vector(0, 0, 0), Vector(0, 0, 0), Vector(0, 0, 0))
+            if not buttonmat:IsError() then
+                render.SetMaterial(buttonmat)
+                render.DrawQuad(Vector(0, 0, 0), Vector(0, 0, 0), Vector(0, 0, 0), Vector(0, 0, 0))
+            end
         end
     end)
 end
