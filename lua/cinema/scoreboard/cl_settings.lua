@@ -169,7 +169,7 @@ function SETTINGS:Create()
 
     addDropdown("Playermodels", "swamp_workshop", "When to download playermodels?", {"Don't Download", "Small (≤10mb) only", "Medium (≤30mb) only", "All (≤60mb) - Short range", "All (≤60mb) - Long range"}, 100, 100, -3)
 
-    addCheckbox('Dynamic theater lighting', "cinema_lightfx", 'Exclusive lighting effects (reduces fps)')
+    addCheckbox('Dynamic theater lighting', "cinema_dynamic_light", 'Exclusive lighting effects (reduces fps)')
     addCheckbox('Turbo button (increase FPS)', "swamp_fps_boost", "Put your gaymergear PC into overdrive")
     addLabel('Display')
     addCheckbox('Show help menu', "swamp_help", 'Show controls on the top of your screen')

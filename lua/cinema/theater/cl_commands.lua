@@ -11,7 +11,7 @@ end
 
 MuteGameConVar = CreateClientConVar("cinema_mutegame", 0, true, true, "", 0, 1)
 MuteVoiceConVar = CreateClientConVar("cinema_mute_voice", 0, true, true, "", 0, 4)
-CreateClientConVar("cinema_lightfx", 0, true, false, "", 0, 1)
+
 CreateClientConVar("cinema_quality", 1, true, false, "", 0, 3)
 local MuteNoFocus = CreateClientConVar("cinema_mute_nofocus", 1, true, false, "", 0, 1)
 
