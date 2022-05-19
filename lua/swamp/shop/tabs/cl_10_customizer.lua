@@ -26,8 +26,8 @@ vgui.Register('DSSCustomizerMode', {
         SS_CustomizerPanel = self
     end,
     DrawOverPreview = function(self, preview)
-        draw.SimpleText("RMB + drag to rotate", Font.Calibri24, preview:GetWide() / 2, 14, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        draw.SimpleText("MMB + drag to move", Font.Calibri24, preview:GetWide() / 2, 14 + 32, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText("RMB + drag to rotate", Font.sans24, preview:GetWide() / 2, 14, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText("MMB + drag to move", Font.sans24, preview:GetWide() / 2, 14 + 32, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end,
     OpenItem = function(self, item)
         self:Clear()

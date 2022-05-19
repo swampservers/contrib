@@ -41,7 +41,7 @@ vgui.Register("DSSJoinMenu", {
                         p:Dock(FILL)
                         p:SetText(txt)
                         p:SetTextColor(Color.white)
-                        p:SetFont(Font.Calibri26_800)
+                        p:SetFont(Font.sansbold26)
                         p.Hover = 0
                         DSS_Anim(p, "Hover", 500)
 
@@ -215,25 +215,25 @@ function ppp(self, w, h)
 
         -- "(Requires joining Steam too)"
         if nwp.in_steamgroup and nwp.in_steamchat then
-            draw.SimpleText("Steam connected!", Font.Calibri36_800, w / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("Steam connected!", Font.sansbold36, w / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         else
             local ofs = 0
 
             if nwp.in_steamgroup or nwp.in_steamchat then
                 local white = (math.sin(SysTime() * 3) + 1) * 0.5
-                draw.SimpleText("You are only in the " .. (nwp.in_steamgroup and "group" or "chat"), Font.Calibri24_800, w / 4, h - 20, Color(255, 255 * white, 255 * white, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("You are only in the " .. (nwp.in_steamgroup and "group" or "chat"), Font.sansbold24, w / 4, h - 20, Color(255, 255 * white, 255 * white, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 ofs = -16
             end
 
             local m = Material["swamp/join/steam_instructions.png"]
             surface.SetMaterial(m)
             surface.DrawTexturedRect(w / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40 + ofs, m:Width(), m:Height())
-            draw.SimpleText("Join both the group and chat!", Font.Calibri24_800, w / 4, h - 30 + ofs, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("Join both the group and chat!", Font.sansbold24, w / 4, h - 30 + ofs, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
 
         if nwp.in_discord then
-            draw.SimpleText("Discord connected!", Font.Calibri36_800, w * 3 / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            draw.SimpleText((nwp.in_steamgroup and nwp.in_steamchat) and "2x income unlocked!" or "Join Steam too for 2x income", Font.Calibri24_800, w * 3 / 4, h / 2 + 50, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("Discord connected!", Font.sansbold36, w * 3 / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText((nwp.in_steamgroup and nwp.in_steamchat) and "2x income unlocked!" or "Join Steam too for 2x income", Font.sansbold24, w * 3 / 4, h / 2 + 50, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         else
             if not (nwp.in_steamgroup and nwp.in_steamchat) then
                 draw.SimpleText("(Requires joining Steam too)", "DermaDefault", w * 3 / 4, 140, Color(160, 160, 160, c.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -242,7 +242,7 @@ function ppp(self, w, h)
             local m = Material["swamp/join/discord_instructions.png"]
             surface.SetMaterial(m)
             surface.DrawTexturedRect(w * 3 / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40, m:Width(), m:Height())
-            draw.SimpleText("Make sure to link your Steam account!", Font.Calibri24_800, w * 3 / 4, h - 30, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("Make sure to link your Steam account!", Font.sansbold24, w * 3 / 4, h - 30, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
     end
 

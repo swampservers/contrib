@@ -112,11 +112,14 @@ local function parse_settings(setting_str)
         i = i + 1
     end
 
+    -- aliases
+    if settings.font=="sans" or settings.font=="sansbold" then settings.font="Circular Std Medium" end
+
     return settings
 end
 
 local function pack_settings(settings)
-    local setting_str = (settings.font or "Arial") .. (settings.size or "13")
+    local setting_str = (settings.font or "sans") .. (settings.size or "13")
 
     if settings.weight then
         setting_str = setting_str .. "_" .. settings.weight
@@ -142,6 +145,9 @@ Font = defaultdict(function(setting_str)
 
     return setting_str
 end)
+
+-- default size
+Font.sans = Font.sans24
 
 -- todo clear cache
 local ffc = defaultdict(function() return defaultdict(function() return {} end) end)
