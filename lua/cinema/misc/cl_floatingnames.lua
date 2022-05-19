@@ -6,6 +6,21 @@ concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
 end)
 
+surface.CreateFont("TheaterDermaLarge", {
+    font = "Roboto",
+    size = 32,
+    weight = 500,
+    extended = true
+})
+
+surface.CreateFont("TheaterDermaSmall", {
+    font = "Roboto",
+    size = 16,
+    weight = 500,
+    extended = true
+})
+
+
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
@@ -37,11 +52,11 @@ local function DrawName(ply, opacityScale)
     -- render.OverrideDepthEnable(false, true)
     if SHOWNPSET then
         local inset = InGroupSet(Me.NWP[SHOWNPSET] or "", ply)
-        DrawTheaterText(inset and SHOWNPSETVERB[1]:upper() .. SHOWNPSETVERB:sub(2) or "Not " .. SHOWNPSETVERB, "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity * 1.5))
+        draw.ShadowedText(inset and SHOWNPSETVERB[1]:upper() .. SHOWNPSETVERB:sub(2) or "Not " .. SHOWNPSETVERB, "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity * 1.5))
     end
 
-    DrawTheaterText((ply.ClickMuted and "[MUTED]" or "") .. (ply.IsChatMuted and "[CHATMUTED]" or ""), "TheaterDermaSmall", 65, -10, Color(255, 255, 255, opacity))
-    DrawTheaterText(name, "3D2DName", 65, 0, Color(255, 255, 255, opacity))
+    draw.ShadowedText((ply.ClickMuted and "[MUTED]" or "") .. (ply.IsChatMuted and "[CHATMUTED]" or ""), "TheaterDermaSmall", 65, -10, Color(255, 255, 255, opacity))
+    draw.ShadowedText(name, Font["Bebas Neue80_600"], 65, 0, Color(255, 255, 255, opacity))
     local ch = ply:TypingChars()
     local chy = 58
     local title = ply:GetTitle()
@@ -51,18 +66,18 @@ local function DrawName(ply, opacityScale)
     end
 
     if title ~= "" then
-        DrawTheaterText(title, "TheaterDermaLarge", 70, 70, Color(255, 255, 255, opacity))
+        draw.ShadowedText(title, "TheaterDermaLarge", 70, 70, Color(255, 255, 255, opacity))
     end
 
     while ch > 0 do
-        DrawTheaterText(string.rep("•", math.min(ch, 50), ""), "DebugFixed", 75, chy, Color(255, 255, 255, opacity))
+        draw.ShadowedText(string.rep("•", math.min(ch, 50), ""), "DebugFixed", 75, chy, Color(255, 255, 255, opacity))
         chy = chy + 6
         ch = ch - 50
     end
 
     if Me:IsStaff() and ShowEyeAng then
-        DrawTheaterText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
-        DrawTheaterText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
+        draw.ShadowedText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
+        draw.ShadowedText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
         ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
 
         if CurTime() - ply.lastrequestedmousepos > 0.5 then

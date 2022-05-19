@@ -129,7 +129,7 @@ function GM:MenuShow()
                         surface.SetFont("VideoInfoMedium")
                         local ts = surface.GetTextSize(strSeconds)
                         local xpos = math.Clamp(mpos - ts / 2, 0, w - ts)
-                        DrawTheaterText(strSeconds, "VideoInfoMedium", xpos, h - bh, Color(255, 255, 255, 255), nil, TEXT_ALIGN_BOTTOM)
+                        draw.ShadowedText(strSeconds, "VideoInfoMedium", xpos, h - bh, Color(255, 255, 255, 255), nil, TEXT_ALIGN_BOTTOM)
                     end
                 else
                     GuiSeekBar:SetVisible(false)

@@ -202,3 +202,9 @@ local function tryfont()
 
     return w >= scrw
 end
+
+-- Dude move this
+function draw.ShadowedText(text, font, x, y, c, xalign, yalign)
+    draw.SimpleText(text, font, x + 1, y + 3, Color(0, 0, 0, 255 * math.pow(c.a / 255, 0.5)), xalign, yalign)
+    draw.SimpleText(text, font, x, y, c, xalign, yalign)
+end

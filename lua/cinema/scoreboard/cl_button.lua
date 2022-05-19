@@ -25,7 +25,7 @@ PANEL.TextColor = Color(255, 255, 255)
 function PANEL:Init()
     self.BaseClass.Init(self)
     self:SetTall(28)
-    self:SetFont("LabelFont")
+    self:SetFont(Font.sans)
 end
 
 function PANEL:Paint(w, h)
