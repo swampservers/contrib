@@ -3,7 +3,7 @@ include("shared.lua")
 local mat = Material("models/swamponions/kekfrog_gold")
 
 local function kekoffercolor(points, val)
-    return HSVToColor(math.Clamp(math.log10(math.max(points,1)),4,7)*100 - 340, 1, val or math.min(1, points/10000))
+    return HSVToColor(math.Clamp(math.log10(math.max(points, 1)), 4, 7) * 100 - 340, 1, val or math.min(1, points / 10000))
 end
 
 function ENT:Draw()
@@ -13,23 +13,21 @@ function ENT:Draw()
 end
 
 function ENT:Think()
-    if not Me or self:GetPos():DistToSqr(Me:GetPos())>2000*2000 then return end
-    
+    if not Me or self:GetPos():DistToSqr(Me:GetPos()) > 2000 * 2000 then return end
     local col = kekoffercolor(self:GetOfferedPoints())
+    if col.r == 0 and col.g == 0 and col.b == 0 then return end
+    local b = math.log10(self:GetOfferedPoints()) - 2
+    if b <= 0 then return end
+    local dlight = DynamicLight(self:EntIndex())
 
-    if col.r==0 and col.g==0 and col.b==0 then return end
-    local b = math.log10(self:GetOfferedPoints())-2
-    if b<=0 then return end
-
-    local dlight = DynamicLight( self:EntIndex() )
-	if dlight then
-		dlight.pos = self:GetPos()
-		dlight.r = col.r
-		dlight.g = col.g
-		dlight.b = col.b
-		dlight.brightness = b
-		dlight.Decay = 2000
-		dlight.Size = 64
+    if dlight then
+        dlight.pos = self:GetPos()
+        dlight.r = col.r
+        dlight.g = col.g
+        dlight.b = col.b
+        dlight.brightness = b
+        dlight.Decay = 2000
+        dlight.Size = 64
         dlight.DieTime = CurTime() + 1
     end
 end
@@ -96,9 +94,9 @@ hook.Add("HUDPaint", "saykek2", function()
             local sc = p:ToScreen()
 
             if sc.visible then
-                local jitter = math.max(0, math.log(v[3])*0.3-3)
+                local jitter = math.max(0, math.log(v[3]) * 0.3 - 3)
                 --255, 220, 40
-                draw.SimpleText( (v[3] >= 1000000 and "KEK" or "kek"), "Trebuchet24", sc.x + math.Rand(-jitter,jitter), sc.y + math.Rand(-jitter,jitter), ColorAlpha(kekoffercolor(v[3],1 ), 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText(v[3] >= 1000000 and "KEK" or "kek", "Trebuchet24", sc.x + math.Rand(-jitter, jitter), sc.y + math.Rand(-jitter, jitter), ColorAlpha(kekoffercolor(v[3], 1), 255 * alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
     end
@@ -140,12 +138,11 @@ hook.Add("PostDrawTranslucentRenderables", "EntityUseMenu", function(d, sky, sky
             {"collect", "Collect " .. USEMENUENT:GetCollectPoints() .. " points"},
             {"offer", "Make an offering"}
         }
-        
 
-        local cursev = math.floor(USEMENUENT:GetOfferedPoints()/2000 + USEMENUENT:CurseDestroyBonus()/1000)
+        local cursev = math.floor(USEMENUENT:GetOfferedPoints() / 2000 + USEMENUENT:CurseDestroyBonus() / 1000)
 
-        if cursev>0 then
-            table.insert(buttons, {"curse", "Curse ("..math.floor(USEMENUENT:GetOfferedPoints()/2000 + USEMENUENT:CurseDestroyBonus()/1000).."k)"})
+        if cursev > 0 then
+            table.insert(buttons, {"curse", "Curse (" .. math.floor(USEMENUENT:GetOfferedPoints() / 2000 + USEMENUENT:CurseDestroyBonus() / 1000) .. "k)"})
         end
 
         for i, button in ipairs(buttons) do
