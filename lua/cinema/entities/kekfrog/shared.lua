@@ -86,3 +86,7 @@ function ENT:IncomeSuppression()
 
     return inc
 end
+
+function ENT:CurseDestroyBonus()
+    return self:Income() > 0 and 10000 or 0
+end

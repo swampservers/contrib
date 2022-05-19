@@ -189,8 +189,16 @@ local THLIGHT_CANVAS_XS = 16
 local THLIGHT_CANVAS_YS = 16
 -- TheaterCustomRT = GetRenderTarget("ThLights2", THLIGHT_CANVAS_XS, THLIGHT_CANVAS_YS, true)
 
-local lighttexsize = 128
-TheaterLightRT = GetRenderTargetEx("TheaterProjection", lighttexsize,lighttexsize, 	RT_SIZE_NO_CHANGE,MATERIAL_RT_DEPTH_NONE,bit.bor(2, 4,8, 256),0, IMAGE_FORMAT_BGR888)
+local lighttexsize = 128*8*2
+local lighttexsizedown = lighttexsize/4
+
+local args = {RT_SIZE_NO_CHANGE,MATERIAL_RT_DEPTH_NONE, bit.bor(2, 4,8, 256),0, IMAGE_FORMAT_BGR888}
+TheaterLightRT1 = GetRenderTargetEx("TheaterProjectionA"..lighttexsize, lighttexsize,lighttexsize, 	unpack(args))
+TheaterLightRT2 = GetRenderTargetEx("TheaterProjectionB"..lighttexsize, lighttexsizedown, lighttexsize, 	unpack(args))
+TheaterLightRT = GetRenderTargetEx("TheaterProjectionC"..lighttexsize, lighttexsizedown,lighttexsizedown, 	unpack(args))
+
+local mat_BlurX			= Material( "pp/blurx" )
+local mat_BlurY			= Material( "pp/blury" )
 
 
 local projections = {
@@ -218,13 +226,12 @@ hook.Add("PostRender", "TheaterLighting", function()
         if LightCvar:GetInt() < 1 then return end
 
         -- Dynamic lighting from screen colors (Swamp Cinema)
-        
 
         local t = SysTime()
 
         local OldRT = render.GetRenderTarget()
         local ow, oh = ScrW(), ScrH()
-        render.SetRenderTarget(TheaterLightRT)
+        render.SetRenderTarget(TheaterLightRT1)
         render.SetViewPort(0, 0, lighttexsize, lighttexsize)
         render.Clear(0,0,0,0)
         cam.Start2D()
@@ -233,8 +240,8 @@ hook.Add("PostRender", "TheaterLighting", function()
 
         local um,vm = ActivePanel:GetUVMax()
 
-        local blurscale = 24
-        surface.DrawTexturedRectUV(blurscale, blurscale, lighttexsize-(2*blurscale), lighttexsize-(2*blurscale), um, 0, 0,vm)
+        local border = math.floor(lighttexsize/6)
+        surface.DrawTexturedRectUV(border, border, lighttexsize-(2*border), lighttexsize-(2*border), um, 0, 0,vm)
 
         local sumr, sumg, sumb = 0, 0, 0
 
@@ -247,24 +254,39 @@ hook.Add("PostRender", "TheaterLighting", function()
         -- 	h = ScrH()
         -- } )
 
-        if not use_projection then
-            render.CapturePixels()   
-            for x = 0, THLIGHT_CANVAS_XS - 1 do
-                for y = 0, THLIGHT_CANVAS_YS - 1 do
-                    local r, g, b = render.ReadPixel(x, y)
-                    sumr, sumg, sumb = sumr + r, sumg + g, sumb + b
-                end
-            end
-        end
+        -- if not use_projection then
+        --     render.CapturePixels()   
+        --     for x = 0, THLIGHT_CANVAS_XS - 1 do
+        --         for y = 0, THLIGHT_CANVAS_YS - 1 do
+        --             local r, g, b = render.ReadPixel(x, y)
+        --             sumr, sumg, sumb = sumr + r, sumg + g, sumb + b
+        --         end
+        --     end
+        -- end
 
         cam.End2D()
 
-        local blurbase = 4
-        render.BlurRenderTarget(TheaterLightRT, blurscale*blurbase,blurscale*blurbase, 1)
+        -- should just blur onto a smaller target texture, then trilinear will make it not flickery
+        
+        -- render.BlurRenderTarget(TheaterLightRT, blurscale*blurbase,blurscale*blurbase, 2)
 
+        mat_BlurX:SetTexture( "$basetexture", TheaterLightRT1 )
+        mat_BlurY:SetTexture( "$basetexture", TheaterLightRT2 )
 
-        render.SetViewPort(0, 0, ow, oh)
+        local blurbase = 10
+        mat_BlurX:SetFloat( "$size", blurbase )
+        mat_BlurY:SetFloat( "$size", blurbase )
+
+        render.SetRenderTarget( TheaterLightRT2 )
+        render.SetMaterial( mat_BlurX )
+        render.DrawScreenQuad()
+
+        render.SetRenderTarget( TheaterLightRT )
+        render.SetMaterial( mat_BlurY )
+        render.DrawScreenQuad()
+        
         render.SetRenderTarget(OldRT)
+        render.SetViewPort(0, 0, ow, oh)
         
         -- print(SysTime()-t, FLIPFLOP)
 
@@ -298,6 +320,7 @@ hook.Add("PostRender", "TheaterLighting", function()
                     if i==1 then 
                         p:SetHorizontalFOV(140)
                         p:SetVerticalFOV(130)
+                        p:SetFOV(20)
                         p:SetBrightness(1)
                         p:SetLinearAttenuation(0)
                         p:SetQuadraticAttenuation(math.pow(scale, 2)*0.1)
@@ -306,7 +329,6 @@ hook.Add("PostRender", "TheaterLighting", function()
                         p:SetBrightness(0.2)
                         p:SetLinearAttenuation(math.pow(scale, 1.4)*0.05)
                     end
-                    print(math.sqrt(scale))
                     p:SetFarZ(scale*10)
                     p:SetTexture(TheaterLightRT)
                     
