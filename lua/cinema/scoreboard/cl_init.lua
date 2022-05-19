@@ -44,6 +44,7 @@ function ResetUI()
         GuiSeekBar = nil
     end
 end
+
 ResetUI()
 _G.ResetUI = ResetUI
 

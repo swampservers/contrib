@@ -4,7 +4,6 @@ ENT.RenderGroup = RENDERGROUP_OPAQUE
 local ThumbWidth = 512 -- Expected to be PO2
 local ThumbHeight = 384 -- Expected <= width
 
-
 function ENT:Draw()
     self:DrawModel()
     self:SetModelScale(0.8)
