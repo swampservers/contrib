@@ -20,7 +20,6 @@ surface.CreateFont("TheaterDermaSmall", {
     extended = true
 })
 
-
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end

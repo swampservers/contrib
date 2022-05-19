@@ -113,7 +113,9 @@ local function parse_settings(setting_str)
     end
 
     -- aliases
-    if settings.font=="sans" or settings.font=="sansbold" then settings.font="Circular Std Medium" end
+    if settings.font == "sans" or settings.font == "sansbold" then
+        settings.font = "Circular Std Medium"
+    end
 
     return settings
 end
@@ -148,7 +150,6 @@ end)
 
 -- default size
 Font.sans = Font.sans24
-
 -- todo clear cache
 local ffc = defaultdict(function() return defaultdict(function() return {} end) end)
 

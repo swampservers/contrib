@@ -358,8 +358,9 @@ function API_Optional(typ)
     return {
         Read = function() return net.ReadBool() and API_Read(typ) or nil end,
         Write = function(v)
-            net.WriteBool(v~=nil)
-            if v~=nil then
+            net.WriteBool(v ~= nil)
+
+            if v ~= nil then
                 API_Write(typ, v)
             end
         end

@@ -36,9 +36,9 @@ local alpha = 0
 
 -- on top of other stuff without PostDrawHUD's weird messed up kerning
 hook.Add("HUDDrawScoreBoard", "Hint_Draw", function()
-    if ScrW()<=800 and ScrH()<=600 then
-        draw.SimpleText("Your resolution is only "..ScrW().."x"..ScrH()..".","Trebuchet18",ScrW()/2, ScrH()-36, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-        draw.SimpleText("For a better experience, press escape and go to Options->Video to fix it!","Trebuchet18",ScrW()/2, ScrH()-20, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)    
+    if ScrW() <= 800 and ScrH() <= 600 then
+        draw.SimpleText("Your resolution is only " .. ScrW() .. "x" .. ScrH() .. ".", "Trebuchet18", ScrW() / 2, ScrH() - 36, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        draw.SimpleText("For a better experience, press escape and go to Options->Video to fix it!", "Trebuchet18", ScrW() / 2, ScrH() - 20, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
 
     alpha = math.Clamp(alpha + (HintConVar:GetBool() and 1 or -1) * FrameTime() * 4, 0, 1)

@@ -321,22 +321,25 @@ local function SCKLocalToWorld(ipos, iang, pos, ang)
 end
 
 local AutoIconsToMake = {}
-hook.Add("PostRender","MakeAutoIcons",function()
-    for mode,modetable in pairs(AutoIconsToMake) do
-        for cachekey,p in pairs(modetable) do
+
+hook.Add("PostRender", "MakeAutoIcons", function()
+    for mode, modetable in pairs(AutoIconsToMake) do
+        for cachekey, p in pairs(modetable) do
             MakeAutoIcon(p, mode)
         end
-        AutoIconsToMake[mode]=nil
+
+        AutoIconsToMake[mode] = nil
     end
 end)
 
-
 function GetAutoIcon(p, mode)
     CheckTexturesValid()
-    if not AUTOICONS[mode][p.cachekey] then 
+
+    if not AUTOICONS[mode][p.cachekey] then
         AUTOICONS[mode][p.cachekey] = CreateMaterial(UniqueName(), "UnlitGeneric", {
             ["$basetexture"] = "tools/toolsblack",
         })
+
         AutoIconsToMake[mode] = AutoIconsToMake[mode] or {}
         AutoIconsToMake[mode][p.cachekey] = p
     end
@@ -830,7 +833,6 @@ function MakeAutoIcon(p, mode)
         -- local m = CreateMaterial(UniqueName(), "UnlitGeneric", {
         --     ["$basetexture"] = finalrt:GetName(),
         -- })
-
         -- AUTOICONS[mode][p.cachekey] = m
         AUTOICONS[mode][p.cachekey]:SetTexture("$basetexture", finalrt)
         render.SuppressEngineLighting(false)
