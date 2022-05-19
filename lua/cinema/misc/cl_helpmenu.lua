@@ -13,7 +13,7 @@ hook.Add("Think", "HintToggler", function()
     wasf1down = isf1down
 end)
 
-local function bindingname(bind, desc)
+function BindingName(bind, desc)
     local a = input.LookupBinding(bind) or input.LookupBinding("+" .. bind)
 
     if a then
@@ -48,12 +48,12 @@ hook.Add("HUDDrawScoreBoard", "Hint_Draw", function()
     local pad = "  "
 
     local controlhints = {
-        {bindingname("showscores", "scoreboard"), pad .. "Show currently playing videos and settings:" .. pad},
-        {bindingname("menu", "spawn menu"), pad .. pad .. "Request videos while in theaters:" .. pad},
-        {bindingname("use", "use item"), pad .. "Sit in seats (to avoid being killed!):" .. pad},
-        {bindingname("menu_context", "context menu"), pad .. "Open shop (for toys/weapons/props, many free):" .. pad},
-        {bindingname("messagemode", "chat message") .. " or " .. bindingname("messagemode2", "team message"), pad .. "Text chat:" .. pad},
-        {bindingname("voicerecord", "Use voice communication"), pad .. "Voice chat (push-to-talk):" .. pad},
+        {BindingName("showscores", "scoreboard"), pad .. "Show currently playing videos and settings:" .. pad},
+        {BindingName("menu", "spawn menu"), pad .. pad .. "Request videos while in theaters:" .. pad},
+        {BindingName("use", "use item"), pad .. "Sit in seats (to avoid being killed!):" .. pad},
+        {BindingName("menu_context", "context menu"), pad .. "Open shop (for toys/weapons/props, many free):" .. pad},
+        {BindingName("messagemode", "chat message") .. " or " .. BindingName("messagemode2", "team message"), pad .. "Text chat:" .. pad},
+        {BindingName("voicerecord", "Use voice communication"), pad .. "Voice chat (push-to-talk):" .. pad},
         {"F1", pad .. "Hide this menu:" .. pad .. pad}
     }
 
