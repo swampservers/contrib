@@ -1,20 +1,16 @@
-﻿
-function test()
-    hook.Add("HUDPaint","a",function() 
-        for i,v in ipairs(
-            {"Plus Jakarta Sans","Plus Jakarta Sans Medium","Plus Jakarta Sans SemiBold", "Plus Jakarta Sans Bold",
-             "Circular Std Medium", "Arial", "Roboto", "Times New Roman"}) do 
-                s=math.floor((CurTime()%10)*10) 
-                txt="Hello "..s
-                x,y=10,i*s
-                draw.SimpleText(txt,Font[v..s],x,y) 
-                w,h = GetTextSize(Font[v..s],txt)
-                surface.SetDrawColor(255,255,255)
-                surface.DrawOutlinedRect(x,y,w,h)
-        end 
+﻿function test()
+    hook.Add("HUDPaint", "a", function()
+        for i, v in ipairs({"Plus Jakarta Sans", "Plus Jakarta Sans Medium", "Plus Jakarta Sans SemiBold", "Plus Jakarta Sans Bold", "Circular Std Medium", "Arial", "Roboto", "Times New Roman"}) do
+            s = math.floor((CurTime() % 10) * 10)
+            txt = "Hello " .. s
+            x, y = 10, i * s
+            draw.SimpleText(txt, Font[v .. s], x, y)
+            w, h = GetTextSize(Font[v .. s], txt)
+            surface.SetDrawColor(255, 255, 255)
+            surface.DrawOutlinedRect(x, y, w, h)
+        end
     end)
 end
-
 
 DefaultCreateFont = DefaultCreateFont or surface.CreateFont
 DefaultSetFont = DefaultSetFont or surface.SetFont
@@ -58,9 +54,8 @@ function surface.CreateFont(name, settings)
     end
 
     -- if (settings.font or ""):StartWith("Plus Jak") then
-        -- settings.size = (settings.size or 13)*1.2
+    -- settings.size = (settings.size or 13)*1.2
     -- end
-
     textsizecachecount = textsizecachecount - table.Count(textsizecache[name])
     textsizecache[name] = {}
 
