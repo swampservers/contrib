@@ -1,53 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- TODO cl_draw
--- Colors can index by letter or by number and we prefer to store in the number keys
-local COLOR = debug.getregistry().Color
 
-local translation = {
-    [1] = "r",
-    [2] = "g",
-    [3] = "b",
-    [4] = "a",
-    r = 1,
-    g = 2,
-    b = 3,
-    a = 4
-}
 
-function COLOR:__index(k)
-    if isstring(k) then
-        local k2 = translation[k]
-
-        if k2 then
-            return rawget(self, translation[k])
-        else
-            return rawget(COLOR, k)
-        end
-    else
-        rawset(self, 1, self.r)
-        rawset(self, 2, self.g)
-        rawset(self, 3, self.b)
-        rawset(self, 4, self.a)
-        rawset(self, "r", nil)
-        rawset(self, "g", nil)
-        rawset(self, "b", nil)
-        rawset(self, "a", nil)
-
-        return rawget(self, k)
-    end
-end
-
-function COLOR:__newindex(k, v)
-    rawset(self, translation[k], v)
-end
-
-local SetDrawColor = surface.SetDrawColor
-local DrawRect = surface.DrawRect
-
-function draw.Rect(x, y, w, h, c)
-    SetDrawColor(c[1], c[2], c[3], c[4])
-    DrawRect(x, y, w, h)
-end
 
 BrandColorGrayDarker = Color(32, 32, 32) --(26, 30, 38)
 BrandColorGrayDark = Color(48, 48, 48) --(38, 41, 49)
