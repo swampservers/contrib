@@ -1,8 +1,17 @@
-﻿function test()
+﻿
+-- ExtraLight @200
+-- Light @300
+-- Regular @400
+-- Medium @500
+-- SemiBold @600
+-- Bold @700
+-- ExtraBold @800
+
+function test()
     hook.Add("HUDPaint", "a", function()
         -- for i, v in ipairs({"Plus Jakarta Sans", "Plus Jakarta Sans Medium", "Plus Jakarta Sans SemiBold", "Plus Jakarta Sans Bold", "Circular Std Medium", "Arial", "Roboto", "Times New Roman"}) do
         -- for i, v in ipairs({"Plus Jakarta Sans", "Swampkarta", "Circular Std Medium", "Arial"}) do
-        for i, v in ipairs({"Swampkarta ExtraLight","Swampkarta Regular","Swampkarta ExtraBold","Swampkarta","SwampkartaA","Circular Std Medium"}) do
+        for i, v in ipairs({"Swampkarta ExtraLight","Swampkarta Regular","Swampkarta Medium","Swampkarta ExtraBold","Swampkarta","Circular Std Medium"}) do
 
             local s = 24 --math.floor((CurTime() % 10) * 10)
 
@@ -11,9 +20,10 @@
             txt = "Hello " .. s -- .. " " .. w .. " "..h
             x, y = 10, i * s
             draw.SimpleText(txt, Font[v .. s], x, y)
-            draw.SimpleText(txt, Font[v .. s.."_100"], x+200, y)
+            draw.SimpleText(txt, Font[v .. s.."_200"], x+200, y)
             draw.SimpleText(txt, Font[v .. s.."_400"], x+400, y)
-            draw.SimpleText(txt, Font[v .. s.."_600"], x+600, y)
+            
+            draw.SimpleText(txt, Font[v .. s.."_500"], x+600, y)
             draw.SimpleText(txt, Font[v .. s.."_800"], x+800, y)
 
             -- y=y+100
@@ -152,6 +162,8 @@ local function parse_settings(setting_str)
 
     -- aliases
     if settings.font == "sans" or settings.font == "sansbold" then
+        -- settings.font = "Swampkarta SemiBold" 
+        -- settings.weight = 600
         settings.font = "Circular Std Medium"
     end
 
