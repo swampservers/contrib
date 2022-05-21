@@ -1,30 +1,41 @@
-﻿-- ExtraLight @200
+﻿
+-- ExtraLight @200
 -- Light @300
 -- Regular @400
 -- Medium @500
 -- SemiBold @600
 -- Bold @700
 -- ExtraBold @800
+
 function test()
     hook.Add("HUDPaint", "a", function()
         -- for i, v in ipairs({"Plus Jakarta Sans", "Plus Jakarta Sans Medium", "Plus Jakarta Sans SemiBold", "Plus Jakarta Sans Bold", "Circular Std Medium", "Arial", "Roboto", "Times New Roman"}) do
         -- for i, v in ipairs({"Plus Jakarta Sans", "Swampkarta", "Circular Std Medium", "Arial"}) do
-        for i, v in ipairs({"Swampkarta ExtraLight", "Swampkarta Regular", "Swampkarta Medium", "Swampkarta ExtraBold", "Swampkarta", "Circular Std Medium", "CircularStd-Book", "CircularStd-Bold"}) do
+        for i, v in ipairs({"Swampkarta ExtraLight","Swampkarta Regular","Swampkarta Medium","Swampkarta ExtraBold","Swampkarta","Circular Std Medium", "CircularStd-Book", "CircularStd-Bold"}) do
+
             local s = 24 --math.floor((CurTime() % 10) * 10)
+
             -- local w,h = GetTextSize(Font[v .. s], "Hello")
+
             txt = "Hello " .. s -- .. " " .. w .. " "..h
             x, y = 10, i * s
             draw.SimpleText(txt, Font[v .. s], x, y)
-            draw.SimpleText(txt, Font[v .. s .. "_200"], x + 200, y)
-            draw.SimpleText(txt, Font[v .. s .. "_400"], x + 400, y)
-            draw.SimpleText(txt, Font[v .. s .. "_500"], x + 600, y)
-            draw.SimpleText(txt, Font[v .. s .. "_800"], x + 800, y)
+            draw.SimpleText(txt, Font[v .. s.."_200"], x+200, y)
+            draw.SimpleText(txt, Font[v .. s.."_400"], x+400, y)
+            
+            draw.SimpleText(txt, Font[v .. s.."_500"], x+600, y)
+            draw.SimpleText(txt, Font[v .. s.."_800"], x+800, y)
+
             -- y=y+100
             -- draw.SimpleText(txt, Font[v .. s.."_italic"], x, y)
             -- draw.SimpleText(txt, Font[v .. s.."_100_italic"], x+200, y)
             -- draw.SimpleText(txt, Font[v .. s.."_400_italic"], x+400, y)
             -- draw.SimpleText(txt, Font[v .. s.."_600_italic"], x+600, y)
             -- draw.SimpleText(txt, Font[v .. s.."_800_italic"], x+800, y)
+
+
+            
+
             -- w, h = GetTextSize(Font[v .. s], txt)
             -- surface.SetDrawColor(255, 255, 255)
             -- surface.DrawOutlinedRect(x, y, w, h)
@@ -155,13 +166,14 @@ local function parse_settings(setting_str)
         -- settings.weight = 600
         settings.font = "CircularStd-Book"
     end
-
     if settings.font == "sansmedium" then
         settings.font = "CircularStd-Medium"
+
     end
 
     if settings.font == "sansbold" then
         settings.font = "CircularStd-Bold"
+
     end
 
     return settings
@@ -251,8 +263,3 @@ local function tryfont()
     return w >= scrw
 end
 
--- Dude move this
-function draw.ShadowedText(text, font, x, y, c, xalign, yalign)
-    draw.SimpleText(text, font, x + 1, y + 3, Color(0, 0, 0, 255 * math.pow(c.a / 255, 0.5)), xalign, yalign)
-    draw.SimpleText(text, font, x, y, c, xalign, yalign)
-end

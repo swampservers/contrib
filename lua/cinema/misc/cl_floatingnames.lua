@@ -4,6 +4,7 @@ local ShowEyeAng = false
 
 concommand.Add("showeyeang", function(ply, cmd, args)
     ShowEyeAng = not ShowEyeAng
+    print(ShowEyeAng)
 end)
 
 surface.CreateFont("TheaterDermaLarge", {
@@ -20,81 +21,94 @@ surface.CreateFont("TheaterDermaSmall", {
     extended = true
 })
 
+local dotsperline = nil
+
 local function DrawName(ply, opacityScale)
     if not IsValid(ply) or not ply:Alive() then return end
     if ply:IsDormant() or ply:GetNoDraw() then return end
-    if not Me:IsStaff() and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_anonymous" then return end
-    local dist = EyePos():Distance(ply:EyePos())
-    if dist >= 800 then return end
-    local opacity = math.Clamp(310.526 - 0.394737 * dist, 0, 150)
-    opacity = opacity * opacityScale
-    if opacity <= 0 then return end
-    local pos = ply:EyePos() - Vector(0, 0, 4)
-    local ang = EyeAngles()
-    ang:RotateAroundAxis(ang:Forward(), 90)
-    ang:RotateAroundAxis(ang:Right(), 90)
-    -- if Me:InVehicle() then
-    --     ang:RotateAroundAxis(ang:Right(), -Me:GetVehicle():GetAngles().y)
-    -- end
-    --[[
-	if ply:InVehicle() then
-		pos = pos + Vector( 0, 0, 30 )
-	else
-		pos = pos + Vector( 0, 0, 60 )
-	end
-	 
-	]]
-    --
-    local name = string.upper(ply:GetName())
-    cam.Start3D2D(pos, Angle(0, ang.y, 90), 0.15)
 
-    -- render.OverrideDepthEnable(false, true)
+    local pos = ply:EyePos() - Vector(0, 0, 4)
+    local offset = pos - EyePos()
+
+    local opacity = math.Clamp(320 - 0.4 * offset:Length(), 0, 150) * opacityScale
+    if opacity <= 0 then return end
+    
+    local ang = LerpAngle(0.5, Angle(0,EyeAngles().y+270,90), Angle(0,  math.deg(math.atan2(-offset.y,-offset.x))+90, 90))
+    
+    local anon = not Me:IsStaff() and ply:UsingWeapon("weapon_anonymous")
+    
+    -- render.DepthRange( 0,0.998)
+    cam.Start3D2D(pos + ang:Forward()*10, ang, 0.08)
+
+    local x = 0
+    local maxw = 500
+
+    local y=0
+
+    local name = anon and "Anonymous" or ply:GetName()
+    local namefont = FitFont("sansbold116", name, maxw) -- "Bebas Neue80_600"
+    draw.ShadowedText(name, namefont, 0, y, Color(255, 255, 255, opacity))
+
+    local nw,nh = GetTextSize(namefont, name)
+    y=y+math.floor(nh*0.92)
+
+
+    local health = ply:Health()/ply:GetMaxHealth()
+    if health<1 then
+        local barw,barh = math.max(nw, 200),9
+        local bary = math.floor(nh*0.08) - barh
+        draw.Rect(1,bary+2,barw,barh, {0, 0, 0, 255 * math.pow(opacity / 255, 0.5)} )
+        local part = math.floor(barw*health)
+        draw.Rect(0,bary,part,barh,{255,255*health,255*health,opacity})
+        draw.Rect(part,bary,barw-part,barh,{0,0,0,opacity})
+    end
+
+
+    local chars = ply:TypingChars()
+    
+    if chars==0 then
+        y=y+9
+    else
+        dotsperline = dotsperline or math.floor(100 * maxw/GetTextWidth(Font.sans28, string.rep("•", 100, "")))
+        while chars > 0 do
+            draw.ShadowedText(string.rep("•", math.min(chars, dotsperline), ""), Font.sans28, 0, y-4, {255, 255, 255, opacity})
+            chars = chars - dotsperline
+            y=y+9
+        end
+    end
+
+
+    local x = 8
+
+    local title, titlec = (anon and "We are legion" or ply:GetTitle()), {255, 255, 255, opacity}
+
     if SHOWNPSET then
         local inset = InGroupSet(Me.NWP[SHOWNPSET] or "", ply)
-        draw.ShadowedText(inset and SHOWNPSETVERB[1]:upper() .. SHOWNPSETVERB:sub(2) or "Not " .. SHOWNPSETVERB, "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity * 1.5))
-    end
-
-    if ply.ClickMuted or ply.IsChatMuted then draw.ShadowedText( (ply.ClickMuted and "[MUTED]" or "") .. (ply.IsChatMuted and "[CHATMUTED]" or ""), "TheaterDermaSmall", 65, -10, Color(255, 255, 255, opacity)) end
-    
-    
-    
-    local h = ply:Health()/ply:GetMaxHealth()
-    if h<1 then
-        draw.Rect(65,0,160*h,6,{255,255*h,255*h,opacity})
-        draw.Rect(65+160*h,0,160*(1-h),6,{0,0,0,opacity})
-    end
-    
-    
-    -- draw.ShadowedText(name, Font["Bebas Neue80_600"], 65, 0, Color(255, 255, 255, opacity))
-
-    draw.ShadowedText(ply:GetName(), Font.sansbold72, 65, 0, Color(255, 255, 255, opacity))
-
-    local ch = ply:TypingChars()
-    local chy = 58
-    local title = ply:GetTitle()
-
-
-
-    if ply:IsAFK() then
-        title = "[AFK] " .. title
+        title = inset and SHOWNPSETVERB[1] .. SHOWNPSETVERB:sub(2) or "Not " .. SHOWNPSETVERB
+        titlec = inset and {128, 255, 128, opacity} or {255, 128, 128, opacity}
     end
 
     if title ~= "" then
-        draw.ShadowedText(title, "TheaterDermaLarge", 70, 70, Color(255, 255, 255, opacity))
+        draw.ShadowedText(title, Font.sansmedium60, x, y, titlec)        
+        x = x+GetTextWidth(Font.sansmedium60, title)
     end
 
-    while ch > 0 do
-        draw.ShadowedText(string.rep("•", math.min(ch, 50), ""), "DebugFixed", 75, chy, Color(255, 255, 255, opacity))
-        chy = chy + 6
-        ch = ch - 50
+    for i,icon in ipairs({
+        {ply:IsAFK(), "swamp/icon48/clock-outline.png"},
+        {ply.ClickMuted, "swamp/icon48/volume-off.png"},
+        {ply.IsChatMuted, "swamp/icon48/chat-remove.png"},
+    }) do
+        if icon[1] then
+        draw.ShadowedIcon(icon[2],48,x+8,y+7, {255, 255, 255, opacity})
+        x=x+56
+        end
     end
+
 
     if Me:IsStaff() and ShowEyeAng then
-        draw.ShadowedText(tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)), "TheaterDermaLarge", 70, 100, Color(255, 255, 255, opacity))
-        draw.ShadowedText(tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), "TheaterDermaLarge", 70, 130, Color(255, 255, 255, opacity))
-        ply.lastrequestedmousepos = ply.lastrequestedmousepos or 0
+        draw.ShadowedText("Eyes "..tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)).. ", Mouse "..tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY) , Font.sans40, 0, y+70, Color(255, 255, 255, opacity))
 
-        if CurTime() - ply.lastrequestedmousepos > 0.5 then
+        if CurTime() - (ply.lastrequestedmousepos or 0) > 0.5 then
             ply.lastrequestedmousepos = CurTime()
             net.Start("GetGUIMousePos")
             net.WriteEntity(ply)
@@ -104,6 +118,7 @@ local function DrawName(ply, opacityScale)
 
     -- render.OverrideDepthEnable(false, false)
     cam.End3D2D()
+    render.DepthRange( 0,1)
 end
 
 local HUDTargets = {}
@@ -152,6 +167,9 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sk
         end
     end
 end)
+
+
+
 -- TODO: make targeted players' names light up at long distance like in code below
 -- hook.Add("PostDrawTranslucentRenderables", "DrawPlayerNames", function(depth, sky)
 -- if sky then return end
