@@ -1,13 +1,34 @@
 ﻿function test()
     hook.Add("HUDPaint", "a", function()
-        for i, v in ipairs({"Plus Jakarta Sans", "Plus Jakarta Sans Medium", "Plus Jakarta Sans SemiBold", "Plus Jakarta Sans Bold", "Circular Std Medium", "Arial", "Roboto", "Times New Roman"}) do
-            s = math.floor((CurTime() % 10) * 10)
-            txt = "Hello " .. s
+        -- for i, v in ipairs({"Plus Jakarta Sans", "Plus Jakarta Sans Medium", "Plus Jakarta Sans SemiBold", "Plus Jakarta Sans Bold", "Circular Std Medium", "Arial", "Roboto", "Times New Roman"}) do
+        -- for i, v in ipairs({"Plus Jakarta Sans", "Swampkarta", "Circular Std Medium", "Arial"}) do
+        for i, v in ipairs({"Swampkarta ExtraLight","Swampkarta Regular","Swampkarta ExtraBold","Swampkarta","SwampkartaA","Circular Std Medium"}) do
+
+            local s = 24 --math.floor((CurTime() % 10) * 10)
+
+            -- local w,h = GetTextSize(Font[v .. s], "Hello")
+
+            txt = "Hello " .. s -- .. " " .. w .. " "..h
             x, y = 10, i * s
             draw.SimpleText(txt, Font[v .. s], x, y)
-            w, h = GetTextSize(Font[v .. s], txt)
-            surface.SetDrawColor(255, 255, 255)
-            surface.DrawOutlinedRect(x, y, w, h)
+            draw.SimpleText(txt, Font[v .. s.."_100"], x+200, y)
+            draw.SimpleText(txt, Font[v .. s.."_400"], x+400, y)
+            draw.SimpleText(txt, Font[v .. s.."_600"], x+600, y)
+            draw.SimpleText(txt, Font[v .. s.."_800"], x+800, y)
+
+            -- y=y+100
+            -- draw.SimpleText(txt, Font[v .. s.."_italic"], x, y)
+            -- draw.SimpleText(txt, Font[v .. s.."_100_italic"], x+200, y)
+            -- draw.SimpleText(txt, Font[v .. s.."_400_italic"], x+400, y)
+            -- draw.SimpleText(txt, Font[v .. s.."_600_italic"], x+600, y)
+            -- draw.SimpleText(txt, Font[v .. s.."_800_italic"], x+800, y)
+
+
+            
+
+            -- w, h = GetTextSize(Font[v .. s], txt)
+            -- surface.SetDrawColor(255, 255, 255)
+            -- surface.DrawOutlinedRect(x, y, w, h)
         end
     end)
 end
