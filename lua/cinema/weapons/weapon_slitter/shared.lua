@@ -367,7 +367,6 @@ function SWEP:SecondaryAttack()
 
     self:SetNextSecondaryFire(CurTime() + 1)
 end
-
 -- function SWEP:DoImpactEffect(tr, nDamageType)
 --     util.Decal("ManhackCut", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
 --     return true

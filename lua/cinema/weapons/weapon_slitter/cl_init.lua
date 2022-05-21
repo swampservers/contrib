@@ -69,7 +69,6 @@ net.Receive("SlitThroatneck", function(len)
     end
 end)
 
-
 function SWEP:DrawHUD()
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 100))
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 150))
