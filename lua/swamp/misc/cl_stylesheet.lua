@@ -1,8 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
-
-
 BrandColorGrayDarker = Color(32, 32, 32) --(26, 30, 38)
 BrandColorGrayDark = Color(48, 48, 48) --(38, 41, 49)
 BrandColorGray = Color(60, 60, 60)

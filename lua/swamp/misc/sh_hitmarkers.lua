@@ -18,7 +18,6 @@ end)
 local badskull = Material("swamp/icon48/skull.png")
 
 --NOMINIFY
-
 hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function(d, s, s3)
     if d or s or s3 then return end
     local i, t = #hitmarkers, SysTime()
