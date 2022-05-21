@@ -54,11 +54,24 @@ local function DrawName(ply, opacityScale)
         draw.ShadowedText(inset and SHOWNPSETVERB[1]:upper() .. SHOWNPSETVERB:sub(2) or "Not " .. SHOWNPSETVERB, "TheaterDermaLarge", 70, -24, Color(inset and 128 or 255, inset and 255 or 128, 128, opacity * 1.5))
     end
 
-    draw.ShadowedText((ply.ClickMuted and "[MUTED]" or "") .. (ply.IsChatMuted and "[CHATMUTED]" or ""), "TheaterDermaSmall", 65, -10, Color(255, 255, 255, opacity))
+    if ply.ClickMuted or ply.IsChatMuted then draw.ShadowedText( (ply.ClickMuted and "[MUTED]" or "") .. (ply.IsChatMuted and "[CHATMUTED]" or ""), "TheaterDermaSmall", 65, -10, Color(255, 255, 255, opacity)) end
+    
+    
+    
+    local h = ply:Health()/ply:GetMaxHealth()
+    if h<1 then
+        draw.Rect(65,0,160*h,6,{255,255*h,255*h,opacity})
+        draw.Rect(65+160*h,0,160*(1-h),6,{0,0,0,opacity})
+    end
+    
+    
     draw.ShadowedText(name, Font["Bebas Neue80_600"], 65, 0, Color(255, 255, 255, opacity))
+
     local ch = ply:TypingChars()
     local chy = 58
     local title = ply:GetTitle()
+
+
 
     if ply:IsAFK() then
         title = "[AFK] " .. title
