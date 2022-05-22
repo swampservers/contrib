@@ -133,7 +133,7 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         self.b3 = vgui("DButton", self, function(p)
-            p:SetText("Increase Exposure Time")
+            p:SetText("Increase Exposure Time (better in low light)")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
@@ -147,7 +147,7 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         self.b4 = vgui("DButton", self, function(p)
-            p:SetText("Decrease Exposure Time")
+            p:SetText("Decrease Exposure Time (better motion response, less blur)")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
@@ -160,8 +160,9 @@ vgui.Register('DSSGPoserMode', {
             end
         end)
 
+        local sstate = true
         self.b5 = vgui("DButton", self, function(p)
-            p:SetText("Stop")
+            p:SetText("Stop/Start")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
@@ -169,8 +170,8 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                estate = math.min(-1, estate - 1)
-                RunConsoleCommand("gposer", "stop")
+                sstate=not sstate
+                RunConsoleCommand("gposer", sstate and "start" or "stop")
             end
         end)
     end,
