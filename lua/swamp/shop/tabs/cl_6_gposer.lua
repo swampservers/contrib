@@ -161,6 +161,7 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         local sstate = true
+
         self.b5 = vgui("DButton", self, function(p)
             p:SetText("Stop/Start")
             p:SetFont(Font.sans24)
@@ -170,7 +171,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                sstate=not sstate
+                sstate = not sstate
                 RunConsoleCommand("gposer", sstate and "start" or "stop")
             end
         end)
