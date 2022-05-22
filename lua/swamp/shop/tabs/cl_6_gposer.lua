@@ -161,7 +161,6 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         local sstate = true
-
         self.b5 = vgui("DButton", self, function(p)
             p:SetText("Stop/Start")
             p:SetFont(Font.sans24)
@@ -171,7 +170,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                sstate = not sstate
+                sstate=not sstate
                 RunConsoleCommand("gposer", sstate and "start" or "stop")
             end
         end)
@@ -181,7 +180,7 @@ vgui.Register('DSSGPoserMode', {
         self.FileExists = file.Exists("lua/bin/gmcl_gposer_win64.dll", "MOD")
         self.FileExistsTime = CurTime()
 
-        for x = 1, 4 do
+        for x = 1, 5 do
             self["b" .. x]:SetVisible(GPoserVersion and true or false)
         end
     end,
