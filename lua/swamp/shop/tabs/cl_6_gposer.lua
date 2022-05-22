@@ -39,7 +39,7 @@ vgui.Register('DSSGPoserMode', {
         -- end)
         vgui("SLabel", self, function(p)
             p:SetText("GPoser")
-            p:SetFont("DermaLarge")
+            p:SetFont(Font.sansbold48)
             p:SetContentAlignment(5)
             p:Dock(TOP)
             -- p:SizeToContents()
@@ -48,7 +48,7 @@ vgui.Register('DSSGPoserMode', {
 
         vgui("SLabel", self, function(p)
             p:SetText("Control your entire playermodel using just your webcam!")
-            p:SetFont(Font.Roboto24)
+            p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:Dock(TOP)
             -- p:SizeToContents()
@@ -65,6 +65,8 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(40)
 
             function p:Think()
+
+
                 if GPoserVersion == "0.2" then
                     self:SetVisible(false)
                 else
@@ -86,14 +88,14 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         vgui("SLabel", self, function(p)
-            p:SetFont(Font.Roboto32)
+            p:SetFont(Font.sans28)
             p:SetContentAlignment(5)
             p:Dock(TOP)
-            p:SetTall(80)
+            p:SetTall(100)
 
             function p:Think()
                 if GPoserVersion then
-                    self:SetText("GPoser v" .. GPoserVersion .. "\n" .. GPoserState)
+                    self:SetText("GPoser v" .. GPoserVersion .. "\n"..GPoserState.. "\n"..GPoserInfo)
                 else
                     self:SetText("")
                 end
@@ -106,57 +108,71 @@ vgui.Register('DSSGPoserMode', {
 
         self.b1 = vgui("DButton", self, function(p)
             p:SetText("Toggle Preview")
-            p:SetFont(Font.Roboto28)
+            p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
             p:Dock(TOP)
             p:SetTall(32)
 
             function p:DoClick()
-                pstate = 1 - pstate
+                pstate=1-pstate
                 RunConsoleCommand("gposer", "preview", tostring(pstate))
             end
         end)
 
         self.b2 = vgui("DButton", self, function(p)
             p:SetText("Toggle Quality")
-            p:SetFont(Font.Roboto28)
+            p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
             p:Dock(TOP)
             p:SetTall(32)
 
             function p:DoClick()
-                qstate = 1 - qstate
+                qstate=1-qstate
                 RunConsoleCommand("gposer", "quality", tostring(qstate))
             end
         end)
 
         self.b3 = vgui("DButton", self, function(p)
             p:SetText("Increase Exposure Time")
-            p:SetFont(Font.Roboto28)
+            p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
             p:Dock(TOP)
             p:SetTall(32)
 
             function p:DoClick()
-                estate = math.min(-1, estate + 1)
+                estate = math.min(-1, estate+1)
                 RunConsoleCommand("gposer", "exposure", estate)
             end
         end)
 
         self.b4 = vgui("DButton", self, function(p)
             p:SetText("Decrease Exposure Time")
-            p:SetFont(Font.Roboto28)
+            p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
             p:Dock(TOP)
             p:SetTall(32)
 
             function p:DoClick()
-                estate = math.min(-1, estate - 1)
+                estate = math.min(-1, estate-1)
                 RunConsoleCommand("gposer", "exposure", estate)
+            end
+        end)
+
+        self.b5 = vgui("DButton", self, function(p)
+            p:SetText("Stop")
+            p:SetFont(Font.sans24)
+            p:SetContentAlignment(5)
+            p:SetTextColor(Color.black)
+            p:Dock(TOP)
+            p:SetTall(32)
+
+            function p:DoClick()
+                estate = math.min(-1, estate-1)
+                RunConsoleCommand("gposer", "stop")
             end
         end)
     end,
@@ -164,9 +180,8 @@ vgui.Register('DSSGPoserMode', {
         if (self.FileExistsTime or -100) > CurTime() - 5 then return end
         self.FileExists = file.Exists("lua/bin/gmcl_gposer_win64.dll", "MOD")
         self.FileExistsTime = CurTime()
-
-        for x = 1, 4 do
-            self["b" .. x]:SetVisible(GPoserVersion and true or false)
+        for x=1,4 do
+        self["b"..x]:SetVisible(GPoserVersion and true or false)
         end
     end,
     Paint = function(self) end
