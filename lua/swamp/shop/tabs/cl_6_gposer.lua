@@ -65,8 +65,6 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(40)
 
             function p:Think()
-
-
                 if GPoserVersion == "0.2" then
                     self:SetVisible(false)
                 else
@@ -95,7 +93,7 @@ vgui.Register('DSSGPoserMode', {
 
             function p:Think()
                 if GPoserVersion then
-                    self:SetText("GPoser v" .. GPoserVersion .. "\n"..GPoserState)
+                    self:SetText("GPoser v" .. GPoserVersion .. "\n" .. GPoserState)
                 else
                     self:SetText("")
                 end
@@ -115,7 +113,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                pstate=1-pstate
+                pstate = 1 - pstate
                 RunConsoleCommand("gposer", "preview", tostring(pstate))
             end
         end)
@@ -129,7 +127,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                qstate=1-qstate
+                qstate = 1 - qstate
                 RunConsoleCommand("gposer", "quality", tostring(qstate))
             end
         end)
@@ -143,7 +141,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                estate = math.min(-1, estate+1)
+                estate = math.min(-1, estate + 1)
                 RunConsoleCommand("gposer", "exposure", estate)
             end
         end)
@@ -157,7 +155,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                estate = math.min(-1, estate-1)
+                estate = math.min(-1, estate - 1)
                 RunConsoleCommand("gposer", "exposure", estate)
             end
         end)
@@ -166,8 +164,9 @@ vgui.Register('DSSGPoserMode', {
         if (self.FileExistsTime or -100) > CurTime() - 5 then return end
         self.FileExists = file.Exists("lua/bin/gmcl_gposer_win64.dll", "MOD")
         self.FileExistsTime = CurTime()
-        for x=1,4 do
-        self["b"..x]:SetVisible(GPoserVersion and true or false)
+
+        for x = 1, 4 do
+            self["b" .. x]:SetVisible(GPoserVersion and true or false)
         end
     end,
     Paint = function(self) end
