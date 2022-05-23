@@ -47,7 +47,7 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         vgui("SLabel", self, function(p)
-            p:SetText("Control your entire playermodel using just your webcam!")
+            p:SetText("Control your body, arms, and face using just your webcam!")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
             p:Dock(TOP)
@@ -161,7 +161,6 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         local sstate = true
-
         self.b5 = vgui("DButton", self, function(p)
             p:SetText("Stop/Start")
             p:SetFont(Font.sans24)
@@ -171,7 +170,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                sstate = not sstate
+                sstate=not sstate
                 RunConsoleCommand("gposer", sstate and "start" or "stop")
             end
         end)
