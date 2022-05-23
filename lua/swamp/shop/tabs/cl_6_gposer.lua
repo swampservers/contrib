@@ -65,7 +65,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(40)
 
             function p:Think()
-                if GPoserVersion == "0.2" then
+                if GPoserVersion == "0.3" then
                     self:SetVisible(false)
                 else
                     if mode.FileExists then
@@ -161,7 +161,6 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         local sstate = true
-
         self.b5 = vgui("DButton", self, function(p)
             p:SetText("Stop/Start")
             p:SetFont(Font.sans24)
@@ -171,7 +170,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                sstate = not sstate
+                sstate=not sstate
                 RunConsoleCommand("gposer", sstate and "start" or "stop")
             end
         end)
