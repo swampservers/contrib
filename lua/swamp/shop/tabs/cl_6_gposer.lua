@@ -79,7 +79,7 @@ vgui.Register('DSSGPoserMode', {
                             gui.OpenURL("https://github.com/swampservers/gposer")
                         end
 
-                        self:SetText(GPoserVersion and "Please update!" or "Download Now!")
+                        self:SetText(GPoserVersion and "Click here to update!" or "Download Now!")
                     end
                 end
             end
@@ -161,7 +161,6 @@ vgui.Register('DSSGPoserMode', {
         end)
 
         local sstate = true
-
         self.b5 = vgui("DButton", self, function(p)
             p:SetText("Stop/Start")
             p:SetFont(Font.sans24)
@@ -171,7 +170,7 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(32)
 
             function p:DoClick()
-                sstate = not sstate
+                sstate=not sstate
                 RunConsoleCommand("gposer", sstate and "start" or "stop")
             end
         end)

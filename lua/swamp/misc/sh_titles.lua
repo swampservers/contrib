@@ -152,6 +152,20 @@ end
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --group_view: optional, pset id and verb to track with
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
+
+
+
+
+AddTitle({
+    {1800, "Squatter", 5000},
+    {7200, "Western Spy", 10000},
+    {3600*10, "Hardbass Enthusiast", 25000},
+    {3600*30, "Vodka Addict", 50000},
+    {3600*100, "Squatting Slav", 100000},
+    {"s_sec_crouching_place3", "KGB Agent", 0},
+    {"s_sec_crouching_place1", "Grand Tzar", 0},
+}, "Crouch for %s seconds.", "s_sec_crouching")
+
 AddTitle({
     {1, "Lover", 25000},
 }, "On Valentine's Day, accept a valentine from another player, or give one to someone and have them accept it", "s_valentine")

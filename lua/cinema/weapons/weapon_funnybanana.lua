@@ -98,8 +98,8 @@ function SWEP:SecondaryAttack()
     self:PrimaryAttack()
 
     if SERVER then
-        timer.Simple(5, function()
-            if IsValid(self) and IsValid(self.Owner) and self.Owner:Alive() and self.Owner:GetLocationName() ~= "Treatment Room" then
+        self:TimerSimple(5, function()
+            if IsValid(self.Owner) and self.Owner:Alive() and self.Owner:GetLocationName() ~= "Treatment Room" then
                 self.Owner:Kill()
                 self.Owner:ChatPrint("[red]you died after laughing too hard")
             end
