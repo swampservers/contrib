@@ -4,11 +4,6 @@ SWEP.Purpose = "A hilarious picture. Look at it!"
 SWEP.Author = "John J. Callanan"
 SWEP.Instructions = "Left Click: Laugh\nRight Click: Laugh Hard"
 
-if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("chev/weapon_funnybanana/funnybananawepicon")
-    SWEP.BounceWeaponIcon = false
-end
-
 SWEP.ViewModel = "models/chev/bananaframe.mdl"
 SWEP.WorldModel = "models/chev/bananaframe.mdl"
 

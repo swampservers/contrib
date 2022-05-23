@@ -1,7 +1,7 @@
 "UnlitGeneric"
 {
-	"$basetexture" "chev/rainbowdashtrail"
-	"$texture2" "chev/rainbowdashtrail"
+	"$basetexture" "swamp/rainbowdashtrail"
+	"$texture2" "swamp/rainbowdashtrail"
 
 	"$additive" 0
 	"$vertexcolor" 1
