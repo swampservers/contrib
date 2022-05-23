@@ -66,6 +66,14 @@ local panelsetup = {
     margin = function(p,v)
         p:DockMargin(unpack(v))
     end,
+    pos = function(p,v)
+        p:SetPos(unpack(v))
+    end,
+    zpos = function(p,v)
+        p:SetZPos(v)
+    end,
+    
+    
 
     wide = function(p,v)
         p:SetWide(v)
@@ -95,6 +103,12 @@ local panelsetup = {
         p:SetTooltip(v)
     end,
 
+    mouse = function(p,v)
+        p:SetMouseInputEnabled(v)
+    end,
+    keyboard = function(p,v)
+        p:SetKeyboardInputEnabled(v)
+    end,
 }
 
 -- adds args which is expected to be a table
@@ -103,7 +117,6 @@ function MyVguiCreate( classname, parent, name_or_args, args)
 
 	local metatable =vgui.GetControlTable(classname)
 	if metatable then
-        print(classname, "W META", name_or_args)
         args = istable(name_or_args) and name_or_args or args or {}
 
         -- strip these before so baseclass can't call them before the panel table is setup
