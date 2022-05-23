@@ -27,20 +27,31 @@ local function DrawName(ply, opacityScale)
     draw.ShadowedText(name, namefont, 0, y, Color(255, 255, 255, opacity))
     local nw, nh = GetTextSize(namefont, name)
     y = y + math.floor(nh * 0.92)
-    local health = ply:Health() / ply:GetMaxHealth()
 
+    
+    local health = ply:Health() / ply:GetMaxHealth()
+    local topy = math.floor(nh * 0.08) 
     if health < 1 then
         local barw, barh = math.max(nw, 200), 9
-        local bary = math.floor(nh * 0.08) - barh
-
-        draw.Rect(1, bary + 2, barw, barh, {0, 0, 0, 255 * math.pow(opacity / 255, 0.5)})
+        
+        draw.Rect(1, topy + 2 - barh, barw, barh, {0, 0, 0, 255 * math.pow(opacity / 255, 0.5)})
 
         local part = math.floor(barw * health)
 
-        draw.Rect(0, bary, part, barh, {255, 255 * health, 255 * health, opacity})
+        draw.Rect(0, topy - barh, part, barh, {255, 255 * health, 255 * health, opacity})
 
-        draw.Rect(part, bary, barw - part, barh, {0, 0, 0, opacity})
+        draw.Rect(part, topy - barh, barw - part, barh, {0, 0, 0, opacity})
+        
     end
+
+    if ply:IsAFK() then
+        for i=0,2 do
+            local a = math.pow( (math.sin( (SysTime()+ply:EntIndex()*1.337-i)*1.6 )+1)/2 ,4)
+            draw.ShadowedText("Z", Font.sansbold72, 1+i*40, topy - (76 + i*25), {255, 255, 255, Lerp(a, opacity/2.5, opacity)})
+        end
+    end
+
+
 
     local chars = ply:TypingChars()
 
@@ -73,8 +84,8 @@ local function DrawName(ply, opacityScale)
         x = x + GetTextWidth(Font.sansmedium60, title)
     end
 
-    for i, icon in ipairs({
-        {ply:IsAFK(), "swamp/icon48/clock-outline.png"},
+
+    for i, icon in ipairs({    
         {ply.ClickMuted, "swamp/icon48/volume-off.png"},
         {ply.IsChatMuted, "swamp/icon48/chat-remove.png"},
     }) do
