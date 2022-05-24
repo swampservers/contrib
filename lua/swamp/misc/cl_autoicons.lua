@@ -58,19 +58,22 @@ local function CheckTexturesValid()
     assert(not AUTOICON_INDICATOR_TEXTURE:IsError())
     render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
     render.CapturePixels()
-    local r, g, b = render.ReadPixel(0, 0)
+
+    local cap = render.Capture({format="png",x=0,y=0,w=1,h=1})
+    print("CAP", cap)
+    -- local r, g, b = render.ReadPixel(0, 0)
     render.PopRenderTarget()
-    local curtex = AUTOICON_INDICATOR_MATERIAL:GetTexture("$basetexture")
+    -- local curtex = AUTOICON_INDICATOR_MATERIAL:GetTexture("$basetexture")
 
-    if r == 0 or not curtex or curtex:GetName() == "metal6" then
-        render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
-        render.Clear(255, 255, 255, 255)
-        render.PopRenderTarget()
-        AUTOICON_INDICATOR_MATERIAL:SetTexture("$basetexture", AUTOICON_INDICATOR_TEXTURE)
+    -- if r == 0 or not curtex or curtex:GetName() == "metal6" then
+    --     render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
+    --     render.Clear(255, 255, 255, 255)
+    --     render.PopRenderTarget()
+    --     AUTOICON_INDICATOR_MATERIAL:SetTexture("$basetexture", AUTOICON_INDICATOR_TEXTURE)
 
-        -- Clear the cache
-        AUTOICONS = {{}, {}}
-    end
+    --     -- Clear the cache
+    --     AUTOICONS = {{}, {}}
+    -- end
 end
 
 local function GetBitmap()
@@ -322,7 +325,9 @@ end
 
 local AutoIconsToMake = {}
 
-hook.Add("PostRender", "MakeAutoIcons", function()
+hook.Add("PreRender", "MakeAutoIcons", function()
+    CheckTexturesValid()
+
     for mode, modetable in pairs(AutoIconsToMake) do
         for cachekey, p in pairs(modetable) do
             MakeAutoIcon(p, mode)
@@ -333,7 +338,7 @@ hook.Add("PostRender", "MakeAutoIcons", function()
 end)
 
 function GetAutoIcon(p, mode)
-    CheckTexturesValid()
+    
 
     if not AUTOICONS[mode][p.cachekey] then
         AUTOICONS[mode][p.cachekey] = CreateMaterial(UniqueName(), "UnlitGeneric", {
