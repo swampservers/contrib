@@ -337,8 +337,6 @@ hook.Add("PreRender", "MakeAutoIcons", function()
 end)
 
 function GetAutoIcon(p, mode)
-    
-
     if not AUTOICONS[mode][p.cachekey] then
         AUTOICONS[mode][p.cachekey] = CreateMaterial(UniqueName(), "UnlitGeneric", {
             ["$basetexture"] = "tools/toolsblack",
