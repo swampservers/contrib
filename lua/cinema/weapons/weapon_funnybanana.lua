@@ -3,7 +3,6 @@ SWEP.PrintName = "Funny Picture of a Banana"
 SWEP.Purpose = "A hilarious picture. Look at it!"
 SWEP.Author = "John J. Callanan"
 SWEP.Instructions = "Left Click: Laugh\nRight Click: Laugh Hard"
-
 SWEP.ViewModel = "models/chev/bananaframe.mdl"
 SWEP.WorldModel = "models/chev/bananaframe.mdl"
 

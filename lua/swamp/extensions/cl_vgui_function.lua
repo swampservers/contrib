@@ -47,10 +47,10 @@ setmetatable(vgui, {
         end
 
         return p
-    end -- parent_or_constructor, args_or_constructor, constructor)
-    
+    end
 })
 
+-- parent_or_constructor, args_or_constructor, constructor)
 --- Push a panel to the vgui parent stack, run callback, and pop it
 function vgui_parent(parent, callback)
     parent = parent or vgui.GetWorldPanel()
