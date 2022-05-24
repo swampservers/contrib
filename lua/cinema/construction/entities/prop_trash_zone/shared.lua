@@ -138,14 +138,12 @@ function ENT:CreateTheater()
     local tzm = TrashZoneModels[self:GetModel()]
     local th = tzm.theater
     if not th then return end
-    print(i)
     local li = MobileLocations[i]
     local l = Locations[li]
     l.Min, l.Max = self:GetBounds()
     l.Name = self:GetTheaterName()
     l.Theater.Width, l.Theater.Height = th.w, th.h
     l.Theater.Pos, l.Theater.Ang = LocalToWorld(th.pos, th.ang, self:GetPos(), self:GetAngles())
-    print(l.Theater.Pos, l.Theater.Ang)
     -- if tmtd.projection then
     --     -- TODO implement this
     --     l.Theater.Projector = {

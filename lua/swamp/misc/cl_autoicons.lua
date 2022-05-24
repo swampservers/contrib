@@ -53,32 +53,26 @@ local ValidCheckTime = 0
 
 --NOMINIFY
 local function CheckTexturesValid()
-    if SysTime() - ValidCheckTime < 5 then return end
+    if SysTime() - ValidCheckTime < 5.555 then return end
     ValidCheckTime = SysTime()
     assert(not AUTOICON_INDICATOR_TEXTURE:IsError())
     render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
     render.CapturePixels()
-
-    local cap = render.Capture({
-        format = "png",
-        x = 0,
-        y = 0,
-        w = 1,
-        h = 1
-    })
-
-    print("CAP", cap)
-    -- local r, g, b = render.ReadPixel(0, 0)
+    -- local cap = render.Capture({format="png",x=0,y=0,w=1,h=1})
+    -- print("CAP", cap:len())
+    local r, g, b = render.ReadPixel(0, 0)
     render.PopRenderTarget()
-    -- local curtex = AUTOICON_INDICATOR_MATERIAL:GetTexture("$basetexture")
-    -- if r == 0 or not curtex or curtex:GetName() == "metal6" then
-    --     render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
-    --     render.Clear(255, 255, 255, 255)
-    --     render.PopRenderTarget()
-    --     AUTOICON_INDICATOR_MATERIAL:SetTexture("$basetexture", AUTOICON_INDICATOR_TEXTURE)
-    --     -- Clear the cache
-    --     AUTOICONS = {{}, {}}
-    -- end
+    local curtex = AUTOICON_INDICATOR_MATERIAL:GetTexture("$basetexture")
+
+    if r == 0 or not curtex or curtex:GetName() == "metal6" then
+        render.PushRenderTarget(AUTOICON_INDICATOR_TEXTURE)
+        render.Clear(255, 255, 255, 255)
+        render.PopRenderTarget()
+        AUTOICON_INDICATOR_MATERIAL:SetTexture("$basetexture", AUTOICON_INDICATOR_TEXTURE)
+
+        -- Clear the cache
+        AUTOICONS = {{}, {}}
+    end
 end
 
 local function GetBitmap()
@@ -343,6 +337,8 @@ hook.Add("PreRender", "MakeAutoIcons", function()
 end)
 
 function GetAutoIcon(p, mode)
+    
+
     if not AUTOICONS[mode][p.cachekey] then
         AUTOICONS[mode][p.cachekey] = CreateMaterial(UniqueName(), "UnlitGeneric", {
             ["$basetexture"] = "tools/toolsblack",
