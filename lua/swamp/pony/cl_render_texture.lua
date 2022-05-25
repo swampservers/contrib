@@ -309,12 +309,14 @@ PPM.tex_draweyefunc = function(pony, isR)
         prefix = "r"
     end
 
-    local backcolor = pony.eyecolor_bg or Vector(1, 1, 1)
-    local color = 1.3 * pony.eyecolor_iris or Vector(0.5, 0.5, 0.5)
-    local colorg = 1.3 * pony.eyecolor_grad or Vector(1, 0.5, 0.5)
-    local colorl1 = 1.3 * pony.eyecolor_line1 or Vector(0.6, 0.6, 0.6)
-    local colorl2 = 1.3 * pony.eyecolor_line2 or Vector(0.7, 0.7, 0.7)
-    local holecol = 1.3 * pony.eyecolor_hole or Vector(0, 0, 0)
+    local limit = Vector(1,1,1)
+
+    local backcolor = limit:Min(pony.eyecolor_bg or Vector(1, 1, 1))
+    local color = limit:Min(1.3 * pony.eyecolor_iris or Vector(0.5, 0.5, 0.5))
+    local colorg =limit:Min( 1.3 * pony.eyecolor_grad or Vector(1, 0.5, 0.5))
+    local colorl1 =limit:Min( 1.3 * pony.eyecolor_line1 or Vector(0.6, 0.6, 0.6))
+    local colorl2 = limit:Min(1.3 * pony.eyecolor_line2 or Vector(0.7, 0.7, 0.7))
+    local holecol =limit:Min( 1.3 * pony.eyecolor_hole or Vector(0, 0, 0))
     render.Clear(backcolor.x * 255, backcolor.y * 255, backcolor.z * 255, 255, true)
     local material = Material("models/ppm/partrender/eye_oval.png")
     render.SetMaterial(material)
