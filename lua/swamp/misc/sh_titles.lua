@@ -347,7 +347,8 @@ AddTitle({
     {20, "Protector"},
     {100, "Guardian"},
     {500, "Homeland Security"},
-    {2000, "The Law"}
+    {2000, "The Law"},
+    {5000, "Peacekeeper"}
 }, "Kill %s players while protecting your private theater.", "s_theaterdefend")
 
 AddTitle({
