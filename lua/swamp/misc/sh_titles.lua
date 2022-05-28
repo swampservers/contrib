@@ -152,8 +152,6 @@ end
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --group_view: optional, pset id and verb to track with
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
-
-
 AddTitle("Newfriend", "Welcome to the Swamp", {}, {
     progress_fn = function() return true end
 })
@@ -162,11 +160,10 @@ AddTitle({
     {1, "Clown", 10000}
 }, "Dance (say /dance) on the steps near the Joker statue", "s_jokerdance")
 
-
 AddTitle({
-    {3600, "Extrovert", 1000}, 
+    {3600, "Extrovert", 1000},
     {36000, "Audiophile", 10000},
-    {180000, "Radio Host", 50000}, 
+    {180000, "Radio Host", 50000},
     {720000, "Swamp DJ", 200000},
 }, "Use Voice-Chat for %s seconds.", "s_sec_speaking")
 
@@ -372,7 +369,6 @@ AddTitle({
 
 TitleCategory("Seasonal")
 
-
 AddTitle({
     {1, "Lover", 25000},
 }, "On Valentine's Day, accept a valentine from another player, or give one to someone and have them accept it", "s_valentine")
@@ -418,7 +414,6 @@ AddTitle({
     {1000, "Greedy", 100000},
     {10000, "Spoiled Child", 1000000}
 }, "Open %s presents which you didn't buy yourself", "s_giftopener")
-
 
 if SERVER and gm == "cinema" then
     local weaponcallbacks = {
