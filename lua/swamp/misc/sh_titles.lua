@@ -165,7 +165,7 @@ AddTitle({
     {36000, "Audiophile", 10000},
     {180000, "Radio Host", 50000},
     {720000, "Swamp DJ", 200000},
-}, "Use Voice-Chat for %s seconds.", "s_sec_speaking")
+}, "Speak on voice chat for %s seconds.", "s_sec_speaking")
 
 AddTitle({
     {1800, "Squatter", 5000},
