@@ -152,6 +152,13 @@ end
 --progress_fn: optional function to compute progess, defaults to summing nwp vars
 --group_view: optional, pset id and verb to track with
 -- TODO: make income max at 500k due to new ways to get points, make leaderboards network the threshold to get to a certain level
+
+TitleCategory("Fun")
+
+AddTitle("Newfriend", "Welcome to the Swamp", {}, {
+    progress_fn = function() return true end
+})
+
 AddTitle({
     {1800, "Squatter", 5000},
     {7200, "Western Spy", 10000},
@@ -162,62 +169,12 @@ AddTitle({
     {"s_sec_crouching_place1", "Grand Tzar", 0},
 }, "Crouch for %s seconds.", "s_sec_crouching")
 
-AddTitle({
-    {1, "Lover", 25000},
-}, "On Valentine's Day, accept a valentine from another player, or give one to someone and have them accept it", "s_valentine")
-
-AddTitle({
-    {10, "Incel"},
-}, "Have a valentine rejected by %s different players", "s_rejectedby_size")
-
-AddTitle({
-    {10, "Heartbreaker"},
-}, "Reject a valentine from %s different players", "s_rejected_size")
-
-AddTitle("valentine", "Show who your valentine is!", "valentine_t", {
-    progress_fn = function(ply) return ply.NWP.valentine_t ~= nil end,
-})
-
-TitleDisplayFn.valentine = function(ply) return "❤ " .. (ply.NW.ValentineName or "(name)") end
-
---jolly
-AddTitle({
-    {1, "Festive", 25000},
-}, "During December, give a present (from shop) to another player", "s_christmas")
-
--- {1000, "Saint Nick", 1000000}
-AddTitle({
-    {100, "Gift Giver", 200000},
-    {"s_giftgiver_size_place10", "Elf", 0},
-    {"s_giftgiver_size_place3", "Santa's Little Helper", 0},
-    {"s_giftgiver_size_place2", "The Red-Nosed Pony", 0},
-    {"s_giftgiver_size_place1", "Saint Nick", 0}
-}, {"Give a present (from shop) to %s different players", "Give a present (from shop) to %s different players (top 10)", "Give a present (from shop) to %s different players (#3)", "Give a present (from shop) to %s different players (#2)", "Give a present (from shop) to %s different players (#1)"}, "s_giftgiver_size", {
-    reward_id = "giftgiver",
-    group_view = {"s_giftgiver", "gifted"}
-})
-
-AddTitle({
-    {"s_grinch_place5", "Naughty"},
-    {"s_grinch_place1", "The Grinch"}
-}, {"Destroy %s presents using the knife (top 5)", "Destroy %s presents using the knife (#1)"}, "s_grinch", {})
-
-AddTitle("Newfriend", "Welcome to the Swamp", {}, {
-    progress_fn = function() return true end
-})
 
 -- this title should be shown to new players for easy money
 AddTitle({
     {1, "Clown", 10000}
 }, "Dance (say /dance) on the steps near the Joker statue", "s_jokerdance")
 
-AddTitle({
-    {200, "Gift Receiver", 10000},
-    {1000, "Greedy", 100000},
-    {10000, "Spoiled Child", 1000000}
-}, "Open %s presents which you didn't buy yourself", "s_giftopener")
-
-TitleCategory("Fun")
 
 AddTitle({
     {200, "Chonkers", 10000},
@@ -347,8 +304,7 @@ AddTitle({
     {20, "Protector"},
     {100, "Guardian"},
     {500, "Homeland Security"},
-    {2000, "The Law"},
-    {5000, "Peacekeeper"}
+    {2000, "The Law"}
 }, "Kill %s players while protecting your private theater.", "s_theaterdefend")
 
 AddTitle({
@@ -407,7 +363,57 @@ AddTitle({
     {100, "Dev Server Proponent"}
 }, "Experience %s different Lua errors", "s_clienterror_size")
 
-if SERVER and gm == "cinema" then
+TitleCategory("Holidays")
+
+AddTitle({
+    {200, "Gift Receiver", 10000},
+    {1000, "Greedy", 100000},
+    {10000, "Spoiled Child", 1000000}
+}, "Open %s presents which you didn't buy yourself", "s_giftopener")
+    
+AddTitle({
+    {1, "Lover", 25000},
+}, "On Valentine's Day, accept a valentine from another player, or give one to someone and have them accept it", "s_valentine")
+
+AddTitle({
+    {10, "Incel"},
+}, "Have a valentine rejected by %s different players", "s_rejectedby_size")
+
+AddTitle({
+    {10, "Heartbreaker"},
+}, "Reject a valentine from %s different players", "s_rejected_size")
+
+AddTitle("valentine", "Show who your valentine is!", "valentine_t", {
+    progress_fn = function(ply) return ply.NWP.valentine_t ~= nil end,
+})
+
+TitleDisplayFn.valentine = function(ply) return "❤ " .. (ply.NW.ValentineName or "(name)") end
+
+--jolly
+AddTitle({
+    {1, "Festive", 25000},
+}, "During December, give a present (from shop) to another player", "s_christmas")
+
+-- {1000, "Saint Nick", 1000000}
+AddTitle({
+    {100, "Gift Giver", 200000},
+    {"s_giftgiver_size_place10", "Elf", 0},
+    {"s_giftgiver_size_place3", "Santa's Little Helper", 0},
+    {"s_giftgiver_size_place2", "The Red-Nosed Pony", 0},
+    {"s_giftgiver_size_place1", "Saint Nick", 0}
+}, {"Give a present (from shop) to %s different players", "Give a present (from shop) to %s different players (top 10)", "Give a present (from shop) to %s different players (#3)", "Give a present (from shop) to %s different players (#2)", "Give a present (from shop) to %s different players (#1)"}, "s_giftgiver_size", {
+    reward_id = "giftgiver",
+    group_view = {"s_giftgiver", "gifted"}
+})
+
+AddTitle({
+    {"s_grinch_place5", "Naughty"},
+    {"s_grinch_place1", "The Grinch"}
+}, {"Destroy %s presents using the knife (top 5)", "Destroy %s presents using the knife (#1)"}, "s_grinch", {})
+   
+    
+    
+    if SERVER and gm == "cinema" then
     local weaponcallbacks = {
         weapon_gauntlet = function(atk, vic)
             if vic:InVehicle() then
