@@ -148,15 +148,19 @@ hook.Add("HUDDrawScoreBoard", "Hint_Draw", function()
     end
 end)
 
-
-
-if GetConVar("cl_downloadfilter"):GetString()~="all" then
+if GetConVar("cl_downloadfilter"):GetString() ~= "all" then
     -- put it on an imgur image because they have downloads disabled
     hook.Add("PostDrawHUD", "DownloadWarning", function()
         -- if gui.IsGameUIVisible() then return end
         surface.SetDrawColor(255, 255, 255, 255)
-        surface.SetMaterial(WebMaterial({id=(GetConVar("cl_downloadfilter"):GetString()=="all" and "0mmU13f.png" or "qdwRnPl.png"),shader="UnlitGeneric",stretch = true}))
-        surface.DrawTexturedRect((ScrW()-1024)/2, (ScrH()-464)/2, 1024, 464)
+
+        surface.SetMaterial(WebMaterial({
+            id = GetConVar("cl_downloadfilter"):GetString() == "all" and "0mmU13f.png" or "qdwRnPl.png",
+            shader = "UnlitGeneric",
+            stretch = true
+        }))
+
+        surface.DrawTexturedRect((ScrW() - 1024) / 2, (ScrH() - 464) / 2, 1024, 464)
     end)
     -- timer.Create("downloadautorejoin",0.1,0,function()
     --     if DownloadCVar:GetString()=="all" then RunConsoleCommand("retry") end
