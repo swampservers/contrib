@@ -128,7 +128,6 @@ span {
 </body>
 </html>
             ]])
-
             self.HTML.ConsoleMessage = function(self, msg) end
 
             return
