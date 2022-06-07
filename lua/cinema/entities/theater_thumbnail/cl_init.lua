@@ -68,66 +68,68 @@ function ENT:DrawThumbnail()
         self.ThumbMat = nil
     elseif self.LastSetting and not self.ThumbMat then
         if not ValidPanel(self.HTML) then
-            self.HTML = vgui.Create("Awesomium")
+            self.HTML = vgui.Create("HTML")
             self.HTML:SetSize(ThumbWidth, ThumbHeight)
             self.HTML:SetPaintedManually(true)
             self.HTML:SetKeyBoardInputEnabled(false)
             self.HTML:SetMouseInputEnabled(false)
             --<link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&family=Righteous&display=swap" rel="stylesheet">
             self.HTML:SetHTML([[
-                <html>
-                <head>
-                <link rel="preconnect" href="https://fonts.gstatic.com">
-                <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
-                <style>
-                @font-face {
-                    font-family: 'Circular Std Medium';
-                    src: url(https://swamp.sv/fonts/circular.ttf);
-                  }
-                body {
-                    margin:0;
-                    ]] .. background .. [[
-                    background-size:contain;
-                }
-                div {
-                    color:white; 
-                    text-align: center;
-                    background-color: rgba(0,0,0,0.5);
-                }
-                #div1 {
-                    font-family: 'Circular Std Medium', sans-serif; /*'Righteous', sans-serif;*/
-                    text-transform: uppercase;
-                    font-size: 10vw;
-                }
-                #div2 {
-                    font-family: 'Circular Std Medium', sans-serif; /*'Times New Roman', serif;*/
-                    position:absolute;
-                    bottom:0;left:0;right:0;
-                }
-                span {
-                    white-space:nowrap;
-                }
-                </style>
-                </head>
-                <body>
-                    <div id="div1"><span id="span1">]] .. theatername_esc .. [[</span></div>
-                    <div id="div2"><span id="span2">]] .. videotitle:gsub("<", "&lt;") .. [[</span></div>
-                    <script>
-                    function autofont(el) {
-                        //div.style.fontSize = Math.min(10,((div.innerText.length > 45 ? 440 : 220)/div.innerText.length))+"vw";
-                        for(var i=10.0; i>0; i-=0.5) {
-                            el.style.fontSize = i+"vw";    
-                            if (el.getBoundingClientRect().width < 512) {
-                                break;
-                            }
-                        }
-                    }
-                    autofont(document.getElementById("span1"));
-                    autofont(document.getElementById("span2"));
-                    </script>
-                </body>
-                </html>
+<html>
+<head>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+@font-face {
+    font-family: 'Circular Std Medium';
+    src: url(https://swamp.sv/fonts/circular.ttf);
+    }
+body {
+    margin:0;
+    ]] .. background .. [[
+    background-size:contain;
+}
+div {
+    color:white; 
+    text-align: center;
+    background-color: rgba(0,0,0,0.5);
+}
+#div1 {
+    font-family: 'Circular Std Medium', sans-serif; /*'Righteous', sans-serif;*/
+    text-transform: uppercase;
+    font-size: 10vw;
+}
+#div2 {
+    font-family: 'Circular Std Medium', sans-serif; /*'Times New Roman', serif;*/
+    position:absolute;
+    bottom:0;left:0;right:0;
+}
+span {
+    white-space:nowrap;
+}
+</style>
+</head>
+<body>
+    <div id="div1"><span id="span1">]] .. theatername_esc .. [[</span></div>
+    <div id="div2"><span id="span2">]] .. videotitle:gsub("<", "&lt;") .. [[</span></div>
+    <script>
+    function autofont(el) {
+        //div.style.fontSize = Math.min(10,((div.innerText.length > 45 ? 440 : 220)/div.innerText.length))+"vw";
+        for(var i=10.0; i>0; i-=0.5) {
+            el.style.fontSize = i+"vw";    
+            if (el.getBoundingClientRect().width < 512) {
+                break;
+            }
+        }
+    }
+    autofont(document.getElementById("span1"));
+    autofont(document.getElementById("span2"));
+    </script>
+</body>
+</html>
             ]])
+
+            self.HTML.ConsoleMessage = function(self, msg) end
 
             return
         elseif not self.HTML:IsLoading() and not self.JSDelay then
