@@ -40,7 +40,10 @@ local API_TypeToType = {
             end
         end
     end,
-    string = function(x) return API_NetworkStringCache[x] and API_NETWORK_STRING or API_STRING end,
+    string = function(x) 
+        -- capitalization issue
+        local id = API_NetworkStringCache[x]
+        return (id and API_NetworkStringCache[id]==x) and API_NETWORK_STRING or API_STRING end,
     Vector = function(x) return API_VECTOR end,
     Angle = function(x) return API_ANGLE end,
     Entity = function(x) return API_ENTITY end,
