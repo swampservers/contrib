@@ -218,11 +218,11 @@ timer.Create("TrashLights", 0.1, 0, function()
         local p = e:LocalToWorld(l.pos)
         local d = ep:DistToSqr(p)
         local b = e:GetNWFloat("bright", 0)
+        local shadow = b == 0
 
-        local shadow = b==0
         if e.last_shadow ~= shadow then
-            e.last_shadow=shadow
-        e:DrawShadow(shadow)
+            e.last_shadow = shadow
+            e:DrawShadow(shadow)
         end
 
         -- (l.untaped or e:GetTaped()) instead of b>0
