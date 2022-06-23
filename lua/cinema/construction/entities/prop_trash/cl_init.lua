@@ -219,6 +219,12 @@ timer.Create("TrashLights", 0.1, 0, function()
         local d = ep:DistToSqr(p)
         local b = e:GetNWFloat("bright", 0)
 
+        local shadow = b==0
+        if e.last_shadow ~= shadow then
+            e.last_shadow=shadow
+        e:DrawShadow(shadow)
+        end
+
         -- (l.untaped or e:GetTaped()) instead of b>0
         if b > 0 and d < maxd2 and not FrustrumCull(f, p, 250) then
             table.insert(candidates, {
