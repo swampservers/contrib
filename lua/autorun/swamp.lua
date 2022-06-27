@@ -101,11 +101,9 @@ local find, sub = string.find, string.sub
 -- TODO optimize format thing sub!
 local function findfiles(dir)
     local files, dirs = file.Find(dir .. "*", "LUA", "namedesc")
-
     -- sorting broken by update
-    table.sort(files, function(a, b) return a<b end)
-    table.sort(dirs, function(a, b) return a<b end)
-
+    table.sort(files, function(a, b) return a < b end)
+    table.sort(dirs, function(a, b) return a < b end)
     local initdirs = list()
 
     list(dirs):Map(function(d)
