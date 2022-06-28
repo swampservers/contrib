@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
 SERVICE.Name = "Oligopoly"
 --SERVICE.Mature = true
@@ -27,7 +27,7 @@ if CLIENT then
         local season = string.match(key, "/tv/%d+/(%d+)/%d+")
         local episode = string.match(key, "/tv/%d+/%d+/(%d+)")
 
-        timer.Simple(40, function()
+        timer.Simple(60, function()
             if IsValid(vpanel) then
                 vpanel:Remove()
                 print("Failed")
@@ -41,29 +41,35 @@ if CLIENT then
             if t == nil then
                 callback()
             else
-                self:Fetch("https://olgply.com/api/?imdb=" .. t["external_ids"]["imdb_id"] .. (isTV and "&season=" .. season .. "&episode=" .. episode or ""), function(body)
-                    info.data = string.match(body, 'file: "(.-)",')
-                    info.title = (t["original_title"] or t["original_name"]) .. (isTV and " S" .. season .. " E" .. episode or " (" .. string.match(t["release_date"], '(%d%d%d%d)') .. ")")
-                    info.thumb = "https://image.tmdb.org/t/p/w370_and_h556_bestv2" .. t["poster_path"]
+                http.Fetch("https://olgply.com/api/?imdb=" .. t["external_ids"]["imdb_id"] .. (isTV and "&season=" .. season .. "&episode=" .. episode or ""),
+                    function(body)
+                        info.data = string.match(body, 'file: "(.-)",')
+                        info.title = (t["original_title"] or t["original_name"]) .. (isTV and " S" .. season .. " E" .. episode or " (" .. string.match(t["release_date"], '(%d%d%d%d)') .. ")")
+                        info.thumb = "https://image.tmdb.org/t/p/w370_and_h556_bestv2" .. t["poster_path"]
 
-                    function vpanel:ConsoleMessage(msg)
-                        if Me.videoDebug then
-                            print(msg)
+                        function vpanel:ConsoleMessage(msg)
+                            if Me.videoDebug then
+                                print(msg)
+                            end
+
+                            if msg:StartWith("DURATION:") and msg ~= "DURATION:NaN" then
+                                local duration = math.ceil(tonumber(string.sub(msg, 10)))
+                                self:Remove()
+                                print("Success!")
+                                info.duration = duration
+                                callback(info)
+                            end
                         end
 
-                        if msg:StartWith("DURATION:") and msg ~= "DURATION:NaN" then
-                            local duration = math.ceil(tonumber(string.sub(msg, 10)))
-                            self:Remove()
-                            print("Success!")
-                            info.duration = duration
-                            callback(info)
-                        end
-                    end
-
-                    vpanel:OpenURL("http://swamp.sv/s/cinema/file.html")
-                    vpanel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(info.data)))
-                    vpanel:QueueJavascript("to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration())},100);")
-                end)
+                        vpanel:OpenURL("http://swamp.sv/s/cinema/file.html")
+                        vpanel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(info.data)))
+                        vpanel:QueueJavascript("to_volume=0;setInterval(function(){console.log('DURATION:'+player.duration())},100);")
+                    end,
+                    function(err)
+                        print(err)
+                    end,
+                    {["Referer"] = key}
+                )
             end
         end)
     end
