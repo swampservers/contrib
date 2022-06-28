@@ -90,7 +90,6 @@ function SWEP:PrimaryAttack()
 end
 
 --NOMINIFY
-
 -- tase a player, if one is attached
 function SWEP:SecondaryAttack()
     self.Owner:SetAnimation(PLAYER_ATTACK1)
