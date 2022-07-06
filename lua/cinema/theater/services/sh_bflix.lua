@@ -44,32 +44,42 @@ if CLIENT then
                 t = util.JSONToTable(body)
                 local subs = ''
                 local url = t['sources'][1]['file']
-                if #t['tracks']>0 then
+
+                if #t['tracks'] > 0 then
                     vgui("DFrame", function(r)
                         r:SetSize(300, 300)
                         r:MakePopup()
                         r:SetTitle("Choose the Subtitles")
                         r:Center()
+
                         vgui("DScrollPanel", function(p)
                             p:Dock(FILL)
                             local tt = t['tracks']
-                            table.insert(tt,0,{['label']='(None)',['file']=''})
-                            for _,v in pairs(tt) do
+
+                            table.insert(tt, 0, {
+                                ['label'] = '(None)',
+                                ['file'] = ''
+                            })
+
+                            for _, v in pairs(tt) do
                                 local b = p:Add("DButton")
                                 b:SetText(v['label'])
                                 b:Dock(TOP)
-                                b:DockMargin(0,0,0,2)
+                                b:DockMargin(0, 0, 0, 2)
+
                                 function b:DoClick()
                                     subs = v['file']
                                     r:Close()
                                 end
                             end
                         end)
+
                         function r:Close()
                             info.data = util.TableToJSON({
                                 url = url,
                                 subs = subs
                             })
+
                             r:Remove()
                         end
                     end)
@@ -136,9 +146,11 @@ if CLIENT then
         panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         local key = util.JSONToTable(Video:Data()).url
         local subs = string.JavascriptSafe(util.JSONToTable(Video:Data()).subs)
+
         if subs ~= '' then
-            subs = "'https://holyublocker.herokuapp.com/search/'+encodeURIComponent(('"..subs.."').split('').map((char,ind)=>ind%2?String.fromCharCode(char.charCodeAt()^2):char).join(''))"
+            subs = "'https://holyublocker.herokuapp.com/search/'+encodeURIComponent(('" .. subs .. "').split('').map((char,ind)=>ind%2?String.fromCharCode(char.charCodeAt()^2):char).join(''))"
         end
+
         panel:QueueJavascript(string.format("th_video('%s',%s);", string.JavascriptSafe(key), subs))
     end
 end
