@@ -8,7 +8,7 @@ SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
     if util.JSONToTable(url.encoded) then return false end
-    if string.sub(url.path, -5) == ".m3u8" and not string.find(url.path, "%.") then return url.encoded end
+    if string.sub(url.path, -5) == ".m3u8" then return url.encoded end
 
     return false
 end
