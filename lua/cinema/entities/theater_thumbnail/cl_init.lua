@@ -88,6 +88,7 @@ body {
     margin:0;
     ]] .. background .. [[
     background-size:contain;
+    overflow: hidden;
 }
 div {
     color:white; 
