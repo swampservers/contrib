@@ -1,7 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
 SERVICE.Name = "BFlix"
---SERVICE.Mature = true
 SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
@@ -42,23 +41,47 @@ if CLIENT then
 
             --embed api
             http.Fetch("https://mzzcloud.life/ajax/embed-4/getSources?id=" .. string.match(t['link'], "mzzcloud.life/.-/(.-)%?z="), function(body, length, headers, code)
-                local subs = ''
                 t = util.JSONToTable(body)
-
-                for _, v in pairs(t['tracks']) do
-                    if string.match(v['label'], '[Ee]nglish') then
-                        subs = v['file']
-                        break
-                    end
+                local subs = ''
+                local url = t['sources'][1]['file']
+                if #t['tracks']>0 then
+                    vgui("DFrame", function(r)
+                        r:SetSize(300, 300)
+                        r:MakePopup()
+                        r:SetTitle("Choose the Subtitles")
+                        r:Center()
+                        vgui("DScrollPanel", function(p)
+                            p:Dock(FILL)
+                            local tt = t['tracks']
+                            table.insert(tt,0,{['label']='(None)',['file']=''})
+                            for _,v in pairs(tt) do
+                                local b = p:Add("DButton")
+                                b:SetText(v['label'])
+                                b:Dock(TOP)
+                                b:DockMargin(0,0,0,2)
+                                function b:DoClick()
+                                    subs = v['file']
+                                    r:Close()
+                                end
+                            end
+                        end)
+                        function r:Close()
+                            info.data = util.TableToJSON({
+                                url = url,
+                                subs = subs
+                            })
+                            r:Remove()
+                        end
+                    end)
+                else
+                    info.data = util.TableToJSON({
+                        url = url,
+                        subs = subs
+                    })
                 end
 
-                info.data = util.TableToJSON({
-                    url = t['sources'][1]['file'],
-                    subs = subs
-                })
-
                 --m3u8 playlist
-                http.Fetch(t['sources'][1]['file'], function(body)
+                http.Fetch(url, function(body)
                     local duration = 0
 
                     for k, v in ipairs(string.Split(body, "\n")) do
@@ -112,10 +135,11 @@ if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         local key = util.JSONToTable(Video:Data()).url
-        local subs = util.JSONToTable(Video:Data()).subs
-        panel:QueueJavascript("xor=(str)=>{return 'https://holyublocker.herokuapp.com/search/'+encodeURIComponent(str.toString().split('').map((char,ind)=>ind%2?String.fromCharCode(char.charCodeAt()^2):char).join(''));}") --proxy because chromium doesn't like the sub domain
-        local str = string.format("th_video('%s',xor('%s'));", string.JavascriptSafe(key), string.JavascriptSafe(subs))
-        panel:QueueJavascript(str)
+        local subs = string.JavascriptSafe(util.JSONToTable(Video:Data()).subs)
+        if subs ~= '' then
+            subs = "'https://holyublocker.herokuapp.com/search/'+encodeURIComponent(('"..subs.."').split('').map((char,ind)=>ind%2?String.fromCharCode(char.charCodeAt()^2):char).join(''))"
+        end
+        panel:QueueJavascript(string.format("th_video('%s',%s);", string.JavascriptSafe(key), subs))
     end
 end
 
