@@ -25,6 +25,10 @@ if CLIENT then
         end
 
         EmbeddedCheckCodecs(function()
+            if vpanel then
+                vpanel:Remove()
+            end
+
             vpanel = vgui.Create("DHTML")
             vpanel:SetSize(100, 100)
             vpanel:SetAlpha(0)
@@ -100,54 +104,8 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local urll = "http://swamp.sv/s/cinema/file.html"
-        --if string.StartWith(Video:Key():lower(), "rtmp") then
-        --	urll = "http://swamp.sv/s/cinema/filevjs.html"
-        --end
-        panel:EnsureURL(urll)
-        local cc = Me:GetNetworkedString("cntry", "us")
-
-        local eu_countries = {
-            at = true,
-            be = true,
-            bg = true,
-            cy = true,
-            cz = true,
-            dk = true,
-            ee = true,
-            fi = true,
-            fr = true,
-            de = true,
-            gr = true,
-            hu = true,
-            ie = true,
-            it = true,
-            lv = true,
-            lt = true,
-            lu = true,
-            mt = true,
-            nl = true,
-            pl = true,
-            pt = true,
-            ro = true,
-            sk = true,
-            si = true,
-            es = true,
-            se = true,
-            gb = true
-        }
-
-        if eu_countries[cc] then
-            cc = "eu"
-        else
-            cc = "us"
-        end
-
-        local k = Video:Key()
-        k = string.Replace(k, "relay.horatio.tube", cc .. ".horatio.tube")
-        -- Let the webpage handle loading a video
-        local str = string.format("th_video('%s');", string.JavascriptSafe(k))
-        panel:QueueJavascript(str)
+        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Key())))
     end
 end
 

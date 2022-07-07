@@ -13,6 +13,10 @@ end
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         EmbeddedCheckCodecs(function()
+            if vpanel then
+                vpanel:Remove()
+            end
+
             vpanel = vgui.Create("DHTML")
             vpanel:SetSize(100, 100)
             vpanel:SetAlpha(0)
@@ -48,11 +52,8 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local url = "http://swamp.sv/s/cinema/file.html"
-        panel:EnsureURL(url)
-        local k = Video:Data()
-        local str = string.format("th_video('%s');", string.JavascriptSafe(k))
-        panel:QueueJavascript(str)
+        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Data())))
     end
 end
 

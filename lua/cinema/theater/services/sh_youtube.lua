@@ -118,8 +118,7 @@ if CLIENT then
             end
 
             panel:EnsureURL("http://swamp.sv/s/cinema/youtube.html")
-            local str = string.format("th_video('%s',%s);", string.JavascriptSafe(Video:Key()), Video:Duration() > 0 and "false" or "true")
-            panel:QueueJavascript(str)
+            panel:QueueJavascript(string.format("th_video('%s',%s);", string.JavascriptSafe(Video:Key()), Video:Duration() > 0 and "false" or "true"))
         end
 
         local fn = panel.ConsoleMessage

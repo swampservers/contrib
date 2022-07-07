@@ -34,8 +34,7 @@ if CLIENT then
     end
 
     function SERVICE:SetVolume(vol, panel)
-        local str = string.format("document.getElementsByTagName('video')[0].volume = %s", vol / 100)
-        panel:RunJavascript(str) --QueueJavascript is unreliable
+        panel:RunJavascript(string.format("document.getElementsByTagName('video')[0].volume = %s", vol / 100)) --QueueJavascript is unreliable
     end
 end
 

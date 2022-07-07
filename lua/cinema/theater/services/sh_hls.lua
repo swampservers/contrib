@@ -25,24 +25,12 @@ if CLIENT then
     end
 
     function SERVICE:GetHost(Video)
-        local k = Video:Key()
-
-        if string.len(Video:Data()) > 1 and Video:Data() ~= "true" then
-            k = Video:Data()
-        end
-
-        return url.parse2(k).host
+        return url.parse2(Video:Key()).host
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local k = Video:Key()
-        local url = "http://swamp.sv/s/cinema/file.html"
-        panel:EnsureURL(url)
-
-        if IsValid(panel) then
-            local str = string.format("th_video('%s');", string.JavascriptSafe(k))
-            panel:QueueJavascript(str)
-        end
+        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Key())))
     end
 end
 
