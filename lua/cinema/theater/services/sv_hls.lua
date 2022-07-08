@@ -33,18 +33,20 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
         for _, v in ipairs(string.Split(body, "\n")) do
             if string.find(v, ".m3u8") then
                 local streamurl = v
-    
-                if not string.find(streamurl, "http.://") then --relative path
+
+                --relative path
+                if not string.find(streamurl, "http.://") then
                     local path = string.Split(key, "/")
                     path[#path] = streamurl
                     streamurl = table.concat(path, "/")
                 end
-    
+
                 self:Fetch(streamurl, onFetchReceive, onFailure)
+
                 return
             end
         end
-    
+
         onFetchReceive(body)
     end, onFailure)
 end
