@@ -73,8 +73,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local k = Video:Data()
-        panel:EnsureURL("https://animixplay.to/player.html#" .. k) --most gogo streams are CORS locked
+        panel:EnsureURL("https://animixplay.to/player.html#" .. Video:Data()) --most gogo streams are CORS locked
 
         if IsValid(panel) then
             panel:QueueJavascript("x=document.getElementsByClassName('plyr__controls');setInterval(function(){if(x[0])x[0].remove()},100);")
