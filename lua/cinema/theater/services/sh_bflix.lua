@@ -94,7 +94,7 @@ if CLIENT then
                 http.Fetch(url, function(body)
                     local duration = 0
 
-                    for k, v in ipairs(string.Split(body, "\n")) do
+                    for _, v in ipairs(string.Split(body, "\n")) do
                         if string.find(v, ".m3u8") then
                             --m3u8 stream
                             http.Fetch(v, function(body)
@@ -104,7 +104,7 @@ if CLIENT then
                                     return
                                 end
 
-                                for k, v in ipairs(string.Split(body, "\n")) do
+                                for _, v in ipairs(string.Split(body, "\n")) do
                                     if v:StartWith("#EXTINF:") then
                                         duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
                                     end

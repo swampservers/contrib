@@ -14,8 +14,13 @@ if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         http.Fetch(key, function(body)
             local ep = string.match(key, "animixplay.to/v11?/.+/ep(%d+)") or 1
+            local k = string.match(body, "\"" .. ep - 1 .. "\":\".-php%?id=(.-)&title")
 
-            --required because the http functions fail to get the location response header
+            if not k then
+                chat.AddText(string.match(body, "\"eptotal\":0") and "[red]There are no episodes of this yet." or "[red]Use a different stream server.")
+                callback()
+            end
+
             EmbeddedCheckCodecs(function()
                 if vpanel then
                     vpanel:Remove()
@@ -25,9 +30,9 @@ if CLIENT then
                 vpanel:SetSize(0, 0)
                 vpanel:SetAlpha(0)
                 vpanel:SetMouseInputEnabled(false)
-                local duration
+                local title, thumb, duration = string.match(body, "<span class=\"animetitle\">(.-)</span>") .. (string.match(body, "\"eptotal\":1,") and "" or " - Episode " .. ep)
 
-                timer.Simple(10, function()
+                timer.Simple(15, function()
                     if IsValid(vpanel) then
                         vpanel:Remove()
                         print("Failed")
@@ -41,31 +46,31 @@ if CLIENT then
                     end
                 end)
 
-                function vpanel:ConsoleMessage(msg)
+                function vpanel:ConsoleMessage(msg) --required because the http functions fail to get the location response header
                     if msg:StartWith("DURATION:") and not msg:StartWith("DURATION:0") then
                         duration = tonumber(string.sub(msg, 10))
-                    elseif msg:StartWith("HREF:") and duration ~= nil then
+                    elseif msg:StartWith("HREF:") and thumb and duration then
                         local url = msg:sub(6)
 
                         if url ~= "about:blank" then
-                            vpanel:Remove()
+                            self:Remove()
 
                             callback({
-                                title = string.match(body, "<span class=\"animetitle\">(.-)</span>") .. (string.match(body, "\"eptotal\":1,") and "" or " - Episode " .. ep),
-                                data = string.Explode("#", url)[2],
-                                duration = duration
+                                title = title,
+                                data = util.Base64Decode(string.Explode("#",url)[2]), --sometimes a mp4, can't rely on hls duration code
+                                duration = duration,
+                                thumb = thumb
                             })
-                            --data = util.Base64Decode(string.Explode("#",url)[2])
                         end
                     end
                 end
 
-                local k = string.match(body, "\"" .. ep - 1 .. "\":\".-php%?id=(.-)&title")
-
-                if not k then
-                    chat.AddText(string.match(body, "\"eptotal\":0") and "[red]There are no episodes of this yet." or "[red]Use a different stream server.")
-                    callback()
-                end
+                self:Fetch(key, function(body)
+                    self:Fetch("https://animixplay.to/assets/mal/" .. string.match(body, "var malid = '(%d+)';") .. ".json", function(body)
+                        local url = util.JSONToTable(body)['image_url']
+                        thumb = string.StripExtension(url) .. "l" .. string.Right(url,4) --get large image
+                    end, callback)
+                end, callback)
 
                 vpanel:OpenURL("https://animixplay.to/api/live" .. util.Base64Encode(k .. "LTXs3GrU8we9O" .. util.Base64Encode(k))) --redirects to player page
             end)
@@ -73,21 +78,8 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("https://animixplay.to/player.html#" .. Video:Data()) --most gogo streams are CORS locked
-
-        if IsValid(panel) then
-            panel:QueueJavascript("x=document.getElementsByClassName('plyr__controls');setInterval(function(){if(x[0])x[0].remove()},100);")
-            panel:QueueJavascript("target_time=-.5;to_volume=100;setInterval(function(){target_time+=.1;if(typeof player1!=='undefined'){player1.quality=0;player1.play();player1.media.volume=to_volume*.01;if(target_time<player1.duration&&Math.abs(player1.media.currentTime-target_time)>15){player1.media.currentTime=Math.max(0,target_time)}}},100)")
-            panel:QueueJavascript(string.format("target_time=%s;to_volume=%s;", Me:GetTheater():VideoCurrentTime(true), theater.GetVolume()))
-        end
-    end
-
-    function SERVICE:SetVolume(vol, panel)
-        panel:RunJavascript(string.format("to_volume=%s;", vol))
-    end
-
-    function SERVICE:SeekTo(time, panel)
-        panel:RunJavascript(string.format("target_time=%s;", time))
+        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Data())))
     end
 end
 
