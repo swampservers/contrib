@@ -5,7 +5,6 @@ SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
-    if util.JSONToTable(url.encoded) then return false end
     if string.match(url.encoded, "bflix.gg/watch%-%w-/.-%d-%.%d-$") then return url.encoded end
 
     return false

@@ -113,4 +113,4 @@ if CLIENT then
     end
 end
 
-theater.RegisterService('thirdparty', SERVICE)
+--theater.RegisterService('thirdparty', SERVICE)
