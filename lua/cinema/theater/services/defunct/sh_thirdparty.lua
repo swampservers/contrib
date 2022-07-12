@@ -112,5 +112,4 @@ if CLIENT then
         end
     end
 end
-
 --theater.RegisterService('thirdparty', SERVICE)

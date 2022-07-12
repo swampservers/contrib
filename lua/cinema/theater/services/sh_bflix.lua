@@ -26,10 +26,12 @@ if CLIENT then
 
             if data and subs and info.thumb and info.title and info.duration then
                 info.title = info.title .. " " .. (isTV and episode or year)
+
                 info.data = util.TableToJSON({
                     url = data,
                     subs = subs
                 })
+
                 timer.Remove("AwaitBFlixFetches")
                 callback(info)
             end
@@ -75,6 +77,7 @@ if CLIENT then
                                 end
                             end
                         end)
+
                         function r:Close()
                             subs = subs or ''
                             r:Remove()
@@ -89,14 +92,17 @@ if CLIENT then
                     local duration = 0
                     local resolution = ""
                     local stream = ""
+
                     for _, v in ipairs(string.Split(body, "\n")) do
                         if string.find(v, "RESOLUTION=") then
-                            resolution = string.Split(v,"RESOLUTION=")[2]
+                            resolution = string.Split(v, "RESOLUTION=")[2]
                         end
+
                         if string.find(v, ".m3u8") then
-                            if (resolution == "1280x720") then
+                            if resolution == "1280x720" then
                                 url = v
                             end
+
                             stream = v
                         end
                     end

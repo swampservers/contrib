@@ -46,7 +46,8 @@ if CLIENT then
                     end
                 end)
 
-                function vpanel:ConsoleMessage(msg) --required because the http functions fail to get the location response header
+                --required because the http functions fail to get the location response header
+                function vpanel:ConsoleMessage(msg)
                     if msg:StartWith("DURATION:") and not msg:StartWith("DURATION:0") then
                         duration = tonumber(string.sub(msg, 10))
                     elseif msg:StartWith("HREF:") and thumb and duration then
@@ -57,7 +58,7 @@ if CLIENT then
 
                             callback({
                                 title = title,
-                                data = util.Base64Decode(string.Explode("#",url)[2]), --sometimes a mp4, can't rely on hls duration code
+                                data = util.Base64Decode(string.Explode("#", url)[2]), --sometimes a mp4, can't rely on hls duration code
                                 duration = duration,
                                 thumb = thumb
                             })
@@ -68,7 +69,7 @@ if CLIENT then
                 self:Fetch(key, function(body)
                     self:Fetch("https://animixplay.to/assets/mal/" .. string.match(body, "var malid = '(%d+)';") .. ".json", function(body)
                         local url = util.JSONToTable(body)['image_url']
-                        thumb = string.StripExtension(url) .. "l" .. string.Right(url,4) --get large image
+                        thumb = string.StripExtension(url) .. "l" .. string.Right(url, 4) --get large image
                     end, callback)
                 end, callback)
 
