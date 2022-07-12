@@ -5,7 +5,6 @@ SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 
 function SERVICE:GetKey(url)
-    if util.JSONToTable(url.encoded) then return false end
     if string.match(url.encoded, "bflix.gg/watch%-%w-/.-%d-%.%d-$") then return url.encoded end
 
     return false
@@ -15,7 +14,7 @@ if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         local info = {}
         local isTV = string.match(key, "bflix.gg/watch%-tv")
-        local year, episode
+        local year, episode, data, subs
 
         --fetches are asynchronous so they need to be handled this way
         timer.Create("AwaitBFlixFetches", 1, 15, function()
@@ -25,8 +24,12 @@ if CLIENT then
                 callback()
             end
 
-            if info.data and info.thumb and info.title and info.duration then
+            if data and subs and info.thumb and info.title and info.duration then
                 info.title = info.title .. " " .. (isTV and episode or year)
+                info.data = util.TableToJSON({
+                    url = data,
+                    subs = subs
+                })
                 timer.Remove("AwaitBFlixFetches")
                 callback(info)
             end
@@ -42,7 +45,6 @@ if CLIENT then
             --embed api
             http.Fetch("https://mzzcloud.life/ajax/embed-4/getSources?id=" .. string.match(t['link'], "mzzcloud.life/.-/(.-)%?z="), function(body, length, headers, code)
                 t = util.JSONToTable(body)
-                local subs = ''
                 local url = t['sources'][1]['file']
 
                 if #t['tracks'] > 0 then
@@ -73,51 +75,51 @@ if CLIENT then
                                 end
                             end
                         end)
-
                         function r:Close()
-                            info.data = util.TableToJSON({
-                                url = url,
-                                subs = subs
-                            })
-
+                            subs = subs or ''
                             r:Remove()
                         end
                     end)
                 else
-                    info.data = util.TableToJSON({
-                        url = url,
-                        subs = subs
-                    })
+                    subs = ''
                 end
 
                 --m3u8 playlist
                 http.Fetch(url, function(body)
                     local duration = 0
-
-                    for k, v in ipairs(string.Split(body, "\n")) do
+                    local resolution = ""
+                    local stream = ""
+                    for _, v in ipairs(string.Split(body, "\n")) do
+                        if string.find(v, "RESOLUTION=") then
+                            resolution = string.Split(v,"RESOLUTION=")[2]
+                        end
                         if string.find(v, ".m3u8") then
-                            --m3u8 stream
-                            http.Fetch(v, function(body)
-                                if #string.Split(body, "\n") < 2 then
-                                    callback()
-
-                                    return
-                                end
-
-                                for k, v in ipairs(string.Split(body, "\n")) do
-                                    if v:StartWith("#EXTINF:") then
-                                        duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
-                                    end
-                                end
-
-                                info.duration = math.ceil(duration)
-                            end, function(err)
-                                print(err)
-                            end)
-
-                            break
+                            if (resolution == "1280x720") then
+                                url = v
+                            end
+                            stream = v
                         end
                     end
+
+                    --m3u8 stream
+                    http.Fetch(stream, function(body)
+                        if #string.Split(body, "\n") < 2 then
+                            callback()
+
+                            return
+                        end
+
+                        for _, v in ipairs(string.Split(body, "\n")) do
+                            if v:StartWith("#EXTINF:") then
+                                duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
+                            end
+                        end
+
+                        info.duration = math.ceil(duration)
+                        data = url
+                    end, function(err)
+                        print(err)
+                    end)
                 end, function(err)
                     print(err)
                 end)

@@ -6,7 +6,6 @@ SERVICE.NeedsCodecs = true
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey(url)
-    if util.JSONToTable(url.encoded) then return false end
     if url.scheme == "rtmp" then return url.encoded end
 
     if string.sub(url.path, -4) == ".mp4" then
