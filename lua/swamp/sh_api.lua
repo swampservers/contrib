@@ -187,7 +187,7 @@ local API_Readers = {
 
 local API_Writers = {
     [API_DATALEN] = function(v)
-        if v > 255 then
+        if v >= 255 then
             net.WriteUInt(255, 8)
             assert(v <= 65535)
             net.WriteUInt(v, 16)
