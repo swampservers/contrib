@@ -13,21 +13,22 @@ end
 if CLIENT then
     function ServerPrint(...)
         local arg = {...}
+
         local st = ""
-        for i,v in ipairs(arg) do
-            if i>1 then
-                st = st.." "
+
+        for i, v in ipairs(arg) do
+            if i > 1 then
+                st = st .. " "
             end
-            st=st..tostring(v)
+
+            st = st .. tostring(v)
         end
+
         net.Start("ServerPrint")
         net.WriteString(st)
         net.SendToServer()
     end
 else
     util.AddNetworkString("ServerPrint")
-    net.Receive("ServerPrint", function(len, ply)
-        --print(ply, "ServerPrint", net.ReadString())
-    end)
+    net.Receive("ServerPrint", function(len, ply) end) --print(ply, "ServerPrint", net.ReadString())
 end
-
