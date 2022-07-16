@@ -208,6 +208,7 @@ end
 function SWEP:GetViewModelPosition(pos, ang)
     --local of,_ = LocalToWorld(self.Owner:GetCurrentViewOffset(),Angle(0,0,0),Vector(0,0,0),ang)
     --pos = pos - (of*0.5)
+    if not IsValid(self.Owner) then return pos, ang end
     if self.Owner:InVehicle() then
         local va = self.Owner:GetVehicle():GetAngles()
         va:RotateAroundAxis(va:Up(), 90)
