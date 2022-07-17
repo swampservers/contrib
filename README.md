@@ -346,11 +346,6 @@ Omit FindMetaTable from your code because these globals always refer to their re
 \
 *file: [lua/swamp/sh_meta.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_meta.lua)*
 
-### function Entity:OrthoBounds(angle, offset)
-Returns min,max such that the rotated bbox render.DrawWireframeBox(Vector(0,0,0), angle, min, max) tightly bounds the entity's model in world space. no angle means Angle(0,0,0). if offset it gets applied in world space
-\
-*file: [lua/swamp/shop/cl_modelbounds.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/cl_modelbounds.lua)*
-
 ### function Player:GetPoints()
 Number of points
 \
@@ -360,6 +355,11 @@ Number of points
 If the player has at least this many points. Don't use it on the server if you are about to buy something; just do TryTakePoints
 \
 *file: [lua/swamp/shop/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sh_init.lua)*
+
+### function Entity:OrthoBounds(angle, offset)
+Returns min,max such that the rotated bbox render.DrawWireframeBox(Vector(0,0,0), angle, min, max) tightly bounds the entity's model in world space. no angle means Angle(0,0,0). if offset it gets applied in world space
+\
+*file: [lua/swamp/shop/sh_modelbounds.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sh_modelbounds.lua)*
 
 ### function Player:GivePoints(points, callback, fcallback)
 Give points. `callback` happens once the points are written. `fcallback` = failed to write
