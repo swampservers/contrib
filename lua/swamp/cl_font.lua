@@ -82,6 +82,8 @@ function surface.CreateFont(name, settings)
     return DefaultCreateFont(name, settings)
 end
 
+local textsizecachelimit,textsizecachereset = 1000,0
+
 --- surface.GetTextSize with cached result
 function GetTextSize(font, text)
     if not text then
@@ -93,9 +95,11 @@ function GetTextSize(font, text)
     local c = textsizecache[font]
 
     if not c[text] then
-        if textsizecachecount > 1000 then
-            -- todo make it make max larger if it clears twice within 10 sec or whatever
-            print("CLEAR TEXT SIZE CACHE")
+        if textsizecachecount > textsizecachelimit then
+            if CurTime() - textsizecachereset < 10 then
+                textsizecachelimit=textsizecachelimit*2
+            end
+            textsizecachereset = CurTime()            
             textsizecachecount = 0
             textsizecache = defaultdict(function() return {} end)
         end

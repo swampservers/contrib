@@ -237,12 +237,15 @@ function Entity:GetActualModel()
     --         end
     --     end
     -- end
-    local setmodel = getmodel(self)
     -- local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
     -- return correct and setmodel or "models/error.mdl"
     -- util.IsValidModel
 
-    return IsModelAvailable(setmodel) and setmodel or "models/error.mdl"
+    return GetActualModel(getmodel(self))
+end
+
+function GetActualModel(mdl)
+    return IsModelAvailable(mdl) and mdl or "models/error.mdl"
 end
 
 function require_playermodel_list(wsid)

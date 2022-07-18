@@ -148,6 +148,22 @@ function table.imin(tab)
     return table.ireduce(tab, math.min)
 end
 
+-- remove if this is added to gmod
+function table.GetValues( tab )
+
+	local values = {}
+	local id = 1
+
+	for k, v in pairs( tab ) do
+		values[ id ] = v
+		id = id + 1
+	end
+
+	return values
+
+end
+
+
 local function sortedindex(tab, val, a, b)
     if a >= b then
         assert(a == 0 or tab[a] <= val)
