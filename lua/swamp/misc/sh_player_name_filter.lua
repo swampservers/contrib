@@ -5,7 +5,7 @@ Player.TrueName = Player.TrueName or Player.Nick
 local decor_pattern = "[%[%]%{%}%(%)%<%>%-%|%=% ]+"
 
 -- todo: create memo() which is like this but uses call interface and takes multiple args (memoization)
-local advertpattern = defaultdict(function(advert)
+local advertpattern = memo(function(advert)
     local pat = {decor_pattern}
 
     for i = 1, #advert do

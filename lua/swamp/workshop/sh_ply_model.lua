@@ -27,7 +27,7 @@ if CLIENT then
         local dmdl, dwsid, dbodygroups = ply:GetDisplayModel()
 
         if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
-            if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(Me:GetPos()))) and IsValidPlayermodel(dmdl) then
+            if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(Me:GetPos()))) and ModelIsPlayermodel[dmdl] then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
 
@@ -124,7 +124,7 @@ if CLIENT then
         end
     end)
 
-    local OversizeRagdoll = defaultdict(function(mdl) return (file.Size(mdl:gsub("%.mdl$", '.phy'), 'GAME') or 999999) > 100000 end)
+    local OversizeRagdoll = memo(function(mdl) return (file.Size(mdl:gsub("%.mdl$", '.phy'), 'GAME') or 999999) > 100000 end)
 
     -- Setting display model has to be done in this hook or it breaks!
     hook.Add("NetworkEntityCreated", "ragdoll1", function(rag)
@@ -132,7 +132,7 @@ if CLIENT then
         local ply = rag:GetRagdollOwner()
         if not IsValid(ply) then return end
         local mdl, dw, bg = ply:GetDisplayModel()
-        if not mdl or not IsValidPlayermodel(mdl) then return end
+        if not mdl or not ModelIsPlayermodel[mdl] then return end
         if OversizeRagdoll[mdl] then return end
         rag.enforce_model = mdl
         enforce_models[rag] = 8

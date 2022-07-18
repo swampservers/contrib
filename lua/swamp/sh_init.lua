@@ -341,18 +341,18 @@ BLACK = Color(0, 0, 0, 255)
 WHITE = Color(255, 255, 255, 255)
 
 --- Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
-function defaultdict(constructor, args)
-    assert(args==nil)
-    return setmetatable(args or {}, {
-        __index = function(tab, key)
-            local d = constructor(key)
-            tab[key] = d
+-- function defaultdict(constructor, args)
+--     assert(args==nil)
+--     return setmetatable(args or {}, {
+--         __index = function(tab, key)
+--             local d = constructor(key)
+--             tab[key] = d
 
-            return d
-        end,
-        __mode = mode
-    })
-end
+--             return d
+--         end,
+--         __mode = mode
+--     })
+-- end
 
 
 -- -- __mode = weak and "v" or nil
@@ -415,13 +415,18 @@ function multimemo(func, params, stack, limit)
     end
 end
 
---- defaultdict but supports multiple args now
-function memo(func, params)
+--- Wraps a function with a cache to store computations when the same arguments are reused. Google: Memoization
+-- The returned memo should be "called" by indexing it:
+-- a = memo(function(x,y) return x*y end)
+-- print(a[2][3]) --prints 6
+-- If the function returns nil, nothing will be stored, and the second return value will be returned by the indexing.
+function memo(func)
+    local params = nil
     local limit = debug.getinfo(func, "u").nparams
 
-    assert(limit>=1)
+    -- if limit<1 then ErrorNoHalt("BAD MEMO FUNC") end
 
-    local the_memo = nparams==1 and basememo(func, params) or multimemo(func, params, {}, limit)
+    local the_memo = limit<=1 and basememo(func, params) or multimemo(func, params, {}, limit)
     
     -- getmetatable(the_memo).__call = function()
     return the_memo

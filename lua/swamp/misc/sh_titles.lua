@@ -10,8 +10,8 @@ end
 
 --NOMINIFY
 Titles = {}
-TitleRefreshDir = defaultdict(function() return {} end)
-RewardIdTitleDir = defaultdict(function() return {} end)
+TitleRefreshDir = memo(function() return {} end)
+RewardIdTitleDir = memo(function() return {} end)
 TitleDisplayFn = {}
 
 -- not implemented lol

@@ -14,7 +14,7 @@ local classmapping = SERVER and {
 } or {}
 
 function _SetupEnts1()
-    local _Ents = defaultdict(function() return {} end)
+    local _Ents = memo(function() return {} end)
 
     for i, v in ipairs(ents.GetAll()) do
         local idx = EntIndex(v)
@@ -29,7 +29,7 @@ end
 
 --NOMINIFY
 function _SetupEnts2()
-    local _Ents = defaultdict(function() return {} end)
+    local _Ents = memo(function() return {} end)
 
     for i, v in ipairs(ents.GetAll()) do
         if EntIndex(v) <= 0 then continue end

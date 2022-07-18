@@ -120,7 +120,7 @@ local function findfiles(dir)
         dirs = initdirs:Extend(dirs)
     end
 
-    local groups = defaultdict(function() return list() end)
+    local groups = memo(function() return list() end)
 
     for i, f in ipairs(files) do
         if sub(f, -4) == ".lua" then

@@ -4,7 +4,7 @@ if not ProvableGenerator then
     -- close to the highest int we can store precisely in a lua number
     local maxseed = 1000 ^ 5
 
-    ProvableGenerator = defaultdict(function(genfor)
+    ProvableGenerator = memo(function(genfor)
         local seed, state, ledger, samples
 
         -- This object stores its state in upvalues that reset when you call Ledger, making it EXTREMELY SECURE
