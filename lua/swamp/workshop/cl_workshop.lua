@@ -1,6 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local loadrange = CreateClientConVar("swamp_workshop", 0, true, false, "", -3, 1)
 
+--NOMINIFY
+
 function RefreshWorkshop()
     STEAMWS_FILEINFO_STARTED = {}
     STEAMWS_DOWNLOAD_STARTED = {}
