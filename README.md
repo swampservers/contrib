@@ -270,6 +270,42 @@ Register a function which is called on the server and executed on the client. Se
 \
 *file: [lua/swamp/sh_api.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_api.lua)*
 
+### function basememo(func, params)
+Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.\
+ function defaultdict(constructor, args)\
+    assert(args==nil)\
+    return setmetatable(args or {}, {\
+        __index = function(tab, key)\
+            local d = constructor(key)\
+            tab[key] = d\
+            return d\
+        end,\
+        __mode = mode\
+    })\
+ end\
+ -- __mode = weak and "v" or nil\
+ local memofunc = {\
+    function(func)\
+        return setmetatable({}, {\
+            __index = function(tab, key)\
+                local d = func(key)\
+                tab[key] = d\
+                return d\
+            end\
+        })\
+    end\
+ }\
+ for i=2,10 do\
+    local nextmemo = memofunc[i-1]\
+    memofunc[i] = function(func, weak)\
+        return memo(function(arg)\
+            return nextmemo[funci(function(arg) return func(arg) end, weak)\
+        end, weak)\
+    end\
+ end
+\
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
+
 ### function call(func, ...)
 Just calls the function with the args
 \
