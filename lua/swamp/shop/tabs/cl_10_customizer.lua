@@ -27,10 +27,12 @@ vgui.Register('DSSCustomizerMode', {
     end,
     DrawOverPreview = function(self, preview)
         local y = 14
+
         if IsValid(self.Angle) then
             draw.SimpleText("RMB + drag to rotate", Font.sans24, preview:GetWide() / 2, y, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            y = y+32
+            y = y + 32
         end
+
         if IsValid(self.Position) then
             draw.SimpleText("MMB + drag to move", Font.sans24, preview:GetWide() / 2, y, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end

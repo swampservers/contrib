@@ -240,7 +240,6 @@ function Entity:GetActualModel()
     -- local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
     -- return correct and setmodel or "models/error.mdl"
     -- util.IsValidModel
-
     return GetActualModel(getmodel(self))
 end
 

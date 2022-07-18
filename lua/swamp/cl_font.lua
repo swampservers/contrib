@@ -82,7 +82,7 @@ function surface.CreateFont(name, settings)
     return DefaultCreateFont(name, settings)
 end
 
-local textsizecachelimit,textsizecachereset = 1000,0
+local textsizecachelimit, textsizecachereset = 1000, 0
 
 --- surface.GetTextSize with cached result
 function GetTextSize(font, text)
@@ -97,9 +97,10 @@ function GetTextSize(font, text)
     if not c[text] then
         if textsizecachecount > textsizecachelimit then
             if CurTime() - textsizecachereset < 10 then
-                textsizecachelimit=textsizecachelimit*2
+                textsizecachelimit = textsizecachelimit * 2
             end
-            textsizecachereset = CurTime()            
+
+            textsizecachereset = CurTime()
             textsizecachecount = 0
             textsizecache = defaultdict(function() return {} end)
         end
