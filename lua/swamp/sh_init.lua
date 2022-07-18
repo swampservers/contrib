@@ -149,17 +149,20 @@ function table.imin(tab)
 end
 
 -- remove if this is added to gmod
-function table.GetValues(tab)
-    local values = {}
-    local id = 1
+function table.GetValues( tab )
 
-    for k, v in pairs(tab) do
-        values[id] = v
-        id = id + 1
-    end
+	local values = {}
+	local id = 1
 
-    return values
+	for k, v in pairs( tab ) do
+		values[ id ] = v
+		id = id + 1
+	end
+
+	return values
+
 end
+
 
 local function sortedindex(tab, val, a, b)
     if a >= b then
@@ -338,8 +341,9 @@ BLACK = Color(0, 0, 0, 255)
 WHITE = Color(255, 255, 255, 255)
 
 --- Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
-function defaultdict(constructor, init)
-    return setmetatable(init or {}, {
+function defaultdict(constructor, args)
+    assert(args==nil)
+    return setmetatable(args or {}, {
         __index = function(tab, key)
             local d = constructor(key)
             tab[key] = d
@@ -350,9 +354,85 @@ function defaultdict(constructor, init)
     })
 end
 
--- multi arg version of defaultdict that should be called
-function memo(func, weak)
+
+-- -- __mode = weak and "v" or nil
+-- local memofunc = {
+--     function(func)
+--         return setmetatable({}, {
+--             __index = function(tab, key)
+--                 local d = func(key)
+--                 tab[key] = d
+    
+--                 return d
+--             end
+            
+--         })
+--     end
+-- }
+
+-- for i=2,10 do
+--     local nextmemo = memofunc[i-1]
+--     memofunc[i] = function(func, weak)
+--         return memo(function(arg) 
+--             return nextmemo[funci(function(arg) return func(arg) end, weak)
+--         end, weak)
+--     end
+-- end
+
+
+function basememo(func, params)
+    return setmetatable({}, {
+        __index = function(tab, key)
+            local d, out = func(key)
+            if d==nil then
+                return out
+            else
+                tab[key] = d
+                return d
+            end
+        end
+    })
 end
+
+-- note: stack will belong to callee
+function multimemo(func, params, stack, limit)
+    if #stack == limit-1 then
+        return basememo(function(arg)
+            stack[limit] = arg
+            return func(unpack(stack))
+        end)
+    else
+        return basememo(function(arg)
+            local i,childstack = 1,{}
+            while stack[i]~=nil do
+                childstack[i]=stack[i]
+                i=i+1
+            end
+            childstack[i]=arg
+            
+            return multimemo(func, params, childstack, limit)
+        end)
+    end
+end
+
+--- defaultdict but supports multiple args now
+function memo(func, params)
+    local limit = debug.getinfo(func, "u").nparams
+
+    assert(limit>=1)
+
+    local the_memo = nparams==1 and basememo(func, params) or multimemo(func, params, {}, limit)
+    
+    -- getmetatable(the_memo).__call = function()
+    return the_memo
+end
+
+
+-- local test = memo(function(a,b,c) return a + b * c end)
+-- print(test[1][2][3])
+-- PrintTable(test)
+
+
 
 function bit.packu32(i)
     return string.char(bit.band(bit.rshift(i, 24), 255), bit.band(bit.rshift(i, 16), 255), bit.band(bit.rshift(i, 8), 255), bit.band(i, 255))
