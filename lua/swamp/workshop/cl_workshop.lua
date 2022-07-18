@@ -20,10 +20,6 @@ if not STEAMWS_UNMOUNTED then
     RefreshWorkshop()
 end
 
-
-
-
-
 function require_model(mdl, wsid, range)
     -- if range==nil then print(mdl, wsid) end
     if (wsid or "") == "" or ModelExists[mdl] then return true end
@@ -220,10 +216,9 @@ function Entity:GetActualModel()
     -- return correct and setmodel or "models/error.mdl"
     -- util.IsValidModel
     local mdl = getmodel(self)
+
     return ModelExists[mdl] and mdl or "models/error.mdl"
 end
-
-
 
 function require_playermodel_list(wsid)
     if not require_workshop(wsid) then return end
