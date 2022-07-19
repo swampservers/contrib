@@ -249,6 +249,13 @@ function vector:Min(o)
     return Vector(math.min(self[1], o[1]), math.min(self[2], o[2]), math.min(self[3], o[3]))
 end
 
+
+function vector:Clamp(min, max)
+    if isnumber(min) then return Vector(math.Clamp(self[1], min, max), math.Clamp(self[2], min, max), math.Clamp(self[3], min, max)) end
+
+    return Vector(math.Clamp(self[1], min[1], max[1]), math.Clamp(self[2], min[2], max[2]), math.Clamp(self[3], min[3], max[3]))
+end
+
 function vector:MaxWith(o)
     if o[1] > self[1] then
         self[1] = o[1]
@@ -277,6 +284,11 @@ function vector:MinWith(o)
     end
 end
 
+function vector:ClampWith(a,b)
+    self:MaxWith(a)
+    self:MinWith(b)
+end
+
 function vector:MaxVal()
     return math.max(self[1], self[2], self[3])
 end
@@ -285,11 +297,6 @@ function vector:MinVal()
     return math.min(self[1], self[2], self[3])
 end
 
-function vector:Clamp(min, max)
-    if isnumber(min) then return Vector(math.Clamp(self[1], min, max), math.Clamp(self[2], min, max), math.Clamp(self[3], min, max)) end
-
-    return Vector(math.Clamp(self[1], min[1], max[1]), math.Clamp(self[2], min[2], max[2]), math.Clamp(self[3], min[3], max[3]))
-end
 
 function vector:InBox(vec1, vec2)
     return self[1] >= vec1[1] and self[1] <= vec2[1] and self[2] >= vec1[2] and self[2] <= vec2[2] and self[3] >= vec1[3] and self[3] <= vec2[3]
