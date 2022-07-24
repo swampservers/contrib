@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local loadrange = CreateClientConVar("swamp_workshop", 0, true, false, "", -3, 1)
 
+--NOMINIFY
 function RefreshWorkshop()
     STEAMWS_FILEINFO_STARTED = {}
     STEAMWS_DOWNLOAD_STARTED = {}
@@ -20,35 +21,9 @@ if not STEAMWS_UNMOUNTED then
     RefreshWorkshop()
 end
 
-local AvailableMdls = {}
-local ValidPlayerMdls = {}
-
-function IsModelAvailable(mdl)
-    if AvailableMdls[mdl] == nil then
-        AvailableMdls[mdl] = file.Exists(mdl, 'GAME')
-    end
-
-    return AvailableMdls[mdl]
-end
-
-function IsValidPlayermodel(mdl)
-    if not IsModelAvailable(mdl) then return false end
-
-    if ValidPlayerMdls[mdl] == nil then
-        local ok, err = MDLIsPlayermodel(mdl)
-        ValidPlayerMdls[mdl] = ok
-
-        if not ok then
-            print("INVALID PLAYERMODEL " .. mdl .. " BECAUSE " .. err)
-        end
-    end
-
-    return ValidPlayerMdls[mdl]
-end
-
 function require_model(mdl, wsid, range)
     -- if range==nil then print(mdl, wsid) end
-    if (wsid or "") == "" or IsModelAvailable(mdl) then return true end
+    if (wsid or "") == "" or ModelExists[mdl] then return true end
     -- STEAMWS_REGISTRY[mdl] = wsid
     -- will return true despite being error if the workshop is missing the model
 
@@ -69,7 +44,7 @@ function require_workshop_info(id)
     end
 end
 
--- todo: asyncdefaultdict?
+-- todo: asyncmemo?
 function require_workshop_preview(id)
     if STEAMWS_PREVIEWICON[id] then
         return STEAMWS_PREVIEWICON[id]
@@ -204,7 +179,8 @@ hook.Add("Tick", "WorkshopMounter", function()
 
             for i, v in ipairs(files) do
                 if v:EndsWith(".mdl") then
-                    AvailableMdls[v] = true
+                    -- overwrite the memo
+                    ModelExists[v] = true
                 end
             end
 
@@ -237,12 +213,12 @@ function Entity:GetActualModel()
     --         end
     --     end
     -- end
-    local setmodel = getmodel(self)
     -- local correct = STEAMWS_REGISTRY[setmodel] and require_workshop(STEAMWS_REGISTRY[setmodel]) or isvalidmodel(setmodel)
     -- return correct and setmodel or "models/error.mdl"
     -- util.IsValidModel
+    local mdl = getmodel(self)
 
-    return IsModelAvailable(setmodel) and setmodel or "models/error.mdl"
+    return ModelExists[mdl] and mdl or "models/error.mdl"
 end
 
 function require_playermodel_list(wsid)

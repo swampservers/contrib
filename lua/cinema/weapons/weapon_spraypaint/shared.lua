@@ -47,6 +47,7 @@ for i = 1, 27 do
     list.Set("SprayPaintDecals", i, dname)
 end
 
+--NOMINIFY
 SWEP.DecalSet = "SprayPaintDecals"
 SWEP.MenuColumns = 9
 SWEP.ConVar = "spraypaint_decal"

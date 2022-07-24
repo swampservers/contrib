@@ -92,7 +92,7 @@ Bool (typing a chat message)
 \
 *file: [lua/swamp/chat/sh_swampchat.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/chat/sh_swampchat.lua)*
 
-### Font = defaultdict(function(setting_str)
+### Font = memo(function(setting_str)
 Generates a font quickly. Caches so it can be used in paint hooks.\
  Example input: draw.DrawText("based", Font.Arial24)
 \
@@ -270,6 +270,42 @@ Register a function which is called on the server and executed on the client. Se
 \
 *file: [lua/swamp/sh_api.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_api.lua)*
 
+### function basememo(func, params)
+Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.\
+ function defaultdict(constructor, args)\
+    assert(args==nil)\
+    return setmetatable(args or {}, {\
+        __index = function(tab, key)\
+            local d = constructor(key)\
+            tab[key] = d\
+            return d\
+        end,\
+        __mode = mode\
+    })\
+ end\
+ -- __mode = weak and "v" or nil\
+ local memofunc = {\
+    function(func)\
+        return setmetatable({}, {\
+            __index = function(tab, key)\
+                local d = func(key)\
+                tab[key] = d\
+                return d\
+            end\
+        })\
+    end\
+ }\
+ for i=2,10 do\
+    local nextmemo = memofunc[i-1]\
+    memofunc[i] = function(func, weak)\
+        return memo(function(arg)\
+            return nextmemo[funci(function(arg) return func(arg) end, weak)\
+        end, weak)\
+    end\
+ end
+\
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
+
 ### function call(func, ...)
 Just calls the function with the args
 \
@@ -280,13 +316,17 @@ Shorthand timer.Simple(0, callback) and also passes args
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
-### function defaultdict(constructor, init)
-Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.
+### function math.nextpow2(n)
+Returns next power of 2 >= n
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
-### function math.nextpow2(n)
-Returns next power of 2 >= n
+### function memo(func)
+Wraps a function with a cache to store computations when the same arguments are reused. Google: Memoization\
+ The returned memo should be "called" by indexing it:\
+ a = memo(function(x,y) return x*y end)\
+ print(a[2][3]) --prints 6\
+ If the function returns nil, nothing will be stored, and the second return value will be returned by the indexing.
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
@@ -346,11 +386,6 @@ Omit FindMetaTable from your code because these globals always refer to their re
 \
 *file: [lua/swamp/sh_meta.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_meta.lua)*
 
-### function Entity:OrthoBounds(angle, offset)
-Returns min,max such that the rotated bbox render.DrawWireframeBox(Vector(0,0,0), angle, min, max) tightly bounds the entity's model in world space. no angle means Angle(0,0,0). if offset it gets applied in world space
-\
-*file: [lua/swamp/shop/cl_modelbounds.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/cl_modelbounds.lua)*
-
 ### function Player:GetPoints()
 Number of points
 \
@@ -360,6 +395,11 @@ Number of points
 If the player has at least this many points. Don't use it on the server if you are about to buy something; just do TryTakePoints
 \
 *file: [lua/swamp/shop/sh_init.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sh_init.lua)*
+
+### function Entity:OrthoBounds(angle, offset)
+Returns min,max such that the rotated bbox render.DrawWireframeBox(Vector(0,0,0), angle, min, max) tightly bounds the entity's model in world space. no angle means Angle(0,0,0). if offset it gets applied in world space
+\
+*file: [lua/swamp/shop/sh_modelbounds.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/sh_modelbounds.lua)*
 
 ### function Player:GivePoints(points, callback, fcallback)
 Give points. `callback` happens once the points are written. `fcallback` = failed to write

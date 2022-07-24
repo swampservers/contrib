@@ -63,7 +63,7 @@ local spam = {
     outline = false,
 }
 
-local textsizecache = defaultdict(function() return {} end)
+local textsizecache = memo(function() return {} end)
 local textsizecachecount = 0
 
 function surface.CreateFont(name, settings)
@@ -82,6 +82,8 @@ function surface.CreateFont(name, settings)
     return DefaultCreateFont(name, settings)
 end
 
+local textsizecachelimit, textsizecachereset = 1000, 0
+
 --- surface.GetTextSize with cached result
 function GetTextSize(font, text)
     if not text then
@@ -93,11 +95,14 @@ function GetTextSize(font, text)
     local c = textsizecache[font]
 
     if not c[text] then
-        if textsizecachecount > 1000 then
-            -- todo make it make max larger if it clears twice within 10 sec or whatever
-            print("CLEAR TEXT SIZE CACHE")
+        if textsizecachecount > textsizecachelimit then
+            if CurTime() - textsizecachereset < 10 then
+                textsizecachelimit = textsizecachelimit * 2
+            end
+
+            textsizecachereset = CurTime()
             textsizecachecount = 0
-            textsizecache = defaultdict(function() return {} end)
+            textsizecache = memo(function() return {} end)
         end
 
         surface.SetFont(font)
@@ -189,7 +194,7 @@ local fontsmade = {}
 
 --- Generates a font quickly. Caches so it can be used in paint hooks.
 -- Example input: draw.DrawText("based", Font.Arial24)
-Font = defaultdict(function(setting_str)
+Font = memo(function(setting_str)
     surface.CreateFont(setting_str, parse_settings(setting_str))
 
     return setting_str
@@ -198,7 +203,7 @@ end)
 -- default size
 Font.sans = Font.sans24
 -- todo clear cache
-local ffc = defaultdict(function() return defaultdict(function() return {} end) end)
+local ffc = memo(function() return memo(function() return {} end) end)
 
 function FitFont(setting_str, txt, w)
     local c = ffc[setting_str][txt][w]
