@@ -27,7 +27,6 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-SWEP.CannotDrop = true
 -- hook.Add("PlayerModelChanged", "GarfHead", function(ply, mdl)
 --     if mdl:find("garfield.mdl") then
 --         local bn = ply:LookupBone("ValveBiped.Bip01_Head1")
@@ -201,9 +200,9 @@ if SERVER then
                 ply.properRSP = rsp
             end
 
-            ply:SetSlowWalkSpeed(1)
-            ply:SetWalkSpeed(1)
-            ply:SetRunSpeed(1)
+            ply:SetSlowWalkSpeed(1/ply.properSWSP, "garf_victim")
+            ply:SetWalkSpeed(1/ply.properWSP, "garf_victim")
+            ply:SetRunSpeed(1/ply.properRSP, "garf_victim")
             local eater = self.Owner
             ply:SetNW2Entity("EATER", eater)
 
@@ -228,9 +227,9 @@ if SERVER then
 
                 if not IsValid(self) or not IsValid(eater) or not eater:Alive() or issafe(eater) or not self:ValidTarget(ply) then
                     Finish()
-                    ply:SetSlowWalkSpeed(ply.properSWSP or 1)
-                    ply:SetWalkSpeed(ply.properWSP or 1)
-                    ply:SetRunSpeed(ply.properRSP or 1)
+                    ply:SetSlowWalkSpeed(1, "garf_victim")
+                    ply:SetWalkSpeed(1, "garf_victim")
+                    ply:SetRunSpeed(1, "garf_victim")
 
                     return
                 end
