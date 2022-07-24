@@ -206,11 +206,14 @@ function SWEP:DrawWorldModel()
         self:EnableMatrix("RenderMultiply", mat)
         self.matrix = Matrix()
         self.matrix:SetScale(modelstuff.scale)
-        if (self.WorldModel == "models/props_lab/cleaver.mdl") then --hacky solution for this model
+
+        --hacky solution for this model
+        if self.WorldModel == "models/props_lab/cleaver.mdl" then
             local basemodelstuff = SlitterModels["models/weapons/w_knife_t.mdl"]
             local mp, ma = WorldToLocal(Vector(12, 0, 8), Angle(-180, 90, 0), basemodelstuff.pos, basemodelstuff.ang)
             pos, ang = LocalToWorld(mp, ma, pos, ang)
         end
+
         self:InvalidateBoneCache()
         self:SetupBones()
         self:SetBonePosition(0, pos, ang)

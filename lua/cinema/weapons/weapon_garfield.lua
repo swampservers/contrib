@@ -200,9 +200,9 @@ if SERVER then
                 ply.properRSP = rsp
             end
 
-            ply:SetSlowWalkSpeed(1/ply.properSWSP, "garf_victim")
-            ply:SetWalkSpeed(1/ply.properWSP, "garf_victim")
-            ply:SetRunSpeed(1/ply.properRSP, "garf_victim")
+            ply:SetSlowWalkSpeed(1 / ply.properSWSP, "garf_victim")
+            ply:SetWalkSpeed(1 / ply.properWSP, "garf_victim")
+            ply:SetRunSpeed(1 / ply.properRSP, "garf_victim")
             local eater = self.Owner
             ply:SetNW2Entity("EATER", eater)
 
