@@ -186,7 +186,6 @@ if SERVER then
 
         if IsValid(ply) and self:ValidTarget(ply) then
             self:SetNW2Entity("EATINGp", ply)
-
             ply:SetSlowWalkSpeed(0.01, "garf_victim")
             ply:SetWalkSpeed(0.01, "garf_victim")
             ply:SetRunSpeed(0.01, "garf_victim")
