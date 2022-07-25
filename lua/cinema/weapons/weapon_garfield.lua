@@ -186,23 +186,10 @@ if SERVER then
 
         if IsValid(ply) and self:ValidTarget(ply) then
             self:SetNW2Entity("EATINGp", ply)
-            local swsp, wsp, rsp = ply:GetSlowWalkSpeed(), ply:GetWalkSpeed(), ply:GetRunSpeed()
 
-            if swsp > 1 then
-                ply.properSWSP = swsp
-            end
-
-            if wsp > 1 then
-                ply.properWSP = wsp
-            end
-
-            if rsp > 1 then
-                ply.properRSP = rsp
-            end
-
-            ply:SetSlowWalkSpeed(1 / ply.properSWSP, "garf_victim")
-            ply:SetWalkSpeed(1 / ply.properWSP, "garf_victim")
-            ply:SetRunSpeed(1 / ply.properRSP, "garf_victim")
+            ply:SetSlowWalkSpeed(0.01, "garf_victim")
+            ply:SetWalkSpeed(0.01, "garf_victim")
+            ply:SetRunSpeed(0.01, "garf_victim")
             local eater = self.Owner
             ply:SetNW2Entity("EATER", eater)
 
