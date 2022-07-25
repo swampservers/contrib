@@ -196,6 +196,9 @@ if SERVER then
             local function Finish()
                 if IsValid(ply) then
                     ply:SetNW2Entity("EATER", nil)
+                    ply:SetSlowWalkSpeed(1, "garf_victim")
+                    ply:SetWalkSpeed(1, "garf_victim")
+                    ply:SetRunSpeed(1, "garf_victim")
                 end
 
                 if IsValid(self) then
@@ -213,9 +216,6 @@ if SERVER then
 
                 if not IsValid(self) or not IsValid(eater) or not eater:Alive() or issafe(eater) or not self:ValidTarget(ply) then
                     Finish()
-                    ply:SetSlowWalkSpeed(1, "garf_victim")
-                    ply:SetWalkSpeed(1, "garf_victim")
-                    ply:SetRunSpeed(1, "garf_victim")
 
                     return
                 end
