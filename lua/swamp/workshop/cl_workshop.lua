@@ -64,31 +64,14 @@ end
 
 local messagecolor = Color(64, 160, 0)
 
-
-local function should_load(size, range) 
+local function should_load(size, range)
     local mb = size / 1000000
-    
     local setting = loadrange:GetInt()
-
-    if setting == -3 then
-        return false
-    end
-
-    if setting == -2 and mb * 100 > 1000 - range then
-        return false
-    end
-
-    if setting == -1 and mb * 40 > 1200 - range then
-        return false
-    end
-
-    if setting == 0 and mb * 25 > 1500 - range then
-        return false
-    end
-
-    if setting == 1 and mb * 50 > 3000 - range then
-        return false
-    end
+    if setting == -3 then return false end
+    if setting == -2 and mb * 100 > 1000 - range then return false end
+    if setting == -1 and mb * 40 > 1200 - range then return false end
+    if setting == 0 and mb * 25 > 1500 - range then return false end
+    if setting == 1 and mb * 50 > 3000 - range then return false end
 
     return true
 end
@@ -105,11 +88,10 @@ function require_workshop(id, range)
 
     if info and info.size then
         if range then
-            
             shouldload = shouldload and should_load(info.size, range)
 
             if not shouldload and not should_load(info.size, 0) and not oversize_ids[id] then
-                oversize_ids[id]=true
+                oversize_ids[id] = true
                 MsgC(messagecolor, ("Addon %s is too big (%.2fmb)\n"):format(id, info.size / 1000000))
             end
         end
