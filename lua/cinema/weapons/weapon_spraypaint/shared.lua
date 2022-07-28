@@ -267,7 +267,7 @@ function SWEP:DoSound(delay)
         end)
     end
 
-    if self.SpraySound then
+    if self.SpraySound and CinemaGameVolumeSetting() > 0 then
         self.SpraySound:SetPos(self:GetPos())
 
         if self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING then

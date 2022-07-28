@@ -27,6 +27,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
+SWEP.CannotDrop = true
 -- hook.Add("PlayerModelChanged", "GarfHead", function(ply, mdl)
 --     if mdl:find("garfield.mdl") then
 --         local bn = ply:LookupBone("ValveBiped.Bip01_Head1")
