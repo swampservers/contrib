@@ -67,6 +67,7 @@ end
 
 function SWEP:PrimaryAttack()
     local ply = self:GetOwner()
+    if not (IsValid(ply) and ply:Alive()) then return end
 
     if SERVER then
         local filt = RecipientFilter()
