@@ -67,7 +67,6 @@ end
 
 function SWEP:PrimaryAttack()
     local ply = self:GetOwner()
-    if not (IsValid(ply) and ply:Alive()) then return end
 
     if SERVER then
         local filt = RecipientFilter()
@@ -113,8 +112,8 @@ end
 if CLIENT then
     net.Receive("SpraypaintNetworked", function(len)
         local ent = net.ReadEntity()
-
-        if IsValid(ent) and ent.PrimaryAttack then
+            
+        if IsValid(ent) and ent.PrimaryAttack and IsValid(ent.Owner) and ent.Owner:Alive() then
             ent:PrimaryAttack()
         end
     end)
