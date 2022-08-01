@@ -213,9 +213,9 @@ end
 
 MAPPROPS_RERUN = true
 
-hook.Add("OnEntityCreated","TripminePositionValidator",function(ent,dmginfo) --move this somewhere else
+hook.Add("OnEntityCreated","TripminePositionValidator",function(ent) --move this somewhere else
 	if ent:GetClass() == "npc_tripmine" then
-		timer.Simple(0,function()
+		ent:TimerSimple(0,function()
 			if not util.IsInWorld(ent:GetPos()) then
 				ent:TakeDamage(1) --more fun than simply removing it
 			end
