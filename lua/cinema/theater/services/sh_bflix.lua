@@ -154,7 +154,6 @@ if CLIENT then
         panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         local key = util.JSONToTable(Video:Data()).url
         local subs = string.JavascriptSafe(util.JSONToTable(Video:Data()).subs)
-
         panel:QueueJavascript(string.format("th_video('%s','%s');", string.JavascriptSafe(key), string.JavascriptSafe(subs)))
     end
 end
