@@ -308,7 +308,7 @@ function SWEP:WeaponSound(soundtype)
         sndname = "Weapon_TMP.Single"
     end
 
-    if sndname then
+    if sndname and !(soundtype == 'reload' and sndname == self.ShootSound) then
         self:EmitSound(sndname, nil, nil, nil, CHAN_AUTO)
     end
 end

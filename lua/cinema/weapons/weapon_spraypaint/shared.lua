@@ -67,6 +67,7 @@ end
 
 function SWEP:PrimaryAttack()
     local ply = self:GetOwner()
+    if not (IsValid(ply) and ply:Alive()) then return end
 
     if SERVER then
         local filt = RecipientFilter()
@@ -267,7 +268,7 @@ function SWEP:DoSound(delay)
         end)
     end
 
-    if self.SpraySound then
+    if self.SpraySound and CinemaGameVolumeSetting() > 0 then
         self.SpraySound:SetPos(self:GetPos())
 
         if self.SpraySound:GetState() ~= GMOD_CHANNEL_PLAYING then

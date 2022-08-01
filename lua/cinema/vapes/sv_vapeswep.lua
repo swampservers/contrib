@@ -151,6 +151,7 @@ net.Receive("DragonVapeIgnite", function(len, ply)
     local ent = net:ReadEntity()
     if not IsValid(ent) then return end
     if not ply:HasWeapon("weapon_vape_dragon") then return end
+    if ply:IsProtected() then return end
     if not ent:IsSolid() then return end
     if ent:GetPos():Distance(ply:GetPos()) > 500 then return end
     --I hope there's no exploits

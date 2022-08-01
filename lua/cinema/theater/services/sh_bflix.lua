@@ -155,11 +155,7 @@ if CLIENT then
         local key = util.JSONToTable(Video:Data()).url
         local subs = string.JavascriptSafe(util.JSONToTable(Video:Data()).subs)
 
-        if subs ~= '' then
-            subs = "'https://holyublocker.herokuapp.com/search/'+encodeURIComponent(('" .. subs .. "').split('').map((char,ind)=>ind%2?String.fromCharCode(char.charCodeAt()^2):char).join(''))"
-        end
-
-        panel:QueueJavascript(string.format("th_video('%s',%s);", string.JavascriptSafe(key), subs))
+        panel:QueueJavascript(string.format("th_video('%s','%s');", string.JavascriptSafe(key), string.JavascriptSafe(subs)))
     end
 end
 
