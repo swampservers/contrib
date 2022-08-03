@@ -120,6 +120,15 @@ function table.sub(tab, startpos, endpos)
     return out
 end
 
+function table.map(tab, func)
+    local out = {}
+    for k, v in pairs(tab) do
+        out[k] = func(v)
+    end
+    return out
+end
+
+
 function table.ireduce(tab, func)
     local out = nil
 

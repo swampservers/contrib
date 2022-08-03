@@ -619,3 +619,56 @@ if CLIENT then
         API_EntityHandles[h.id] = nil
     end)
 end
+
+-- webcommand stuff, mostly separate to above
+API_Command("RetrieveWebCommand", {API_STRING}, function(id)
+    table.insert(WebCommandIds, id)
+end)
+
+function API_WebCommand(name, callback)
+    if CLIENT then WebCommandHandlers[name]=callback end
+end
+
+if CLIENT then
+    WebCommandHandlers = WebCommandHandlers or {}
+    WebCommandIds = WebCommandIds or {}
+
+    function API_WebCommand(name, callback)
+        WebCommandHandlers[name]=callback
+    end
+
+    hook.Add("Think", "WebCommandRequest", function()
+        if WebCommandInFlight or not WebCommandIds[1] then return end
+
+        WebCommandInFlight = true
+        local function finish()
+            WebCommandInFlight=false
+            finish=function() end
+            return true
+        end
+
+        timer.Simple(30, function() finish() end)
+
+        http.Post("https://swamp.sv/webcommand", {ids = table.concat(WebCommandIds, ",")},
+            function( body, length, headers, code )
+                if finish() then
+                    local tab = util.JSONToTable(body)
+                    -- print("webdata", #body)
+                    if not tab then WebCommandIds={} error("Failed to parse body size "..#body) end
+                    for i,command in ipairs(tab) do
+                        local id,name,data_wrapped = unpack(command)
+                        assert(table.remove(WebCommandIds, 1) == id)
+                        if WebCommandHandlers[name] then
+                            WebCommandHandlers[name](data_wrapped[1])
+                        else
+                            print("Unhandled webcommand", name)
+                        end                        
+                    end
+                end
+            end,
+            function() finish() end
+        )
+    end)
+
+    API_WebCommand("PrintTable", function(data) print("WebCommand size ", #util.TableToJSON(data)) PrintTable(data) end)
+end
