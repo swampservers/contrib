@@ -620,22 +620,22 @@ if CLIENT then
     end)
 end
 
--- webcommand stuff, mostly separate to above
-API_Command("RetrieveWebCommand", {API_STRING}, function(id)
-    table.insert(WebCommandIds, id)
-end)
 
-function API_WebCommand(name, callback)
-    if CLIENT then WebCommandHandlers[name]=callback end
-end
+
 
 if CLIENT then
-    WebCommandHandlers = WebCommandHandlers or {}
-    WebCommandIds = WebCommandIds or {}
+
+    -- webcommand stuff, mostly separate to above
+    API_Command("RetrieveWebCommand", {API_STRING}, function(id)
+        table.insert(WebCommandIds, id)
+    end)
 
     function API_WebCommand(name, callback)
         WebCommandHandlers[name]=callback
     end
+
+    WebCommandHandlers = WebCommandHandlers or {}
+    WebCommandIds = WebCommandIds or {}
 
     hook.Add("Think", "WebCommandRequest", function()
         if WebCommandInFlight or not WebCommandIds[1] then return end
