@@ -321,7 +321,7 @@ Returns next power of 2 >= n
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
-### function memo(func)
+### function memo(func, params)
 Wraps a function with a cache to store computations when the same arguments are reused. Google: Memoization\
  The returned memo should be "called" by indexing it:\
  a = memo(function(x,y) return x*y end)\
@@ -377,6 +377,11 @@ Selects a range of an ordered table similar to string.sub
 
 ### function try(func, catch)
 Calls the function and if it fails, calls catch (default: ErrorNoHaltWithStack) with the error. Doesn't return anything
+\
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
+
+### function weakref(value)
+weak reference, call it to get the thing or nil if its gone
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 

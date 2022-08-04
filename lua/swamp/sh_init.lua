@@ -385,7 +385,7 @@ WHITE = Color(255, 255, 255, 255)
 --     end
 -- end
 function basememo(func, params)
-    return setmetatable({}, {
+    local init,meta = {},{
         __index = function(tab, key)
             local d, out = func(key)
 
@@ -397,7 +397,16 @@ function basememo(func, params)
                 return d
             end
         end
-    })
+    }
+
+    if params then
+        for k,v in pairs(params) do meta[k]=v end
+        if params.init then
+            init,meta.init = params.init,nil
+        end
+    end
+
+    return setmetatable(init, meta)
 end
 
 -- note: stack will belong to callee
@@ -429,15 +438,22 @@ end
 -- a = memo(function(x,y) return x*y end)
 -- print(a[2][3]) --prints 6
 -- If the function returns nil, nothing will be stored, and the second return value will be returned by the indexing.
-function memo(func)
-    local params = nil
+function memo(func, params)
     local limit = debug.getinfo(func, "u").nparams
-    -- if limit<1 then ErrorNoHalt("BAD MEMO FUNC") end 
+    assert(params==nil or params.init==nil or limit<=1, "init only for single argument memo")
     local the_memo = limit <= 1 and basememo(func, params) or multimemo(func, params, {}, limit)
     -- getmetatable(the_memo).__call = function()
 
     return the_memo
 end
+
+
+local weakrefmeta={__mode="v",__call=function(t) return t[1] end}
+--- weak reference, call it to get the thing or nil if its gone
+function weakref(value)
+    return setmetatable({value},weakrefmeta)
+end
+ 
 
 -- local test = memo(function(a,b,c) return a + b * c end)
 -- print(test[1][2][3])
