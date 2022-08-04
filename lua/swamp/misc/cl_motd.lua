@@ -1,8 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-hook.Add("InitPostEntity", "MOTDshow", function()
-    ShowServerMotd()
-end)
-
 function ShowServerMotd()
     if GAMEMODE.FolderName == "cinema" then
         ShowMotd("https://swamp.sv/news/")

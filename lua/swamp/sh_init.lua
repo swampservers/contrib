@@ -663,3 +663,13 @@ end
 -- })
 -- bench(function() x=0 T:Filter(function(v) if v[1]=="." then x=x+1 end return v end) end)
 -- bench(function() x=0 T:Filter(function(v) if v[1]=="." then x=x+1 end return v end) end)
+
+
+function GenerateKey()
+    local c = {}
+    for i=1,16 do 
+        c[i]=("0123456789abcdefghijklmnopqrstuvwxyz")[math.random(36)]
+    end
+    c = table.concat(c,"")
+    return tonumber(c) and GenerateKey() or c -- regenerate it if there aren't any letters
+end
