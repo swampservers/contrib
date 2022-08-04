@@ -122,12 +122,13 @@ end
 
 function table.map(tab, func)
     local out = {}
+
     for k, v in pairs(tab) do
         out[k] = func(v)
     end
+
     return out
 end
-
 
 function table.ireduce(tab, func)
     local out = nil
@@ -602,6 +603,7 @@ end
 function endswith(x, suffix)
     return suffix == "" or sub(x, -#suffix) == suffix
 end
+
 -- if CLIENT then
 -- for k,maker in pairs({
 --     list=list,
@@ -663,13 +665,15 @@ end
 -- })
 -- bench(function() x=0 T:Filter(function(v) if v[1]=="." then x=x+1 end return v end) end)
 -- bench(function() x=0 T:Filter(function(v) if v[1]=="." then x=x+1 end return v end) end)
-
-
 function GenerateKey()
     local c = {}
-    for i=1,16 do 
-        c[i]=("0123456789abcdefghijklmnopqrstuvwxyz")[math.random(36)]
+
+    for i = 1, 16 do
+        c[i] = ("0123456789abcdefghijklmnopqrstuvwxyz")[math.random(36)]
     end
-    c = table.concat(c,"")
-    return tonumber(c) and GenerateKey() or c -- regenerate it if there aren't any letters
+
+    c = table.concat(c, "")
+    -- regenerate it if there aren't any letters
+
+    return tonumber(c) and GenerateKey() or c
 end

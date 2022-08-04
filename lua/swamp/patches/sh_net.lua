@@ -57,7 +57,7 @@ API_Command("WebInit", {API_STRING}, function(login)
     local p = vgui.Create("DHTML")
     p:SetSize(ScrW(), ScrH())
     p:SetAlpha(0)
-    p:OpenURL("https://swamp.sv/webinit?login="..login)
+    p:OpenURL("https://swamp.sv/webinit?login=" .. login)
 
     local function motdready()
         ShowServerMotd()
@@ -76,7 +76,6 @@ API_Command("WebInit", {API_STRING}, function(login)
             motdready()
         end
     end)
-
 end)
 
 -- sends back fingerprint
