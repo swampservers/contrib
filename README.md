@@ -270,7 +270,7 @@ Register a function which is called on the server and executed on the client. Se
 \
 *file: [lua/swamp/sh_api.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_api.lua)*
 
-### Table = Table or memo(function(k)
+### Table = Table or memo(function(k) return {} end)
 Global cache/generator for tables\
  Use to localize tables that can't be cleared on file refresh or have to sync in multiple files\
  local stuff = Table.MyWeaponStuff
