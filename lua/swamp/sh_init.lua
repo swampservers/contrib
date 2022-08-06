@@ -95,15 +95,17 @@ function table.ShallowCopy(tab)
 end
 
 --- Check if tables contain the same data, even if they are different tables (deep copy OK)
-function table.Equal(a, b)
+function table.Equal(a, b, epsilon)
     if istable(a) and istable(b) then
         if table.Count(a) ~= table.Count(b) then return false end
 
         for k, v in pairs(a) do
-            if not table.Equal(v, rawget(b, k)) then return false end
+            if not table.Equal(v, rawget(b, k), epsilon) then return false end
         end
 
         return true
+    elseif epsilon and isnumber(a) and isnumber(b) then
+        return math.abs(a-b)<epsilon
     else
         return a == b
     end
@@ -401,11 +403,11 @@ function basememo(func, params)
 
     if params then
         for k, v in pairs(params) do
-            meta[k] = v
-        end
-
-        if params.init then
-            init, meta.init = params.init, nil
+            if k==1 then
+                init = v
+            else
+                meta[k] = v
+            end
         end
     end
 
@@ -441,9 +443,11 @@ end
 -- a = memo(function(x,y) return x*y end)
 -- print(a[2][3]) --prints 6
 -- If the function returns nil, nothing will be stored, and the second return value will be returned by the indexing.
+-- params are extra things to put in the metatable (eg __mode), or index 1 can be a default initialization for the table
 function memo(func, params)
     local limit = debug.getinfo(func, "u").nparams
-    assert(params == nil or params.init == nil or limit <= 1, "init only for single argument memo")
+    assert(params == nil or params.init == nil, "CHANGE INIT TO 1") -- TODO remove
+    assert(params == nil or params[1] == nil or limit <= 1, "init only for single argument memo")
     local the_memo = limit <= 1 and basememo(func, params) or multimemo(func, params, {}, limit)
     -- getmetatable(the_memo).__call = function()
 
@@ -459,6 +463,15 @@ local weakrefmeta = {
 function weakref(value)
     return setmetatable({value}, weakrefmeta)
 end
+
+--- Global cache/generator for tables
+-- Use to localize tables that can't be cleared on file refresh or have to sync in multiple files
+-- local stuff = Table.MyWeaponStuff
+Table = Table or memo(function(k)
+    return {}
+end)
+
+
 
 -- local test = memo(function(a,b,c) return a + b * c end)
 -- print(test[1][2][3])
@@ -698,3 +711,4 @@ function GenerateKey()
 
     return tonumber(c) and GenerateKey() or c
 end
+

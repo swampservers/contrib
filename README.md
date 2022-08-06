@@ -270,6 +270,13 @@ Register a function which is called on the server and executed on the client. Se
 \
 *file: [lua/swamp/sh_api.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_api.lua)*
 
+### Table = Table or memo(function(k)
+Global cache/generator for tables\
+ Use to localize tables that can't be cleared on file refresh or have to sync in multiple files\
+ local stuff = Table.MyWeaponStuff
+\
+*file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
+
 ### function basememo(func, params)
 Returns a table such that when indexing the table, if the value doesn't exist, the constructor will be called with the key to initialize it.\
  function defaultdict(constructor, args)\
@@ -326,7 +333,8 @@ Wraps a function with a cache to store computations when the same arguments are 
  The returned memo should be "called" by indexing it:\
  a = memo(function(x,y) return x*y end)\
  print(a[2][3]) --prints 6\
- If the function returns nil, nothing will be stored, and the second return value will be returned by the indexing.
+ If the function returns nil, nothing will be stored, and the second return value will be returned by the indexing.\
+ params are extra things to put in the metatable (eg __mode), or index 1 can be a default initialization for the table
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
@@ -335,7 +343,7 @@ Shorthand for empty function
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
 
-### function table.Equal(a, b)
+### function table.Equal(a, b, epsilon)
 Check if tables contain the same data, even if they are different tables (deep copy OK)
 \
 *file: [lua/swamp/sh_init.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_init.lua)*
