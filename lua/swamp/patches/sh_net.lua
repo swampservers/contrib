@@ -53,11 +53,13 @@ end
 API_Request("NetReady", {API_TABLE})
 
 -- sends login key
-API_Command("WebInit", {API_STRING}, function(login)
+API_Command("WebInit", {API_STRING}, function(auth)
+    AUTHKEY = auth
+
     local p = vgui.Create("DHTML")
     p:SetSize(ScrW(), ScrH())
     p:SetAlpha(0)
-    p:OpenURL("https://swamp.sv/webinit?login=" .. login)
+    p:OpenURL("https://swamp.sv/webinit?auth=" .. auth)
 
     local function motdready()
         ShowServerMotd()

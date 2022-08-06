@@ -467,7 +467,8 @@ end
 --- Global cache/generator for tables
 -- Use to localize tables that can't be cleared on file refresh or have to sync in multiple files
 -- local stuff = Table.MyWeaponStuff
-Table = Table or memo(function(k) return {} end)
+Table = Table or memo(function() return {} end)
+-- Table = memo(function(k) if not _G[k] then _G[k] = {} end assert(istable(_G[k])) return _G[k] end)
 
 -- local test = memo(function(a,b,c) return a + b * c end)
 -- print(test[1][2][3])
