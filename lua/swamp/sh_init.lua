@@ -105,7 +105,7 @@ function table.Equal(a, b, epsilon)
 
         return true
     elseif epsilon and isnumber(a) and isnumber(b) then
-        return math.abs(a-b)<epsilon
+        return math.abs(a - b) < epsilon
     else
         return a == b
     end
@@ -403,7 +403,7 @@ function basememo(func, params)
 
     if params then
         for k, v in pairs(params) do
-            if k==1 then
+            if k == 1 then
                 init = v
             else
                 meta[k] = v
@@ -467,11 +467,7 @@ end
 --- Global cache/generator for tables
 -- Use to localize tables that can't be cleared on file refresh or have to sync in multiple files
 -- local stuff = Table.MyWeaponStuff
-Table = Table or memo(function(k)
-    return {}
-end)
-
-
+Table = Table or memo(function(k) return {} end)
 
 -- local test = memo(function(a,b,c) return a + b * c end)
 -- print(test[1][2][3])
@@ -711,4 +707,3 @@ function GenerateKey()
 
     return tonumber(c) and GenerateKey() or c
 end
-
