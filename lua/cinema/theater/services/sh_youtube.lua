@@ -19,6 +19,9 @@ function SERVICE:GetKey(url)
         -- http://www.youtube.com/v/(videoId)
     elseif url.path and string.match(url.path, "^/v/([%a%d-_]+)") then
         key = string.match(url.path, "^/v/([%a%d-_]+)")
+        -- https://www.youtube.com/shorts/(videoId)
+    elseif url.path and string.match(url.path, "^/shorts/([%a%d-_]+)") then
+        key = string.match(url.path, "^/shorts/([%a%d-_]+)")
     elseif string.match(url.host, "youtu.be") and url.path and string.match(url.path, "^/([%a%d-_]+)$") and (not info.query or #info.query == 0) then
         -- http://youtu.be/(videoId)
         -- short url
