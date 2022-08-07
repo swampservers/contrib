@@ -184,8 +184,8 @@ function setup_panel_(panel, panelargs)
         if f then
             f(panel, v)
         else
-            assert(not isnumber(k), "No positional args!")
-            panel[k] = v
+            -- assert(not isnumber(k), "No positional args!")
+            if isstring(k) then panel[k] = v end
         end
     end
 
