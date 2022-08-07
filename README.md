@@ -174,11 +174,6 @@ This defines the function vgui(classname, parent (optional), constructor) which 
 \
 *file: [lua/swamp/extensions/cl_vgui_function.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/cl_vgui_function.lua)*
 
-### function vgui_parent(parent, callback)
-Push a panel to the vgui parent stack, run callback, and pop it
-\
-*file: [lua/swamp/extensions/cl_vgui_function.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/extensions/cl_vgui_function.lua)*
-
 ### function Entity:TimerCreate(identifier, delay, repetitions, callback)
 A timer which will only call the callback (with the entity passed as the argument) if the ent is still valid
 \
