@@ -16,55 +16,52 @@
 -- end)
 -- ```
 --- function vgui(classname, parent (optional), constructor)
-
 -- see if this formats well then decide whether to use build= or a seperate argument
 local function formatme()
     vgui("Panel", {
         dock = FILL,
-     build=function(p)
-        vgui("Panel", {
-            dock = TOP,
-            tall = 26,
-            padding = {0, 4, 0, 0},
-            build= function(p)
-            self.Name = vgui("DLabel", {
-                dock = LEFT,
-                font = Font.sans24,
-                color = Color.white,
-                PerformLayout = function(p)
-                    p:SizeToContentsX()
+        build = function(p)
+            vgui("Panel", {
+                dock = TOP,
+                tall = 26,
+                padding = {0, 4, 0, 0},
+                build = function(p)
+                    self.Name = vgui("DLabel", {
+                        dock = LEFT,
+                        font = Font.sans24,
+                        color = Color.white,
+                        PerformLayout = function(p)
+                            p:SizeToContentsX()
+                        end
+                    })
                 end
             })
-        end})
 
-        self.Location = vgui("DLabel", {
-            dock = FILL,
-            margin = {0, 0, 0, 2},
-            font = Font.sans18,
-            color = Color.fff5
-        })
-    end})
+            self.Location = vgui("DLabel", {
+                dock = FILL,
+                margin = {0, 0, 0, 2},
+                font = Font.sans18,
+                color = Color.fff5
+            })
+        end
+    })
 end
 
-
-
 local ui_stack = list()
+print(IsValid(vgui.GetWorldPanel()) and "WORLDPANEL" or "NOWORLDPANEL!!") -- TODO see if it prints when you join, if so put it in the ui_stack
 
-print( IsValid(vgui.GetWorldPanel()) and "WORLDPANEL" or "NOWORLDPANEL!!") -- TODO see if it prints when you join, if so put it in the ui_stack
-
-function ui(classname, args_or_constructor, constructor) 
+function ui(classname, args_or_constructor, constructor)
     local args = istable(args_or_constructor) and args_or_constructor or {}
     args.build = isfunction(args_or_constructor) and args_or_constructor or constructor or args.build
-
     local parent
+
     if args.parent then
-        parent,args.parent = args.parent,nil
+        parent, args.parent = args.parent, nil
     else
         parent = ui_stack:Top() or vgui.GetWorldPanel() --could the world panel just always be in there    
     end
 
     return vgui.Create(classname, parent, args)
-
 end
 
 function update_ui(panel, args_or_constructor, constructor)
@@ -81,12 +78,10 @@ function update_ui(panel, args_or_constructor, constructor)
     return panel
 end
 
-
-
 function with_ui(parent, callback)
     parent = parent or vgui.GetWorldPanel()
     ui_stack:Push(parent)
-    
+
     ProtectedCall(function()
         callback(parent)
     end)
@@ -96,7 +91,6 @@ end
 
 -- strip these
 vgui_parent = with_ui
-
 
 setmetatable(vgui, {
     __call = function(_vgui, classname_or_element, ...)
@@ -129,7 +123,6 @@ setmetatable(vgui, {
         return p
     end
 })
-
 
 local panelsetup = {
     dock = function(p, v)
@@ -181,7 +174,6 @@ local panelsetup = {
 }
 
 function setup_panel_(panel, panelargs)
-
     local build = panelargs.build
     panelargs.build = nil
 
@@ -239,14 +231,12 @@ function MyVguiCreate(classname, parent, name_or_args, args)
 
         -- what if we set these before prepare?
         panel:Prepare()
-
         setup_panel_(panel, panelargs)
 
         return panel
     end
 
     local panel = vgui.CreateX(classname, parent, isstring(name_or_args) and name_or_args or classname)
-
     setup_panel_(panel, istable(name_or_args) and name_or_args or args or {})
 
     return panel
