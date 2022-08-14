@@ -4,7 +4,7 @@ function ShowServerMotd()
         ShowMotd("https://swamp.sv/news/")
         SERVERMOTDOPEN = true
     elseif GAMEMODE.FolderName == "fatkid" then
-        ShowMotd("https://swamp.sv/infection/?map=" .. game.GetMap())
+        ShowMotd("https://swamp.sv/fatkid/?map=" .. game.GetMap())
         SERVERMOTDOPEN = true
     end
 end
