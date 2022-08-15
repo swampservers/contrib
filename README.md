@@ -426,6 +426,11 @@ Get the value of the stat with the given name. If default isn't given it is 0
 \
 *file: [lua/swamp/sql/sh_stats.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sh_stats.lua)*
 
+### Redis = memo(function(k)
+Call this like: Redis.Get("a", callback(value) end) or Redis({"get","a"}, {"get","b"}, callback(values) end)
+\
+*file: [lua/swamp/sql/sv_init_redis.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/sql/sv_init_redis.lua)*
+
 ### function Player:AddStat(name, increment)
 Adds increment (or 1) to a stat with the given name
 \
