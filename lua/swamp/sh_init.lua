@@ -449,7 +449,6 @@ function memo(func, params)
     assert(params == nil or params.init == nil, "CHANGE INIT TO 1") -- TODO remove
     assert(params == nil or params[1] == nil or limit <= 1, "init only for single argument memo")
     local the_memo = limit <= 1 and basememo(func, params) or multimemo(func, params, {}, limit)
-
     -- Note: we must support a custom __call in params if we even want a default __call
     -- getmetatable(the_memo).__call = function()
 
