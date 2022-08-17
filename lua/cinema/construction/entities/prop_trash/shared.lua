@@ -95,7 +95,7 @@ function TrashSpecialModelData(m)
         d = {}
         local mn = table.remove(string.Explode("/", m)):lower()
 
-        if mn:find("light") or mn:find("lamp") or mn:find("lantern") then
+        if mn:find("light") or mn:find("lamp") or mn:find("lantern") or mn:find("candle") then
             PropTrashSpecialModels[m] = {
                 class = "light",
                 data = {
