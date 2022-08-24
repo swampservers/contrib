@@ -62,7 +62,7 @@ PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
             inputarea = {Vector(-22, -10, -10), Vector(-2, 10, 10)}
         }
     },
-   ["models/ruins_floor_candle_lamp_mid.mdl"] = {
+    ["models/ruins_floor_candle_lamp_mid.mdl"] = {
         class = "light",
         data = {
             untaped = false,
