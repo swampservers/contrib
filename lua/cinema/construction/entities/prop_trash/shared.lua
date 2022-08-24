@@ -61,6 +61,16 @@ PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
             func = "inverter",
             inputarea = {Vector(-22, -10, -10), Vector(-2, 10, 10)}
         }
+    },
+   ["models/ruins_floor_candle_lamp_mid.mdl"] = {
+        class = "light",
+        data = {
+            untaped = false,
+            size = 400,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 18)
+        }
     }
 })
 
@@ -95,7 +105,7 @@ function TrashSpecialModelData(m)
         d = {}
         local mn = table.remove(string.Explode("/", m)):lower()
 
-        if mn:find("light") or mn:find("lamp") or mn:find("lantern") or mn:find("candle") then
+        if mn:find("light") or mn:find("lamp") or mn:find("lantern") or mn:find("candle") or mn:find("fire") then
             PropTrashSpecialModels[m] = {
                 class = "light",
                 data = {
