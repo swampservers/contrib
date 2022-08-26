@@ -394,6 +394,21 @@ Omit FindMetaTable from your code because these globals always refer to their re
 \
 *file: [lua/swamp/sh_meta.lua](https://github.com/swampservers/contrib/blob/master/lua/swamp/sh_meta.lua)*
 
+### function Anim(init, force, callback)
+Makes an "anim" which smoothly interpolates a value\
+ init = default value\
+ force = acceleration towards target value\
+ callback runs when value changes (return true to stop updating, but this happens automatically when target is reached)\
+ returned table has functions __call() to get the current value, SetTarget(value) to set a target, SetInstant(value) to jump and set velocity to zero
+\
+*file: [lua/swamp/shop/cl_vgui/animation.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/cl_vgui/animation.lua)*
+
+### function AnimValue(subject, key, init_or_force, force)
+Anim which will set a named property on a subject (entity or panel)\
+ The value is placed at ent.Key and the anim is at ent.KeyAnim
+\
+*file: [lua/swamp/shop/cl_vgui/animation.lua (hidden)](https://github.com/swampservers/contrib/blob/master/lua/swamp/shop/cl_vgui/animation.lua)*
+
 ### function Player:GetPoints()
 Number of points
 \
