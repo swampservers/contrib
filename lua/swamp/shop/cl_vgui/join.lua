@@ -41,7 +41,7 @@ vgui.Register("DSSJoinMenu", {
                         p:SetText(txt)
                         p:SetTextColor(Color.white)
                         p:SetFont(Font.sansbold26)
-                        AnimValue(p, "Hover", 0,  500)
+                        AnimValue(p, "Hover", 0, 500)
 
                         function p:Paint(w, h)
                             self.HoverAnim:SetTarget(self:IsHovered() and 1 or 0)
