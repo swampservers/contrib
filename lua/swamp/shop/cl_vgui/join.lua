@@ -12,8 +12,7 @@ vgui.Register("DSSJoinMenu", {
         self:SetZPos(100)
         self:SetMouseInputEnabled(true)
         self:NoClipping(true)
-        self.Expansion = 0
-        DSS_Anim(self, "Expansion", 50)
+        AnimValue(self, "Expansion", 0, 50)
         self:SetVisible(false)
 
         hook.Add("Think", SS_JoinMenu, function()
@@ -42,8 +41,7 @@ vgui.Register("DSSJoinMenu", {
                         p:SetText(txt)
                         p:SetTextColor(Color.white)
                         p:SetFont(Font.sansbold26)
-                        p.Hover = 0
-                        DSS_Anim(p, "Hover", 500)
+                        AnimValue(p, "Hover", 0,  500)
 
                         function p:Paint(w, h)
                             self.HoverAnim:SetTarget(self:IsHovered() and 1 or 0)
