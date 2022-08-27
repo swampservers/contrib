@@ -21,35 +21,39 @@ if isfunction(Player) then
 end
 
 Weapon = FindMetaTable("Weapon")
+
+local entity_meta,player_meta, weapon_meta = Entity, Player, Weapon
+
+
+
+
 -- caches the Entity.GetTable so stuff is super fast
-ENTITY_CGETTABLE = ENTITY_CGETTABLE or Entity.GetTable
-local cgettable = ENTITY_CGETTABLE
+CEntityGetTable = CEntityGetTable or entity_meta.GetTable
+local cgettable = CEntityGetTable
 
--- Thanks to trolge#2286 on the GMod discord for help with this
---weak references
-local EntTableCache = setmetatable({}, {
-    __mode = "kv"
-})
-
-function Entity:GetTable()
-    local tab = EntTableCache[self]
-
-    if not tab then
-        tab = cgettable(self)
-        EntTableCache[self] = tab
-        -- TODO: perhaps initialize default values in the entity table here?
+-- __mode = "kv",
+EntityTable = setmetatable({}, {
+    __mode = "k",
+    __index = function(self, ent)
+        local tab = cgettable(ent)
+        -- extension: perhaps initialize default values in the entity table here?
+        rawset(self, ent, tab)
+        return tab
     end
+})
+local entity_table=EntityTable
 
-    return tab
+function entity_meta:GetTable()
+    return entity_table[self]
 end
 
-local EntTable = Entity.GetTable
-local EntOwner = Entity.GetOwner
+local ent_owner = entity_meta.GetOwner
 
-function Entity:__index(key)
-    local val = Entity[key]
+
+function entity_meta:__index(key)
+    local val = entity_meta[key]
     if val ~= nil then return val end
-    local tab = EntTable(self)
+    local tab = entity_table[self]
 
     if tab ~= nil then
         local val = tab[key]
@@ -57,24 +61,24 @@ function Entity:__index(key)
     end
 
     -- TODO remove this and collapse this function to be like Player
-    if key == "Owner" then return EntOwner(self) end
+    if key == "Owner" then return ent_owner(self) end
 end
 
-function Player:__index(key)
-    local val = Player[key]
+function player_meta:__index(key)
+    local val = player_meta[key]
     if val ~= nil then return val end
-    local val = Entity[key]
+    local val = entity_meta[key]
     if val ~= nil then return val end
-    local tab = EntTable(self)
+    local tab = entity_table[self]
     if tab then return tab[key] end
 end
 
-function Weapon:__index(key)
-    local val = Weapon[key]
+function weapon_meta:__index(key)
+    local val = weapon_meta[key]
     if val ~= nil then return val end
-    local val = Entity[key]
+    local val = entity_meta[key]
     if val ~= nil then return val end
-    local tab = EntTable(self)
+    local tab = entity_table[self]
 
     if tab ~= nil then
         local val = tab[key]
@@ -82,5 +86,5 @@ function Weapon:__index(key)
     end
 
     -- TODO remove this and collapse this function to be like Player
-    if key == "Owner" then return EntOwner(self) end
+    if key == "Owner" then return ent_owner(self) end
 end

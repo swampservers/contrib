@@ -455,6 +455,8 @@ function memo(func, params)
     return the_memo
 end
 
+Memo = memo
+
 local weakrefmeta = {
     __mode = "v",
     __call = function(t) return t[1] end
@@ -464,6 +466,8 @@ local weakrefmeta = {
 function weakref(value)
     return setmetatable({value}, weakrefmeta)
 end
+
+WeakRef = weakref
 
 --- Global cache/generator for tables
 -- Use to localize tables that can't be cleared on file refresh or have to sync in multiple files
@@ -609,20 +613,28 @@ local listmeta = {
 
 listmeta.__index = listmeta
 
+List = function(tab)
+    if tab then
+        tab[0] = #tab
+    else
+        tab = {
+            [0] = 0
+        }
+    end
+
+    return setmetatable(tab, listmeta)
+end
+
+
 -- makes list() callable, its basically util stack but a little faster (and i wanted to make my own)
 setmetatable(list, {
     __call = function(_list, tab)
-        if tab then
-            tab[0] = #tab
-        else
-            tab = {
-                [0] = 0
-            }
-        end
-
-        return setmetatable(tab, listmeta)
+        return List(tab)
     end
 })
+
+
+
 
 -- calling sub(x, ...) instead of x:sub(...) is much faster (on windows at least). localizing is ideal but too much code pollution
 sub = string.sub
