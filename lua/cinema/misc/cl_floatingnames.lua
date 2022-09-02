@@ -92,6 +92,11 @@ local function DrawName(ply, opacityScale)
         end
     end
 
+    if ply.NW.bounty > 0 then
+        draw.ShadowedIcon("swamp/icon36/target-account.png", 48, x + 5, y + 8, Color(255, 0, 0, opacity + 60))
+        draw.ShadowedText(ply.NW.bounty, Font.sansmedium60, x + 55, y, Color(255, 0, 0, opacity))
+    end
+
     if Me:IsStaff() and ShowEyeAng then
         draw.ShadowedText("Eyes " .. tostring(math.Round(ply:EyeAngles().p, 1)) .. " " .. tostring(math.Round(ply:EyeAngles().y, 1)) .. ", Mouse " .. tostring(ply.GuiMousePosX) .. " " .. tostring(ply.GuiMousePosY), Font.sans40, 0, y + 70, Color(255, 255, 255, opacity))
 
