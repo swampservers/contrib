@@ -468,7 +468,6 @@ function weakref(value)
 end
 
 WeakRef = weakref
-
 --- Global cache/generator for tables
 -- Use to localize tables that can't be cleared on file refresh or have to sync in multiple files
 -- local stuff = Table.MyWeaponStuff
@@ -625,16 +624,10 @@ List = function(tab)
     return setmetatable(tab, listmeta)
 end
 
-
 -- makes list() callable, its basically util stack but a little faster (and i wanted to make my own)
 setmetatable(list, {
-    __call = function(_list, tab)
-        return List(tab)
-    end
+    __call = function(_list, tab) return List(tab) end
 })
-
-
-
 
 -- calling sub(x, ...) instead of x:sub(...) is much faster (on windows at least). localizing is ideal but too much code pollution
 sub = string.sub

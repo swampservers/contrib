@@ -21,12 +21,7 @@ if isfunction(Player) then
 end
 
 Weapon = FindMetaTable("Weapon")
-
-local entity_meta,player_meta, weapon_meta = Entity, Player, Weapon
-
-
-
-
+local entity_meta, player_meta, weapon_meta = Entity, Player, Weapon
 -- caches the Entity.GetTable so stuff is super fast
 CEntityGetTable = CEntityGetTable or entity_meta.GetTable
 local cgettable = CEntityGetTable
@@ -38,17 +33,18 @@ EntityTable = setmetatable({}, {
         local tab = cgettable(ent)
         -- extension: perhaps initialize default values in the entity table here?
         rawset(self, ent, tab)
+
         return tab
     end
 })
-local entity_table=EntityTable
+
+local entity_table = EntityTable
 
 function entity_meta:GetTable()
     return entity_table[self]
 end
 
 local ent_owner = entity_meta.GetOwner
-
 
 function entity_meta:__index(key)
     local val = entity_meta[key]
