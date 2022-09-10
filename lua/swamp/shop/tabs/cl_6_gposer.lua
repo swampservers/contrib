@@ -10,17 +10,17 @@ vgui.Register('DSSGPoserMode', {
         local mode = self
         self:DockPadding(100, 100, 100, 100)
 
-        -- vgui("Panel", self, function(p)
+        -- ui.Panel({parent=self},function(p)
         --     p:SetTall(32)
         --     p:Dock(TOP)
         --     p:DockMargin(0, 0, 0, 8)
-        --     vgui("DLabel", function(p)
+        --     ui.DLabel(function(p)
         --         p:SetWide(100)
         --         p:Dock(LEFT)
         --         p:SetText("Theme color")
         --     end)
         --     for k, v in pairs(BrandColors) do
-        --         vgui("DButton", function(p)
+        --         ui.DButton(function(p)
         --             p:DockMargin(4, 4, 4, 4)
         --             p:SetWide(24)
         --             p:Dock(LEFT)
@@ -37,7 +37,9 @@ vgui.Register('DSSGPoserMode', {
         --         end)
         --     end
         -- end)
-        vgui("SLabel", self, function(p)
+        ui.SLabel({
+            parent = self
+        }, function(p)
             p:SetText("GPoser")
             p:SetFont(Font.sansbold48)
             p:SetContentAlignment(5)
@@ -46,7 +48,9 @@ vgui.Register('DSSGPoserMode', {
             p:SetTall(40)
         end)
 
-        vgui("SLabel", self, function(p)
+        ui.SLabel({
+            parent = self
+        }, function(p)
             p:SetText("Control your body, arms, and face using just your webcam!")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
@@ -57,7 +61,9 @@ vgui.Register('DSSGPoserMode', {
 
         local exists, existstime = false, -100
 
-        vgui("DButton", self, function(p)
+        ui.DButton({
+            parent = self
+        }, function(p)
             p:SetFont("DermaLarge")
             p:SetContentAlignment(5)
             p:SetTextColor(Color.black)
@@ -85,7 +91,9 @@ vgui.Register('DSSGPoserMode', {
             end
         end)
 
-        vgui("SLabel", self, function(p)
+        ui.SLabel({
+            parent = self
+        }, function(p)
             p:SetFont(Font.sans28)
             p:SetContentAlignment(5)
             p:Dock(TOP)
@@ -104,7 +112,9 @@ vgui.Register('DSSGPoserMode', {
         local qstate = 1
         local estate = -6
 
-        self.b1 = vgui("DButton", self, function(p)
+        self.b1 = ui.DButton({
+            parent = self
+        }, function(p)
             p:SetText("Toggle Preview")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
@@ -118,7 +128,9 @@ vgui.Register('DSSGPoserMode', {
             end
         end)
 
-        self.b2 = vgui("DButton", self, function(p)
+        self.b2 = ui.DButton({
+            parent = self
+        }, function(p)
             p:SetText("Toggle Quality")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
@@ -132,7 +144,9 @@ vgui.Register('DSSGPoserMode', {
             end
         end)
 
-        self.b3 = vgui("DButton", self, function(p)
+        self.b3 = ui.DButton({
+            parent = self
+        }, function(p)
             p:SetText("Increase Exposure Time (better in low light)")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
@@ -146,7 +160,9 @@ vgui.Register('DSSGPoserMode', {
             end
         end)
 
-        self.b4 = vgui("DButton", self, function(p)
+        self.b4 = ui.DButton({
+            parent = self
+        }, function(p)
             p:SetText("Decrease Exposure Time (better motion response, less blur)")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)
@@ -162,7 +178,9 @@ vgui.Register('DSSGPoserMode', {
 
         local sstate = true
 
-        self.b5 = vgui("DButton", self, function(p)
+        self.b5 = ui.DButton({
+            parent = self
+        }, function(p)
             p:SetText("Stop/Start")
             p:SetFont(Font.sans24)
             p:SetContentAlignment(5)

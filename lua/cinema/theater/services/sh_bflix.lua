@@ -50,13 +50,13 @@ if CLIENT then
                 local url = t['sources'][1]['file']
 
                 if #t['tracks'] > 0 then
-                    vgui("DFrame", function(r)
+                    ui.DFrame(function(r)
                         r:SetSize(300, 300)
                         r:MakePopup()
                         r:SetTitle("Choose the Subtitles")
                         r:Center()
 
-                        vgui("DScrollPanel", function(p)
+                        ui.DScrollPanel(function(p)
                             p:Dock(FILL)
                             local tt = t['tracks']
 

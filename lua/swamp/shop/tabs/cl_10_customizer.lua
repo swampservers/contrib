@@ -48,12 +48,14 @@ vgui.Register('DSSCustomizerMode', {
         self:SetVisible(true)
 
         --bottom panel
-        vgui("DSSEqualWidthLayout", self, function(p)
+        ui.DSSEqualWidthLayout({
+            parent = self
+        }, function(p)
             p:SetTall(64)
             p:Dock(BOTTOM)
 
-            vgui("DSSEqualWidthLayout", function(p)
-                vgui("DSSButton", function(p)
+            ui.DSSEqualWidthLayout(function(p)
+                ui.DSSButton(function(p)
                     p:SetText("Reset")
                     p:SetFont("SS_DESCTITLEFONT")
 
@@ -64,7 +66,7 @@ vgui.Register('DSSCustomizerMode', {
                     end
                 end)
 
-                vgui("DSSButton", function(p)
+                ui.DSSButton(function(p)
                     p:SetText("Cancel")
                     p:SetFont("SS_DESCTITLEFONT")
 
@@ -76,7 +78,7 @@ vgui.Register('DSSCustomizerMode', {
                 end)
             end)
 
-            vgui("DSSButton", function(p)
+            ui.DSSButton(function(p)
                 p:SetFont("SS_DESCTITLEFONT")
                 p:SetText("Done")
 
@@ -102,7 +104,9 @@ vgui.Register('DSSCustomizerMode', {
         end)
 
         -- p:InvalidateLayout()
-        vgui("Panel", self, function(p)
+        ui.Panel({
+            parent = self
+        }, function(p)
             p:SetZPos(1)
             p:Dock(BOTTOM)
             p:SetTall(DSS_DIVIDERSIZE)
@@ -112,7 +116,9 @@ vgui.Register('DSSCustomizerMode', {
             end
         end)
 
-        self.controlzone = vgui("DSSEqualWidthLayout", self, function(p)
+        self.controlzone = ui.DSSEqualWidthLayout({
+            parent = self
+        }, function(p)
             p:Dock(FILL)
         end)
 
@@ -121,11 +127,15 @@ vgui.Register('DSSCustomizerMode', {
     SetupControls = function(self)
         self.controlzone:Clear()
 
-        self.LeftColumn = vgui("DSSScrollPanel", self.controlzone, function(p)
+        self.LeftColumn = ui.DSSScrollPanel({
+            parent = self.controlzone
+        }, function(p)
             p:Dock(LEFT)
         end)
 
-        self.RightColumn = vgui("DSSScrollPanel", self.controlzone, function(p)
+        self.RightColumn = ui.DSSScrollPanel({
+            parent = self.controlzone
+        }, function(p)
             p:Dock(FILL)
         end)
 
@@ -138,7 +148,9 @@ vgui.Register('DSSCustomizerMode', {
         local settings = self.item.settings
 
         if settings.color then
-            vgui("DSSCustomizerColor", self.RightColumn, function(p)
+            ui.DSSCustomizerColor({
+                parent = self.RightColumn
+            }, function(p)
                 p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
 
                 p.OnValueChanged = function(pnl, vec)
@@ -149,7 +161,9 @@ vgui.Register('DSSCustomizerMode', {
         end
 
         if settings.imgur then
-            vgui("DSSCustomizerImgur", self.RightColumn, function(p)
+            ui.DSSCustomizerImgur({
+                parent = self.RightColumn
+            }, function(p)
                 p:SetValue(self.item.cfg.imgur)
 
                 p.OnValueChanged = function(pnl, imgur)
@@ -159,11 +173,13 @@ vgui.Register('DSSCustomizerMode', {
             end)
         end
 
-        local rawdata = vgui("DSSCustomizerSection", self.RightColumn, function(p)
+        local rawdata = ui.DSSCustomizerSection({
+            parent = self.RightColumn
+        }, function(p)
             p:SetVisible(false)
             p:SetText("Raw Data")
 
-            self.RawEntry = vgui("DTextEntry", function(p)
+            self.RawEntry = ui.DTextEntry(function(p)
                 p:SetMultiline(true)
                 p:SetTall(256)
                 p:Dock(TOP)
@@ -183,7 +199,9 @@ vgui.Register('DSSCustomizerMode', {
             end)
         end)
 
-        vgui("DSSButton", self.RightColumn, function(p)
+        ui.DSSButton({
+            parent = self.RightColumn
+        }, function(p)
             p:SetText("Show Raw Data")
             p:SetTall(32)
 
@@ -217,7 +235,7 @@ function ImageGetterPanel()
     tw = tw / big * dispmax
     th = th / big * dispmax
 
-    vgui("DFrame", function(p)
+    ui.DFrame(function(p)
         local frame = p
         p:SetSize(tw + 10, th + 30 + 24)
         -- p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN + 24, SS_COMMONMARGIN, SS_COMMONMARGIN)
@@ -237,7 +255,7 @@ function ImageGetterPanel()
             BrandBackgroundPattern(0, 0, w, 24, 0)
         end
 
-        vgui("DSSButton", function(p)
+        ui.DSSButton(function(p)
             p:SetPos(128, 0)
             p:Dock(BOTTOM)
             -- p:DockMargin(0, SS_COMMONMARGIN, 0, 0)
@@ -287,7 +305,7 @@ function ImageGetterPanel()
             end
         end)
 
-        vgui("DImage", function(p)
+        ui.DImage(function(p)
             p:Dock(FILL)
             p:SetImage(mat)
             p:GetMaterial():SetInt("$flags", 0)
@@ -314,14 +332,14 @@ end
 --     end
 --     local itmcp = settings.pos
 --     if itmcp then
---         self.Position = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+--         self.Position = ui.DSSCustomizerVectorSection({parent=self.LeftColumn},function(p)
 --             p:SetForPosition(itmcp.min, itmcp.max, self.item.cfg["pos" .. suffix] or Vector(0,0,0))
 --             p.OnValueChanged = transformslidersupdate
 --         end)
 --     end
 --     -- local itmca = settings.ang
 --     -- if itmca then
---     --     self.Scale = vgui('DSSCustomizerVectorSection', self.LeftColumn, function(p)
+--     --     self.Scale = ui.DSSCustomizerVectorSection({parent=self.LeftColumn},function(p)
 --     --         p:SetForAngle(itmcs.min, itmcs.scale.max, self.item.cfg["scale" .. suffix] or Vector(1,1,1))
 --     --         p.OnValueChanged = transformslidersupdate
 --     --     end)

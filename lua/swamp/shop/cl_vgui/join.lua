@@ -40,8 +40,8 @@ vgui.Register("DSSJoinMenu", {
 
         local joinmenu = self
 
-        vgui_parent(self, function(p)
-            self.info = vgui("DLabel", function(p)
+        ui[self](function(p)
+            self.info = ui.DLabel(function(p)
                 p:SetMouseInputEnabled(true)
                 p:SetText("")
 
@@ -55,7 +55,7 @@ vgui.Register("DSSJoinMenu", {
                 p:Dock(FILL)
 
                 local function button(txt)
-                    return vgui("DButton", function(p)
+                    return ui.DButton(function(p)
                         p:Dock(FILL)
                         p:SetText(txt)
                         p:SetTextColor(Color.white)
@@ -77,12 +77,12 @@ vgui.Register("DSSJoinMenu", {
                     end)
                 end
 
-                vgui("DSSEqualWidthLayout", function(p)
+                ui.DSSEqualWidthLayout(function(p)
                     p:Dock(TOP)
                     p:DockMargin(0, 96, 0, 0)
                     p:SetTall(32)
 
-                    vgui("Panel", function(p)
+                    ui.Panel(function(p)
                         p:DockPadding(40, 0, 40, 0)
                         local b = button("Join for " .. string.Comma(SS_JOIN_REWARD) .. " points")
 
@@ -93,7 +93,7 @@ vgui.Register("DSSJoinMenu", {
                         SS_JoinMenu.button1 = b
                     end)
 
-                    vgui("Panel", function(p)
+                    ui.Panel(function(p)
                         p:DockPadding(40, 0, 40, 0)
                         local b = button("Join for 2x income")
 
@@ -105,7 +105,7 @@ vgui.Register("DSSJoinMenu", {
                     end)
                 end)
 
-                vgui("DButton", function(p)
+                ui.DButton(function(p)
                     p:SetText('r')
                     p:SetColor(Color.white)
                     p:SetSize(40, 40)

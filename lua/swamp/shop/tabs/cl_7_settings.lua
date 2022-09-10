@@ -9,19 +9,21 @@ vgui.Register('DSSSettingsMode', {
     Init = function(self)
         self:DockPadding(100, 100, 100, 100)
 
-        vgui("Panel", self, function(p)
+        ui.Panel({
+            parent = self
+        }, function(p)
             p:SetTall(32)
             p:Dock(TOP)
             p:DockMargin(0, 0, 0, 8)
 
-            vgui("DLabel", function(p)
+            ui.DLabel(function(p)
                 p:SetWide(100)
                 p:Dock(LEFT)
                 p:SetText("Theme color")
             end)
 
             for k, v in pairs(BrandColors) do
-                vgui("DButton", function(p)
+                ui.DButton(function(p)
                     p:DockMargin(4, 4, 4, 4)
                     p:SetWide(24)
                     p:Dock(LEFT)
@@ -41,7 +43,9 @@ vgui.Register('DSSSettingsMode', {
             end
         end)
 
-        vgui("DLabel", self, function(p)
+        ui.DLabel({
+            parent = self
+        }, function(p)
             p:SetText("To resize the shop, drag the lower right corner (where the frog is)\n\nIf the shop is haeving prooblems, right click the close button to reset it.")
             p:Dock(TOP)
             p:SizeToContents()

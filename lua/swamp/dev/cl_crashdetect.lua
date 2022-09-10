@@ -130,7 +130,7 @@ end
 -- end
 -- -- crashwindow(delta)
 -- function crashwindow(delta)
--- vgui("DFrame", function(p)
+-- ui.DFrame(function(p)
 --     local popup = p
 --     p:SetSize(440, 210)
 --     p:Center()
@@ -145,7 +145,7 @@ end
 --     for i, line in ipairs({"It looks like your game crashed last time you played (" .. delta .. " ago).", "If so, please send a crash report to help us fix it.", "If you send a crash report, you may optionally include comments below:", "BUTTONS", "Don't send a crash report if your game closed for another reason (eg. power outage).", "If you keep crashing, try disabling playermodel downloads and the\n  \"turbo button\" in the tab menu. If you still crash, ask for help."}) do
 --         if line == "BUTTONS" then
 --             local comments
---             comments = vgui("DTextEntry", function(p)
+--             comments = ui.DTextEntry(function(p)
 --                 p:Dock(TOP)
 --                 p:DockMargin(0, 0, 0, 8)
 --                 p:SetPlaceholderText(" what were you doing when it crashed? does anything seem to cause the crash?")
@@ -158,19 +158,19 @@ end
 --                     popup:Close()
 --                 end
 --             end)
---             vgui("DPanel", function(p)
+--             ui.DPanel(function(p)
 --                 p:Dock(TOP)
 --                 p:DockMargin(0, 0, 0, 8)
 --                 p:SetTall(24)
 --                 p.Paint = noop
---                 vgui("DButton", function(p)
+--                 ui.DButton(function(p)
 --                     p:DockMargin(70, 0, 0, 0)
 --                     p:SetWide(125)
 --                     p:Dock(LEFT)
 --                     p:SetText("Send crash report")
 --                     p.DoClick = comments.OnEnter
 --                 end)
---                 vgui("DButton", function(p)
+--                 ui.DButton(function(p)
 --                     p:DockMargin(0, 0, 70, 0)
 --                     p:SetWide(125)
 --                     p:Dock(RIGHT)
@@ -181,7 +181,7 @@ end
 --                 end)
 --             end)
 --         else
---             vgui("DLabel", function(p)
+--             ui.DLabel(function(p)
 --                 p:Dock(TOP)
 --                 p:SetText(line)
 --                 p:SizeToContents()

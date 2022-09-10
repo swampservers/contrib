@@ -77,7 +77,7 @@ print("cl_spraymesh_manager.lua empty")
 --             v:Remove()
 --         end
 --         for k, v in pairs(table.Reverse(SprayList)) do
---             vgui("DButton", basedpanel.thumbnails, function(p)
+--             ui.DButton({parent=basedpanel.thumbnails},function(p)
 --                 basedpanel.thumbnails:Add(p)
 --                 local thumb = p
 --                 p.id = v[1]
@@ -128,7 +128,7 @@ print("cl_spraymesh_manager.lua empty")
 --                 end
 --                 local nsfw = p.nsfw
 --                 if nsfw ~= nil then
---                     vgui("DImage", function(p)
+--                     ui.DImage(function(p)
 --                         p:SetSize(16, 16)
 --                         local x, y = thumb:GetSize()
 --                         p:SetPos(x - 20, y - 20)
@@ -143,7 +143,7 @@ print("cl_spraymesh_manager.lua empty")
 --         if IsValid(basedpanel) then
 --             basedpanel:Remove()
 --         end
---         vgui("DFrame", function(p)
+--         ui.DFrame(function(p)
 --             basedpanel = p
 --             p:SetSize(480, 568)
 --             p:SetTitle("")
@@ -160,7 +160,7 @@ print("cl_spraymesh_manager.lua empty")
 --                 draw.DrawText("Spray Manager", "DermaLarge", 20, 4, almostwhite, TEXT_ALIGN_LEFT)
 --                 -- draw.DrawText("Recent Sprays", "DermaMedium", 20, y+h2 + 4, Color(255, 255, 255), TEXT_ALIGN_LEFT)
 --             end
---             basedpanel.inputholder = vgui("Panel", function(p)
+--             basedpanel.inputholder = ui.Panel(function(p)
 --                 p:SetTall(56)
 --                 p:Dock(TOP)
 --                 p:DockMargin(0, 16 + 8, 0, 8 + 8)
@@ -177,7 +177,7 @@ print("cl_spraymesh_manager.lua empty")
 --                     -- draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 200))
 --                     draw.DrawText(self.Text, "DermaMedium", 40, 4, self.TextColor)
 --                 end
---                 basedpanel.input = vgui("DTextEntry", function(p)
+--                 basedpanel.input = ui.DTextEntry(function(p)
 --                     -- p:Dock(TOP)
 --                     p:SetSize(160, 20)
 --                     p:SetPos(230, 28)
@@ -201,14 +201,14 @@ print("cl_spraymesh_manager.lua empty")
 --                     end
 --                 end)
 --             end)
---             basedpanel.scrollzone = vgui("DLabel", function(p)
+--             basedpanel.scrollzone = ui.DLabel(function(p)
 --                 p:Dock(BOTTOM)
 --                 p:SetText("To open this panel quickly, run in console: bind <key> spray")
 --                 p:SetContentAlignment(5)
 --             end)
---             basedpanel.scrollzone = vgui("DScrollPanel", function(p)
+--             basedpanel.scrollzone = ui.DScrollPanel(function(p)
 --                 p:Dock(FILL)
---                 basedpanel.thumbnails = vgui("DIconLayout", function(p)
+--                 basedpanel.thumbnails = ui.DIconLayout(function(p)
 --                     p:Dock(FILL)
 --                     p:SetSpaceX(10)
 --                     p:SetSpaceY(10)

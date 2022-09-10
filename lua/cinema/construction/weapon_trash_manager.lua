@@ -118,19 +118,19 @@ end
 function SWEP:PrimaryAttack()
     if CLIENT then
         if not IsValid(TRASHMANAGERWINDOW) then
-            TRASHMANAGERWINDOW = vgui("DFrame", function(p)
+            TRASHMANAGERWINDOW = ui.DFrame(function(p)
                 p:SetTitle("Trash manager")
                 p:SetSize(300, 360)
                 p:Center()
                 p:MakePopup()
                 p:CloseOnEscape()
 
-                vgui("DLabel", function(p)
+                ui.DLabel(function(p)
                     p:Dock(TOP)
                     p:SetText("You can delete any props in an area you own.")
                 end)
 
-                TRASHMANAGERDELETEBUTTON = vgui("DButton", function(p)
+                TRASHMANAGERDELETEBUTTON = ui.DButton(function(p)
                     p:Dock(TOP)
                     p:SetText("")
 
@@ -141,11 +141,11 @@ function SWEP:PrimaryAttack()
                     end
                 end)
 
-                vgui("DHorizontalDivider", function(p)
+                ui.DHorizontalDivider(function(p)
                     p:Dock(TOP)
                 end)
 
-                vgui("DLabel", function(p)
+                ui.DLabel(function(p)
                     p:Dock(TOP)
                     p:SetText([[You can save any props spawned from your inventory.
 This will save any of your frozen props on the map,
@@ -153,7 +153,7 @@ but you need a nearby theater/field to respawn them.]])
                     p:SizeToContentsY()
                 end)
 
-                TRASHMANAGERSAVEBUTTON = vgui("DButton", function(p)
+                TRASHMANAGERSAVEBUTTON = ui.DButton(function(p)
                     p:Dock(TOP)
                     p:SetText("")
 
@@ -190,11 +190,11 @@ but you need a nearby theater/field to respawn them.]])
                     end
                 end, function(text) end)
 
-                vgui("DHorizontalDivider", function(p)
+                ui.DHorizontalDivider(function(p)
                     p:Dock(TOP)
                 end)
 
-                TRASHMANAGERFILES = vgui("DListView", function(p)
+                TRASHMANAGERFILES = ui.DListView(function(p)
                     p:Dock(FILL)
                     p:SetMultiSelect(false)
                     p:AddColumn("Saved builds")
@@ -243,10 +243,12 @@ but you need a nearby theater/field to respawn them.]])
                                 table.remove(d)
                             end
 
-                            TRASHMANAGERFILEBUTTONS = vgui("Panel", TRASHMANAGERWINDOW, function(p)
+                            TRASHMANAGERFILEBUTTONS = ui.Panel({
+                                parent = TRASHMANAGERWINDOW
+                            }, function(p)
                                 p:Dock(BOTTOM)
 
-                                vgui("DButton", function(p)
+                                ui.DButton(function(p)
                                     p:SetText("Delete")
                                     p:Dock(LEFT)
 
@@ -256,7 +258,7 @@ but you need a nearby theater/field to respawn them.]])
                                     end
                                 end)
 
-                                vgui("DButton", function(p)
+                                ui.DButton(function(p)
                                     local price = TRASH_MANAGER_BASE_LOAD_PRICE
 
                                     for k, v in pairs(d) do
@@ -297,14 +299,14 @@ but you need a nearby theater/field to respawn them.]])
                     p:Reset()
                 end)
 
-                vgui("DButton", function(p)
+                ui.DButton(function(p)
                     p:Dock(BOTTOM)
                     p:SetText("Manage Friends")
 
                     function p:DoClick()
                         TRASHMANAGERWINDOW:Close()
 
-                        vgui("DFrame", function(p)
+                        ui.DFrame(function(p)
                             p:SetTitle("Trash friends")
                             p:SetSize(300, 300)
                             p:Center()
@@ -312,12 +314,12 @@ but you need a nearby theater/field to respawn them.]])
                             p:CloseOnEscape()
                             Me.TrashFriends = Me.TrashFriends or {}
 
-                            vgui("DLabel", function(p)
+                            ui.DLabel(function(p)
                                 p:Dock(TOP)
                                 p:SetText("Your friends can build in your areas.")
                             end)
 
-                            vgui("DListView", function(p)
+                            ui.DListView(function(p)
                                 p:Dock(FILL)
                                 p:SetMultiSelect(false)
                                 p:AddColumn("Player")
@@ -344,7 +346,7 @@ but you need a nearby theater/field to respawn them.]])
                     end
                 end)
 
-                vgui("DHorizontalDivider", function(p)
+                ui.DHorizontalDivider(function(p)
                     p:Dock(BOTTOM)
                 end)
             end)
