@@ -42,23 +42,36 @@ if CLIENT then
     GlobAnnce = false
 
     net.Receive("Announcement", function()
-        surface.PlaySound("npc/attack_helicopter/aheli_damaged_alarm1.wav")
-        GlobAnnce = net.ReadString()
-        local time = net.ReadUInt(8)
-
-        timer.Create("AnnouncementRemover", time, 1, function()
-            GlobAnnce = false
-        end)
+        ShowAnnouncement(net.ReadString(), net.ReadUInt(8))
     end)
 
+    function ShowAnnouncement(txt, time)
+        surface.PlaySound("npc/attack_helicopter/aheli_damaged_alarm1.wav")
+        GlobAnnce = txt
+
+        AnnouncementOpenness = AnnouncementOpenness or Anim(0, 10)
+        AnnouncementOpenness:SetTarget(1)
+
+        timer.Create("AnnouncementRemover", time or 5, 1, function()
+            AnnouncementOpenness:SetTarget(0)
+        end)
+    end
+
+    
+
     hook.Add("HUDPaint", "Drawannocnr", function()
-        if not GlobAnnce then return end
-        local bs = 15
-        surface.SetFont("DermaLarge")
-        local w, h = surface.GetTextSize(GlobAnnce)
-        draw.WordBox(bs, (ScrW() - w) / 2 - bs, (ScrH() - h) / 2 - bs, GlobAnnce, "DermaLarge", Color(255, 0, 0), Color(255, 255, 255))
-        bs = bs - 5
-        draw.WordBox(bs, (ScrW() - w) / 2 - bs, (ScrH() - h) / 2 - bs, GlobAnnce, "DermaLarge", Color(0, 0, 0), Color(255, 255, 255))
+        if AnnouncementOpenness and AnnouncementOpenness()>0 then 
+            local h = math.floor(AnnouncementOpenness() * 50) --ScrH()/8
+            render.SetScissorRect( 0, ScrH()/2 - h, ScrW(), ScrH()/2 + h, true )
+	            draw.RoundedBox( 0, 0, 0, ScrW(), ScrH(), Color.black )
+            render.SetScissorRect( 0, 0, 0, 0, false )
+                h=math.max(h-8,0)
+                local w = math.floor((math.min(AnnouncementOpenness() * 4, 1) * ScrW())/2)
+            render.SetScissorRect( ScrW()/2 - w, ScrH()/2 - h, ScrW()/2 + w, ScrH()/2 + h, true )
+                draw.RoundedBox( 0, 0, 0, ScrW(), ScrH(), Color(200, 0, 0) )
+                draw.SimpleText(GlobAnnce, FitFont("sans64", GlobAnnce, ScrW()), ScrW()/2, ScrH()/2, Color.white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            render.SetScissorRect( 0, 0, 0, 0, false )
+        end
     end)
 else
     util.AddNetworkString('Notify')

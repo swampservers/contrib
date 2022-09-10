@@ -59,7 +59,7 @@ function ENT:DrawThumbnail()
     end
 
     if self.LastSetting ~= setting then
-        if ValidPanel(self.HTML) then
+        if IsValid(self.HTML) then
             self.HTML:Remove()
         end
 
@@ -67,7 +67,7 @@ function ENT:DrawThumbnail()
         self.LastSetting = setting
         self.ThumbMat = nil
     elseif self.LastSetting and not self.ThumbMat then
-        if not ValidPanel(self.HTML) then
+        if not IsValid(self.HTML) then
             self.HTML = vgui.Create("HTML")
             self.HTML:SetSize(ThumbWidth, ThumbHeight)
             self.HTML:SetPaintedManually(true)
@@ -138,7 +138,7 @@ span {
             -- Add delay to wait for JS to run
             timer.Simple(0.1, function()
                 if not IsValid(self) then return end
-                if not ValidPanel(self.HTML) then return end
+                if not IsValid(self.HTML) then return end
                 self.HTML:UpdateHTMLTexture()
                 self.ThumbMat = self.HTML:GetHTMLMaterial()
                 self.HTML:Remove()

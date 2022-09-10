@@ -23,7 +23,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
         target = "gym"
     end
 
-    if ValidPanel(HELLTAKERFRAME) then
+    if IsValid(HELLTAKERFRAME) then
         target = "helltaker"
     end
 

@@ -254,7 +254,7 @@ function ENT:DrawHUD()
     end
 
     -- Sheet music help
-    if not ValidPanel(self.Browser) and self.BrowserHUD.Show then
+    if not IsValid(self.Browser) and self.BrowserHUD.Show then
         draw.DrawText("SPACE FOR SHEET MUSIC", "InstrumentKeyLabel", mainX + mainWidth / 2, mainY + 60, self.DefaultTextInfoColor, TEXT_ALIGN_CENTER)
     end
 
@@ -288,7 +288,7 @@ function ENT:PrecacheMaterials()
 end
 
 function ENT:OpenSheetMusic()
-    if ValidPanel(self.Browser) or not self.BrowserHUD.Show then return end
+    if IsValid(self.Browser) or not self.BrowserHUD.Show then return end
     self.Browser = vgui.Create("HTML")
     self.Browser:SetVisible(false)
     local width = self.BrowserHUD.Width
@@ -309,7 +309,7 @@ function ENT:OpenSheetMusic()
     -- This is delayed because otherwise it will not load at all
     -- for some silly reason...
     timer.Simple(.1, function()
-        if ValidPanel(self.Browser) then
+        if IsValid(self.Browser) then
             self.Browser:SetVisible(true)
             self.Browser:SetPos(x, self.BrowserHUD.Y)
             self.Browser:SetSize(width, self.BrowserHUD.Height)
@@ -318,13 +318,13 @@ function ENT:OpenSheetMusic()
 end
 
 function ENT:CloseSheetMusic()
-    if not ValidPanel(self.Browser) then return end
+    if not IsValid(self.Browser) then return end
     self.Browser:Remove()
     self.Browser = nil
 end
 
 function ENT:ToggleSheetMusic()
-    if ValidPanel(self.Browser) then
+    if IsValid(self.Browser) then
         self:CloseSheetMusic()
     else
         self:OpenSheetMusic()
@@ -332,13 +332,13 @@ function ENT:ToggleSheetMusic()
 end
 
 function ENT:SheetMusicForward()
-    if not ValidPanel(self.Browser) then return end
+    if not IsValid(self.Browser) then return end
     self.Browser:Exec("pageForward()")
     self:EmitSound(self.PageTurnSound, 100, math.random(120, 150))
 end
 
 function ENT:SheetMusicBack()
-    if not ValidPanel(self.Browser) then return end
+    if not IsValid(self.Browser) then return end
     self.Browser:Exec("pageBack()")
     self:EmitSound(self.PageTurnSound, 100, math.random(100, 120))
 end
@@ -361,7 +361,7 @@ end
 function ENT:ToggleAdvancedMode()
     self.AdvancedMode = not self.AdvancedMode
 
-    if ValidPanel(self.Browser) then
+    if IsValid(self.Browser) then
         self:CloseSheetMusic()
         self:OpenSheetMusic()
     end

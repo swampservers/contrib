@@ -209,11 +209,11 @@ if CLIENT then
     hook.Add("Think", "RemoveVoiceIcons", function()
         local visible = not (IsValid(Me) and Me:UsingWeapon("weapon_camera"))
 
-        if ValidPanel(g_VoicePanelList) then
+        if IsValid(g_VoicePanelList) then
             g_VoicePanelList:SetVisible(visible)
         end
 
-        if SwampChat and ValidPanel(SwampChat.Panel) then
+        if SwampChat and IsValid(SwampChat.Panel) then
             SwampChat.Panel:SetVisible(visible or SwampChat.IsOpen)
         end
     end)

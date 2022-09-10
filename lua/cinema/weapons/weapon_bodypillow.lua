@@ -455,7 +455,7 @@ end
 
 function SWEP:Reload()
     if CLIENT then
-        if ValidPanel(self.OPENREQUEST) then return end
+        if IsValid(self.OPENREQUEST) then return end
         local curl, cown = self:GetImgur()
 
         self.OPENREQUEST = Derma_StringRequest("Custom Waifu", "Post an imgur direct URL, such as:\nhttps://i.imgur.com/4aIcUgd.jpg\nLeft half is front of pillow, right half is back.", curl, function(url)

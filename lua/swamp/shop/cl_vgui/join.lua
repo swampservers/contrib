@@ -1,6 +1,27 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local cvar = CreateClientConVar("swamp_join_dismiss", "0")
 
+
+local function triangle(grow)
+    local x1, y1 = 100, 40
+
+    return {
+        {
+            x = x1 - grow,
+            y = y1
+        },
+        {
+            x = x1 + 100 + grow,
+            y = y1
+        },
+        {
+            x = x1 + 50,
+            y = y1 + 50 + grow
+        },
+    }
+end
+
+
 vgui.Register("DSSJoinMenu", {
     Init = function(self)
         if IsValid(SS_JoinMenu) then
@@ -140,7 +161,7 @@ vgui.Register("DSSJoinMenu", {
         --     return
         -- end
         local e = self.Expansion
-        self:SetVisible(SS_ShopMenu:IsVisible())
+        self:SetVisible(SS_ShopMenu:IsVisible() and SS_ShopMenu:GetParent():IsVisible())
         self:SetSize(Lerp(e, 450, 750), Lerp(e, 72, 380))
         local x, y = SS_ShopMenu:LocalToScreen(-30, SS_ShopMenu.botbar:GetY() - 80)
         self:SetPos(Lerp(e, x, (ScrW() - self:GetWide()) / 2), Lerp(e, y, (ScrH() - self:GetTall()) / 2))
@@ -150,111 +171,88 @@ vgui.Register("DSSJoinMenu", {
         self.info:SetAlpha(a * 255)
     end,
     Paint = function(self, w, h)
-        ppp(self, w, h)
+        local nwp = Me and Me.NWP or {}
+        local e = self.Expansion
+        local l = Lerp(e, Lerp(0.3, (math.sin(SysTime() * 3) + 1) * 0.5, 1), 0)
+        -- local c = Color(Lerp(l, 27, 255), Lerp(l, 40, 255), Lerp(l, 56, 255))
+        -- local c = Color(Lerp(l, 40, 255), Lerp(l, 60, 255), Lerp(l, 30, 255))
+        local linecolor = Color(Lerp(l, 128, 64), Lerp(l, 128, 255), Lerp(l, 128, 64))
+        surface.SetDrawColor(linecolor)
+        draw.NoTexture()
+        surface.DrawPoly(triangle(4))
+        surface.DrawRect(-3, -3, w + 6, h + 6)
+        local shade = 50
+        surface.SetDrawColor(shade, shade, shade, 255)
+        surface.DrawPoly(triangle(0))
+        surface.DrawRect(0, 0, w, h)
+        draw.VerticalGradient(Color.black, 0, 0, w, h, 0.8, 0)
+        linecolor.a = 255 * e
+        surface.SetDrawColor(linecolor)
+        surface.DrawRect(w / 2 - 1, 50, 2, h - 100)
+        surface.SetDrawColor(255, 255, 255, 255)
+        local s = 64 --Lerp(e, 64, 80)
+        local pad = (h - s) / 2
+        local m = Material["swamp/join/steam_text.png"]
+        surface.SetMaterial(m)
+        local dw = Lerp(e, s, s * m:Width() / m:Height())
+        surface.DrawTexturedRectUV(Lerp(e, pad, w / 4 - dw / 2), Lerp(e, pad, 16), dw, s, 0, 0, Lerp(e, m:Height() / m:Width(), 1), 1)
+        local m = Material["swamp/join/discord_text.png"]
+        surface.SetMaterial(m)
+        local dw = Lerp(e, s, s * m:Width() / m:Height())
+        surface.DrawTexturedRectUV(Lerp(e, w - (dw + pad), w * 3 / 4 - dw / 2), Lerp(e, pad, 16), dw, s, 0, 0, Lerp(e, m:Height() / m:Width(), 1), 1)
+        local a = e * 2 - 1
+    
+        if a > 0 then
+            local c = Color(255, 255, 255, 255 * a)
+            surface.SetDrawColor(c)
+            self.button1:SetVisible(not (nwp.in_steamgroup and nwp.in_steamchat))
+            self.button2:SetVisible(not nwp.in_discord)
+    
+            -- "(Requires joining Steam too)"
+            if nwp.in_steamgroup and nwp.in_steamchat then
+                draw.SimpleText("Steam connected!", Font.sansbold36, w / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            else
+                local ofs = 0
+    
+                if nwp.in_steamgroup or nwp.in_steamchat then
+                    local white = (math.sin(SysTime() * 3) + 1) * 0.5
+                    draw.SimpleText("You are only in the " .. (nwp.in_steamgroup and "group" or "chat"), Font.sansbold24, w / 4, h - 20, Color(255, 255 * white, 255 * white, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    ofs = -16
+                end
+    
+                local m = Material["swamp/join/steam_instructions.png"]
+                surface.SetMaterial(m)
+                surface.DrawTexturedRect(w / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40 + ofs, m:Width(), m:Height())
+                draw.SimpleText("Join both the group and chat!", Font.sansbold24, w / 4, h - 30 + ofs, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
+    
+            if nwp.in_discord then
+                draw.SimpleText("Discord connected!", Font.sansbold36, w * 3 / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText((nwp.in_steamgroup and nwp.in_steamchat) and "2x income unlocked!" or "Join Steam too for 2x income", Font.sansbold24, w * 3 / 4, h / 2 + 50, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            else
+                if not (nwp.in_steamgroup and nwp.in_steamchat) then
+                    draw.SimpleText("(Requires joining Steam too)", "DermaDefault", w * 3 / 4, 140, Color(160, 160, 160, c.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                end
+    
+                local m = Material["swamp/join/discord_instructions.png"]
+                surface.SetMaterial(m)
+                surface.DrawTexturedRect(w * 3 / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40, m:Width(), m:Height())
+                draw.SimpleText("Make sure to link your Steam account!", Font.sansbold24, w * 3 / 4, h - 30, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
+        end
+    
+        a = -a
+    
+        if a > 0 then
+            local s = 16
+    
+            if nwp.in_steamgroup and nwp.in_steamchat and nwp.in_discord then
+                draw.SimpleText("2x income unlocked!", Font.Lato32_800, w / 2, h / 2 - s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("Click to dismiss", Font.Lato24_800, w / 2, h / 2 + s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            else
+                draw.SimpleText("Join us on Steam & Discord", Font.Lato30_800, w / 2, h / 2 - s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                draw.SimpleText("for 2x income & " .. string.Comma(SS_JOIN_REWARD) .. " points!", Font.Lato26_800, w / 2, h / 2 + s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
+        end
     end
 }, "DLabel")
-
-local function triangle(grow)
-    local x1, y1 = 100, 40
-
-    return {
-        {
-            x = x1 - grow,
-            y = y1
-        },
-        {
-            x = x1 + 100 + grow,
-            y = y1
-        },
-        {
-            x = x1 + 50,
-            y = y1 + 50 + grow
-        },
-    }
-end
-
-function ppp(self, w, h)
-    local nwp = Me and Me.NWP or {}
-    local e = self.Expansion
-    local l = Lerp(e, Lerp(0.3, (math.sin(SysTime() * 3) + 1) * 0.5, 1), 0)
-    -- local c = Color(Lerp(l, 27, 255), Lerp(l, 40, 255), Lerp(l, 56, 255))
-    -- local c = Color(Lerp(l, 40, 255), Lerp(l, 60, 255), Lerp(l, 30, 255))
-    local linecolor = Color(Lerp(l, 128, 64), Lerp(l, 128, 255), Lerp(l, 128, 64))
-    surface.SetDrawColor(linecolor)
-    draw.NoTexture()
-    surface.DrawPoly(triangle(4))
-    surface.DrawRect(-3, -3, w + 6, h + 6)
-    local shade = 50
-    surface.SetDrawColor(shade, shade, shade, 255)
-    surface.DrawPoly(triangle(0))
-    surface.DrawRect(0, 0, w, h)
-    draw.VerticalGradient(Color.black, 0, 0, w, h, 0.8, 0)
-    linecolor.a = 255 * e
-    surface.SetDrawColor(linecolor)
-    surface.DrawRect(w / 2 - 1, 50, 2, h - 100)
-    surface.SetDrawColor(255, 255, 255, 255)
-    local s = 64 --Lerp(e, 64, 80)
-    local pad = (h - s) / 2
-    local m = Material["swamp/join/steam_text.png"]
-    surface.SetMaterial(m)
-    local dw = Lerp(e, s, s * m:Width() / m:Height())
-    surface.DrawTexturedRectUV(Lerp(e, pad, w / 4 - dw / 2), Lerp(e, pad, 16), dw, s, 0, 0, Lerp(e, m:Height() / m:Width(), 1), 1)
-    local m = Material["swamp/join/discord_text.png"]
-    surface.SetMaterial(m)
-    local dw = Lerp(e, s, s * m:Width() / m:Height())
-    surface.DrawTexturedRectUV(Lerp(e, w - (dw + pad), w * 3 / 4 - dw / 2), Lerp(e, pad, 16), dw, s, 0, 0, Lerp(e, m:Height() / m:Width(), 1), 1)
-    local a = e * 2 - 1
-
-    if a > 0 then
-        local c = Color(255, 255, 255, 255 * a)
-        surface.SetDrawColor(c)
-        self.button1:SetVisible(not (nwp.in_steamgroup and nwp.in_steamchat))
-        self.button2:SetVisible(not nwp.in_discord)
-
-        -- "(Requires joining Steam too)"
-        if nwp.in_steamgroup and nwp.in_steamchat then
-            draw.SimpleText("Steam connected!", Font.sansbold36, w / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        else
-            local ofs = 0
-
-            if nwp.in_steamgroup or nwp.in_steamchat then
-                local white = (math.sin(SysTime() * 3) + 1) * 0.5
-                draw.SimpleText("You are only in the " .. (nwp.in_steamgroup and "group" or "chat"), Font.sansbold24, w / 4, h - 20, Color(255, 255 * white, 255 * white, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                ofs = -16
-            end
-
-            local m = Material["swamp/join/steam_instructions.png"]
-            surface.SetMaterial(m)
-            surface.DrawTexturedRect(w / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40 + ofs, m:Width(), m:Height())
-            draw.SimpleText("Join both the group and chat!", Font.sansbold24, w / 4, h - 30 + ofs, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        end
-
-        if nwp.in_discord then
-            draw.SimpleText("Discord connected!", Font.sansbold36, w * 3 / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            draw.SimpleText((nwp.in_steamgroup and nwp.in_steamchat) and "2x income unlocked!" or "Join Steam too for 2x income", Font.sansbold24, w * 3 / 4, h / 2 + 50, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        else
-            if not (nwp.in_steamgroup and nwp.in_steamchat) then
-                draw.SimpleText("(Requires joining Steam too)", "DermaDefault", w * 3 / 4, 140, Color(160, 160, 160, c.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            end
-
-            local m = Material["swamp/join/discord_instructions.png"]
-            surface.SetMaterial(m)
-            surface.DrawTexturedRect(w * 3 / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40, m:Width(), m:Height())
-            draw.SimpleText("Make sure to link your Steam account!", Font.sansbold24, w * 3 / 4, h - 30, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        end
-    end
-
-    a = -a
-
-    if a > 0 then
-        local s = 16
-
-        if nwp.in_steamgroup and nwp.in_steamchat and nwp.in_discord then
-            draw.SimpleText("2x income unlocked!", Font.Lato32_800, w / 2, h / 2 - s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            draw.SimpleText("Click to dismiss", Font.Lato24_800, w / 2, h / 2 + s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        else
-            draw.SimpleText("Join us on Steam & Discord", Font.Lato30_800, w / 2, h / 2 - s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            draw.SimpleText("for 2x income & " .. string.Comma(SS_JOIN_REWARD) .. " points!", Font.Lato26_800, w / 2, h / 2 + s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        end
-    end
-end

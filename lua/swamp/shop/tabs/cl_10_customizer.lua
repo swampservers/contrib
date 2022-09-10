@@ -18,7 +18,6 @@ vgui.Register('DSSEqualWidthLayout', {
 }, "Panel")
 
 vgui.Register('DSSCustomizerMode', {
-    NeedsKeyboard = true,
     OpensOver = true,
     Title = "Customizer",
     TitleNote = "WARNING: Pornographic images or builds are not allowed!",
@@ -164,7 +163,6 @@ vgui.Register('DSSCustomizerMode', {
             p:SetVisible(false)
             p:SetText("Raw Data")
 
-            -- p:SetKeyboardInputEnabled(true)
             self.RawEntry = vgui("DTextEntry", function(p)
                 p:SetMultiline(true)
                 p:SetTall(256)
