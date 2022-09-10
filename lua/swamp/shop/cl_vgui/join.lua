@@ -1,7 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local cvar = CreateClientConVar("swamp_join_dismiss", "0")
 
-
 local function triangle(grow)
     local x1, y1 = 100, 40
 
@@ -20,7 +19,6 @@ local function triangle(grow)
         },
     }
 end
-
 
 vgui.Register("DSSJoinMenu", {
     Init = function(self)
@@ -201,31 +199,31 @@ vgui.Register("DSSJoinMenu", {
         local dw = Lerp(e, s, s * m:Width() / m:Height())
         surface.DrawTexturedRectUV(Lerp(e, w - (dw + pad), w * 3 / 4 - dw / 2), Lerp(e, pad, 16), dw, s, 0, 0, Lerp(e, m:Height() / m:Width(), 1), 1)
         local a = e * 2 - 1
-    
+
         if a > 0 then
             local c = Color(255, 255, 255, 255 * a)
             surface.SetDrawColor(c)
             self.button1:SetVisible(not (nwp.in_steamgroup and nwp.in_steamchat))
             self.button2:SetVisible(not nwp.in_discord)
-    
+
             -- "(Requires joining Steam too)"
             if nwp.in_steamgroup and nwp.in_steamchat then
                 draw.SimpleText("Steam connected!", Font.sansbold36, w / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             else
                 local ofs = 0
-    
+
                 if nwp.in_steamgroup or nwp.in_steamchat then
                     local white = (math.sin(SysTime() * 3) + 1) * 0.5
                     draw.SimpleText("You are only in the " .. (nwp.in_steamgroup and "group" or "chat"), Font.sansbold24, w / 4, h - 20, Color(255, 255 * white, 255 * white, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                     ofs = -16
                 end
-    
+
                 local m = Material["swamp/join/steam_instructions.png"]
                 surface.SetMaterial(m)
                 surface.DrawTexturedRect(w / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40 + ofs, m:Width(), m:Height())
                 draw.SimpleText("Join both the group and chat!", Font.sansbold24, w / 4, h - 30 + ofs, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
-    
+
             if nwp.in_discord then
                 draw.SimpleText("Discord connected!", Font.sansbold36, w * 3 / 4, h / 2, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 draw.SimpleText((nwp.in_steamgroup and nwp.in_steamchat) and "2x income unlocked!" or "Join Steam too for 2x income", Font.sansbold24, w * 3 / 4, h / 2 + 50, c, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -233,19 +231,19 @@ vgui.Register("DSSJoinMenu", {
                 if not (nwp.in_steamgroup and nwp.in_steamchat) then
                     draw.SimpleText("(Requires joining Steam too)", "DermaDefault", w * 3 / 4, 140, Color(160, 160, 160, c.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 end
-    
+
                 local m = Material["swamp/join/discord_instructions.png"]
                 surface.SetMaterial(m)
                 surface.DrawTexturedRect(w * 3 / 4 - m:Width() / 2, h / 2 - m:Height() / 2 + 40, m:Width(), m:Height())
                 draw.SimpleText("Make sure to link your Steam account!", Font.sansbold24, w * 3 / 4, h - 30, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
-    
+
         a = -a
-    
+
         if a > 0 then
             local s = 16
-    
+
             if nwp.in_steamgroup and nwp.in_steamchat and nwp.in_discord then
                 draw.SimpleText("2x income unlocked!", Font.Lato32_800, w / 2, h / 2 - s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 draw.SimpleText("Click to dismiss", Font.Lato24_800, w / 2, h / 2 + s, Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
