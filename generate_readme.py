@@ -7,8 +7,8 @@ import shutil
 
 print("generating readme")
 
-lua_dir = "/swamp/workspace"
-output_dir = "/swamp/repos/contrib"
+lua_dir = "/swamp/gmod"
+output_dir = "/swamp/gmod/repos/contrib"
 
 luadocs = []
 

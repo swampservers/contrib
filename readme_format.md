@@ -20,6 +20,21 @@ All models/materials/sounds in this repository will be automatically uploaded to
 - Make your code compatible with our [loading system](https://github.com/swampservers/contrib/blob/master/lua/autorun/swamp.lua).
 - Try to put cinema-specific code in gamemodes/cinema/ and generic (cross-server) code in lua/. Both folders are loaded using our loading system.
 
+
+# Code Style
+
+Name stuff like this. A lot of current code doesn't conform, but this is the style:
+- local my_var = 1
+- local function my_func()
+- tab.data_member = 1
+- GlobalVariable = 1
+- function GlobalFunc()
+- function tab:FunctionMember() -- use this naming for callable tables as well
+- panel.ChildPanel = ui.Label()
+- CONSTANT_VALUE = 1
+
+Never use capital letters when naming local vars/functions
+
 # API
 
 DOCSGOHERE
