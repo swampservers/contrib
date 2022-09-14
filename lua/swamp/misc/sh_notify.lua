@@ -3,10 +3,10 @@ if CLIENT then
     local notifications = {}
 
     net.Receive('Notify', function(length)
-        LocalPlayerNotify(net.ReadString())
+        Notify(net.ReadString())
     end)
 
-    function LocalPlayerNotify(str)
+    function Notify(str)
         print(str)
 
         table.insert(notifications, 1, {
@@ -14,6 +14,8 @@ if CLIENT then
             pos = 1
         })
     end
+
+    LocalPlayerNotify = Notify
 
     hook.Add("HUDDrawScoreBoard", "HUDPaint_PSNotification", function()
         local t = SysTime()

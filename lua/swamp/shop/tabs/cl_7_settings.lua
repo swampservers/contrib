@@ -2,10 +2,10 @@
     name = "Settings",
     icon = "cog",
     pos = "bottom",
-    class = "DSSSettingsMode",
+    class = "ShopSettingsMode",
 })
 
-vgui.Register('DSSSettingsMode', {
+vgui.Register('ShopSettingsMode', {
     Init = function(self)
         self:DockPadding(100, 100, 100, 100)
 
@@ -55,4 +55,4 @@ vgui.Register('DSSSettingsMode', {
         self.Think = nil
     end,
     Paint = function(self) end
-}, 'DSSMode')
+}, 'ShopMode')

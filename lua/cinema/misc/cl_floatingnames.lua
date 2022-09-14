@@ -33,13 +33,13 @@ local function DrawName(ply, opacityScale)
     if health < 1 then
         local barw, barh = math.max(nw, 200), 9
 
-        draw.Rect(1, topy + 2 - barh, barw, barh, {0, 0, 0, 255 * math.pow(opacity / 255, 0.5)})
+        draw.Box(1, topy + 2 - barh, barw, barh, {0, 0, 0, 255 * math.pow(opacity / 255, 0.5)})
 
         local part = math.floor(barw * health)
 
-        draw.Rect(0, topy - barh, part, barh, {255, 255 * health, 255 * health, opacity})
+        draw.Box(0, topy - barh, part, barh, {255, 255 * health, 255 * health, opacity})
 
-        draw.Rect(part, topy - barh, barw - part, barh, {0, 0, 0, opacity})
+        draw.Box(part, topy - barh, barw - part, barh, {0, 0, 0, opacity})
     end
 
     if ply:IsAFK() then

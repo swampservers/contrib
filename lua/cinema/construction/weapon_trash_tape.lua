@@ -137,7 +137,7 @@ function SWEP:Reload()
 
             net.SendToServer()
         else
-            SS_Products.trash.actions.Buy()
+            ShopProducts.trash.actions.Buy()
         end
     end
 

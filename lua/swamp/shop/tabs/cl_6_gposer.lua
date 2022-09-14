@@ -2,10 +2,10 @@
     name = "GPoser",
     icon = "hand-peace",
     pos = "bottom",
-    class = "DSSGPoserMode",
+    class = "ShopGPoserMode",
 })
 
-vgui.Register('DSSGPoserMode', {
+vgui.Register('ShopGPoserMode', {
     Init = function(self)
         local mode = self
         self:DockPadding(100, 100, 100, 100)
@@ -204,4 +204,4 @@ vgui.Register('DSSGPoserMode', {
         end
     end,
     Paint = function(self) end
-}, 'DSSMode')
+}, 'ShopMode')

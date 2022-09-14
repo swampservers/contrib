@@ -43,57 +43,28 @@ SS_ColorWhite = Color(255, 255, 255)
 SS_ColorBlack = Color(0, 0, 0)
 SS_CORNERCOMMON = 4
 
-function SS_GetFrame(pnl)
-    local par = pnl
-
-    while IsValid(par) do
-        if par:GetParent() == vgui.GetWorldPanel() then return par end
-        par = par:GetParent()
-    end
-end
-
---if you want to change how every single rectangle is drawn
-SS_GLOBAL_RECT = function(x, y, w, h, color)
-    surface.SetDrawColor(color)
-    surface.DrawRect(x, y, w, h)
-end
-
---draw.RoundedBox( SS_CORNERCOMMON, 0,0, w,h, color )
---extra function if i need a particular visual to stand out for debugging
-SS_PaintDirty = function(pnl, w, h)
-    surface.SetDrawColor(Color(255, 0, 255))
-    SS_GLOBAL_RECT(0, 0, w, h, Color(255, 0, 255))
-end
-
-SS_PaintBrand = function(pnl, w, h)
-    SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_Brand)
-end
-
--- SS_PaintBrandDark = function(pnl, w, h)
---     SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_BrandDark)
--- end
 SS_PaintButtonBrandHL = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, 0, 0, w, h)
+    UI_DrawPanelShadow(pnl, 0, 0, w, h)
 
     if pnl.Depressed then
         pnl:SetTextColor(SS_ColorWhite)
         surface.SetDrawColor(MenuTheme_Brand)
-        SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_Brand)
+        draw.Box(0, 0, w, h, MenuTheme_Brand)
     else
         pnl:SetTextColor(SS_SwitchableColor)
-        SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_FG)
+        draw.Box(0, 0, w, h, MenuTheme_FG)
     end
 end
 
 SS_PaintFG = function(pnl, w, h)
     --surface.SetDrawColor(MenuTheme_FG)
     --surface.DrawRect(0, 0, w, h)
-    SS_DrawPanelShadow(pnl, 0, 0, w, h)
-    SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_FG)
+    UI_DrawPanelShadow(pnl, 0, 0, w, h)
+    draw.Box(0, 0, w, h, MenuTheme_FG)
 end
 
 SS_PaintBG = function(pnl, w, h)
-    SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_BG)
+    draw.Box(0, 0, w, h, MenuTheme_BG)
 end
 
 SS_PaintTileInset = function(pnl, w, h)
@@ -101,72 +72,33 @@ SS_PaintTileInset = function(pnl, w, h)
 end
 
 SS_PaintMD = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, 0, 0, w, h)
-    SS_GLOBAL_RECT(0, 0, w, h, MenuTheme_MD)
+    UI_DrawPanelShadow(pnl, 0, 0, w, h)
+    draw.Box(0, 0, w, h, MenuTheme_MD)
 end
 
 SS_PaintDarkenOnHover = function(pnl, w, h)
     if pnl:IsHovered() then
-        SS_GLOBAL_RECT(0, 0, w, h, Color(0, 0, 0, 100))
+        draw.Box(0, 0, w, h, Color(0, 0, 0, 100))
     end
 end
 
 SS_PaintShaded = function(pnl, w, h, alpha)
     --surface.SetDrawColor(Color(0, 0, 0, 100))
     --surface.DrawRect(0, 0, w, h)
-    SS_GLOBAL_RECT(0, 0, w, h, Color(0, 0, 0, alpha or 100))
+    draw.Box(0, 0, w, h, Color(0, 0, 0, alpha or 100))
 end
 
 SS_PaintFGAlpha = function(pnl, w, h, alpha)
     --surface.SetDrawColor(Color(0, 0, 0, 100))
     --surface.DrawRect(0, 0, w, h)
-    SS_GLOBAL_RECT(0, 0, w, h, ColorAlpha(MenuTheme_FG, alpha or 100))
+    draw.Box(0, 0, w, h, ColorAlpha(MenuTheme_FG, alpha or 100))
 end
 
 SS_PaintBrandStripes = function(pnl, w, h)
-    SS_DrawPanelShadow(pnl, 0, 0, w, h)
+    UI_DrawPanelShadow(pnl, 0, 0, w, h)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(0, 0, w, h)
     BrandBackgroundPattern(0, 0, w, h, 0)
-end
-
-SS_COMMONMARGIN = 8
-SS_SMALLMARGIN = 2
-SS_TILE_SIZE = 156
-SS_RPANEWIDTH = 344
-SS_SCROLL_WIDTH = 16
-SS_SUBCATEGORY_HEIGHT = 36
-SS_NAVBARHEIGHT = 56
-SS_BOTBARHEIGHT = 88
-SS_BOTBARSUBHEIGHT = 38
-SS_ROOM_TILES_W = 5
-SS_ROOM_TILES_H = 4
-SS_ROOM_SUBCAT = 1
-SS_CUSTOMIZER_HEADINGSIZE = 64
-SS_MENUWIDTH = SS_RPANEWIDTH
-SS_MENUWIDTH = SS_MENUWIDTH + SS_TILE_SIZE * SS_ROOM_TILES_W
-SS_MENUWIDTH = SS_MENUWIDTH + SS_COMMONMARGIN * SS_ROOM_TILES_W
-SS_MENUWIDTH = SS_MENUWIDTH + SS_SCROLL_WIDTH
-SS_MENUWIDTH = SS_MENUWIDTH + SS_COMMONMARGIN * 3
-SS_MENUHEIGHT = SS_NAVBARHEIGHT * 1
-SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_SUBCATEGORY_HEIGHT + SS_COMMONMARGIN) * SS_ROOM_SUBCAT
-SS_MENUHEIGHT = SS_MENUHEIGHT + (SS_TILE_SIZE + SS_COMMONMARGIN) * SS_ROOM_TILES_H
-SS_MENUHEIGHT = SS_MENUHEIGHT + SS_COMMONMARGIN * 1
-SS_MENUHEIGHT = SS_MENUHEIGHT + SS_BOTBARHEIGHT
-
---get the width of usable space in the left side panel
-function SS_GetMainGridSpace()
-    return SS_MENUWIDTH - SS_COMMONMARGIN * 2 - SS_RPANEWIDTH
-end
-
---get the height
-function SS_GetCustomizerHeight()
-    return SS_MENUHEIGHT - SS_BOTBARHEIGHT - SS_NAVBARHEIGHT - SS_CUSTOMIZER_HEADINGSIZE * 2 - SS_COMMONMARGIN * 4
-end
-
---get the of 1/div of the usable grid space, taking into account the spaces between
-function SS_GetMainGridDivision(div)
-    return (SS_GetMainGridSpace() - SS_COMMONMARGIN * math.max(div - 1, 0)) / div
 end
 
 -- 24381a
@@ -225,166 +157,6 @@ end
 
 BrandTitleBarHeight = 64
 
---------------------------------------stuff taken from the shop code below
-surface.CreateFont("LabelFont", {
-    font = "Lato-Light",
-    size = 21,
-    weight = 200
-})
-
-surface.CreateFont("SmallFont", {
-    font = "Lato",
-    size = 16,
-    weight = 200
-})
-
-local cornerMat = Material("vgui/corner_gradient")
-
-local function predrawshadow(alpha)
-    cornerMat:SetFloat("$alpha", alpha)
-    surface.SetDrawColor(0, 0, 0)
-    surface.SetMaterial(cornerMat)
-end
-
-function draw.BoxShadow(x, y, w, h, blur, alpha)
-    if cornerMat:IsError() then return end
-    local hblur = blur / 2
-    x = x - hblur
-    y = y - hblur
-    w = w / 2 + hblur
-    h = h / 2 + hblur
-    local cx, cy = x + w / 2, y + h / 2
-    local wb, hb = w / blur, h / blur
-    predrawshadow(alpha)
-    surface.DrawTexturedRectUV(x, y, w, h, 0, 0, wb, hb)
-    surface.DrawTexturedRectUV(x, y + h, w, h, 0, hb, wb, 0)
-    surface.DrawTexturedRectUV(x + w, y, w, h, wb, 0, 0, hb)
-    surface.DrawTexturedRectUV(x + w, y + h, w, h, wb, hb, 0, 0)
-end
-
-function draw.VerticalGradient(col, x, y, w, h, a_top, a_bottom)
-    if cornerMat:IsError() then return end
-    cornerMat:SetFloat("$alpha", 1)
-    surface.SetDrawColor(col)
-    surface.SetMaterial(cornerMat)
-    surface.DrawTexturedRectUV(x, y, w, h, 1, a_top, 1, a_bottom)
-end
-
-function draw.GradientShadowDown(x, y, w, h, alpha)
-    if cornerMat:IsError() then return end
-    predrawshadow(alpha)
-    surface.DrawTexturedRectUV(x, y, w, h, 1, 1, 1, 0)
-end
-
-function draw.GradientShadowUp(x, y, w, h, alpha)
-    if cornerMat:IsError() then return end
-    predrawshadow(alpha)
-    surface.DrawTexturedRectUV(x, y, w, h, 1, 0, 1, 1)
-end
-
-function draw.GradientShadowRight(x, y, w, h, alpha)
-    if cornerMat:IsError() then return end
-    predrawshadow(alpha)
-    surface.DrawTexturedRectUV(x, y, w, h, 1, 1, 0, 1)
-end
-
-function draw.WrappedText(text, font, x, y, w, col, xalign, yalign, prepare_only)
-    surface.SetFont(font)
-    surface.SetTextColor(col)
-    local buffer = {}
-    local lines = {}
-    local tw, th = 0, 0
-    local mw = 0
-
-    for spaces, word in string.gmatch(text, "(%s*)(%S+)") do
-        for s in string.gmatch(spaces, "\n") do
-            table.insert(lines, table.concat(buffer, " "))
-            buffer = {}
-        end
-
-        tw, th = surface.GetTextSize(table.concat(buffer, " ") .. " " .. word)
-
-        if tw > w then
-            table.insert(lines, table.concat(buffer, " "))
-            buffer = {}
-        else
-            mw = math.max(mw, tw)
-        end
-
-        table.insert(buffer, word)
-    end
-
-    if #buffer > 0 then
-        table.insert(lines, table.concat(buffer, " "))
-    end
-
-    if yalign == TEXT_ALIGN_BOTTOM then
-        y = y - th * (#lines - 1)
-    end
-
-    if yalign == TEXT_ALIGN_CENTER then
-        y = y - th * (#lines - 1) * 0.5
-    end
-
-    local function finish()
-        for i, line in ipairs(lines) do
-            draw.SimpleText(line, font, x, y + (i - 1) * th, col, xalign, yalign)
-        end
-    end
-
-    local h = th * #lines
-    if prepare_only then return mw, h, finish end
-    finish()
-
-    return mw, h
-end
-
-surface.CreateFont('SS_Heading', {
-    font = 'coolvetica',
-    size = 64
-})
-
-surface.CreateFont('SS_Heading2', {
-    font = 'coolvetica',
-    size = 24
-})
-
-surface.CreateFont('SS_Heading3', {
-    font = 'coolvetica',
-    size = 19
-})
-
-surface.CreateFont('SS_Heading4', {
-    font = 'Arial',
-    size = 14
-})
-
-surface.CreateFont('SS_POINTSFONT', {
-    font = 'Righteous',
-    size = 42
-})
-
-surface.CreateFont('SS_INCOMEFONT', {
-    font = 'Lato',
-    size = 22
-})
-
-surface.CreateFont('SS_JOINFONT', {
-    font = 'Lato',
-    size = 28,
-    weight = 700
-})
-
--- surface.CreateFont('SS_JOINFONTBIG', {
---     font = 'Lato',
---     size = 28,
---     weight = 700
--- })
-surface.CreateFont('SS_DESCTITLEFONT', {
-    font = 'Righteous',
-    size = 32
-})
-
 surface.CreateFont('SS_DESCFONT', {
     font = 'Lato',
     size = 18,
@@ -404,125 +176,3 @@ surface.CreateFont('SS_DESCINSTFONT', {
 
 pointshopDollarImage = Material("icon16/money_dollar.png")
 pointshopMoneyImage = Material("icon16/money.png")
-
-surface.CreateFont("SS_Default", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 13,
-    weight = 500,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Donate1", {
-    font = "Roboto",
-    size = 32,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Donate2", {
-    font = "Roboto",
-    size = 26,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Models", {
-    font = "Roboto",
-    size = 24,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_DefaultBold", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 13,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Heading1", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 18,
-    weight = 500,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Heading1Bold", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 18,
-    weight = 800,
-    antialias = true,
-})
-
-surface.CreateFont("SS_ButtonText1", {
-    font = "Roboto",
-    size = 22,
-    weight = 700,
-    antialias = true,
-})
-
-surface.CreateFont("SS_ItemText", {
-    font = system.IsLinux() and "Arial" or "Tahoma",
-    size = 11,
-    weight = 500,
-    antialias = true,
-})
-
-surface.CreateFont('SS_ProductName', {
-    font = 'Lato',
-    size = 17,
-})
-
--- weight = 1000,
-surface.CreateFont("SS_Price", {
-    font = "Righteous",
-    size = 32,
-    weight = 900,
-    antialias = true,
-})
-
-surface.CreateFont("SS_PriceSmaller", {
-    font = "Righteous",
-    size = 27,
-    weight = 900,
-    antialias = true,
-})
-
-surface.CreateFont("SS_CategoryGroup", {
-    font = "Lato",
-    size = 24,
-    weight = 200,
-    antialias = true,
-})
-
-surface.CreateFont("SS_Category", {
-    font = "Lato",
-    size = 18,
-    weight = 200,
-    antialias = true,
-})
-
---REMOVE THIS when gmod is updatd
-draw.WordBox = function(bordersize, x, y, text, font, color, fontcolor, xalign, yalign)
-    surface.SetFont(font)
-    local w, h = surface.GetTextSize(text)
-
-    if xalign == TEXT_ALIGN_CENTER then
-        x = x - (bordersize + w / 2)
-    elseif xalign == TEXT_ALIGN_RIGHT then
-        x = x - (bordersize * 2 + w)
-    end
-
-    if yalign == TEXT_ALIGN_CENTER then
-        y = y - (bordersize + h / 2)
-    elseif yalign == TEXT_ALIGN_BOTTOM then
-        y = y - (bordersize * 2 + h)
-    end
-
-    draw.RoundedBox(bordersize, x, y, w + bordersize * 2, h + bordersize * 2, color)
-    surface.SetTextColor(fontcolor.r, fontcolor.g, fontcolor.b, fontcolor.a)
-    surface.SetTextPos(x + bordersize, y + bordersize)
-    surface.DrawText(text)
-
-    return w + bordersize * 2, h + bordersize * 2
-end

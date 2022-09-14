@@ -3,8 +3,8 @@ SS_Tab({
     name = "Edit Raw Data",
 })
 
--- class = "DSSCustomizerRawDataMode"
+-- class = "ShopCustomizerRawDataMode"
 SS_Tab({
     name = "Reference Texture",
 })
--- class = "DSSCustomizerReferenceTextureMode"
+-- class = "ShopCustomizerReferenceTextureMode"

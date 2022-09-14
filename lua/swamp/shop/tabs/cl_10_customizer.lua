@@ -1,10 +1,10 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 SS_Tab({
     name = "Customizer",
-    class = "DSSCustomizerMode"
+    class = "ShopCustomizerMode"
 })
 
-vgui.Register('DSSEqualWidthLayout', {
+vgui.Register('ShopEqualWidthLayout', {
     PerformLayout = function(self, w, h)
         local c = self:GetChildren()
         local cw = w / #c
@@ -17,7 +17,7 @@ vgui.Register('DSSEqualWidthLayout', {
     end
 }, "Panel")
 
-vgui.Register('DSSCustomizerMode', {
+vgui.Register('ShopCustomizerMode', {
     OpensOver = true,
     Title = "Customizer",
     TitleNote = "WARNING: Pornographic images or builds are not allowed!",
@@ -28,12 +28,12 @@ vgui.Register('DSSCustomizerMode', {
         local y = 14
 
         if IsValid(self.Angle) then
-            draw.SimpleText("RMB + drag to rotate", Font.sans24, preview:GetWide() / 2, y, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("RMB + drag to rotate", Font.sans24, preview:GetWide() / 2, y, UI_White[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             y = y + 32
         end
 
         if IsValid(self.Position) then
-            draw.SimpleText("MMB + drag to move", Font.sans24, preview:GetWide() / 2, y, SWhite[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("MMB + drag to move", Font.sans24, preview:GetWide() / 2, y, UI_White[0], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
     end,
     OpenItem = function(self, item)
@@ -48,16 +48,16 @@ vgui.Register('DSSCustomizerMode', {
         self:SetVisible(true)
 
         --bottom panel
-        ui.DSSEqualWidthLayout({
+        ui.ShopEqualWidthLayout({
             parent = self
         }, function(p)
             p:SetTall(64)
             p:Dock(BOTTOM)
 
-            ui.DSSEqualWidthLayout(function(p)
-                ui.DSSButton(function(p)
+            ui.ShopEqualWidthLayout(function(p)
+                ui.ShopButton(function(p)
                     p:SetText("Reset")
-                    p:SetFont("SS_DESCTITLEFONT")
+                    p:SetFont(Font.Righteous32)
 
                     p.DoClick = function(butn)
                         self.item.cfg = {}
@@ -66,9 +66,9 @@ vgui.Register('DSSCustomizerMode', {
                     end
                 end)
 
-                ui.DSSButton(function(p)
+                ui.ShopButton(function(p)
                     p:SetText("Cancel")
-                    p:SetFont("SS_DESCTITLEFONT")
+                    p:SetFont(Font.Righteous32)
 
                     p.DoClick = function(butn)
                         self.item.cfg = self.item.applied_cfg
@@ -78,8 +78,8 @@ vgui.Register('DSSCustomizerMode', {
                 end)
             end)
 
-            ui.DSSButton(function(p)
-                p:SetFont("SS_DESCTITLEFONT")
+            ui.ShopButton(function(p)
+                p:SetFont(Font.Righteous32)
                 p:SetText("Done")
 
                 p.DoClick = function(butn)
@@ -109,14 +109,14 @@ vgui.Register('DSSCustomizerMode', {
         }, function(p)
             p:SetZPos(1)
             p:Dock(BOTTOM)
-            p:SetTall(DSS_DIVIDERSIZE)
+            p:SetTall(UI_DIVIDER_SIZE)
 
             function p:Paint()
-                DSS_DrawDivider(self, false)
+                UI_DrawDivider(self, false)
             end
         end)
 
-        self.controlzone = ui.DSSEqualWidthLayout({
+        self.controlzone = ui.ShopEqualWidthLayout({
             parent = self
         }, function(p)
             p:Dock(FILL)
@@ -125,18 +125,16 @@ vgui.Register('DSSCustomizerMode', {
         self:SetupControls()
     end,
     SetupControls = function(self)
-        self.controlzone:Clear()
+        ui[self.controlzone](function(p)
+            p:Clear()
 
-        self.LeftColumn = ui.DSSScrollPanel({
-            parent = self.controlzone
-        }, function(p)
-            p:Dock(LEFT)
-        end)
+            self.LeftColumn = ui.List({
+                dock = LEFT
+            })
 
-        self.RightColumn = ui.DSSScrollPanel({
-            parent = self.controlzone
-        }, function(p)
-            p:Dock(FILL)
+            self.RightColumn = ui.List({
+                dock = FILL
+            })
         end)
 
         if self.item.SetupCustomizer then
@@ -148,7 +146,7 @@ vgui.Register('DSSCustomizerMode', {
         local settings = self.item.settings
 
         if settings.color then
-            ui.DSSCustomizerColor({
+            ui.ShopCustomizerColor({
                 parent = self.RightColumn
             }, function(p)
                 p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
@@ -161,7 +159,7 @@ vgui.Register('DSSCustomizerMode', {
         end
 
         if settings.imgur then
-            ui.DSSCustomizerImgur({
+            ui.ShopCustomizerImgur({
                 parent = self.RightColumn
             }, function(p)
                 p:SetValue(self.item.cfg.imgur)
@@ -173,7 +171,7 @@ vgui.Register('DSSCustomizerMode', {
             end)
         end
 
-        local rawdata = ui.DSSCustomizerSection({
+        local rawdata = ui.ShopCustomizerSection({
             parent = self.RightColumn
         }, function(p)
             p:SetVisible(false)
@@ -199,7 +197,7 @@ vgui.Register('DSSCustomizerMode', {
             end)
         end)
 
-        ui.DSSButton({
+        ui.ShopButton({
             parent = self.RightColumn
         }, function(p)
             p:SetText("Show Raw Data")
@@ -222,7 +220,7 @@ vgui.Register('DSSCustomizerMode', {
             self.RawEntry.RECIEVE = nil
         end
     end
-}, 'DSSMode')
+}, 'ShopMode')
 
 -- TODO we need a way to get the accessory ent
 function ImageGetterPanel()
@@ -238,7 +236,7 @@ function ImageGetterPanel()
     ui.DFrame(function(p)
         local frame = p
         p:SetSize(tw + 10, th + 30 + 24)
-        -- p:DockPadding(SS_COMMONMARGIN, SS_COMMONMARGIN + 24, SS_COMMONMARGIN, SS_COMMONMARGIN)
+        -- p:DockPadding(UI_MARGIN, UI_MARGIN + 24, UI_MARGIN, UI_MARGIN)
         p:Center()
         p:SetTitle(mat)
         p:MakePopup()
@@ -255,10 +253,10 @@ function ImageGetterPanel()
             BrandBackgroundPattern(0, 0, w, 24, 0)
         end
 
-        ui.DSSButton(function(p)
+        ui.ShopButton(function(p)
             p:SetPos(128, 0)
             p:Dock(BOTTOM)
-            -- p:DockMargin(0, SS_COMMONMARGIN, 0, 0)
+            -- p:DockMargin(0, UI_MARGIN, 0, 0)
             p:SetText("Download Image")
             -- p.Paint = SS_PaintButtonBrandHL
             p:SetTextColor(MenuTheme_TX)
@@ -332,14 +330,14 @@ end
 --     end
 --     local itmcp = settings.pos
 --     if itmcp then
---         self.Position = ui.DSSCustomizerVectorSection({parent=self.LeftColumn},function(p)
+--         self.Position = ui.ShopCustomizerVectorSection({parent=self.LeftColumn},function(p)
 --             p:SetForPosition(itmcp.min, itmcp.max, self.item.cfg["pos" .. suffix] or Vector(0,0,0))
 --             p.OnValueChanged = transformslidersupdate
 --         end)
 --     end
 --     -- local itmca = settings.ang
 --     -- if itmca then
---     --     self.Scale = ui.DSSCustomizerVectorSection({parent=self.LeftColumn},function(p)
+--     --     self.Scale = ui.ShopCustomizerVectorSection({parent=self.LeftColumn},function(p)
 --     --         p:SetForAngle(itmcs.min, itmcs.scale.max, self.item.cfg["scale" .. suffix] or Vector(1,1,1))
 --     --         p.OnValueChanged = transformslidersupdate
 --     --     end)
@@ -388,7 +386,7 @@ end
 --             SS_CustomizerPanel:Update()
 --         end)
 --     end
---     local x, y = button:LocalToScreen(button:GetWide() + SS_COMMONMARGIN, 0)
+--     local x, y = button:LocalToScreen(button:GetWide() + UI_MARGIN, 0)
 --     Menu:Open(x, y)
 --     Menu.BaseLayout = Menu.PerformLayout
 --     Menu.PerformLayout = function(pnl, w, h)

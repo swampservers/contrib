@@ -1,4 +1,23 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- local unused_G = rawget(_G, "unused_G") or {}
+-- setmetatable(_G, {
+--     __index = function(t, k)
+--         local v = unused_G[k]
+--         if v!=nil then
+--             rawset(t,k,v)
+--             unused_G[k] = nil
+--         end
+--         return v
+--     end,
+--     __newindex = function(t,k,v)
+--         -- if v==nil then
+--         --     print("NILLED", k)
+--         --     rawset(t,k,v)
+--         -- end
+--         rawset(unused_G, k, v)
+--     end
+-- })
+-- rawset(_G, "unused_G", unused_G)
 --- Shorthand for empty function
 function noop()
 end
