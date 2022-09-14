@@ -18,18 +18,7 @@ if CLIENT then
     surface.CreateFont(PPM.EDM_FONT, {
         font = "Arial",
         size = 15,
-        weight = 2500,
-        blursize = 0,
-        scanlines = 0,
-        antialias = true,
-        underline = false,
-        italic = false,
-        strikeout = false,
-        symbol = false,
-        rotary = false,
-        shadow = false,
-        additive = false,
-        outline = false
+        weight = 2500
     })
 
     concommand.Add("ppm_chared3", function(ply)

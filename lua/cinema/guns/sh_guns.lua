@@ -206,12 +206,10 @@ local wepinfo_default = {
 wepinfo_default.__index = wepinfo_default
 
 if CLIENT then
-    CS_KILLICON_FONT = "CSTypeDeath"
 
-    surface.CreateFont(CS_KILLICON_FONT, {
+    surface.CreateFont("CSTypeDeath", {
         font = "csd",
         size = ScreenScale(20),
-        antialias = true,
         weight = 300,
         additive = true,
     })
@@ -219,7 +217,7 @@ end
 
 function CSKillIcon(self, letter)
     if SERVER then return end
-    killicon.AddFont(self.Folder:Replace(".lua", ""):Replace("weapons/", ""), CS_KILLICON_FONT, letter, Color(255, 80, 0, 255))
+    killicon.AddFont(self.Folder:Replace(".lua", ""):Replace("weapons/", ""), "CSTypeDeath", letter, Color(255, 80, 0, 255))
 end
 
 local classlist = {}
@@ -295,7 +293,7 @@ function CSParseWeaponInfo(self, str)
 
     if CLIENT then
         if tab.TextureData then
-            killicon.AddFont(class, CS_KILLICON_FONT, tab.TextureData.weapon.character:lower(), Color(255, 80, 0, 255))
+            killicon.AddFont(class, "CSTypeDeath", tab.TextureData.weapon.character:lower(), Color(255, 80, 0, 255))
 
             if self.ProjectileClass then
                 killicon.AddAlias(self.ProjectileClass, class)

@@ -102,7 +102,6 @@ end)
 
 hook.Add("PreRegisterSENT", "VeryFastRendering", function(ent, class)
     if class == "base_anim" then
-        print("WEDIDTI2")
         ent.Draw = Entity.DrawModel
         -- swep.DrawTranslucent = Entity.DrawModel incorrect because we might override draw and want drawtranslucent to do it
         hook.Remove("PreRegisterSENT", "VeryFastRendering")

@@ -49,7 +49,7 @@ end)
 -- end)
 function Entity:SetPonyMaterials()
     if not self:IsPPMPony() then return end
-    -- print("PONYMAT", ent)
+    
     local ply = self:PonyPlayer()
     -- if ent ~= ply then
     --     print("THISS", ply, ent)
