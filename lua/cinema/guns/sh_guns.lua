@@ -206,7 +206,6 @@ local wepinfo_default = {
 wepinfo_default.__index = wepinfo_default
 
 if CLIENT then
-
     surface.CreateFont("CSTypeDeath", {
         font = "csd",
         size = ScreenScale(20),

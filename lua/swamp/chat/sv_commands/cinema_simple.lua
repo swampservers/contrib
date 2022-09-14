@@ -48,11 +48,13 @@ timer.Create("steamspam", 100, 0, function()
     end
 end)
 
-
 RegisterChatCommand({'callnoz'}, function(ply, arg)
-    if ply:GetRank()<1 then return end
-    arg = (arg .. "   from "..ply:Name().." "..ply:SteamID64()):gsub("[^a-zA-Z0-9 ]","")
-    Shell.Execute({"/swamp/gm_shell/notify.sh", "<@656202383034155021> /callnoz "..arg}, function(code) print(code) end)
+    if ply:GetRank() < 1 then return end
+    arg = (arg .. "   from " .. ply:Name() .. " " .. ply:SteamID64()):gsub("[^a-zA-Z0-9 ]", "")
+
+    Shell.Execute({"/swamp/gm_shell/notify.sh", "<@656202383034155021> /callnoz " .. arg}, function(code)
+        print(code)
+    end)
 end, {
     global = true,
     throttle = true
