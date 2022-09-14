@@ -68,7 +68,7 @@ hook.Add("HUDDrawScoreBoard", "Hint_Draw", function()
 
         local function tryfont()
             surface.CreateFont('HintControls', {
-                font = 'Lato',
+                font = "CircularStd-Book",
                 size = sz,
             })
 
@@ -119,7 +119,7 @@ hook.Add("HUDDrawScoreBoard", "Hint_Draw", function()
         _, row2h = surface.GetTextSize("A")
 
         surface.CreateFont('HintHeader', {
-            font = 'Lato',
+            font = "CircularStd-Book",
             size = sz,
             weight = 1000,
         })
