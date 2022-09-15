@@ -35,7 +35,7 @@ net.Receive("SlitThroatneck", function(len)
                 mask = MASK_NPCWORLDSTATIC
             })
 
-            if tr.Hit then
+            if tr and tr.Hit then
                 util.DecalEx(BloodMaterials[math.random(#BloodMaterials)], tr.Entity, tr.HitPos, tr.HitNormal, Color(255, 255, 255, 255), 1, 1)
             end
         end)
