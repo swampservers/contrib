@@ -26,7 +26,7 @@ function PPM_PrePonyDraw(ent)
     end
 
     PPM_PONIES_NEARBY[ply] = true
-    -- players will get set in SS_ApplyMods
+    -- players will get set in ApplyModItems
     if ent:IsPlayer() then return end
     ent:SetSubMaterial()
     ent:SetPonyMaterials()
@@ -77,7 +77,7 @@ end
 --     PPM_PrePonyDraw(ply)
 -- end)
 -- -- alternate path so sps materials stack correctly
--- function SS_PPM_SetSubMaterials(ent)
+-- function ShopPPM_SetSubMaterials(ent)
 --     hook.Remove("PrePlayerDraw", "PPM_PrePlayerDraw")
 --     RP_PUSH("ponydraw")
 --     PPM_PrePonyDraw(ent)
@@ -118,7 +118,7 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 -- end
             end
 
-            ply.SS_SetupPlayermodel = nil
+            ply.SetupPlayermodel = nil
         end
     end
 

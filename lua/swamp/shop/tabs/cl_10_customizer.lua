@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-SS_Tab({
+ShopTab({
     name = "Customizer",
     class = "ShopCustomizerMode"
 })
@@ -22,7 +22,7 @@ vgui.Register('ShopCustomizerMode', {
     Title = "Customizer",
     TitleNote = "WARNING: Pornographic images or builds are not allowed!",
     Init = function(self)
-        SS_CustomizerPanel = self
+        ShopCustomizerPanel = self
     end,
     DrawOverPreview = function(self, preview)
         local y = 14
@@ -40,7 +40,7 @@ vgui.Register('ShopCustomizerMode', {
         self:Clear()
         self:Open()
 
-        SS_PreviewPanel.ents.player:SwitchSequence({"reference", "menu_combine", "ragdoll"})
+        ShopPreviewPanel.ents.player:SwitchSequence({"reference", "menu_combine", "ragdoll"})
 
         self.item = item
         item.applied_cfg = table.Copy(item.cfg)
@@ -73,7 +73,7 @@ vgui.Register('ShopCustomizerMode', {
                     p.DoClick = function(butn)
                         self.item.cfg = self.item.applied_cfg
                         self:Close()
-                        SS_PreviewPanel.ents.player:SwitchSequence()
+                        ShopPreviewPanel.ents.player:SwitchSequence()
                     end
                 end)
             end)
@@ -86,14 +86,14 @@ vgui.Register('ShopCustomizerMode', {
                     local callback = function()
                         self:Close()
 
-                        SS_PreviewPanel.ents.player:TimerSimple(0.4, function(e)
+                        ShopPreviewPanel.ents.player:TimerSimple(0.4, function(e)
                             e:SwitchSequence({
                                 ({"pose_standing_01", "pose_standing_04", "pose_standing_04", "zombie_attack_07_original"})[math.ceil(math.random() * 3.2)],
                                 "cidle_me1"
                             })
                         end)
 
-                        SS_PreviewPanel.ents.player:TimerSimple(1.6, function(e)
+                        ShopPreviewPanel.ents.player:TimerSimple(1.6, function(e)
                             e:SwitchSequence()
                         end)
                     end
@@ -224,7 +224,7 @@ vgui.Register('ShopCustomizerMode', {
 
 -- TODO we need a way to get the accessory ent
 function ImageGetterPanel()
-    local mat = IsValid(SS_PreviewPanel.ents.item) and SS_PreviewPanel.ents.item:GetMaterials()[1] or (IsValid(SS_PreviewPanel.accessoryitement) and SS_PreviewPanel.accessoryitement:GetMaterials()[1] or SS_PreviewPanel.ents.player:GetMaterials()[(SS_CustomizerPanel.item.cfg.submaterial or 0) + 1])
+    local mat = IsValid(ShopPreviewPanel.ents.item) and ShopPreviewPanel.ents.item:GetMaterials()[1] or (IsValid(ShopPreviewPanel.accessoryitement) and ShopPreviewPanel.accessoryitement:GetMaterials()[1] or ShopPreviewPanel.ents.player:GetMaterials()[(ShopCustomizerPanel.item.cfg.submaterial or 0) + 1])
     assert(mat)
     local mat_inst = Material(mat)
     local dispmax = 512
@@ -249,7 +249,7 @@ function ImageGetterPanel()
             local border = 8
             draw.BoxShadow(-2, -2, w + 4, h + 4, border, 1)
             DisableClipping(false)
-            SS_PaintBG(pnl, w, h)
+            ShopPaintBG(pnl, w, h)
             BrandBackgroundPattern(0, 0, w, 24, 0)
         end
 
@@ -258,14 +258,14 @@ function ImageGetterPanel()
             p:Dock(BOTTOM)
             -- p:DockMargin(0, UI_MARGIN, 0, 0)
             p:SetText("Download Image")
-            -- p.Paint = SS_PaintButtonBrandHL
+            -- p.Paint = ShopPaintButtonBrandHL
             p:SetTextColor(MenuTheme_TX)
 
             p.DoClick = function()
                 local imat = Material(mat)
 
-                hook.Add("PostRender", "SS_TexDownload", function()
-                    hook.Remove("PostRender", "SS_TexDownload")
+                hook.Add("PostRender", "ShopTexDownload", function()
+                    hook.Remove("PostRender", "ShopTexDownload")
 
                     local matcopy = CreateMaterial(imat:GetName() .. "copy", "UnlitGeneric", {
                         ["$basetexture"] = imat:GetString("$basetexture")
@@ -345,8 +345,8 @@ end
 --     --end bunch of copied shit
 -- end
 -- function ImageHistoryPanel(button)
---     if IsValid(SS_CustTextureHistory) then
---         SS_CustTextureHistory:Remove()
+--     if IsValid(ShopCustomizerTextureHistory) then
+--         ShopCustomizerTextureHistory:Remove()
 --         return
 --     end
 --     local sz = 512
@@ -365,25 +365,25 @@ end
 --         local border = 8
 --         draw.BoxShadow(-2, -2, w + 4, h + 4, border, 1)
 --         DisableClipping(false)
---         SS_PaintBG(pnl, w, h)
+--         ShopPaintBG(pnl, w, h)
 --     end
---     SS_CustTextureHistory = Menu
+--     ShopCustomizerTextureHistory = Menu
 --     textures:SetColumns(4)
 --     textures:Load()
---     local img = SS_CustomizerPanel.TextureBar:GetText()
+--     local img = ShopCustomizerPanel.TextureBar:GetText()
 --     textures.AddField:SetText(img)
 --     textures.OnChoose = function(pnl, img)
 --         SingleAsyncSanitizeImgurId(img, function(id)
 --             if not IsValid(pnl) then return end
 --             if id then
---                 SS_CustomizerPanel.TextureBar:SetText(id)
+--                 ShopCustomizerPanel.TextureBar:SetText(id)
 --                 textures.AddField:SetText(id)
 --             end
---             SS_CustomizerPanel.item.cfg.imgur = id and {
+--             ShopCustomizerPanel.item.cfg.imgur = id and {
 --                 url = id,
 --                 nsfw = false
 --             } or nil
---             SS_CustomizerPanel:Update()
+--             ShopCustomizerPanel:Update()
 --         end)
 --     end
 --     local x, y = button:LocalToScreen(button:GetWide() + UI_MARGIN, 0)

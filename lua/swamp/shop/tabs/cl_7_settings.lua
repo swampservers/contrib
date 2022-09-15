@@ -1,4 +1,4 @@
-﻿SS_Tab({
+﻿ShopTab({
     name = "Settings",
     icon = "cog",
     pos = "bottom",

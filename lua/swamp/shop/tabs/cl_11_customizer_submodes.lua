@@ -1,10 +1,10 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-SS_Tab({
+ShopTab({
     name = "Edit Raw Data",
 })
 
 -- class = "ShopCustomizerRawDataMode"
-SS_Tab({
+ShopTab({
     name = "Reference Texture",
 })
 -- class = "ShopCustomizerReferenceTextureMode"

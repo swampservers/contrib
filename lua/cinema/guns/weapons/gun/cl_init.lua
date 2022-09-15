@@ -148,6 +148,6 @@ function SWEP:PrintWeaponInfo(x, y, alpha)
     -- surface.DrawRect(x,y, 100, 100)
     if self:GetItem() then
         -- self.PrintName = self:GetItem():GetName()
-        SS_DrawSpecInfo(self:GetItem(), x, y + 50, 250, Color(255, 255, 255, 255), alpha / 255)
+        UI_DrawItemSpecInfo(self:GetItem(), x, y + 50, 250, Color(255, 255, 255, 255), alpha / 255)
     end
 end

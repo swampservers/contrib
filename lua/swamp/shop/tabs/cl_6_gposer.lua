@@ -1,4 +1,4 @@
-﻿SS_Tab({
+﻿ShopTab({
     name = "GPoser",
     icon = "hand-peace",
     pos = "bottom",

@@ -39,62 +39,61 @@ cvars.AddChangeCallback("ps_themecolor", function(cvar, old, new)
     ReloadStyle(tonumber(new))
 end)
 
-SS_ColorWhite = Color(255, 255, 255)
-SS_ColorBlack = Color(0, 0, 0)
-SS_CORNERCOMMON = 4
+ShopColorWhite = Color(255, 255, 255)
+ShopColorBlack = Color(0, 0, 0)
 
-SS_PaintButtonBrandHL = function(pnl, w, h)
+ShopPaintButtonBrandHL = function(pnl, w, h)
     UI_DrawPanelShadow(pnl, 0, 0, w, h)
 
     if pnl.Depressed then
-        pnl:SetTextColor(SS_ColorWhite)
+        pnl:SetTextColor(ShopColorWhite)
         surface.SetDrawColor(MenuTheme_Brand)
         draw.Box(0, 0, w, h, MenuTheme_Brand)
     else
-        pnl:SetTextColor(SS_SwitchableColor)
+        pnl:SetTextColor(ShopSwitchableColor)
         draw.Box(0, 0, w, h, MenuTheme_FG)
     end
 end
 
-SS_PaintFG = function(pnl, w, h)
+ShopPaintFG = function(pnl, w, h)
     --surface.SetDrawColor(MenuTheme_FG)
     --surface.DrawRect(0, 0, w, h)
     UI_DrawPanelShadow(pnl, 0, 0, w, h)
     draw.Box(0, 0, w, h, MenuTheme_FG)
 end
 
-SS_PaintBG = function(pnl, w, h)
+ShopPaintBG = function(pnl, w, h)
     draw.Box(0, 0, w, h, MenuTheme_BG)
 end
 
-SS_PaintTileInset = function(pnl, w, h)
-    SS_PaintDiry(0, 0, w, h)
+ShopPaintTileInset = function(pnl, w, h)
+    ShopPaintDiry(0, 0, w, h)
 end
 
-SS_PaintMD = function(pnl, w, h)
+ShopPaintMD = function(pnl, w, h)
     UI_DrawPanelShadow(pnl, 0, 0, w, h)
     draw.Box(0, 0, w, h, MenuTheme_MD)
 end
 
-SS_PaintDarkenOnHover = function(pnl, w, h)
+ShopPaintDarkenOnHover = function(pnl, w, h)
     if pnl:IsHovered() then
         draw.Box(0, 0, w, h, Color(0, 0, 0, 100))
     end
 end
 
-SS_PaintShaded = function(pnl, w, h, alpha)
+ShopPaintShaded = function(pnl, w, h, alpha)
     --surface.SetDrawColor(Color(0, 0, 0, 100))
     --surface.DrawRect(0, 0, w, h)
     draw.Box(0, 0, w, h, Color(0, 0, 0, alpha or 100))
 end
 
-SS_PaintFGAlpha = function(pnl, w, h, alpha)
+ShopPaintFGAlpha = function(pnl, w, h, alpha)
     --surface.SetDrawColor(Color(0, 0, 0, 100))
     --surface.DrawRect(0, 0, w, h)
     draw.Box(0, 0, w, h, ColorAlpha(MenuTheme_FG, alpha or 100))
 end
 
-SS_PaintBrandStripes = function(pnl, w, h)
+ShopPaintBrandStripes = function(pnl, w, h)
     UI_DrawPanelShadow(pnl, 0, 0, w, h)
     surface.SetDrawColor(MenuTheme_Brand)
     surface.DrawRect(0, 0, w, h)
@@ -157,19 +156,19 @@ end
 
 BrandTitleBarHeight = 64
 
-surface.CreateFont('SS_DESCFONT', {
+surface.CreateFont('SHOP_DESCFONT', {
     font = 'Lato',
     size = 18,
     weight = 700
 })
 
-surface.CreateFont('SS_DESCFONTBIG', {
+surface.CreateFont('SHOP_DESCFONTBIG', {
     font = 'Lato',
     size = 24,
     weight = 700
 })
 
-surface.CreateFont('SS_DESCINSTFONT', {
+surface.CreateFont('SHOP_DESCINSTFONT', {
     font = 'Lato',
     size = 20
 })
