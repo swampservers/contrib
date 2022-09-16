@@ -77,10 +77,10 @@ if CLIENT then
                     info.duration = math.ceil(duration)
                     data = url
                 end, function(err)
-                    print("m3u8 stream",err)
+                    print("m3u8 stream", err)
                 end)
             end, function(err)
-                print("m3u8 playlist",err)
+                print("m3u8 playlist", err)
             end)
         end
 
@@ -93,9 +93,10 @@ if CLIENT then
             --embed api
             http.Fetch("https://mzzcloud.life/ajax/embed-4/getSources?id=" .. string.match(link, "mzzcloud.life/.-/(.-)%?z="), function(body, length, headers, code)
                 t = util.JSONToTable(body)
-                local url = (t['encrypted'] == true and nil or t['sources'][1]['file'])
+                local url = t['encrypted'] == true and nil or t['sources'][1]['file']
 
-                if (not url) then --load player page to extract m3u8 playlist url
+                --load player page to extract m3u8 playlist url
+                if not url then
                     if vpanel then
                         vpanel:Remove()
                     end
@@ -123,14 +124,14 @@ if CLIENT then
                             print(msg)
                         end
 
-                        if msg:StartWith("FILE:")then
+                        if msg:StartWith("FILE:") then
                             self:Remove()
                             parseURL(string.sub(msg, 6))
                         end
                     end
 
                     vpanel:OpenURL(key)
-                    vpanel:QueueJavascript("window.location = '"..link.."'")
+                    vpanel:QueueJavascript("window.location = '" .. link .. "'")
                 else
                     parseURL(url)
                 end
@@ -173,13 +174,13 @@ if CLIENT then
                     subs = ''
                 end
             end, function(err)
-                print("mzzcloud.life",err)
+                print("mzzcloud.life", err)
             end, {
                 ["X-Requested-With"] = "XMLHttpRequest" --required
                 
             })
         end, function(err)
-            print("bflix.gg",err)
+            print("bflix.gg", err)
         end)
 
         --player page
@@ -189,7 +190,7 @@ if CLIENT then
             info.title = string.match(body, '"film%-poster%-img".-title="(.-)"')
             year = "(" .. string.match(body, 'Released:.-(%d%d%d%d)') .. ")"
         end, function(err)
-            print("player",err)
+            print("player", err)
         end)
     end
 
