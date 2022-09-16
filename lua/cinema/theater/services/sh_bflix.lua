@@ -39,15 +39,101 @@ if CLIENT then
 
         local catid, epid = string.match(key, "%-(%d-)%.(%d-)$")
 
+        local function parseURL(url)
+            --m3u8 playlist
+            http.Fetch(url, function(body)
+                local duration = 0
+                local resolution = ""
+                local stream = ""
+
+                for _, v in ipairs(string.Split(body, "\n")) do
+                    if string.find(v, "RESOLUTION=") then
+                        resolution = string.Split(v, "RESOLUTION=")[2]
+                    end
+
+                    if string.find(v, ".m3u8") then
+                        if resolution == "1280x720" then
+                            url = v
+                        end
+
+                        stream = v
+                    end
+                end
+
+                --m3u8 stream
+                http.Fetch(stream, function(body)
+                    if #string.Split(body, "\n") < 2 then
+                        callback()
+
+                        return
+                    end
+
+                    for _, v in ipairs(string.Split(body, "\n")) do
+                        if v:StartWith("#EXTINF:") then
+                            duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
+                        end
+                    end
+
+                    info.duration = math.ceil(duration)
+                    data = url
+                end, function(err)
+                    print("m3u8 stream",err)
+                end)
+            end, function(err)
+                print("m3u8 playlist",err)
+            end)
+        end
+
         --embed link
         http.Fetch("https://bflix.gg/ajax/get_link/" .. epid, function(body, length, headers, code)
             local t = util.JSONToTable(body)
+            local link = t['link']
             episode = "| " .. t['title']
 
             --embed api
-            http.Fetch("https://mzzcloud.life/ajax/embed-4/getSources?id=" .. string.match(t['link'], "mzzcloud.life/.-/(.-)%?z="), function(body, length, headers, code)
+            http.Fetch("https://mzzcloud.life/ajax/embed-4/getSources?id=" .. string.match(link, "mzzcloud.life/.-/(.-)%?z="), function(body, length, headers, code)
                 t = util.JSONToTable(body)
-                local url = t['sources'][1]['file']
+                local url = (t['encrypted'] == true and nil or t['sources'][1]['file'])
+
+                if (not url) then --load player page to extract m3u8 playlist url
+                    if vpanel then
+                        vpanel:Remove()
+                    end
+
+                    vpanel = vgui.Create("DHTML")
+                    vpanel:SetSize(ScrW(), ScrH())
+                    vpanel:SetAlpha(0)
+                    vpanel:SetMouseInputEnabled(false)
+
+                    timer.Simple(10, function()
+                        if IsValid(vpanel) then
+                            vpanel:Remove()
+                            print("Failed")
+                        end
+                    end)
+
+                    timer.Create("bflixupdate" .. tostring(math.random(1, 100000)), 1, 10, function()
+                        if IsValid(vpanel) then
+                            vpanel:RunJavascript("console.log('FILE:'+jwplayer('vidcloud-player').getPlaylistItem()['file'])")
+                        end
+                    end)
+
+                    function vpanel:ConsoleMessage(msg)
+                        if Me.videoDebug then
+                            print(msg)
+                        end
+
+                        if msg:StartWith("FILE:")then
+                            self:Remove()
+                            parseURL(string.sub(msg, 6))
+                        end
+                    end
+
+                    vpanel:OpenURL(key)
+                    vpanel:QueueJavascript("window.location = '"..link.."'")
+                else
+                    parseURL(url)
+                end
 
                 if #t['tracks'] > 0 then
                     ui.DFrame(function(r)
@@ -86,57 +172,14 @@ if CLIENT then
                 else
                     subs = ''
                 end
-
-                --m3u8 playlist
-                http.Fetch(url, function(body)
-                    local duration = 0
-                    local resolution = ""
-                    local stream = ""
-
-                    for _, v in ipairs(string.Split(body, "\n")) do
-                        if string.find(v, "RESOLUTION=") then
-                            resolution = string.Split(v, "RESOLUTION=")[2]
-                        end
-
-                        if string.find(v, ".m3u8") then
-                            if resolution == "1280x720" then
-                                url = v
-                            end
-
-                            stream = v
-                        end
-                    end
-
-                    --m3u8 stream
-                    http.Fetch(stream, function(body)
-                        if #string.Split(body, "\n") < 2 then
-                            callback()
-
-                            return
-                        end
-
-                        for _, v in ipairs(string.Split(body, "\n")) do
-                            if v:StartWith("#EXTINF:") then
-                                duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
-                            end
-                        end
-
-                        info.duration = math.ceil(duration)
-                        data = url
-                    end, function(err)
-                        print(err)
-                    end)
-                end, function(err)
-                    print(err)
-                end)
             end, function(err)
-                print(err)
+                print("mzzcloud.life",err)
             end, {
                 ["X-Requested-With"] = "XMLHttpRequest" --required
                 
             })
         end, function(err)
-            print(err)
+            print("bflix.gg",err)
         end)
 
         --player page
@@ -146,7 +189,7 @@ if CLIENT then
             info.title = string.match(body, '"film%-poster%-img".-title="(.-)"')
             year = "(" .. string.match(body, 'Released:.-(%d%d%d%d)') .. ")"
         end, function(err)
-            print(err)
+            print("player",err)
         end)
     end
 
