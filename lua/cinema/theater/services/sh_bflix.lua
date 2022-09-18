@@ -12,6 +12,7 @@ end
 
 if CLIENT then
     local url2 = url
+
     function SERVICE:GetVideoInfoClientside(key, callback)
         local info = {}
         local isTV = string.match(key, "bflix.gg/watch%-tv")
@@ -42,6 +43,7 @@ if CLIENT then
 
         local function parseURL(url)
             url = string.Replace(url, "e-10.dokicloud.one", "e-1.dokicloud.one") --HTTP functions can't handle e-10???
+
             --m3u8 playlist
             http.Fetch(url, function(body)
                 local duration = 0
@@ -94,7 +96,7 @@ if CLIENT then
             episode = "| " .. t['title']
 
             --embed api
-            http.Fetch("https://"..host.."/ajax/embed-4/getSources?id=" .. string.match(link, host.."/.-/(.-)%?z="), function(body, length, headers, code)
+            http.Fetch("https://" .. host .. "/ajax/embed-4/getSources?id=" .. string.match(link, host .. "/.-/(.-)%?z="), function(body, length, headers, code)
                 t = util.JSONToTable(body)
                 local url = t['encrypted'] == true and nil or t['sources'][1]['file']
 

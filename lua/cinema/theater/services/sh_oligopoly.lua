@@ -52,10 +52,12 @@ if CLIENT then
                         local duration = math.ceil(tonumber(string.sub(msg, 10)))
                         info.duration = duration
                     end
+
                     if msg:StartWith("FILE:") then
                         local data = string.sub(msg, 6)
                         info.data = data
                     end
+
                     if info.duration ~= nil and info.data ~= nil then
                         self:Remove()
                         print("Success!")
@@ -65,6 +67,7 @@ if CLIENT then
 
                 vpanel:OpenURL(key)
                 vpanel:QueueJavascript("window.location='https://olgply.xyz/" .. (isTV and string.match(key, "olgply.com/.-/(%d+/%d+/%d+)") or string.match(key, "olgply.com/.-/(%d+)")) .. "'")
+
                 timer.Create("oligopolyupdate" .. tostring(math.random(1, 100000)), 1, 20, function()
                     if IsValid(vpanel) then
                         vpanel:RunJavascript("console.log('FILE:'+hls.url);")
