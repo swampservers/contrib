@@ -11,13 +11,14 @@ function SERVICE:GetKey(url)
 end
 
 if CLIENT then
+    local url2 = url
     function SERVICE:GetVideoInfoClientside(key, callback)
         local info = {}
         local isTV = string.match(key, "bflix.gg/watch%-tv")
         local year, episode, data, subs
 
         --fetches are asynchronous so they need to be handled this way
-        timer.Create("AwaitBFlixFetches", 1, 15, function()
+        timer.Create("AwaitBFlixFetches", 1, 40, function()
             if timer.RepsLeft("AwaitBFlixFetches") == 0 then
                 print("Failed")
                 timer.Remove("AwaitBFlixFetches")
@@ -40,6 +41,7 @@ if CLIENT then
         local catid, epid = string.match(key, "%-(%d-)%.(%d-)$")
 
         local function parseURL(url)
+            url = string.Replace(url, "e-10.dokicloud.one", "e-1.dokicloud.one") --HTTP functions can't handle e-10???
             --m3u8 playlist
             http.Fetch(url, function(body)
                 local duration = 0
@@ -80,18 +82,19 @@ if CLIENT then
                     print("m3u8 stream", err)
                 end)
             end, function(err)
-                print("m3u8 playlist", err)
+                print("m3u8 playlist", err, url)
             end)
         end
 
         --embed link
-        http.Fetch("https://bflix.gg/ajax/get_link/" .. epid, function(body, length, headers, code)
+        http.Fetch("https://bflix.gg/ajax/sources/" .. epid, function(body, length, headers, code)
             local t = util.JSONToTable(body)
             local link = t['link']
+            local host = url2.parse(link).host --domain keeps changing
             episode = "| " .. t['title']
 
             --embed api
-            http.Fetch("https://mzzcloud.life/ajax/embed-4/getSources?id=" .. string.match(link, "mzzcloud.life/.-/(.-)%?z="), function(body, length, headers, code)
+            http.Fetch("https://"..host.."/ajax/embed-4/getSources?id=" .. string.match(link, host.."/.-/(.-)%?z="), function(body, length, headers, code)
                 t = util.JSONToTable(body)
                 local url = t['encrypted'] == true and nil or t['sources'][1]['file']
 
@@ -106,7 +109,7 @@ if CLIENT then
                     vpanel:SetAlpha(0)
                     vpanel:SetMouseInputEnabled(false)
 
-                    timer.Simple(10, function()
+                    timer.Simple(35, function()
                         if IsValid(vpanel) then
                             vpanel:Remove()
                             print("Failed")
@@ -131,7 +134,7 @@ if CLIENT then
                     end
 
                     vpanel:OpenURL(key)
-                    vpanel:QueueJavascript("window.location = '" .. link .. "'")
+                    vpanel:QueueJavascript("window.location='" .. link .. "'")
                 else
                     parseURL(url)
                 end
@@ -174,7 +177,7 @@ if CLIENT then
                     subs = ''
                 end
             end, function(err)
-                print("mzzcloud.life", err)
+                print(host, err)
             end, {
                 ["X-Requested-With"] = "XMLHttpRequest" --required
                 
