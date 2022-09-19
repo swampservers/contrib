@@ -116,241 +116,239 @@ local function DecorrectSaveData(data)
 end
 
 function SWEP:PrimaryAttack()
-    if CLIENT then
-        if not IsValid(TRASHMANAGERWINDOW) then
-            TRASHMANAGERWINDOW = ui.DFrame(function(p)
-                p:SetTitle("Trash manager")
-                p:SetSize(300, 360)
-                p:Center()
-                p:MakePopup()
-                p:CloseOnEscape()
+    if CLIENT and not IsValid(TRASHMANAGERWINDOW) then
+        TRASHMANAGERWINDOW = ui.DFrame(function(p)
+            p:SetTitle("Trash manager")
+            p:SetSize(300, 360)
+            p:Center()
+            p:MakePopup()
+            p:CloseOnEscape()
 
-                ui.DLabel(function(p)
-                    p:Dock(TOP)
-                    p:SetText("You can delete any props in an area you own.")
-                end)
+            ui.DLabel(function(p)
+                p:Dock(TOP)
+                p:SetText("You can delete any props in an area you own.")
+            end)
 
-                TRASHMANAGERDELETEBUTTON = ui.DButton(function(p)
-                    p:Dock(TOP)
-                    p:SetText("")
+            TRASHMANAGERDELETEBUTTON = ui.DButton(function(p)
+                p:Dock(TOP)
+                p:SetText("")
 
-                    function p:DoClick()
-                        net.Start("TrashManagerAction")
-                        net.WriteString("cleanup")
-                        net.SendToServer()
-                    end
-                end)
+                function p:DoClick()
+                    net.Start("TrashManagerAction")
+                    net.WriteString("cleanup")
+                    net.SendToServer()
+                end
+            end)
 
-                ui.DHorizontalDivider(function(p)
-                    p:Dock(TOP)
-                end)
+            ui.DHorizontalDivider(function(p)
+                p:Dock(TOP)
+            end)
 
-                ui.DLabel(function(p)
-                    p:Dock(TOP)
-                    p:SetText([[You can save any props spawned from your inventory.
+            ui.DLabel(function(p)
+                p:Dock(TOP)
+                p:SetText([[You can save any props spawned from your inventory.
 This will save any of your frozen props on the map,
 but you need a nearby theater/field to respawn them.]])
-                    p:SizeToContentsY()
-                end)
+                p:SizeToContentsY()
+            end)
 
-                TRASHMANAGERSAVEBUTTON = ui.DButton(function(p)
-                    p:Dock(TOP)
-                    p:SetText("")
+            TRASHMANAGERSAVEBUTTON = ui.DButton(function(p)
+                p:Dock(TOP)
+                p:SetText("")
 
-                    function p:DoClick()
-                        Derma_StringRequest("Filename", "Name of this prop configuration?", "stuff", function(text)
-                            local w = Me:GetActiveWeapon()
+                function p:DoClick()
+                    Derma_StringRequest("Filename", "Name of this prop configuration?", "stuff", function(text)
+                        local w = Me:GetActiveWeapon()
 
-                            if IsValid(w) and w:GetClass() == "weapon_trash_manager" then
-                                local c = {}
+                        if IsValid(w) and w:GetClass() == "weapon_trash_manager" then
+                            local c = {}
 
-                                for i, v in ipairs(w:GetSaveEntities()) do
-                                    table.insert(c, {
-                                        id = v:GetItemID(),
-                                        pos = v:GetPos(),
-                                        ang = v:GetAngles()
-                                    })
-                                end
-
-                                CorrectSaveData(c)
-
-                                c = {
-                                    map = game.GetMap(),
-                                    props = c
-                                }
-
-                                if not file.IsDir("swampbuilds", "DATA") then
-                                    file.CreateDir("swampbuilds")
-                                end
-
-                                file.Write("swampbuilds/" .. text .. ".txt", util.TableToJSON(c, true))
-                                TRASHMANAGERFILES:Reset()
+                            for i, v in ipairs(w:GetSaveEntities()) do
+                                table.insert(c, {
+                                    id = v:GetItemID(),
+                                    pos = v:GetPos(),
+                                    ang = v:GetAngles()
+                                })
                             end
-                        end)
+
+                            CorrectSaveData(c)
+
+                            c = {
+                                map = game.GetMap(),
+                                props = c
+                            }
+
+                            if not file.IsDir("swampbuilds", "DATA") then
+                                file.CreateDir("swampbuilds")
+                            end
+
+                            file.Write("swampbuilds/" .. text .. ".txt", util.TableToJSON(c, true))
+                            TRASHMANAGERFILES:Reset()
+                        end
+                    end)
+                end
+            end, function(text) end)
+
+            ui.DHorizontalDivider(function(p)
+                p:Dock(TOP)
+            end)
+
+            TRASHMANAGERFILES = ui.DListView(function(p)
+                p:Dock(FILL)
+                p:SetMultiSelect(false)
+                p:AddColumn("Saved builds")
+
+                function p:Reset()
+                    self:Clear()
+
+                    if IsValid(TRASHMANAGERFILEBUTTONS) then
+                        TRASHMANAGERFILEBUTTONS:Remove()
                     end
-                end, function(text) end)
 
-                ui.DHorizontalDivider(function(p)
-                    p:Dock(TOP)
-                end)
+                    local f, d = file.Find("swampbuilds/*.txt", "DATA")
 
-                TRASHMANAGERFILES = ui.DListView(function(p)
-                    p:Dock(FILL)
-                    p:SetMultiSelect(false)
-                    p:AddColumn("Saved builds")
+                    for i, v in ipairs(f) do
+                        self:AddLine(v)
+                    end
 
-                    function p:Reset()
-                        self:Clear()
-
+                    function p:OnRowSelected(i, r)
                         if IsValid(TRASHMANAGERFILEBUTTONS) then
                             TRASHMANAGERFILEBUTTONS:Remove()
                         end
 
-                        local f, d = file.Find("swampbuilds/*.txt", "DATA")
+                        local fn = r:GetColumnText(1)
+                        local d = util.JSONToTable(file.Read("swampbuilds/" .. fn))
+                        d = d.props or d
+                        local items = {}
 
-                        for i, v in ipairs(f) do
-                            self:AddLine(v)
+                        for k, v in pairs(Me.items or {}) do
+                            items[v.id] = v
                         end
 
-                        function p:OnRowSelected(i, r)
-                            if IsValid(TRASHMANAGERFILEBUTTONS) then
-                                TRASHMANAGERFILEBUTTONS:Remove()
+                        DecorrectSaveData(d)
+                        local i = 1
+
+                        while i <= #d do
+                            local v = d[i]
+
+                            if not items[v.id] or v.pos:Distance(Me:GetPos()) > TRASH_MANAGER_LOAD_RANGE or TrashLocationOwner(FindLocation(v.pos), v.pos) ~= Me:SteamID() then
+                                table.remove(d, i)
+                            else
+                                i = i + 1
                             end
+                        end
 
-                            local fn = r:GetColumnText(1)
-                            local d = util.JSONToTable(file.Read("swampbuilds/" .. fn))
-                            d = d.props or d
-                            local items = {}
+                        while #d > TRASH_MANAGER_PROP_LIMIT do
+                            table.remove(d)
+                        end
 
-                            for k, v in pairs(Me.items or {}) do
-                                items[v.id] = v
-                            end
+                        TRASHMANAGERFILEBUTTONS = ui.Panel({
+                            parent = TRASHMANAGERWINDOW
+                        }, function(p)
+                            p:Dock(BOTTOM)
 
-                            DecorrectSaveData(d)
-                            local i = 1
+                            ui.DButton(function(p)
+                                p:SetText("Delete")
+                                p:Dock(LEFT)
 
-                            while i <= #d do
-                                local v = d[i]
-
-                                if not items[v.id] or v.pos:Distance(Me:GetPos()) > TRASH_MANAGER_LOAD_RANGE or TrashLocationOwner(FindLocation(v.pos), v.pos) ~= Me:SteamID() then
-                                    table.remove(d, i)
-                                else
-                                    i = i + 1
+                                function p:DoClick()
+                                    file.Delete("swampbuilds/" .. fn)
+                                    TRASHMANAGERFILES:Reset()
                                 end
-                            end
+                            end)
 
-                            while #d > TRASH_MANAGER_PROP_LIMIT do
-                                table.remove(d)
-                            end
-
-                            TRASHMANAGERFILEBUTTONS = ui.Panel({
-                                parent = TRASHMANAGERWINDOW
-                            }, function(p)
-                                p:Dock(BOTTOM)
-
-                                ui.DButton(function(p)
-                                    p:SetText("Delete")
-                                    p:Dock(LEFT)
-
-                                    function p:DoClick()
-                                        file.Delete("swampbuilds/" .. fn)
-                                        TRASHMANAGERFILES:Reset()
-                                    end
-                                end)
-
-                                ui.DButton(function(p)
-                                    local price = TRASH_MANAGER_BASE_LOAD_PRICE
-
-                                    for k, v in pairs(d) do
-                                        price = price + items[v.id]:SpawnPrice()
-                                    end
-
-                                    p:SetText("Load " .. table.Count(d) .. " props (cost " .. price .. ")")
-                                    p:Dock(FILL)
-
-                                    function p:DoClick()
-                                        net.Start("TrashManagerAction")
-                                        net.WriteString("load")
-                                        net.WriteTable(d)
-                                        net.SendToServer()
-                                    end
-                                end)
-
-                                p:SizeToChildren(false, true)
-                                p.mymodels = {}
+                            ui.DButton(function(p)
+                                local price = TRASH_MANAGER_BASE_LOAD_PRICE
 
                                 for k, v in pairs(d) do
-                                    local e = ClientsideModel(items[v.id]:GetModel())
-                                    e:SetMaterial("models/effects/vol_light001")
-                                    e:SetPos(v.pos)
-                                    e:SetAngles(v.ang)
-                                    table.insert(p.mymodels, e)
+                                    price = price + items[v.id]:SpawnPrice()
                                 end
 
-                                function p:OnRemove()
-                                    for i, v in ipairs(p.mymodels) do
-                                        v:Remove()
-                                    end
-                                end
-                            end)
-                        end
-                    end
-
-                    p:Reset()
-                end)
-
-                ui.DButton(function(p)
-                    p:Dock(BOTTOM)
-                    p:SetText("Manage Friends")
-
-                    function p:DoClick()
-                        TRASHMANAGERWINDOW:Close()
-
-                        ui.DFrame(function(p)
-                            p:SetTitle("Trash friends")
-                            p:SetSize(300, 300)
-                            p:Center()
-                            p:MakePopup()
-                            p:CloseOnEscape()
-                            Me.TrashFriends = Me.TrashFriends or {}
-
-                            ui.DLabel(function(p)
-                                p:Dock(TOP)
-                                p:SetText("Your friends can build in your areas.")
-                            end)
-
-                            ui.DListView(function(p)
+                                p:SetText("Load " .. table.Count(d) .. " props (cost " .. price .. ")")
                                 p:Dock(FILL)
-                                p:SetMultiSelect(false)
-                                p:AddColumn("Player")
-                                p:AddColumn("Friend?"):SetFixedWidth(50)
 
-                                for i, v in ipairs(player.GetAll()) do
-                                    if v ~= Me and not v:IsBot() then
-                                        p:AddLine(v:Name(), Me.TrashFriends[v] and "X" or "").player = v
-                                    end
-                                end
-
-                                function p:OnRowSelected(index, pnl)
-                                    if IsValid(pnl.player) then
-                                        Me.TrashFriends[pnl.player] = not Me.TrashFriends[pnl.player] and true or nil
-                                        pnl:SetColumnText(2, Me.TrashFriends[pnl.player] and "X" or "")
-                                    end
-
-                                    net.Start("SetTrashFriends")
-                                    net.WriteTable(Me.TrashFriends)
+                                function p:DoClick()
+                                    net.Start("TrashManagerAction")
+                                    net.WriteString("load")
+                                    net.WriteTable(d)
                                     net.SendToServer()
                                 end
                             end)
+
+                            p:SizeToChildren(false, true)
+                            p.mymodels = {}
+
+                            for k, v in pairs(d) do
+                                local e = ClientsideModel(items[v.id]:Model())
+                                e:SetMaterial("models/effects/vol_light001")
+                                e:SetPos(v.pos)
+                                e:SetAngles(v.ang)
+                                table.insert(p.mymodels, e)
+                            end
+
+                            function p:OnRemove()
+                                for i, v in ipairs(p.mymodels) do
+                                    v:Remove()
+                                end
+                            end
                         end)
                     end
-                end)
+                end
 
-                ui.DHorizontalDivider(function(p)
-                    p:Dock(BOTTOM)
-                end)
+                p:Reset()
             end)
-        end
+
+            ui.DButton(function(p)
+                p:Dock(BOTTOM)
+                p:SetText("Manage Friends")
+
+                function p:DoClick()
+                    TRASHMANAGERWINDOW:Close()
+
+                    ui.DFrame(function(p)
+                        p:SetTitle("Trash friends")
+                        p:SetSize(300, 300)
+                        p:Center()
+                        p:MakePopup()
+                        p:CloseOnEscape()
+                        Me.TrashFriends = Me.TrashFriends or {}
+
+                        ui.DLabel(function(p)
+                            p:Dock(TOP)
+                            p:SetText("Your friends can build in your areas.")
+                        end)
+
+                        ui.DListView(function(p)
+                            p:Dock(FILL)
+                            p:SetMultiSelect(false)
+                            p:AddColumn("Player")
+                            p:AddColumn("Friend?"):SetFixedWidth(50)
+
+                            for i, v in ipairs(player.GetAll()) do
+                                if v ~= Me and not v:IsBot() then
+                                    p:AddLine(v:Name(), Me.TrashFriends[v] and "X" or "").player = v
+                                end
+                            end
+
+                            function p:OnRowSelected(index, pnl)
+                                if IsValid(pnl.player) then
+                                    Me.TrashFriends[pnl.player] = not Me.TrashFriends[pnl.player] and true or nil
+                                    pnl:SetColumnText(2, Me.TrashFriends[pnl.player] and "X" or "")
+                                end
+
+                                net.Start("SetTrashFriends")
+                                net.WriteTable(Me.TrashFriends)
+                                net.SendToServer()
+                            end
+                        end)
+                    end)
+                end
+            end)
+
+            ui.DHorizontalDivider(function(p)
+                p:Dock(BOTTOM)
+            end)
+        end)
     end
 
     self:SetNextPrimaryFire(CurTime() + 0.3)
