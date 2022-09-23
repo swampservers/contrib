@@ -155,20 +155,22 @@ function GunPerkOverrides(swep, perk)
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * (cs / swep.Primary.ClipSize)
     elseif perk == "skullpiercing" then
         t.HeadshotMultiplier = 5
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.2
     elseif perk == "slug" or perk == "explosiveslug" then
-        t.Damage = swep.Damage * swep.NumPellets
+        t.Damage = swep.Damage * swep.NumPellets * 0.8
         t.NumPellets = 1
         t.PelletSpread = 0
-        t.HalfDamageDistance = swep.HalfDamageDistance * 1.7
+        t.HalfDamageDistance = swep.HalfDamageDistance * 1.8
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.8
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
         t.UnscopeOnShoot = false
     elseif perk == "boomstick" then
-        t.NumPellets = swep.NumPellets * 2
+        t.NumPellets = swep.NumPellets * 1.5
         t.PelletSpread = swep.PelletSpread * 1.5
         t.CycleTime = swep.CycleTime * 1.5
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
     elseif perk == "moredamage" then
         t.Damage = swep.Damage * 1.2

@@ -18,7 +18,7 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_BUCKSHOT"
 SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
-SWEP.Damage = 14
+SWEP.Damage = 13
 SWEP.CycleTime = 0.88
 SWEP.HalfDamageDistance = 1024
 --
@@ -34,7 +34,7 @@ ComputeSpray(SWEP, {
 
 --
 SWEP.NumPellets = 12
-SWEP.PelletSpread = 0.03
+SWEP.PelletSpread = 0.04
 SWEP.UseShellReload = true
 SWEP.KickUBase = 5
 SWEP.KickUSpray = 0
