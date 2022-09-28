@@ -12,9 +12,9 @@ local allowed = {
     ["STEAM_0:0:26424112"] = true, -- pyroteknik
     ["STEAM_0:1:43528204"] = true, -- noz
     ["STEAM_0:0:44814758"] = true, -- brian
-    ["STEAM_0:1:94321246"] = true, -- brittan
     ["STEAM_0:1:38369552"] = true, -- smor
-    ["STEAM_0:0:39563158"] = true -- bananainc
+    ["STEAM_0:0:39563158"] = true, -- bananainc
+    ["STEAM_1:1:33536503"] = true  -- medroit
     
 }
 

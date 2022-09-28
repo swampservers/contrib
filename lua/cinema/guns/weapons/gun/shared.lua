@@ -161,14 +161,14 @@ function GunPerkOverrides(swep, perk)
         t.NumPellets = 1
         t.PelletSpread = 0
         t.HalfDamageDistance = swep.HalfDamageDistance * 1.8
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.4
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.8
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
         t.UnscopeOnShoot = false
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 1.5
-        t.PelletSpread = swep.PelletSpread * 1.5
+        t.PelletSpread = swep.PelletSpread * 1.35
         t.CycleTime = swep.CycleTime * 1.5
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
