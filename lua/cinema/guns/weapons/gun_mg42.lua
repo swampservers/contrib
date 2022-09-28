@@ -31,7 +31,7 @@ SWEP.Damage = 32
 SWEP.CycleTime = 0.05 --4
 SWEP.HalfDamageDistance = 8192
 --
-SWEP.SpreadBase = 0.009
+SWEP.SpreadBase = 0.008
 SWEP.SpreadMove = 0.08
 SWEP.Spray = 0.08
 SWEP.SprayExponent = 3
