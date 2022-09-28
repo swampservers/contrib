@@ -168,7 +168,7 @@ function GunPerkOverrides(swep, perk)
         t.UnscopeOnShoot = false
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 1.5
-        t.PelletSpread = swep.PelletSpread * 1.35
+        t.PelletSpread = swep.PelletSpread * 1.4
         t.CycleTime = swep.CycleTime * 1.5
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
