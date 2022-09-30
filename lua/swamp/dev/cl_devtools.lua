@@ -14,8 +14,9 @@ local allowed = {
     ["STEAM_0:0:44814758"] = true, -- brian
     ["STEAM_0:1:38369552"] = true, -- smor
     ["STEAM_0:0:39563158"] = true, -- bananainc
-    ["STEAM_1:1:33536503"] = true, -- medroit
-    ["STEAM_0:0:16678862"] = true -- legacy
+    ["STEAM_0:1:33536503"] = true, -- medroit
+    ["STEAM_0:0:16678862"] = true, -- legacy
+    ["STEAM_0:0:183303619"] = true -- pura
     
 }
 
