@@ -119,6 +119,12 @@ function GunPerkOverrides(swep, perk)
         t.KickLBase = 0
         t.KickUSpray = 0
         t.KickLSpray = 0
+        t.Primary = {
+            Ammo = "BULLET_PLAYER_AIRSOFT",
+            ClipSize = swep.Primary.Clip,
+            DefaultClip = swep.Primary.DefaultClip,
+            Automatic = swep.Primary.Automatic
+        }
         t.SprayIncrement = 0
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.3
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.2
