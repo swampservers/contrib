@@ -22,7 +22,7 @@ SWEP.Primary.Ammo = "peaceshot"
 SWEP.Primary.ClipSize = 2
 SWEP.Primary.DefaultClip = 2
 SWEP.Primary.Automatic = false
-SWEP.Damage = 14
+SWEP.Damage = 13
 SWEP.CycleTime = 0.26
 SWEP.HalfDamageDistance = 512
 --

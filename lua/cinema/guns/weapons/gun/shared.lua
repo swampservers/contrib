@@ -89,14 +89,18 @@ end
 -- swep can be the swep or weapons.GetTable
 function GunPerkOverrides(swep, perk)
     local t = {}
+    local damage = swep.Damage
 
+    if swep.GunType == "smg" then
+        damage = 100/((100/damage) + 1)
+    end
     if perk == "min" then
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
     elseif perk == "crackedscope" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.05
         t.SpreadUnscoped = math.max((swep.SpreadUnscoped or 0) - 0.05, 0)
     elseif perk == "lessdamage" then
-        t.Damage = swep.Damage * 0.6
+        t.Damage = damage * 0.6
         t.KickUBase = (swep.KickUBase or 0) * 0.5
         t.KickLBase = (swep.KickLBase or 0) * 0.5
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
@@ -157,11 +161,11 @@ function GunPerkOverrides(swep, perk)
         t.HeadshotMultiplier = 5
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.2
     elseif perk == "slug" or perk == "explosiveslug" then
-        t.Damage = swep.Damage * swep.NumPellets
+        t.Damage = damage * swep.NumPellets * 0.9
         t.NumPellets = 1
         t.PelletSpread = 0
-        t.HalfDamageDistance = swep.HalfDamageDistance * 1.7
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.4
+        t.HalfDamageDistance = swep.HalfDamageDistance * 1.8
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.8
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
@@ -170,9 +174,10 @@ function GunPerkOverrides(swep, perk)
         t.NumPellets = swep.NumPellets * 1.5
         t.PelletSpread = swep.PelletSpread * 1.4
         t.CycleTime = swep.CycleTime * 1.5
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
     elseif perk == "moredamage" then
-        t.Damage = swep.Damage * 1.2
+        t.Damage = damage * 1.2
         t.CycleTime = swep.CycleTime * 1.1
         t.KickUBase = (swep.KickUBase or 0) * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.4
