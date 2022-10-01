@@ -286,7 +286,7 @@ function LaserPointer_DrawBeam(ply, wep, origin, dir, color, phase, startoverrid
     local beamstart = origin
     local beamend = tr.HitPos
 
-    if tr.Entity == Me:GetObserverTarget() or tr.Entity == Me or beamend:Distance(EyePos()) < 5 then
+    if not Me:IsProtected() and (tr.Entity == Me:GetObserverTarget() or tr.Entity == Me or beamend:Distance(EyePos()) < 5) then
         local dot = dir:Dot(Me:GetAimVector() * -1)
 
         if tr.Entity:IsPlayer() and math.deg(math.acos(dot)) < 45 then
