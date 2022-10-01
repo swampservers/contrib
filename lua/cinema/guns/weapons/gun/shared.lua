@@ -92,7 +92,7 @@ function GunPerkOverrides(swep, perk)
     local damage = swep.Damage
 
     if swep.GunType == "smg" then
-        damage = 100/((100/damage) + 1)
+        damage = math.Round(100/((100/damage) + 1))
     end
     if perk == "min" then
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
@@ -108,6 +108,7 @@ function GunPerkOverrides(swep, perk)
     elseif perk == "smoothbore" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.02
     elseif perk == "chinese" then
+        t.Damage = damage * 0.9
         t.SpreadBase = (swep.SpreadBase or 0) + 0.005
         t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
@@ -170,7 +171,7 @@ function GunPerkOverrides(swep, perk)
         t.Damage = damage * swep.NumPellets * 0.9
         t.NumPellets = 1
         t.PelletSpread = 0
-        t.HalfDamageDistance = swep.HalfDamageDistance * 1.8
+        t.HalfDamageDistance = swep.HalfDamageDistance * 1.7
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.8
     elseif perk == "selfloading" then
@@ -178,7 +179,7 @@ function GunPerkOverrides(swep, perk)
         t.UnscopeOnShoot = false
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 1.5
-        t.PelletSpread = swep.PelletSpread * 1.4
+        t.PelletSpread = swep.PelletSpread * 1.2
         t.CycleTime = swep.CycleTime * 1.5
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
