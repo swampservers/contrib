@@ -90,12 +90,17 @@ end
 function GunPerkOverrides(swep, perk)
     local t = {}
     local damage = swep.Damage
+    local spawn_price_mod = swep.SpawnPriceMod or 1
 
     if swep.GunType == "smg" then
         damage = math.Round(100/((100/damage) + 0.9))
+        t.Damage = damage
+    elseif swep.GunType == "pistol" or swep.GunType == "heavypistol" then
+        spawn_price_mod = spawn_price_mod * 1.2
+        t.SpawnPriceMod = spawn_price_mod
     end
     if perk == "min" then
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
+        t.SpawnPriceMod = spawn_price_mod * 0.7
     elseif perk == "crackedscope" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.05
         t.SpreadUnscoped = math.max((swep.SpreadUnscoped or 0) - 0.05, 0)
@@ -103,7 +108,7 @@ function GunPerkOverrides(swep, perk)
         t.Damage = damage * 0.6
         t.KickUBase = (swep.KickUBase or 0) * 0.5
         t.KickLBase = (swep.KickLBase or 0) * 0.5
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
+        t.SpawnPriceMod = spawn_price_mod * 0.8
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.5
     elseif perk == "smoothbore" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.02
@@ -111,7 +116,7 @@ function GunPerkOverrides(swep, perk)
         t.Damage = damage * 0.9
         t.SpreadBase = (swep.SpreadBase or 0) + 0.005
         t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.8
+        t.SpawnPriceMod = spawn_price_mod * 0.8
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.8
     elseif perk == "airsoft" then
         t.Damage = 1
@@ -127,7 +132,7 @@ function GunPerkOverrides(swep, perk)
             Automatic = swep.Primary.Automatic
         }
         t.SprayIncrement = 0
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.3
+        t.SpawnPriceMod = spawn_price_mod * 0.3
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.2
     elseif perk == "compliant" then
         t.Primary = {
@@ -172,7 +177,7 @@ function GunPerkOverrides(swep, perk)
         t.NumPellets = 1
         t.PelletSpread = 0
         t.HalfDamageDistance = swep.HalfDamageDistance * 1.7
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
+        t.SpawnPriceMod = spawn_price_mod * 1.5
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.8
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
@@ -181,7 +186,7 @@ function GunPerkOverrides(swep, perk)
         t.NumPellets = swep.NumPellets * 1.5
         t.PelletSpread = swep.PelletSpread * 1.2
         t.CycleTime = swep.CycleTime * 1.5
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.2
+        t.SpawnPriceMod = spawn_price_mod * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
     elseif perk == "moredamage" then
         t.Damage = damage * 1.2
