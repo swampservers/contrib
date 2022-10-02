@@ -92,7 +92,7 @@ function GunPerkOverrides(swep, perk)
     local damage = swep.Damage
 
     if swep.GunType == "smg" then
-        damage = math.Round(100/((100/damage) + 1))
+        damage = math.Round(100/((100/damage) + 0.9))
     end
     if perk == "min" then
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
