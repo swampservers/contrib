@@ -178,7 +178,7 @@ function GunPerkOverrides(swep, perk)
         t.PelletSpread = 0
         t.HalfDamageDistance = swep.HalfDamageDistance * 2
         if not swep.GunType == "autoshotgun" then
-            t.SpawnPriceMod = spawn_price_mod * 1.4
+            t.SpawnPriceMod = spawn_price_mod * 1.5
         end
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 1.8
     elseif perk == "selfloading" then
