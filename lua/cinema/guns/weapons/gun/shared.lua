@@ -108,16 +108,14 @@ function GunPerkOverrides(swep, perk)
         t.Damage = damage * 0.6
         t.KickUBase = (swep.KickUBase or 0) * 0.5
         t.KickLBase = (swep.KickLBase or 0) * 0.5
-        t.SpawnPriceMod = spawn_price_mod * 0.8
-        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.5
+        t.SpawnPriceMod = spawn_price_mod * 0.7
+        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.7
     elseif perk == "smoothbore" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.02
     elseif perk == "chinese" then
-        t.Damage = damage * 0.9
         t.SpreadBase = (swep.SpreadBase or 0) + 0.005
         t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
-        t.SpawnPriceMod = spawn_price_mod * 0.8
-        t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 0.8
+        t.SpawnPriceMod = spawn_price_mod * 0.7
     elseif perk == "airsoft" then
         t.Damage = 1
         t.HeadshotMultiplier = 1
@@ -176,7 +174,7 @@ function GunPerkOverrides(swep, perk)
         t.Damage = damage * swep.NumPellets * 0.9
         t.NumPellets = 1
         t.PelletSpread = 0
-        t.HalfDamageDistance = swep.HalfDamageDistance * 2
+        t.HalfDamageDistance = swep.HalfDamageDistance * 1.8
         if not swep.GunType == "autoshotgun" then
             t.SpawnPriceMod = spawn_price_mod * 1.5
         end
@@ -186,7 +184,7 @@ function GunPerkOverrides(swep, perk)
         t.UnscopeOnShoot = false
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 1.5
-        t.PelletSpread = swep.PelletSpread * 1.2
+        t.PelletSpread = swep.PelletSpread * 1.3
         t.CycleTime = swep.CycleTime * 1.5
         t.SpawnPriceMod = spawn_price_mod * 1.2
         t.AmmoPriceMod = (swep.AmmoPriceMod or 1) * 2
