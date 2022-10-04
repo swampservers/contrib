@@ -171,7 +171,7 @@ function GunPerkOverrides(swep, perk)
         t.AmmoPriceMod = ammo_price_mod * (cs / swep.Primary.ClipSize)
     elseif perk == "skullpiercing" then
         t.HeadshotMultiplier = headshot_multi * 1.4
-        t.AmmoPriceMod = ammo_price_mod * 1.2
+        t.AmmoPriceMod = ammo_price_mod * 1.25
     elseif perk == "slug" or perk == "explosiveslug" then
         t.Damage = swep.Damage * swep.NumPellets
         t.NumPellets = 1
@@ -195,7 +195,7 @@ function GunPerkOverrides(swep, perk)
         t.Damage = swep.Damage * 1.2
         t.CycleTime = swep.CycleTime * 1.1
         t.KickUBase = (swep.KickUBase or 0) * 1.2
-        t.AmmoPriceMod = ammo_price_mod * 1.4
+        t.AmmoPriceMod = ammo_price_mod * 1.5
     elseif perk == "explosive" then
         t.KickUBase = (swep.KickUBase or 0) * 2
     elseif perk == "shothose" then
