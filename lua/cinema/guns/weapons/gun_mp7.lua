@@ -28,7 +28,7 @@ SWEP.HalfDamageDistance = 4096
 --
 SWEP.SpreadBase = 0.012
 SWEP.SpreadMove = 0.008
-SWEP.Spray = 0.045
+SWEP.Spray = 0.046
 SWEP.SprayExponent = 3.5
 
 ComputeSpray(SWEP, {

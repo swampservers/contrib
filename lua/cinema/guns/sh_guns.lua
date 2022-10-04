@@ -130,6 +130,17 @@ game.AddAmmoType{
 }
 
 game.AddAmmoType{
+    name = "BULLET_PLAYER_AIRSOFT",
+    dmgtype = DMG_BULLET,
+    tracer = TRACER_LINE,
+    plydmg = 0,
+    npcdmg = 0,
+    force = 600,
+    minsplash = 3,
+    maxsplash = 6
+}
+
+game.AddAmmoType{
     name = "BULLET_PLAYER_45ACP",
     dmgtype = DMG_BULLET,
     tracer = TRACER_LINE,
