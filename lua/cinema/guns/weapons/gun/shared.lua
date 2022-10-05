@@ -141,6 +141,7 @@ function GunPerkOverrides(swep, perk)
             DefaultClip = 10,
             Automatic = false
         }
+        t.AmmoPriceMod = ammo_price_mod * 0.8
     elseif perk == "fullauto" then
         t.Primary = {
             Ammo = swep.Primary.Ammo,
@@ -150,6 +151,7 @@ function GunPerkOverrides(swep, perk)
         }
 
         t.CycleTime = swep.CycleTime * 0.8
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.1
     elseif perk == "lightweight" then
         t.SpreadMove = (swep.SpreadMove or 0) * 0.5
         t.MobilityExponent = 0.6 --should make you walk faster
@@ -185,6 +187,7 @@ function GunPerkOverrides(swep, perk)
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
         t.UnscopeOnShoot = false
+        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.1
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 1.5
         t.PelletSpread = swep.PelletSpread * 1.3
@@ -198,6 +201,7 @@ function GunPerkOverrides(swep, perk)
         t.AmmoPriceMod = ammo_price_mod * 1.5
     elseif perk == "explosive" then
         t.KickUBase = (swep.KickUBase or 0) * 2
+        t.AmmoPriceMod = ammo_price_mod * 1.25
     elseif perk == "shothose" then
         -- mac10
         if (swep.NumPellets or 1) == 1 then
@@ -221,6 +225,7 @@ function GunPerkOverrides(swep, perk)
 
             t.CycleTime = 0.15
         end
+        t.AmmoPriceMod = ammo_price_mod * 1.25
     end
 
     return t
