@@ -89,7 +89,7 @@ end
 -- swep can be the swep or weapons.GetTable
 function GunPerkOverrides(swep, perk)
     local t = {}
-    local ammo_price_mod = (swep.AmmoPriceMod or 1)
+    local ammo_price_mod = swep.AmmoPriceMod or 1
     local headshot_multi = 3 --default HeadshotMultiplier
 
     if swep.GunType == "shotgun" or swep.GunType == "autoshotgun" then
@@ -101,6 +101,7 @@ function GunPerkOverrides(swep, perk)
         headshot_multi = 3.75
         t.HeadshotMultiplier = headshot_multi
     end
+
     if perk == "min" then
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
     elseif perk == "crackedscope" then
@@ -125,12 +126,14 @@ function GunPerkOverrides(swep, perk)
         t.KickLBase = 0
         t.KickUSpray = 0
         t.KickLSpray = 0
+
         t.Primary = {
             Ammo = "BULLET_PLAYER_AIRSOFT",
             ClipSize = swep.Primary.Clip,
             DefaultClip = swep.Primary.DefaultClip,
             Automatic = swep.Primary.Automatic
         }
+
         t.SprayIncrement = 0
         t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.3
         t.AmmoPriceMod = ammo_price_mod * 0.2
@@ -141,6 +144,7 @@ function GunPerkOverrides(swep, perk)
             DefaultClip = 10,
             Automatic = false
         }
+
         t.AmmoPriceMod = ammo_price_mod * 0.8
     elseif perk == "fullauto" then
         t.Primary = {
@@ -180,9 +184,11 @@ function GunPerkOverrides(swep, perk)
         t.PelletSpread = 0.01
         t.HalfDamageDistance = swep.HalfDamageDistance * 2
         t.HeadshotMultiplier = 3
+
         if not swep.GunType == "autoshotgun" then
             t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
         end
+
         t.AmmoPriceMod = ammo_price_mod * 1.8
     elseif perk == "selfloading" then
         t.CycleTime = swep.CycleTime * 0.6
@@ -225,6 +231,7 @@ function GunPerkOverrides(swep, perk)
 
             t.CycleTime = 0.15
         end
+
         t.AmmoPriceMod = ammo_price_mod * 1.25
     end
 
