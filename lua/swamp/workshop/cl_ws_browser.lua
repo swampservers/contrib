@@ -18,17 +18,17 @@ function PANEL:Init()
 
     self.Browser.Think = function(self)
         if not self._nextUrlPoll or self._nextUrlPoll < RealTime() then
-            self:RunJavascript('console.log("HREF:"+window.location.href);')
+            --self:RunJavascript('console.log("HREF:"+window.location.href);')
             self:RunJavascript([[
-				function SubscribeItem(){
-					gmod.wssubscribe();
-				};
-				
-				var sub = document.getElementById("SubscribeItemOptionAdd");
-				if (sub){
-					sub.innerText = "Select";
-				};
-			]])
+                function SubscribeItem(){
+                    gmod.wssubscribe();
+                };
+
+                var sub = document.getElementById("SubscribeItemOptionAdd");
+                if (sub){
+                    sub.innerText = "Select";
+                };
+            ]])
             self._nextUrlPoll = RealTime() + 0.25
         end
     end

@@ -324,9 +324,9 @@ hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
             mat:SetInt("$flags", 2097152)
         end
 
-        -- This fixes shop glow messing with the ore materials
-        mat:SetVector("$color", Vector(1, 1, 1))
-        mat:SetFloat("$alpha", 1)
+        -- TODO: Fix ore color being manipulated by shop UI (ColorModulation?)
+        --mat:SetVector("$color", Vector(1, 1, 1))
+        --mat:SetFloat("$alpha", 1)
         render.SetMaterial(mat)
         MINECRAFTOREMESHES[i]:Draw()
     end
