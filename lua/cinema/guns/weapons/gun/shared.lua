@@ -97,7 +97,7 @@ function GunPerkOverrides(swep, perk)
         headshot_multi = 1.5
         t.HeadshotMultiplier = headshot_multi
         t.AmmoPriceMod = ammo_price_mod
-    elseif SWEP.GunType == "ar" then
+    elseif swep.GunType == "ar" then
         headshot_multi = 3.75
         t.HeadshotMultiplier = headshot_multi
     end
