@@ -1,4 +1,1 @@
-"LightmappedGeneric"
-{
-"$basetexture" "swampcinemaposters/doom"
-}
+"LightmappedGeneric" { "$basetexture" "swampcinemaposters/doom" }
