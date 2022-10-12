@@ -19,7 +19,7 @@ SWEP.Primary.ClipSize = 13
 SWEP.Primary.DefaultClip = 13
 SWEP.Primary.Automatic = false
 SWEP.Damage = 30
-SWEP.CycleTime = 0.13
+SWEP.CycleTime = 0.14
 SWEP.HalfDamageDistance = 2048
 --
 SWEP.SpreadBase = 0.008
