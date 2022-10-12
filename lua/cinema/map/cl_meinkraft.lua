@@ -324,6 +324,9 @@ hook.Add("PostDrawOpaqueRenderables", "MinecraftOres", function(depth, sky)
             mat:SetInt("$flags", 2097152)
         end
 
+        -- TODO: Fix ore color being manipulated by shop UI (ColorModulation?)
+        --mat:SetVector("$color", Vector(1, 1, 1))
+        --mat:SetFloat("$alpha", 1)
         render.SetMaterial(mat)
         MINECRAFTOREMESHES[i]:Draw()
     end

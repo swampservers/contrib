@@ -19,7 +19,7 @@ SWEP.Primary.ClipSize = 7
 SWEP.Primary.DefaultClip = 7
 SWEP.Primary.Automatic = false
 SWEP.Damage = 56
-SWEP.CycleTime = 0.2
+SWEP.CycleTime = 0.225
 SWEP.HalfDamageDistance = 4096
 --
 SWEP.SpreadBase = 0.004
@@ -38,6 +38,8 @@ SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
+--
+SWEP.SpawnPriceMod = 1.4
 -- SWEP.ShootSound = "Weapon_DEagle.Single"
 -- SWEP.CSSTeam = "ANY" 
 -- CSParseWeaponInfo(SWEP, [[WeaponData

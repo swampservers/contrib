@@ -22,9 +22,9 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_BUCKSHOT"
 SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
-SWEP.Damage = 14
-SWEP.CycleTime = 0.44
-SWEP.HalfDamageDistance = 1024
+SWEP.Damage = 12
+SWEP.CycleTime = 0.57
+SWEP.HalfDamageDistance = 768 --1024
 --
 SWEP.SpreadBase = 0.006
 SWEP.SpreadMove = 0.02
@@ -32,13 +32,13 @@ SWEP.Spray = 0.12
 SWEP.SprayExponent = 2
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 0.8,
+    TapFireInterval = 0.9,
     ShotsTo90Spray = 5
 })
 
 --
 SWEP.NumPellets = 10
-SWEP.PelletSpread = 0.04
+SWEP.PelletSpread = 0.045
 SWEP.UseShellReload = true
 SWEP.KickUBase = 2.5
 SWEP.KickUSpray = 1.5

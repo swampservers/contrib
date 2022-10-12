@@ -22,7 +22,7 @@ SWEP.Primary.Ammo = "peaceshot"
 SWEP.Primary.ClipSize = 2
 SWEP.Primary.DefaultClip = 2
 SWEP.Primary.Automatic = false
-SWEP.Damage = 14
+SWEP.Damage = 12
 SWEP.CycleTime = 0.26
 SWEP.HalfDamageDistance = 512
 --
@@ -37,7 +37,7 @@ ComputeSpray(SWEP, {
 })
 
 --
-SWEP.NumPellets = 15
+SWEP.NumPellets = 16
 SWEP.PelletSpread = 0.1
 SWEP.UseShellReload = true
 SWEP.KickUBase = 2.5
@@ -45,6 +45,8 @@ SWEP.KickUSpray = 1.5
 SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
 SWEP.MoveSpeed = 230 / 250
+--
+SWEP.AmmoPriceMod = 0.5
 
 game.AddAmmoType({
     name = "peaceshot",

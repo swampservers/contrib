@@ -52,3 +52,5 @@ SWEP.MoveSpeed = 200 / 250
 --
 SWEP.KickDance = 3
 SWEP.CrouchKickDanceMultiplier = 0.2
+--
+SWEP.SpawnPriceMod = 1.2

@@ -19,7 +19,7 @@ SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = true
 -- headshot only at point blank
-SWEP.Damage = 33.6
+SWEP.Damage = 26.8 --33.6
 SWEP.CycleTime = 0.0900
 SWEP.HalfDamageDistance = 16384 * 0.66
 --
