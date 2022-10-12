@@ -19,8 +19,7 @@ local allowed = {
     ["STEAM_0:0:183303619"] = true -- pura
 }
 
-local player = FindMetaTable("Player")
-function player:IsLocalDev()
+function Player:IsLocalDev()
     return allowed[self:SteamID()]
 end
 
@@ -184,18 +183,10 @@ concommand.Add("dev_refresh", function(_, _, args)
 end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
 
 concommand.Add("trace", function(ply)
-    if not Me:IsLocalDev() then
-        print( "Not allowed!" )
-        return
-    end
     print(Me:GetEyeTrace().HitPos)
 end)
 
 concommand.Add("origin", function(ply)
-    if not Me:IsLocalDev() then
-        print( "Not allowed!" )
-        return
-    end
     local v = Me:GetPos()
     local a = Me:EyeAngles()
     local txt = "{Vector(" .. tostring(math.floor(v.x)) .. ", " .. tostring(math.floor(v.y)) .. ", " .. tostring(math.floor(v.z)) .. "), Angle(0, " .. tostring(math.floor(a.y)) .. ", 0)},\n"
@@ -204,10 +195,6 @@ concommand.Add("origin", function(ply)
 end)
 
 concommand.Add("model", function()
-    if not Me:IsLocalDev() then
-        print( "Not allowed!" )
-        return
-    end
     local ent = Me:GetEyeTrace().Entity
     if ent:IsVehicle() and ent:GetDriver():IsPlayer() then ent = ent:GetDriver() end
     if ent:IsWorld() or not IsValid(ent) then
