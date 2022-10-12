@@ -80,7 +80,7 @@ end, {
 
 if gm == "cinema" then
     RegisterChatCommand({'ponyrp'}, function(ply, arg)
-        if IsValid(ply) and not ply:InVehicle() and ply:Alive() and not ply:IsPlayingTaunt() then
+        if IsValid(ply) and not ply:InVehicle() and ply:Alive() then
             ply:SetPos(Vector(-388, 1400, -118)) --treatment room location
 
             for k, v in ipairs(ents.GetAll()) do
