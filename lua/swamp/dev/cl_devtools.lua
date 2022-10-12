@@ -17,16 +17,18 @@ local allowed = {
     ["STEAM_0:1:33536503"] = true, -- medroit
     ["STEAM_0:0:16678862"] = true, -- legacy
     ["STEAM_0:0:183303619"] = true -- pura
-    
 }
 
-concommand.Add("lua", function(ply, cmd, args, args2)
-    if not allowed[Me:SteamID()] then
-        print("Not allowed!")
+local player = FindMetaTable("Player")
+function player:IsLocalDev()
+    return allowed[self:SteamID()]
+end
 
+concommand.Add("lua", function(ply, cmd, args, args2)
+    if not Me:IsLocalDev() then
+        print("Not allowed!")
         return
     end
-
     RunString(args2)
 end)
 
@@ -134,9 +136,8 @@ local function refreshFolder(subDir)
 end
 
 concommand.Add("dev", function()
-    if not allowed[Me:SteamID()] then
+    if not Me:IsLocalDev() then
         print("Not allowed!")
-
         return
     end
 
@@ -183,13 +184,35 @@ concommand.Add("dev_refresh", function(_, _, args)
 end, nil, "Force refresh file PATH, CLASSNAME (if ENT or SWEP)", FCVAR_UNREGISTERED)
 
 concommand.Add("trace", function(ply)
+    if not Me:IsLocalDev() then
+        print( "Not allowed!" )
+        return
+    end
     print(Me:GetEyeTrace().HitPos)
 end)
 
 concommand.Add("origin", function(ply)
+    if not Me:IsLocalDev() then
+        print( "Not allowed!" )
+        return
+    end
     local v = Me:GetPos()
     local a = Me:EyeAngles()
     local txt = "{Vector(" .. tostring(math.floor(v.x)) .. ", " .. tostring(math.floor(v.y)) .. ", " .. tostring(math.floor(v.z)) .. "), Angle(0, " .. tostring(math.floor(a.y)) .. ", 0)},\n"
     print(txt)
     SetClipboardText(txt)
+end)
+
+concommand.Add("model",function()
+    if not Me:IsLocalDev() then
+        print( "Not allowed!" )
+        return
+    end
+    local ent = Me:GetEyeTrace().Entity
+    if ent:IsVehicle() and ent:GetDriver():IsPlayer() then ent = ent:GetDriver() end
+    if ent:IsWorld() or not IsValid(ent) then
+        print ("No valid target.")
+    else
+        print( "Ent Class: " .. ent:GetClass() .. "\nEnt Mdl: " .. ent:GetModel() )
+    end
 end)
