@@ -203,7 +203,7 @@ concommand.Add("origin", function(ply)
     SetClipboardText(txt)
 end)
 
-concommand.Add("model",function()
+concommand.Add("model", function()
     if not Me:IsLocalDev() then
         print( "Not allowed!" )
         return
