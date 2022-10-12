@@ -129,7 +129,7 @@ function GunPerkOverrides(swep, perk)
 
         t.Primary = {
             Ammo = "BULLET_PLAYER_AIRSOFT",
-            ClipSize = swep.Primary.Clip,
+            ClipSize = swep.Primary.ClipSize,
             DefaultClip = swep.Primary.DefaultClip,
             Automatic = swep.Primary.Automatic
         }
