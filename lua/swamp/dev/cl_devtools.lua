@@ -211,7 +211,7 @@ concommand.Add("model",function()
     local ent = Me:GetEyeTrace().Entity
     if ent:IsVehicle() and ent:GetDriver():IsPlayer() then ent = ent:GetDriver() end
     if ent:IsWorld() or not IsValid(ent) then
-        print ("No valid target.")
+        print ( "No valid target." )
     else
         print( "Ent Class: " .. ent:GetClass() .. "\nEnt Mdl: " .. ent:GetModel() )
     end
