@@ -3,11 +3,15 @@ local ponyreplace = {
     ["hand"] = "hoof",
     ["hands"] = "hooves",
     ["foot"] = "hoof",
-    ["feet"] = "hoof",
+    ["feet"] = "hooves",
     ["toe"] = "hoof",
     ["toes"] = "hooves",
     ["finger"] = "hoof",
     ["fingers"] = "hooves",
+    ["arm"] = "hoof",
+    ["arms"] = "hooves",
+    ["boy"] = "colt",
+    ["boys"] = "colts",
     ["guy"] = "stallion",
     ["man"] = "stallion",
     ["men"] = "stallions",
@@ -24,6 +28,7 @@ local ponyreplace = {
     ["somebody"] = "somepony",
     ["brofist"] = "brohoof",
     ["fap"] = "clop",
+    ["fapping"] = "clopping",
     ["gentleman"] = "gentlecolt",
     ["gentlemen"] = "gentlecolts",
     ["human"] = "pony",
@@ -34,14 +39,32 @@ local ponyreplace = {
     ["handedly"] = "hoofedly",
     ["butt"] = "flank",
     ["ass"] = "flank",
+    ["asshole"] = "ponut",
     ["tattoo"] = "cutie mark",
     ["boner"] = "wingboner",
+    ["pussy"] = "marehood",
     ["highfive"] = "/)",
     ["cooler"] = "20% cooler",
     ["neet"] = "blank flank",
     ["fuck"] = "buck",
+    ["fucking"] = "bucking",
     ["heck"] = "hay",
     ["hell"] = "hay",
+    ["mayonnaise"] = "[redacted]",
+    ["halloween"] = "nightmare night",
+    ["christmas"] = "hearth's warming",
+    ["valentines"] = "hearts and hooves",
+    ["cowboy"] = "cowpony",
+    ["cowgirl"] = "cowpony",
+    ["naysayer"] = "neighsayer",
+    ["snowman"] = "snowpony",
+    ["walk"] = "trot",
+    ["walking"] = "trotting",
+    ["run"] = "gallop",
+    ["running"] = "galloping",
+    ["wingman"] = "wingpony",
+    ["god"] = "celestia",
+    ["gamer"] = "luna",
 }
 
 randsnd = {"squee.wav", "squee2.ogg", "squee3.ogg"}
@@ -52,8 +75,10 @@ local function PonyspeakConvert(txt)
     for k, v in pairs(split) do
         split[k] = string.gsub(v:lower(), "(%a+)", ponyreplace)
 
-        if v:lower() ~= v then
+        if v:lower() ~= v and split[k] ~= v:lower() then
             split[k] = split[k]:upper()
+        elseif split[k] == v:lower() then
+            split[k] = v
         end
     end
 

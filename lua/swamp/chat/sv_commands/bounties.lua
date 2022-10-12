@@ -177,3 +177,42 @@ end, {
     global = false,
     throttle = false
 })
+
+--Could be it's own file, but eh
+RegisterChatCommand({'givepointsrandom', 'randomgivepoints'}, function(ply, arg)
+    local p = tonumber(arg)
+
+    if p then
+        local ranply = {}
+
+        for k, v in ipairs(player.GetHumans()) do
+            if v:IsActive() and v ~= ply then
+                table.insert(ranply, v)
+            end
+        end
+        
+        if #ranply == 0 then return end
+        
+        local rcvr = ranply[math.random(#ranply)]
+        
+        ply:TryTakePoints(p, function()
+            if not IsValid(ply) then return end
+
+            if IsValid(rcvr) then
+                rcvr:GivePoints(p, function()
+                    ply:Notify("You gave " .. rcvr:Nick() .. " " .. p .. " points.")
+                    rcvr:Notify(ply:Nick() .. " gave you " .. p .. " of their points.")
+                end,
+                function() return end)
+            end
+        end, function()
+            if IsValid(ply) then
+                ply:ChatPrint("[red]You don't have enough points")
+            end
+        end)
+    else
+        ply:ChatPrint("[orange]!givepointsrandom points")
+    end
+end, {
+    throttle = true
+})

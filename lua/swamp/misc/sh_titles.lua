@@ -418,9 +418,7 @@ AddTitle({
 if SERVER and gm == "cinema" then
     local weaponcallbacks = {
         weapon_gauntlet = function(atk, vic)
-            if vic:InVehicle() then
-                atk:AddStat("gauntletkill")
-            end
+            atk:AddStat("gauntletkill")
         end,
         weapon_slitter = function(atk, vic)
             if vic:IsActive() then

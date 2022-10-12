@@ -6,6 +6,7 @@ SWEP.ViewModel = ""
 SWEP.DrawWeaponInfoBox = false
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
+SWEP.Purpose = "We do not forgive. We do not forget. We are Anonymous. We are legion. Expect us."
 
 function SWEP:Initialize()
     self:SetHoldType("normal")

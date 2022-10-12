@@ -1,6 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 include("shared.lua")
-SWEP.Purpose = "Wage jihad against the infidel"
 GOLFSWINGFRAMES = {}
 
 function ADDGOLFFRAME()
