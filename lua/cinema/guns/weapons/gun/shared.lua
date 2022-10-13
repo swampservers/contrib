@@ -129,7 +129,7 @@ function GunPerkOverrides(swep, perk)
 
         t.Primary = {
             Ammo = "BULLET_PLAYER_AIRSOFT",
-            ClipSize = swep.Primary.Clip,
+            ClipSize = swep.Primary.ClipSize,
             DefaultClip = swep.Primary.DefaultClip,
             Automatic = swep.Primary.Automatic
         }
@@ -198,8 +198,7 @@ function GunPerkOverrides(swep, perk)
         t.NumPellets = swep.NumPellets * 1.5
         t.PelletSpread = swep.PelletSpread * 1.3
         t.CycleTime = swep.CycleTime * 1.5
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.2
-        t.AmmoPriceMod = ammo_price_mod * 2
+        t.AmmoPriceMod = ammo_price_mod * 1.8
     elseif perk == "moredamage" then
         t.Damage = swep.Damage * 1.2
         t.CycleTime = swep.CycleTime * 1.1
