@@ -209,7 +209,7 @@ function GunPerkOverrides(swep, perk)
         t.AmmoPriceMod = ammo_price_mod * 1.8
     elseif perk == "moredamage" then
         t.Damage = swep.Damage * 1.2
-        t.CycleTime = cycle_time * 1.2
+        t.CycleTime = cycle_time * 1.1
         t.KickUBase = (swep.KickUBase or 0) * 1.2
         t.AmmoPriceMod = ammo_price_mod * 1.5
     elseif perk == "explosive" then
