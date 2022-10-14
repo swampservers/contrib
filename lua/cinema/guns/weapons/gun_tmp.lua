@@ -34,7 +34,7 @@ ComputeSpray(SWEP, {
 
 --
 -- SWEP.Silenced = true
-SWEP.KickUBase = 0.52
+SWEP.KickUBase = 0.5
 SWEP.KickUSpray = 0.5
 SWEP.KickLBase = 0.3
 SWEP.KickLSpray = 0
