@@ -103,7 +103,7 @@ function GunPerkOverrides(swep, perk)
         headshot_multi = 3.75
         t.HeadshotMultiplier = headshot_multi
     elseif swep.GunType == "smg" then
-        spawn_price_mod = spawn_price_mod * 1.2
+        spawn_price_mod = spawn_price_mod * 1.1
         t.SpawnPriceMod = spawn_price_mod
     elseif swep.GunType == "pistol" then
         cycle_time = cycle_time * 1.07
