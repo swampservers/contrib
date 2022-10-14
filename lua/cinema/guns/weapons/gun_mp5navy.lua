@@ -19,7 +19,7 @@ SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = true
 SWEP.Damage = 22 --29
-SWEP.CycleTime = 0.075
+SWEP.CycleTime = 0.08
 SWEP.HalfDamageDistance = 4096
 --
 SWEP.SpreadBase = 0.008
@@ -33,7 +33,7 @@ ComputeSpray(SWEP, {
 })
 
 --
-SWEP.KickUBase = 0.2
+SWEP.KickUBase = 0.22
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0.1
 SWEP.KickLSpray = 0.3
