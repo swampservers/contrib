@@ -180,9 +180,9 @@ end, {
 
 --Could be it's own file, but eh
 RegisterChatCommand({'givepointsrandom', 'randomgivepoints'}, function(ply, arg)
-    local p = tonumber(arg)
+    local p = math.floor(tonumber(arg) or 0)
 
-    if p then
+    if p > 0 then
         local ranply = {}
 
         for k, v in ipairs(player.GetHumans()) do
