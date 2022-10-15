@@ -75,10 +75,10 @@ local function PonyspeakConvert(txt)
     for k, v in pairs(split) do
         split[k] = string.gsub(v:lower(), "(%a+)", ponyreplace)
 
-        if v:lower() ~= v and split[k] ~= v:lower() then
-            split[k] = split[k]:upper()
-        elseif split[k] == v:lower() then
+        if split[k] == v:lower() then
             split[k] = v
+        elseif v:lower() ~= v then
+            split[k] = split[k]:upper()
         end
     end
 
