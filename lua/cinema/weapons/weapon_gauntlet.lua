@@ -18,7 +18,7 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-SWEP.Instructions = "Hold left mouse button to snap. wait time is based on target's health."
+SWEP.Instructions = "Press the left mouse button to snap the highlighted target."
 SWEP.TargetCone = 15
 
 --NOMINIFY
