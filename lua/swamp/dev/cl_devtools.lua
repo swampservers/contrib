@@ -211,3 +211,14 @@ concommand.Add("model", function()
         print("Ent Class: " .. ent:GetClass() .. "\nEnt Mdl: " .. ent:GetModel())
     end
 end)
+
+
+-- Print message when a file is changed
+timer.Simple(0, function()
+    jit.attach(function(proto) 
+        local info = jit.util.funcinfo(proto)
+        if info.linedefined==0 and info.source and info.source:EndsWith(".lua") then
+            MsgC( Color( 255,100,100 ), "Refreshed: ", Color( 255,200,200 ), info.source,  "\n" )
+        end
+    end, "bc")
+end)
