@@ -190,11 +190,10 @@ RegisterChatCommand({'givepointsrandom', 'randomgivepoints'}, function(ply, arg)
                 table.insert(ranply, v)
             end
         end
-        
+
         if #ranply == 0 then return end
-        
         local rcvr = ranply[math.random(#ranply)]
-        
+
         ply:TryTakePoints(p, function()
             if not IsValid(ply) then return end
 
@@ -202,8 +201,7 @@ RegisterChatCommand({'givepointsrandom', 'randomgivepoints'}, function(ply, arg)
                 rcvr:GivePoints(p, function()
                     ply:Notify("You gave " .. rcvr:Nick() .. " " .. p .. " points.")
                     rcvr:Notify(ply:Nick() .. " gave you " .. p .. " of their points.")
-                end,
-                function() return end)
+                end, function() return end)
             end
         end, function()
             if IsValid(ply) then

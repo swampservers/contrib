@@ -17,6 +17,7 @@ local allowed = {
     ["STEAM_0:1:33536503"] = true, -- medroit
     ["STEAM_0:0:16678862"] = true, -- legacy
     ["STEAM_0:0:183303619"] = true -- pura
+    
 }
 
 function Player:IsLocalDev()
@@ -26,8 +27,10 @@ end
 concommand.Add("lua", function(ply, cmd, args, args2)
     if not Me:IsLocalDev() then
         print("Not allowed!")
+
         return
     end
+
     RunString(args2)
 end)
 
@@ -137,6 +140,7 @@ end
 concommand.Add("dev", function()
     if not Me:IsLocalDev() then
         print("Not allowed!")
+
         return
     end
 
@@ -196,10 +200,14 @@ end)
 
 concommand.Add("model", function()
     local ent = Me:GetEyeTrace().Entity
-    if ent:IsVehicle() and ent:GetDriver():IsPlayer() then ent = ent:GetDriver() end
+
+    if ent:IsVehicle() and ent:GetDriver():IsPlayer() then
+        ent = ent:GetDriver()
+    end
+
     if ent:IsWorld() or not IsValid(ent) then
-        print ( "No valid target." )
+        print("No valid target.")
     else
-        print( "Ent Class: " .. ent:GetClass() .. "\nEnt Mdl: " .. ent:GetModel() )
+        print("Ent Class: " .. ent:GetClass() .. "\nEnt Mdl: " .. ent:GetModel())
     end
 end)
