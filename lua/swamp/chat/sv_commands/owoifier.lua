@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local OwOemotes = {"OwO", "owo", "UwU", "uwu", "TwT", ">w<", ">w>", "<w<", ">wO", "Ow<", ":3c", ":3", ":33", ":333", "nya", "nyaa", "(> owo )>", "(> owo <)", "^w^", "\ (^w^) /", "*pounces on you*", "*glomps u*", "*nuzzles you*", "mrowww", "rawr", "*rawr*", "(OwO)<rawrrr)~", "~", "~~", ":owo:", ":uwu:", ":uwu02:", ":uwu2:", ":awoo:", ":ayaya:", ":blush:", ":burynice:", ":catgirl:", ":ohno:", ":pat:", ":shy:", ":snug:", ":teehee:", ":thinkerfelix:", ":weebblush1:", ":weebears:", ":weebhappy:", ":widetrap:"}
+local OwOemotes = {"OwO", "owo", "UwU", "uwu", "TwT", ">w<", ">w>", "<w<", ">wO", "Ow<", ":3c", ":3", ":33", ":333", "nya", "nyaa", "(> owo )>", "(> owo <)", "^w^", "*pounces on you*", "*glomps u*", "*nuzzles you*", "mrowww", "rawr", "*rawr*", "(OwO)<rawrrr)~", "~", "~~", ":owo:", ":uwu:", ":uwu02:", ":uwu2:", ":awoo:", ":ayaya:", ":blush:", ":burynice:", ":catgirl:", ":ohno:", ":pat:", ":shy:", ":snug:", ":teehee:", ":thinkerfelix:", ":weebblush1:", ":weebears:", ":weebhappy:", ":widetrap:"}
 
 --Add more emotes here
 local function OwOifier(text)
