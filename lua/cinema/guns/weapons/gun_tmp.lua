@@ -2,7 +2,7 @@
 DEFINE_BASECLASS("gun")
 SWEP.GunType = "smg"
 SWEP.PrintName = "TMP"
-SWEP.Purpose = "Burst fire silenced SMG"
+SWEP.Purpose = "Silenced SMG"
 SWEP.HoldType = "smg"
 SWEP.Slot = 0
 CSKillIcon(SWEP, "d")
