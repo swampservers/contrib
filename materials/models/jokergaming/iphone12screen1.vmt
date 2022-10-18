@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jokergaming/iphone12screen1"
+	"$basetexturetransform" "center .5 .5 scale 0.99 0.995 rotate 0 translate 0 0"
+}

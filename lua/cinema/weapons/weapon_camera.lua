@@ -164,6 +164,8 @@ function SWEP:AdjustMouseSensitivity()
     return self:GetZoom() / 80
 end
 
+-- models/props_combine/combinecamera001.mdl
+-- models/mechanics/robotics/c3.mdl
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
