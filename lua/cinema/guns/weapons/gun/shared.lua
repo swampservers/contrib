@@ -107,7 +107,7 @@ function GunPerkOverrides(swep, perk)
         spawn_price_mod = spawn_price_mod * 1.1
         t.CycleTime = cycle_time
         t.SpawnPriceMod = spawn_price_mod
-    elseif swep.GunType == "pistol" or self.GunType == "heavypistol" then
+    elseif swep.GunType == "pistol" then
         cycle_time = cycle_time * (12/11)
         t.CycleTime = cycle_time
     end
