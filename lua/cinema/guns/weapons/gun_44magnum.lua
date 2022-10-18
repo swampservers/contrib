@@ -41,7 +41,7 @@ SWEP.KickUBase = 2
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
-SWEP.MoveSpeed = 240 / 250
+SWEP.MoveSpeed = 245 / 250
 --
 SWEP.SpawnPriceMod = 1.4
 -- SWEP.ShootSound = "Weapon_DEagle.Single"
