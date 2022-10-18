@@ -22,48 +22,43 @@ if SERVER then
     SWEP.AutoSwitchTo = false
     SWEP.AutoSwitchFrom = false
 
-    --
-    -- A concommand to quickly switch to the camera
-    --
     concommand.Add("gmod_camera", function(player, command, arguments)
         player:SelectWeapon("weapon_camera")
     end)
 end
 
---
--- Network/Data Tables
---
 function SWEP:SetupDataTables()
     self:NetworkVar("Float", 0, "Zoom")
     self:NetworkVar("Float", 1, "Roll")
+    self:NetworkVar("Bool", 0, "Selfie")
 
     if SERVER then
         self:SetZoom(70)
         self:SetRoll(0)
+        self:SetSelfie(false)
     end
 end
 
---
--- Initialize Stuff
---
+
 function SWEP:Initialize()
     self:SetHoldType("camera")
 end
 
---
--- Reload resets the FOV and Roll
---
+
 function SWEP:Reload()
     if not self.Owner:KeyDown(IN_ATTACK2) then
         self:SetZoom(self.Owner:IsBot() and 75 or self.Owner:GetInfoNum("fov_desired", 75))
     end
 
     self:SetRoll(0)
+    
+    if SERVER and self.Owner:KeyPressed(IN_RELOAD) then
+        self:SetSelfie(not self:GetSelfie())
+        self:SetHoldType(self:GetSelfie() and "pistol" or "camera")
+    end
 end
 
---
--- PrimaryAttack - make a screenshot
---
+
 function SWEP:PrimaryAttack()
     self:DoShootEffect()
     -- If we're multiplayer this can be done totally clientside
@@ -72,15 +67,11 @@ function SWEP:PrimaryAttack()
     self.Owner:ConCommand("jpeg")
 end
 
---
--- SecondaryAttack - Nothing. See Tick for zooming.
---
+
 function SWEP:SecondaryAttack()
 end
 
---
--- Mouse 2 action
---
+
 function SWEP:Tick()
     if CLIENT and self.Owner ~= Me then return end -- If someone is spectating a player holding this weapon, bail
     local cmd = self.Owner:GetCurrentCommand()
@@ -89,23 +80,17 @@ function SWEP:Tick()
     self:SetRoll(self:GetRoll() + cmd:GetMouseX() * 0.025) -- Handles rotation
 end
 
---
--- Override players Field Of View
---
+
 function SWEP:TranslateFOV(current_fov)
     return self:GetZoom()
 end
 
---
--- Deploy - Allow lastinv
---
+
 function SWEP:Deploy()
     return true
 end
 
---
--- Set FOV to players desired FOV
---
+
 function SWEP:Equip()
     if self:GetZoom() == 70 and self.Owner:IsPlayer() and not self.Owner:IsBot() then
         self:SetZoom(self.Owner:GetInfoNum("fov_desired", 75))
@@ -116,19 +101,16 @@ function SWEP:ShouldDropOnDie()
     return false
 end
 
---
--- The effect when a weapon is fired successfully
---
+
 function SWEP:DoShootEffect()
     self:ExtEmitSound(self.ShootSound)
-    self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
-    self.Owner:SetAnimation(PLAYER_ATTACK1)
+    if not self:GetSelfie() then self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+    self.Owner:SetAnimation(PLAYER_ATTACK1) end
 end
 
 if SERVER then return end -- Only clientside lua after this line
 SWEP.WepSelectIcon = surface.GetTextureID("vgui/gmod_camera")
 
--- Don't draw the weapon info on the weapon selection thing
 function SWEP:DrawHUD()
 end
 
@@ -136,7 +118,6 @@ function SWEP:PrintWeaponInfo(x, y, alpha)
 end
 
 function SWEP:HUDShouldDraw(name)
-    -- So we can change weapons
     if name == "CHudWeaponSelection" then return true end
     if name == "CHudChat" then return true end
 
@@ -150,13 +131,6 @@ function SWEP:FreezeMovement()
     return false
 end
 
-function SWEP:CalcView(ply, origin, angles, fov)
-    if self:GetRoll() ~= 0 then
-        angles.Roll = self:GetRoll()
-    end
-
-    return origin, angles, fov
-end
 
 function SWEP:AdjustMouseSensitivity()
     if self.Owner:KeyDown(IN_ATTACK2) then return 1 end
@@ -164,46 +138,120 @@ function SWEP:AdjustMouseSensitivity()
     return self:GetZoom() / 80
 end
 
--- models/props_combine/combinecamera001.mdl
--- models/mechanics/robotics/c3.mdl
-function SWEP:DrawWorldModel()
+
+function SWEP:GetSelfieCam()
     local ply = self:GetOwner()
 
-    if IsValid(ply) and ply:IsPony() then
-        local bn = "LrigScull"
-        local bon = ply:LookupBone(bn) or 0
-        local opos = self:GetPos()
-        local oang = self:GetAngles()
-        local bp, ba = ply:GetBonePosition(bon)
+    local bn = ply:LookupBone("ValveBiped.Bip01_R_Hand")
+    if bn then
+        local mat = ply:GetBoneMatrix(bn)
+        if mat then
+            local pos,ang = mat:GetTranslation(),mat:GetAngles()
+            return pos,ang
 
-        if bp then
-            opos = bp
         end
-
-        if ba then
-            oang = ba
-        end
-
-        if ply:IsPony() then
-            oang:RotateAroundAxis(oang:Forward(), 90)
-            --oang:RotateAroundAxis(oang:Up(),-90)
-            opos = opos + oang:Up() * 1 + oang:Right() * -2 + oang:Forward() * 10.5
-            oang:RotateAroundAxis(oang:Right(), 10)
-        end
-
-        self:SetupBones()
-        self:SetModelScale(1, 0)
-        local mrt = self:GetBoneMatrix(0)
-
-        if mrt then
-            mrt:SetTranslation(opos)
-            mrt:SetAngles(oang)
-            --self:SetBoneMatrix(0, mrt )
-            self:SetRenderOrigin(opos)
-            self:SetRenderAngles(oang)
+    else
+        bn = ply:LookupBone("LrigScull")
+        if bn then
+            local mat = ply:GetBoneMatrix(bn)
+            if mat then
+                local pos,ang = mat:GetTranslation(),mat:GetAngles()
+                return pos,ang
+            end
         end
     end
 
+    return self:GetPos(), self:GetAngles()
+end
+
+--NOMINIFY
+
+local stickpos,stickang = Vector(10,-3,-4),Angle(30,-15,-90)
+local phonepos,phoneang = Vector(21,-7,-12.5),Angle(190,0,90)
+
+local camang = Angle(190,0,0)
+
+function SWEP:CalcView(ply, origin, angles, fov)
+    if self:GetRoll() ~= 0 then
+        angles.Roll = self:GetRoll()
+    end
+
+    if self:GetSelfie() then
+        self.Owner:SetupBones()
+        local p,a = self:GetSelfieCam()
+
+        local p2,a2 = LocalToWorld(phonepos + Vector(-1,0,-1),camang, p,a)
+
+        a2:RotateAroundAxis(a2:Forward(),self:GetRoll())
+
+        return p2,a2,fov
+    end
+
+    return origin, angles, fov
+end
+
+hook.Add("ShouldDrawLocalPlayer","SelfieDrawLocalPlayer",function(ply)
+    local wep =ply:GetActiveWeapon()
+    if IsValid(wep) and wep.GetSelfie and wep:GetSelfie() then
+        return true
+    end
+end)
+
+
+-- models/props_combine/combinecamera001.mdl
+-- models/mechanics/robotics/c4.mdl
+function SWEP:DrawWorldModel()
+    local ply = self:GetOwner()
+
+    if IsValid(ply) then
+
+        if self:GetSelfie() then
+            if not IsValid(SELFIE_PHONE) then
+                SELFIE_PHONE = ClientsideModel("models/jokergaming/iphone12.mdl")
+                SELFIE_PHONE:SetNoDraw(true)
+            end
+            if not IsValid(SELFIE_STICK) then
+                SELFIE_STICK = ClientsideModel("models/mechanics/robotics/c4.mdl")
+                SELFIE_STICK:SetNoDraw(true)
+                SELFIE_STICK:SetColor(Color(100,100,100))
+            end
+
+            SELFIE_STICK:SetModelScale(0.1)
+
+            local p,a = self:GetSelfieCam()
+
+            local p2,a2 = LocalToWorld(stickpos, stickang, p,a)
+            SELFIE_STICK:SetPos(p2)
+            SELFIE_STICK:SetAngles(a2)
+            SELFIE_STICK:DrawModel()
+
+
+            local p2,a2 = LocalToWorld(phonepos, phoneang, p,a)
+            SELFIE_PHONE:SetPos(p2)
+            SELFIE_PHONE:SetAngles(a2)
+            SELFIE_PHONE:DrawModel()
+
+            return
+        else
+
+            bn = ply:LookupBone("LrigScull")
+            if bn then
+                local mat = ply:GetBoneMatrix(bn)
+                if mat then
+                    local pos,ang = mat:GetTranslation(),mat:GetAngles()
+
+                        
+                        ang:RotateAroundAxis(ang:Forward(), 90)
+                        pos = pos + ang:Up() * 1 + ang:Right() * -2 + ang:Forward() * 10.5
+                        ang:RotateAroundAxis(ang:Right(), 10)
+                        self:SetRenderOrigin(pos)
+                        self:SetRenderAngles(ang)
+
+                end
+            end
+
+        end
+    end
     self:DrawModel()
 end
 
