@@ -39,11 +39,9 @@ function SWEP:SetupDataTables()
     end
 end
 
-
 function SWEP:Initialize()
     self:SetHoldType("camera")
 end
-
 
 function SWEP:Reload()
     if not self.Owner:KeyDown(IN_ATTACK2) then
@@ -51,13 +49,12 @@ function SWEP:Reload()
     end
 
     self:SetRoll(0)
-    
+
     if SERVER and self.Owner:KeyPressed(IN_RELOAD) then
         self:SetSelfie(not self:GetSelfie())
         self:SetHoldType(self:GetSelfie() and "pistol" or "camera")
     end
 end
-
 
 function SWEP:PrimaryAttack()
     self:DoShootEffect()
@@ -67,10 +64,8 @@ function SWEP:PrimaryAttack()
     self.Owner:ConCommand("jpeg")
 end
 
-
 function SWEP:SecondaryAttack()
 end
-
 
 function SWEP:Tick()
     if CLIENT and self.Owner ~= Me then return end -- If someone is spectating a player holding this weapon, bail
@@ -80,16 +75,13 @@ function SWEP:Tick()
     self:SetRoll(self:GetRoll() + cmd:GetMouseX() * 0.025) -- Handles rotation
 end
 
-
 function SWEP:TranslateFOV(current_fov)
     return self:GetZoom()
 end
 
-
 function SWEP:Deploy()
     return true
 end
-
 
 function SWEP:Equip()
     if self:GetZoom() == 70 and self.Owner:IsPlayer() and not self.Owner:IsBot() then
@@ -101,11 +93,13 @@ function SWEP:ShouldDropOnDie()
     return false
 end
 
-
 function SWEP:DoShootEffect()
     self:ExtEmitSound(self.ShootSound)
-    if not self:GetSelfie() then self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
-    self.Owner:SetAnimation(PLAYER_ATTACK1) end
+
+    if not self:GetSelfie() then
+        self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+        self.Owner:SetAnimation(PLAYER_ATTACK1)
+    end
 end
 
 if SERVER then return end -- Only clientside lua after this line
@@ -131,32 +125,34 @@ function SWEP:FreezeMovement()
     return false
 end
 
-
 function SWEP:AdjustMouseSensitivity()
     if self.Owner:KeyDown(IN_ATTACK2) then return 1 end
 
     return self:GetZoom() / 80
 end
 
-
 function SWEP:GetSelfieCam()
     local ply = self:GetOwner()
-
     local bn = ply:LookupBone("ValveBiped.Bip01_R_Hand")
+
     if bn then
         local mat = ply:GetBoneMatrix(bn)
-        if mat then
-            local pos,ang = mat:GetTranslation(),mat:GetAngles()
-            return pos,ang
 
+        if mat then
+            local pos, ang = mat:GetTranslation(), mat:GetAngles()
+
+            return pos, ang
         end
     else
         bn = ply:LookupBone("LrigScull")
+
         if bn then
             local mat = ply:GetBoneMatrix(bn)
+
             if mat then
-                local pos,ang = mat:GetTranslation(),mat:GetAngles()
-                return pos,ang
+                local pos, ang = mat:GetTranslation(), mat:GetAngles()
+
+                return pos, ang
             end
         end
     end
@@ -165,11 +161,9 @@ function SWEP:GetSelfieCam()
 end
 
 --NOMINIFY
-
-local stickpos,stickang = Vector(10,-3,-4),Angle(30,-15,-90)
-local phonepos,phoneang = Vector(21,-7,-12.5),Angle(190,0,90)
-
-local camang = Angle(190,0,0)
+local stickpos, stickang = Vector(10, -3, -4), Angle(30, -15, -90)
+local phonepos, phoneang = Vector(21, -7, -12.5), Angle(190, 0, 90)
+local camang = Angle(190, 0, 0)
 
 function SWEP:CalcView(ply, origin, angles, fov)
     if self:GetRoll() ~= 0 then
@@ -178,25 +172,20 @@ function SWEP:CalcView(ply, origin, angles, fov)
 
     if self:GetSelfie() then
         self.Owner:SetupBones()
-        local p,a = self:GetSelfieCam()
+        local p, a = self:GetSelfieCam()
+        local p2, a2 = LocalToWorld(phonepos + Vector(-1, 0, -1), camang, p, a)
+        a2:RotateAroundAxis(a2:Forward(), self:GetRoll())
 
-        local p2,a2 = LocalToWorld(phonepos + Vector(-1,0,-1),camang, p,a)
-
-        a2:RotateAroundAxis(a2:Forward(),self:GetRoll())
-
-        return p2,a2,fov
+        return p2, a2, fov
     end
 
     return origin, angles, fov
 end
 
-hook.Add("ShouldDrawLocalPlayer","SelfieDrawLocalPlayer",function(ply)
-    local wep =ply:GetActiveWeapon()
-    if IsValid(wep) and wep.GetSelfie and wep:GetSelfie() then
-        return true
-    end
+hook.Add("ShouldDrawLocalPlayer", "SelfieDrawLocalPlayer", function(ply)
+    local wep = ply:GetActiveWeapon()
+    if IsValid(wep) and wep.GetSelfie and wep:GetSelfie() then return true end
 end)
-
 
 -- models/props_combine/combinecamera001.mdl
 -- models/mechanics/robotics/c4.mdl
@@ -204,54 +193,48 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
     if IsValid(ply) then
-
         if self:GetSelfie() then
             if not IsValid(SELFIE_PHONE) then
                 SELFIE_PHONE = ClientsideModel("models/jokergaming/iphone12.mdl")
                 SELFIE_PHONE:SetNoDraw(true)
             end
+
             if not IsValid(SELFIE_STICK) then
                 SELFIE_STICK = ClientsideModel("models/mechanics/robotics/c4.mdl")
                 SELFIE_STICK:SetNoDraw(true)
-                SELFIE_STICK:SetColor(Color(100,100,100))
+                SELFIE_STICK:SetColor(Color(100, 100, 100))
             end
 
             SELFIE_STICK:SetModelScale(0.1)
-
-            local p,a = self:GetSelfieCam()
-
-            local p2,a2 = LocalToWorld(stickpos, stickang, p,a)
+            local p, a = self:GetSelfieCam()
+            local p2, a2 = LocalToWorld(stickpos, stickang, p, a)
             SELFIE_STICK:SetPos(p2)
             SELFIE_STICK:SetAngles(a2)
             SELFIE_STICK:DrawModel()
-
-
-            local p2,a2 = LocalToWorld(phonepos, phoneang, p,a)
+            local p2, a2 = LocalToWorld(phonepos, phoneang, p, a)
             SELFIE_PHONE:SetPos(p2)
             SELFIE_PHONE:SetAngles(a2)
             SELFIE_PHONE:DrawModel()
 
             return
         else
-
             bn = ply:LookupBone("LrigScull")
+
             if bn then
                 local mat = ply:GetBoneMatrix(bn)
+
                 if mat then
-                    local pos,ang = mat:GetTranslation(),mat:GetAngles()
-
-                        
-                        ang:RotateAroundAxis(ang:Forward(), 90)
-                        pos = pos + ang:Up() * 1 + ang:Right() * -2 + ang:Forward() * 10.5
-                        ang:RotateAroundAxis(ang:Right(), 10)
-                        self:SetRenderOrigin(pos)
-                        self:SetRenderAngles(ang)
-
+                    local pos, ang = mat:GetTranslation(), mat:GetAngles()
+                    ang:RotateAroundAxis(ang:Forward(), 90)
+                    pos = pos + ang:Up() * 1 + ang:Right() * -2 + ang:Forward() * 10.5
+                    ang:RotateAroundAxis(ang:Right(), 10)
+                    self:SetRenderOrigin(pos)
+                    self:SetRenderAngles(ang)
                 end
             end
-
         end
     end
+
     self:DrawModel()
 end
 
