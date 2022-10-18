@@ -37,11 +37,11 @@ ComputeSpray(SWEP, {
 })
 
 --
-SWEP.KickUBase = 0.2
+SWEP.KickUBase = 0.22
 SWEP.KickUSpray = 1
-SWEP.KickLBase = 0.1
+SWEP.KickLBase = 0.11
 SWEP.KickLSpray = 0.3
-SWEP.MoveSpeed = 1
+SWEP.MoveSpeed = 240 / 250
 --
 SWEP.AmmoPriceMod = 1.2
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}

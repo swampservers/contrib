@@ -38,7 +38,7 @@ SWEP.KickUBase = 0.2
 SWEP.KickUSpray = 2.5
 SWEP.KickLBase = 0.05
 SWEP.KickLSpray = 0.3
-SWEP.MoveSpeed = 230 / 250
+SWEP.MoveSpeed = 225 / 250
 
 function SWEP:TranslateViewModelActivity(act)
     return ({

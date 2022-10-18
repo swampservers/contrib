@@ -26,7 +26,7 @@ SWEP.Damage = 66
 SWEP.CycleTime = 0.3
 SWEP.HalfDamageDistance = 8192
 --
-SWEP.SpreadBase = 0.002
+SWEP.SpreadBase = 0.003
 SWEP.SpreadMove = 0.012
 SWEP.Spray = 0.1
 SWEP.SprayExponent = 3
@@ -41,7 +41,7 @@ SWEP.KickUBase = 2
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
-SWEP.MoveSpeed = 1
+SWEP.MoveSpeed = 240 / 250
 --
 SWEP.SpawnPriceMod = 1.4
 -- SWEP.ShootSound = "Weapon_DEagle.Single"

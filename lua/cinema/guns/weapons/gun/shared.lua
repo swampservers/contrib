@@ -89,8 +89,10 @@ end
 -- swep can be the swep or weapons.GetTable
 function GunPerkOverrides(swep, perk)
     local t = {}
+    local cycle_time = swep.CycleTime
+    local headshot_multi = swep.HeadshotMultiplier or 3 --default HeadshotMultiplier
+    local spawn_price_mod = swep.SpawnPriceMod or 1
     local ammo_price_mod = swep.AmmoPriceMod or 1
-    local headshot_multi = 3 --default HeadshotMultiplier
 
     if swep.GunType == "shotgun" or swep.GunType == "autoshotgun" then
         ammo_price_mod = ammo_price_mod * 1.4
@@ -100,10 +102,18 @@ function GunPerkOverrides(swep, perk)
     elseif swep.GunType == "ar" then
         headshot_multi = 3.75
         t.HeadshotMultiplier = headshot_multi
+    elseif swep.GunType == "smg" then
+        cycle_time = cycle_time * (32/30)
+        spawn_price_mod = spawn_price_mod * 1.1
+        t.CycleTime = cycle_time
+        t.SpawnPriceMod = spawn_price_mod
+    elseif swep.GunType == "pistol" or self.GunType == "heavypistol" then
+        cycle_time = cycle_time * (12/11)
+        t.CycleTime = cycle_time
     end
 
     if perk == "min" then
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
+        t.SpawnPriceMod = spawn_price_mod * 0.7
     elseif perk == "crackedscope" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.05
         t.SpreadUnscoped = math.max((swep.SpreadUnscoped or 0) - 0.05, 0)
@@ -111,14 +121,22 @@ function GunPerkOverrides(swep, perk)
         t.Damage = swep.Damage * 0.6
         t.KickUBase = (swep.KickUBase or 0) * 0.5
         t.KickLBase = (swep.KickLBase or 0) * 0.5
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
-        t.AmmoPriceMod = ammo_price_mod * 0.7
+        
+        t.Primary = {
+            Ammo = "BULLET_PLAYER_RUBBER",
+            ClipSize = swep.Primary.ClipSize,
+            DefaultClip = swep.Primary.DefaultClip,
+            Automatic = swep.Primary.Automatic
+        }
+        
+        t.SpawnPriceMod = spawn_price_mod * 0.8
+        t.AmmoPriceMod = ammo_price_mod * 0.5
     elseif perk == "smoothbore" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.02
     elseif perk == "chinese" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.005
         t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.7
+        t.SpawnPriceMod = spawn_price_mod * 0.7
     elseif perk == "airsoft" then
         t.Damage = 1
         t.HeadshotMultiplier = 1
@@ -135,7 +153,7 @@ function GunPerkOverrides(swep, perk)
         }
 
         t.SprayIncrement = 0
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 0.3
+        t.SpawnPriceMod = spawn_price_mod * 0.3
         t.AmmoPriceMod = ammo_price_mod * 0.2
     elseif perk == "compliant" then
         t.Primary = {
@@ -154,15 +172,15 @@ function GunPerkOverrides(swep, perk)
             Automatic = true
         }
 
-        t.CycleTime = swep.CycleTime * 0.8
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.1
+        t.CycleTime = cycle_time * 0.84
+        t.SpawnPriceMod = spawn_price_mod * 1.1
     elseif perk == "lightweight" then
         t.SpreadMove = (swep.SpreadMove or 0) * 0.5
         t.MobilityExponent = 0.6 --should make you walk faster
     elseif perk == "compensated" then
-        t.KickUBase = (swep.KickUBase or 0) * 0.5
-        t.KickLBase = (swep.KickLBase or 0) * 0.5
-        t.KickUSpray = (swep.KickUSpray or 0) * 0.5
+        t.KickUBase = (swep.KickUBase or 0) * 0.6
+        t.KickLBase = (swep.KickLBase or 0) * 0.6
+        t.KickUSpray = (swep.KickUSpray or 0) * 0.6
     elseif perk == "extended" then
         local cs = math.Round(swep.Primary.ClipSize * 18 / 15) + 2
 
@@ -186,22 +204,22 @@ function GunPerkOverrides(swep, perk)
         t.HeadshotMultiplier = 3
 
         if not swep.GunType == "autoshotgun" then
-            t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.5
+            t.SpawnPriceMod = spawn_price_mod * 1.5
         end
 
         t.AmmoPriceMod = ammo_price_mod * 1.8
     elseif perk == "selfloading" then
-        t.CycleTime = swep.CycleTime * 0.6
+        t.CycleTime = cycle_time * 0.6
         t.UnscopeOnShoot = false
-        t.SpawnPriceMod = (swep.SpawnPriceMod or 1) * 1.1
+        t.SpawnPriceMod = spawn_price_mod * 1.1
     elseif perk == "boomstick" then
         t.NumPellets = swep.NumPellets * 1.5
         t.PelletSpread = swep.PelletSpread * 1.3
-        t.CycleTime = swep.CycleTime * 1.5
+        t.CycleTime = cycle_time * 1.5
         t.AmmoPriceMod = ammo_price_mod * 1.8
     elseif perk == "moredamage" then
         t.Damage = swep.Damage * 1.2
-        t.CycleTime = swep.CycleTime * 1.1
+        t.CycleTime = cycle_time * 1.1
         t.KickUBase = (swep.KickUBase or 0) * 1.2
         t.AmmoPriceMod = ammo_price_mod * 1.5
     elseif perk == "explosive" then
@@ -214,6 +232,7 @@ function GunPerkOverrides(swep, perk)
             t.PelletSpread = 0.04
             t.Damage = 7
             t.HalfDamageDistance = 768 --1024
+            t.CycleTime = 0.055
             -- t.Primary = {
             --     Ammo = swep.Primary.Ammo,
             --     ClipSize = 20,

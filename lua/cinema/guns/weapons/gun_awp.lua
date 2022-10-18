@@ -39,7 +39,7 @@ SWEP.ScopeLevels = {40 / 90, 10 / 90}
 
 SWEP.UnscopeOnShoot = true
 SWEP.KickUBase = 3
-SWEP.MoveSpeed = 210 / 250
+SWEP.MoveSpeed = 205 / 250
 SWEP.ScopedSpeedRatio = 0.5
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

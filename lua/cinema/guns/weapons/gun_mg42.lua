@@ -48,7 +48,7 @@ SWEP.KickUBase = 1
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0.35
 SWEP.KickLSpray = 0.5
-SWEP.MoveSpeed = 200 / 250
+SWEP.MoveSpeed = 190 / 250
 --
 SWEP.KickDance = 3
 SWEP.CrouchKickDanceMultiplier = 0.2

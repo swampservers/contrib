@@ -141,6 +141,17 @@ game.AddAmmoType{
 }
 
 game.AddAmmoType{
+    name = "BULLET_PLAYER_RUBBER",
+    dmgtype = DMG_BULLET,
+    tracer = TRACER_LINE,
+    plydmg = 0,
+    npcdmg = 0,
+    force = 1600,
+    minsplash = 4,
+    maxsplash = 8
+}
+
+game.AddAmmoType{
     name = "BULLET_PLAYER_45ACP",
     dmgtype = DMG_BULLET,
     tracer = TRACER_LINE,
