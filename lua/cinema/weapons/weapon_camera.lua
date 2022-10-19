@@ -219,6 +219,8 @@ function SWEP:DrawWorldModel()
             SELFIE_PHONE:SetupBones()
             SELFIE_PHONE:DrawModel()
 
+            ply:SetEyeTarget(p2)
+
             return
         else
             bn = ply:LookupBone("LrigScull")
