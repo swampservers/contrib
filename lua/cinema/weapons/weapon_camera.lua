@@ -218,7 +218,6 @@ function SWEP:DrawWorldModel()
             SELFIE_PHONE:SetAngles(a2)
             SELFIE_PHONE:SetupBones()
             SELFIE_PHONE:DrawModel()
-
             ply:SetEyeTarget(p2)
 
             return
