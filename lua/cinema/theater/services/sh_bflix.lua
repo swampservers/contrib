@@ -43,6 +43,9 @@ if CLIENT then
 
         local function parseURL(url)
             url = string.Replace(url, "e-10.dokicloud.one", "e-1.dokicloud.one") --HTTP functions can't handle e-10???
+            if (not string.match(url,"playlist%.m3u8")) then
+                url = string.match(url,"(https.+/)%d+/.+.m3u8").."playlist.m3u8"
+            end
 
             --m3u8 playlist
             http.Fetch(url, function(body)
@@ -98,7 +101,7 @@ if CLIENT then
             --embed api
             http.Fetch("https://" .. host .. "/ajax/embed-4/getSources?id=" .. string.match(link, host .. "/.-/(.-)%?z="), function(body, length, headers, code)
                 t = util.JSONToTable(body)
-                local url = t['encrypted'] == true and nil or t['sources'][1]['file']
+                local url = type(t['sources']) == 'string' and nil or t['sources'][1]['file']
 
                 --load player page to extract m3u8 playlist url
                 if not url then
@@ -118,22 +121,36 @@ if CLIENT then
                         end
                     end)
 
-                    timer.Create("bflixupdate" .. tostring(math.random(1, 100000)), 1, 10, function()
-                        if IsValid(vpanel) then
-                            vpanel:RunJavascript("console.log('FILE:'+jwplayer('vidcloud-player').getPlaylistItem()['file'])")
-                        end
-                    end)
-
-                    function vpanel:ConsoleMessage(msg)
+                    vpanel:AddFunction( "gmod", "log", function( msg ) --console.log is overridden
                         if Me.videoDebug then
                             print(msg)
                         end
 
                         if msg:StartWith("FILE:") then
-                            self:Remove()
+                            vpanel:Remove()
                             parseURL(string.sub(msg, 6))
                         end
-                    end
+                    end)
+
+                    timer.Create("bflixupdate" .. tostring(math.random(1, 100000)), 1, 15, function()
+                        if IsValid(vpanel) then
+                            vpanel:RunJavascript([[
+                                if(typeof(resource_list)=="undefined"){
+                                    setInterval(function(){
+                                        var resources=performance.getEntriesByType("resource");
+                                        var il=resource_list.length;
+                                        for(var i=il;i<resources.length;i++){
+                                            if (resources[i].name.endsWith('.m3u8')){
+                                               gmod.log("FILE:"+resources[i].name);
+                                            }
+                                        }
+                                        resource_list=resources;
+                                    },100);
+                                }
+                                var resource_list=[];
+                            ]])
+                        end
+                    end)
 
                     vpanel:OpenURL(key)
                     vpanel:QueueJavascript("window.location='" .. link .. "'")
