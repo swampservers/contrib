@@ -43,8 +43,9 @@ if CLIENT then
 
         local function parseURL(url)
             url = string.Replace(url, "e-10.dokicloud.one", "e-1.dokicloud.one") --HTTP functions can't handle e-10???
-            if (not string.match(url,"playlist%.m3u8")) then
-                url = string.match(url,"(https.+/)%d+/.+.m3u8").."playlist.m3u8"
+
+            if not string.match(url, "playlist%.m3u8") then
+                url = string.match(url, "(https.+/)%d+/.+.m3u8") .. "playlist.m3u8"
             end
 
             --m3u8 playlist
@@ -121,7 +122,8 @@ if CLIENT then
                         end
                     end)
 
-                    vpanel:AddFunction( "gmod", "log", function( msg ) --console.log is overridden
+                    --console.log is overridden
+                    vpanel:AddFunction("gmod", "log", function(msg)
                         if Me.videoDebug then
                             print(msg)
                         end
