@@ -140,6 +140,56 @@ function GetMapPropTable()
             scale = 0.95 --the curve doesnt quite line up now, but the map very well curved
             
         },
+        {
+            class = "pcasino_blackjack_table",
+            data = {
+                bet = {
+                    default = 500,
+                    iteration = 100,
+                    max = 1000,
+                    min = 100
+                },
+                general = {
+                    betPeriod = 30
+                },
+                payout = {
+                    blackjack = 1.5,
+                    win = 1
+                },
+                turn = {
+                    timeout = 30
+                }
+            },
+            pos = Vector(-2550 + math.random(-arcadeyposrnd, arcadeyposrnd), -280 + math.random(-arcadexposrnd, arcadexposrnd), 481),
+            ang = Angle(0, 90 + math.random(-arcadeanglernd, arcadeanglernd), 0)
+        },
+        {
+            class = "pcasino_roulette_table",
+            data = {
+                bet = {
+                    betLimit = 3000,
+                    default = 500,
+                    iteration = 100,
+                    max = 1000,
+                    min = 100
+                },
+                general = {
+                    betPeriod = 30
+                }
+            },
+            pos = Vector(-2700 + math.random(-arcadeyposrnd, arcadeyposrnd), -280 + math.random(-arcadexposrnd, arcadexposrnd), 499),
+            ang = Angle(0, 90 + math.random(-arcadeanglernd, arcadeanglernd), 0)
+        },
+        {
+            class = "floppa_npc",
+            pos = Vector(-2554, -323, 481),
+            ang = Angle(0, 90, 0)
+        },
+        {
+            class = "floppa_npc",
+            pos = Vector(-2704, -320, 481),
+            ang = Angle(0, 90, 0)
+        },
     }
 
     --IN VAPOR LOUNGE
