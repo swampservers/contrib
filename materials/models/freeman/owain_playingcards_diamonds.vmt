@@ -1,0 +1,30 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/freeman/owain_playingcards_diamonds"	
+	"$bumpmap" "models/freeman/owain_playingcards_norm"
+	 "$phongexponenttexture" "models/freeman/owain_playingcards_exponent"
+
+
+	"$model" "1"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.25 .25 .25]"
+
+	"$phong" "1"
+	"$halflambert" "0"
+	"$phongboost" "0.6"
+	"$phongtint" "[1 1 1.2]"
+	"$phongalbedotint" "0"
+	"$phongfresnelranges" "[1 1 1]"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "1"
+	"$rimlightboost" "0.45"
+	"$rimmask" "1"
+
+
+	"$normalmapalphaenvmapmask" "1"
+
+
+
+}

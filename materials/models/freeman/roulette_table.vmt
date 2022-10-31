@@ -1,0 +1,30 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/freeman/owain_roulettetable_diffuse"	
+	"$bumpmap" "models/freeman/owain_roulettetable_norm"
+	 "$phongexponenttexture" "models/freeman/owain_roulettetable_exponent"
+
+
+	"$model" "1"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.2 .2 .26]"
+
+	"$phong" "1"
+	"$halflambert" "0"
+	"$phongboost" "0.5"
+	"$phongtint" "[1 1 1.2]"
+	"$phongalbedotint" "0"
+	"$phongfresnelranges" "[1 1 1]"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "1"
+	"$rimlightboost" "0.4"
+	"$rimmask" "1"
+
+
+	"$normalmapalphaenvmapmask" "1"
+
+
+
+}

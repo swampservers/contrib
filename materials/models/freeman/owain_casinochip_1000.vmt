@@ -1,0 +1,44 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/freeman/owain_casinochip_diffuse"	
+	"$bumpmap" "models/freeman/owain_casinochip_norm"
+	 "$phongexponenttexture" "models/freeman/owain_casinochip_exponent"
+
+
+	"$model" "1"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.33 .33 .33]"
+
+	"$phong" "1"
+	"$halflambert" "0"
+	"$phongboost" "1"
+	"$phongtint" "[1 1 1.2]"
+	"$phongalbedotint" "0"
+	"$phongfresnelranges" "[1 1 1]"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "1"
+	"$rimlightboost" "2"
+	"$rimmask" "1"
+
+	"$color2" "[0.9 0.9 0]"
+
+	"$normalmapalphaenvmapmask" "1"
+
+
+	"$detail" "models/freeman/owain_chipdenom_1000"
+	"$detailscale" "1"
+	"$detailblendmode" "0"	
+	"$detailblendfactor" "1"
+
+
+// Tinting
+
+	"$blendtintbybasealpha" "1" 
+ 	"$blendtintcoloroverbase" "0"
+
+
+
+
+}

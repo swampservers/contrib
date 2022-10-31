@@ -1,0 +1,27 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/freeman/owain_roulettesurface_diffuse"	
+	"$bumpmap" "models/freeman/owain_roulettesurface_norm"
+
+
+	"$model" "1"
+
+
+	"$phong" "1"
+	"$halflambert" "0"
+	"$phongboost" "0.1"
+	"$phongtint" "[1 1 1.2]"
+	"$phongalbedotint" "0"
+	"$phongfresnelranges" "[1 1 1]"
+
+	"$phongfresnel" "1"
+
+	"$rimlight" "0"
+
+
+
+	"$normalmapalphaenvmapmask" "1"
+
+
+
+}
