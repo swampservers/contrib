@@ -144,17 +144,17 @@ function GetMapPropTable()
             class = "pcasino_blackjack_table",
             data = {
                 bet = {
-                    default = 500,
+                    default = 1000,
                     iteration = 100,
-                    max = 1000,
+                    max = 100000,
                     min = 100
                 },
                 general = {
-                    betPeriod = 30
+                    betPeriod = 15
                 },
                 payout = {
-                    blackjack = 1.5,
-                    win = 1
+                    blackjack = 2.5,
+                    win = 2
                 },
                 turn = {
                     timeout = 30
@@ -167,14 +167,14 @@ function GetMapPropTable()
             class = "pcasino_roulette_table",
             data = {
                 bet = {
-                    betLimit = 3000,
-                    default = 500,
+                    betLimit = 100000,
+                    default = 1000,
                     iteration = 100,
-                    max = 1000,
+                    max = 50000,
                     min = 100
                 },
                 general = {
-                    betPeriod = 30
+                    betPeriod = 15
                 }
             },
             pos = Vector(-2700 + math.random(-arcadeyposrnd, arcadeyposrnd), -280 + math.random(-arcadexposrnd, arcadexposrnd), 499),
