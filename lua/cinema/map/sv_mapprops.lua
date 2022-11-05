@@ -145,7 +145,7 @@ function GetMapPropTable()
             data = {
                 bet = {
                     default = 1000,
-                    iteration = 100,
+                    iteration = 1000,
                     max = 100000,
                     min = 100
                 },
@@ -169,7 +169,7 @@ function GetMapPropTable()
                 bet = {
                     betLimit = 100000,
                     default = 1000,
-                    iteration = 100,
+                    iteration = 1000,
                     max = 50000,
                     min = 100
                 },
@@ -182,12 +182,7 @@ function GetMapPropTable()
         },
         {
             class = "floppa_npc",
-            pos = Vector(-2554, -323, 481),
-            ang = Angle(0, 90, 0)
-        },
-        {
-            class = "floppa_npc",
-            pos = Vector(-2704, -320, 481),
+            pos = Vector(-2554, -325, 482),
             ang = Angle(0, 90, 0)
         },
     }
