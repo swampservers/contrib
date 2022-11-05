@@ -77,6 +77,7 @@ TrashLocationOverrides = {
     ['SushiTheater Basement'] = TRASHLOC_BUILD,
     ['SushiTheater Second Floor'] = TRASHLOC_NOSPAWN,
     ['SushiTheater Attic'] = TRASHLOC_BUILD,
+    ['Trump Taj Mahal'] = TRASHLOC_NOSPAWN,
     ['Auditorium'] = TRASHLOC_BUILD,
     ['The Pit'] = TRASHLOC_BUILD,
     ['Control Room'] = TRASHLOC_BUILD,

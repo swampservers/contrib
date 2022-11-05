@@ -440,6 +440,11 @@ Locations = {
         Max = Vector(-2128, -112, 992)
     },
     {
+        Name = "Trump Taj Mahal",
+        Min = Vector(-2872, -330, 472),
+        Max = Vector(-2490, -6, 612)
+    },
+    {
         Name = "Trump Tower",
         Min = Vector(-2993, -419, 260),
         Max = Vector(-1958, 346, 992),
