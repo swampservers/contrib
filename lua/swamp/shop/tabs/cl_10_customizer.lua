@@ -4,8 +4,6 @@ ShopTab({
     class = "ShopCustomizerMode"
 })
 
-
-
 vgui.Register('ShopCustomizerMode', {
     OpensOver = true,
     Title = "Customizer",

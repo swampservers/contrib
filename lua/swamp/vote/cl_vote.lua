@@ -142,11 +142,8 @@ function DRAWVOTE()
     local tw, th = surface.GetTextSize("Vote")
     surface.SetFont("PlayerOptionVoteFont")
     local lw, lh = surface.GetTextSize("Vote")
-    
-
-    local chatx,chaty = chat.GetChatBoxPos()
-    local  bottom = math.min(ScrH() / 2, chaty-16)
-
+    local chatx, chaty = chat.GetChatBoxPos()
+    local bottom = math.min(ScrH() / 2, chaty - 16)
     local p1, p2, p3, p4 = 4, 10, 2, 4
     local h = lh * #options + th + p1 + p2 + p3 + p4
     local y = bottom - h

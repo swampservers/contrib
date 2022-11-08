@@ -495,6 +495,7 @@ if CLIENT then
             end)
         else
             local nargs = #argtypes
+
             net.Receive(name, function()
                 local argvals = {}
 

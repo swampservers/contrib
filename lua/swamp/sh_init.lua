@@ -1,17 +1,11 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-
-
-for _,f in ipairs({
-    "_core/list.lua",
-    "_core/memo.lua",
-    "_core/table.lua",
-    "_core/vector.lua"
-}) do
+for _, f in ipairs({"_core/list.lua", "_core/memo.lua", "_core/table.lua", "_core/vector.lua"}) do
     include(f)
-    if SERVER then AddCSLuaFile(f) end
+
+    if SERVER then
+        AddCSLuaFile(f)
+    end
 end
-
-
 
 --- Shorthand for empty function
 function noop()
@@ -74,8 +68,6 @@ function math.nextpow2(n)
 end
 
 math.power2 = math.nextpow2
-
-
 local angle = FindMetaTable("Angle")
 
 function angle:GetInverse()
@@ -96,8 +88,6 @@ function ScaleMatrix(scale)
 end
 
 --NOMINIFY
-
-
 local weakrefmeta = {
     __mode = "v",
     __call = function(t) return t[1] end
@@ -121,8 +111,6 @@ Table = Table or memo(function() return {} end)
 function bit.packu32(i)
     return string.char(bit.band(bit.rshift(i, 24), 255), bit.band(bit.rshift(i, 16), 255), bit.band(bit.rshift(i, 8), 255), bit.band(i, 255))
 end
-
-
 
 -- calling sub(x, ...) instead of x:sub(...) is much faster (on windows at least). localizing is ideal but too much code pollution
 sub = string.sub
@@ -148,9 +136,6 @@ function GenerateKey()
 
     return tonumber(c) and GenerateKey() or c
 end
-
-
-
 -- local unused_G = rawget(_G, "unused_G") or {}
 -- setmetatable(_G, {
 --     __index = function(t, k)
