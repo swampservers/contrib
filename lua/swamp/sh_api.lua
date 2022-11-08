@@ -483,20 +483,28 @@ end
 --- Register a function which is called on the server and executed on the client. See this file for details.
 if CLIENT then
     function API_Command(name, argtypes, client_function, unreliable)
+        if isfunction(argtypes) then
+            client_function, unreliable = argtypes, client_function
+        end
+
         unreliable = unreliable or false
-        local nargs = #argtypes
 
-        net.Receive(name, function()
-            local argvals = {}
+        if isfunction(argtypes) then
+            net.Receive(name, function()
+                client_function(unpack(API_Read(API_List(API_ANY))))
+            end)
+        else
+            local nargs = #argtypes
+            net.Receive(name, function()
+                local argvals = {}
 
-            for i = 1, nargs do
-                argvals[i] = API_Read(argtypes[i])
-            end
+                for i = 1, nargs do
+                    argvals[i] = API_Read(argtypes[i])
+                end
 
-            -- local by,bi = net.BytesLeft()
-            -- print("bits", bi)
-            client_function(unpack(argvals))
-        end)
+                client_function(unpack(argvals))
+            end)
+        end
     end
 
     API_OnRequests = API_OnRequests or {}

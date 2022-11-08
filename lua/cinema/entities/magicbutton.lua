@@ -328,7 +328,7 @@ local function MagicOutcomePrize(ply)
     if ply.GivePoints == nil then return nil end
     ply:GivePoints(amount)
 
-    return "and won [white]" .. string.Comma(amount) .. " points![fbc];coins;"
+    return "and won [white]" .. string.Comma(amount) .. " points![bot];coins;"
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
@@ -338,7 +338,7 @@ local function MagicOutcomeBountyAndPrize(ply)
     local add = GetPlayerBounty(ply) + amount
     SetPlayerBounty(ply, add)
 
-    return "and won [red]" .. string.Comma(amount) .. " points[fbc] and also a [red]" .. string.Comma(amount) .. " point bounty[fbc] on themself! ;fingers;"
+    return "and won [red]" .. string.Comma(amount) .. " points[bot] and also a [red]" .. string.Comma(amount) .. " point bounty[bot] on themself! ;fingers;"
 end
 
 local function MagicOutcomeBountyAll(ply)
@@ -490,7 +490,7 @@ local function MagicOutcomeButtonSpawn(ply)
             locname = locname .. " (" .. nearestname .. ")"
         end
 
-        return "and spawned [rainbow2];weewoo;another button;weewoo;[fbc], which appeared somewhere in the location: [white]" .. (locname or "Somewhere stupid")
+        return "and spawned [rainbow2];weewoo;another button;weewoo;[bot], which appeared somewhere in the location: [white]" .. (locname or "Somewhere stupid")
     end
 end
 
@@ -640,7 +640,7 @@ local MagicButtonOutcomes = {
             if OpenAPresent then
                 local content = OpenAPresent(ply, button:GetPos())
 
-                return "and got [white]" .. content .. "[fbc]! ;alien;"
+                return "and got [white]" .. content .. "[bot]! ;alien;"
             end
         end,
         weight = 8
@@ -690,8 +690,8 @@ function ENT:Use(activator)
 
         local message = self:Effect(activator)
         assert(message ~= nil)
-        message = "[white]" .. activator:Nick() .. "[fbc] pressed a hidden button " .. message
-        BotSayGlobal(";clap;[fbc]" .. message)
+        message = "[white]" .. activator:Nick() .. "[bot] pressed a hidden button " .. message
+        BotSayGlobal(";clap;[bot]" .. message)
         local c2 = self:GetColor()
         c2.r = c2.r / 5
         c2.g = c2.g / 5

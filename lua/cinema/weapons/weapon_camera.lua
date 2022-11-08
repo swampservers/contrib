@@ -250,8 +250,8 @@ if CLIENT then
             g_VoicePanelList:SetVisible(visible)
         end
 
-        if SwampChat and IsValid(SwampChat.Panel) then
-            SwampChat.Panel:SetVisible(visible or SwampChat.IsOpen)
+        if IsValid(SwampChat) then
+            SwampChat:SetVisible(visible or SwampChat:GetState())
         end
     end)
 end

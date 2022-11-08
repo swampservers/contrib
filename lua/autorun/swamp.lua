@@ -109,7 +109,7 @@ local function findfiles(dir)
     list(dirs):Map(function(d)
         if sub(d, 1, 1) ~= "_" then
             if sub(d, 1, 4) == "init" then
-                initdirs:Append(d)
+                initdirs:Push(d)
             else
                 return d
             end
@@ -132,9 +132,9 @@ local function findfiles(dir)
                 local v = {f, ext}
 
                 if sub(f, (s or 0) + 1, (s or 0) + 4) == "init" then
-                    groups[ext == "sh" and 1 or 2]:Append(v)
+                    groups[ext == "sh" and 1 or 2]:Push(v)
                 else
-                    groups[ext == "sh" and 3 or (ext == "cl" or ext == "sv") and 4 or 5]:Append(v)
+                    groups[ext == "sh" and 3 or (ext == "cl" or ext == "sv") and 4 or 5]:Push(v)
                 end
             else
                 -- still download the files but dont autorun them

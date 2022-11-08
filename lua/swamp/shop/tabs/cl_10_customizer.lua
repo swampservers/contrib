@@ -4,18 +4,7 @@ ShopTab({
     class = "ShopCustomizerMode"
 })
 
-vgui.Register('ShopEqualWidthLayout', {
-    PerformLayout = function(self, w, h)
-        local c = self:GetChildren()
-        local cw = w / #c
 
-        for i, v in ipairs(c) do
-            local x = math.floor(cw * (i - 1))
-            v:SetPos(x, 0)
-            v:SetSize(math.floor(cw * i) - x, h)
-        end
-    end
-}, "Panel")
 
 vgui.Register('ShopCustomizerMode', {
     OpensOver = true,
@@ -48,13 +37,13 @@ vgui.Register('ShopCustomizerMode', {
         self:SetVisible(true)
 
         --bottom panel
-        ui.ShopEqualWidthLayout({
+        ui.EqualWidthLayout({
             parent = self
         }, function(p)
             p:SetTall(64)
             p:Dock(BOTTOM)
 
-            ui.ShopEqualWidthLayout(function(p)
+            ui.EqualWidthLayout(function(p)
                 ui.ShopButton(function(p)
                     p:SetText("Reset")
                     p:SetFont(Font.Righteous32)
@@ -116,7 +105,7 @@ vgui.Register('ShopCustomizerMode', {
             end
         end)
 
-        self.controlzone = ui.ShopEqualWidthLayout({
+        self.controlzone = ui.EqualWidthLayout({
             parent = self
         }, function(p)
             p:Dock(FILL)

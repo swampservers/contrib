@@ -205,10 +205,10 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
 
             ply:TimerSimple(0.1, function()
                 if bet > 0 and getsize > 1 then
-                    BotSayToWhoCanSee(ply, teamchat, ply:Nick() .. ' [fbc]rolled ' .. get .. " and won [gold]" .. string.Comma(bet * 10) .. " points[fbc].[red]" .. compliment)
+                    BotSayToWhoCanSee(ply, teamchat, ply:Nick() .. ' [bot]rolled ' .. get .. " and won [gold]" .. string.Comma(bet * 10) .. " points[bot].[red]" .. compliment)
                     ply:GivePoints(bet * 10)
                 else
-                    BotSayToWhoCanSee(ply, teamchat, ply:Nick() .. ' [fbc]rolled ' .. get .. ".[red]" .. compliment)
+                    BotSayToWhoCanSee(ply, teamchat, ply:Nick() .. ' [bot]rolled ' .. get .. ".[red]" .. compliment)
                 end
 
                 if bet == 0 then

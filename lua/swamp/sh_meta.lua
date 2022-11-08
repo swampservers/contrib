@@ -40,6 +40,11 @@ EntityTable = setmetatable({}, {
 
 local entity_table = EntityTable
 
+-- Apparently entities cant be weak keys
+hook.Add("EntityRemoved", "CleanupEntityTableCache", function(ent)
+    timer.Simple(0,function() entity_table[ent] = nil end)
+end)
+
 function entity_meta:GetTable()
     return entity_table[self]
 end

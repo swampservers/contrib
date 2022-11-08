@@ -17,28 +17,45 @@ function time_function(func)
 end
 
 --- Prints how long it takes to run a function, averaging over a large number of samples with minimal overhead
-function bench(func)
+function bench(func, reps)
+
+    
     if istable(func) then
         print("Benchmarking " .. table.Count(func) .. " functions...")
+    end
 
-        local function pop()
-            if table.IsEmpty(func) then
-                print("Done")
+    if isfunction(func) and debug.getinfo(func, "u").nparams==1 then
+        print("Comparing running with false vs true")
 
-                return
-            end
+        local basef = func
+        func = {
+            ["false"] = function() basef(false) end,
+            ["true"] =function() basef(true) end
+        }
+    end
 
+
+    if istable(func) then
+        -- local function pop()
+        --     if table.IsEmpty(func) then
+        --         print("Done")
+
+        --         return
+        --     end
+
+        for i=1,(reps or 1) do
             for k, v in pairs(func) do
-                func[k] = nil
+                -- func[k] = nil
                 print(k .. ":")
                 bench(v)
-                break
+                -- break
             end
-
-            timer.Simple(0.5, pop)
         end
 
-        timer.Simple(0.5, pop)
+        --     timer.Simple(0.5, pop)
+        -- end
+
+        -- timer.Simple(0.5, pop)
 
         return
     end

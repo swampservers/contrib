@@ -40,7 +40,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
 
         ply.BountyFunders = nil
         atk:GivePoints(bounty)
-        BotSayGlobal("[edgy]" .. atk:Nick() .. " [fbc]has claimed [gold]" .. ply:Nick() .. "'s [fbc]bounty of [rainbow]" .. bounty .. " [fbc]points!")
+        BotSayGlobal("[edgy]" .. atk:Nick() .. " [bot]has claimed [gold]" .. ply:Nick() .. "'s [bot]bounty of [rainbow]" .. bounty .. " [bot]points!")
         sc.log(atk, " claimed a bounty on ", ply, " for ", bounty, " points")
     end
 end)
@@ -70,11 +70,11 @@ function TryAddBounty(ply, targets, amount)
 
         if #targets == 1 then
             if IsValid(targets[1]) then
-                BotSayGlobal("[fbc]" .. targets[1]:Nick() .. "'s bounty is now [rainbow]" .. targets[1]:GetBounty() .. " [fbc]points")
+                BotSayGlobal("[bot]" .. targets[1]:Nick() .. "'s bounty is now [rainbow]" .. targets[1]:GetBounty() .. " [bot]points")
                 sc.log(ply, " set a bounty on ", targets[1], " for ", amount, " points")
             end
         else
-            BotSayGlobal("[fbc]" .. ply:Nick() .. " has increased everyone's bounty by [rainbow]" .. amount .. " [fbc]points!")
+            BotSayGlobal("[bot]" .. ply:Nick() .. " has increased everyone's bounty by [rainbow]" .. amount .. " [bot]points!")
             sc.log(ply, " set a bounty on everyone for ", amount, " points")
         end
     end, function()
@@ -164,14 +164,14 @@ RegisterChatCommand({'bounties', 'showbounties'}, function(ply, arg)
     table.sort(t, function(a, b) return a[2] > b[2] end)
 
     if t[1] then
-        ply:ChatPrint("[fbc]--- [gold]Bounties [fbc]---")
+        ply:ChatPrint("[bot]--- [gold]Bounties [bot]---")
 
         for k, v in ipairs(t) do
-            ply:ChatPrint("[fbc]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. (v[1]:IsProtected() and " - Protected)" or ")"))
+            ply:ChatPrint("[bot]" .. v[1]:Nick() .. ": [gold]" .. v[2] .. " [white](" .. v[1]:GetLocationName() .. (v[1]:IsProtected() and " - Protected)" or ")"))
             if k >= 10 then break end
         end
     else
-        ply:ChatPrint("[fbc]There are currently no bounties!")
+        ply:ChatPrint("[bot]There are currently no bounties!")
     end
 end, {
     global = false,

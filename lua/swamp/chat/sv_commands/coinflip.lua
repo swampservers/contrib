@@ -118,7 +118,7 @@ function finishCoinFlip(fromID, toPlayer)
         -- Final Check, make sure they have funds still
         CoinFlips[fromID] = nil
         local heads = math.random() < 0.5 -- the "request from" player is always Heads.
-        BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[fbc] flipped a coin worth [rainbow]" .. string.Comma(amount * 2) .. "[fbc] against [gold]" .. toPlayer:Nick() .. "[fbc] and [rainbow]" .. (heads and "Won" or "Lost") .. "[fbc]!")
+        BotSayGlobal("[edgy]" .. fromPlayer:Nick() .. "[bot] flipped a coin worth [rainbow]" .. string.Comma(amount * 2) .. "[bot] against [gold]" .. toPlayer:Nick() .. "[bot] and [rainbow]" .. (heads and "Won" or "Lost") .. "[bot]!")
         local fromcol = heads and "green" or "edgy"
         fromPlayer:ChatPrint("[" .. fromcol .. "]You " .. (heads and "won" or "lost") .. " [gold]" .. string.Comma(amount) .. "[" .. fromcol .. "] points.")
         local tocol = heads and "edgy" or "green"
