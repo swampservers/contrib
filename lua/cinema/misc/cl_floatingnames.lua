@@ -196,7 +196,7 @@ end)
 --     local ep = EyePos()
 --     -- for _, ply in ipairs(player.GetAll()) do
 --     -- for k,ply in ipairs(ap) do
---     for k, ply in pairs(Ents.player) do
+--     for k, ply in ipairs(Ents.player) do
 --         if ply ~= lp then
 --             local v2 = (ply:EyePos() - ep)
 --             local dist2 = v2:LengthSqr()

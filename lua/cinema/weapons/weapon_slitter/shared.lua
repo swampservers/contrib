@@ -107,7 +107,7 @@ function SWEP:Deploy()
         self.AppliedSkin = true
 
         if IsValid(self) and IsValid(self.Owner) then
-            for k, v in pairs(self.Owner.items.knifeskin or {}) do
+            for k, v in pairs((self.Owner.items or {}).knifeskin or {}) do
                 if v.eq then
                     self:SetItem(v)
                     -- self:SetModel(self.WorldModel)

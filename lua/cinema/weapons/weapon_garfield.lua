@@ -150,7 +150,7 @@ end)
 
 if SERVER then
     timer.Create("GarfieldDecay", 10, 0, function()
-        for k, v in pairs(Ents.weapon_garfield) do
+        for k, v in ipairs(Ents.weapon_garfield) do
             v = v.Owner
 
             if IsValid(v) then

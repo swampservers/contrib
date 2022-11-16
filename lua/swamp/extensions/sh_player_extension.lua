@@ -10,12 +10,3 @@ end
 function Player:GetWeaponColor()
     return self:GetPlayerColor()
 end
-
---- IsPlayer and not IsBot
-function Entity:IsHuman()
-    return self:IsPlayer() and not self:IsBot()
-end
-
-function Player:IsHuman()
-    return not self:IsBot()
-end

@@ -91,3 +91,58 @@ function weapon_meta:__index(key)
     -- TODO remove this and collapse this function to be like Player
     if key == "Owner" then return ent_owner(self) end
 end
+-- Makes it so like Entity_GetTable maps to Entity.GetTable automatically.
+-- TODO: Auto-localize these. Organize the code so all our overrides happen prior to this caching. Or maybe have a hook that updates the localized values once when loading is finished and again when files are changed?
+-- local metatables = {
+--     Player=Player,
+--     Entity=Entity,
+--     Weapon=Weapon,
+--     string=string,
+--     math=math,
+--     table=table,
+--     timer=timer,
+--     util=util
+-- }
+-- if not RanGlobalCache then
+--     RanGlobalCache=true
+--     for name,mt in pairs(metatables) do
+--         name = name.."_"
+--         for k,v in pairs(mt) do
+--             k = name..k
+--             assert(_G[k]==nil, k)
+--             _G[k] = v
+--         end
+--     end
+-- end
+-- local ignore = {}
+-- local stringsub,stringfind = string.sub, string.find
+-- setmetatable(_G, {
+--     __index = function(t, k)
+--         if ignore[k] or not isstring(k) then return nil end
+--         local split,_ = stringfind(k, "_", 5, true)
+--         local split1 = split+1
+--         if not split or stringfind(k, "_", split1, true) then ignore[k]=true return end
+--         local mt = metatables[stringsub(k, 1, split-1)]
+--         if not mt then ignore[k]=true return end
+--         t[k] = stringsub()
+--     end
+-- })
+-- local unused_G = rawget(_G, "unused_G") or {}
+-- setmetatable(_G, {
+--     __index = function(t, k)
+--         local v = unused_G[k]
+--         if v!=nil then
+--             rawset(t,k,v)
+--             unused_G[k] = nil
+--         end
+--         return v
+--     end,
+--     __newindex = function(t,k,v)
+--         -- if v==nil then
+--         --     print("NILLED", k)
+--         --     rawset(t,k,v)
+--         -- end
+--         rawset(unused_G, k, v)
+--     end
+-- })
+-- rawset(_G, "unused_G", unused_G)
