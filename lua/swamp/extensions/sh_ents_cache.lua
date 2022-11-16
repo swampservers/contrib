@@ -41,13 +41,21 @@ local function create(ent)
     end)
 end
 
-for _,ent in ipairs(ents.GetAll()) do
+for _, ent in ipairs(ents.GetAll()) do
     create(ent)
 end
 
 local function remove(tab, ent)
     local ci = tab[ent]
-    if ci==nil then if SERVER then ErrorNoHaltWithStack("cant remove ent "..tostring(ent)) end return end
+
+    if ci == nil then
+        if SERVER then
+            ErrorNoHaltWithStack("cant remove ent " .. tostring(ent))
+        end
+
+        return
+    end
+
     tab[ent] = nil
     local last = tab:Pop()
     assert((ent == last) == (tab:Length() == ci - 1))
