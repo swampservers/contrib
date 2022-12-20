@@ -95,7 +95,7 @@ function GunPerkOverrides(swep, perk)
     local ammo_price_mod = swep.AmmoPriceMod or 1
 
     if swep.GunType == "shotgun" or swep.GunType == "autoshotgun" then
-        ammo_price_mod = ammo_price_mod * 1.4
+        ammo_price_mod = ammo_price_mod * 1.333
         headshot_multi = 1.5
         t.HeadshotMultiplier = headshot_multi
         t.AmmoPriceMod = ammo_price_mod
