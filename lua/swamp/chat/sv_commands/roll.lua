@@ -194,7 +194,7 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
     ply:SendLua("chat.PlaySound()")
 
     ply:TryTakePoints(bet, function()
-        BotWhisper(ply, bet > 0 and string.Comma(bet) .. " points removed." or "Rolling...")
+        ply:NamedBotMessage( bet > 0 and string.Comma(bet) .. " points removed." or "Rolling...")
 
         ply:TimerSimple(0.9, function()
             if getsize == 1 then
@@ -205,19 +205,19 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
 
             ply:TimerSimple(0.1, function()
                 if bet > 0 and getsize > 1 then
-                    BotSayToWhoCanSee(ply, teamchat, ply:Nick() .. ' [bot]rolled ' .. get .. " and won [gold]" .. string.Comma(bet * 10) .. " points[bot].[red]" .. compliment)
+                    WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ', tostring(get) ," and won ", Style.gold(bet * 10, " points"), ".", Style.red(compliment) )
                     ply:GivePoints(bet * 10)
                 else
-                    BotSayToWhoCanSee(ply, teamchat, ply:Nick() .. ' [bot]rolled ' .. get .. ".[red]" .. compliment)
+                    WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ' , tostring(get) , ".", Style.red(compliment))
                 end
 
                 if bet == 0 then
-                    BotWhisper(ply, "To bet, say: /roll 100")
+                    ply:NamedBotMessage("To bet, say: /roll 100")
                 end
             end)
         end)
     end, function()
-        BotSayToWhoCanSee(ply, teamchat, '[red]' .. ply:Nick() .. " has gone broke!")
+        WhoSeesChat(ply, teamchat):NamedBotMessage( Style.red( ply, " has gone broke!"))
     end)
 end, {
     throttle = true

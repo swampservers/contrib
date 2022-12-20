@@ -7,26 +7,26 @@ RegisterChatLUACommand('title', "OpenTitlePicker()")
 RegisterChatLUACommand('thirdperson', "THIRDPERSON = !THIRDPERSON")
 RegisterChatLUACommand('virtualreality', "BOBBINGVIEW = !BOBBINGVIEW")
 
-RegisterChatLUACommand({'global', 'globalchat', 'ooc'}, [[chat.AddText("[orange]Press "..input.LookupBinding("messagemode2"):upper().." to speak in Global chat.")]])
+RegisterChatLUACommand({'global', 'globalchat', 'ooc'}, [[ChatMessage(Color.orange,"Press "..input.LookupBinding("messagemode2"):upper().." to speak in Global chat.")]])
 
-RegisterChatLUACommand({'golf', 'golfclub'}, [[chat.AddText("[orange]Walk up to a golf rack to grab a golf club!")]])
+RegisterChatLUACommand({'golf', 'golfclub'}, [[ChatMessage(Color.orange,"Walk up to a golf rack to grab a golf club!")]])
 
 RegisterChatCommand({'kills', 'showkills'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has gotten [edgy]" .. ply:GetStat("kill") .. "[bot] kills!")
+    NamedBotMessage(ply, " has gotten ", Style.edgy(ply:GetStat("kill")), " kills!")
 end, {
     global = true,
     throttle = true
 })
 
 RegisterChatCommand({'deaths', 'showdeaths'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has died [edgy]" .. ply:GetStat("death") .. "[bot] times!")
+    NamedBotMessage(ply, " has died ", Style.edgy(ply:GetStat("death")), " times!")
 end, {
     global = true,
     throttle = true
 })
 
 RegisterChatCommand({'playtime', 'showplaytime', 'hours'}, function(ply, arg)
-    BotSayGlobal(ply:Nick() .. " has played for [rainbow]" .. math.floor(ply:GetStat("sec") / 3600) .. "[bot] hours!")
+    NamedBotMessage(ply, " has played for ", Style.rainbow( math.floor(ply:GetStat("sec") / 3600) ), " hours!")
 end, {
     global = true,
     throttle = true

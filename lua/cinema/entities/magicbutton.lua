@@ -689,9 +689,8 @@ function ENT:Use(activator)
         end)
 
         local message = self:Effect(activator)
-        assert(message ~= nil)
-        message = "[white]" .. activator:Nick() .. "[bot] pressed a hidden button " .. message
-        BotSayGlobal(";clap;[bot]" .. message)
+        assert(message)
+        NamedBotMessage(Emote.clap, Style.white(activator), " pressed a hidden button ", ChatContent(message))
         local c2 = self:GetColor()
         c2.r = c2.r / 5
         c2.g = c2.g / 5
