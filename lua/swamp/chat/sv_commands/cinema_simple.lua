@@ -26,7 +26,7 @@ end, {
 })
 
 RegisterChatCommand({'playtime', 'showplaytime', 'hours'}, function(ply, arg)
-    NamedBotMessage(ply, " has played for ", Style.rainbow( math.floor(ply:GetStat("sec") / 3600) ), " hours!")
+    NamedBotMessage(ply, " has played for ", Style.rainbow(math.floor(ply:GetStat("sec") / 3600)), " hours!")
 end, {
     global = true,
     throttle = true

@@ -1,9 +1,13 @@
-﻿
---- Global cache/generator for tables
+﻿--- Global cache/generator for tables
 -- Use to localize tables that can't be cleared on file refresh or have to sync in multiple files
 -- local stuff = Table.MyWeaponStuff
-Table = Table or setmetatable({}, {__index =function(t,k) t[k]={} return t[k] end})
+Table = Table or setmetatable({}, {
+    __index = function(t, k)
+        t[k] = {}
 
+        return t[k]
+    end
+})
 
 -- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local corefiles, _ = file.Find("swamp/_core/*.lua", "LUA")
