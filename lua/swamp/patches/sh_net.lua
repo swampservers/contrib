@@ -55,6 +55,11 @@ API_Request("NetReady", {API_TABLE})
 -- sends login key
 API_Command("WebInit", {API_STRING}, function(auth)
     AUTHKEY = auth
+
+    MeOnValid(function()
+        hook.Run("ClientReady")
+    end)
+
     local p = vgui.Create("DHTML")
     p:SetSize(ScrW(), ScrH())
     p:SetAlpha(0)
