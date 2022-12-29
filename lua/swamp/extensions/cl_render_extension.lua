@@ -43,7 +43,7 @@ function render.DrawingScreen()
     return t == nil or tostring(t) == "[NULL Texture]"
 end
 
-local getcm, setcm = render.GetColorModulation,render.SetColorModulation
+local getcm, setcm = render.GetColorModulation, render.SetColorModulation
 
 --- Sets the color modulation, calls your callback, then sets it back to what it was before.
 function render.WithColorModulation(r, g, b, callback)
@@ -59,6 +59,7 @@ function cam.Culled3D2D(pos, ang, scale, callback)
         cam.Start3D2D(pos, ang, scale)
         callback()
         cam.End3D2D()
+
         return true
     end
 end
