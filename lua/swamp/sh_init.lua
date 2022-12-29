@@ -133,16 +133,3 @@ end
 function endswith(x, suffix)
     return suffix == "" or sub(x, -#suffix) == suffix
 end
-
-function GenerateKey()
-    local c = {}
-
-    for i = 1, 16 do
-        c[i] = ("0123456789abcdefghijklmnopqrstuvwxyz")[math.random(36)]
-    end
-
-    c = table.concat(c, "")
-    -- regenerate it if there aren't any letters
-
-    return tonumber(c) and GenerateKey() or c
-end

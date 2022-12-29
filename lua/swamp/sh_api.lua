@@ -149,10 +149,11 @@ function net.WriteNetworkString(v)
             util.AddNetworkString(v)
             id = API_NetworkStringCache[v]
             assert(id)
-            -- send the full string for 1 sec until the id gets pooled
+            -- send the full string for 10 sec until the id gets pooled (1 sec wasnt enough at loading time!)
+            -- print("POOLING", id)
             API_UnfinishedNetworkStrings[id] = true
 
-            timer.Simple(1, function()
+            timer.Simple(10, function()
                 API_UnfinishedNetworkStrings[id] = nil
             end)
         end
