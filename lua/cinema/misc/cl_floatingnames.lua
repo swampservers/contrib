@@ -24,7 +24,9 @@ local function DrawName(ply, opacityScale)
     local y = 0
     local name = anon and "Anonymous" or ply:GetName()
     local namefont = FitFont("sansbold116", name, maxw) -- "Bebas Neue80_600"
-    draw.ShadowedText(name, namefont, 0, y, Color(255, 255, 255, opacity))
+    local namecolor = Color(255,255,255, opacity)
+    if ply:GetFriendStatus() == "friend" then namecolor = Color(125,170,80, opacity) end
+    draw.ShadowedText(name, namefont, 0, y, namecolor)
     local nw, nh = GetTextSize(namefont, name)
     y = y + math.floor(nh * 0.92)
     local health = ply:Health() / ply:GetMaxHealth()
