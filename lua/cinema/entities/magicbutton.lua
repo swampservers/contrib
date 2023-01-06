@@ -328,7 +328,7 @@ local function MagicOutcomePrize(ply)
     if ply.GivePoints == nil then return nil end
     ply:GivePoints(amount)
 
-    return "and won [white]" .. string.Comma(amount) .. "[bot] points! ;coins;"
+    return "and won [white]" .. string.Comma(amount) .. " points[bot]! ;coins;"
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
