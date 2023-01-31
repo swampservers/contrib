@@ -4,7 +4,7 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "Secret Button"
 ENT.Author = "PYROTEKNIK"
-ENT.Purpose = "If you find one of these, something magic may happen"
+ENT.Purpose = "If you find one of these, something magical may happen"
 ENT.Category = "PYROTEKNIK"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
@@ -328,7 +328,7 @@ local function MagicOutcomePrize(ply)
     if ply.GivePoints == nil then return nil end
     ply:GivePoints(amount)
 
-    return "and won [white]" .. string.Comma(amount) .. " points![bot];coins;"
+    return "and won [white]" .. string.Comma(amount) .. " points[bot]! ;coins;"
 end
 
 local function MagicOutcomeBountyAndPrize(ply)
@@ -372,7 +372,7 @@ local function MagicOutcomeKleinerFanclub(ply)
             KLEINER_OVERRIDE_TARGET = nil
         end)
 
-        if someoneelse then return "and it made " .. ply:Nick() .. " really popular with kleiners! ;kleinerfortnite;" end
+        if someoneelse then return "and it made [white]" .. ply:Nick() .. "[bot] really popular with kleiners! ;kleinerfortnite;" end
 
         return "and it made them really popular with kleiners! ;kleinerfortnite;"
     end
@@ -385,7 +385,7 @@ local function MagicOutcomeExplode(ply, button)
     explosion:SetKeyValue("iMagnitude", "150") -- the magnitude of the explosion
     explosion:Fire("Explode", 0, 0) -- explode
 
-    return "it exploded haha ;crazy;"
+    return "and it exploded, haha! ;crazy;"
 end
 
 local function MagicOutcomeDecals(ply, button)
@@ -406,7 +406,7 @@ local function MagicOutcomeDecals(ply, button)
         pos = table.Random(navareas):GetCenter() + Vector(0, 0, 40)
     end)
 
-    return "it sprayed a bunch of funny decals everywhere"
+    return "and it sprayed a bunch of funny decals everywhere! ;smileylaugh;"
 end
 
 local function MagicOutcomeKleinerSlur(ply)
@@ -419,7 +419,7 @@ local function MagicOutcomeKleinerSlur(ply)
         end
 
         KLEINER_BULLIES[ply:SteamID()] = 5000
-        if someoneelse then return "and it sent the kleiner mob after " .. ply:Nick() .. "! ;antikleiner;" end
+        if someoneelse then return "and it sent the kleiner mob after [white]" .. ply:Nick() .. "[bot]! ;antikleiner;" end
 
         return "and it made them accidentally say a anti-kleiner slur! Now you're gonna get it! ;antikleiner;"
     end
@@ -438,7 +438,7 @@ local function MagicOutcomeKleinerTeleported(ply)
             v:TeleportSafe(ply:GetPos())
         end
 
-        if someoneelse then return "and it teleported all kleiners to the player [white]" .. ply:Nick() .. ";hahaha;" end
+        if someoneelse then return "and it teleported all kleiners to the player [white]" .. ply:Nick() .. "[bot]! ;hahaha;" end
 
         return "and it teleported all kleiners to them! ;kleinerfortnite;"
     end
@@ -490,7 +490,7 @@ local function MagicOutcomeButtonSpawn(ply)
             locname = locname .. " (" .. nearestname .. ")"
         end
 
-        return "and spawned [rainbow2];weewoo;another button;weewoo;[bot], which appeared somewhere in the location: [white]" .. (locname or "Somewhere stupid")
+        return "and spawned [s1;s1.1,1:[s1;s1,1.1:[white;blue .2s]another button]][bot], which appeared somewhere in the location: [white]" .. (locname or "Somewhere stupid") .. "[bot]! ;weewoo;"
     end
 end
 
@@ -558,7 +558,7 @@ local function MagicOutcomeOverlay(ply, button)
         end
     end)
 
-    return "and had their screen fucked up ;billhead;"
+    return "and had their screen fucked up! ;billhead;"
 end
 
 local MagicButtonOutcomes = {
@@ -594,7 +594,7 @@ local MagicButtonOutcomes = {
         func = function(ply, button)
             ply:SetPos(button:FindSuitableCastOrigin().StartPos)
 
-            return "and teleported somewhere mysterious! " .. table.Random({";blackwhat;", ";billhead;", "", ""})
+            return "and teleported somewhere mysterious! " .. table.Random({";what;", ";billhead;", ";shocked2;", ";soypointing;"})
         end,
         weight = 2
     },
@@ -625,13 +625,13 @@ local MagicButtonOutcomes = {
             bang.pitch = -eang.roll
             ply:ManipulateBoneAngles(bone, bang)
 
-            return "and got a sore neck"
+            return "and got a sore neck! ;haha;"
         end,
         weight = 3
     },
     {
         func = function(ply, button)
-            return "but nothing happened! " .. table.Random({";baby;", ";bad;", ";biggestloser;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
+            return "and nothing happened! " .. table.Random({";baby;", ";bad;", ";biggestloser;", ";concern;", ";bartcry;", ";bazinga;", ";boohoo;", ";chungus;", ";eating;"})
         end,
         weight = 2
     },
@@ -690,7 +690,7 @@ function ENT:Use(activator)
 
         local message = self:Effect(activator)
         assert(message)
-        NamedBotMessage(Emote.clap, Style.white(activator), " pressed a hidden button ", ChatContent(message))
+        NamedBotMessage(Style.white(activator), " pressed a hidden button ", ChatContent(message))
         local c2 = self:GetColor()
         c2.r = c2.r / 5
         c2.g = c2.g / 5
