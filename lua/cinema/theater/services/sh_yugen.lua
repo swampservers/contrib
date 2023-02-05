@@ -46,7 +46,7 @@ if CLIENT then
                 callback()
             end
 
-            if YugenData.stream and YugenVideoInfo.duration then
+            if YugenData.stream and YugenVideoInfo.duration and YugenVideoInfo.thumb then
                 YugenVideoInfo.data = util.TableToJSON({
                     url = YugenData.stream
                 })
@@ -56,27 +56,24 @@ if CLIENT then
             end
         end)
 
-        http.Post("https://yugen.to/api/embed", {
+        http.Post("https://yugen.to/api/embed/", {
             id = ani_id,
             ac = 0
         }, function(body, length, headers, code)
+
             local tab = util.JSONToTable(body)
             local hls_link = tab["hls"][0]
             local stream = ""
 
-            -- http playlist parsing, gets the best quality by default
-            http.Fetch(hls_link, function()
-                -- todo: for each newline
-                for _, v in ipairs(string.Split(body, ",")) do
-                    if string.find(v, "RESOLUTION=") then
-                        -- always grab the best resolution from the playlist
-                        local res_split = string.Split(v, "RESOLUTION=")
-                        resolution = res_split[#res_split]
-                    end
+            -- grabs video thumbnail from embed api
+            -- side-note: is webp supported in swamp? i am not sure.
+            YugenVideoInfo.thumb = tab["thumbnail"]
 
-                    if string.find(v, ".m3u8") and string.match(resolution, "%d+x%d+") then
-                        stream = v
-                    end
+            -- http playlist parsing, gets the best quality by default
+            -- todo, for now
+            http.Fetch(hls_link, function()
+                for _, v in ipairs(string.Split(body, "\n")) do
+                    stream = v
                 end
             end, function(message)
                 print("m3u8 playlist error - ", message)
