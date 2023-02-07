@@ -18,8 +18,8 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_57MM"
 SWEP.Primary.ClipSize = 50
 SWEP.Primary.DefaultClip = 50
 SWEP.Primary.Automatic = true
-SWEP.Damage = 19 --26
-SWEP.CycleTime = 0.066
+SWEP.Damage = 18 --26
+SWEP.CycleTime = 0.07
 SWEP.HalfDamageDistance = 4096
 --
 SWEP.SpreadBase = 0.01
