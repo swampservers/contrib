@@ -232,7 +232,7 @@ function GunPerkOverrides(swep, perk)
             t.NumPellets = 6
             t.PelletSpread = 0.04
             t.Damage = 6
-            t.HalfDamageDistance = 768 --1024
+            t.HalfDamageDistance = 1024 * 0.88
             t.CycleTime = 0.06
             -- t.Primary = {
             --     Ammo = swep.Primary.Ammo,
