@@ -154,8 +154,8 @@ function GunPerkOverrides(swep, perk)
         }
 
         t.SprayIncrement = 0
-        t.SpawnPriceMod = spawn_price_mod * 0.3
-        t.AmmoPriceMod = ammo_price_mod * 0.2
+        t.SpawnPriceMod = spawn_price_mod * 0.2
+        t.AmmoPriceMod = ammo_price_mod * 0.15
     elseif perk == "compliant" then
         t.Primary = {
             Ammo = swep.Primary.Ammo,
