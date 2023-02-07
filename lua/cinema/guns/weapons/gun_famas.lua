@@ -51,7 +51,6 @@ SWEP.BurstFire = 3
 SWEP.BurstFireInterval = 0.1
 SWEP.MoveSpeed = 220 / 250
 --
-SWEP.SpawnPriceMod = 1.03 -- 27.8 / 27
 SWEP.AmmoPriceMod = 25 / 30
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

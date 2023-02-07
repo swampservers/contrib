@@ -43,7 +43,7 @@ SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
 --
-SWEP.SpawnPriceMod = 0.74 -- 48 / 65
+SWEP.SpawnPriceMod = 0.94 -- (48 / 0.22) / (65 / 0.28)
 SWEP.AmmoPriceMod = 30 / 20
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

@@ -41,7 +41,7 @@ SWEP.KickLSpray = 0.5
 SWEP.MoveKickMultiplier = 2
 SWEP.MoveSpeed = 245 / 250
 --
-SWEP.SpawnPriceMod = 1.06 -- 19 / 18
+SWEP.SpawnPriceMod = 1.2 -- (19 / 0.06) / (18 / 0.075) * 0.8ish because of distance and accuracy
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}
