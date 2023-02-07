@@ -91,8 +91,11 @@ function GunPerkOverrides(swep, perk)
     local t = {}
     local cycle_time = swep.CycleTime
     local headshot_multi = swep.HeadshotMultiplier or 3 --default HeadshotMultiplier
-    local spawn_price_mod = swep.SpawnPriceMod or 1
-    local ammo_price_mod = swep.AmmoPriceMod or 1
+    local spawn_price_mod = (swep.SpawnPriceMod or 1) * 1.2
+    local ammo_price_mod = (swep.AmmoPriceMod or 1) * 1.5
+    
+    t.SpawnPriceMod = spawn_price_mod
+    t.AmmoPriceMod = ammo_price_mod
 
     if swep.GunType == "shotgun" or swep.GunType == "autoshotgun" then
         ammo_price_mod = ammo_price_mod * 1.333
@@ -100,15 +103,15 @@ function GunPerkOverrides(swep, perk)
         t.HeadshotMultiplier = headshot_multi
         t.AmmoPriceMod = ammo_price_mod
     elseif swep.GunType == "ar" then
-        headshot_multi = 3.75
+        headshot_multi = 4
         t.HeadshotMultiplier = headshot_multi
     elseif swep.GunType == "smg" then
-        cycle_time = cycle_time * (32/30)
+        cycle_time = cycle_time * (16/15)
         spawn_price_mod = spawn_price_mod * 1.1
         t.CycleTime = cycle_time
         t.SpawnPriceMod = spawn_price_mod
     elseif swep.GunType == "pistol" then
-        cycle_time = cycle_time * (12/11)
+        cycle_time = cycle_time * (13/12)
         t.CycleTime = cycle_time
     end
 
@@ -163,7 +166,7 @@ function GunPerkOverrides(swep, perk)
             Automatic = false
         }
 
-        t.AmmoPriceMod = ammo_price_mod * 0.8
+        t.AmmoPriceMod = ammo_price_mod * (10 / swep.Primary.ClipSize)
     elseif perk == "fullauto" then
         t.Primary = {
             Ammo = swep.Primary.Ammo,
@@ -194,8 +197,8 @@ function GunPerkOverrides(swep, perk)
         t.HandlingMod = 0.8
         t.AmmoPriceMod = ammo_price_mod * (cs / swep.Primary.ClipSize)
     elseif perk == "skullpiercing" then
-        t.HeadshotMultiplier = headshot_multi * 1.4
-        t.AmmoPriceMod = ammo_price_mod * 1.25
+        t.HeadshotMultiplier = headshot_multi * (4 / 3)
+        t.AmmoPriceMod = ammo_price_mod * 1.2
     elseif perk == "slug" or perk == "explosiveslug" then
         t.Damage = swep.Damage * swep.NumPellets
         t.NumPellets = 1
@@ -204,10 +207,10 @@ function GunPerkOverrides(swep, perk)
         t.HeadshotMultiplier = 3
 
         if not swep.GunType == "autoshotgun" then
-            t.SpawnPriceMod = spawn_price_mod * 1.5
+            t.SpawnPriceMod = spawn_price_mod * 1.4
         end
 
-        t.AmmoPriceMod = ammo_price_mod * 1.8
+        t.AmmoPriceMod = ammo_price_mod * 1.666
     elseif perk == "selfloading" then
         t.CycleTime = cycle_time * 0.6
         t.UnscopeOnShoot = false
@@ -216,29 +219,30 @@ function GunPerkOverrides(swep, perk)
         t.NumPellets = swep.NumPellets * 1.5
         t.PelletSpread = swep.PelletSpread * 1.3
         t.CycleTime = cycle_time * 1.5
-        t.AmmoPriceMod = ammo_price_mod * 1.8
+        t.AmmoPriceMod = ammo_price_mod * 1.666
     elseif perk == "moredamage" then
         t.Damage = swep.Damage * 1.2
         t.CycleTime = cycle_time * 1.1
         t.KickUBase = (swep.KickUBase or 0) * 1.2
-        t.AmmoPriceMod = ammo_price_mod * 1.5
+        t.AmmoPriceMod = ammo_price_mod * 1.333
     elseif perk == "explosive" then
         t.KickUBase = (swep.KickUBase or 0) * 2
-        t.AmmoPriceMod = ammo_price_mod * 1.25
+        t.AmmoPriceMod = ammo_price_mod * 1.333
     elseif perk == "shothose" then
         -- mac10
         if (swep.NumPellets or 1) == 1 then
             t.NumPellets = 6
             t.PelletSpread = 0.04
-            t.Damage = 7
+            t.Damage = 6
             t.HalfDamageDistance = 768 --1024
-            t.CycleTime = 0.055
+            t.CycleTime = 0.06
             -- t.Primary = {
             --     Ammo = swep.Primary.Ammo,
             --     ClipSize = 20,
             --     DefaultClip = 20,
             --     Automatic = true
             -- }
+            t.AmmoPriceMod = ammo_price_mod * 1.333
         else
             t.Primary = {
                 Ammo = swep.Primary.Ammo,
@@ -248,9 +252,9 @@ function GunPerkOverrides(swep, perk)
             }
 
             t.CycleTime = 0.15
+            t.AmmoPriceMod = ammo_price_mod * (20 / swep.Primary.ClipSize) * 0.6
         end
-
-        t.AmmoPriceMod = ammo_price_mod * 1.25
+        
     end
 
     return t

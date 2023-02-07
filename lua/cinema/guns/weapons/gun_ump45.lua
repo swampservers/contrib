@@ -18,7 +18,7 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_45ACP"
 SWEP.Primary.ClipSize = 25
 SWEP.Primary.DefaultClip = 25
 SWEP.Primary.Automatic = true
-SWEP.Damage = 28 --36
+SWEP.Damage = 23 --36
 SWEP.CycleTime = 0.102
 SWEP.HalfDamageDistance = 4096
 --
@@ -38,6 +38,9 @@ SWEP.KickUSpray = 1
 SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
 SWEP.MoveSpeed = 240 / 250
+--
+SWEP.SpawnPriceMod = 1.2 -- 23 / 19
+SWEP.AmmoPriceMod = 25 / 30
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
 -- SWEP.KickCrouching = {0.275, 0.2, 0.125, 0.02, 3, 1, 9}

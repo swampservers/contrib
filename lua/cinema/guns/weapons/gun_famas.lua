@@ -18,7 +18,7 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_556MM"
 SWEP.Primary.ClipSize = 25
 SWEP.Primary.DefaultClip = 25
 SWEP.Primary.Automatic = false
-SWEP.Damage = 27.9 --This will result in 1-Burst kills at close range with AP rounds. Originally 32
+SWEP.Damage = 27.8 --This will result in 1-Burst kills at close range with AP rounds. Originally 32
 SWEP.CycleTime = 0.07 --90
 SWEP.HalfDamageDistance = 8192
 --
@@ -50,6 +50,9 @@ SWEP.KickLSpray = 0.3
 SWEP.BurstFire = 3
 SWEP.BurstFireInterval = 0.1
 SWEP.MoveSpeed = 220 / 250
+--
+SWEP.SpawnPriceMod = 1.03 -- 27.8 / 27
+SWEP.AmmoPriceMod = 25 / 30
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed"			"220"

@@ -18,9 +18,9 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_45ACP"
 SWEP.Primary.ClipSize = 12
 SWEP.Primary.DefaultClip = 12
 SWEP.Primary.Automatic = false
-SWEP.Damage = 27 --29
+SWEP.Damage = 18 --29
 SWEP.CycleTime = 0.14
-SWEP.HalfDamageDistance = 4096 * 0.75
+SWEP.HalfDamageDistance = 4096 * 0.9
 --
 SWEP.SpreadBase = 0.006
 SWEP.SpreadMove = 0.014
@@ -39,7 +39,7 @@ SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
-SWEP.SpawnPriceMod = 1.2
+SWEP.SpawnPriceMod = 1.05 -- 18 / 17
 
 function SWEP:TranslateViewModelActivity(act)
     return ({

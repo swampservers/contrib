@@ -18,7 +18,7 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_50AE"
 SWEP.Primary.ClipSize = 7
 SWEP.Primary.DefaultClip = 7
 SWEP.Primary.Automatic = false
-SWEP.Damage = 56
+SWEP.Damage = 49 --56
 SWEP.CycleTime = 0.225
 SWEP.HalfDamageDistance = 4096
 --
@@ -40,6 +40,7 @@ SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 245 / 250
 --
 SWEP.SpawnPriceMod = 1.4
+SWEP.AmmoPriceMod = 7 / 6
 -- SWEP.ShootSound = "Weapon_DEagle.Single"
 -- SWEP.CSSTeam = "ANY" 
 -- CSParseWeaponInfo(SWEP, [[WeaponData

@@ -22,7 +22,7 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_45ACP"
 SWEP.Primary.ClipSize = 18
 SWEP.Primary.DefaultClip = 18
 SWEP.Primary.Automatic = false
-SWEP.Damage = 27 --29
+SWEP.Damage = 21 --29
 SWEP.CycleTime = 0.14
 SWEP.HalfDamageDistance = 2048
 --
@@ -43,8 +43,8 @@ SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
-SWEP.SpawnPriceMod = 1.2
-SWEP.AmmoPriceMod = 1.4
+SWEP.SpawnPriceMod = 1.24 -- 21 / 17
+SWEP.AmmoPriceMod = 1.5 -- 18 / 12
 -- SWEP.KickSimple = 2
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

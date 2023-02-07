@@ -18,9 +18,9 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_BUCKSHOT"
 SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
-SWEP.Damage = 12
+SWEP.Damage = 11
 SWEP.CycleTime = 0.88
-SWEP.HalfDamageDistance = 768 --1024
+SWEP.HalfDamageDistance = 1024 * 0.88
 --
 SWEP.SpreadBase = 0.005
 SWEP.SpreadMove = 0.02

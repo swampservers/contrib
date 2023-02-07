@@ -50,7 +50,7 @@ SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1.5
 --
-SWEP.AmmoPriceMod = 0.5
+SWEP.AmmoPriceMod = 0.4 -- 8 / 20
 
 function SWEP:GunFire()
     local basedfire = BaseClass.GunFire(self)

@@ -22,8 +22,8 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_50AE"
 SWEP.Primary.ClipSize = 6
 SWEP.Primary.DefaultClip = 6
 SWEP.Primary.Automatic = false
-SWEP.Damage = 66
-SWEP.CycleTime = 0.3
+SWEP.Damage = 65
+SWEP.CycleTime = 0.45 --0.3
 SWEP.HalfDamageDistance = 8192
 --
 SWEP.SpreadBase = 0.003
@@ -32,7 +32,7 @@ SWEP.Spray = 0.1
 SWEP.SprayExponent = 3
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 1,
+    TapFireInterval = 1.5, --1
     ShotsTo90Spray = 3
 })
 
@@ -41,7 +41,7 @@ SWEP.KickUBase = 2
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
-SWEP.MoveSpeed = 245 / 250
+SWEP.MoveSpeed = 240 / 250
 --
 SWEP.SpawnPriceMod = 1.4
 -- SWEP.ShootSound = "Weapon_DEagle.Single"
