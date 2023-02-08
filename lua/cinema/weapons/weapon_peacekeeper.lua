@@ -37,7 +37,7 @@ ComputeSpray(SWEP, {
 })
 
 --
-SWEP.NumPellets = 18
+SWEP.NumPellets = 17
 SWEP.PelletSpread = 0.1
 SWEP.UseShellReload = true
 SWEP.KickUBase = 2.5
