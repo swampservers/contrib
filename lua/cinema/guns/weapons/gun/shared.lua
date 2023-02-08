@@ -218,8 +218,13 @@ function GunPerkOverrides(swep, perk)
         if not swep.GunType == "autoshotgun" then
             t.SpawnPriceMod = spawn_price_mod * 1.4
         end
-
-        t.AmmoPriceMod = ammo_price_mod * 1.7
+        
+        if perk == "slug" then
+            t.AmmoPriceMod = ammo_price_mod * 1.7
+        else
+            t.AmmoPriceMod = ammo_price_mod * 1.85
+        end
+        
     elseif perk == "selfloading" then
         t.CycleTime = cycle_time * 0.6
         t.UnscopeOnShoot = false
