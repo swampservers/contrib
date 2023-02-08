@@ -211,7 +211,7 @@ function GunPerkOverrides(swep, perk)
     elseif perk == "slug" or perk == "explosiveslug" then
         t.Damage = swep.Damage * swep.NumPellets
         t.NumPellets = 1
-        t.PelletSpread = 0.01
+        t.PelletSpread = 0.011
         t.HalfDamageDistance = swep.HalfDamageDistance * 2
         t.HeadshotMultiplier = 3
 
