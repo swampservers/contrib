@@ -161,7 +161,7 @@ function GunPerkOverrides(swep, perk)
 
         t.SprayIncrement = 0
         t.SpawnPriceMod = spawn_price_mod * 0.2
-        t.AmmoPriceMod = ammo_price_mod * 0.1
+        t.AmmoPriceMod = ammo_price_mod * 0.15
     elseif perk == "alwaysjam" or perk == "sometimesjam" then
         t.SpawnPriceMod = spawn_price_mod * 0.7
     elseif perk == "unstable" then
