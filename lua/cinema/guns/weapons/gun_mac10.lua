@@ -20,7 +20,7 @@ SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = true
 SWEP.Damage = 19 --27
 SWEP.CycleTime = 0.06
-SWEP.HalfDamageDistance = 2048 * 0.8 --Lots of damage but short range
+SWEP.HalfDamageDistance = 2048 * 0.75 --Lots of damage but short range
 --
 SWEP.SpreadBase = 0.012
 SWEP.SpreadMove = 0.01
