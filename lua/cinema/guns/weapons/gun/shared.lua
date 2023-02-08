@@ -91,7 +91,7 @@ function GunPerkOverrides(swep, perk)
     local t = {}
     local cycle_time = swep.CycleTime
     local headshot_multi = swep.HeadshotMultiplier or 3 --default HeadshotMultiplier
-    local spawn_price_mod = (swep.SpawnPriceMod or 1) * 1.2
+    local spawn_price_mod = (swep.SpawnPriceMod or 1) * 1.1
     local ammo_price_mod = (swep.AmmoPriceMod or 1) * 1.5
     
     t.SpawnPriceMod = spawn_price_mod
@@ -134,6 +134,7 @@ function GunPerkOverrides(swep, perk)
         t.AmmoPriceMod = ammo_price_mod * 0.5
     elseif perk == "smoothbore" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.02
+        t.SpawnPriceMod = spawn_price_mod * 0.8
     elseif perk == "chinese" then
         t.SpreadBase = (swep.SpreadBase or 0) + 0.005
         t.SpreadUnscoped = (swep.SpreadUnscoped or 0) + 0.001
@@ -155,7 +156,11 @@ function GunPerkOverrides(swep, perk)
 
         t.SprayIncrement = 0
         t.SpawnPriceMod = spawn_price_mod * 0.2
-        t.AmmoPriceMod = ammo_price_mod * 0.15
+        t.AmmoPriceMod = ammo_price_mod * 0.1
+    elseif perk == "alwaysjam" or perk == "sometimesjam" then
+        t.SpawnPriceMod = spawn_price_mod * 0.7
+    elseif perk == "unstable" then
+        t.SpawnPriceMod = spawn_price_mod * 0.6
     elseif perk == "compliant" then
         t.Primary = {
             Ammo = swep.Primary.Ammo,
@@ -163,7 +168,8 @@ function GunPerkOverrides(swep, perk)
             DefaultClip = 10,
             Automatic = false
         }
-
+        
+        t.SpawnPriceMod = spawn_price_mod * 0.9
         t.AmmoPriceMod = ammo_price_mod * (10 / swep.Primary.ClipSize)
     elseif perk == "fullauto" then
         t.Primary = {
@@ -226,6 +232,8 @@ function GunPerkOverrides(swep, perk)
     elseif perk == "explosive" then
         t.KickUBase = (swep.KickUBase or 0) * 2
         t.AmmoPriceMod = ammo_price_mod * 1.333
+    elseif perk == "dragon" then
+        t.AmmoPriceMod = ammo_price_mod * 1.1
     elseif perk == "shothose" then
         -- mac10
         if (swep.NumPellets or 1) == 1 then
@@ -854,7 +862,7 @@ function SWEP:GunFire()
             if IsValid(trace.Entity) then
                 if self:HasPerk("antikleiner") then
                     if trace.Entity:GetModel() == "models/player/kleiner.mdl" then
-                        scale = scale * 3.1
+                        scale = scale * 3.8
                         dmginfo:SetDamageType(DMG_DISSOLVE)
                     end
                 end
