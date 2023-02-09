@@ -93,8 +93,6 @@ function GunPerkOverrides(swep, perk)
     local headshot_multi = swep.HeadshotMultiplier or 3 --default HeadshotMultiplier
     local spawn_price_mod = swep.SpawnPriceMod or 1
     local ammo_price_mod = swep.AmmoPriceMod or 1
-    
-    t.SpawnPriceMod = spawn_price_mod
 
     if swep.GunType == "shotgun" or swep.GunType == "autoshotgun" then
         ammo_price_mod = ammo_price_mod * 1.333 -- 2000
