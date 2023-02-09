@@ -91,7 +91,7 @@ function GunPerkOverrides(swep, perk)
     local t = {}
     local cycle_time = swep.CycleTime
     local headshot_multi = swep.HeadshotMultiplier or 3 --default HeadshotMultiplier
-    local spawn_price_mod = (swep.SpawnPriceMod or 1) * 1.1
+    local spawn_price_mod = swep.SpawnPriceMod or 1
     local ammo_price_mod = swep.AmmoPriceMod or 1
     
     t.SpawnPriceMod = spawn_price_mod
