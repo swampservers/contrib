@@ -40,7 +40,7 @@ SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
-SWEP.SpawnPriceMod = 1.34 -- (21 / 0.12) / (17 / 0.13)
+SWEP.SpawnPriceMod = 1.26 -- (21 / 0.12) / (17 / 0.13)
 SWEP.AmmoPriceMod = 30 / 12
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}

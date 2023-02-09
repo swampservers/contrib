@@ -112,8 +112,8 @@ function GunPerkOverrides(swep, perk)
         ammo_price_mod = ammo_price_mod * 1.2 -- 600
         cycle_time = cycle_time * 1.05
         t.CycleTime = cycle_time
-    elseif swep.GunType == "sniper" or swep.GunType == "autosniper" then
-        ammo_price_mod = ammo_price_mod * 1.2 -- 3000
+    elseif swep.GunType == "sniper" or swep.GunType == "autosniper" or swep.GunType == "pistol" then
+        ammo_price_mod = ammo_price_mod * 1.2 -- 3000 & 600
     end
     
     t.AmmoPriceMod = ammo_price_mod
