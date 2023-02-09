@@ -47,7 +47,7 @@ SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
 SWEP.SpawnPriceMod = 0.77 -- (74 / 1.25) / (115 / 1.5)
-SWEP.AmmoPriceMod = 0.6
+SWEP.AmmoPriceMod = 0.5
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"260"

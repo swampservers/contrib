@@ -18,9 +18,9 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_57MM"
 SWEP.Primary.ClipSize = 20
 SWEP.Primary.DefaultClip = 20
 SWEP.Primary.Automatic = false
-SWEP.Damage = 27.8 --34
-SWEP.CycleTime = 0.15
-SWEP.HalfDamageDistance = 2048 * 0.75 --High damage, but less range than other pistols
+SWEP.Damage = 23 --34
+SWEP.CycleTime = 0.14
+SWEP.HalfDamageDistance = 2048
 --
 SWEP.SpreadBase = 0.008
 SWEP.SpreadMove = 0.01
@@ -39,7 +39,7 @@ SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
 SWEP.MoveSpeed = 1
 --
-SWEP.SpawnPriceMod = 1.42 -- (27.8 / 0.15) / (17 / 0.13)
+SWEP.SpawnPriceMod = 1.26 -- (23 / 0.14) / (17 / 0.13)
 SWEP.AmmoPriceMod = 20 / 12
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
