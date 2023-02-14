@@ -97,23 +97,21 @@ function GunPerkOverrides(swep, perk)
     if swep.GunType == "shotgun" or swep.GunType == "autoshotgun" then
         ammo_price_mod = ammo_price_mod * 1.333 -- 2000
         headshot_multi = 1.5
-        t.HeadshotMultiplier = headshot_multi
     elseif swep.GunType == "ar" then
         ammo_price_mod = ammo_price_mod * 1.25 -- 2500
         headshot_multi = 4
-        t.HeadshotMultiplier = headshot_multi
     elseif swep.GunType == "smg" then
         ammo_price_mod = ammo_price_mod * 1.2 -- 1800
         cycle_time = cycle_time * (16/15)
-        t.CycleTime = cycle_time
     elseif swep.GunType == "heavypistol" then
         ammo_price_mod = ammo_price_mod * 1.2 -- 600
         cycle_time = cycle_time * 1.05
-        t.CycleTime = cycle_time
     elseif swep.GunType == "sniper" or swep.GunType == "autosniper" or swep.GunType == "pistol" then
         ammo_price_mod = ammo_price_mod * 1.2 -- 3000 & 600
     end
     
+    t.CycleTime = cycle_time
+    t.HeadshotMultiplier = headshot_multi
     t.AmmoPriceMod = ammo_price_mod
 
     if perk == "min" then
