@@ -2,6 +2,7 @@
 --- NWP="Networked Private"
 -- A table on each player. Values written on server will automatically be replicated to that client. Won't be sent to other players. Read-only on client, read-write on server.
 --- ply.NWP = {}
+--NOMINIFY
 -- TODO: should we use the stringtable for key names?
 -- TODO try API_NETWORK_STRING
 API_NETWORK_STRING_TABLE_UPDATE = {
