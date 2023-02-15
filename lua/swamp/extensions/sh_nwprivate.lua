@@ -40,7 +40,7 @@ API_NETWORK_STRING_TABLE_UPDATE = {
 
         if removals and not table.IsEmpty(removals) then
             API_NETWORK_STRING[2](nil)
-            API_Set(API_NETWORK_STRING).Write(removals)
+            API_Set(API_NETWORK_STRING)[2](removals)
         end
     end
 }
