@@ -72,6 +72,36 @@ PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
             pos = Vector(0, 0, 18)
         }
     }
+    ["models/mcmodelpack/blocks/glowstone.mdl"] = {
+        class = "light",
+        data = {
+            untaped = false,
+            size = 600,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 0)
+        }
+    }
+    ["models/mcmodelpack/entities/torch.mdl"] = {
+        class = "light",
+        data = {
+            untaped = false,
+            size = 300,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 2)
+        }
+    }
+    ["models/roblox_assets/candle/candle.mdl"] = {
+        class = "light",
+        data = {
+            untaped = true,
+            size = 200,
+            brightness = 2,
+            style = 0,
+            pos = Vector(0, 0, 2)
+        }
+    }
 })
 
 function IsModelExplosive(mdl)
