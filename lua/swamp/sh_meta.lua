@@ -2,6 +2,8 @@
 --- Omit FindMetaTable from your code because these globals always refer to their respective metatables.
 -- Player/Entity are still callable and function the same as the default global functions.
 --- Player, Entity, Weapon  (global variables)
+-- do them all automatically?
+-- for k,v in pairs(debug.getregistry()) do if isstring(k) and istable(v) and (_G[k] == nil or isfunction(_G[k])) then print("GLOBAL METATABLE", k, _G[k]) end end
 if isfunction(Entity) then
     local EntityFunction = Entity
     Entity = FindMetaTable("Entity")
@@ -21,6 +23,9 @@ if isfunction(Player) then
 end
 
 Weapon = FindMetaTable("Weapon")
+CRecipientFilter = FindMetaTable("CRecipientFilter")
+-- Do all and auto add the functions?
+-- for k,v in pairs(debug.getregistry()) do if isstring(k) and istable(v) then print(k) end end
 local entity_meta, player_meta, weapon_meta = Entity, Player, Weapon
 -- caches the Entity.GetTable so stuff is super fast
 CEntityGetTable = CEntityGetTable or entity_meta.GetTable

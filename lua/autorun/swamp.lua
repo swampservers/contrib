@@ -104,9 +104,9 @@ local function findfiles(dir)
     -- sorting broken by update
     table.sort(files, function(a, b) return a < b end)
     table.sort(dirs, function(a, b) return a < b end)
-    local initdirs = list()
+    local initdirs = List()
 
-    list(dirs):Map(function(d)
+    List(dirs):Map(function(d)
         if sub(d, 1, 1) ~= "_" then
             if sub(d, 1, 4) == "init" then
                 initdirs:Push(d)
@@ -120,7 +120,7 @@ local function findfiles(dir)
         dirs = initdirs:Extend(dirs)
     end
 
-    local groups = memo(function() return list() end)
+    local groups = Memo(function() return List() end)
 
     for i, f in ipairs(files) do
         if sub(f, -4) == ".lua" then
@@ -160,7 +160,7 @@ local function findfiles(dir)
     end
 
     if files == nil then
-        files = list()
+        files = List()
     end
     -- local x = ""
     -- for i,v in ipairs(files) do x=x.." "..v[1] end

@@ -40,7 +40,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
 
         ply.BountyFunders = nil
         atk:GivePoints(bounty)
-        BotSayGlobal("[edgy]" .. atk:Nick() .. " [bot]has claimed [gold]" .. ply:Nick() .. "'s [bot]bounty of [rainbow]" .. bounty .. " [bot]points!")
+        NamedBotMessage(Style.edgy(atk), " has claimed ", Style.gold(ply, "'s"), " bounty of ", Style.rainbow(bounty), " points!")
         sc.log(atk, " claimed a bounty on ", ply, " for ", bounty, " points")
     end
 end)
@@ -70,11 +70,11 @@ function TryAddBounty(ply, targets, amount)
 
         if #targets == 1 then
             if IsValid(targets[1]) then
-                BotSayGlobal("[bot]" .. targets[1]:Nick() .. "'s bounty is now [rainbow]" .. targets[1]:GetBounty() .. " [bot]points")
+                NamedBotMessage(targets[1], "'s bounty is now ", Style.rainbow(targets[1]:GetBounty()), " points")
                 sc.log(ply, " set a bounty on ", targets[1], " for ", amount, " points")
             end
         else
-            BotSayGlobal("[bot]" .. ply:Nick() .. " has increased everyone's bounty by [rainbow]" .. amount .. " [bot]points!")
+            NamedBotMessage(ply, " has increased everyone's bounty by ", Style.rainbow(amount), " points!")
             sc.log(ply, " set a bounty on everyone for ", amount, " points")
         end
     end, function()

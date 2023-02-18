@@ -34,9 +34,9 @@ end
 function SWEP:Reload()
     if CLIENT then return end
     if (self.Owner.NextGamerWord or 0) > CurTime() then return end
-    self.Owner.NextGamerWord = CurTime() + 60
+    self.Owner.NextGamerWord = CurTime() + 2
 
-    self:ExtEmitSound("keem/fuckinggamer.ogg", {
+    self:ExtEmitSound("keem/stupidbitch.ogg", {
         speech = 0.7,
         pitch = 190,
     })
