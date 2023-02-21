@@ -247,7 +247,11 @@ any_type_writers.Player = any_type_writers.Entity
 function net.ReadAny()
     local id = ReadUInt(any_id_bits)
     local fn = any_id_reader[id]
-    if not fn then error("bad id "..id) end
+
+    if not fn then
+        error("bad id " .. id)
+    end
+
     return fn()
 end
 
