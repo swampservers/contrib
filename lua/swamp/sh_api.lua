@@ -200,11 +200,20 @@ API_ENTITY = {net.ReadEntity, net.WriteEntity}
 
 API_COLOR = {net.ReadColor, net.WriteColor}
 
-local any_id_bits = 4
+local any_id_bits = 8
 
 local any_id_reader = {
     [0] = API_NIL[1],
-    API_TRUE[1], API_FALSE[1], API_UINT8[1], API_DOUBLE[1], API_STRING[1], API_NETWORK_STRING[1], API_VECTOR[1], API_ANGLE[1], API_ENTITY[1], API_COLOR[1]
+    [1] = API_TRUE[1],
+    [2] = API_FALSE[1],
+    [3] = API_UINT8[1],
+    [4] = API_DOUBLE[1],
+    [5] = API_STRING[1],
+    [6] = API_NETWORK_STRING[1],
+    [7] = API_VECTOR[1],
+    [8] = API_ANGLE[1],
+    [9] = API_ENTITY[1],
+    [10] = API_COLOR[1]
 }
 
 local any_type_writers = {
