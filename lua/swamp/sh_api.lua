@@ -258,7 +258,7 @@ function net.ReadAny()
     local fn = any_id_reader[id]
 
     if not fn then
-        error("bad id " .. id)
+        error("bad id " .. id.." total message size "..net.BytesReceived())
     end
 
     return fn()
