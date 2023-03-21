@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-RegisterChatLUACommand({'help', 'motd'}, 'ShowMotd("http://steamcommunity.com/groups/swampservers/discussions/0/133255810024702956/")')
+RegisterChatLUACommand({'help', 'motd'}, 'ShowMotd("https://steamcommunity.com/groups/swampservers/discussions/0/133255810024702956/")')
 
 RegisterChatConsoleCommand({'skip', 'voteskip'}, "cinema_voteskip")
 
@@ -43,6 +43,10 @@ end)
 RegisterChatCommand({'callnoz'}, function(ply, arg)
     if ply:GetRank() < 1 then return end
     arg = (arg .. "   from " .. ply:Name() .. " " .. ply:SteamID64()):gsub("[^a-zA-Z0-9 ]", "")
+
+    if not Shell then
+        require("shell")
+    end
 
     Shell.Execute({"/swamp/gm_shell/notify.sh", "<@656202383034155021> /callnoz " .. arg}, function(code)
         print(code)

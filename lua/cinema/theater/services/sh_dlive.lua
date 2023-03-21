@@ -11,7 +11,7 @@ end
 
 if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Data())))
     end
 end

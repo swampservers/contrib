@@ -22,7 +22,7 @@ end
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         EmbeddedCheckFlash(function()
-            local file = "http://www.watchcartoononline.io/" .. key
+            local file = "https://www.watchcartoononline.io/" .. key
             local vpanel = vgui.Create("DHTML")
             vpanel:SetSize(1000, 1000)
             vpanel:SetAlpha(0)

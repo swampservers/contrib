@@ -51,7 +51,7 @@ if CLIENT then
             end
         end
 
-        local urll = "http://swamp.sv/s/cinema/filedata.php?file="
+        local urll = "https://swamp.sv/s/cinema/filedata.php?file="
         vpanel:OpenURL(urll .. key)
     end
 
@@ -60,7 +60,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Key())))
     end
 end

@@ -4,7 +4,7 @@ local matUp = Material("icon16/arrow_up.png")
 local maxfilesize = 60
 
 function PANEL:Init()
-    self.HomeURL = "http://steamcommunity.com/workshop/browse/?appid=4000&searchtext=playermodel&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Model"
+    self.HomeURL = "https://steamcommunity.com/workshop/browse/?appid=4000&searchtext=playermodel&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Model"
     self.Browser:OpenURL(self.HomeURL)
     self.AddressBar:SetText(self.HomeURL)
 

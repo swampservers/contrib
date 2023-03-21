@@ -13,17 +13,17 @@ function SERVICE:GetKey(url)
     if not string.match(url.host or "", "youtu.?be[.com]?") then return false end
     local key = false
 
-    -- http://www.youtube.com/watch?v=(videoId)
+    -- https://www.youtube.com/watch?v=(videoId)
     if url.query and url.query.v and string.len(url.query.v) == 11 then
         key = url.query.v
-        -- http://www.youtube.com/v/(videoId)
+        -- https://www.youtube.com/v/(videoId)
     elseif url.path and string.match(url.path, "^/v/([%a%d-_]+)") then
         key = string.match(url.path, "^/v/([%a%d-_]+)")
     elseif url.path and string.match(url.path, "^/shorts/([%a%d-_]+)") then
         -- https://www.youtube.com/shorts/(videoId)
         key = string.match(url.path, "^/shorts/([%a%d-_]+)")
     elseif string.match(url.host, "youtu.be") and url.path and string.match(url.path, "^/([%a%d-_]+)$") and (not info.query or #info.query == 0) then
-        -- http://youtu.be/(videoId)
+        -- https://youtu.be/(videoId)
         -- short url
         key = string.match(url.path, "^/([%a%d-_]+)$")
     end
@@ -38,7 +38,7 @@ if CLIENT then
 
     function SERVICE:LoadVideo(Video, panel)
         if self:IsMature(Video) then
-            if string.StartWith(panel:GetURL(), "http://swamp.sv/s/cinema/youtube.html") then
+            if string.StartWith(panel:GetURL(), "https://swamp.sv/s/cinema/youtube.html") then
                 theater.LoadVideo(Video, true)
             end
 
@@ -120,7 +120,7 @@ if CLIENT then
                 theater.LoadVideo(Video, true)
             end
 
-            panel:EnsureURL("http://swamp.sv/s/cinema/youtube.html")
+            panel:EnsureURL("https://swamp.sv/s/cinema/youtube.html")
             panel:QueueJavascript(string.format("th_video('%s',%s);", string.JavascriptSafe(Video:Key()), Video:Duration() > 0 and "false" or "true"))
         end
 

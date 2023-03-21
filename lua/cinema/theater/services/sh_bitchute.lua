@@ -43,7 +43,7 @@ if CLIENT then
                 end
             end
 
-            vpanel:OpenURL("http://swamp.sv/s/cinema/filedata.php?file=" .. key)
+            vpanel:OpenURL("https://swamp.sv/s/cinema/filedata.php?file=" .. key)
         end, function()
             chat.AddText("You need codecs to request this. Press F2.")
 
@@ -52,7 +52,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Data())))
     end
 end

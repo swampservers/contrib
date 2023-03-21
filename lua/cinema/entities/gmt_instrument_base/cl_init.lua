@@ -58,7 +58,7 @@ ENT.AdvMainHUD = {
 }
 
 ENT.BrowserHUD = {
-    URL = "http://www.gmtower.org/apps/instruments/piano.php",
+    URL = "https://www.gmtower.org/apps/instruments/piano.php",
     Show = true, -- display the sheet music?
     X = 0,
     Y = 0,

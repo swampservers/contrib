@@ -18,10 +18,10 @@ end
 
 if CLIENT then
     local function LoadCustomPage(panel, js, k)
-        local url = "http://swamp.sv/s/cinema/file.html"
+        local url = "https://swamp.sv/s/cinema/file.html"
 
         if string.find(k, ".m3u8") then
-            url = "http://swamp.sv/s/cinema/hls.html"
+            url = "https://swamp.sv/s/cinema/hls.html"
         end
 
         http.Fetch(url, function(body)

@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- weapon_vape/cl_init.lua
 -- Defines common clientside code/defaults for Vape SWEP
--- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/
+-- Vape SWEP by Swamp Onions - https://steamcommunity.com/id/swamponions/
 include('shared.lua')
 
 function SWEP:DrawWorldModel()

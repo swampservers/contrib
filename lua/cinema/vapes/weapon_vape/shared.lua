@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- weapon_vape/shared.lua
 -- Defines common shared code/defaults for Vape SWEP
--- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/
+-- Vape SWEP by Swamp Onions - https://steamcommunity.com/id/swamponions/
 SWEP.Author = "Swamp Onions"
 SWEP.Instructions = "LMB: Rip Fat Clouds\n (Hold and release)\nRMB & Reload: Play Sounds\n\nVape Nation!"
 SWEP.PrintName = "Vape"

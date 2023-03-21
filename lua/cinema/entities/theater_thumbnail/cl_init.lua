@@ -32,7 +32,7 @@ function ENT:DrawThumbnail()
     local thumbnail = self:GetThumbnail()
 
     if thumbnail == "" then
-        thumbnail = "http://swamp.sv/s/img/default_thumbnail.png"
+        thumbnail = "https://swamp.sv/s/img/default_thumbnail.png"
     end
 
     local background = [[background:black url(]] .. thumbnail:gsub("<", "&lt;") .. [[) no-repeat fixed center;]]

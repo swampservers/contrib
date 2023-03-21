@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- autorun/client/cl_vapeswep.lua
 -- Defines clientside globals for Vape SWEP
--- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/
+-- Vape SWEP by Swamp Onions - https://steamcommunity.com/id/swamponions/
 if not VapeParticleEmitter then
     VapeParticleEmitter = ParticleEmitter(Vector(0, 0, 0))
 end

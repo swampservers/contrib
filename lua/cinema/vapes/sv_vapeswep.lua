@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- autorun/server/sv_vapeswep.lua
 -- Defines serverside globals for Vape SWEP
--- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/
+-- Vape SWEP by Swamp Onions - https://steamcommunity.com/id/swamponions/
 util.AddNetworkString("Vape")
 util.AddNetworkString("VapeArm")
 util.AddNetworkString("VapeTalking")

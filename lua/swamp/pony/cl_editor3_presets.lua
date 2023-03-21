@@ -285,7 +285,7 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         DLabel:DockMargin(8, 2, 8, 2)
         DLabel:Dock(TOP)
         DLabel:SetTextColor(Color(0, 0, 0, 255))
-        DLabel:SetText("Paste an imgur URL here. Example:\nhttp://i.imgur.com/OMyCUd4.jpg")
+        DLabel:SetText("Paste an imgur URL here. Example:\nhttps://i.imgur.com/OMyCUd4.jpg")
         local TextEntry = vgui.Create("DTextEntry", CONTAINER)
         TextEntry:SetSize(75, 30)
         TextEntry:SetText(Me.ponydata.imgurcmark or "")

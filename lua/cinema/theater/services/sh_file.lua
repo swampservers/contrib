@@ -84,9 +84,9 @@ if CLIENT then
                 end
             end
 
-            local urll = "http://swamp.sv/s/cinema/file.html"
+            local urll = "https://swamp.sv/s/cinema/file.html"
             --if string.StartWith(key:lower(), "rtmp") then
-            --	urll = "http://swamp.sv/s/cinema/filedatavjs.php?file="..key
+            --	urll = "https://swamp.sv/s/cinema/filedatavjs.php?file="..key
             --end
             vpanel:OpenURL(urll)
             vpanel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(key)))
@@ -103,7 +103,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Key())))
     end
 end

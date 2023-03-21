@@ -32,26 +32,26 @@ function SendFromPonyWorld(e, rev)
     SendToTeleport(p, v, e, rev)
 end
 
-function SendToTeleport(p, v, e, reverse)
-    e:SetPos(p)
+function SendToTeleport(pos, vel, ent, reverse)
+    ent:SetPos(pos)
 
-    if e:IsPlayer() then
-        local a
+    if ent:IsPlayer() then
+        local ang
 
         if reverse then
-            a = Vector(-v.x, -v.y, -v.z / 8):Angle()
+            ang = Vector(-vel.x, -vel.y, -vel.z / 8):Angle()
         else
-            a = Vector(v.x, v.y, v.z / 8):Angle()
+            ang = Vector(vel.x, vel.y, vel.z / 8):Angle()
         end
 
-        a.r = 0
-        e:SetEyeAngles(a)
-        e:SetVelocity(v - e:GetVelocity())
+        ang.r = 0
+        ent:SetEyeAngles(ang)
+        ent:SetVelocity(vel - ent:GetVelocity())
     else
-        e:SetVelocity(v)
+        ent:SetVelocity(vel)
 
-        if IsValid(e:GetPhysicsObject()) then
-            e:GetPhysicsObject():SetVelocity(v)
+        if IsValid(ent:GetPhysicsObject()) then
+            ent:GetPhysicsObject():SetVelocity(vel)
         end
     end
 end

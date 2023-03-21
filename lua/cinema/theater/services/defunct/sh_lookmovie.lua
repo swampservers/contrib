@@ -179,7 +179,7 @@ if CLIENT then
     cachedURL = cachedURL or {}
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("http://swamp.sv/s/cinema/file.html")
+        panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
         local key = Video:Key()
         cachedURL[key] = cachedURL[key] or util.JSONToTable(Video:Data()).url
 

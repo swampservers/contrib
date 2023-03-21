@@ -21,7 +21,7 @@ end
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
         EmbeddedCheckFlash(function()
-            local file = "http://www.animetoon.org/" .. key
+            local file = "https://www.animetoon.org/" .. key
             local vpanel = vgui.Create("DHTML")
             vpanel:SetSize(1000, 1000)
             vpanel:SetAlpha(0)
@@ -55,7 +55,7 @@ if CLIENT then
                             vpanel:RunJavascript([[
 								var list = document.getElementsByTagName("IFRAME");
 								for (var i = 0; i<list.length; i++) {
-									if (list[i].src && list[i].src.startsWith("http://playpandanet.gogoanime.to/embed.php")) {
+									if (list[i].src && list[i].src.startsWith("https://playpandanet.gogoanime.to/embed.php")) {
 										console.log('EmbedURL:'+list[i].src);
 									}
 								}

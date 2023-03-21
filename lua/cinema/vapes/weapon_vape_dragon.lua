@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- weapon_vape_dragon.lua
 -- Defines a vape which emits fire
--- Vape SWEP by Swamp Onions - http://steamcommunity.com/id/swamponions/
+-- Vape SWEP by Swamp Onions - https://steamcommunity.com/id/swamponions/
 if CLIENT then
     include('weapon_vape/cl_init.lua')
 else

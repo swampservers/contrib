@@ -92,7 +92,7 @@ if CLIENT then
 
                         if self.data ~= nil and self.title ~= nil then
                             self.phase = 2
-                            self:OpenURL("http://swamp.sv/s/cinema/file.html")
+                            self:OpenURL("https://swamp.sv/s/cinema/file.html")
                         end
 
                         return
@@ -125,7 +125,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        local url = "http://swamp.sv/s/cinema/file.html"
+        local url = "https://swamp.sv/s/cinema/file.html"
         panel:EnsureURL(url)
         local k = Video:Data()
         -- Let the webpage handle loading a video
