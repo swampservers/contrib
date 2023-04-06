@@ -24,44 +24,6 @@ net.Receive("BoneSequence", function()
     local ply = net.ReadEntity()
     local command = net.ReadString()
 
-    if command == "heil" then
-        timer.Simple(1, function()
-            timer.Simple(0.1, function()
-                setHeilEmotePower(ply, 0.25)
-            end)
-
-            timer.Simple(0.2, function()
-                setHeilEmotePower(ply, 0.5)
-            end)
-
-            timer.Simple(0.3, function()
-                setHeilEmotePower(ply, 0.75)
-            end)
-
-            timer.Simple(0.4, function()
-                setHeilEmotePower(ply, 1)
-            end)
-        end)
-
-        timer.Simple(2.6, function()
-            timer.Simple(0.1, function()
-                setHeilEmotePower(ply, 0.75)
-            end)
-
-            timer.Simple(0.2, function()
-                setHeilEmotePower(ply, 0.5)
-            end)
-
-            timer.Simple(0.3, function()
-                setHeilEmotePower(ply, 0.25)
-            end)
-
-            timer.Simple(0.4, function()
-                setHeilEmotePower(ply, 0)
-            end)
-        end)
-    end
-
     if command == "dab" then
         timer.Simple(1, function()
             timer.Simple(0.1, function()
@@ -138,14 +100,6 @@ net.Receive("BoneSequence", function()
         end)
     end
 end)
-
-function setHeilEmotePower(ply, mult)
-    if not IsValid(ply) then return end
-    if not ply:LookupBone("ValveBiped.Bip01_L_Upperarm") then return end
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Upperarm"), Angle(-5 * mult, -40 * mult, 0), "heil")
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), Angle(0, 122 * mult, 0), "heil")
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Hand"), Angle(0, -20 * mult, 0), "heil")
-end
 
 function setTipEmotePower(ply, mult)
     if not IsValid(ply) then return end
