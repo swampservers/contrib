@@ -61,7 +61,12 @@ function PANEL:Init()
             if info then
                 self.addonsize = info.size / 1000000
 
-                if info.size / 1000000 > 60 then
+                if info.size == 0 then
+                    b:SetText("Addon isn't available (0mb)!")
+                    b:SetEnabled(false)
+                    surface.SetDrawColor(Color(255, 0, 0))
+                    surface.DrawRect(0, 0, w, h)
+                elseif self.addonsize > 60 then
                     b:SetText("Addon is too big (>60mb)!")
                     b:SetEnabled(false)
                     surface.SetDrawColor(Color(255, 0, 0))
