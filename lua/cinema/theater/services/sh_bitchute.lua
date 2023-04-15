@@ -53,6 +53,12 @@ if CLIENT then
 
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
+
+        panel:AddFunction("gmod", "loaded", function()
+            self:SeekTo(CurTime() - Video:StartTime(), panel)
+            self:SetVolume(theater.GetVolume(), panel)
+        end)
+
         panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Data())))
     end
 end

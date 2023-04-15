@@ -220,6 +220,12 @@ if CLIENT then
 
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
+
+        panel:AddFunction("gmod", "loaded", function()
+            self:SeekTo(CurTime() - Video:StartTime(), panel)
+            self:SetVolume(theater.GetVolume(), panel)
+        end)
+
         local key = util.JSONToTable(Video:Data()).url
         local subs = string.JavascriptSafe(util.JSONToTable(Video:Data()).subs)
         panel:QueueJavascript(string.format("th_video('%s','%s');", string.JavascriptSafe(key), string.JavascriptSafe(subs)))
