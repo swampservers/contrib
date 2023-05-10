@@ -48,6 +48,7 @@ if CLIENT then
     end)
 
     function ShowAnnouncement(txt, time)
+        system.FlashWindow()
         surface.PlaySound("npc/attack_helicopter/aheli_damaged_alarm1.wav")
         GlobAnnce = txt
         AnnouncementOpenness = AnnouncementOpenness or Anim(0, 10)
