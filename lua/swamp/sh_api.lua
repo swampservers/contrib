@@ -258,7 +258,7 @@ function net.ReadAny()
     local fn = any_id_reader[id]
 
     if not fn then
-        error("bad id " .. id .. " total message size " .. net.BytesReceived())
+        error("Msg Name/ID: " .. (API_NetworkStringCache[net._CurNetworkID] or net._CurNetworkID) .. " | Type ID: " .. id .. " | Msg Size: " .. net.BytesReceived())
     end
 
     return fn()
