@@ -1,23 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-function SaveCrashData()
-    file.Write("swamp_crashdata.txt", util.TableToJSON(CRASH_DATA or {}))
-end
-
-function SetCrashData(k, v, fortime)
-    if CRASH_DATA[k] ~= v then
-        CRASH_DATA[k] = v
-        SaveCrashData()
-    end
-
-    if fortime then
-        timer.Simple(fortime, function()
-            if CRASH_DATA[k] == v then
-                SetCrashData(k, nil)
-            end
-        end)
-    end
-end
-
+-- The rest of this file is in includes/util
 -- possibly would it be useful to save the current hook name?
 function CrashDataScope(callback, data)
     local lastscope, lastdata = CRASH_DATA.scope, CRASH_DATA.scope_data
@@ -73,37 +55,6 @@ end)
 hook.Add("ShutDown", "CrashClear", function()
     file.Delete("swamp_crashdata.txt")
 end)
-
-if not CRASH_DATA then
-    local lastcrash = file.Read("swamp_crashdata.txt", "DATA")
-    local crashtime = file.Time("swamp_crashdata.txt", "DATA")
-
-    if lastcrash then
-        timer.Simple(1, function()
-            net.Start("ReportCrash")
-            net.WriteDouble(crashtime)
-            net.WriteString(lastcrash)
-            net.WriteString("")
-            net.SendToServer()
-        end)
-    end
-
-    CRASH_DATA = {
-        osx = system.IsOSX() or nil,
-        linux = system.IsLinux() or nil,
-        initializing = true,
-        uptime = 0
-    }
-
-    local uptime = 0
-
-    timer.Create("CrashDataUptime", 10, 0, function()
-        uptime = uptime + 10
-        SetCrashData("uptime", uptime)
-    end)
-
-    SaveCrashData()
-end
 -- hook.Add("MOTDClose", "ShowCrashDialog", function()
 -- local delta = os.time() - crashtime
 -- local function plural(x, st)
