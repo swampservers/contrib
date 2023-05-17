@@ -177,14 +177,16 @@ if CLIENT then
                             })
 
                             for _, v in pairs(tt) do
-                                local b = p:Add("DButton")
-                                b:SetText(v['label'])
-                                b:Dock(TOP)
-                                b:DockMargin(0, 0, 0, 2)
+                                if v["kind"] == "captions" then
+                                    local b = p:Add("DButton")
+                                    b:SetText(v['label'])
+                                    b:Dock(TOP)
+                                    b:DockMargin(0, 0, 0, 2)
 
-                                function b:DoClick()
-                                    subs = v['file']
-                                    r:Close()
+                                    function b:DoClick()
+                                        subs = v['file']
+                                        r:Close()
+                                    end
                                 end
                             end
                         end)
