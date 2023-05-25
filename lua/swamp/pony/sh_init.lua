@@ -131,7 +131,7 @@ function SanitizePonyCfg(in_cfg)
         cfg[k] = vec
     end
 
-    cfg.imgurcmark = SanitizeImgurId(in_cfg.imgurcmark)
+    cfg.cmark_url = SanitizeWebMatURL(in_cfg.cmark_url or in_cfg.imgurcmark and "i.imgur.com/" .. in_cfg.imgurcmark) -- Convert legacy imgurcmark
 
     return cfg
 end

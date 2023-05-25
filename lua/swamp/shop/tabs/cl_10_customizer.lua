@@ -145,14 +145,14 @@ vgui.Register('ShopCustomizerMode', {
             end)
         end
 
-        if settings.imgur then
-            ui.ShopCustomizerImgur({
+        if settings.webmat then
+            ui.ShopCustomizerWebMat({
                 parent = self.RightColumn
             }, function(p)
-                p:SetValue(self.item.cfg.imgur)
+                p:SetValue(self.item.cfg.webmat or self.item.cfg.imgur and ("i.imgur.com/" .. self.item.cfg.imgur.url))
 
-                p.OnValueChanged = function(pnl, imgur)
-                    self.item.cfg.imgur = imgur
+                p.OnValueChanged = function(pnl, webmat_url)
+                    self.item.cfg.webmat = webmat_url
                     self:Update()
                 end
             end)

@@ -2,7 +2,8 @@
 AddCSLuaFile()
 
 if CLIENT then
-    CreateClientConVar("bodypillow_imgur", "", true, true)
+    CreateClientConVar("bodypillow_url", "", true, true)
+    CreateClientConVar("bodypillow_imgur", "", true, true) -- NOTE(winter): Legacy ConVar; just here so we don't wipe out everyone's settings
 end
 
 SWEP.PrintName = "Body Pillow"
@@ -143,19 +144,19 @@ function SWEP:DrawWorldModel()
     end
 
     self:SetupBones()
-    local url, own = self:GetImgur()
+    local url, owner = self:GetWebMatInfo()
 
     if not url and self:GetHardened() then
-        url = "cogLTj5.png" -- the default texture, hacky solution
+        url = "i.imgur.com/cogLTj5.png" -- the default texture, hacky solution
     end
 
     if url then
         render.MaterialOverride(WebMaterial({
-            id = url,
-            owner = own,
+            url = url,
+            owner = owner,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((owner ~= "" and owner or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
             nsfw = "?"
         }))
     end
@@ -178,19 +179,19 @@ end
 function SWEP:PreDrawViewModel(vm, ply, wep)
     self.PrintName = self:GetHardened() and "Body Pillow (Hardened)" or "Body Pillow"
     self.Purpose = self:GetHardened() and "Stands up on its own" or "Gives the feeling of companionship"
-    local url, own = self:GetImgur()
+    local url, owner = self:GetWebMatInfo()
 
     if not url and self:GetHardened() then
-        url = "cogLTj5.png" -- the default texture, hacky solution
+        url = "i.imgur.com/cogLTj5.png" -- the default texture, hacky solution
     end
 
     if url then
         render.MaterialOverride(WebMaterial({
-            id = url,
-            owner = own,
+            url = url,
+            owner = owner,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((own ~= "" and own or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((owner ~= "" and owner or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
             nsfw = "?"
         }))
     end
@@ -268,15 +269,15 @@ if SERVER then
         local wep = ply:GetWeapon("weapon_bodypillow")
 
         if IsValid(wep) then
-            url = SanitizeImgurId(url)
-            wep:SetImgur(url, ply:SteamID())
+            local url = SanitizeWebMatURL(url)
+            wep:SetWebMatInfo(url, ply:SteamID())
 
-            if url then
-                for k, v in pairs(ents.FindByClass("prop_trash_pillow")) do
-                    local turl, own = v:GetImgur()
+            if id then
+                for _, pillow_ent in pairs(ents.FindByClass("prop_trash_pillow")) do
+                    local t_url, t_owner = pillow_ent:GetWebMatInfo()
 
-                    if own == ply:SteamID() and turl ~= url then
-                        v:SetImgur()
+                    if t_owner == ply:SteamID() and url ~= t_url then
+                        pillow_ent:SetWebMatInfo()
                         ply:Notify("Can't have different custom pillows")
                     end
                 end
@@ -429,8 +430,8 @@ function SWEP:SecondaryAttack()
             e:Spawn()
             e:Activate()
             e:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
-            local img, own = self:GetImgur()
-            e:SetImgur(img, own)
+            local url, owner = self:GetWebMatInfo()
+            e:SetWebMatInfo(url, owner)
             self.REMOVING = true
             self:Remove()
         else
@@ -449,18 +450,29 @@ end
 
 function SWEP:OwnerChanged()
     if SERVER and IsValid(self.Owner) then
-        self:SetImgur(SanitizeImgurId(self.Owner:GetInfo("bodypillow_imgur")) or "", self.Owner:SteamID())
+        local webmat_url = string.Trim(self.Owner:GetInfo("bodypillow_url"))
+
+        if webmat_url == "" then
+            webmat_url = string.Trim(self.Owner:GetInfo("bodypillow_imgur")) -- Fallback to the old ConVar
+
+            if webmat_url ~= "" then
+                webmat_url = "i.imgur.com/" .. webmat_url
+            end
+        end
+
+        self:SetWebMatInfo(webmat_url, self.Owner:SteamID())
     end
 end
 
 function SWEP:Reload()
     if CLIENT then
         if IsValid(self.OPENREQUEST) then return end
-        local curl, cown = self:GetImgur()
+        local cur_url = self:GetWebMatInfo()
 
-        self.OPENREQUEST = Derma_StringRequest("Custom Waifu", "Post an imgur direct URL, such as:\nhttps://i.imgur.com/4aIcUgd.jpg\nLeft half is front of pillow, right half is back.", curl, function(url)
-            url = SanitizeImgurId(url) or ""
-            RunConsoleCommand("bodypillow_imgur", url)
+        self.OPENREQUEST = Derma_StringRequest("Custom Waifu", "Post an imgur/catbox direct URL, such as:\n\nhttps://i.imgur.com/4aIcUgd.jpg\nor\nhttps://files.catbox.moe/tx86vk.jpg\n\nLeft half is front of pillow, right half is back.", cur_url, function(url)
+            local url = SanitizeWebMatURL(url) or ""
+            RunConsoleCommand("bodypillow_url", url)
+            RunConsoleCommand("bodypillow_imgur", "") -- Wipe out as soon as we're using the new ConVar
             net.Start("SetMyBodyPillow")
             net.WriteString(url)
             net.SendToServer()

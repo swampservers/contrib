@@ -143,20 +143,20 @@ local last = 1
 
 function PPM_rgbtoHex(r, g, b)
     --[[
-	local value = string.char(r)..string.char(g)..string.char(b)
-	local index = usedcolors[value]
-	local oldnumber = 0
-	if index ==nil then
-		usedcolors[value] = last
-		oldnumber = last
-		last = last + 1 
-	else
-		oldnumber = index
-	end
-	local nextnumber =math.floor(oldnumber/256)
-	local prevnumber =oldnumber - nextnumber*256
-	return string.char(nextnumber)..string.char(prevnumber)
-	//]]
+    local value = string.char(r)..string.char(g)..string.char(b)
+    local index = usedcolors[value]
+    local oldnumber = 0
+    if index ==nil then
+        usedcolors[value] = last
+        oldnumber = last
+        last = last + 1 
+    else
+        oldnumber = index
+    end
+    local nextnumber =math.floor(oldnumber/256)
+    local prevnumber =oldnumber - nextnumber*256
+    return string.char(nextnumber)..string.char(prevnumber)
+    //]]
     return string.char(r) .. string.char(g) .. string.char(b)
 end
 
@@ -223,7 +223,7 @@ PPM.Editor3_presets["edit_bool"] = {
         HEADERLABEL:SetPos(80, 0)
         HEADERLABEL:SetText(variable.name)
         local SELECTOR = vgui.Create("DCheckBoxLabel", CONTAINER)
-        SELECTOR:SetText(tostring(istable(variable) and variable.param or ""))
+        SELECTOR:SetText(tostring(istable(variable) and variable.name or variable.param or ""))
         --SELECTOR:SetSize( 100, 100 ) 
         SELECTOR:SetPos(20, 20)
         SELECTOR:Dock(FILL)
@@ -265,10 +265,10 @@ PPM.Editor3_presets["edit_number"] = {
     end
 }
 
-PPM.Editor3_presets["edit_imgur_cmark"] = {
+PPM.Editor3_presets["edit_webmat_cmark"] = {
     spawn = function(parent, variable)
         local CONTAINER = vgui.Create("DPanel", parent)
-        CONTAINER:SetSize(200, 170)
+        CONTAINER:SetSize(200, 200)
         CONTAINER:Dock(TOP)
         local HEADER = vgui.Create("DImageButton", CONTAINER)
         HEADER:SetSize(200, 20)
@@ -281,14 +281,14 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         HEADERLABEL:SetSize(120, 20)
         HEADERLABEL:SetText(variable.name)
         local DLabel = vgui.Create("DLabel", CONTAINER)
-        DLabel:SetSize(120, 40)
+        DLabel:SetSize(120, 70)
         DLabel:DockMargin(8, 2, 8, 2)
         DLabel:Dock(TOP)
         DLabel:SetTextColor(Color(0, 0, 0, 255))
-        DLabel:SetText("Paste an imgur URL here. Example:\nhttps://i.imgur.com/OMyCUd4.jpg")
+        DLabel:SetText("Paste an imgur or catbox URL here.\nExample:\nhttps://i.imgur.com/OMyCUd4.jpg\nor\nhttps://files.catbox.moe/6o5f1h.jpg")
         local TextEntry = vgui.Create("DTextEntry", CONTAINER)
         TextEntry:SetSize(75, 30)
-        TextEntry:SetText(Me.ponydata.imgurcmark or "")
+        TextEntry:SetText(Me.ponydata.cmark_url or "")
         TextEntry:DockMargin(8, 0, 8, 4)
         TextEntry:Dock(TOP)
         local DermaButton = vgui.Create("DButton", CONTAINER)
@@ -297,9 +297,9 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         DermaButton:Dock(TOP)
 
         DermaButton.DoClick = function()
-            PPM_UpdateLocalPonyCfg('imgurcmark', SanitizeImgurId(TextEntry:GetValue()))
-            --print("imgur cmark:"..Me.ponydata.imgurcmark)
-            TextEntry:SetValue(Me.ponydata.imgurcmark or "")
+            PPM_UpdateLocalPonyCfg("cmark_url", SanitizeWebMatURL(TextEntry:GetValue()))
+            --print("webmat cmark:"..Me.ponydata.cmark_url)
+            TextEntry:SetValue(Me.ponydata.cmark_url or "")
         end
 
         local DermaButton = vgui.Create("DButton", CONTAINER)
@@ -308,7 +308,7 @@ PPM.Editor3_presets["edit_imgur_cmark"] = {
         DermaButton:Dock(TOP)
 
         DermaButton.DoClick = function()
-            PPM_UpdateLocalPonyCfg('imgurcmark', "")
+            PPM_UpdateLocalPonyCfg('cmark_url', "")
             TextEntry:SetValue("")
         end
     end
@@ -344,16 +344,16 @@ PPM.Editor3_presets["edit_color"] = {
         SELECTOR:SetPos(20, 20)
         SELECTOR:SetAlphaBar(false)
         --[[
-	local bCANCEL = vgui.Create( "DButton", sR )
-	bCANCEL:SetSize( 20, 130 ) 
-	bCANCEL:Dock( BOTTOM )
-	bCANCEL:SetPos(0,0)
-	bCANCEL:SetText( "C" )
-	bCANCEL.DoClick = function( button ) 
-		PanelSelect:SetColor(Color(color.x*255,color.y*255,color.z*255,255))
-		PanelSelect.ValueChanged()
-	end
-	]]
+    local bCANCEL = vgui.Create( "DButton", sR )
+    bCANCEL:SetSize( 20, 130 ) 
+    bCANCEL:Dock( BOTTOM )
+    bCANCEL:SetPos(0,0)
+    bCANCEL:SetText( "C" )
+    bCANCEL.DoClick = function( button ) 
+        PanelSelect:SetColor(Color(color.x*255,color.y*255,color.z*255,255))
+        PanelSelect.ValueChanged()
+    end
+    ]]
         SELECTOR:SetColor(Color(VALUE.x * 255, VALUE.y * 255, VALUE.z * 255, 255))
         INDICATOR:SetColor(Color(VALUE.x * 255, VALUE.y * 255, VALUE.z * 255, 255))
         SELECTOR:Dock(FILL)
@@ -382,41 +382,41 @@ PPM.Editor3_presets["edit_type"] = {
         HEADERLABEL:SetPos(80, 0)
         HEADERLABEL:SetText(variable.name)
         --[[
-	local INDICATOR = vgui.Create("DImageButton",CONTAINER)
-	INDICATOR:Dock( LEFT )
-	INDICATOR:SetSize( 20, 20 ) 
-	INDICATOR:SetImage( "gui/editor/pictorect.png" )
-	]]
+    local INDICATOR = vgui.Create("DImageButton",CONTAINER)
+    INDICATOR:Dock( LEFT )
+    INDICATOR:SetSize( 20, 20 ) 
+    INDICATOR:SetImage( "gui/editor/pictorect.png" )
+    ]]
         --choises
         --[[
-	local SELECTOR = vgui.Create( "DComboBox", CONTAINER )
-	SELECTOR:SetPos( 10, 35 )
-	SELECTOR:SetSize( 100, 185 )
-	//SELECTOR:SetMultiple( false )
-	
-	 
-	SELECTOR:Dock( TOP )
-	if variable.choises !=nil then
-		for k , v in pairs(variable.choises) do
-			SELECTOR:AddChoice( v ) 
-		end
-		SELECTOR:ChooseOptionID(Me.ponydata[variable.param] or 1)
-		SELECTOR.OnSelect = function( panel, index, value, data ) 
-			Me.ponydata[variable.param] = index 
-		end 
-	end
-	]]
+    local SELECTOR = vgui.Create( "DComboBox", CONTAINER )
+    SELECTOR:SetPos( 10, 35 )
+    SELECTOR:SetSize( 100, 185 )
+    //SELECTOR:SetMultiple( false )
+    
+     
+    SELECTOR:Dock( TOP )
+    if variable.choises !=nil then
+        for k , v in pairs(variable.choises) do
+            SELECTOR:AddChoice( v ) 
+        end
+        SELECTOR:ChooseOptionID(Me.ponydata[variable.param] or 1)
+        SELECTOR.OnSelect = function( panel, index, value, data ) 
+            Me.ponydata[variable.param] = index 
+        end 
+    end
+    ]]
         local SELECTOR = vgui.Create("DPanel", CONTAINER)
         SELECTOR:SetPos(10, 35)
         SELECTOR:SetSize(100, 185)
         SELECTOR:Dock(TOP)
         --[[
-	SCROLL = vgui.Create( "DVScrollBar", SELECTOR )
-	SCROLL:SetSize( 20, ScrH()-100) 
-	SCROLL:SetUp(1000,2000)
-	SCROLL:SetEnabled(true)
-	SCROLL:Dock(RIGHT)
-	]]
+    SCROLL = vgui.Create( "DVScrollBar", SELECTOR )
+    SCROLL:SetSize( 20, ScrH()-100) 
+    SCROLL:SetUp(1000,2000)
+    SCROLL:SetEnabled(true)
+    SCROLL:Dock(RIGHT)
+    ]]
         local SELECTOR_INNER = vgui.Create("DPanel", SELECTOR)
         SELECTOR_INNER:SetPos(0, 0)
         SELECTOR_INNER:SetSize(200, 2000)

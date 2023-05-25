@@ -236,7 +236,7 @@ PPM.Editor3_nodes.pony_normal_body = {
             },
             {
                 name = "Custom Ponymark",
-                type = "edit_imgur_cmark"
+                type = "edit_webmat_cmark"
             },
                         --[[	{
 

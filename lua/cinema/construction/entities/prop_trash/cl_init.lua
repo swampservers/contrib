@@ -98,7 +98,7 @@ function ENT:ApplyMaterialData(data)
     -- ["$alphatest"]=1,
     if data.i then
         self:SetWebMaterial({
-            id = data.i,
+            url = data.i,
             owner = data.o,
             params = [[{["$color2"]="[]] .. tostring(col) .. [[]"}]]
         })

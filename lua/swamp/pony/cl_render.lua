@@ -56,16 +56,21 @@ function Entity:SetPonyMaterials()
     if not IsValid(ply) then return end
 
     for k, v in ipairs(ply.ponymaterials or {}) do
-        if k == 10 and ((ply.ponydata or {}).imgurcmark or "") ~= "" then
-            -- big TODO: make imgur materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
-            self:SetWebSubMaterial(k - 1, {
-                id = ply.ponydata.imgurcmark,
-                owner = ply,
-                -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
-                stretch = false,
-                shader = "VertexLitGeneric",
-                params = [[{["$translucent"]=1}]]
-            })
+        if k == 10 then
+            local ponydata = ply.ponydata or {}
+            local cmark_url = ponydata.cmark_url or ""
+
+            if cmark_url ~= "" then
+                -- TODO: Important! Make webmat materials return a single material, and update the texture in think hook, so we dont need to reapply them constantly!!!!
+                self:SetWebSubMaterial(k - 1, {
+                    url = cmark_url,
+                    owner = ply,
+                    -- worksafe = true, -- pos = IsValid(ent) and ent:IsPlayer() and ent:GetPos(),
+                    stretch = false,
+                    shader = "VertexLitGeneric",
+                    params = [[{["$translucent"]=1}]]
+                })
+            end
         else
             self:SetSubMaterial(k - 1, "!" .. v:GetName())
         end

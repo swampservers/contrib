@@ -43,8 +43,8 @@ function ENT:Use(ply)
                 wep:SetNWBool('flip', true)
             end
 
-            local img, own = self:GetImgur()
-            wep:SetImgur(img, own)
+            local url, owner = self:GetWebMatInfo()
+            wep:SetWebMatInfo(url, owner)
             self.REMOVING = true
             self:Remove()
         end

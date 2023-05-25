@@ -155,7 +155,7 @@ if GetConVar("cl_downloadfilter"):GetString() ~= "all" then
         surface.SetDrawColor(255, 255, 255, 255)
 
         surface.SetMaterial(WebMaterial({
-            id = GetConVar("cl_downloadfilter"):GetString() == "all" and "0mmU13f.png" or "qdwRnPl.png",
+            url = GetConVar("cl_downloadfilter"):GetString() == "all" and "i.imgur.com/0mmU13f.png" or "i.imgur.com/qdwRnPl.png",
             shader = "UnlitGeneric",
             stretch = true
         }))
