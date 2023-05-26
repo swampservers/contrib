@@ -145,7 +145,7 @@ vgui.Register('ShopCustomizerMode', {
             end)
         end
 
-        if settings.webmat then
+        if settings.webmat and (not settings.webmat.min_rating_id or self.item.rating_id >= settings.webmat.min_rating_id) then
             ui.ShopCustomizerWebMat({
                 parent = self.RightColumn
             }, function(p)
