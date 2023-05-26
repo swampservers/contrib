@@ -132,7 +132,7 @@ vgui.Register('ShopCustomizerMode', {
         local suffix = pone and "_p" or "_h"
         local settings = self.item.settings
 
-        if settings.color then
+        if settings.color and (not settings.color.min_rating_id or self.item.rating_id >= settings.color.min_rating_id) then
             ui.ShopCustomizerColor({
                 parent = self.RightColumn
             }, function(p)
