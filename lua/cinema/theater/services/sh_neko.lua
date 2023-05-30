@@ -1,10 +1,10 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
 SERVICE.Name = "Neko"
 SERVICE.Mature = true
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "horatio.tube/(.+)") or string.match(url.encoded, "screens.wfinoc.net/(.+)") then return url.encoded end
+    if string.match(url.encoded, "horatiotube.net/(.+)") or string.match(url.encoded, "stream.anonahost.com/(.+)") then return url.encoded end
 
     return false
 end
