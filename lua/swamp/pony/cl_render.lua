@@ -70,6 +70,8 @@ function Entity:SetPonyMaterials()
                     shader = "VertexLitGeneric",
                     params = [[{["$translucent"]=1}]]
                 })
+            else
+                self:SetSubMaterial(k - 1, "!" .. v:GetName())
             end
         else
             self:SetSubMaterial(k - 1, "!" .. v:GetName())
