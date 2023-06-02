@@ -124,7 +124,7 @@ if CLIENT then
         function HELLTAKERFRAME:Paint()
         end
 
-        HELLTAKERHTML = vgui.Create("HTML", HELLTAKERFRAME)
+        HELLTAKERHTML = vgui.Create("DHTML", HELLTAKERFRAME, "Helltaker")
         HELLTAKERHTML:SetPos(0, 24)
         HELLTAKERHTML:SetSize(900, 890)
         HELLTAKERHTML:OpenURL("swamp.sv/helltaker")

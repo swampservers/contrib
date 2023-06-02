@@ -110,7 +110,7 @@ if CLIENT then
                         vpanel:Remove()
                     end
 
-                    vpanel = vgui.Create("DHTML")
+                    vpanel = vgui.Create("DHTML", nil, "BFlixVPanel")
                     vpanel:SetSize(ScrW(), ScrH())
                     vpanel:SetAlpha(0)
                     vpanel:SetMouseInputEnabled(false)

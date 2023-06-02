@@ -289,7 +289,7 @@ end
 
 function ENT:OpenSheetMusic()
     if IsValid(self.Browser) or not self.BrowserHUD.Show then return end
-    self.Browser = vgui.Create("HTML")
+    self.Browser = vgui.Create("DHTML", nil, "GMTSheetMusic")
     self.Browser:SetVisible(false)
     local width = self.BrowserHUD.Width
 

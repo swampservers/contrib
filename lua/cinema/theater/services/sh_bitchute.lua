@@ -17,7 +17,7 @@ if CLIENT then
                 vpanel:Remove()
             end
 
-            vpanel = vgui.Create("DHTML")
+            vpanel = vgui.Create("DHTML", nil, "BitChuteVPanel")
             vpanel:SetSize(100, 100)
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)

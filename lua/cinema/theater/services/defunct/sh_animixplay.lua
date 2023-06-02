@@ -26,7 +26,7 @@ if CLIENT then
                     vpanel:Remove()
                 end
 
-                vpanel = vgui.Create("TheaterHTML")
+                vpanel = vgui.Create("DHTML")
                 vpanel:SetSize(0, 0)
                 vpanel:SetAlpha(0)
                 vpanel:SetMouseInputEnabled(false)

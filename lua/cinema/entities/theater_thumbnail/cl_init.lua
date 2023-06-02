@@ -68,10 +68,10 @@ function ENT:DrawThumbnail()
         self.ThumbMat = nil
     elseif self.LastSetting and not self.ThumbMat then
         if not IsValid(self.HTML) then
-            self.HTML = vgui.Create("HTML")
+            self.HTML = vgui.Create("DHTML", nil, "TheaterThumbnail")
             self.HTML:SetSize(ThumbWidth, ThumbHeight)
             self.HTML:SetPaintedManually(true)
-            self.HTML:SetKeyBoardInputEnabled(false)
+            self.HTML:SetKeyboardInputEnabled(false)
             self.HTML:SetMouseInputEnabled(false)
             --<link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@700&family=Righteous&display=swap" rel="stylesheet">
             self.HTML:SetHTML([[

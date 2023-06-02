@@ -38,7 +38,7 @@ timer.Create("AreaMusicController", 0.5, 0, function()
     else
         if target ~= "" then
             if MusicPagePanel == nil then
-                MusicPagePanel = vgui.Create("TheaterHTML")
+                MusicPagePanel = vgui.Create("DHTML", nil, "MusicPage")
 
                 if MusicPagePanel == nil then
                     print('dhtml error')

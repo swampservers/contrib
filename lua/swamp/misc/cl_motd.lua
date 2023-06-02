@@ -81,7 +81,8 @@ vgui.Register("Motd", {
         -- ui.Header()
         self.HTML = ui.DHTML({
             dock = FILL,
-            margin = {16, 16, 16, 0}
+            margin = {16, 16, 16, 0},
+            name = "Motd"
         }, function(p)
             p:SetAllowLua(true)
             p:OpenURL(url)

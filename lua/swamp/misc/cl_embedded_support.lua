@@ -82,7 +82,7 @@ end
 function RequestEmbeddedSupport()
     if EmbeddedStartedRequest then return end
     EmbeddedStartedRequest = true
-    local panel = vgui.Create("HTML")
+    local panel = vgui.Create("DHTML", nil, "EmbeddedSupport")
     panel:SetSize(100, 100)
     panel:SetAlpha(0)
     panel:SetMouseInputEnabled(false)
@@ -93,6 +93,7 @@ function RequestEmbeddedSupport()
             EmbeddedFlashStatus = msg[10] == "1"
             EmbeddedCodecsStatus = msg[11] == "1"
             EmbeddedFinishedRequest = true
+            print("Embedded support:", EmbeddedChromiumStatus, EmbeddedFlashStatus, EmbeddedCodecsStatus)
 
             for _, f in ipairs(EmbeddedChromiumStatus and EmbeddedChromiumSuccessCallbacks or EmbeddedChromiumFailCallbacks) do
                 f()
@@ -114,21 +115,27 @@ function RequestEmbeddedSupport()
 
             EmbeddedCodecsSuccessCallbacks = nil
             EmbeddedCodecsFailCallbacks = nil
-            print("Embedded support:", EmbeddedChromiumStatus, EmbeddedFlashStatus, EmbeddedCodecsStatus)
             self:Remove()
         end
     end
 
-    panel:SetHTML([[<html><body>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js" type="text/javascript"></script>
-	<script>
-	var support = "SUPPORT:";
-	support += navigator.userAgent.indexOf("Awesomium")==-1?1:0;
-	support += swfobject.hasFlashPlayerVersion("1")?1:0;
-	support += (document.createElement("video").canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')=="probably")?1:0;
-	console.log(support);
-	</script>
-	</body></html>]])
+    panel:SetHTML([[
+        <html>
+            <body>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js" type="text/javascript"></script>
+                <script>
+                    var support = "SUPPORT:";
+                    support += navigator.userAgent.indexOf("Awesomium")==-1?1:0;
+                    support += swfobject.hasFlashPlayerVersion("1")?1:0;
+                    support += (document.createElement("video").canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')=="probably")?1:0;
+                </script>
+            </body>
+        </html>
+    ]])
+
+    function panel:OnDocumentReady()
+        self:QueueJavascript("console.log(support);")
+    end
 end
 
 local wasf2down = false
