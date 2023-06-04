@@ -42,7 +42,7 @@ if CLIENT then
         local catid, epid = string.match(key, "%-(%d-)%.(%d-)$")
 
         local function parseURL(url)
-            url = string.Replace(url, "e-10.dokicloud.one", "e-1.dokicloud.one") --HTTP functions can't handle e-10???
+            url = string.Replace(url, "e-10.dokicloud.one", "e-1.dokicloud.one") -- BUG: HTTP functions can't handle e-10, because GMod thinks it's part of a local address
 
             if not string.match(url, "playlist%.m3u8") then
                 url = string.match(url, "(https.+/)%d+/.+.m3u8") .. "playlist.m3u8"
@@ -122,40 +122,34 @@ if CLIENT then
                         end
                     end)
 
-                    --console.log is overridden
-                    vpanel:AddFunction("gmod", "log", function(msg)
-                        if Me.videoDebug then
-                            print(msg)
-                        end
-
-                        if msg:StartWith("FILE:") then
-                            vpanel:Remove()
-                            parseURL(string.sub(msg, 6))
-                        end
-                    end)
-
-                    timer.Create("bflixupdate" .. tostring(math.random(1, 100000)), 1, 15, function()
-                        if IsValid(vpanel) then
-                            vpanel:RunJavascript([[
-                                if(typeof(resource_list)=="undefined"){
-                                    setInterval(function(){
-                                        var resources=performance.getEntriesByType("resource");
-                                        var il=resource_list.length;
-                                        for(var i=il;i<resources.length;i++){
-                                            if (resources[i].name.endsWith('.m3u8')){
-                                               gmod.log("FILE:"+resources[i].name);
-                                            }
-                                        }
-                                        resource_list=resources;
-                                    },100);
-                                }
-                                var resource_list=[];
-                            ]])
-                        end
-                    end)
-
                     vpanel:OpenURL(key)
-                    vpanel:QueueJavascript("window.location='" .. link .. "'")
+
+                    function vpanel:OnDocumentReady(url)
+                        self:OnDocumentReadyBase(url)
+
+                        if url == link then
+                            self:AddFunction("exTheater", "onVideoInfoReady", function(video_url)
+                                if Me.videoDebug then
+                                    print(video_url)
+                                end
+
+                                parseURL(video_url)
+                                self:Remove()
+                            end)
+
+                            self:RunJavascript([[
+                                setInterval(function() {
+                                    for(const resource of performance.getEntriesByType("resource")){
+                                        if (resource.name.endsWith('.m3u8')){
+                                        exTheater.onVideoInfoReady(resource.name);
+                                        }
+                                    }
+                                }, 100);
+                            ]])
+                        else
+                            vpanel:QueueJavascript("window.location='" .. link .. "';")
+                        end
+                    end
                 else
                     parseURL(url)
                 end

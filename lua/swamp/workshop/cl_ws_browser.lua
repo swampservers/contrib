@@ -8,29 +8,20 @@ function PANEL:Init()
     self.Browser:OpenURL(self.HomeURL)
     self.AddressBar:SetText(self.HomeURL)
 
-    self.Browser:AddFunction("gmod", "wssubscribe", function()
-        if self.addonsize and self.addonsize < maxfilesize then
-            self:GetWSID(tostring(self.chosen_id))
-            self:OnClose()
-            self:Remove()
-        end
-    end)
+    function self:OnDocumentReady()
+        self.Browser:AddFunction("gmod", "wssubscribe", function()
+            if self.addonsize and self.addonsize < maxfilesize then
+                self:GetWSID(tostring(self.chosen_id))
+                self:OnClose()
+                self:Remove()
+            end
+        end)
 
-    self.Browser.Think = function(self)
-        if not self._nextUrlPoll or self._nextUrlPoll < RealTime() then
-            --self:RunJavascript('console.log("HREF:"+window.location.href);')
-            self:RunJavascript([[
-                function SubscribeItem(){
-                    gmod.wssubscribe();
-                };
-
-                var sub = document.getElementById("SubscribeItemOptionAdd");
-                if (sub){
-                    sub.innerText = "Select";
-                };
-            ]])
-            self._nextUrlPoll = RealTime() + 0.25
-        end
+        self.Browser:QueueJavascript([[
+            function SubscribeItem(){
+                gmod.wssubscribe();
+            };
+        ]])
     end
 
     -- local prevurl = ""
@@ -99,14 +90,20 @@ function PANEL:Init()
     end
 end
 
-function PANEL:OnDocumentReady(url)
+function PANEL:OnURLChanged(url)
     -- local url = self.AddressBar:GetValue()
     local id = url:match('://steamcommunity.com/sharedfiles/filedetails/.*[%?%&]id=(%d+)') or url:match('://steamcommunity.com/workshop/filedetails/.*[%?%&]id=(%d+)')
     -- self.chooseb:SetEnabled(id and true or false)
     self.chosen_id = id
+    self.Browser:QueueJavascript([[
+        var sub = document.getElementById("SubscribeItemOptionAdd");
+        if (sub){
+            sub.innerText = "Select";
+        };
+    ]])
 end
 
 function PANEL:GetWSID(data)
 end
 
-vgui.Register("workshopbrowser", PANEL, "BrowserBase")
+vgui.Register("WorkshopBrowser", PANEL, "BrowserBase")
