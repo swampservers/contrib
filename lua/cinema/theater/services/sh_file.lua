@@ -155,7 +155,7 @@ if CLIENT then
                 }, 100);
             ]])
         else
-            panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Data())))
+            panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Key())))
         end
     end
 end
