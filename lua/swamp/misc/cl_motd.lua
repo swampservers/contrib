@@ -31,7 +31,7 @@ function SetFatKidMotd()
     end
 
     if IsValid(MotdPanel.HTML) then
-        MotdPanel.HTML:RunJavascript('document.getElementById("mapinfozone").innerHTML=`' .. FATKID_BACKSTORY .. "`;")
+        MotdPanel.HTML:QueueJavascript('document.getElementById("mapinfozone").innerHTML=`' .. FATKID_BACKSTORY .. "`;")
     end
 end
 
