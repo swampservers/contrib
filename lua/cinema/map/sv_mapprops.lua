@@ -146,7 +146,7 @@ function GetMapPropTable()
                 bet = {
                     default = 1000,
                     iteration = 1000,
-                    max = 100000,
+                    max = 10000000,
                     min = 100
                 },
                 general = {
@@ -167,7 +167,7 @@ function GetMapPropTable()
             class = "pcasino_roulette_table",
             data = {
                 bet = {
-                    betLimit = 100000,
+                    betLimit = 10000000,
                     default = 1000,
                     iteration = 1000,
                     max = 50000,
