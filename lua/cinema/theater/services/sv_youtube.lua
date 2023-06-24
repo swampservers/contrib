@@ -15,7 +15,7 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
         if resp.error then return onFailure('Theater_RequestFailed') end
         if table.Lookup(resp, 'pageInfo.totalResults', 0) <= 0 then return onFailure('Theater_RequestFailed') end
         local item = resp.items[1]
-        if not table.Lookup(item, 'status.embeddable') then return onFailure('Service_EmbedDisabled') end
+        --if not table.Lookup(item, 'status.embeddable') then return onFailure('Service_EmbedDisabled') end
         local info = {}
         info.title = table.Lookup(item, 'snippet.title')
 
@@ -31,10 +31,16 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
 
         if table.Lookup(item, "status.privacyStatus") == "unlisted" or table.Lookup(item, "contentDetails.contentRating.ytRating") == "ytAgeRestricted" then
             info.data = "adult"
-        else
+        end
+
+        if not table.Lookup(item, "status.embeddable") then
+            info.data = (info.data and "," or "") .. "noembed"
+        end
+
+        if not info.data then
             info.data = ""
             -- Medium Size doesn't have a letterbox
-            info.thumb = table.Lookup(item, 'snippet.thumbnails.medium.url')
+            info.thumb = table.Lookup(item, "snippet.thumbnails.medium.url")
         end
 
         onSuccess(info)
