@@ -11,11 +11,10 @@ API_NETWORK_STRING_TABLE_UPDATE = {
 
         for i = 1, nvals do
             local st = API_NETWORK_STRING[1]()
+            out[st] = API_ANY[1]()
 
-            if st then
-                out[st] = API_ANY[1]()
-            else
-                out[1] = API_List(API_NETWORK_STRING).Read()
+            if out[st] == nil then
+                out[1][st] = true
             end
         end
 
@@ -25,8 +24,14 @@ API_NETWORK_STRING_TABLE_UPDATE = {
         local removals = val[1]
         local count = table.Count(val)
 
-        if removals and table.IsEmpty(removals) then
+        if removals then
+            -- Remove the [1] entry from the count
             count = count - 1
+
+            if not table.IsEmpty(removals) then
+                -- Add whatever number of strings is in removals
+                count = count + table.Count(removals)
+            end
         end
 
         net.WriteLength(count)
@@ -38,9 +43,16 @@ API_NETWORK_STRING_TABLE_UPDATE = {
             end
         end
 
+        -- Test case for removals: lua_run local ply = player.GetHumans()[1] ply.NWP.valentine_t = 0 timer.Simple(1, function() ply.NWP.valentine_t = nil end)
         if removals and not table.IsEmpty(removals) then
-            API_NETWORK_STRING[2](nil)
-            API_Set(API_NETWORK_STRING)[2](removals)
+            for k in pairs(removals) do
+                API_NETWORK_STRING[2](k)
+                API_NIL[2]()
+            end
+            -- TODO(winter): The below implementation of removals breaks the net api, so I've rewritten it
+            -- API_Set is a total unreadable mess. Somebody else can unfuck it if they want
+            --API_NETWORK_STRING[2](nil)
+            --API_Set(API_NETWORK_STRING)[2](removals)
         end
     end
 }
@@ -53,8 +65,8 @@ function ApplyNetworkStringTableUpdate(tab, update)
         tab[k] = v
     end
 
-    for i, v in ipairs(remove) do
-        tab[v] = nil
+    for k in pairs(remove) do
+        tab[k] = nil
     end
 end
 
