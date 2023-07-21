@@ -75,7 +75,7 @@ API_Command("UpdateNW", {API_ENTITY_HANDLE, API_NETWORK_STRING_TABLE_UPDATE}, fu
         ent.NW = ent.NW or {}
         ApplyNetworkStringTableUpdate(ent.NW, update)
 
-        if CLIENT and (update["ValentineName"] or update[1]["ValentineName"]) then
+        if CLIENT and (update and (update["ValentineName"] or (update[1] and update[1]["ValentineName"]))) then
             ShopProducts["valentine"]:Update()
 
             if IsValid(ShopPanel) then
