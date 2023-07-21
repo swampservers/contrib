@@ -47,7 +47,7 @@ API_NETWORK_STRING_TABLE_UPDATE = {
         if removals and not table.IsEmpty(removals) then
             for k in pairs(removals) do
                 API_NETWORK_STRING[2](k)
-                API_NIL[2]()
+                API_ANY[2](nil)
             end
             -- TODO(winter): The below implementation of removals breaks the net api, so I've rewritten it
             -- API_Set is a total unreadable mess. Somebody else can unfuck it if they want
@@ -74,6 +74,14 @@ API_Command("UpdateNW", {API_ENTITY_HANDLE, API_NETWORK_STRING_TABLE_UPDATE}, fu
     eh:OnValid(function(ent)
         ent.NW = ent.NW or {}
         ApplyNetworkStringTableUpdate(ent.NW, update)
+
+        if CLIENT and (update["ValentineName"] or update[1]["ValentineName"]) then
+            ShopProducts["valentine"]:Update()
+
+            if IsValid(ShopPanel) then
+                ShopPanel:RefreshInventory()
+            end
+        end
     end)
 end)
 
