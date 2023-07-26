@@ -47,7 +47,7 @@ if CLIENT then
         var player = null;
         var player_ready = false;
         var to_video = null;
-        var to_volume = 100;
+        var to_volume = 0;
         var start_time = 0;
         var seek_to_end = false;
 
