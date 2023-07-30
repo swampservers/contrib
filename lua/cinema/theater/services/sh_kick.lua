@@ -17,7 +17,8 @@ end
 
 if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("https://player.kick.com/" .. Video:Key())
+        panel:EnsureURL("https://player.kick.com/" .. Video:Key() .. "?autoplay=true&muted=false")
+        panel:QueueJavascript("document.querySelector('button[aria-label=\"Mute/Unmute\"]').click();")
     end
 
     function SERVICE:SetVolume(vol, panel)
