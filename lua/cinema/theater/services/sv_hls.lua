@@ -36,8 +36,9 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
 
                 --relative path
                 if not string.find(streamurl, "http.://") then
+                    local uri = string.match(streamurl, 'URI="(.-)"')
                     local path = string.Split(key, "/")
-                    path[#path] = streamurl
+                    path[#path] = uri
                     streamurl = table.concat(path, "/")
                 end
 
