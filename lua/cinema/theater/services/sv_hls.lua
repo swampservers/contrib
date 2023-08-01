@@ -30,13 +30,14 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
     end
 
     self:Fetch(key, function(body)
-        for _, v in ipairs(string.Split(body, "\n")) do
-            if string.find(v, ".m3u8") then
-                local streamurl = v
-
-                --relative path
-                if not string.find(streamurl, "http.://") then
-                    local uri = string.match(streamurl, 'URI="(.-)"')
+        for _, line in ipairs(string.Split(body, "\n")) do
+            if string.find(line, ".m3u8") then
+                local streamurl
+            
+                if string.find(line, "http.://") then
+                    streamurl = line
+                else -- relative path
+                    local uri = string.match(line, 'URI="(.-)"')
                     local path = string.Split(key, "/")
                     path[#path] = uri
                     streamurl = table.concat(path, "/")
