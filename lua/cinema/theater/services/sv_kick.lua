@@ -10,7 +10,6 @@ sv_GetVideoInfo.kick = function(self, key, ply, onSuccess, onFailure)
             info.title = t["livestream"]["session_title"]
             info.thumb = t["livestream"]["thumbnail"]["url"]
             info.duration = 0
-
             onSuccess(info)
         else
             onFailure('Theater_RequestFailed')
