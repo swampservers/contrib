@@ -34,7 +34,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
             if string.find(line, ".m3u8") then
                 local streamurl
             
-                if string.find(line, "http.://") then
+                if string.find(line, "https?://") then
                     streamurl = line
                 else -- relative path
                     local uri = string.match(line, 'URI="(.-)"')
