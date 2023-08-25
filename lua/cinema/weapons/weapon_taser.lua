@@ -142,7 +142,7 @@ function SWEP:TasePlayer()
 
     if SERVER then
         ply:Freeze(true)
-        ply:SendLua("THIRDPERSON = true")
+        ply:SendLua("THIRDPERSON = true Me.IsTaseredBy = Entity(" .. self.Owner:EntIndex() .. ")")
         --ply:DropToFloor()
         self.Rope:SetKeyValue("EndOffset", tostring(Vector(0, 0, 0)))
         ply:ExtEmitSound("weapon_taser/taser.ogg")
@@ -151,7 +151,10 @@ function SWEP:TasePlayer()
     timer.Create("ForceStopTasing" .. self.Owner:SteamID64(), self.AutoUntase, 0, function()
         if not IsValid(self) then return end
         self:UnTasePlayer()
-        self:Remove()
+
+        if SERVER then
+            self:Remove()
+        end
     end)
 end
 
@@ -167,7 +170,7 @@ function SWEP:UnTasePlayer()
 
     if SERVER then
         ply:Freeze(false)
-        ply:SendLua("THIRDPERSON = false")
+        ply:SendLua("THIRDPERSON = false Me.IsTaseredBy = nil")
         --ply:UnSpectate()
         self.Rope:SetKeyValue("EndOffset", tostring(Vector(0, 0, 48)))
     end
