@@ -46,7 +46,7 @@ hook.Add("Think", "ThirdPersonSideViewToggler", function()
     local is_freecam_bind_down = (freecam_bind and input.IsButtonDown(input.GetKeyCode(freecam_bind))) or (not input.LookupKeyBinding(MOUSE_MIDDLE) and input.IsButtonDown(MOUSE_MIDDLE))
 
     if is_freecam_bind_down and not was_freecam_bind_down then
-        ThirdPerson_SideViewEnable = not ThirdPerson_SideViewEnable
+        Thirdperson_SideViewEnable = not Thirdperson_SideViewEnable
     end
 
     was_freecam_bind_down = is_freecam_bind_down
@@ -81,7 +81,7 @@ end
 CreateClientConVar("swamp_thirdperson_side", "0", false, true, true)
 
 function UseThirdpersonSide()
-    if not ThirdPerson_SideViewEnable then return false end
+    if not Thirdperson_SideViewEnable then return false end
     local ply = LocalPlayer()
     if ply:InVehicle() then return false end
     if IsLockedByTaunting(ply) then return false end
@@ -96,7 +96,7 @@ hook.Add("HUDShouldDraw", "HUDShouldDraw_HideCrosshair", function(name)
 end)
 
 concommand.Add("swamp_freecam", function() end)
-ThirdPerson_SideViewEnable = false
+Thirdperson_SideViewEnable = false
 Thirdperson_Lerp = 0
 Thirdperson_SideLerp = 0
 Thirdperson_ViewYaw = 0
