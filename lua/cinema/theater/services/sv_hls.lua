@@ -33,7 +33,7 @@ sv_GetVideoInfo.hls = function(self, key, ply, onSuccess, onFailure)
         for _, line in ipairs(string.Split(body, "\n")) do
             if string.find(line, ".m3u8") then
                 local streamurl
-            
+
                 if string.find(line, "https?://") then
                     streamurl = line
                 else -- relative path
