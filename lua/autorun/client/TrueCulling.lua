@@ -40,12 +40,23 @@ function main()
 			else
 				return
 			end
-			if engine.TickCount()%10 == 0 then
-				if ents_:GetClass() == "10C_BaseFlex" then
-					ents_:SetNoDraw(true)
+			if system.IsLinux() or system.IsOSX() then
+				if engine.TickCount()%10 == 0 then
+					if ents_:GetClass() == "10C_BaseFlex" then
+						ents_:SetNoDraw(true)
+					end
+				else
+					return
 				end
-			else
-				return
+			end
+			if system.IsWindows() then
+				if engine.TickCount()%10 == 0 then
+					if ents_:GetClass() == "class C_BaseFlex" then
+						ents_:SetNoDraw(true)
+					end
+				else
+					return
+				end
 			end
 		end
 	else
