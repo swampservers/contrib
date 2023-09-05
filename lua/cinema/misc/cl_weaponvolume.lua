@@ -10,14 +10,10 @@ local weapon_sound_patterns = {
 }
 
 hook.Add("EntityEmitSound", "EntityEmitSound_WeaponVolume", function(data)
-    for k, v in pairs(data) do
-        if (k == "SoundName") then
-            for i = 1, #weapon_sound_patterns do
-                if string.find(v, weapon_sound_patterns[i]) then
-                    data.Volume = swamp_weaponvolume:GetFloat()
-                    return true
-                end
-            end
+    for i = 1, #weapon_sound_patterns do
+        if string.find(data.SoundName, weapon_sound_patterns[i]) then
+            data.Volume = swamp_weaponvolume:GetFloat()
+            return true
         end
     end
 end)
