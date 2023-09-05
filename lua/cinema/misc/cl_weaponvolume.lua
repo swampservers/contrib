@@ -18,5 +18,5 @@ hook.Add("EntityEmitSound", "EntityEmitSound_WeaponVolume", function(data)
                 end
             end
         end
-      end
+    end
 end)
