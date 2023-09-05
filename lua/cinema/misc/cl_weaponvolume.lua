@@ -1,3 +1,4 @@
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local swamp_weaponvolume = CreateClientConVar("swamp_weaponvolume", "1", true, false, "", 0.0, 1.0)
 
 local weapon_sound_patterns = {
