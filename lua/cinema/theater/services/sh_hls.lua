@@ -28,7 +28,7 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("https://swamp.sv/s/cinema/hls.html")
+        panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
 
         panel:AddFunction("gmod", "loaded", function()
             self:SeekTo(CurTime() - Video:StartTime(), panel)
