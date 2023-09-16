@@ -5,7 +5,7 @@ SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 
 function SERVICE:GetKey(url)
-    if string.match(url.host or "", "rumble.com") and string.match(url.path or "", "^/v%w%w%w%w%w%w%-(.+)%.html$") then return url.path end
+    if string.match(url.host or "", "rumble.com") and string.match(url.path or "", "^/v%w%w%w%w%w%w%-(.+)%.html$") then return url.encoded end
     return false
 end
 
