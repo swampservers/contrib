@@ -62,7 +62,7 @@ if CLIENT then
                         "title": videoTitle,
                         "data": embedUrl,
                         "duration": durationSeconds,
-                        "thumb": thumb
+                        "thumb": thumbnailUrl
                     };
 
                     gmod.onVideoInfoReady(videoInfo);
