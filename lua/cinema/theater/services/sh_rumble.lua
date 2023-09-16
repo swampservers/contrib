@@ -40,33 +40,35 @@ if CLIENT then
                     end
                 end)
 
-                self:QueueJavascript([[
-                    function iso8601ToSeconds(duration) {
-                        var match = duration.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
-                        var hours = (parseInt(match[1]) || 0);
-                        var minutes = (parseInt(match[2]) || 0);
-                        var seconds = (parseInt(match[3]) || 0);
-                        return (hours * 3600) + (minutes * 60) + seconds;
-                    }
+                if url == key then
+                    self:QueueJavascript([[
+                        function iso8601ToSeconds(duration) {
+                            var match = duration.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
+                            var hours = (parseInt(match[1]) || 0);
+                            var minutes = (parseInt(match[2]) || 0);
+                            var seconds = (parseInt(match[3]) || 0);
+                            return (hours * 3600) + (minutes * 60) + seconds;
+                        }
 
-                    const videoInfoJson = document.querySelector('script[type="application/ld+json"]').textContent;
-                    const videoInfoJsonObject = JSON.parse(videoInfoJson);
+                        const videoInfoJson = document.querySelector('script[type="application/ld+json"]').textContent;
+                        const videoInfoJsonObject = JSON.parse(videoInfoJson);
 
-                    const videoTitle = videoInfoJsonObject[0].name;
-                    const thumbnailUrl = videoInfoJsonObject[0].thumbnailUrl;
-                    const durationISO8601 = videoInfoJsonObject[0].duration;
-                    const durationSeconds = iso8601ToSeconds(durationISO8601);
-                    const embedUrl = videoInfoJsonObject[0].embedUrl;
+                        const videoTitle = videoInfoJsonObject[0].name;
+                        const thumbnailUrl = videoInfoJsonObject[0].thumbnailUrl;
+                        const durationISO8601 = videoInfoJsonObject[0].duration;
+                        const durationSeconds = iso8601ToSeconds(durationISO8601);
+                        const embedUrl = videoInfoJsonObject[0].embedUrl;
 
-                    const videoInfo = {
-                        "title": videoTitle,
-                        "data": embedUrl,
-                        "duration": durationSeconds,
-                        "thumb": thumbnailUrl
-                    };
+                        const videoInfo = {
+                            "title": videoTitle,
+                            "data": embedUrl,
+                            "duration": durationSeconds,
+                            "thumb": thumbnailUrl
+                        };
 
-                    gmod.onVideoInfoReady(videoInfo);
-                ]])
+                        gmod.onVideoInfoReady(videoInfo);
+                    ]])
+                end
             end
 
             vpanel:OpenURL(key)
