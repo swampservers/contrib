@@ -67,7 +67,9 @@ if CLIENT then
                     const videoPropsJson = document.getElementById('__NEXT_DATA__').textContent;
                     const videoPropsJsonObject = JSON.parse(videoPropsJson);
 
-                    if ('channel' in videoPropsJsonObject.props.pageProps) {
+                    if ('channel' in videoPropsJsonObject.props.pageProps
+                            && videoPropsJsonObject.props.pageProps.channel.isLive
+                            && 'liveStreamVideo' in videoPropsJsonObject.props.pageProps.channel) {
                         const videoTitle = videoPropsJsonObject.props.pageProps.channel.title;
                         const streamUrl = videoPropsJsonObject.props.pageProps.channel.liveStreamVideo.streamUrl;
                         const durationSeconds = 0;
