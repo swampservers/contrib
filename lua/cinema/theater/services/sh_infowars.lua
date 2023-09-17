@@ -19,7 +19,7 @@ function SERVICE:GetKey(url)
             local key = string.match(url.encoded or "", "/watch%?id=(%w+)$")
             if key then return key end -- was a video ID
             local key = string.match(url.encoded or "", "/channel/(%w+)$")
-            if key then return "channel:" .. key end; -- was a channel
+            if key then return "channel:" .. key end -- was a channel
         end
     end
     return false
