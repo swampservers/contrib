@@ -18,7 +18,7 @@ end
 if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("https://player.kick.com/" .. Video:Key() .. "?autoplay=true&muted=false")
-
+ 
         panel:AddFunction("gmod", "loaded", function()
             self:SetVolume(theater.GetVolume(), panel)
         end)
@@ -26,11 +26,14 @@ if CLIENT then
         panel:QueueJavascript("document.querySelector('button[aria-label=\"Mute/Unmute\"]').click();")
         panel:QueueJavascript([[
             const initInterval = setInterval(function() {
-                document.querySelectorAll('audio, video').forEach(element => {
+                document.querySelectorAll('video').forEach(element => {
                     element.volume = 0;
-                    if (element.readyState > 0) {
-                        gmod.loaded();
-                        clearInterval(initInterval);
+                    // Wait for the kick player to be loaded
+                    if (element.classList.contains("vjs-tech")) {
+                        if (element.readyState > 0) {
+                            gmod.loaded();
+                            clearInterval(initInterval);
+                        }
                     }
                 });
             }, 100);
