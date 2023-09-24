@@ -35,7 +35,18 @@ if CLIENT then
             self:SetVolume(theater.GetVolume(), panel)
         end)
 
-        panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Key())))
+        panel:QueueJavascript([[
+            th_video(']] .. string.JavascriptSafe(Video:Key()) .. [[');
+            function checkLoaded() {
+                if (!loaded) {
+                    // Try a CORS proxy
+                    // TODO: modify hls.html and add a hls.on for MEDIA_ATTACHED
+                    console.log("Trying CORS proxy");
+                    th_video('https://p.micspam.com/]] .. string.JavascriptSafe(Video:Key()) .. [[');
+                }
+            }
+            setTimeout(checkLoaded, 5000);
+        ]])
     end
 end
 

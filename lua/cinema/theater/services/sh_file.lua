@@ -155,7 +155,17 @@ if CLIENT then
                 }, 100);
             ]])
         else
-            panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Key())))
+            panel:QueueJavascript([[
+                th_video(']] .. string.JavascriptSafe(Video:Key()) .. [[');
+                function checkLoaded() {
+                    if (player.error().code === 4) {
+                        // Try a CORS proxy
+                        console.log("Trying CORS proxy");
+                        th_video('https://p.micspam.com/]] .. string.JavascriptSafe(Video:Key()) .. [[');
+                    }
+                }
+                setTimeout(checkLoaded, 5000);
+            ]])
         end
     end
 end
