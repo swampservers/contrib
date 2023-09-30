@@ -1,5 +1,5 @@
-﻿﻿------------------------------// General Settings \\------------------------------------------------------------|
-SWEP.Author = "PYROTEKNIK / Horatio" -- Your name.
+﻿------------------------------// General Settings \\------------------------------------------------------------|
+﻿"someString".Author = "PYROTEKNIK / Horatio" -- Your name.
 SWEP.Contact = "" -- How People could contact you.
 SWEP.base = "weapon_base" -- What base should the swep be based on.
 SWEP.ViewModel = "models/aoc_weapon/v_longsword.mdl" -- The viewModel, the model you see when you are holding it.
