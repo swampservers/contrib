@@ -18,7 +18,7 @@ end
 if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("https://player.kick.com/" .. Video:Key() .. "?autoplay=true&muted=false")
- 
+
         panel:AddFunction("gmod", "loaded", function()
             self:SetVolume(theater.GetVolume(), panel)
         end)
