@@ -14,7 +14,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://bflix.sx/watch%-movie/.*%-%d+%.%d+$") then return url.encoded end
+    if string.match(url.encoded, "https://bflix.sx/watch%-%w-/.*%-%d+%.%d+$") then return url.encoded end
     return false
 end
 
@@ -63,7 +63,7 @@ if CLIENT then
                         }, 100);
 
                         exTheater.onVideoInfoReady({
-                            "title": document.querySelector("meta[property='og:title']").content.replace("Watch ", ""),
+                            "title": document.querySelector("li[aria-current=\"page\"]").textContent.split(':')[0].replace(/\s+/g, ' ').trim(),
                             "thumb": document.querySelector("meta[property='og:image']").content,
                             "data": document.getElementById("iframe-embed").src
                         });
