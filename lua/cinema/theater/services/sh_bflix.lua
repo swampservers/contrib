@@ -3,6 +3,7 @@ local SERVICE = {}
 SERVICE.Name = "Bflix"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
+SERVICE.CacheLife = 0
 SERVICE.ServiceJS = [[
     const plyrInterval = setInterval(function() {
         const video = document.querySelector('video');
