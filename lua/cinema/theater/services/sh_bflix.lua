@@ -58,14 +58,14 @@ if CLIENT then
                             let iframe = document.getElementById("iframe-embed");
                             if (iframe && iframe.src && iframe.src.includes("embed")) {
                                 window.location.href = iframe.src;
+                                exTheater.onVideoInfoReady({"data": iframe.src});
                                 clearInterval(initInterval);
                             }
                         }, 100);
 
                         exTheater.onVideoInfoReady({
                             "title": document.querySelector("li[aria-current=\"page\"]").textContent.split(':')[0].replace(/\s+/g, ' ').trim(),
-                            "thumb": document.querySelector("meta[property='og:image']").content,
-                            "data": document.getElementById("iframe-embed").src
+                            "thumb": document.querySelector("meta[property='og:image']").content
                         });
                     ]])
                 else
@@ -88,7 +88,7 @@ if CLIENT then
         panel:EnsureURL(Video:Key())
 
         panel.OnDocumentReady = function(_, url)
-            if string.match(url, "embed") then
+            if url == Video:Data() then
                 panel:AddFunction("gmod", "loaded", function()
                     self:SeekTo(CurTime() - Video:StartTime(), panel)
                     self:SetVolume(theater.GetVolume(), panel)
