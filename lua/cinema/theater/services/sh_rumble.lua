@@ -104,8 +104,16 @@ if CLIENT then
 
     function SERVICE:SetVolume(vol, panel)
         panel:QueueJavascript([[
-            document.querySelectorAll('audio, video').forEach(element => {
+            document.querySelectorAll('video').forEach(element => {
                 element.volume = ]] .. (vol * 0.01) .. [[;
+            });
+        ]])
+    end
+
+    function SERVICE:SeekTo(time, panel)
+        panel:QueueJavascript([[
+            document.querySelectorAll('video').forEach(element => {
+                element.currentTime = ]] .. time .. [[;
             });
         ]])
     end
