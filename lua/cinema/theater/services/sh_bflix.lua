@@ -16,6 +16,7 @@ SERVICE.ServiceJS = [[
 
 function SERVICE:GetKey(url)
     if string.match(url.encoded, "https://bflix.sx/watch%-%w-/.*%-%d+%.%d+$") then return url.encoded end
+
     return false
 end
 
@@ -109,7 +110,7 @@ if CLIENT then
                 ]])
             end
         end
-    end 
+    end
 
     function SERVICE:SetVolume(vol, panel)
         panel:QueueJavascript([[
