@@ -1,4 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
 SERVICE.Name = "Rumble"
 SERVICE.NeedsCodecs = true
@@ -6,6 +6,7 @@ SERVICE.NeedsChromium = true
 
 function SERVICE:GetKey(url)
     if string.match(url.host or "", "rumble.com") and string.match(url.path or "", "^/v%w%w%w%w%w%w%-(.+)%.html$") then return url.encoded end
+
     return false
 end
 
@@ -34,6 +35,7 @@ if CLIENT then
             function vpanel:OnDocumentReady(url)
                 self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
+
                     if videoInfo.title and videoInfo.data and videoInfo.duration and videoInfo.thumb then
                         callback(videoInfo)
                         self:Remove()
@@ -81,9 +83,11 @@ if CLIENT then
 
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL(Video:Data())
+
         panel:AddFunction("gmod", "loaded", function()
             self:SetVolume(theater.GetVolume(), panel)
         end)
+
         panel:QueueJavascript("document.querySelector('.bigPlayUI.ctp').click();")
         panel:QueueJavascript([[
             const initInterval = setInterval(function() {
