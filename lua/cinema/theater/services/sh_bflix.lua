@@ -90,7 +90,7 @@ if CLIENT then
         panel:EnsureURL(Video:Key())
 
         panel.OnDocumentReady = function(_, url)
-            if url == Video:Data() then
+            if string.match(url, "embed") then
                 panel:AddFunction("gmod", "loaded", function()
                     self:SeekTo(CurTime() - Video:StartTime(), panel)
                     self:SetVolume(theater.GetVolume(), panel)
