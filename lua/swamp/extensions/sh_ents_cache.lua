@@ -24,6 +24,10 @@ local function add(tab, ent)
 end
 
 local function create(ent)
+    if ent:GetClass() == "point_message" then
+        print("create", ent)
+    end
+
     if EntIndex(ent) <= 0 then return end
     local cl = EntClass(ent)
     cl = classmapping[cl] or cl
