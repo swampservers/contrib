@@ -24,10 +24,6 @@ local function add(tab, ent)
 end
 
 local function create(ent)
-    if ent:GetClass() == "point_message" then
-        print("create", ent)
-    end
-
     if EntIndex(ent) <= 0 then return end
     local cl = EntClass(ent)
     cl = classmapping[cl] or cl
@@ -52,6 +48,7 @@ end
 local function remove(tab, ent)
     local ci = tab[ent]
 
+    -- TODO(winter): This happens consistently with point_message for some reason... maybe we should be using EntIndexes or something instead
     if ci == nil then
         if SERVER then
             ErrorNoHaltWithStack("cant remove ent " .. tostring(ent))
