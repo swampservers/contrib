@@ -62,7 +62,7 @@ function SWEP:Snap(target)
     self:GetOwner():SetAnimation(PLAYER_ATTACK1)
 
     if SERVER then
-        self:GetOwner():EmitSound("gauntlet/snap.wav", 100)
+        self:EmitSound("gauntlet/snap.wav", 100)
         util.ScreenShake(self:GetOwner():GetPos(), 1, 2, 0.2, 300)
     end
 

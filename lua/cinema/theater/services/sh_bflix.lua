@@ -1,230 +1,131 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
-SERVICE.Name = "BFlix"
+SERVICE.Name = "Bflix"
 SERVICE.NeedsCodecs = true
+SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
+SERVICE.ServiceJS = [[
+    const plyrInterval = setInterval(function() {
+        const video = document.querySelector('video');
+        if (video && video.paused) {
+            video.play();
+            gmod.loaded();
+        }
+    }, 100);
+]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "bflix.gg/watch%-%w-/.-%d-%.%d-$") then return url.encoded end
+    if string.match(url.encoded, "https://bflix.sx/watch%-%w-/.*%-%d+%.%d+$") then return url.encoded end
 
     return false
 end
 
 if CLIENT then
-    local url2 = url
-
     function SERVICE:GetVideoInfoClientside(key, callback)
-        local info = {}
-        local isTV = string.match(key, "bflix.gg/watch%-tv")
-        local year, episode, data, subs
+        local videoInfo = {}
 
-        --fetches are asynchronous so they need to be handled this way
-        timer.Create("AwaitBFlixFetches", 1, 40, function()
-            if timer.RepsLeft("AwaitBFlixFetches") == 0 then
-                print("Failed")
-                timer.Remove("AwaitBFlixFetches")
-                callback()
+        EmbeddedCheckCodecs(function()
+            if vpanel then
+                vpanel:Remove()
             end
 
-            if data and subs and info.thumb and info.title and info.duration then
-                info.title = info.title .. " " .. (isTV and episode or year)
+            vpanel = vgui.Create("DHTML", nil, "BflixPanel")
+            vpanel:SetSize(ScrW(), ScrH())
+            vpanel:SetAlpha(0)
+            vpanel:SetMouseInputEnabled(false)
+            vpanel:SetKeyboardInputEnabled(false)
+            vpanel:OpenURL(key)
 
-                info.data = util.TableToJSON({
-                    url = data,
-                    subs = subs
-                })
-
-                timer.Remove("AwaitBFlixFetches")
-                callback(info)
-            end
-        end)
-
-        local catid, epid = string.match(key, "%-(%d-)%.(%d-)$")
-
-        local function parseURL(url)
-            url = string.Replace(url, "e-10.dokicloud.one", "e-1.dokicloud.one") -- BUG: HTTP functions can't handle e-10, because GMod thinks it's part of a local address
-
-            if not string.match(url, "playlist%.m3u8") then
-                url = string.match(url, "(https.+/)%d+/.+.m3u8") .. "playlist.m3u8"
-            end
-
-            --m3u8 playlist
-            http.Fetch(url, function(body)
-                local duration = 0
-                local resolution = ""
-                local stream = ""
-
-                for _, v in ipairs(string.Split(body, "\n")) do
-                    if string.find(v, "RESOLUTION=") then
-                        resolution = string.Split(v, "RESOLUTION=")[2]
-                    end
-
-                    if string.find(v, ".m3u8") then
-                        if resolution == "1280x720" then
-                            url = v
-                        end
-
-                        stream = v
-                    end
+            timer.Simple(20, function()
+                if IsValid(vpanel) then
+                    vpanel:Remove()
+                    print("Bflix request failed")
+                    callback()
                 end
-
-                --m3u8 stream
-                http.Fetch(stream, function(body)
-                    if #string.Split(body, "\n") < 2 then
-                        callback()
-
-                        return
-                    end
-
-                    for _, v in ipairs(string.Split(body, "\n")) do
-                        if v:StartWith("#EXTINF:") then
-                            duration = duration + tonumber(string.Split(string.sub(v, 9), ",")[1])
-                        end
-                    end
-
-                    info.duration = math.ceil(duration)
-                    data = url
-                end, function(err)
-                    print("m3u8 stream", err)
-                end)
-            end, function(err)
-                print("m3u8 playlist", err, url)
             end)
-        end
 
-        --embed link
-        http.Fetch("https://bflix.gg/ajax/sources/" .. epid, function(body, length, headers, code)
-            local t = util.JSONToTable(body)
-            local link = t['link']
-            local host = url2.parse(link).host --domain keeps changing
-            episode = "| " .. t['title']
+            function vpanel:OnDocumentReady(url)
+                self:AddFunction("exTheater", "onVideoInfoReady", function(newVideoInfo)
+                    table.Merge(videoInfo, newVideoInfo)
 
-            --embed api
-            http.Fetch("https://" .. host .. "/ajax/embed-4/getSources?id=" .. string.match(link, host .. "/.-/(.-)%?z="), function(body, length, headers, code)
-                t = util.JSONToTable(body)
-                local url = type(t['sources']) == 'string' and nil or t['sources'][1]['file']
-
-                --load player page to extract m3u8 playlist url
-                if not url then
-                    if vpanel then
-                        vpanel:Remove()
+                    if videoInfo.title and videoInfo.data and videoInfo.duration and videoInfo.thumb then
+                        callback(videoInfo)
+                        self:Remove()
                     end
+                end)
 
-                    vpanel = vgui.Create("DHTML", nil, "BFlixVPanel")
-                    vpanel:SetSize(ScrW(), ScrH())
-                    vpanel:SetAlpha(0)
-                    vpanel:SetMouseInputEnabled(false)
+                if url == key then
+                    self:QueueJavascript([[
+                        const initInterval = setInterval(function() {
+                            let iframe = document.getElementById("iframe-embed");
+                            if (iframe && iframe.src && iframe.src.includes("embed")) {
+                                window.location.href = iframe.src;
+                                exTheater.onVideoInfoReady({"data": iframe.src});
+                                clearInterval(initInterval);
+                            }
+                        }, 100);
 
-                    timer.Simple(35, function()
-                        if IsValid(vpanel) then
-                            vpanel:Remove()
-                            print("Failed")
-                        end
-                    end)
-
-                    vpanel:OpenURL(key)
-
-                    function vpanel:OnDocumentReady(url)
-                        self:OnDocumentReadyBase(url)
-
-                        if url == link then
-                            self:AddFunction("exTheater", "onVideoInfoReady", function(video_url)
-                                if Me.videoDebug then
-                                    print(video_url)
-                                end
-
-                                parseURL(video_url)
-                                self:Remove()
-                            end)
-
-                            self:RunJavascript([[
-                                setInterval(function() {
-                                    for(const resource of performance.getEntriesByType("resource")){
-                                        if (resource.name.endsWith('.m3u8')){
-                                        exTheater.onVideoInfoReady(resource.name);
-                                        }
-                                    }
-                                }, 100);
-                            ]])
-                        else
-                            vpanel:QueueJavascript("window.location='" .. link .. "';")
-                        end
-                    end
+                        exTheater.onVideoInfoReady({
+                            "title": document.querySelector("li[aria-current=\"page\"]").textContent.split(':')[0].replace(/\s+/g, ' ').trim(),
+                            "thumb": document.querySelector("meta[property='og:image']").content
+                        });
+                    ]])
                 else
-                    parseURL(url)
+                    self:QueueJavascript([[
+                        const initInterval = setInterval(function() {
+                            const player = document.querySelector("video");
+                            if (player != null && player.readyState > 0) {
+                                exTheater.onVideoInfoReady({"duration": player.duration});
+                                clearInterval(initInterval);
+                            }
+                        }, 100);
+                    ]])
+                    self:QueueJavascript(SERVICE.ServiceJS)
                 end
-
-                if #t['tracks'] > 0 then
-                    ui.DFrame(function(r)
-                        r:SetSize(300, 300)
-                        r:MakePopup()
-                        r:SetTitle("Choose the Subtitles")
-                        r:Center()
-
-                        ui.DScrollPanel(function(p)
-                            p:Dock(FILL)
-                            local tt = t['tracks']
-
-                            table.insert(tt, 0, {
-                                ['label'] = '(None)',
-                                ['file'] = ''
-                            })
-
-                            for _, v in pairs(tt) do
-                                if v["kind"] == "captions" then
-                                    local b = p:Add("DButton")
-                                    b:SetText(v['label'])
-                                    b:Dock(TOP)
-                                    b:DockMargin(0, 0, 0, 2)
-
-                                    function b:DoClick()
-                                        subs = v['file']
-                                        r:Close()
-                                    end
-                                end
-                            end
-                        end)
-
-                        function r:Close()
-                            subs = subs or ''
-                            r:Remove()
-                        end
-                    end)
-                else
-                    subs = ''
-                end
-            end, function(err)
-                print(host, err)
-            end, {
-                ["X-Requested-With"] = "XMLHttpRequest" --required
-                
-            })
-        end, function(err)
-            print("bflix.gg", err)
-        end)
-
-        --player page
-        http.Fetch(key, function(body, length, headers, code)
-            local thumb = string.match(body, '"film%-poster%-img".-src="(.-)"')
-            info.thumb = string.Replace(thumb, string.match(thumb, '/(%d-x%d-)/'), "99999x99999") --max resolution
-            info.title = string.match(body, '"film%-poster%-img".-title="(.-)"')
-            year = "(" .. string.match(body, 'Released:.-(%d%d%d%d)') .. ")"
-        end, function(err)
-            print("player", err)
+            end
         end)
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL("https://swamp.sv/s/cinema/file.html")
+        panel:EnsureURL(Video:Key())
 
-        panel:AddFunction("gmod", "loaded", function()
-            self:SeekTo(CurTime() - Video:StartTime(), panel)
-            self:SetVolume(theater.GetVolume(), panel)
-        end)
+        panel.OnDocumentReady = function(_, url)
+            if string.match(url, "embed") then
+                panel:AddFunction("gmod", "loaded", function()
+                    self:SeekTo(CurTime() - Video:StartTime(), panel)
+                    self:SetVolume(theater.GetVolume(), panel)
+                end)
 
-        local key = util.JSONToTable(Video:Data()).url
-        local subs = string.JavascriptSafe(util.JSONToTable(Video:Data()).subs)
-        panel:QueueJavascript(string.format("th_video('%s','%s');", string.JavascriptSafe(key), string.JavascriptSafe(subs)))
+                panel:QueueJavascript(theater.TheaterJS)
+                panel:QueueJavascript(self.ServiceJS)
+            else
+                panel:QueueJavascript([[
+                    const initInterval = setInterval(function() {
+                        let iframe = document.getElementById("iframe-embed");
+                        if (iframe && iframe.src && iframe.src.includes("embed")) {
+                            window.location.href = iframe.src;
+                            clearInterval(initInterval);
+                        }
+                    }, 100);
+                ]])
+            end
+        end
+    end
+
+    function SERVICE:SetVolume(vol, panel)
+        panel:QueueJavascript([[
+            document.querySelectorAll('video').forEach(element => {
+                element.volume = ]] .. (vol * 0.01) .. [[;
+            });
+        ]])
+    end
+
+    function SERVICE:SeekTo(time, panel)
+        panel:QueueJavascript([[
+            document.querySelectorAll('video').forEach(element => {
+                element.currentTime = ]] .. time .. [[;
+            });
+        ]])
     end
 end
 
