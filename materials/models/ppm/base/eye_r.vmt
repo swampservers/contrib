@@ -1,5 +1,6 @@
 "eyes"
 { 
+ "$basetexture" "models/Humans/Female/eyeball_r"
  "$Iris"               "models/ppm/base/face/p_luna"     // Iris color in RGB with cornea noise in A
  "$Irisframe" "0"    // Frame for the iris texture, 0 being the default frame
  
