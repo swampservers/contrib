@@ -91,7 +91,8 @@ if CLIENT then
                     self:QueueJavascript([[
                         const initInterval = setInterval(function() {
                             const player = document.querySelector("video");
-                            if (player != null && player.readyState > 0) {
+                            if (player && player.readyState > 0) {
+                                player.volume = 0;
                                 exTheater.onVideoInfoReady({"duration": player.duration});
                                 clearInterval(initInterval);
                             }
