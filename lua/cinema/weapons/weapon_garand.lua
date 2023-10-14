@@ -181,8 +181,8 @@ function SWEP:PrimaryAttack()
 
     if self:Clip1() == 1 then
         timer.Simple(0.01, function()
-            if IsValid(self) and IsValid(self.Owner) then
-                self.Owner:EmitSound("dod_garand/garand_clipding.wav")
+            if IsValid(self) then
+                self:EmitSound("dod_garand/garand_clipding.wav")
             end
         end)
     end

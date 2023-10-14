@@ -3,9 +3,7 @@ RegisterChatLUACommand({'help', 'motd'}, 'ShowMotd("https://steamcommunity.com/g
 
 RegisterChatConsoleCommand({'skip', 'voteskip'}, "cinema_voteskip")
 
-RegisterChatLUACommand('title', "OpenTitlePicker()")
 RegisterChatLUACommand('thirdperson', "THIRDPERSON = !THIRDPERSON")
-RegisterChatLUACommand('virtualreality', "BOBBINGVIEW = !BOBBINGVIEW")
 
 RegisterChatLUACommand({'global', 'globalchat', 'ooc'}, [[ChatMessage(Color.orange,"Press "..input.LookupBinding("messagemode2"):upper().." to speak in Global chat.")]])
 
