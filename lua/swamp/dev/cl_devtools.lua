@@ -65,6 +65,13 @@ local structEnvironments = {
             ENT = found
         } or nil
     end,
+    ["cinema/map"] = function(curClass)
+        local found = scripted_ents.GetStored(curClass)
+
+        return found and {
+            ENT = found
+        } or nil
+    end,
     ["cinema/effects"] = function(curClass)
         local allEffects = effects.GetList()
         local targetEffect = "effects/" .. curClass
