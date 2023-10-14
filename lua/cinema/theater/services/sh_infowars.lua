@@ -34,10 +34,11 @@ if CLIENT then
                 vpanel:Remove()
             end
 
-            vpanel = vgui.Create("DHTML", nil, "FileVPanel")
+            vpanel = vgui.Create("DHTML", nil, "InfowarsVPanel")
             vpanel:SetSize(100, 100)
-            vpanel:SetAlpha(1)
+            vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
+            vpanel:SetKeyboardInputEnabled(false)
 
             timer.Simple(20, function()
                 if IsValid(vpanel) then
@@ -50,16 +51,16 @@ if CLIENT then
             function vpanel:OnDocumentReady(url)
                 self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
+                    
                     if videoInfo.title and videoInfo.data and videoInfo.duration and videoInfo.thumb then
                         callback(videoInfo)
                         self:Remove()
                     end
-                    self:Remove()
                 end)
 
                 self:QueueJavascript([[
                     setInterval(function() {
-                        document.querySelectorAll('audio, video').forEach(element => {
+                        document.querySelectorAll('video').forEach(element => {
                             element.volume = 0;
                         });
                     }, 100);
@@ -67,39 +68,23 @@ if CLIENT then
                     const videoPropsJson = document.getElementById('__NEXT_DATA__').textContent;
                     const videoPropsJsonObject = JSON.parse(videoPropsJson);
 
+                    const videoInfo = {};
+
                     if ('channel' in videoPropsJsonObject.props.pageProps
                             && videoPropsJsonObject.props.pageProps.channel.isLive
                             && 'liveStreamVideo' in videoPropsJsonObject.props.pageProps.channel) {
-                        const videoTitle = videoPropsJsonObject.props.pageProps.channel.title;
-                        const streamUrl = videoPropsJsonObject.props.pageProps.channel.liveStreamVideo.streamUrl;
-                        const durationSeconds = 0;
-                        const thumbnailUrl = videoPropsJsonObject.props.pageProps.channel.coverImage;
-    
-                        const videoInfo = {
-                            "title": videoTitle,
-                            "data": streamUrl,
-                            "duration": durationSeconds,
-                            "thumb": thumbnailUrl
-                        };
-
-                        gmod.onVideoInfoReady(videoInfo);
+                        videoInfo['title'] = videoPropsJsonObject.props.pageProps.channel.title;
+                        videoInfo['data'] = videoPropsJsonObject.props.pageProps.channel.liveStreamVideo.streamUrl;
+                        videoInfo['duration'] = 0;
+                        videoInfo['thumb'] = videoPropsJsonObject.props.pageProps.channel.coverImage;
                     } else if ('video' in videoPropsJsonObject.props.pageProps) {
-                        const videoTitle = videoPropsJsonObject.props.pageProps.video.title;
-                        const streamUrl = videoPropsJsonObject.props.pageProps.video.streamUrl;
-                        const durationSeconds = parseInt(Math.ceil(videoPropsJsonObject.props.pageProps.video.videoDuration));
-                        const thumbnailUrl = videoPropsJsonObject.props.pageProps.video.largeImage;
-    
-                        const videoInfo = {
-                            "title": videoTitle,
-                            "data": streamUrl,
-                            "duration": durationSeconds,
-                            "thumb": thumbnailUrl
-                        };
-
-                        gmod.onVideoInfoReady(videoInfo);
-                    } else {
-                        gmod.onVideoInfoReady({});
+                        videoInfo['title'] = videoPropsJsonObject.props.pageProps.video.title;
+                        videoInfo['data'] = videoPropsJsonObject.props.pageProps.video.streamUrl;
+                        videoInfo['duration'] = parseInt(Math.ceil(videoPropsJsonObject.props.pageProps.video.videoDuration));
+                        videoInfo['thumb'] = videoPropsJsonObject.props.pageProps.video.largeImage;
                     }
+
+                    gmod.onVideoInfoReady(videoInfo);
                 ]])
             end
 
@@ -124,14 +109,6 @@ if CLIENT then
         end)
 
         panel:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(Video:Data())))
-    end
-
-    function SERVICE:SetVolume(vol, panel)
-        panel:QueueJavascript([[
-            document.querySelectorAll('audio, video').forEach(element => {
-                element.volume = ]] .. (vol * 0.01) .. [[;
-            });
-        ]])
     end
 end
 
