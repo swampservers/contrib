@@ -1,5 +1,5 @@
 ﻿------------------------------// General Settings \\------------------------------------------------------------|
-SWEP.Author = "PYROTEKNIK / Horatio" -- Your name.
+﻿"someString".Author = "PYROTEKNIK / Horatio" -- Your name.
 SWEP.Contact = "" -- How People could contact you.
 SWEP.base = "weapon_base" -- What base should the swep be based on.
 SWEP.ViewModel = "models/aoc_weapon/v_longsword.mdl" -- The viewModel, the model you see when you are holding it.
@@ -233,10 +233,10 @@ function SWEP:PrimaryAttack()
     local holy = self:GetHoly()
     local vm = ply:GetViewModel()
     self:SetChargeEnd(CurTime() - 1)
-    self.Weapon:EmitSound(self.SwingSound, 100, math.random(90, 120))
+    self:EmitSound(self.SwingSound, 100, math.random(90, 120))
 
     if holy then
-        self.Weapon:EmitSound(self.BigSwingSound, 100, math.random(177, 200))
+        self:EmitSound(self.BigSwingSound, 100, math.random(177, 200))
     end
 
     self.Owner:SetAnimation(PLAYER_ATTACK1)
@@ -319,7 +319,7 @@ function SWEP:Think()
 
             if flesh then
                 trace.Entity:EmitSound(self.FleshSound, 80, 100, 1, CHAN_WEAPON)
-                self:GetOwner():EmitSound("physics/flesh/flesh_impact_hard" .. math.random(1, 4) .. ".wav")
+                self:EmitSound("physics/flesh/flesh_impact_hard" .. math.random(1, 4) .. ".wav")
             else
                 ply:ViewPunch(Angle(25, 24, 0))
                 self:EmitSound(self.WallSound, 80, 100, 1, CHAN_WEAPON)
