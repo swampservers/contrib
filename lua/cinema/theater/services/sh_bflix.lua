@@ -81,9 +81,13 @@ if CLIENT then
                                 clearInterval(initInterval);
                             }
                         }, 100);
-
+                        let title = document.querySelector("li[aria-current=\"page\"]").textContent;
+                        if (window.parent.location.href.includes("watch-tv")) {
+                            title = title.substring(0, title.lastIndexOf(":")).replace(/\s+/g, ' ');
+                        }
+                        title = title.trim();
                         exTheater.onVideoInfoReady({
-                            "title": document.querySelector("li[aria-current=\"page\"]").textContent.split(':')[0].replace(/\s+/g, ' ').trim(),
+                            "title": title,
                             "thumb": document.querySelector("meta[property='og:image']").content
                         });
                     ]])
