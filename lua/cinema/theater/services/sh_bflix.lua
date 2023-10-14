@@ -5,11 +5,28 @@ SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
 SERVICE.ServiceJS = [[
+    var bflixPlayer;
+    function th_volume(vol) {
+        if (bflixPlayer) {
+            bflixPlayer.volume = vol * 0.01;
+        }
+    }
+    function th_seek(time) {
+        if (bflixPlayer) {
+            bflixPlayer.currentTime = time;
+        }
+    }
     const plyrInterval = setInterval(function() {
-        const video = document.querySelector('video');
-        if (video && video.paused) {
-            video.play();
-            gmod.loaded();
+        if (bflixPlayer) {
+            if (bflixPlayer.paused) {
+                bflixPlayer.play();
+            }
+        } else {
+            let player = document.querySelector('video');
+            if (player) {
+                bflixPlayer = player;
+                gmod.loaded();
+            }
         }
     }, 100);
 ]]
@@ -110,22 +127,6 @@ if CLIENT then
                 ]])
             end
         end
-    end
-
-    function SERVICE:SetVolume(vol, panel)
-        panel:QueueJavascript([[
-            document.querySelectorAll('video').forEach(element => {
-                element.volume = ]] .. (vol * 0.01) .. [[;
-            });
-        ]])
-    end
-
-    function SERVICE:SeekTo(time, panel)
-        panel:QueueJavascript([[
-            document.querySelectorAll('video').forEach(element => {
-                element.currentTime = ]] .. time .. [[;
-            });
-        ]])
     end
 end
 
