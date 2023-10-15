@@ -26,7 +26,7 @@ SERVICE.ServiceJS = [[
             }
             if (bflixPlayer.duration > 0) {
                 var maxOffset = 15;
-                if (updateTimeNow || Math.abs(player.currentTime - targetTime) > maxOffset) {
+                if (updateTimeNow || Math.abs(bflixPlayer.currentTime - targetTime) > maxOffset) {
                     bflixPlayer.currentTime = Math.max(0, targetTime);
                     updateTimeNow = false;
                 }
