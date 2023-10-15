@@ -6,20 +6,30 @@ SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
 SERVICE.ServiceJS = [[
     var bflixPlayer;
+    var targetTime = -0.5;
+    var updateTimeNow = false;
     function th_volume(vol) {
         if (bflixPlayer) {
             bflixPlayer.volume = vol * 0.01;
         }
     }
-    function th_seek(time) {
-        if (bflixPlayer) {
-            bflixPlayer.currentTime = time;
-        }
+    function th_seek(seconds) {
+        targetTime = seconds - 0.5;
+        updateTimeNow = true;
     }
-    const plyrInterval = setInterval(function() {
+    // Think
+    setInterval(function() {
+        targetTime += 0.1;
         if (bflixPlayer) {
             if (bflixPlayer.paused) {
                 bflixPlayer.play();
+            }
+            if (bflixPlayer.duration > 0) {
+                var maxOffset = 15;
+                if (updateTimeNow || Math.abs(player.currentTime - targetTime) > maxOffset) {
+                    bflixPlayer.currentTime = Math.max(0, targetTime);
+                    updateTimeNow = false;
+                }
             }
         } else {
             let player = document.querySelector('video');
