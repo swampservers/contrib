@@ -51,11 +51,25 @@ local structEnvironments = {
             SWEP = found
         } or nil
     end,
+    ["weapons"] = function(curClass)
+        local found = weapons.GetStored(curClass)
+
+        return found and {
+            SWEP = found
+        } or nil
+    end,
     ["cinema/weapons"] = function(curClass)
         local found = weapons.GetStored(curClass)
 
         return found and {
             SWEP = found
+        } or nil
+    end,
+    ["entities"] = function(curClass)
+        local found = scripted_ents.GetStored(curClass)
+
+        return found and {
+            ENT = found
         } or nil
     end,
     ["cinema/entities"] = function(curClass)
