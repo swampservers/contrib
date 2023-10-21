@@ -85,28 +85,34 @@ if CLIENT then
         panel:EnsureURL(Video:Data())
 
         panel:AddFunction("gmod", "loaded", function()
+            self:SeekTo(CurTime() - Video:StartTime(), panel)
             self:SetVolume(theater.GetVolume(), panel)
         end)
 
         panel:QueueJavascript("document.querySelector('.bigPlayUI.ctp').click();")
         panel:QueueJavascript([[
+            var rumblePlayer;
             const initInterval = setInterval(function() {
-                document.querySelectorAll('audio, video').forEach(element => {
-                    element.volume = 0;
-                    if (element.readyState > 0) {
+                let player = document.querySelector('video');
+                if (player) {
+                    player.volume = 0;
+                    if (player.readyState > 0) {
+                        rumblePlayer = player;
                         gmod.loaded();
                         clearInterval(initInterval);
                     }
-                });
+                }
             }, 100);
-        ]])
-    end
-
-    function SERVICE:SetVolume(vol, panel)
-        panel:QueueJavascript([[
-            document.querySelectorAll('audio, video').forEach(element => {
-                element.volume = ]] .. (vol * 0.01) .. [[;
-            });
+            function th_volume(vol) {
+                if (rumblePlayer) {
+                    rumblePlayer.volume = vol * 0.01;
+                }
+            }
+            function th_seek(time) {
+                if (rumblePlayer) {
+                    rumblePlayer.currentTime = time;
+                }
+            }
         ]])
     end
 end

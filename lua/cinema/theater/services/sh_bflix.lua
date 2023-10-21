@@ -5,11 +5,38 @@ SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
 SERVICE.ServiceJS = [[
-    const plyrInterval = setInterval(function() {
-        const video = document.querySelector('video');
-        if (video && video.paused) {
-            video.play();
-            gmod.loaded();
+    var bflixPlayer;
+    var targetTime = -0.5;
+    var updateTimeNow = false;
+    function th_volume(vol) {
+        if (bflixPlayer) {
+            bflixPlayer.volume = vol * 0.01;
+        }
+    }
+    function th_seek(seconds) {
+        targetTime = seconds - 0.5;
+        updateTimeNow = true;
+    }
+    // Think
+    setInterval(function() {
+        targetTime += 0.1;
+        if (bflixPlayer) {
+            if (bflixPlayer.paused) {
+                bflixPlayer.play();
+            }
+            if (bflixPlayer.duration > 0) {
+                var maxOffset = 15;
+                if (updateTimeNow || Math.abs(bflixPlayer.currentTime - targetTime) > maxOffset) {
+                    bflixPlayer.currentTime = Math.max(0, targetTime);
+                    updateTimeNow = false;
+                }
+            }
+        } else {
+            let player = document.querySelector('video');
+            if (player) {
+                bflixPlayer = player;
+                gmod.loaded();
+            }
         }
     }, 100);
 ]]
@@ -64,9 +91,13 @@ if CLIENT then
                                 clearInterval(initInterval);
                             }
                         }, 100);
-
+                        let title = document.querySelector("li[aria-current=\"page\"]").textContent;
+                        if (window.parent.location.href.includes("watch-tv")) {
+                            title = title.substring(0, title.lastIndexOf(":")).replace(/\s+/g, ' ');
+                        }
+                        title = title.trim();
                         exTheater.onVideoInfoReady({
-                            "title": document.querySelector("li[aria-current=\"page\"]").textContent.split(':')[0].replace(/\s+/g, ' ').trim(),
+                            "title": title,
                             "thumb": document.querySelector("meta[property='og:image']").content
                         });
                     ]])
@@ -74,7 +105,8 @@ if CLIENT then
                     self:QueueJavascript([[
                         const initInterval = setInterval(function() {
                             const player = document.querySelector("video");
-                            if (player != null && player.readyState > 0) {
+                            if (player && player.readyState > 0) {
+                                player.volume = 0;
                                 exTheater.onVideoInfoReady({"duration": player.duration});
                                 clearInterval(initInterval);
                             }
@@ -110,22 +142,6 @@ if CLIENT then
                 ]])
             end
         end
-    end
-
-    function SERVICE:SetVolume(vol, panel)
-        panel:QueueJavascript([[
-            document.querySelectorAll('video').forEach(element => {
-                element.volume = ]] .. (vol * 0.01) .. [[;
-            });
-        ]])
-    end
-
-    function SERVICE:SeekTo(time, panel)
-        panel:QueueJavascript([[
-            document.querySelectorAll('video').forEach(element => {
-                element.currentTime = ]] .. time .. [[;
-            });
-        ]])
     end
 end
 
