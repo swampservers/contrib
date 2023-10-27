@@ -12,7 +12,7 @@ function EFFECT:Init(data)
 end
 
 function EFFECT:Think()
-    print("THINK", self,self.Time)
+    print("THINK", self, self.Time)
     self.Time = self.Time + FrameTime()
     self.Size = 64 * self.Time ^ .1
 
