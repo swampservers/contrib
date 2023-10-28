@@ -37,12 +37,8 @@ EntityTable = setmetatable({}, {
     __mode = "k",
     __index = function(self, ent)
         local tab = cgettable(ent)
-
         -- BUG(winter): Don't cache clientside entity tables; they get replaced in some scenarios and don't even go through ENT.SetTable
-        if IsValid(ent) and ent:EntIndex() == -1 then
-            return tab
-        end
-
+        if IsValid(ent) and ent:EntIndex() == -1 then return tab end
         -- extension: perhaps initialize default values in the entity table here?
         rawset(self, ent, tab)
 
@@ -62,6 +58,7 @@ end)
 function entity_meta:SetTable(tab)
     -- Need to update the cached value since it changed
     entity_table[self] = tab
+
     return CEntitySetTable(self, tab)
 end
 
