@@ -30,7 +30,9 @@ local entity_meta, player_meta, weapon_meta = Entity, Player, Weapon
 -- caches the Entity.GetTable so stuff is super fast
 CEntitySetTable = CEntitySetTable or entity_meta.SetTable
 CEntityGetTable = CEntityGetTable or entity_meta.GetTable
+CEntityEntIndex = CEntityEntIndex or entity_meta.EntIndex
 local cgettable = CEntityGetTable
+local centindex = CEntityEntIndex
 
 -- __mode = "kv",
 EntityTable = setmetatable({}, {
@@ -38,7 +40,7 @@ EntityTable = setmetatable({}, {
     __index = function(self, ent)
         local tab = cgettable(ent)
         -- BUG(winter): Don't cache clientside entity tables; they get replaced in some scenarios and don't even go through ENT.SetTable
-        if IsValid(ent) and ent:EntIndex() == -1 then return tab end
+        if IsValid(ent) and centindex(ent) == -1 then return tab end
         -- extension: perhaps initialize default values in the entity table here?
         rawset(self, ent, tab)
 
