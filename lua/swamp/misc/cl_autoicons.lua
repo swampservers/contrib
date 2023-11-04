@@ -918,7 +918,12 @@ local killiconcolor = Vector(1, 80 / 255, 0)
 
 killicon.GetSize = function(name, dontEqualizeHeight)
     if not ReplaceAllConvar:GetBool() and BASED_KILLICON_EXISTS(name) then return BASED_KILLICON_GETSIZE(name, dontEqualizeHeight) end
-    if ClassNameParams(name).LEGIT then print("GetSize", name) return killiconsize / 2, killiconsize / 2 end
+
+    if ClassNameParams(name).LEGIT then
+        print("GetSize", name)
+
+        return killiconsize / 2, killiconsize / 2
+    end
 
     return BASED_KILLICON_GETSIZE(name, dontEqualizeHeight)
 end
@@ -933,14 +938,14 @@ killicon.Draw = function(x, y, name, alpha, noCorrections, dontEqualizeHeight)
         x = x - w * 0.5
         y = y - h * 0.35
         cam.Start2D()
-            local killicon = GetAutoIcon(p, AUTOICON_HL2KILLICON)
-            render.SetMaterial(killicon)
-            killicon:SetVector("$color2", killiconcolor * alpha / 255)
-            render.OverrideBlend(true, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
-            render.OverrideDepthEnable(true, false)
-            render.DrawScreenQuadEx(x, y, w, h)
-            render.OverrideDepthEnable(false, false)
-            render.OverrideBlend(false)
+        local killicon = GetAutoIcon(p, AUTOICON_HL2KILLICON)
+        render.SetMaterial(killicon)
+        killicon:SetVector("$color2", killiconcolor * alpha / 255)
+        render.OverrideBlend(true, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+        render.OverrideDepthEnable(true, false)
+        render.DrawScreenQuadEx(x, y, w, h)
+        render.OverrideDepthEnable(false, false)
+        render.OverrideBlend(false)
         cam.End2D()
     else
         return BASED_KILLICON_DRAW(x, y, name, alpha, noCorrections, dontEqualizeHeight)
