@@ -53,6 +53,9 @@ if CLIENT then
 
         function think() {
             if (player_ready) {
+                if (player.isMuted()){
+                    player.unMute();
+                }
                 if (to_video !== null) {
                     player.loadVideoById(to_video);
                     to_video = null;
@@ -154,7 +157,8 @@ if CLIENT then
 
     function SERVICE:LoadVideo(Video, panel)
         -- NOTE(winter): We aren't using https://swamp.sv/s/cinema/youtube.html anymore; embedding JS like this makes us more flexible to support Age Restricted and Embed Disabled videos
-        panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1")
+        -- NOTE(noz): mute=1 to prevent annoying full volume initialization; immediately check player.isMuted() to player.unMute() when possible, player.setVolume(0) doesn't set player.isMuted() to true so it's fine
+        panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1&mute=1")
 
         panel.OnBeginLoadingDocument = function()
             if self:IsMature(Video) then
