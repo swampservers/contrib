@@ -28,14 +28,19 @@ CRecipientFilter = FindMetaTable("CRecipientFilter")
 -- for k,v in pairs(debug.getregistry()) do if isstring(k) and istable(v) then print(k) end end
 local entity_meta, player_meta, weapon_meta = Entity, Player, Weapon
 -- caches the Entity.GetTable so stuff is super fast
+CEntitySetTable = CEntitySetTable or entity_meta.SetTable
 CEntityGetTable = CEntityGetTable or entity_meta.GetTable
+CEntityEntIndex = CEntityEntIndex or entity_meta.EntIndex
 local cgettable = CEntityGetTable
+local centindex = CEntityEntIndex
 
 -- __mode = "kv",
 EntityTable = setmetatable({}, {
     __mode = "k",
     __index = function(self, ent)
         local tab = cgettable(ent)
+        -- BUG(winter): Don't cache clientside entity tables; they get replaced in some scenarios and don't even go through ENT.SetTable
+        if IsValid(ent) and centindex(ent) == -1 then return tab end
         -- extension: perhaps initialize default values in the entity table here?
         rawset(self, ent, tab)
 
@@ -51,6 +56,13 @@ hook.Add("EntityRemoved", "CleanupEntityTableCache", function(ent)
         entity_table[ent] = nil
     end)
 end)
+
+function entity_meta:SetTable(tab)
+    -- Need to update the cached value since it changed
+    entity_table[self] = tab
+
+    return CEntitySetTable(self, tab)
+end
 
 function entity_meta:GetTable()
     return entity_table[self]
