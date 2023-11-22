@@ -78,7 +78,7 @@ function IsLockedByTaunting(ply)
 end
 
 -- Allow the client to change the third person side
-CreateClientConVar("swamp_thirdperson_side", "0", false, true, true)
+CreateClientConVar("swamp_thirdperson_side", "0", false, true)
 
 function UseThirdpersonSide()
     if not Thirdperson_SideViewEnable then return false end
