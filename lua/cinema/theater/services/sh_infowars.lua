@@ -1,16 +1,11 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
 SERVICE.Name = "Infowars"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 
 -- All of these are basically just aliases for banned.video
-local infowars_domains = {
-    "banned.video",
-    "conspiracyfact.info",
-    "freeworldnews.tv",
-    "madmaxworld.tv"
-}
+local infowars_domains = {"banned.video", "conspiracyfact.info", "freeworldnews.tv", "madmaxworld.tv"}
 
 -- The key will either be a video ID or a channel name in the format channel:<name>
 function SERVICE:GetKey(url)
@@ -22,6 +17,7 @@ function SERVICE:GetKey(url)
             if key then return "channel:" .. key end -- was a channel
         end
     end
+
     return false
 end
 
@@ -51,7 +47,7 @@ if CLIENT then
             function vpanel:OnDocumentReady(url)
                 self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
-                    
+
                     if videoInfo.title and videoInfo.data and videoInfo.duration and videoInfo.thumb then
                         callback(videoInfo)
                         self:Remove()
@@ -91,7 +87,7 @@ if CLIENT then
             if string.match(key, "channel") then
                 vpanel:OpenURL("https://banned.video/channel/" .. string.match(key, "channel:(.+)"))
             else
-                vpanel:OpenURL("https://banned.video/watch?id=".. key)
+                vpanel:OpenURL("https://banned.video/watch?id=" .. key)
             end
         end, function()
             chat.AddText("You need codecs to request this. Press F2.")
