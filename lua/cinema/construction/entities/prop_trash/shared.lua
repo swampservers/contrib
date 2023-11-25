@@ -102,39 +102,36 @@ PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
             pos = Vector(0, 0, 2)
         }
     }
-    ["models/mcmodelpack/blocks/glowstone.mdl"] = {
-        class = "light",
-        data = {
-            untaped = false,
-            size = 600,
-            brightness = 2,
-            style = 0,
-            pos = Vector(0, 0, 0)
-        }
-    }
-    ["models/mcmodelpack/entities/torch.mdl"] = {
-        class = "light",
-        data = {
-            untaped = false,
-            size = 300,
-            brightness = 2,
-            style = 0,
-            pos = Vector(0, 0, 2)
-        }
-    }
-    ["models/roblox_assets/candle/candle.mdl"] = {
-        class = "light",
-        data = {
-            untaped = true,
-            size = 200,
-            brightness = 2,
-            style = 0,
-            pos = Vector(0, 0, 2)
-        }
-    }
-})
+})["models/mcmodelpack/blocks/glowstone.mdl"]
 
-function IsModelExplosive(mdl)
+return {
+    class = "light",
+    data = {
+        untaped = false,
+        size = 600,
+        brightness = 2,
+        style = 0,
+        pos = Vector(0, 0, 0)
+    }
+}, someVariable["models/mcmodelpack/entities/torch.mdl"], {
+    class = "light",
+    data = {
+        untaped = false,
+        size = 300,
+        brightness = 2,
+        style = 0,
+        pos = Vector(0, 0, 2)
+    }
+}, someVariable["models/roblox_assets/candle/candle.mdl"], {
+    class = "light",
+    data = {
+        untaped = true,
+        size = 200,
+        brightness = 2,
+        style = 0,
+        pos = Vector(0, 0, 2)
+    }
+}, function(mdl)
     local ModelInfo = util.GetModelInfo(mdl)
 
     if ModelInfo and ModelInfo.ModelKeyValues then
@@ -142,10 +139,8 @@ function IsModelExplosive(mdl)
 
         return ((mkvs.physgun_interactions or {}).onbreak or "") == "explode"
     end
-end
-
--- hopefully this isnt a bottleneck, if it is we need a cache (which is subject to new models being added)
-function GetSpecialTrashModelsByClass(class)
+end, function(class)
+    -- hopefully this isnt a bottleneck, if it is we need a cache (which is subject to new models being added)
     local t = {}
 
     for k, v in pairs(PropTrashSpecialModels) do
@@ -155,9 +150,7 @@ function GetSpecialTrashModelsByClass(class)
     end
 
     return t
-end
-
-function TrashSpecialModelData(m)
+end, function(m)
     local d = PropTrashSpecialModels[m]
 
     if not d then
@@ -189,113 +182,51 @@ function TrashSpecialModelData(m)
     end
 
     return d
-end
-
-function ENT:GetSpecialModelData()
-    return TrashSpecialModelData(self:GetModel())
-end
-
-function ENT:ElectricalInputVector()
-end
-
-if CLIENT then
+end, ENT:GetSpecialModelData(), TrashSpecialModelData(self:GetModel()), ENT:ElectricalInputVector(), hook.Add("NetworkEntityCreated", "CreatedTrashProp", function(ent)
     -- hook.Add("OnEntityCreated","CreatedTrashProp",function(ent)
     --     -- if ent:GetClass()=="prop_physics" then print("TC1", ent:GetTrashClass(),  ent:GetModel()) end
     -- end)
-    hook.Add("NetworkEntityCreated", "CreatedTrashProp", function(ent)
-        -- if ent:GetClass()=="prop_physics" then print("TC2", ent:GetTrashClass(),  ent:GetModel()) end
-        if ent:GetClass() == "prop_physics" and ent:GetTrashClass() and not ent.SetupTrashAlready then
-            ent.SetupTrashAlready = true
-            ent:SetTrashClass(ent:GetTrashClass())
-            ent:InstallDataTable()
-            ent:SetupDataTables()
-            ent:Initialize()
-        end
-    end)
-
-    hook.Add("EntityNetworkedVarChanged", "CreatedTrashProp", function(ent, name, oldval, newval)
-        if ent:GetClass() == "prop_physics" and name == "trc" and ent:GetModel() and not ent.SetupTrashAlready then
-            ent.SetupTrashAlready = true
-            ent:SetTrashClass(newval)
-            ent:InstallDataTable()
-            ent:SetupDataTables()
-            ent:Initialize()
-        end
-    end)
-end
-
-local function copyentitytable(self, class)
-    local t = scripted_ents.GetStored(class)
-
-    if t.Base and t.Base ~= "base_anim" then
-        copyentitytable(self, t.Base)
+    -- if ent:GetClass()=="prop_physics" then print("TC2", ent:GetTrashClass(),  ent:GetModel()) end
+    if ent:GetClass() == "prop_physics" and ent:GetTrashClass() and not ent.SetupTrashAlready then
+        ent.SetupTrashAlready = true
+        ent:SetTrashClass(ent:GetTrashClass())
+        ent:InstallDataTable()
+        ent:SetupDataTables()
+        ent:Initialize()
     end
-
-    local mytab = self:GetTable()
-
-    for k, v in pairs(t.t) do
-        mytab[k] = v
+end), hook.Add("EntityNetworkedVarChanged", "CreatedTrashProp", function(ent, name, oldval, newval)
+    if ent:GetClass() == "prop_physics" and name == "trc" and ent:GetModel() and not ent.SetupTrashAlready then
+        ent.SetupTrashAlready = true
+        ent:SetTrashClass(newval)
+        ent:InstallDataTable()
+        ent:SetupDataTables()
+        ent:Initialize()
     end
-end
-
-if SERVER then
-    function Entity:SetTrashClass(tc)
-        self:SetNW2String("trc", tc)
-        copyentitytable(self, tc)
-    end
-else
-    function Entity:SetTrashClass(tc)
-        copyentitytable(self, tc)
-    end
-end
-
-function ENT:SetupDataTables()
+end), copyentitytable(self, class){
+    t = scripted_ents.GetStored(class)
+}.Base and t.Base ~= "base_anim", copyentitytable(self, t.Base){
+    mytab = self:GetTable(),
+    v or pairs(t.t)
+}[k]{
+    someVariable = v,
+    SERVER or Entity:SetTrashClass(tc)
+}:SetNW2String("trc", tc), copyentitytable(self, tc), Entity:SetTrashClass(tc), copyentitytable(self, tc), ENT:SetupDataTables(), self:NetworkVar("Float", 0, "Strength"), self:SetStrength(1), self:NetworkVarNotify("Strength", function(ent, name, old, new)
     -- Use instead of Health so we can monitor it
-    self:NetworkVar("Float", 0, "Strength")
-
-    if SERVER then
-        self:SetStrength(1)
-    else
-        self:NetworkVarNotify("Strength", function(ent, name, old, new)
-            DAMAGED_TRASH[ent] = (ent:GetTrashClass() and name == "Strength" and new < 1) and true or nil
-        end)
-    end
-
+    DAMAGED_TRASH[ent] = (ent:GetTrashClass() and name == "Strength" and new < 1) and true or nil
+end), self:NetworkVar("String", 0, "MaterialData"), self:NetworkVarNotify("MaterialData", function(ent, name, old, new)
     --
-    self:NetworkVar("String", 0, "MaterialData")
-
-    if CLIENT then
-        self:NetworkVarNotify("MaterialData", function(ent, name, old, new)
-            ent:ApplyMaterialData(new)
-        end)
-    end
-
+    ent:ApplyMaterialData(new)
+end), self:NetworkVar("String", 1, "OwnerID"), self:NetworkVar("Bool", 0, "Taped"), self:NetworkVar("Int", 0, "Rating"), self:SetRating(4), self:NetworkVar("Int", 1, "ItemID"), ENT.CanChangeTrashOwner{
     --
-    self:NetworkVar("String", 1, "OwnerID")
-    self:NetworkVar("Bool", 0, "Taped")
-    self:NetworkVar("Int", 0, "Rating")
-
-    if SERVER then
-        self:SetRating(4)
-    end
-
-    self:NetworkVar("Int", 1, "ItemID")
-end
-
-ENT.CanChangeTrashOwner = true
-
-function ENT:CanChangeOwner()
-    return true
-end
-
--- function ENT:GetLocation()
---     if (self.LastLocationCoords == nil) or (self:GetPos():DistToSqr(self.LastLocationCoords) > 1) then
---         self.LastLocationCoords = self:GetPos()
---         self.LastLocationIndex = Location.Find(self)
---     end
---     return self.LastLocationIndex
--- end
-function TrashLocationClass(locid)
+    someVariable = true
+}:CanChangeOwner(), true, function(locid)
+    -- function ENT:GetLocation()
+    --     if (self.LastLocationCoords == nil) or (self:GetPos():DistToSqr(self.LastLocationCoords) > 1) then
+    --         self.LastLocationCoords = self:GetPos()
+    --         self.LastLocationIndex = Location.Find(self)
+    --     end
+    --     return self.LastLocationIndex
+    -- end
     local ln = Locations[locid].Name
     if TrashLocationOverrides[ln] then return TrashLocationOverrides[ln] end
     local t = theater.GetByLocation(locid)
@@ -307,90 +238,14 @@ function TrashLocationClass(locid)
     end
 
     return TRASHLOC_NOBUILD
-end
-
-function ENT:GetLocationClass()
-    return TrashLocationClass(self:GetLocation())
-end
-
-function TrashLocationOwner(locid, pos)
-    local class = TrashLocationClass(locid)
-    local t = theater.GetByLocation(locid)
-
-    if t and t:IsPrivate() then
-        if t._PermanentOwnerID then return t._PermanentOwnerID end
-        if IsValid(t:GetOwner()) then return t:GetOwner():SteamID() end
-    end
-
-    if class ~= TRASHLOC_BUILD then return nil end -- The only way to own a non build area is with a theater. Not a field.
-
-    -- print(table.Count(Ents.prop_trash_zone))
-    for k, v in ipairs(Ents.prop_trash_zone) do
-        if v:Protects(pos) then return v:GetOwnerID() end
-    end
-
-    return nil
-end
-
-function ENT:GetLocationOwner()
-    return TrashLocationOwner(self:GetLocation(), self:GetPos())
-end
-
---NOMINIFY
--- MIGHT BE A FILE RUN ORDER ISSUE
-if HumanTeamName then
-    function ENT:CanExist()
-        return true
-    end
-else
-    function ENT:CanExist()
-        -- local vec = self:GetPos()
-        -- vec.x = math.abs(vec.x)
-        -- if vec:DistToSqr(Vector(160,160,80)) < 65536 then return false end --theater enterance
-        -- someone sitting in the seat
-        if IsValid((self.UseTable or {})[1]) then return true end
-
-        return not (self:GetLocationClass() == TRASHLOC_NOSPAWN and self:GetOwnerID() ~= self:GetLocationOwner())
-    end
-end
-
-function ENT:CanEdit(userid)
-    if self:GetOwnerID() == userid or self:GetLocationOwner() == userid then return true end
-    local ply = player.GetBySteamID(self:GetOwnerID())
-    if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
-
-    return false
-end
-
-function ENT:CanTape(userid)
-    if self:GetRating() == 1 then return false end
-    if self:CannotTape(userid) then return false end
-    -- If the obbcenter intersects the world, dont allow
-    local center = self:LocalToWorld(self:OBBCenter())
-
-    if util.TraceLine({
-        start = center,
-        endpos = center + Vector(0, 0, 1),
-        mask = MASK_NPCWORLDSTATIC
-    }).StartSolid then
-        return false
-    end
-
-    if HumanTeamName ~= nil then return self:CanEdit(userid) end
-
-    for k, v in ipairs(TrashNoFreezeNodes) do
-        if self:GetPos():Distance(v[1]) < v[2] then return false end
-    end
-
-    local lown, lcl = self:GetLocationOwner(), self:GetLocationClass()
-    if self:GetOwnerID() == userid and lown == nil and (lcl == TRASHLOC_BUILD or self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD) or lown == userid and userid ~= nil then return true end
-    local ply = player.GetBySteamID(self:GetOwnerID())
-    if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
-
-    return false
-end
-
+end, ENT:GetLocationClass(), TrashLocationClass(self:GetLocation()), TrashLocationOwner(locid, pos){
+    class = TrashLocationClass(locid)
+}{
+    t = theater.GetByLocation(locid)
+} and t:IsPrivate(), t._PermanentOwnerID, t._PermanentOwnerID, IsValid(t:GetOwner()), t:GetOwner():SteamID(), class ~= TRASHLOC_BUILD, nil, v, ipairs(Ents.prop_trash_zone), v:Protects(pos), v:GetOwnerID(), nil, ENT:GetLocationOwner(), TrashLocationOwner(self:GetLocation(), self:GetPos()), HumanTeamName, ENT:CanExist(), true, ENT:CanExist(), IsValid((self.UseTable or {})[1]), true, not (self:GetLocationClass() == TRASHLOC_NOSPAWN and self:GetOwnerID() ~= self:GetLocationOwner()), ENT:CanEdit(userid), self:GetOwnerID() == userid or self:GetLocationOwner() == userid, true, player.GetBySteamID(self:GetOwnerID()), ply and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""], true, false, ENT:CanTape(userid), self:GetRating() == 1, false, self:CannotTape(userid), false, self:LocalToWorld(self:OBBCenter()), util.TraceLine({
+    -- The only way to own a non build area is with a theater. Not a field. -- print(table.Count(Ents.prop_trash_zone)) --NOMINIFY -- MIGHT BE A FILE RUN ORDER ISSUE -- local vec = self:GetPos() -- vec.x = math.abs(vec.x) -- if vec:DistToSqr(Vector(160,160,80)) < 65536 then return false end --theater enterance -- someone sitting in the seat -- If the obbcenter intersects the world, dont allow
+    start = center,
+    endpos = center + Vector(0, 0, 1),
+    mask = MASK_NPCWORLDSTATIC
+}).StartSolid, false, HumanTeamName ~= nil, self:CanEdit(userid), v, TrashNoFreezeNodes, self:GetPos():Distance(v[1]) < v[2], false, lcl, self:GetLocationOwner(), self:GetLocationClass(), self:GetOwnerID() == userid and lown == nil and (lcl == TRASHLOC_BUILD or self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD) or lown == userid and userid ~= nil, true, player.GetBySteamID(self:GetOwnerID()), ply and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""], true, false, ENT:CannotTape(userid)
 -- dont make an infinite loop when you implement this
-function ENT:CannotTape(userid)
-    return
-end
