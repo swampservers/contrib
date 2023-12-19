@@ -16,6 +16,46 @@ function SERVICE:GetKey(url)
 end
 
 if CLIENT then
+    function SERVICE:GetVideoInfoClientside(key, callback)
+        if vpanel then
+            vpanel:Remove()
+        end
+
+        vpanel = vgui.Create("DHTML", nil, "KickVPanel")
+        vpanel:SetSize(100, 100)
+        vpanel:SetAlpha(0)
+        vpanel:SetMouseInputEnabled(false)
+        vpanel:SetKeyboardInputEnabled(false)
+        vpanel:OpenURL("https://kick.com/api/v2/channels/" .. key)
+
+        timer.Simple(10, function()
+            if IsValid(vpanel) then
+                vpanel:Remove()
+                print("Kick request failed")
+                callback()
+            end
+        end)
+
+        function vpanel:OnDocumentReady(url)
+            self:AddFunction("gmod", "onVideoInfoReady", function(videoInfo)
+                if videoInfo.title and videoInfo.duration and videoInfo.thumb then
+                    callback(videoInfo)
+                    self:Remove()
+                end
+            end)
+
+            self:QueueJavascript([[
+                const json = JSON.parse(document.body.textContent);
+                const videoInfo = {
+                    "title": json["livestream"]["session_title"],
+                    "duration": 0,
+                    "thumb": json["livestream"]["thumbnail"]["url"]
+                };
+                gmod.onVideoInfoReady(videoInfo);
+            ]])
+        end
+    end
+
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL("https://player.kick.com/" .. Video:Key() .. "?autoplay=true&muted=false")
 
