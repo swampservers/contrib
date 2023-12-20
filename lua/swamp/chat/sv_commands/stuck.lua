@@ -3,7 +3,7 @@ local function AppropriateNavArea(ply, area)
     if not IsValid(area) then return false end
     local mins, maxs = ply:GetCollisionBounds()
     if area:GetSizeX() < maxs.x * 2 or area:GetSizeY() < maxs.z * 2 then return false end
-    local mins, maxs = ply:GetCollisionBounds()
+
     local tr = {}
     tr.start = area:GetCenter() + Vector(0, 0, 1)
     tr.endpos = area:GetCenter()
