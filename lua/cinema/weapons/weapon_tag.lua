@@ -99,7 +99,7 @@ end
 function SWEP:TestTagPlayer(target, attacker)
     if not target:IsProtected() and not target:InVehicle() then
         self:TagPlayer(target, attacker)
-    elseif not target:IsAFK() and target:InVehicle() then
+    elseif not target:InTheater() and not target:IsAFK() and target:InVehicle() then
         self:TagPlayer(target, attacker)
     elseif attacker:GetTheater() and attacker:GetTheater():IsPrivate() and attacker:GetTheater():GetOwner() == attacker and attacker:GetLocationName() == target:GetLocationName() then
         self:TagPlayer(target, attacker)
