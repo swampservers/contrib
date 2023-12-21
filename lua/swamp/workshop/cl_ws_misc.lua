@@ -81,7 +81,7 @@ function MDLIsPlayermodel(f)
 end
 
 function IsUGCFilePath(path)
-    return path:find("^.:") or path:find("^[%\\%/]") or false
+    return path:find("^content") or false
 end
 
 function GMABlacklist(fpath, wsid, fhandle)
