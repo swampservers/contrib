@@ -90,7 +90,6 @@ function GMABlacklist(fpath, wsid, fhandle)
     dbg("GMABlacklist", fpath, f and "" or (IsUGCFilePath(fpath) and "UGC, SKIP" or "INVALIDFILE"))
 
     if not f then
-    --if true then
         if IsUGCFilePath(fpath) then return true, 'file' end -- Can no longer access gma data
 
         return nil, "file"
