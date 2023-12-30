@@ -115,6 +115,7 @@ function require_workshop(id, range)
 
                 if name then
                     STEAMWS_UNMOUNTED[_id_] = name
+
                     -- file handle is closed after DownloadUGC function exits so GMABlacklist must be called inside it
                     STEAMWS_BLACKLIST[_id_] = {GMABlacklist(name, _id_, file)}
                 else
