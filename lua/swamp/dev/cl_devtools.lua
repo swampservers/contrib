@@ -86,6 +86,18 @@ local structEnvironments = {
             ENT = found
         } or nil
     end,
+    ["effects"] = function(curClass)
+        local allEffects = effects.GetList()
+        local targetEffect = "effects/" .. curClass
+
+        for _, effect in ipairs(allEffects) do
+            if effect.Folder == targetEffect then
+                return {
+                    EFFECT = effect
+                }
+            end
+        end
+    end,
     ["cinema/effects"] = function(curClass)
         local allEffects = effects.GetList()
         local targetEffect = "effects/" .. curClass
