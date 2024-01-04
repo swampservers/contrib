@@ -48,6 +48,7 @@ end
 local function remove(tab, ent)
     local ci = tab[ent]
 
+    -- TODO(winter): This happens consistently with point_message for some reason... maybe we should be using EntIndexes or something instead
     if ci == nil then
         if SERVER then
             ErrorNoHaltWithStack("cant remove ent " .. tostring(ent))

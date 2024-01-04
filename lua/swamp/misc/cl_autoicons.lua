@@ -896,8 +896,9 @@ hook.Add("PreRegisterSWEP", "AutoIconsOverrideDrawWeaponSelection", function(swe
     end
 end)
 
+-- Override killicon library
 BASED_KILLICON_EXISTS = BASED_KILLICON_EXISTS or killicon.Exists
-BASED_KILLICON_DRAW = BASED_KILLICON_DRAW or killicon.Draw
+BASED_KILLICON_RENDER = BASED_KILLICON_RENDER or killicon.Render
 BASED_KILLICON_GETSIZE = BASED_KILLICON_GETSIZE or killicon.GetSize
 
 -- It might be cool to override GM:PlayerDeath and have it actually send the inflictor entity as well as classname...
@@ -915,21 +916,20 @@ killicon.Exists = function(name) return BASED_KILLICON_EXISTS(name) or ClassName
 local killiconsize = 96
 local killiconcolor = Vector(1, 80 / 255, 0)
 
-killicon.GetSize = function(name)
-    if not ReplaceAllConvar:GetBool() and BASED_KILLICON_EXISTS(name) then return BASED_KILLICON_GETSIZE(name) end
+killicon.GetSize = function(name, dontEqualizeHeight)
+    if not ReplaceAllConvar:GetBool() and BASED_KILLICON_EXISTS(name) then return BASED_KILLICON_GETSIZE(name, dontEqualizeHeight) end
     if ClassNameParams(name).LEGIT then return killiconsize, killiconsize / 2 end
 
-    return BASED_KILLICON_GETSIZE(name)
+    return BASED_KILLICON_GETSIZE(name, dontEqualizeHeight)
 end
 
-killicon.Draw = function(x, y, name, alpha)
-    if not ReplaceAllConvar:GetBool() and BASED_KILLICON_EXISTS(name) then return BASED_KILLICON_DRAW(x, y, name, alpha) end
+killicon.Render = function(x, y, name, alpha, dontEqualizeHeight)
+    if not ReplaceAllConvar:GetBool() and BASED_KILLICON_EXISTS(name) then return BASED_KILLICON_RENDER(x, y, name, alpha, noCorrections, dontEqualizeHeight) end
     local p = ClassNameParams(name)
 
     if p.LEGIT then
         local w, h = killiconsize, killiconsize
-        x = x - w * 0.5
-        y = y - h * 0.35
+        y = y - h * 0.25
         cam.Start2D()
         local killicon = GetAutoIcon(p, AUTOICON_HL2KILLICON)
         render.SetMaterial(killicon)
@@ -941,6 +941,6 @@ killicon.Draw = function(x, y, name, alpha)
         render.OverrideBlend(false)
         cam.End2D()
     else
-        return BASED_KILLICON_DRAW(x, y, name, alpha)
+        return BASED_KILLICON_RENDER(x, y, name, alpha, dontEqualizeHeight)
     end
 end
