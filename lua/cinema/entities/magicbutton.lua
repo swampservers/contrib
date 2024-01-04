@@ -333,16 +333,15 @@ end
 
 local function MagicOutcomeBountyAndPrize(ply)
     local amount = ButtonMoneyPrize()
-    if ply.GivePoints == nil or SetPlayerBounty == nil or GetPlayerBounty == nil then return nil end
+    if ply.GivePoints == nil or ply.SetBounty == nil or ply.GetBounty == nil then return nil end
     ply:GivePoints(amount)
-    local add = GetPlayerBounty(ply) + amount
-    SetPlayerBounty(ply, add)
+    ply:SetBounty(ply:GetBounty() + amount)
 
     return "and won [red]" .. string.Comma(amount) .. " points[bot] and also a [red]" .. string.Comma(amount) .. " point bounty[bot] on themself! ;fingers;"
 end
 
 local function MagicOutcomeBountyAll(ply)
-    if SetPlayerBounty == nil or GetPlayerBounty == nil then return nil end
+    if ply.SetBounty == nil or ply.GetBounty == nil then return nil end
     local amount = 1000
 
     if math.random(1, 20) == 1 then
@@ -350,8 +349,7 @@ local function MagicOutcomeBountyAll(ply)
     end
 
     for k, v in pairs(player.GetAll()) do
-        local add = GetPlayerBounty(v) + amount
-        SetPlayerBounty(v, add)
+        v:SetBounty(v:GetBounty() + amount)
     end
 
     return "and [red]increased everyone's bounty by " .. string.Comma(amount) .. " points! ;dougie;"
