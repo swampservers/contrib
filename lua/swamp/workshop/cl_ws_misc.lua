@@ -81,12 +81,12 @@ function MDLIsPlayermodel(f)
 end
 
 function IsUGCFilePath(path)
-    return path:find("^.:") or path:find("^[%\\%/]") or false
+    return path:find("^content") or false
 end
 
-function GMABlacklist(fpath, wsid)
+function GMABlacklist(fpath, wsid, fhandle)
     assert(fpath)
-    local f = file.Open(fpath, 'rb', 'MOD')
+    local f = fhandle
     dbg("GMABlacklist", fpath, f and "" or (IsUGCFilePath(fpath) and "UGC, SKIP" or "INVALIDFILE"))
 
     if not f then

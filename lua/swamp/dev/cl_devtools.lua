@@ -44,7 +44,21 @@ local fileTimes = {}
 --     - A file within a sub directory of a struct folder like: "lua/weapons/testEnt/mysubdir/lua"
 --         Won't have the SWEP/struct table passed to it.
 local structEnvironments = {
+    ["cinema/guns/weapons"] = function(curClass)
+        local found = weapons.GetStored(curClass)
+
+        return found and {
+            SWEP = found
+        } or nil
+    end,
     ["weapons"] = function(curClass)
+        local found = weapons.GetStored(curClass)
+
+        return found and {
+            SWEP = found
+        } or nil
+    end,
+    ["cinema/weapons"] = function(curClass)
         local found = weapons.GetStored(curClass)
 
         return found and {
@@ -58,7 +72,33 @@ local structEnvironments = {
             ENT = found
         } or nil
     end,
+    ["cinema/entities"] = function(curClass)
+        local found = scripted_ents.GetStored(curClass)
+
+        return found and {
+            ENT = found
+        } or nil
+    end,
+    ["cinema/map"] = function(curClass)
+        local found = scripted_ents.GetStored(curClass)
+
+        return found and {
+            ENT = found
+        } or nil
+    end,
     ["effects"] = function(curClass)
+        local allEffects = effects.GetList()
+        local targetEffect = "effects/" .. curClass
+
+        for _, effect in ipairs(allEffects) do
+            if effect.Folder == targetEffect then
+                return {
+                    EFFECT = effect
+                }
+            end
+        end
+    end,
+    ["cinema/effects"] = function(curClass)
         local allEffects = effects.GetList()
         local targetEffect = "effects/" .. curClass
 
