@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+GM.TauntCam = TauntCamera()
 
 -- Disable standard vehicle third person
 timer.Simple(0, function()
