@@ -133,6 +133,7 @@ if CLIENT then
             else
                 panel:QueueJavascript([[
                     const initInterval = setInterval(function() {
+                        document.querySelector('body').style = "display:none";
                         let iframe = document.getElementById("iframe-embed");
                         if (iframe && iframe.src && iframe.src.includes("embed")) {
                             window.location.href = iframe.src;

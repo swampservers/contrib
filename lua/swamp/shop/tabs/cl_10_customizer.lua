@@ -136,10 +136,11 @@ vgui.Register('ShopCustomizerMode', {
             ui.ShopCustomizerColor({
                 parent = self.RightColumn
             }, function(p)
-                p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1))
+                p:SetValue(self.item.cfg.color or self.item.color or Vector(1, 1, 1), self.item.cfg.opacity or 1)
 
-                p.OnValueChanged = function(pnl, vec)
-                    self.item.cfg.color = vec
+                p.OnValueChanged = function(pnl, vector, opacity)
+                    self.item.cfg.color = vector
+                    self.item.cfg.opacity = opacity
                     self:Update()
                 end
             end)
