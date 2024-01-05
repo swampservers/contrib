@@ -324,9 +324,9 @@ if CLIENT then
 
     function SWEP:CalcViewModelView(vm, oldpos, oldang, pos, ang)
         if not IsValid(vm) or not IsValid(self.Owner) then return end
-        local reg = debug.getregistry()
-        local GetVelocity = reg.Entity.GetVelocity
-        local Length = reg.Vector.Length2D
+        local meta = FindMetaTable("Entity")
+        local GetVelocity = meta.GetVelocity
+        local Length = meta.Length2D
         local vel = Length(GetVelocity(self.Owner))
         local bob
         local RT = RealTime()
