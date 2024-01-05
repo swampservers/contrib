@@ -5,6 +5,7 @@ function ServerDebug(e)
     RecentErrors[tostring(e)] = CurTime()
 end
 
+-- TODO: Do something about this being gone
 ERRORLOG_REALERRORFUNCTION = ERRORLOG_REALERRORFUNCTION or debug.getregistry()[1]
 
 debug.getregistry()[1] = function(e)
