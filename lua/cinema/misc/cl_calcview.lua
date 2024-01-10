@@ -4,6 +4,7 @@ GM.TauntCam = TauntCamera()
 -- Disable standard vehicle third person
 timer.Simple(0, function()
     local VEHICLE = FindMetaTable("Vehicle")
+
     function VEHICLE:GetThirdPersonMode()
         return false
     end
@@ -192,7 +193,6 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
     }
 
     if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then return view end
-
     local use_third_person = UseThirdperson()
     Thirdperson_Lerp = math.Approach(Thirdperson_Lerp or 0, use_third_person and 1 or 0, FrameTime() * 8)
     Thirdperson_LerpSide = math.Approach(Thirdperson_LerpSide or 0, (use_third_person and UseThirdpersonSide()) and 1 or 0, FrameTime() * 8)
@@ -218,9 +218,9 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
         trace = util.TraceHull(trace)
 
         if trace.Hit then
-            view.origin = origin - (offset * (trace.Fraction))
+            view.origin = origin - (offset * trace.Fraction)
         else
-            view.origin = origin - (offset)
+            view.origin = origin - offset
         end
 
         return view
