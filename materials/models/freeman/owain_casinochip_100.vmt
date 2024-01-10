@@ -22,6 +22,8 @@
 	"$rimlightboost" "2"
 	"$rimmask" "1"
 
+	"$nodecal" "1"
+
 	"$color2" "[0.25 .25 .25]"
 
 	"$normalmapalphaenvmapmask" "1"
