@@ -10,7 +10,6 @@ timer.Simple(0, function()
     end
 end)
 
-local thirdperson_enabled = false
 local thirdperson_lerp = 0
 local thirdperson_view_yaw = 0
 local thirdperson_view_pitch = 0
@@ -27,11 +26,11 @@ function UseThirdperson()
         return false
     end
 
-    return thirdperson_enabled or localply and (wep.AlwaysThirdPerson or wc == "weapon_fists" or localply:HasWeapon("weapon_goohulk") or wc == "weapon_garfield" and not localply:InVehicle())
+    return THIRDPERSON or localply and (wep.AlwaysThirdPerson or wc == "weapon_fists" or localply:HasWeapon("weapon_goohulk") or wc == "weapon_garfield" and not localply:InVehicle())
 end
 
 concommand.Add("swamp_thirdperson", function()
-    thirdperson_enabled = not thirdperson_enabled
+    THIRDPERSON = not THIRDPERSON
 end)
 
 local was_f4_down = false
@@ -39,7 +38,7 @@ hook.Add("Think", "ThirdPersonToggler", function()
     local isf4down = input.IsKeyDown(KEY_F4)
 
     if isf4down and not was_f4_down then
-        thirdperson_enabled = not thirdperson_enabled
+        THIRDPERSON = not THIRDPERSON
     end
 
     was_f4_down = isf4down
