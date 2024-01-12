@@ -34,6 +34,7 @@ concommand.Add("swamp_thirdperson", function()
 end)
 
 local was_f4_down = false
+
 hook.Add("Think", "ThirdPersonToggler", function()
     local isf4down = input.IsKeyDown(KEY_F4)
 
@@ -52,6 +53,7 @@ end)
 
 local thirdperson_free_rotating = false
 local thirdperson_binding_hint_shown = false
+
 hook.Add("InputMouseApply", "InputMouseApply_ThirdPersonFreeze", function(cmd, x, y, ang)
     if thirdperson_lerp > 0 then
         local freecam_bind = input.LookupBinding("swamp_freecam")
@@ -69,6 +71,7 @@ hook.Add("InputMouseApply", "InputMouseApply_ThirdPersonFreeze", function(cmd, x
             thirdperson_view_pitch = math.NormalizeAngle(thirdperson_view_pitch)
             cmd:SetMouseX(0)
             cmd:SetMouseY(0)
+
             return true
         end
 
@@ -85,9 +88,7 @@ hook.Add("InputMouseApply", "InputMouseApply_ThirdPersonFreeze", function(cmd, x
     end
 end)
 
-hook.Add("ShouldDrawLocalPlayer", "ShouldDrawLocalPlayer_ThirdPerson", function(ply)
-    return thirdperson_lerp > 0 or ply:IsPlayingTaunt()
-end)
+hook.Add("ShouldDrawLocalPlayer", "ShouldDrawLocalPlayer_ThirdPerson", function(ply) return thirdperson_lerp > 0 or ply:IsPlayingTaunt() end)
 
 function GM:CalcView(ply, origin, angles, fov, znear, zfar)
     local view = {
@@ -100,7 +101,6 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
     }
 
     if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then return view end
-
     local use_third_person = UseThirdperson()
     thirdperson_lerp = math.Approach(thirdperson_lerp or 0, use_third_person and 1 or 0, FrameTime() * 128)
 
