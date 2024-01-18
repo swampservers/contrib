@@ -91,6 +91,7 @@ end)
 hook.Add("ShouldDrawLocalPlayer", "ShouldDrawLocalPlayer_ThirdPerson", function(ply)
     local wep = ply:GetActiveWeapon()
     if IsValid(wep) and wep.GetSelfie and wep:GetSelfie() then return true end
+
     return thirdperson_lerp > 0 or ply:IsPlayingTaunt()
 end)
 
