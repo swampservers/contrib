@@ -28,7 +28,7 @@ SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
 SWEP.Damage = 65
-SWEP.CycleTime = 0.22
+SWEP.CycleTime = 0.28
 SWEP.HalfDamageDistance = 16384
 --
 SWEP.SpreadBase = 0.004
@@ -43,14 +43,14 @@ ComputeSpray(SWEP, {
 
 --
 -- SWEP.ScopeLevels = {40 / 90, 10 / 90}
-SWEP.MoveSpeed = 210 / 250
+SWEP.MoveSpeed = 220 / 250
 SWEP.ScopedSpeedRatio = 220 / 260
 SWEP.KickUBase = 1
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1.5
 --
-SWEP.AmmoPriceMod = 0.5
+SWEP.AmmoPriceMod = 0.4 -- 8 / 20
 
 function SWEP:GunFire()
     local basedfire = BaseClass.GunFire(self)
