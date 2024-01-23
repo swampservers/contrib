@@ -705,7 +705,7 @@ if CLIENT then
                 for k, v in pairs(Locations) do
                     local center = (v.Min + v.Max) / 2
                     Debug3D.DrawBox(v.Min, v.Max)
-                    Debug3D.DrawText(center, v.Name, "VideoInfoSmall")
+                    Debug3D.DrawText(center, v.Name, "DermaLarge")
                 end
             end)
         else
