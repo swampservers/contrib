@@ -48,7 +48,7 @@ end)
 concommand.Add("swamp_freecam", function() end)
 
 hook.Add("HUDShouldDraw", "HUDShouldDraw_HideCrosshair", function(name)
-    if name == "CHudCrosshair" and (thirdperson_lerp > 0 or math.abs(thirdperson_view_yaw) > 1) then return false end
+    if name == "CHudCrosshair" and (math.abs(thirdperson_view_yaw) > 1 or math.abs(thirdperson_view_pitch) > 1) then return false end
 end)
 
 local thirdperson_free_rotating = false
