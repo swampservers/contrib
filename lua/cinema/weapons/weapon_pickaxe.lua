@@ -70,7 +70,7 @@ function SWEP:PrimaryAttack()
     bullet.Distance = self.TARGETDISTANCE
     bullet.Tracer = 0
     bullet.Force = 1
-    bullet.Damage = math.random(1, 5)
+    bullet.Damage = self:IsDiamond() and math.random(2, 10) or math.random(1, 5)
 
     bullet.Callback = function(att, tr, dmginfo)
         local ent = tr.Entity
