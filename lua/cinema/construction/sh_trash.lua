@@ -107,7 +107,6 @@ TrashLocationOverrides = {
     ["Way Outside"] = TRASHLOC_BUILD
 }
 
-TrashNoFreezeNodes = {
-    {Vector(-2040, -60, 80), 120},
-    {Vector(-1970, -1120, 100), 150}
-}
+-- Prevent stuff being taped within a sphere around the position
+-- TODO(winter): Is this still used/necessary?
+TrashNoFreezeNodes = {} --{Vector(-2040, -60, 80), 120},

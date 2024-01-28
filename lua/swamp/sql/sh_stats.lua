@@ -18,7 +18,7 @@ end
 --     return self.NWP["f_" .. name] or false
 -- end
 -- they are strings with 4 bytes for each user (accountid u32)
--- todo LRU?
+-- TODO: LRU?
 partnersetcache = {}
 
 function InGroupSet(pset, ply)

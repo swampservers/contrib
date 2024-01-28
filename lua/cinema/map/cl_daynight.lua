@@ -5,6 +5,33 @@ hook.Add("Tick", "cm_dn", function()
     cm_dn = GetGlobalBool("DAY") and "swamponions/cm_d" or "swamponions/cm_n"
 end)
 
+-- For stuff like the japanese shoji doors, so they'll glow at night
+matproxy.Add({
+    name = "DayNight",
+    init = function(self, mat, values)
+        -- Store the name of the variable we want to set
+        self.ResultTo = values.resultvar
+        self.ValueDay = values.dayval
+        self.ValueNight = values.nightval
+    end,
+    bind = function(self, mat, ent)
+        local day = GetGlobalBool("DAY", true)
+        local val_day = mat:GetVector(self.ValueDay)
+        local val_night = mat:GetVector(self.ValueNight)
+        local value = val_day or val_night or Vector(1, 1, 1)
+
+        if day and val_day then
+            value = val_day
+        end
+
+        if not day and val_night then
+            value = val_night
+        end
+
+        mat:SetVector(self.ResultTo, value)
+    end
+})
+
 matproxy.Add({
     name = "cm_dn",
     init = function(self, mat, values) end,
@@ -35,7 +62,7 @@ matproxy.Add({
 -- local sky_day_ft = Material( "swamponions/sky/sky_day_ft" )
 -- local sky_day_lf = Material( "swamponions/sky/sky_day_lf" )
 -- local sky_day_rt = Material( "swamponions/sky/sky_day_rt" )
--- local sky_day_up = Material( "swamponions/sky/sky_day_up" ) 
+-- local sky_day_up = Material( "swamponions/sky/sky_day_up" )
 local sky_night_bk = Material("swamponions/sky/sky_night_bk")
 local sky_night_ft = Material("swamponions/sky/sky_night_ft")
 local sky_night_lf = Material("swamponions/sky/sky_night_lf")
@@ -76,7 +103,7 @@ local sky_space_ft = Material("swamponions/sky/sky_space_ft")
 local sky_space_bk = Material("swamponions/sky/sky_space_bk")
 local sky_space_sun = Material("effects/yellowflare_noz")
 
-hook.Add("PostDrawSkyBox", "DrawMoonStars", function()
+local function drawMoonStars()
     if not render.DrawingScreen() then return end
     local alpha = IsValid(Me) and math.Clamp((Me:GetPos().z - 3700) / 3500, 0, 1) or 0
     if alpha <= 0 then return end
@@ -104,4 +131,8 @@ hook.Add("PostDrawSkyBox", "DrawMoonStars", function()
     render.DrawQuadEasy(Vector(16, -11, -3), Vector(-1, 1, 0), 12, 12, Color.white, 0)
     cam.End3D()
     render.OverrideDepthEnable(false, false)
-end)
+end
+
+-- BUG(winter): Map v4; for some reason only using the 3D post-draw doesn't work at certain camera angles
+hook.Add("PostDraw2DSkyBox", "DrawMoonStars2D", drawMoonStars)
+hook.Add("PostDrawSkyBox", "DrawMoonStars3D", drawMoonStars)

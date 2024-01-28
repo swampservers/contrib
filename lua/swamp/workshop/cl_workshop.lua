@@ -45,7 +45,7 @@ function require_workshop_info(id)
     end
 end
 
--- todo: asyncmemo?
+-- TODO: asyncmemo?
 function require_workshop_preview(id)
     if STEAMWS_PREVIEWICON[id] then
         return STEAMWS_PREVIEWICON[id]

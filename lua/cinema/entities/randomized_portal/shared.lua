@@ -1,9 +1,9 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 ENT.Type = "anim"
 DEFINE_BASECLASS("base_gmodentity")
-ENT.Model = Model("models/swamponions/teleportal.mdl")
+ENT.Model = Model("models/swamponions/teleportal.mdl") -- TODO: Map v4, missing model
 
--- todo: some sort of color lerp, maybe portal particles when the player teleports
+-- TODO: some sort of color lerp, maybe portal particles when the player teleports
 function ENT:Initialize()
     self:SetModel(self.Model)
     self:PhysicsInitBox(Vector(-8, -20, -42), Vector(8, 20, 42))

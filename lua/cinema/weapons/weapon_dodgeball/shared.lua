@@ -8,7 +8,7 @@ SWEP.Secondary.Automatic = true
 SWEP.Primary.Ammo = "none"
 SWEP.Secondary.Ammo = "none" --you should really leave these in here so that people don't receive pistol ammo when they pick it up
 SWEP.Spawnable = true
-SWEP.Category = "Swamp Cinema" --todo remove these later i just need  this for testing 
+SWEP.Category = "Swamp Cinema" -- TODO: remove these later i just need  this for testing 
 local outie = 64
 local innie = 28
 

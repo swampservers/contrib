@@ -80,6 +80,12 @@ function ENT:FindSuitableCastOrigin()
     if MAGICBUTTON_CACHED_ORIGINPOINTS == nil then
         local origins = {}
 
+        if #navareas == 0 then
+            error("No Navmesh Areas! Did you forget to generate it?")
+
+            return
+        end
+
         for _, area in pairs(navareas) do
             local extent = area:GetExtentInfo()
             local toosmall = extent.SizeX < 32 or extent.SizeY < 32
@@ -442,21 +448,28 @@ local function MagicOutcomeKleinerTeleported(ply)
     end
 end
 
-local landmarks = {
-    ["Near The Drunken Clam"] = Vector(-2518, -802, 64),
-    ["Near Trump Tower"] = Vector(-2528, -66, 64),
-    ["Near Sushi Theater"] = Vector(-2537, -1613, 104),
-    ["Near The Pit"] = Vector(-126, -1355, 19),
-    ["Somewhere on the roof"] = Vector(-1179, 1020, 522),
-    ["Somewhere on the roof"] = Vector(-234, 990, 633),
-    ["Somewhere on the roof"] = Vector(1616, 810, 606),
-    ["Somewhere on the roof"] = Vector(-427, 1352, 688),
-    ["Near Mini Golf"] = Vector(2113, -589, 119),
-    ["Near AFK Corral"] = Vector(2831, 1062, 129),
-    ["Somewhere behind the theater"] = Vector(1780, 1730, 108),
-    ["Near the cabin"] = Vector(-107, 2930, 97),
-    ["Near SportZone"] = Vector(1667, -1918, 85),
-}
+local landmarks = {}
+
+timer.Simple(0, function()
+    landmarks = {
+        ["Near Zen Garden"] = GetLocationCenterByName("Zen Garden"),
+        ["Near Trump Tower"] = GetLocationCenterByName("Trump Tower Lobby"),
+        ["Near SushiTheater"] = GetLocationCenterByName("SushiTheater First Floor"),
+        ["Near The Pit"] = GetLocationCenterByName("The Pit") - Vector(0, 0, 350),
+        ["Somewhere on the roof"] = GetLocationCenterByName("Movie Theater") + Vector(0, 0, 288),
+        ["Somewhere on the roof"] = GetLocationCenterByName("Public Theater") + Vector(0, 0, 256),
+        ["Somewhere on the roof"] = GetLocationCenterByName("Lobby") + Vector(0, 0, 256),
+        ["Somewhere on the roof"] = GetLocationCenterByName("East Wing") + Vector(0, 0, 256),
+        ["Near Minigolf"] = GetLocationCenterByName("Golf"),
+        ["Near SportZone"] = GetLocationCenterByName("SportZone"),
+        ["Near AFK Corral"] = GetLocationCenterByName("AFK Corral"),
+        ["Near Muck Island"] = GetLocationCenterByName("Muck Island"),
+        ["Near Power Plant"] = GetLocationCenterByName("Power Plant"),
+        ["Near Swamp Hut"] = GetLocationCenterByName("Swamp Hut"),
+        ["Near Graveyard"] = GetLocationCenterByName("Graveyard") - Vector(0, 0, 400),
+        ["Near Auditorium"] = GetLocationCenterByName("Auditorium")
+    }
+end)
 
 local function MagicOutcomeButtonSpawn(ply)
     local button = ents.Create("magicbutton")

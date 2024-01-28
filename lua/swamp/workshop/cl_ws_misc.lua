@@ -277,7 +277,7 @@ function File.ReadString(f, n, ch)
     local tmpn = 0
     local sz = f:Size()
 
-    --TODO: Use n and sz instead
+    -- TODO: Use n and sz instead
     for i = 1, 1048576 do
         --	while true do
         if f:Tell() >= sz then return nil, "eof" end

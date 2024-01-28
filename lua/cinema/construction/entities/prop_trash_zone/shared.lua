@@ -145,7 +145,7 @@ function ENT:CreateTheater()
     l.Theater.Width, l.Theater.Height = th.w, th.h
     l.Theater.Pos, l.Theater.Ang = LocalToWorld(th.pos, th.ang, self:GetPos(), self:GetAngles())
     -- if tmtd.projection then
-    --     -- TODO implement this
+    --     -- TODO: implement this
     --     l.Theater.Projector = {
     --         pos = self:LocalToWorld(tmtd.projection.pos),
     --         ang = self:LocalToWorldAngles(tmtd.projection.ang),

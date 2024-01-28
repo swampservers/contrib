@@ -129,7 +129,7 @@ function File.ReadString(f, n, ch)
     local tmpn = 0
     local sz = f:Size()
 
-    --TODO: Use n and sz instead
+    -- TODO: Use n and sz instead
     for i = 1, 1048576 do
         --	while true do
         if f:Tell() >= sz then return nil, "eof" end
@@ -264,7 +264,7 @@ end
 function MDL:Validate(filesize)
     local size = self.dataLength
     local f = self.file
-    --TODO: can be wrong
+    -- TODO: can be wrong
     local fsize = filesize or f:Size() - self.initial_offset
     if fsize ~= size then return nil, "size" end
     --local checksum = from_int(self.checksum,true)

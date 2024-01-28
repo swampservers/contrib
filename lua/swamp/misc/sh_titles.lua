@@ -356,7 +356,7 @@ AddTitle({
     {"s_lefty_donation_place1", "Greatest Ally"}
 }, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, "s_lefty_donation")
 
---todo: print who currently has the title?
+-- TODO: print who currently has the title?
 AddTitle({
     {"points_place15", "The 1%"},
     {"points_place3", "Illuminati"}
@@ -460,5 +460,5 @@ end
 -- fidget spinner max rpm: helicopter tard
 -- "cannabalistic humanoid underground dweller" for watching videos in sewer theater
 --NOMINIFY
---TODO: titles where you don't have a description but the title itself hints at what you do? like a secret achievement but not totally secret
---TODO: if threshold=true, its 1 but you can put better text on the button in that case
+-- TODO: titles where you don't have a description but the title itself hints at what you do? like a secret achievement but not totally secret
+-- TODO: if threshold=true, its 1 but you can put better text on the button in that case

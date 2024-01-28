@@ -210,7 +210,7 @@ vgui.Register('ShopCustomizerMode', {
     end
 }, 'ShopMode')
 
--- TODO we need a way to get the accessory ent
+-- TODO: we need a way to get the accessory ent
 function ImageGetterPanel()
     local mat = IsValid(ShopPreviewPanel.ents.item) and ShopPreviewPanel.ents.item:GetMaterials()[1] or (IsValid(ShopPreviewPanel.accessoryitement) and ShopPreviewPanel.accessoryitement:GetMaterials()[1] or ShopPreviewPanel.ents.player:GetMaterials()[(ShopCustomizerPanel.item.cfg.submaterial or 0) + 1])
     assert(mat)

@@ -12,7 +12,8 @@ SWEP.PrintName = "American Vape"
 SWEP.Instructions = "LMB: Rip Fat Clouds\n (Hold and release)\nRMB: Bing Bong\nReload: MAGA\n\nA patriotic vape made in honor of President Trump."
 SWEP.VapeID = 7
 SWEP.VapeAccentColor = Vector(0.5, 0.5, 0.5)
---tells the matproxy to substitute red/white/blue fader (todo: change how this works)
+-- Tells the matproxy to substitute red/white/blue fader
+-- TODO: change how this works
 SWEP.VapeTankColor = Vector(-2, -2, -2)
 
 function SWEP:SecondaryAttack()

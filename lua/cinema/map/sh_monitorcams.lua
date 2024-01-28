@@ -2,7 +2,7 @@
 if CLIENT then
     SituationMonitorRT = nil
 
-    hook.Add("PreRender", "MonitorTheSituation", function()
+    hook.Add("PostRender", "MonitorTheSituation", function()
         if IsValid(Me) and Me:GetNWInt("MONZ", 0) > 0 then
             if SituationMonitorRT == nil then
                 SituationMonitorRT = GetRenderTarget(cvx_anonymous_name(), 1024, 1024, false)
@@ -14,7 +14,7 @@ if CLIENT then
                 })
             end
 
-            --            print(CurTime())
+            --print(CurTime())
             render.PushRenderTarget(SituationMonitorRT)
 
             -- MONITORINGTHESITUATION = true
@@ -60,11 +60,17 @@ if CLIENT then
     -- hook.Add( "ShouldDrawLocalPlayer", "MonitorDraw3p", function( ply )
     --     if MONITORINGTHESITUATION then return true end
     -- end )
-    local mat = Material("sprites/sent_ball")
-    local mat2 = Material("models/wireframe")
+    -- TODO(winter): This should probably just be a matproxy
+    --local mat = Material("sprites/sent_ball")
+    --local mat2 = Material("models/wireframe")
+    local situationRoomMonitorPos = MapTargets["monitor_situationroom"][1]["origin"]
+    local situationRoomMonitorNormal = Vector(1, 0, 0)
+    situationRoomMonitorNormal:Rotate(MapTargets["monitor_situationroom"][1]["angles"])
 
+    --local deepSpaceMonitorPos = MapTargets["monitor_deepspace"][1]["origin"]
     hook.Add("PostDrawOpaqueRenderables", "MonitorDraw", function(depth, sky)
         if sky or depth then return end
+        if not SituationMonitorMaterial then return end
 
         if IsValid(Me) and Me:GetNWInt("MONZ", 0) == 1 then
             SituationMonitorMaterial:SetMatrix("$texture2transform", Matrix({
@@ -74,12 +80,12 @@ if CLIENT then
                 {0, 0, 0, 1}
             }))
 
-            local v = 0.97
-            v = Vector(math.Rand(v, 1), math.Rand(v, 1), math.Rand(v, 1)) * math.Rand(v, 1)
-            SituationMonitorMaterial:SetVector("$color", v)
+            local colorMod = 0.97
+            colorMod = Vector(math.Rand(colorMod, 1), math.Rand(colorMod, 1), math.Rand(colorMod, 1)) * math.Rand(colorMod, 1)
+            SituationMonitorMaterial:SetVector("$color", colorMod)
             render.SetMaterial(SituationMonitorMaterial)
-            render.DrawQuadEasy(Vector(-2748, 117, -249.6), Vector(1, 0, 0), 104, 65, Color(255, 255, 255))
-            render.DrawQuadEasy(Vector(10863, 10510, 12151), Vector(0, -1, 0), 136, 85, Color(255, 255, 255))
+            render.DrawQuadEasy(situationRoomMonitorPos, situationRoomMonitorNormal, 104, 66, Color(255, 255, 255))
+            --render.DrawQuadEasy(deepSpaceMonitorPos, Vector(0, -1, 0), 136, 85, Color(255, 255, 255))
         end
     end)
 end

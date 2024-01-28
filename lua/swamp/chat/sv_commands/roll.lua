@@ -110,7 +110,7 @@ if not ProvableGenerator then
         print("Failed. " .. cps())
     end
 
-    -- TODO dont fully clear them on restart?
+    -- TODO: dont fully clear them on restart?
     if file.IsDir("roll_ledgers", "DATA") then
         local files, directories = file.Find("roll_ledgers/*", "DATA")
 

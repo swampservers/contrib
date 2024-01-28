@@ -76,7 +76,7 @@ end
 -- end
 -- function PILLOW_UNJIGGLE(self, nb)
 --     pcall(function()
---         --or (self.wep and not self.wep:GetHardened()) 
+--         --or (self.wep and not self.wep:GetHardened())
 --         if self:GetModel() ~= "models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
 --         for i = 0, nb - 1 do
 --             local i2 = i < 3 and i or 2 - i
@@ -405,6 +405,7 @@ function SWEP:SecondaryAttack()
     if SERVER then
         if self.REMOVING then return end
 
+        -- TODO: What if not IsValid(self.Owner?)
         if not CannotMakeTrash(self.Owner) then
             local e = ents.Create("prop_trash_pillow")
             if not IsValid(e) then return end

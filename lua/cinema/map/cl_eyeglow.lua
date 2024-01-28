@@ -1,5 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- Applies to the maze as well as minecraft
+-- NOTE(winter): Disabled, since we don't have minecraft now, and it's EXPENSIVE
+--[[
 hook.Add("Think", "UndergroundEyeGlow", function()
     if not IsValid(Me) then return end
     local pp = Me:EyePos()
@@ -18,3 +20,4 @@ hook.Add("Think", "UndergroundEyeGlow", function()
         dlight.dietime = CurTime() + 1
     end
 end)
+]]

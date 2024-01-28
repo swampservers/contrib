@@ -127,7 +127,7 @@ function GetTextHeight(font)
     return h
 end
 
--- TODO add bold and the other shit. parse kvs?
+-- TODO: add bold and the other shit. parse kvs?
 local function parse_settings(setting_str)
     local stuff = ("_"):Explode(setting_str)
 
@@ -202,7 +202,7 @@ end)
 
 -- default size
 Font.sans = Font.sans24
--- todo clear cache
+-- TODO: clear cache
 local ffc = memo(function() return memo(function() return {} end) end)
 
 function FitFont(setting_str, txt, w)

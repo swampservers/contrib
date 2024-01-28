@@ -71,7 +71,7 @@ end)
 -- hook.Add( "PreDrawHalos", "AddPropHalos", function()
 --     -- local alpha = math.sin(CurTime()*10)*0.25 + 0.75
 --     -- local td = CurTime() - keksaytime
---     -- if td < 10 then 
+--     -- if td < 10 then
 --     --     alpha  = alpha * math.Clamp(td,0,1) * math.Clamp(10-td,0,1)
 -- 	--     halo.Add(Ents.kekfrog, Color(255,255,255,255*alpha), 5, 5, 16,true,true )
 --     -- end

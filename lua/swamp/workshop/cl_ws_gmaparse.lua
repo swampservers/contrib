@@ -75,7 +75,7 @@ function GMA:ParseHeader()
     res.strcontent = strcontent
     -- TODO
     local name = f:ReadString()
-    local desc = f:ReadString() -- TODO json
+    local desc = f:ReadString() -- TODO: json
     local author = f:ReadString()
     res.name, res.desc, res.author = name, desc, author
     -- TODO: unused?

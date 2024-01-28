@@ -2,6 +2,7 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Model = Model("models/golf rack/golf rack.mdl")
+ENT.PutterModel = Model("models/pyroteknik/putter.mdl")
 
 function ENT:Initialize()
     self:SetModel(self.Model)

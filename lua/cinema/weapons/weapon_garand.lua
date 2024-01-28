@@ -230,8 +230,8 @@ killicon.Add( "weapon_sniper", "HUD/killicons/kcon_kar98", Color ( 0, 255, 0, 25
 end
 ]]
 function InGarandZone(v)
-    local origin = Vector(-578, -1375, 396)
-    local ang = Angle(0, 26.75, 0)
+    local origin = MapTargets["garand_zone"][1]["origin"]
+    local ang = MapTargets["garand_zone"][1]["angles"]
     local size = Vector(275, 350, 128)
     local pos, normal, frac = util.IntersectRayWithOBB(v:EyePos(), v:GetAimVector(), origin, ang, -size / 2, size / 2)
     if frac == 0 then return true end
