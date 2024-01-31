@@ -1,7 +1,6 @@
 "VertexLitGeneric"
 {
-	"$basetexture"	"egypt\flat_wall_02"
-	"$bumpmap"	"egypt\flat_wall_normal"
+	"$basetexture"	 "egypt/maze_pillar"
 	"$surfaceprop" "rock"
 	//"$phong"     "1"
 	//"$halflambert"	1

@@ -1,8 +1,8 @@
 "VertexLitGeneric"
 {
-	"$basetexture"	"egypt\flat_wall_02"
-	"$bumpmap"	"egypt\flat_wall_normal"
+	"$basetexture"	 "egypt/hyro_flat_outdoors_01"
 	"$surfaceprop" "rock"
+	$basetexturetransform "center .5 .5 scale 1 1 rotate 0 translate 0.0625 0"
 	//"$phong"     "1"
 	//"$halflambert"	1
  	//"$phongexponent"   "60"
