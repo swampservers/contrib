@@ -472,6 +472,18 @@ function ENT:RunBehaviour()
 
         if self.NeedsTarget then
             self:FindTarget()
+
+            if IsValid(self:GetTarget()) and self:IsHiding() then
+                local result = self:ComputePath()
+
+                if result then
+                    self:SetAngles(((self:GetTarget():GetPos() - self:GetPos()) * Vector(1, 1, 0)):Angle())
+                    self:SetHiding(false)
+                end
+
+                coroutine.wait(0.5)
+            end
+
             self.NeedsTarget = nil
             --ok we found a target, see if we can path there.
         end
