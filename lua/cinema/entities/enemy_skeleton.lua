@@ -57,7 +57,11 @@ hook.Add("EntityRemoved", "skeleton_remove", function(ent)
     end
 end)
 
+-- lua_run for _, ent in ents.Iterator() do if ent:GetClass() == "enemy_skeleton" then ent:Remove() end end
+-- lua_run timer.Remove("SpookySpawns")
+-- lua_run timer.Remove("SpookySpawner")
 if SERVER then
+    --[[
     local function UpdateSkeletonSpawns()
         SKELETON_SPAWNS = {}
         local areas = navmesh.GetAllNavAreas()
@@ -87,6 +91,7 @@ if SERVER then
             boo:Spawn()
         end
     end)
+    ]]
 end
 
 function ENT:SetupDataTables()
