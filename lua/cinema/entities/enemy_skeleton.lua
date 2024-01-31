@@ -99,8 +99,6 @@ function ENT:SetupDataTables()
 end
 
 function ENT:NetworkVarChanged(name, old, new)
-    print(name, old, new)
-
     if name == "Hiding" and old ~= new then
         if new == true then
             self:SetNoDraw(true)
@@ -182,8 +180,6 @@ function ENT:Initialize()
         --self:SetCollisionBounds(Vector(-8, -8, 0), Vector(8, 8, 72))
         self:ResetBehavior()
     end
-
-    if CLIENT then end
 end
 
 if CLIENT then
@@ -194,10 +190,6 @@ function ENT:OnRemove()
 end
 
 function ENT:OnInjured(dmginfo)
-end
-
-function ENT:IsDormant()
-    return self:GetNoDraw()
 end
 
 function ENT:Shatter(dmginfo)
