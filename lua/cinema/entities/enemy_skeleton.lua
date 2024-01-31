@@ -22,15 +22,19 @@ SKELETON_LIMIT = 40
 SKELETON_SPAWN_WHITELIST = {
     ["Caverns"] = true,
     ["Labyrinth of Kek"] = true,
-    ["Maze"] = true,
+    ["maze"] = true,
 }
 
--- Places a skeleton can exist
+-- Places a skeleton can follow players into and exist without dying
 SKELETON_LOCATION_WHITELIST = {
     ["Caverns"] = true,
     ["Labyrinth of Kek"] = true,
-    ["Maze"] = true,
+    ["maze"] = true,
     ["Sewers"] = true,
+    ["Nowhere"] = true,
+    ["Outside"] = true,
+    ["Sneed's Feed and Seed"] = true,
+    ["The Pit"] = true,
 }
 
 hook.Add("OnEntityCreated", "skeleton_add", function(ent)
@@ -54,15 +58,24 @@ hook.Add("EntityRemoved", "skeleton_remove", function(ent)
 end)
 
 if SERVER then
-    timer.Create("SpookySpawns", 10, 0, function()
+    local function UpdateSkeletonSpawns()
         SKELETON_SPAWNS = {}
         local areas = navmesh.GetAllNavAreas()
 
         for k, v in pairs(areas) do
-            if v:GetPlace() ~= "Caverns" and v:GetPlace() ~= "Sewers" then continue end
+            if v:GetPlace() and not SKELETON_SPAWN_WHITELIST[v:GetPlace()] then continue end
             if v:GetSizeX() < 32 or v:GetSizeY() < 32 then continue end
+            if v:IsUnderwater() then continue end
             table.insert(SKELETON_SPAWNS, v)
         end
+    end
+
+    timer.Simple(0.2, function()
+        UpdateSkeletonSpawns()
+    end)
+
+    timer.Create("SpookySpawns", 10, 0, function()
+        UpdateSkeletonSpawns()
     end)
 
     timer.Create("SpookySpawner", 0.25, 0, function()
@@ -79,18 +92,59 @@ end
 function ENT:SetupDataTables()
     self:NetworkVar("Entity", 0, "Target")
     self:NetworkVar("Bool", 0, "Collapsing")
+    self:NetworkVar("Bool", 1, "Hiding")
+    self:SetHiding(true)
+    self:SetNoDraw(true)
+    self:NetworkVarNotify("Hiding", self.NetworkVarChanged)
+end
+
+function ENT:NetworkVarChanged(name, old, new)
+    if name == "Hiding" and old ~= new then
+        if new == true then
+            self:SetNoDraw(true)
+            local ef = EffectData()
+            ef:SetOrigin(self:GetPos())
+            ef:SetAngles(self:GetAngles())
+            ef:SetStart(Vector(0, 0, -30))
+            ef:SetEntity(self)
+            self:SetSolid(SOLID_NONE)
+            util.Effect("skeleton_Splatter", ef)
+            local ef = EffectData()
+            ef:SetOrigin(self:GetPos())
+            ef:SetEntity(self)
+            local fx = util.Effect("RagdollImpact", ef)
+        else
+            self:SetNoDraw(false)
+            local ef = EffectData()
+            ef:SetOrigin(self:GetPos())
+            ef:SetAngles(self:GetAngles())
+            ef:SetEntity(self)
+            self:SetSolid(SOLID_BBOX)
+            local fx = util.Effect("skeleton_form", ef)
+            local ef = EffectData()
+            ef:SetOrigin(self:GetPos())
+            ef:SetEntity(self)
+            local fx = util.Effect("RagdollImpact", ef)
+            self:EmitSound("physics/concrete/boulder_impact_hard" .. math.random(1, 4) .. ".wav", 140, 140, 0.5)
+            util.ScreenShake(self:GetPos(), 5, 5, 0.6, 600)
+        end
+    end
+end
+
+function ENT:IsHiding()
+    return self:GetHiding()
 end
 
 function ENT:GetName()
     return "Skeleton"
 end
 
-ENT.LoseTargetDist = 5000
-ENT.SearchRadius = 3500
+ENT.LoseTargetDist = 1000 --distance at which skeletons will go dormant
+ENT.SearchRadius = 500 --distance at which skeletons will pop out
 ENT.KillReward = 100
 ENT.TargetHeight = 2048
 ENT.TargetHeightInner = 4096
-ENT.TargetHeightInnerRadius = 512
+ENT.TargetHeightInnerRadius = 500
 local TotalPathingBudget = 20000
 
 local function PathingIterationLimit()
@@ -114,28 +168,17 @@ function ENT:Initialize()
         self:SetBloodColor(BLOOD_COLOR_YELLOW)
         self:SetUseType(SIMPLE_USE)
         self:SetHealth(3)
-        --self.loco:SetJumpGapsAllowed(true)
         self.loco:SetGravity(1000)
         self.loco:SetAvoidAllowed(true)
-        self.loco:SetClimbAllowed(true)
+        self.loco:SetClimbAllowed(false)
         self.loco:SetJumpGapsAllowed(true)
+        self.loco:SetJumpHeight(128)
         self:SetGravity(1000)
         self:DrawShadow(true)
+        self:SetHiding(true)
         self:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
         --self:SetCollisionBounds(Vector(-8, -8, 0), Vector(8, 8, 72))
         self:ResetBehavior()
-    end
-
-    if CLIENT then
-        local ef = EffectData()
-        ef:SetOrigin(self:GetPos())
-        ef:SetEntity(self)
-        local fx = util.Effect("RagdollImpact", ef)
-        local ef = EffectData()
-        ef:SetOrigin(self:GetPos())
-        ef:SetAngles(self:GetAngles())
-        ef:SetEntity(self)
-        local fx = util.Effect("skeleton_form", ef)
     end
 end
 
@@ -151,13 +194,16 @@ end
 
 function ENT:Shatter(dmginfo)
     self:SetHealth(0)
-    local ef = EffectData()
-    ef:SetOrigin(self:GetPos())
-    ef:SetAngles(self:GetAngles())
-    ef:SetStart(self:GetVelocity() + (dmginfo and dmginfo:GetDamageForce() / 10 or Vector(0, 0, 50)))
-    ef:SetEntity(self)
-    self:SetSolid(SOLID_NONE)
-    util.Effect("skeleton_Splatter", ef)
+
+    if not self:IsHiding() then
+        local ef = EffectData()
+        ef:SetOrigin(self:GetPos())
+        ef:SetAngles(self:GetAngles())
+        ef:SetStart(self:GetVelocity() + (dmginfo and dmginfo:GetDamageForce() / 10 or Vector(0, 0, 50)))
+        ef:SetEntity(self)
+        self:SetSolid(SOLID_NONE)
+        util.Effect("skeleton_Splatter", ef)
+    end
 end
 
 function ENT:CommitSuicide()
@@ -214,16 +260,10 @@ function ENT:BodyUpdate()
 
     spd = self.loco:GetVelocity():Length() / 150
 
-    if not self:OnGround() then
-        act = ACT_HL2MP_JUMP_ZOMBIE
-    end
-
-    if self.ClimbDir == 1 then end --act = ACT_IDLE
-    if self.ClimbDir == -1 then end --act = ACT_IDLE
-
-    if self:NearTarget() then
-        self:DoSlapAttack()
-        spd = 2
+    if not self.loco:IsOnGround() or self.loco:IsClimbingOrJumping() or self.IsJumping then
+        --act = ACT_HL2MP_JUMP_SCARED
+        local gest = ACT_GMOD_GESTURE_RANGE_FRENZY
+        self:AddGesture(gest, true)
     end
 
     self.FootstepTimer = self.FootstepTimer - spd
@@ -396,6 +436,7 @@ function ENT:ResetBehavior()
         self.path = nil
     end
 
+    self:SetHiding(true)
     self.NeedsTarget = true
     --self:FindTarget()
 end
@@ -421,6 +462,18 @@ function ENT:RunBehaviour()
 
         if self.NeedsTarget then
             self:FindTarget()
+
+            if IsValid(self:GetTarget()) and self:IsHiding() then
+                local result = self:ComputePath()
+
+                if result then
+                    self:SetAngles(((self:GetTarget():GetPos() - self:GetPos()) * Vector(1, 1, 0)):Angle())
+                    self:SetHiding(false)
+                end
+
+                coroutine.wait(0.5)
+            end
+
             self.NeedsTarget = nil
         end
 
@@ -430,7 +483,7 @@ function ENT:RunBehaviour()
             self.loco:SetDesiredSpeed(200)
             self.loco:SetAcceleration(150)
             self.loco:SetDeceleration(500)
-            self.loco:SetJumpHeight(900)
+            self.loco:SetJumpHeight(128)
 
             if not self:NearTarget() then
                 local result = self:ChaseTarget()
@@ -445,22 +498,21 @@ function ENT:RunBehaviour()
                 self.loco:SetDesiredSpeed(220)
                 self.loco:SetAcceleration(150)
                 self.loco:SetDeceleration(2000)
-                self.loco:SetJumpHeight(900)
+                self.loco:SetJumpHeight(128)
                 self.loco:FaceTowards(self:GetTarget():GetPos())
+                self:SetAngles(((self:GetTarget():GetPos() - self:GetPos()) * Vector(1, 1, 0)):Angle())
+                self:DoSlapAttack()
                 coroutine.wait(0.15)
             end
         else
-            -- No target, so we wander
             self.NeedsTarget = true
-            local rand = table.Random(navmesh.Find(self:GetPos(), 256, 64, 64))
-
-            if IsValid(rand) then
-                self:WanderToPos(rand:GetCenter())
-            end
-
-            self.loco:SetDesiredSpeed(200)
+            self.loco:SetDesiredSpeed(0)
             self.loco:SetAcceleration(150)
             self.loco:SetDeceleration(300)
+
+            if not self:IsHiding() then
+                self:SetHiding(true)
+            end
         end
 
         -- At this point in the code the bot has stopped chasing the player or finished walking to a random spot
@@ -560,6 +612,12 @@ function ENT:HandleStuck()
 end
 
 function ENT:Teleport(newpos)
+    local oldpos = self:GetPos()
+    local ef = EffectData()
+    ef:SetOrigin(newpos)
+    ef:SetAngles(self:GetAngles())
+    ef:SetEntity(self)
+    local fx = util.Effect("skeleton_form", ef)
     self:SetPos(newpos)
 end
 
@@ -572,16 +630,25 @@ end
 local KLPATHGEN_ITERS
 local KLPATHGEN_ITERS_BUDGET
 
-function ENT:ChaseTarget(options)
+--Compute a path
+function ENT:ComputePath(options)
     local options = options or {}
     local path = Path("Chase")
     path:SetMinLookAheadDistance(options.lookahead or 100)
     path:SetGoalTolerance(options.tolerance or 32)
     self.path = path
-    RELEVANT_KLEINER = self -- see ENT.PathGen for explanation
+    TEMP_PATHGEN_ITEM = self -- see ENT.PathGen for explanation
     KLPATHGEN_ITERS = 0
     KLPATHGEN_ITERS_BUDGET = PathingIterationLimit()
     local success = path:Compute(self, self:GetTarget():GetPos(), self.PathGen)
+    if not success then return end
+    if not IsValid(path) then return end
+
+    return path
+end
+
+function ENT:ChaseTarget(options)
+    local path = self:ComputePath(options)
     if not success then return "failed" end
     if not IsValid(path) then return "failed" end
     local target = self:GetTarget()
@@ -593,7 +660,7 @@ function ENT:ChaseTarget(options)
         local updaterate = math.max(PathingRateHigh() * (range / self.LoseTargetDist), 0.5)
 
         if path:GetAge() > updaterate and target:IsOnGround() then
-            RELEVANT_KLEINER = self -- see ENT.PathGen for explanation
+            TEMP_PATHGEN_ITEM = self -- see ENT.PathGen for explanation
             KLPATHGEN_ITERS = 0
             KLPATHGEN_ITERS_BUDGET = PathingIterationLimit()
             local success = path:Compute(self, self:GetTarget():GetPos(), self.PathGen)
@@ -625,14 +692,13 @@ local mt = {"WALK", "FALL", "CLIMB", "GAP", "LADDERUP", "LADDERDOWN"}
 
 function ENT:OnNavAreaChanged(old, new)
     local goal = IsValid(self.path) and self.path:GetCurrentGoal()
+    local place = new:GetPlace()
 
-    if not SKELETON_LOCATION_WHITELIST[new:GetPlace()] then
+    if place and place ~= "" and not SKELETON_LOCATION_WHITELIST[place] then
         self:CommitSuicide()
     end
 
-    if goal and (old:HasAttributes(NAV_MESH_JUMP) or new:HasAttributes(NAV_MESH_JUMP) or goal.type == 2 or goal.type == 3) then
-        self.loco:JumpAcrossGap(goal.area:GetCenter(), goal.area:GetCenter() - self:GetPos())
-    end
+    if goal and (old:HasAttributes(NAV_MESH_JUMP) or new:HasAttributes(NAV_MESH_JUMP) or goal.type == 2 or goal.type == 3) then end --self.loco:JumpAcrossGap(goal.area:GetCenter(),goal.area:GetCenter() - self:GetPos())
 end
 
 function ENT:WhilePathing(path)
@@ -640,13 +706,37 @@ function ENT:WhilePathing(path)
     if self.loco == nil then return true end
     --if not self.loco:IsOnGround() and self:GetVelocity().z < -50 then return false end -- attempting to move while falling seems to pause falling
     local seg1, index = self:GetCurrentPathPoint() -- This returns the first path segment we're closest to.
+    local goal = IsValid(self.path) and self.path:NextSegment() or self.path:GetCurrentGoal()
+    local climb = self.loco:IsClimbingOrJumping() or seg1 and seg1.type == 2
+    self.IsJumping = nil
+    local deltaZ = seg1.area:ComputeAdjacentConnectionHeightChange(goal.area)
+
+    if not IsValid(ladder) then
+        local force = goal.area:HasAttributes(NAV_MESH_JUMP)
+
+        if self.loco:IsOnGround() and ((deltaZ > -15 and deltaZ > self.loco:GetStepHeight()) or force) and deltaZ <= self.loco:GetMaxJumpHeight() then
+            local jumpstart = seg1.area:GetCenter()
+            local jumptarget = goal.area:GetCenter()
+            local dist = jumpstart:Distance(jumptarget)
+            path:MoveCursorToClosestPosition(jumptarget, SEEK_ENTIRE_PATH)
+            debugoverlay.Box(jumptarget, Vector(1, 1, 1) * -4, Vector(1, 1, 1) * 4, 2, Color(255, 0, 255, 64))
+            self.IsJumping = true
+            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), (jumptarget - self:GetPos()))
+            self.loco:FaceTowards(jumptarget)
+            self.loco:SetDeceleration(500)
+            coroutine.wait(0.6)
+            debugoverlay.Line(jumptarget, jumpstart, 2, Color(255, 0, 255), true)
+
+            return true
+        end
+    end
 
     return true
 end
 
 ENT.PathGen = function(area, fromArea, ladder, elevator, length)
     KLPATHGEN_ITERS = (KLPATHGEN_ITERS or 0) + 1
-    local self = RELEVANT_KLEINER -- This is bullshit, i guess this callback doesn't include the entity pathing.
+    local self = TEMP_PATHGEN_ITEM -- This is bullshit, i guess this callback doesn't include the entity pathing.
     if not IsValid(self) then return -1 end
 
     if not IsValid(fromArea) then
@@ -678,12 +768,13 @@ ENT.PathGen = function(area, fromArea, ladder, elevator, length)
             end
         end
 
-        if IsValid(area) and area:HasAttributes(NAV_MESH_AVOID) and area:IsUnderwater() then return -1 end
-
-        if IsValid(area) and area:HasAttributes(NAV_MESH_AVOID) then
-            cost = cost + 100
+        if IsValid(area) then
+            if area:IsUnderwater() then return -1 end --do not path through water
+            if area:IsDamaging() then return -1 end --do not path through water
+            if area:HasAttributes(NAV_MESH_AVOID) then
+                cost = cost + 100
+            end
         end
-
         return cost
     end
 end
