@@ -721,7 +721,7 @@ function ENT:WhilePathing(path)
             path:MoveCursorToClosestPosition(jumptarget, SEEK_ENTIRE_PATH)
             debugoverlay.Box(jumptarget, Vector(1, 1, 1) * -4, Vector(1, 1, 1) * 4, 2, Color(255, 0, 255, 64))
             self.IsJumping = true
-            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), (jumptarget - self:GetPos()))
+            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), jumptarget - self:GetPos())
             self.loco:FaceTowards(jumptarget)
             self.loco:SetDeceleration(500)
             coroutine.wait(0.6)
@@ -771,10 +771,12 @@ ENT.PathGen = function(area, fromArea, ladder, elevator, length)
         if IsValid(area) then
             if area:IsUnderwater() then return -1 end --do not path through water
             if area:IsDamaging() then return -1 end --do not path through water
+
             if area:HasAttributes(NAV_MESH_AVOID) then
                 cost = cost + 100
             end
         end
+
         return cost
     end
 end
