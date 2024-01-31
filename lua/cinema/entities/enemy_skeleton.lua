@@ -25,7 +25,7 @@ SKELETON_SPAWN_WHITELIST = {
     ["Maze"] = true,
 }
 
--- Places a skeleton can exist
+-- Places a skeleton can exist 
 SKELETON_LOCATION_WHITELIST = {
     ["Caverns"] = true,
     ["Labyrinth of Kek"] = true,
