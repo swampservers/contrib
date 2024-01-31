@@ -60,8 +60,7 @@ end)
 -- lua_run for _, ent in ents.Iterator() do if ent:GetClass() == "enemy_skeleton" then ent:Remove() end end
 -- lua_run timer.Remove("SpookySpawns")
 -- lua_run timer.Remove("SpookySpawner")
-if SERVER then
-    --[[
+if SERVER then end --[[
     local function UpdateSkeletonSpawns()
         SKELETON_SPAWNS = {}
         local areas = navmesh.GetAllNavAreas()
@@ -92,7 +91,6 @@ if SERVER then
         end
     end)
     ]]
-end
 
 function ENT:SetupDataTables()
     self:NetworkVar("Entity", 0, "Target")
