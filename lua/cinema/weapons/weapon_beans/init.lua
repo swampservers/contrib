@@ -28,10 +28,38 @@ function BeanFart(ply)
 
         if v:GetPos():Distance(pos) < 140 then
             local d = DamageInfo()
-            d:SetDamage(3)
+            d:SetDamage(math.random(3, math.max(3, ply.BeansEaten * 2)))
             d:SetAttacker(ply)
+            --spawn a beans temporarily as an inflictor if one doesnt exist
+            local tempbeans
+
+            if not ply:HasWeapon("weapon_beans") then
+                tempbeans = ents.Create("weapon_beans")
+                tempbeans:SetPos(Vector(0, 0, 3600))
+                tempbeans:Spawn()
+                tempbeans:Activate()
+
+                if IsValid(tempbeans:GetPhysicsObject()) then
+                    tempbeans:GetPhysicsObject():EnableMotion(false)
+                end
+            end
+
+            if IsValid(tempbeans) then
+                d:SetInflictor(tempbeans)
+            end
+
+            if ply:HasWeapon("weapon_beans") then
+                d:SetInflictor(ply:GetWeapon("weapon_beans"))
+            end
+
             d:SetDamageType(DMG_POISON)
             v:TakeDamageInfo(d)
+
+            timer.Simple(0, function()
+                if IsValid(tempbeans) then
+                    tempbeans:Remove()
+                end
+            end)
         end
     end
 end
