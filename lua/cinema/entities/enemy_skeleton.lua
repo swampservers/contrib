@@ -31,12 +31,12 @@ SKELETON_LOCATION_WHITELIST = {
     ["Labyrinth of Kek"] = true,
     ["maze"] = true,
     ["Sewers"] = true,
-    ["Nowhere"] = true,
     ["Outside"] = true,
     ["Sneed's Feed and Seed"] = true,
     ["The Pit"] = true,
 }
 
+--["Nowhere"] = true, --debug
 hook.Add("OnEntityCreated", "skeleton_add", function(ent)
     if ent:GetClass() == "enemy_skeleton" then
         SKELETON[ent] = true
@@ -58,11 +58,7 @@ hook.Add("EntityRemoved", "skeleton_remove", function(ent)
 end)
 
 -- lua_run for _, ent in ents.Iterator() do if ent:GetClass() == "enemy_skeleton" then ent:Remove() end end
--- lua_run timer.Remove("SpookySpawns")
--- lua_run timer.Remove("SpookySpawner")
-if SERVER then end
-
---[[
+if SERVER then
     local function UpdateSkeletonSpawns()
         SKELETON_SPAWNS = {}
         local areas = navmesh.GetAllNavAreas()
@@ -77,14 +73,15 @@ if SERVER then end
 
     timer.Simple(0.2, function()
         UpdateSkeletonSpawns()
+
+        timer.Create("Skeleton_Spawnpoint_List", 20, 0, function()
+            --idk how often to update this. its probably a heavy function. i just wanna make sure this cache stays up to date
+            UpdateSkeletonSpawns()
+        end)
     end)
 
-    timer.Create("SpookySpawns", 10, 0, function()
-        UpdateSkeletonSpawns()
-    end)
-
-    timer.Create("SpookySpawner", 0.25, 0, function()
-        if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < 30 then
+    timer.Create("Skeleton_Spawning", 1, 0, function()
+        if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < 40 then
             local spawn = table.Random(SKELETON_SPAWNS)
             assert(spawn ~= nil, "No spawnpoints for skeleton.")
             local boo = ents.Create("enemy_skeleton")
@@ -92,7 +89,8 @@ if SERVER then end
             boo:Spawn()
         end
     end)
-    ]]
+end
+
 function ENT:SetupDataTables()
     self:NetworkVar("Entity", 0, "Target")
     self:NetworkVar("Bool", 0, "Collapsing")
@@ -109,28 +107,24 @@ function ENT:NetworkVarChanged(name, old, new)
             local ef = EffectData()
             ef:SetOrigin(self:GetPos())
             ef:SetAngles(self:GetAngles())
-            ef:SetStart(Vector(0, 0, -30))
+            ef:SetStart(Vector(0, 0, 0))
             ef:SetEntity(self)
-            self:SetSolid(SOLID_NONE)
+            self:SetNotSolid(true)
             util.Effect("skeleton_Splatter", ef)
-            local ef = EffectData()
-            ef:SetOrigin(self:GetPos())
-            ef:SetEntity(self)
-            local fx = util.Effect("RagdollImpact", ef)
         else
             self:SetNoDraw(false)
             local ef = EffectData()
             ef:SetOrigin(self:GetPos())
             ef:SetAngles(self:GetAngles())
             ef:SetEntity(self)
-            self:SetSolid(SOLID_BBOX)
+            self:SetNotSolid(false)
             local fx = util.Effect("skeleton_form", ef)
             local ef = EffectData()
             ef:SetOrigin(self:GetPos())
             ef:SetEntity(self)
             local fx = util.Effect("RagdollImpact", ef)
             self:EmitSound("physics/concrete/boulder_impact_hard" .. math.random(1, 4) .. ".wav", 140, 140, 0.5)
-            util.ScreenShake(self:GetPos(), 5, 5, 0.6, 600)
+            util.ScreenShake(self:GetPos(), 5, 5, 0.2, 600)
         end
     end
 end
@@ -172,6 +166,14 @@ function ENT:Initialize()
         self:SetBloodColor(BLOOD_COLOR_YELLOW)
         self:SetUseType(SIMPLE_USE)
         self:SetHealth(3)
+
+        if math.random(0, 1000) == 1 then
+            self:SetHealth(200)
+            self.KillReward = 10000
+            self.AttackDamageOverride = 10
+            self:SetColor(Color(32, 32, 32))
+        end
+
         self.loco:SetGravity(1000)
         self.loco:SetAvoidAllowed(true)
         self.loco:SetClimbAllowed(false)
@@ -224,14 +226,13 @@ function ENT:OnKilled(dmginfo)
     self:SetCollapsing(true)
     self:Shatter(dmginfo)
     self:EmitSound("skeleton/bones_drop01.wav", 130, math.Rand(90, 110), 1, CHAN_BODY)
+    SafeRemoveEntityDelayed(self, 3)
     local attacker = dmginfo:GetAttacker()
 
-    if IsValid(attacker) and attacker:IsPlayer() then
+    if IsValid(attacker) and attacker:IsPlayer() and attacker.GivePoints then
         attacker:GivePoints(self.KillReward)
         attacker:Notify("You killed a skeleton for " .. tostring(self.KillReward) .. " Points!")
     end
-
-    SafeRemoveEntityDelayed(self, 3)
 end
 
 function ENT:Draw(flags)
@@ -245,6 +246,11 @@ end
 function ENT:BodyUpdate()
     --self:Shatter()
     if self:Dead() then return true end
+
+    if not self:IsHiding() and self:GetNoDraw() then
+        self:SetNoDraw(false)
+    end
+
     local act = ACT_HL2MP_IDLE_ZOMBIE
     self.FootstepTimer = self.FootstepTimer or 0
     local spd = 0
@@ -300,7 +306,7 @@ function ENT:DoSlapAttack()
 
     if trace.Hit and trace.Entity:Health() > 0 then
         local d = DamageInfo()
-        d:SetDamage(math.random(1, 2))
+        d:SetDamage(self.AttackDamageOverride or math.random(1, 2))
         d:SetAttacker(self)
         d:SetInflictor(self)
         d:SetDamageType(DMG_SLASH)
@@ -326,7 +332,6 @@ end
 function ENT:CanBeTarget(ent)
     if not IsValid(ent) then return false end
     if ent == self then return false end
-    if ent:GetMoveType() == MOVETYPE_FLY then return false end
     if ent.IsAFK and ent:IsAFK() then return false end
     if Safe and Safe(ent) and ent:IsPlayer() then return false end
     if ent:IsPlayer() and not ent:Alive() then return false end
@@ -410,6 +415,7 @@ function ENT:FindTarget()
     end
 
     -- Slowly die if they end up somewhere where nobody is
+    --this is a terrible place for this todo move
     if playersum == 0 then
         self.WasteCounter = (self.WasteCounter or 1000) - 1
         self.NextTargetTime = CurTime() + 1
@@ -430,6 +436,7 @@ function ENT:FindTarget()
 end
 
 function ENT:ResetBehavior()
+    if self:Dead() then return end
     self.shifted = nil
 
     if self.path then
@@ -442,7 +449,6 @@ function ENT:ResetBehavior()
 
     self:SetHiding(true)
     self.NeedsTarget = true
-    --self:FindTarget()
 end
 
 function ENT:WanderToPos(pos)
@@ -466,57 +472,67 @@ function ENT:RunBehaviour()
 
         if self.NeedsTarget then
             self:FindTarget()
-
-            if IsValid(self:GetTarget()) and self:IsHiding() then
-                local result = self:ComputePath()
-
-                if result then
-                    self:SetAngles(((self:GetTarget():GetPos() - self:GetPos()) * Vector(1, 1, 0)):Angle())
-                    self:SetHiding(false)
-                end
-
-                coroutine.wait(0.5)
-            end
-
             self.NeedsTarget = nil
+            --ok we found a target, see if we can path there.
         end
 
         self.loco:SetGravity(1000)
+        local target = self:GetTarget()
+        local should_chase = IsValid(target)
+        local testpath
 
-        if IsValid(self:GetTarget()) and self:CanBeTarget(self:GetTarget()) then
-            self.loco:SetDesiredSpeed(200)
-            self.loco:SetAcceleration(150)
-            self.loco:SetDeceleration(500)
-            self.loco:SetJumpHeight(128)
+        if IsValid(target) then
+            testpath = self:ComputePath(target:GetPos())
+        end
 
-            if not self:NearTarget() then
-                local result = self:ChaseTarget()
-
-                -- If chasing the target fails somehow, its probably a wise assumption that its redundant to keep trying.
-                if result == "failed" then
-                    self:ResetBehavior()
+        if IsValid(target) and testpath and testpath:IsValid() and self:CanBeTarget(target) then
+            if not self:Dead() then
+                --come out of hiding if needed
+                if self:IsHiding() then
+                    self:SetHiding(false)
+                    self:SetAngles(((self:GetTarget():GetPos() - self:GetPos()) * Vector(1, 1, 0)):Angle())
+                    coroutine.wait(0.5)
                 end
-            end
 
-            if self:NearTarget() then
-                self.loco:SetDesiredSpeed(220)
+                self.loco:SetDesiredSpeed(200)
                 self.loco:SetAcceleration(150)
-                self.loco:SetDeceleration(2000)
+                self.loco:SetDeceleration(500)
                 self.loco:SetJumpHeight(128)
-                self.loco:FaceTowards(self:GetTarget():GetPos())
-                self:SetAngles(((self:GetTarget():GetPos() - self:GetPos()) * Vector(1, 1, 0)):Angle())
-                self:DoSlapAttack()
-                coroutine.wait(0.15)
+
+                if not self:NearTarget() then
+                    local result = self:ChaseTarget()
+
+                    -- If chasing the target fails somehow, its probably a wise assumption that its redundant to keep trying.
+                    if result == "failed" then
+                        self:TeleportSafe()
+                        self:ResetBehavior()
+                        coroutine.wait(1)
+                    end
+                end
+
+                if self:NearTarget() then
+                    self.loco:SetDesiredSpeed(220)
+                    self.loco:SetAcceleration(150)
+                    self.loco:SetDeceleration(2000)
+                    self.loco:SetJumpHeight(128)
+                    self.loco:FaceTowards(self:GetTarget():GetPos())
+                    self:SetAngles(((self:GetTarget():GetPos() - self:GetPos()) * Vector(1, 1, 0)):Angle())
+                    self:DoSlapAttack()
+                    coroutine.wait(0.15)
+                end
             end
         else
             self.NeedsTarget = true
+            self:SetTarget(NULL)
             self.loco:SetDesiredSpeed(0)
             self.loco:SetAcceleration(150)
             self.loco:SetDeceleration(300)
 
-            if not self:IsHiding() then
+            if not self:IsHiding() and not self:Dead() then
                 self:SetHiding(true)
             end
+
+            coroutine.wait(1)
         end
 
         -- At this point in the code the bot has stopped chasing the player or finished walking to a random spot
@@ -529,7 +545,7 @@ function ENT:MoveToPos(pos, options)
     if pos == nil then return "failed" end
     options = options or {}
     local path = Path("Follow")
-    path:SetMinLookAheadDistance(options.lookahead or 300)
+    path:SetMinLookAheadDistance(options.lookahead or 150)
     path:SetGoalTolerance(options.tolerance or 20)
     path:Compute(self, pos)
     self.path = path
@@ -635,7 +651,7 @@ local KLPATHGEN_ITERS
 local KLPATHGEN_ITERS_BUDGET
 
 --Compute a path
-function ENT:ComputePath(options)
+function ENT:ComputePath(pos, options)
     local options = options or {}
     local path = Path("Chase")
     path:SetMinLookAheadDistance(options.lookahead or 100)
@@ -644,17 +660,19 @@ function ENT:ComputePath(options)
     TEMP_PATHGEN_ITEM = self -- see ENT.PathGen for explanation
     KLPATHGEN_ITERS = 0
     KLPATHGEN_ITERS_BUDGET = PathingIterationLimit()
-    local success = path:Compute(self, self:GetTarget():GetPos(), self.PathGen)
+    local success = path:Compute(self, pos, self.PathGen)
+    --print(self,"performed path compute, result was",tostring(success))
     if not success then return end
     if not IsValid(path) then return end
 
-    return path
+    return path, success
 end
 
 function ENT:ChaseTarget(options)
-    local path = self:ComputePath(options)
-    if not success then return "failed" end
+    options = options or {}
+    local path, result = self:ComputePath(self:GetTarget():GetPos(), options)
     if not IsValid(path) then return "failed" end
+    if not result then return "failed" end
     local target = self:GetTarget()
 
     while IsValid(path) and self:HaveTarget() and not self:NearTarget() and IsValid(target) do
@@ -678,7 +696,9 @@ function ENT:ChaseTarget(options)
             path:Update(self)
         end
 
-        if options.draw then end --path:Draw()
+        if options.draw then
+            path:Draw()
+        end
 
         if self.loco:IsStuck() then
             self:HandleStuck()
@@ -725,7 +745,7 @@ function ENT:WhilePathing(path)
             path:MoveCursorToClosestPosition(jumptarget, SEEK_ENTIRE_PATH)
             debugoverlay.Box(jumptarget, Vector(1, 1, 1) * -4, Vector(1, 1, 1) * 4, 2, Color(255, 0, 255, 64))
             self.IsJumping = true
-            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), jumptarget - self:GetPos())
+            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), (jumptarget - self:GetPos()))
             self.loco:FaceTowards(jumptarget)
             self.loco:SetDeceleration(500)
             coroutine.wait(0.6)
@@ -780,6 +800,8 @@ ENT.PathGen = function(area, fromArea, ladder, elevator, length)
                 cost = cost + 100
             end
         end
+
+        if dist >= self.LoseTargetDist * 1.5 then return -1 end
 
         return cost
     end
