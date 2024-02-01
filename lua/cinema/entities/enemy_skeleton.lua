@@ -745,7 +745,7 @@ function ENT:WhilePathing(path)
             path:MoveCursorToClosestPosition(jumptarget, SEEK_ENTIRE_PATH)
             debugoverlay.Box(jumptarget, Vector(1, 1, 1) * -4, Vector(1, 1, 1) * 4, 2, Color(255, 0, 255, 64))
             self.IsJumping = true
-            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), (jumptarget - self:GetPos()))
+            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), jumptarget - self:GetPos())
             self.loco:FaceTowards(jumptarget)
             self.loco:SetDeceleration(500)
             coroutine.wait(0.6)
