@@ -83,7 +83,7 @@ local function OreOrigin()
                 trace = util.TraceLine(tr)
             end
 
-            local ep = (trace.Hit or trace.HitPos) or tr.endpos
+            local ep = (trace.Hit and trace.HitPos) or tr.endpos
 
             if not trace.StartSolid or (trace.StartSolid and trace.FractionLeftSolid < 1) then
                 local cpos = LerpVector(0.5,tr.start,ep)
