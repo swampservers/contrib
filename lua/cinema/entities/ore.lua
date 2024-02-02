@@ -1,19 +1,20 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- INSTALL: CINEMA
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "Ore"
 ENT.Author = "PYROTEKNIK"
-ENT.Purpose = "If you find one of these, something magic may happen"
+ENT.Purpose = "Mine And Craft"
 ENT.Category = "PYROTEKNIK"
 ENT.Spawnable = true
-ENT.PointsValue = 1000 -- TODO: Do we want more than one value for ore? Like, diamond or something?
+ENT.PointsValue = 200
 ENT.IsOre = true
 ENT.AdminSpawnable = true
 local PlacementSettings = {}
 PlacementSettings.RequireCeiling = false
 PlacementSettings.AllowFloor = false
--- NOTE: Generally the process will be less efficient if both of these are set to false!
-PlacementSettings.CeilingHeight = 128
+--NOTE: Generally the process will be less efficient if both of these are set to false!
+PlacementSettings.CeilingHeight = 256
 
 PlacementSettings.SurfacePropWhitelist = {"dirt", "grass", "gravel", "rock"}
 
@@ -26,13 +27,13 @@ end
 
 local function OreTrace(data)
     local org = data
-    local dir = VectorRand()
+    local dir = (VectorRand() * Vector(1, 1, 0.5)):GetNormalized()
 
     --handle trace
     if istable(data) and data.HitPos then
         local hitnormal = (data.HitNormal * Vector(1, 1, 0.25)):GetNormalized()
         local dir = data.Normal
-        local refdir = dir - 2 * dir:Dot(hitnormal) * hitnormal
+        local refdir = (dir - 2 * dir:Dot(hitnormal) * hitnormal)
         org = data.HitPos
         --dir = LerpVector(0.4,refdir,dir):GetNormalized()
         dir = (hitnormal + VectorRand() + dir * 0.5):GetNormalized()
@@ -40,8 +41,8 @@ local function OreTrace(data)
 
     local tr = {
         start = org,
-        endpos = org + dir * 65535,
-        mask = MASK_PLAYERSOLID_BRUSHONLY
+        endpos = org + dir * 2000,
+        mask = MASK_PLAYERSOLID
     }
 
     local trace = util.TraceLine(tr)
@@ -52,14 +53,15 @@ end
 local function IsOreTraceValid(trace)
     if not trace.Hit then return false end
     local surprop = util.GetSurfacePropName(trace.SurfaceProps)
-    if not table.HasValue(PlacementSettings.SurfacePropWhitelist, surprop) then return false end
-    if table.HasValue(PlacementSettings.TextureBlacklist, trace.HitTexture) then return false end
-    if not trace.Hit then return false end
-    if trace.HitSky then return false end
-    if trace.HitNoDraw then return false end
-    if IsValid(trace.Entity) then return false end
-    if trace.AllSolid then return false end
-    if trace.StartSolid and trace.FractionLeftSolid == 0 then return false end
+    if (not table.HasValue(PlacementSettings.SurfacePropWhitelist, surprop)) then return false end
+    print(surprop)
+    if (table.HasValue(PlacementSettings.TextureBlacklist, trace.HitTexture)) then return false end
+    if (not trace.Hit) then return false end
+    if (trace.HitSky) then return false end
+    if (trace.HitNoDraw) then return false end
+    if (IsValid(trace.Entity)) then return false end
+    if (trace.AllSolid) then return false end
+    if (trace.StartSolid and trace.FractionLeftSolid == 0) then return false end
 
     return true
 end
@@ -67,13 +69,15 @@ end
 ORE_CACHED_ORIGINPOINTS = nil
 local ore_areas = {}
 ore_areas["Caverns"] = true
+ore_areas["Nowhere"] = true
 
 local function OreOrigin()
     local hull = Vector(64, 64, 64)
     local navareas = navmesh.GetAllNavAreas()
     local picks
 
-    if ORE_CACHED_ORIGINPOINTS == nil then
+    --Cache good ore points
+    if (ORE_CACHED_ORIGINPOINTS == nil) then
         local origins = {}
 
         for _, area in pairs(navareas) do
@@ -87,7 +91,7 @@ local function OreOrigin()
             tr.mins = hull * Vector(1, 1, 0.1) * -0.5
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             local trace = util.TraceHull(tr)
-            if not IsOreTraceValid(trace) then continue end
+            if (not IsOreTraceValid(trace)) then continue end
             local tr = {}
             tr.start = trace.HitPos
             tr.endpos = tr.start + Vector(0, 0, PlacementSettings.CeilingHeight)
@@ -101,7 +105,7 @@ local function OreOrigin()
                 table.insert(origins, trace)
                 local ext = area:GetExtentInfo()
                 local bnds = Vector(ext.SizeX, ext.SizeY, ext.SizeZ + 1)
-                debugoverlay.Box(area:GetCenter() + Vector(0, 0, 0.5), bnds * -0.5, bnds * 0.5, 60, Color(0, 0, 255, 0))
+                debugoverlay.Box(area:GetCenter() + Vector(0, 0, 0.5), bnds * -0.5, bnds * 0.5, 60, Color(0, 0, 255, 16))
                 -- else
                 --debugoverlay.SweptBox( tr.start, trace.HitPos, tr.mins, tr.maxs, Angle(), 60, Color( 255, 0, 255,0 ) )
             end
@@ -113,13 +117,20 @@ local function OreOrigin()
         picks = ORE_CACHED_ORIGINPOINTS
     end
 
-    if table.Count(picks) > 0 then return table.Random(picks) end
+    if (table.Count(picks) > 0) then return table.Random(picks) end
 end
 
-if SERVER then
+if (SERVER) then
+    concommand.Add("ore_showseeds", function()
+        OreOrigin()
+
+        for k, v in pairs(ORE_CACHED_ORIGINPOINTS) do
+            print(v)
+        end
+    end)
+
     ORE_MAXNUMBER = 24
 
-    -- TODO(winter): Despawn after like 30 minutes so we don't have a bunch that get stuck in impossible places
     timer.Create("ore_spawner", 3, 0, function()
         if EntityCount("ore") < ORE_MAXNUMBER then
             local pos = OreOrigin()
@@ -129,21 +140,56 @@ if SERVER then
 end
 
 function SpawnOre(size, origin)
-    local res = origin
+    local res
     local viter = 0
     local bt = 5
     local at = 1 / 16
+    local org = origin
+
+    local tr = {
+        start = org,
+        endpos = org + Vector(0, 0, 3000),
+        mins = Vector(-16, -16, 0),
+        maxs = Vector(16, 16, 0),
+        mask = MASK_PLAYERSOLID
+    }
+
+    local mtrace = util.TraceHull(tr)
+
+    if mtrace.StartSolid then
+        mtrace = util.TraceLine(tr)
+    end
+
+    org = LerpVector(math.Rand(0.2, 0.5), org, mtrace.HitPos)
 
     for i = 1, 100 do
-        local trace = OreTrace(res)
+        local dir = VectorRand()
+        dir.z = math.abs(dir.z)
+        dir = (dir * Vector(1, 1, 0.5)):GetNormalized()
 
-        if IsOreTraceValid(trace) and (trace.HitPos:Distance(origin) + 100) > (res.HitPos or res):Distance(origin) then
-            if trace.HitPos:Distance(trace.StartPos) > 0 then
-                debugoverlay.Line(trace.StartPos, trace.HitPos, bt + viter * at, HSVToColor(180 + math.NormalizeAngle(-180 + viter * 5), 1, 1), false)
-                viter = viter + 1
+        local tr = {
+            start = org,
+            endpos = org + dir * 2000,
+            mask = MASK_PLAYERSOLID
+        }
+
+        local trace = util.TraceLine(tr)
+        local valid = IsOreTraceValid(trace)
+        debugoverlay.Line(trace.StartPos, trace.HitPos, 1, valid and Color(0, 255, 0) or Color(255, 0, 0))
+
+        if valid then
+            local tr = {}
+            tr.start = trace.HitPos + trace.HitNormal * 16
+            tr.endpos = tr.start + Vector(0, 0, -PlacementSettings.CeilingHeight)
+            tr.mask = MASK_PLAYERSOLID
+            local ctrace = util.TraceLine(tr)
+            local cv = ctrace.Hit
+            debugoverlay.Line(ctrace.StartPos, ctrace.HitPos, 1, cv and Color(0, 255, 0) or Color(255, 0, 0), false)
+
+            if cv then
+                res = trace
+                break
             end
-
-            res = trace
         end
     end
 
@@ -167,17 +213,19 @@ function SpawnOre(size, origin)
     ore:Spawn()
     ore:Activate()
     ore.PlacementNormal = nrm
-    debugoverlay.Line(res.StartPos, res.HitPos, bt + viter * at, HSVToColor(180 + math.NormalizeAngle(-180 + viter * 5), 1, 1), false)
-    local ac = HSVToColor(180 + math.NormalizeAngle(-180 + viter * 5), 1, 1)
-    ac.a = 8
-    debugoverlay.Box(ore:GetPos(), Vector(1, 1, 1) * -16, Vector(1, 1, 1) * 16, 10, ac)
-    debugoverlay.Text(ore:GetPos(), viter, 10, false)
+    debugoverlay.Box(ore:GetPos(), Vector(1, 1, 1) * -16, Vector(1, 1, 1) * 16, 5, Color(0, 255, 0, 4))
 
     return ore
 end
 
+if SERVER then
+    concommand.Add("oretest", function(ply, cmd, args)
+        SpawnOre(1, ply:EyePos())
+    end)
+end
+
 function ENT:Initialize()
-    if SERVER then
+    if (SERVER) then
         self.Entity:SetModel("models/props_junk/rock001a.mdl")
         local bmins, bmaxs = Vector(-4.8, -3.1, 0), Vector(4.8, 3.1, 2)
         self:SetCollisionBounds(bmins, bmaxs)
@@ -187,12 +235,12 @@ function ENT:Initialize()
         self:SetSolid(SOLID_VPHYSICS)
         local phys = self:GetPhysicsObject()
 
-        if IsValid(phys) then
+        if (IsValid(phys)) then
             phys:EnableMotion(false)
         end
 
         timer.Simple(60 * 60, function()
-            if IsValid(self) then
+            if (IsValid(self)) then
                 self:Remove()
             end
         end)
@@ -200,7 +248,7 @@ function ENT:Initialize()
 
     self.EmbedDistance = self:BoundingRadius() * 0.7
 
-    if CLIENT then
+    if (CLIENT) then
         local effectdata = EffectData()
         effectdata:SetOrigin(self:GetPos())
         effectdata:SetEntity(self)
@@ -209,7 +257,7 @@ function ENT:Initialize()
 end
 
 function ENT:SpawnFunction(ply, tr, ClassName)
-    local ore = SpawnOre(1, tr.HitPos + tr.HitNormal * 16)
+    local ore = SpawnOre(1, tr.HitPos + tr.HitNormal * 32)
 
     return ore
 end
@@ -226,7 +274,7 @@ function ENT:Draw()
     local a = render.GetAmbientLightColor() + shine
     render.SetAmbientLight(a.x, a.y, a.z)
     local c = self:GetColor()
-    local cvector = Vector(c.r, c.g, c.b) / 255
+    local cvector = (Vector(c.r, c.g, c.b) / 255)
     local lc = render.GetLightColor(pos) + shine
 
     for i = 0, 5 do
@@ -245,7 +293,7 @@ function ENT:DoHit(ply, tr, dmginfo)
     end
 
     if SERVER then
-        self:EmitSound("physics/concrete/rock_impact_hard" .. math.random(1, 4) .. ".wav", 150, 80, 100, 1, CHAN_ITEM)
+        self:EmitSound("physics/concrete/concrete_impact_bullet" .. math.random(1, 4) .. ".wav", 150, 80, 100, 1, CHAN_ITEM)
         local tweak_angle = self:GetAngles()
         self.EmbedDistance = self.EmbedDistance or self:BoundingRadius()
         if self.EmbedDistance <= 0 then return end
@@ -259,19 +307,22 @@ function ENT:DoHit(ply, tr, dmginfo)
         tweak_angle:RotateAroundAxis(ax, bn)
         nv:RotateAroundAxis(ax, bn)
         self.PlacementNormal = nv:Forward()
-        self:SetPos(self:GetPos() + nv:Forward() * md * 0.2)
+        self:SetPos(self:GetPos() + (nv:Forward()) * md * 0.2)
         self:SetAngles(tweak_angle)
 
         if self.EmbedDistance <= 0 then
             self:PhysicsInit(SOLID_VPHYSICS)
+
+            if ply.GivePoints then
+                ply:GivePoints(self.PointsValue)
+            end
+
             self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav", 150, 140, 100, 1, CHAN_ITEM)
             self:GetPhysicsObject():Wake()
             self:GetPhysicsObject():SetVelocity(self.PlacementNormal:GetNormalized() * 100)
             self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
             --self:GetPhysicsObject():EnableGravity(false)
             --self:GetPhysicsObject():EnableCollisions(false)
-            ply:GivePoints(self.PointsValue)
-            ply:Notify("You mined ore worth " .. tostring(self.PointsValue) .. " Points!")
             SafeRemoveEntityDelayed(self, 0.03)
         end
     end
@@ -282,7 +333,7 @@ if CLIENT then
         pos = pos + (LocalPlayer():EyePos() - pos):GetNormalized() * 6
         local part = self.Sparkle:Add("pyroteknik/sparkle", pos) -- Create a new particle at pos
 
-        if part then
+        if (part) then
             local c = self:GetColor()
             part:SetColor(c.r, c.g, c.b)
             part:SetDieTime(life or 1) -- How long the particle should "live"
@@ -293,7 +344,7 @@ if CLIENT then
             part:SetRollDelta(math.Rand(-4, 4))
 
             part:SetThinkFunction(function(pa)
-                local pc = pa:GetLifeTime() / pa:GetDieTime()
+                local pc = (pa:GetLifeTime() / pa:GetDieTime())
                 local wc = math.sin(math.rad(pc * 180))
                 pa:SetStartSize(wc * 16)
                 pa:SetEndSize(wc * 16)
