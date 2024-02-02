@@ -256,6 +256,7 @@ function ENT:OnKilled(dmginfo)
 
     if IsValid(attacker) and attacker:IsPlayer() and attacker.GivePoints then
         attacker:GivePoints(self.KillReward)
+        attacker:AddStat("skeleton_kills")
         attacker:Notify("You killed a skeleton for " .. tostring(self.KillReward) .. " Points!")
     end
 end

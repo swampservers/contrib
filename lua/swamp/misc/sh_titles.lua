@@ -262,6 +262,16 @@ AddTitle({
     reward_id = "mined"
 })
 
+AddTitle({
+    {10, "Skeleton", 5000},
+    {100, "Bone Rattler",20000},
+    {1000, "Bone Shatterer",50000},
+    {10000, "Bone Incinerator",200000},
+}, "Slay %s skeletons.", "s_skeleton_kills",{
+    reward_id = "skeleton_kills"
+})
+
+
 TitleCategory("Weapons")
 
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
