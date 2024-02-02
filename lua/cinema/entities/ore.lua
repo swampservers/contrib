@@ -25,54 +25,29 @@ local function EntityCount(class)
     return table.Count(ents.FindByClass(class))
 end
 
-local function OreTrace(data)
-    local org = data
-    local dir = (VectorRand() * Vector(1, 1, 0.5)):GetNormalized()
-
-    --handle trace
-    if istable(data) and data.HitPos then
-        local hitnormal = (data.HitNormal * Vector(1, 1, 0.25)):GetNormalized()
-        local dir = data.Normal
-        local refdir = (dir - 2 * dir:Dot(hitnormal) * hitnormal)
-        org = data.HitPos
-        --dir = LerpVector(0.4,refdir,dir):GetNormalized()
-        dir = (hitnormal + VectorRand() + dir * 0.5):GetNormalized()
-    end
-
-    local tr = {
-        start = org,
-        endpos = org + dir * 2000,
-        mask = MASK_PLAYERSOLID
-    }
-
-    local trace = util.TraceLine(tr)
-
-    return trace
-end
-
 local function IsOreTraceValid(trace)
     if not trace.Hit then return false end
     local surprop = util.GetSurfacePropName(trace.SurfaceProps)
     if (not table.HasValue(PlacementSettings.SurfacePropWhitelist, surprop)) then return false end
     print(surprop)
     if (table.HasValue(PlacementSettings.TextureBlacklist, trace.HitTexture)) then return false end
+
     if (not trace.Hit) then return false end
     if (trace.HitSky) then return false end
     if (trace.HitNoDraw) then return false end
     if (IsValid(trace.Entity)) then return false end
     if (trace.AllSolid) then return false end
     if (trace.StartSolid and trace.FractionLeftSolid == 0) then return false end
-
     return true
 end
 
 ORE_CACHED_ORIGINPOINTS = nil
+
 local ore_areas = {}
 ore_areas["Caverns"] = true
-ore_areas["Nowhere"] = true
 
 local function OreOrigin()
-    local hull = Vector(64, 64, 64)
+    local hull = Vector(32, 32, 32)
     local navareas = navmesh.GetAllNavAreas()
     local picks
 
@@ -83,7 +58,10 @@ local function OreOrigin()
         for _, area in pairs(navareas) do
             local extent = area:GetExtentInfo()
             if not ore_areas[area:GetPlace()] then continue end
-            if area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or (extent.SizeX < 32 or extent.SizeY < 32) then continue end
+            if area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or (extent.SizeX < hull.x or extent.SizeY < hull.y) then continue end
+
+
+            --perform a trace to check if we have room here
             local tr = {}
             tr.start = area:GetCenter() + Vector(0, 0, hull.z / 4)
             tr.endpos = tr.start + Vector(0, 0, -64)
@@ -91,23 +69,31 @@ local function OreOrigin()
             tr.mins = hull * Vector(1, 1, 0.1) * -0.5
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             local trace = util.TraceHull(tr)
-            if (not IsOreTraceValid(trace)) then continue end
+
+            if (not trace.Hit or trace.StartSolid) then continue end
+            --cast up towards ceiling
             local tr = {}
-            tr.start = trace.HitPos
-            tr.endpos = tr.start + Vector(0, 0, PlacementSettings.CeilingHeight)
+            tr.start = trace.HitPos + Vector(0,0,hull.z/2)
+            tr.endpos = tr.start + Vector(0, 0, 3000)
             tr.mask = MASK_PLAYERSOLID
             tr.mins = hull * Vector(1, 1, 0.1) * -0.5
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             trace = util.TraceHull(tr)
-            trace.area = area
+            if trace.StartSolid then
+                trace = util.TraceLine(tr)
+            end
 
-            if (not PlacementSettings.RequireCeiling or (trace.Hit and IsOreTraceValid(trace))) and not trace.StartSolid or (trace.StartSolid and trace.FractionLeftSolid < 1) then
-                table.insert(origins, trace)
+            local ep = (trace.Hit or trace.HitPos) or tr.endpos
+
+            if not trace.StartSolid or (trace.StartSolid and trace.FractionLeftSolid < 1) then
+                local cpos = LerpVector(0.5,tr.start,ep)
+                table.insert(origins, cpos)
                 local ext = area:GetExtentInfo()
                 local bnds = Vector(ext.SizeX, ext.SizeY, ext.SizeZ + 1)
+
                 debugoverlay.Box(area:GetCenter() + Vector(0, 0, 0.5), bnds * -0.5, bnds * 0.5, 60, Color(0, 0, 255, 16))
-                -- else
-                --debugoverlay.SweptBox( tr.start, trace.HitPos, tr.mins, tr.maxs, Angle(), 60, Color( 255, 0, 255,0 ) )
+                debugoverlay.Line(area:GetCenter(),cpos,60,Color(0,255,255,16),false)
+                debugoverlay.Box(cpos, hull * -0.5, hull * 0.5, 60, Color(0, 255, 0, 16))
             end
         end
 
@@ -121,51 +107,30 @@ local function OreOrigin()
 end
 
 if (SERVER) then
-    concommand.Add("ore_showseeds", function()
-        OreOrigin()
-
-        for k, v in pairs(ORE_CACHED_ORIGINPOINTS) do
-            print(v)
-        end
-    end)
 
     ORE_MAXNUMBER = 24
+    timer.Create("ore_spawner", 1, 0, function()
 
-    timer.Create("ore_spawner", 3, 0, function()
-        if EntityCount("ore") < ORE_MAXNUMBER then
+        if Ents and table.Count(Ents.ore) < ORE_MAXNUMBER then
             local pos = OreOrigin()
-            local new_ore = SpawnOre(1, pos.HitPos)
+            if pos then
+                local new_ore = SpawnOre(1, pos)
+            else
+                ErrorNoHalt("Ore Spawner Failed! Empty Ore Origin Table")
+            end
         end
     end)
 end
 
 function SpawnOre(size, origin)
     local res
-    local viter = 0
-    local bt = 5
-    local at = 1 / 16
     local org = origin
 
-    local tr = {
-        start = org,
-        endpos = org + Vector(0, 0, 3000),
-        mins = Vector(-16, -16, 0),
-        maxs = Vector(16, 16, 0),
-        mask = MASK_PLAYERSOLID
-    }
-
-    local mtrace = util.TraceHull(tr)
-
-    if mtrace.StartSolid then
-        mtrace = util.TraceLine(tr)
-    end
-
-    org = LerpVector(math.Rand(0.2, 0.5), org, mtrace.HitPos)
-
-    for i = 1, 100 do
+    --we start at a seed, and make 100 attempts to raycast onto a rock wall that's at most [CeilingHeight] from the ground
+    local attemptlimit = 100
+    for i = 1, attemptlimit do
         local dir = VectorRand()
-        dir.z = math.abs(dir.z)
-        dir = (dir * Vector(1, 1, 0.5)):GetNormalized()
+        dir = (dir * Vector(1, 1, 1 - math.abs(i/attemptlimit)*0.5 )):GetNormalized()
 
         local tr = {
             start = org,
@@ -175,7 +140,7 @@ function SpawnOre(size, origin)
 
         local trace = util.TraceLine(tr)
         local valid = IsOreTraceValid(trace)
-        debugoverlay.Line(trace.StartPos, trace.HitPos, 1, valid and Color(0, 255, 0) or Color(255, 0, 0))
+        debugoverlay.Line(trace.StartPos, trace.HitPos, valid and 5 or 1, valid and Color(0, 255, 0) or Color(255, 0, 0))
 
         if valid then
             local tr = {}
@@ -184,7 +149,7 @@ function SpawnOre(size, origin)
             tr.mask = MASK_PLAYERSOLID
             local ctrace = util.TraceLine(tr)
             local cv = ctrace.Hit
-            debugoverlay.Line(ctrace.StartPos, ctrace.HitPos, 1, cv and Color(0, 255, 0) or Color(255, 0, 0), false)
+            debugoverlay.Line(ctrace.StartPos, ctrace.HitPos, cv and 5 or 1, cv and Color(0, 255, 0) or Color(255, 0, 0), false)
 
             if cv then
                 res = trace
@@ -239,7 +204,7 @@ function ENT:Initialize()
             phys:EnableMotion(false)
         end
 
-        timer.Simple(60 * 60, function()
+        timer.Simple(60 * 60, function() --remove nugget if nobody finds it in an hour
             if (IsValid(self)) then
                 self:Remove()
             end
@@ -310,12 +275,12 @@ function ENT:DoHit(ply, tr, dmginfo)
         self:SetPos(self:GetPos() + (nv:Forward()) * md * 0.2)
         self:SetAngles(tweak_angle)
 
+        if ply.GivePoints then
+            ply:GivePoints(self.PointsValue)
+        end
+
         if self.EmbedDistance <= 0 then
             self:PhysicsInit(SOLID_VPHYSICS)
-
-            if ply.GivePoints then
-                ply:GivePoints(self.PointsValue)
-            end
 
             self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav", 150, 140, 100, 1, CHAN_ITEM)
             self:GetPhysicsObject():Wake()
@@ -346,8 +311,10 @@ if CLIENT then
             part:SetThinkFunction(function(pa)
                 local pc = (pa:GetLifeTime() / pa:GetDieTime())
                 local wc = math.sin(math.rad(pc * 180))
-                pa:SetStartSize(wc * 16)
-                pa:SetEndSize(wc * 16)
+                
+                pa:SetStartSize(wc * 32)
+                pa:SetEndSize(wc * 32)
+
                 local v = LerpVector(pc, Vector(255, 210, 0), Vector(0, 0, 0))
                 pa:SetColor(v.x, v.y, v.z)
                 pa:SetNextThink(CurTime())
@@ -397,6 +364,6 @@ if CLIENT then
             self.Sparkle = nil
         end
 
-        self:SpawnChunk(math.random(3, 10), VectorRand() * math.Rand(10, 40))
+        self:SpawnChunk(math.random(3, 5), VectorRand() * math.Rand(10, 40))
     end
 end
