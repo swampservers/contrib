@@ -7,7 +7,7 @@ ENT.Author = "PYROTEKNIK"
 ENT.Purpose = "Mine And Craft"
 ENT.Category = "PYROTEKNIK"
 ENT.Spawnable = true
-ENT.PointsValue = 200
+ENT.PointsValue = 1000
 ENT.IsOre = true
 ENT.AdminSpawnable = true
 local PlacementSettings = {}
@@ -192,12 +192,17 @@ end
 function ENT:Initialize()
     if (SERVER) then
         self.Entity:SetModel("models/props_junk/rock001a.mdl")
-        local bmins, bmaxs = Vector(-4.8, -3.1, 0), Vector(4.8, 3.1, 2)
-        self:SetCollisionBounds(bmins, bmaxs)
-        self.Entity:PhysicsInitBox(bmins, bmaxs)
+        self.Entity:PhysicsInit(SOLID_VPHYSICS)
+        self.Entity:SetSolid(SOLID_VPHYSICS)
         self.Entity:SetMoveType(MOVETYPE_NONE)
         self:SetColor(Color(255, 230, 51))
-        self:SetSolid(SOLID_VPHYSICS)
+        if math.random(1,100) == 1 then
+            self:SetColor(Color(100,200,255))
+            self.PointsValue = 10000
+            self.IsDiamond = true
+        end
+
+
         local phys = self:GetPhysicsObject()
 
         if (IsValid(phys)) then
@@ -275,13 +280,14 @@ function ENT:DoHit(ply, tr, dmginfo)
         self:SetPos(self:GetPos() + (nv:Forward()) * md * 0.2)
         self:SetAngles(tweak_angle)
 
-        if ply.GivePoints then
-            ply:GivePoints(self.PointsValue)
-        end
 
         if self.EmbedDistance <= 0 then
             self:PhysicsInit(SOLID_VPHYSICS)
-
+            if ply.GivePoints then
+                ply:GivePoints(self.PointsValue)
+                ply:AddStat("mined")
+            end
+    
             self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav", 150, 140, 100, 1, CHAN_ITEM)
             self:GetPhysicsObject():Wake()
             self:GetPhysicsObject():SetVelocity(self.PlacementNormal:GetNormalized() * 100)
