@@ -84,7 +84,7 @@ if SERVER then
         end)
 
         timer.Create("Skeleton_Spawning", 1, 0, function()
-            if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < 40 then
+            if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < SKELETON_LIMIT then
                 local spawn = table.Random(SKELETON_SPAWNS)
 
                 if spawn then
@@ -97,7 +97,7 @@ if SERVER then
             end
         end)
     end
-
+    --This hook is called from the maze code
     hook.Add("PreUpdateNavigation", "SkeletonsHandling", function()
         --cleanup all skeletons
         timer.Destroy("Skeleton_Spawning")
