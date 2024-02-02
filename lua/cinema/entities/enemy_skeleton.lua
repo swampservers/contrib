@@ -57,37 +57,63 @@ hook.Add("EntityRemoved", "skeleton_remove", function(ent)
     end
 end)
 
--- lua_run for _, ent in ents.Iterator() do if ent:GetClass() == "enemy_skeleton" then ent:Remove() end end
 if SERVER then
-    local function UpdateSkeletonSpawns()
-        SKELETON_SPAWNS = {}
+    function BuildSkeletonSpawns()
+        SKELETON_SPAWNS = nil
+        local spawns = {}
         local areas = navmesh.GetAllNavAreas()
 
         for k, v in pairs(areas) do
             if v:GetPlace() and not SKELETON_SPAWN_WHITELIST[v:GetPlace()] then continue end
             if v:GetSizeX() < 32 or v:GetSizeY() < 32 then continue end
             if v:IsUnderwater() then continue end
-            table.insert(SKELETON_SPAWNS, v)
+            table.insert(spawns, v)
+        end
+
+        if table.Count(spawns) > 0 then
+            SKELETON_SPAWNS = spawns
         end
     end
 
-    timer.Simple(0.2, function()
-        UpdateSkeletonSpawns()
+    function InitSkeletonTimers()
+        BuildSkeletonSpawns()
 
+        --idk how often to update this. its probably a heavy function. i just wanna make sure this cache stays up to date. 
         timer.Create("Skeleton_Spawnpoint_List", 20, 0, function()
-            --idk how often to update this. its probably a heavy function. i just wanna make sure this cache stays up to date
-            UpdateSkeletonSpawns()
+            BuildSkeletonSpawns()
         end)
+
+        timer.Create("Skeleton_Spawning", 1, 0, function()
+            if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < 40 then
+                local spawn = table.Random(SKELETON_SPAWNS)
+
+                if spawn then
+                    local newskel = ents.Create("enemy_skeleton")
+                    boo:SetPos(spawn:GetCenter())
+                    boo:Spawn()
+                else
+                    ErrorNoHalt("failed to spawn skeleton, no spawnpoints.")
+                end
+            end
+        end)
+    end
+
+    hook.Add("PreUpdateNavigation", "SkeletonsHandling", function()
+        --cleanup all skeletons
+        timer.Destroy("Skeleton_Spawning")
+        timer.Destroy("Skeleton_Spawnpoint_List")
+
+        for _, ent in pairs(ents.FindByClass("enemy_skeleton")) do
+            ent:Remove()
+        end
     end)
 
-    timer.Create("Skeleton_Spawning", 1, 0, function()
-        if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < 40 then
-            local spawn = table.Random(SKELETON_SPAWNS)
-            assert(spawn ~= nil, "No spawnpoints for skeleton.")
-            local boo = ents.Create("enemy_skeleton")
-            boo:SetPos(spawn:GetCenter())
-            boo:Spawn()
-        end
+    hook.Add("PostUpdateNavigation", "SkeletonsHandling", function()
+        InitSkeletonTimers()
+    end)
+
+    timer.Simple(1, function()
+        InitSkeletonTimers()
     end)
 end
 
@@ -158,7 +184,6 @@ function ENT:HandleAnimEvent(event, etime, cycle, type, options)
 end
 
 function ENT:Initialize()
-    --self.CalcIdeal = ACT_TERROR_IDLE_NEUTRAL
     self:SetSequence(13)
 
     if SERVER then
