@@ -89,8 +89,8 @@ if SERVER then
 
                 if spawn then
                     local newskel = ents.Create("enemy_skeleton")
-                    boo:SetPos(spawn:GetCenter())
-                    boo:Spawn()
+                    newskel:SetPos(spawn:GetCenter())
+                    newskel:Spawn()
                 else
                     ErrorNoHalt("failed to spawn skeleton, no spawnpoints.")
                 end
