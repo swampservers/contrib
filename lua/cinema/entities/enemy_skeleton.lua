@@ -218,6 +218,7 @@ if CLIENT then
 end
 
 function ENT:OnRemove()
+
 end
 
 function ENT:OnInjured(dmginfo)
@@ -741,6 +742,9 @@ end
 local mt = {"WALK", "FALL", "CLIMB", "GAP", "LADDERUP", "LADDERDOWN"}
 
 function ENT:OnNavAreaChanged(old, new)
+    if !IsValid(old) then return end
+    if !IsValid(new) then return end
+
     local goal = IsValid(self.path) and self.path:GetCurrentGoal()
     local place = new:GetPlace()
 
