@@ -28,21 +28,20 @@ end
 local function IsOreTraceValid(trace)
     if not trace.Hit then return false end
     local surprop = util.GetSurfacePropName(trace.SurfaceProps)
-    if (not table.HasValue(PlacementSettings.SurfacePropWhitelist, surprop)) then return false end
+    if not table.HasValue(PlacementSettings.SurfacePropWhitelist, surprop) then return false end
     print(surprop)
-    if (table.HasValue(PlacementSettings.TextureBlacklist, trace.HitTexture)) then return false end
+    if table.HasValue(PlacementSettings.TextureBlacklist, trace.HitTexture) then return false end
+    if not trace.Hit then return false end
+    if trace.HitSky then return false end
+    if trace.HitNoDraw then return false end
+    if IsValid(trace.Entity) then return false end
+    if trace.AllSolid then return false end
+    if trace.StartSolid and trace.FractionLeftSolid == 0 then return false end
 
-    if (not trace.Hit) then return false end
-    if (trace.HitSky) then return false end
-    if (trace.HitNoDraw) then return false end
-    if (IsValid(trace.Entity)) then return false end
-    if (trace.AllSolid) then return false end
-    if (trace.StartSolid and trace.FractionLeftSolid == 0) then return false end
     return true
 end
 
 ORE_CACHED_ORIGINPOINTS = nil
-
 local ore_areas = {}
 ore_areas["Caverns"] = true
 
@@ -52,15 +51,13 @@ local function OreOrigin()
     local picks
 
     --Cache good ore points
-    if (ORE_CACHED_ORIGINPOINTS == nil) then
+    if ORE_CACHED_ORIGINPOINTS == nil then
         local origins = {}
 
         for _, area in pairs(navareas) do
             local extent = area:GetExtentInfo()
             if not ore_areas[area:GetPlace()] then continue end
             if area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or (extent.SizeX < hull.x or extent.SizeY < hull.y) then continue end
-
-
             --perform a trace to check if we have room here
             local tr = {}
             tr.start = area:GetCenter() + Vector(0, 0, hull.z / 4)
@@ -69,16 +66,16 @@ local function OreOrigin()
             tr.mins = hull * Vector(1, 1, 0.1) * -0.5
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             local trace = util.TraceHull(tr)
-
-            if (not trace.Hit or trace.StartSolid) then continue end
+            if not trace.Hit or trace.StartSolid then continue end
             --cast up towards ceiling
             local tr = {}
-            tr.start = trace.HitPos + Vector(0,0,hull.z/2)
+            tr.start = trace.HitPos + Vector(0, 0, hull.z / 2)
             tr.endpos = tr.start + Vector(0, 0, 3000)
             tr.mask = MASK_PLAYERSOLID
             tr.mins = hull * Vector(1, 1, 0.1) * -0.5
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             trace = util.TraceHull(tr)
+
             if trace.StartSolid then
                 trace = util.TraceLine(tr)
             end
@@ -86,13 +83,12 @@ local function OreOrigin()
             local ep = (trace.Hit and trace.HitPos) or tr.endpos
 
             if not trace.StartSolid or (trace.StartSolid and trace.FractionLeftSolid < 1) then
-                local cpos = LerpVector(0.5,tr.start,ep)
+                local cpos = LerpVector(0.5, tr.start, ep)
                 table.insert(origins, cpos)
                 local ext = area:GetExtentInfo()
                 local bnds = Vector(ext.SizeX, ext.SizeY, ext.SizeZ + 1)
-
                 debugoverlay.Box(area:GetCenter() + Vector(0, 0, 0.5), bnds * -0.5, bnds * 0.5, 60, Color(0, 0, 255, 16))
-                debugoverlay.Line(area:GetCenter(),cpos,60,Color(0,255,255,16),false)
+                debugoverlay.Line(area:GetCenter(), cpos, 60, Color(0, 255, 255, 16), false)
                 debugoverlay.Box(cpos, hull * -0.5, hull * 0.5, 60, Color(0, 255, 0, 16))
             end
         end
@@ -103,16 +99,16 @@ local function OreOrigin()
         picks = ORE_CACHED_ORIGINPOINTS
     end
 
-    if (table.Count(picks) > 0) then return table.Random(picks) end
+    if table.Count(picks) > 0 then return table.Random(picks) end
 end
 
-if (SERVER) then
-
+if SERVER then
     ORE_MAXNUMBER = 24
-    timer.Create("ore_spawner", 1, 0, function()
 
+    timer.Create("ore_spawner", 1, 0, function()
         if Ents and table.Count(Ents.ore) < ORE_MAXNUMBER then
             local pos = OreOrigin()
+
             if pos then
                 local new_ore = SpawnOre(1, pos)
             else
@@ -125,12 +121,12 @@ end
 function SpawnOre(size, origin)
     local res
     local org = origin
-
     --we start at a seed, and make 100 attempts to raycast onto a rock wall that's at most [CeilingHeight] from the ground
     local attemptlimit = 100
+
     for i = 1, attemptlimit do
         local dir = VectorRand()
-        dir = (dir * Vector(1, 1, 1 - math.abs(i/attemptlimit)*0.5 )):GetNormalized()
+        dir = (dir * Vector(1, 1, 1 - math.abs(i / attemptlimit) * 0.5)):GetNormalized()
 
         local tr = {
             start = org,
@@ -190,27 +186,28 @@ if SERVER then
 end
 
 function ENT:Initialize()
-    if (SERVER) then
+    if SERVER then
         self.Entity:SetModel("models/props_junk/rock001a.mdl")
         self.Entity:PhysicsInit(SOLID_VPHYSICS)
         self.Entity:SetSolid(SOLID_VPHYSICS)
         self.Entity:SetMoveType(MOVETYPE_NONE)
         self:SetColor(Color(255, 230, 51))
-        if math.random(1,100) == 1 then
-            self:SetColor(Color(100,200,255))
+
+        if math.random(1, 100) == 1 then
+            self:SetColor(Color(100, 200, 255))
             self.PointsValue = 10000
             self.IsDiamond = true
         end
 
-
         local phys = self:GetPhysicsObject()
 
-        if (IsValid(phys)) then
+        if IsValid(phys) then
             phys:EnableMotion(false)
         end
 
-        timer.Simple(60 * 60, function() --remove nugget if nobody finds it in an hour
-            if (IsValid(self)) then
+        --remove nugget if nobody finds it in an hour
+        timer.Simple(60 * 60, function()
+            if IsValid(self) then
                 self:Remove()
             end
         end)
@@ -218,7 +215,7 @@ function ENT:Initialize()
 
     self.EmbedDistance = self:BoundingRadius() * 0.7
 
-    if (CLIENT) then
+    if CLIENT then
         local effectdata = EffectData()
         effectdata:SetOrigin(self:GetPos())
         effectdata:SetEntity(self)
@@ -244,7 +241,7 @@ function ENT:Draw()
     local a = render.GetAmbientLightColor() + shine
     render.SetAmbientLight(a.x, a.y, a.z)
     local c = self:GetColor()
-    local cvector = (Vector(c.r, c.g, c.b) / 255)
+    local cvector = Vector(c.r, c.g, c.b) / 255
     local lc = render.GetLightColor(pos) + shine
 
     for i = 0, 5 do
@@ -277,17 +274,17 @@ function ENT:DoHit(ply, tr, dmginfo)
         tweak_angle:RotateAroundAxis(ax, bn)
         nv:RotateAroundAxis(ax, bn)
         self.PlacementNormal = nv:Forward()
-        self:SetPos(self:GetPos() + (nv:Forward()) * md * 0.2)
+        self:SetPos(self:GetPos() + nv:Forward() * md * 0.2)
         self:SetAngles(tweak_angle)
-
 
         if self.EmbedDistance <= 0 then
             self:PhysicsInit(SOLID_VPHYSICS)
+
             if ply.GivePoints then
                 ply:GivePoints(self.PointsValue)
                 ply:AddStat("mined")
             end
-    
+
             self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav", 150, 140, 100, 1, CHAN_ITEM)
             self:GetPhysicsObject():Wake()
             self:GetPhysicsObject():SetVelocity(self.PlacementNormal:GetNormalized() * 100)
@@ -304,7 +301,7 @@ if CLIENT then
         pos = pos + (LocalPlayer():EyePos() - pos):GetNormalized() * 6
         local part = self.Sparkle:Add("pyroteknik/sparkle", pos) -- Create a new particle at pos
 
-        if (part) then
+        if part then
             local c = self:GetColor()
             part:SetColor(c.r, c.g, c.b)
             part:SetDieTime(life or 1) -- How long the particle should "live"
@@ -315,12 +312,10 @@ if CLIENT then
             part:SetRollDelta(math.Rand(-4, 4))
 
             part:SetThinkFunction(function(pa)
-                local pc = (pa:GetLifeTime() / pa:GetDieTime())
+                local pc = pa:GetLifeTime() / pa:GetDieTime()
                 local wc = math.sin(math.rad(pc * 180))
-                
                 pa:SetStartSize(wc * 32)
                 pa:SetEndSize(wc * 32)
-
                 local v = LerpVector(pc, Vector(255, 210, 0), Vector(0, 0, 0))
                 pa:SetColor(v.x, v.y, v.z)
                 pa:SetNextThink(CurTime())
