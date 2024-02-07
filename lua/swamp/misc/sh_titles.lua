@@ -258,7 +258,7 @@ AddTitle({
     {500, "Excavator", 30000},
     {2000, "Earth Mover", 40000},
     {10000, "Minecraft Steve", 50000}
-}, "Dig up %s pieces of ore (In Minecraft)", "s_mined", {
+}, "Dig up %s pieces of ore", "s_mined", {
     reward_id = "mined"
 })
 
