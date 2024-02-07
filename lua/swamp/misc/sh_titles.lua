@@ -264,13 +264,12 @@ AddTitle({
 
 AddTitle({
     {10, "Skeleton", 5000},
-    {100, "Bone Rattler",20000},
-    {1000, "Bone Shatterer",50000},
-    {10000, "Bone Incinerator",200000},
-}, "Slay %s skeletons.", "s_skeletonkill",{
+    {100, "Bone Rattler", 20000},
+    {1000, "Bone Shatterer", 50000},
+    {10000, "Bone Incinerator", 200000},
+}, "Slay %s skeletons.", "s_skeletonkill", {
     reward_id = "skeletonkill"
 })
-
 
 TitleCategory("Weapons")
 

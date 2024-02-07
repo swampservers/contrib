@@ -97,6 +97,7 @@ if SERVER then
             end
         end)
     end
+
     --This hook is called from the maze code
     hook.Add("PreUpdateNavigation", "SkeletonsHandling", function()
         --cleanup all skeletons
@@ -218,7 +219,6 @@ if CLIENT then
 end
 
 function ENT:OnRemove()
-
 end
 
 function ENT:OnInjured(dmginfo)
@@ -742,9 +742,8 @@ end
 local mt = {"WALK", "FALL", "CLIMB", "GAP", "LADDERUP", "LADDERDOWN"}
 
 function ENT:OnNavAreaChanged(old, new)
-    if !IsValid(old) then return end
-    if !IsValid(new) then return end
-
+    if not IsValid(old) then return end
+    if not IsValid(new) then return end
     local goal = IsValid(self.path) and self.path:GetCurrentGoal()
     local place = new:GetPlace()
 
@@ -775,7 +774,7 @@ function ENT:WhilePathing(path)
             path:MoveCursorToClosestPosition(jumptarget, SEEK_ENTIRE_PATH)
             debugoverlay.Box(jumptarget, Vector(1, 1, 1) * -4, Vector(1, 1, 1) * 4, 2, Color(255, 0, 255, 64))
             self.IsJumping = true
-            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), (jumptarget - self:GetPos()))
+            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), jumptarget - self:GetPos())
             self.loco:FaceTowards(jumptarget)
             self.loco:SetDeceleration(500)
             coroutine.wait(0.6)
