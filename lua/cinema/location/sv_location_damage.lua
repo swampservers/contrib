@@ -126,7 +126,11 @@ LocationDamageInfo = {
     },
     ["Private Theater 5"] = {
         Frequency = 0.5,
-        ShouldApplyDamage = function(ply) return ply:GetPos().y > 1408 end,
+        ShouldApplyDamage = function(ply)
+            local pos = ply:GetPos()
+
+            return pos.y > 1408 and (pos.x > 1104 or (pos.x > 855 and pos.y < 1576) or pos.y > 1786)
+        end,
         ApplyDamage = function(ply, rep)
             local gensparkents = ents.FindByName("genspark")
 

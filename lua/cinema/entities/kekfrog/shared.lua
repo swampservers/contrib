@@ -53,9 +53,11 @@ function ENT:Initialize()
     end
 end
 
+-- We want kekfrog to be above ground for income, but not into space or protected areas
+-- TODO(winter): Maybe bringing it to the moon would be a more impressive feat and therefore worth more?
 function ENT:Income()
     local p = self:GetPos()
-    if p.z < -100 or p.z > 1000 or p.x < -3300 or p.x > 3300 or self:IsProtected() then return 0 end -- TODO: Map v4
+    if p.z < -128 or p.z > 1184 or p.x < -4096 or p.x > 5120 or self:IsProtected() then return 0 end
     local inc = 1000 + self:GetOfferedPoints() / 50
     local i = 1
 
