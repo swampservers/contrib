@@ -1,5 +1,4 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
--- INSTALL: CINEMA
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "Ore"
@@ -13,12 +12,12 @@ ENT.AdminSpawnable = true
 local PlacementSettings = {}
 PlacementSettings.RequireCeiling = false
 PlacementSettings.AllowFloor = false
---NOTE: Generally the process will be less efficient if both of these are set to false!
-PlacementSettings.CeilingHeight = 256
+-- NOTE: Generally the process will be less efficient if both of these are set to false!
+PlacementSettings.CeilingHeight = 192
 
 PlacementSettings.SurfacePropWhitelist = {"dirt", "grass", "gravel", "rock"}
 
---**studio** is any model
+-- **studio** is any model
 PlacementSettings.TextureBlacklist = {"**empty**", "TOOLS/TOOLSBLACK"}
 
 local function EntityCount(class)
@@ -29,7 +28,6 @@ local function IsOreTraceValid(trace)
     if not trace.Hit then return false end
     local surprop = util.GetSurfacePropName(trace.SurfaceProps)
     if not table.HasValue(PlacementSettings.SurfacePropWhitelist, surprop) then return false end
-    print(surprop)
     if table.HasValue(PlacementSettings.TextureBlacklist, trace.HitTexture) then return false end
     if not trace.Hit then return false end
     if trace.HitSky then return false end
@@ -50,7 +48,7 @@ local function OreOrigin()
     local navareas = navmesh.GetAllNavAreas()
     local picks
 
-    --Cache good ore points
+    -- Cache good ore points
     if ORE_CACHED_ORIGINPOINTS == nil then
         local origins = {}
 
@@ -58,7 +56,7 @@ local function OreOrigin()
             local extent = area:GetExtentInfo()
             if not ore_areas[area:GetPlace()] then continue end
             if area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or (extent.SizeX < hull.x or extent.SizeY < hull.y) then continue end
-            --perform a trace to check if we have room here
+            -- perform a trace to check if we have room here
             local tr = {}
             tr.start = area:GetCenter() + Vector(0, 0, hull.z / 4)
             tr.endpos = tr.start + Vector(0, 0, -64)
@@ -67,7 +65,7 @@ local function OreOrigin()
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             local trace = util.TraceHull(tr)
             if not trace.Hit or trace.StartSolid then continue end
-            --cast up towards ceiling
+            -- cast up towards ceiling
             local tr = {}
             tr.start = trace.HitPos + Vector(0, 0, hull.z / 2)
             tr.endpos = tr.start + Vector(0, 0, 3000)
@@ -121,7 +119,7 @@ end
 function SpawnOre(size, origin)
     local res
     local org = origin
-    --we start at a seed, and make 100 attempts to raycast onto a rock wall that's at most [CeilingHeight] from the ground
+    -- we start at a seed, and make 100 attempts to raycast onto a rock wall that's at most [CeilingHeight] from the ground
     local attemptlimit = 100
 
     for i = 1, attemptlimit do
@@ -205,7 +203,7 @@ function ENT:Initialize()
             phys:EnableMotion(false)
         end
 
-        --remove nugget if nobody finds it in an hour
+        -- remove nugget if nobody finds it in an hour
         timer.Simple(60 * 60, function()
             if IsValid(self) then
                 self:Remove()
@@ -282,6 +280,7 @@ function ENT:DoHit(ply, tr, dmginfo)
 
             if ply.GivePoints then
                 ply:GivePoints(self.PointsValue)
+                ply:Notify("You mined ore worth " .. tostring(self.PointsValue) .. " Points!")
                 ply:AddStat("mined")
             end
 
