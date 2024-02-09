@@ -266,6 +266,7 @@ function SWEP:TargetedPlayer()
     local vr = self.Owner:EyeAngles():Forward()
     local ca = Vector(0, 0, 1)
 
+    -- TODO(winter): There better be a good reason we're iterating over ALL PLAYERS and doing traces for every single one of them!!
     for k, v in ipairs(Ents.player) do
         if v == self.Owner then continue end
         if v:InVehicle() then continue end
@@ -288,11 +289,15 @@ function SWEP:TargetedPlayer()
 
     local trace = self.Owner:GetEyeTrace()
 
-    if IsValid(trace.Entity) and trace.Entity:GetClass() == "ent_mysterybox" and trace.HitPos:Distance(vp) < 100 then
-        self.TraceHitPos = trace.HitPos
-        self.TraceHitNormal = trace.HitNormal
+    if IsValid(trace.Entity) then
+        local traceEntClass = trace.Entity:GetClass()
 
-        return trace.Entity
+        if traceEntClass == "ent_mysterybox" or traceEntClass == "enemy_skeleton" and trace.HitPos:Distance(vp) < 100 then
+            self.TraceHitPos = trace.HitPos
+            self.TraceHitNormal = trace.HitNormal
+
+            return trace.Entity
+        end
     end
 end
 
@@ -307,6 +312,7 @@ function SWEP:PrimaryAttack()
         local hitplayer = self:TargetedPlayer()
 
         if hitplayer then
+            -- TODO(winter): What the fuck? Why are we using net messages for this??? SWEPs are predicted
             net.Start("SlitThroatneck")
             net.WriteEntity(hitplayer)
             net.WriteVector(Me:EyeAngles():Forward())
