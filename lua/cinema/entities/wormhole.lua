@@ -668,7 +668,7 @@ hook.Add("SetupMove", "WormholeTransition", function(ply, mv, cmd)
             local newpos, newang, newvel = hole:GetProjectedPos(pos, ang, vel, ply)
             local neweye, newmang = hole:GetProjectedPos(eye, mang, vel)
             -- NOTE(winter): This prevents players from getting stuck in the portal, or in nearby geometry
-            newpos:Add(Vector(0, 0, 3))
+            newpos:Add(Vector(0, 0, 4))
             newpos:Add(link:GetForward() * 32)
             local newfidvel = hole:ProjectDirection(fidvel)
             local newfijvel = hole:ProjectDirection(fijvel)

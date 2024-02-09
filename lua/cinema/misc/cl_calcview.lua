@@ -1,24 +1,16 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 GM.TauntCam = TauntCamera()
-
--- Disable standard vehicle third person
-timer.Simple(0, function()
-    local vehicle = FindMetaTable("Vehicle")
-
-    function vehicle:GetThirdPersonMode()
-        return false
-    end
-end)
-
 local thirdperson_lerp = 0
 local thirdperson_view_yaw = 0
 local thirdperson_view_pitch = 0
 
 function UseThirdperson()
     local localply = IsValid(Me) and Me
+    if localply and localply:IsPlayingTaunt() then return true end
+    local vehicle = localply:GetVehicle()
+    if IsValid(vehicle) and vehicle:GetThirdPersonMode() then return true end
     local wep = localply and localply:GetActiveWeapon()
     local wc = localply and IsValid(wep) and wep:GetClass()
-    if localply:IsPlayingTaunt() then return true end
 
     if wep.IsScoped and wep:IsScoped() then
         thirdperson_lerp = 0
