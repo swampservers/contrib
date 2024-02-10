@@ -201,6 +201,13 @@ LocationTheaterInfo = {
         Ang = Angle(0, 180, 0),
         Width = 352,
         Height = 198
+    },
+    ["Basement Den"] = {
+        Flags = THEATER_PRIVATEREPLICATED,
+        Pos = Vector(2405, 633, -116),
+        Ang = Angle(0, 277, 0),
+        Width = 54,
+        Height = 32
     }
 }
 

@@ -83,7 +83,30 @@ LocationDamageInfo = {
         ShouldApplyDamage = function(ply)
             local pos = ply:GetPos()
 
-            if pos.x > 2590 and (pos.x > 2820 or pos.y > 3825 or pos.y < 3535 or pos.z > 128) then
+            return IsPlayerDrowning(ply) and (pos.y < 3830 and "radiation" or "acid")
+        end,
+        ApplyDamage = function(ply, rep, applymatch)
+            local world = game.GetWorld()
+            local dmgamount = applymatch == "radiation" and 0.001 * (2 ^ rep) or 100
+            local dmginfo = DamageInfo()
+            dmginfo:SetDamagePosition(ply:GetPos())
+            dmginfo:SetDamageForce(vector_origin)
+            dmginfo:SetInflictor(world)
+            dmginfo:SetAttacker(world)
+            dmginfo:SetDamageType(applymatch == "radiation" and DMG_RADIATION or DMG_BURN)
+            dmginfo:SetDamage(dmgamount)
+            ply:TakeDamageInfo(dmginfo)
+            local alpha = math.min((dmgamount / 100) * 255, 255)
+            local flashcolor = applymatch == "radiation" and Color(255, 255, 255, alpha) or Color(128, 255, 0, alpha)
+            ply:ScreenFade(SCREENFADE.IN, flashcolor, 0.25, 0)
+        end
+    },
+    ["Power Plant Substation"] = {
+        Frequency = 0.5,
+        ShouldApplyDamage = function(ply)
+            local pos = ply:GetPos()
+
+            if pos.x > 2820 or pos.y > 3825 or pos.y < 3535 or pos.z > 128 then
                 local powerbuttonent = ents.FindByName("pp_power_button")[1]
 
                 if IsValid(powerbuttonent) then
@@ -93,35 +116,27 @@ LocationDamageInfo = {
                     ErrorNoHalt("Missing pp_power_button??\n")
                 end
             end
-
-            return IsPlayerDrowning(ply) and (pos.y < 3830 and "radiation" or "acid")
         end,
-        ApplyDamage = function(ply, rep, applymatch)
-            local world = game.GetWorld()
+        ApplyDamage = function(ply, rep)
+            local genspark2ents = ents.FindByName("genspark2")
 
-            if applymatch == "electric" then
-                local genspark2ents = ents.FindByName("genspark2")
-
-                for _, ent in ipairs(genspark2ents) do
-                    ent:Fire("SparkOnce")
-                end
+            for _, ent in ipairs(genspark2ents) do
+                ent:Fire("SparkOnce")
             end
 
-            local dmgamount = applymatch == "electric" and 1000 or applymatch == "radiation" and 0.001 * (2 ^ rep) or 100
+            local world = game.GetWorld()
             local dmginfo = DamageInfo()
             dmginfo:SetDamagePosition(ply:GetPos())
             dmginfo:SetDamageForce(vector_origin)
             dmginfo:SetInflictor(world)
             dmginfo:SetAttacker(world)
-            dmginfo:SetDamageType(applymatch == "electric" and DMG_SHOCK or applymatch == "radiation" and DMG_RADIATION or DMG_BURN)
-            dmginfo:SetDamage(dmgamount)
+            dmginfo:SetDamageType(DMG_SHOCK)
+            dmginfo:SetDamage(1000)
             ply:TakeDamageInfo(dmginfo)
-            local alpha = math.min((dmgamount / 100) * 255, 255)
-            local flashcolor = applymatch == "electric" and Color(255, 255, 255, alpha) or applymatch == "radiation" and Color(255, 255, 255, alpha) or Color(128, 255, 0, alpha)
-            ply:ScreenFade(SCREENFADE.IN, flashcolor, 0.25, 0)
+            ply:ScreenFade(SCREENFADE.IN, color_white, 0.25, 0)
             local zapnum = math.random(1, 9)
             zapnum = zapnum == 4 and 3 or zapnum
-            ply:EmitSound("ambient/energy/zap" .. tostring(zapnum) .. ".wav", 50, 100, 0.25)
+            ply:EmitSound("ambient/energy/zap" .. tostring(zapnum) .. ".wav", 50)
         end
     },
     ["Private Theater 5"] = {
@@ -253,7 +268,7 @@ hook.Add("PlayerUse", "Location.PowerPlant.ElectrifiedDoor", function(ply, ent)
                     timer.Simple(0, function()
                         -- HACK: Stupid workaround for the bug in EntityEmitSound/CinemaMuteGame with GetPredictionPlayer...
                         if IsValid(ply) then
-                            LocationDamageInfo["Power Plant"].ApplyDamage(ply, 0, "electric")
+                            LocationDamageInfo["Power Plant Substation"].ApplyDamage(ply, 0, "electric")
                         end
                     end)
 
