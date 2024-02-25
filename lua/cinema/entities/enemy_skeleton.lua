@@ -1,4 +1,5 @@
-﻿AddCSLuaFile()
+﻿--NOMINIFY
+AddCSLuaFile()
 ENT.Base = "base_nextbot"
 ENT.Name = "Spooky Skeleton"
 ENT.Category = "Swamp Cinema"
@@ -78,7 +79,7 @@ if SERVER then
     function InitSkeletonTimers()
         BuildSkeletonSpawns()
 
-        --idk how often to update this. its probably a heavy function. i just wanna make sure this cache stays up to date. 
+        --idk how often to update this. its probably a heavy function. i just wanna make sure this cache stays up to date.
         timer.Create("Skeleton_Spawnpoint_List", 20, 0, function()
             BuildSkeletonSpawns()
         end)

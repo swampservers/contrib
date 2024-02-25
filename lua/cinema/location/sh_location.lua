@@ -211,15 +211,19 @@ LocationTheaterInfo = {
     }
 }
 
--- We want the last theater so we can set up Mobile Theaters after it (priority order)
-local lastTheaterLocID = nil
+-- NOTE(winter): We're moving stuff around a little bit here. It goes Theaters then MobileTheaters then all normal Locations
+-- This is so MobileTheaters will always work, except when intersecting map theater locations (priority order)
+local lastTheaterLocID = 1
 
-for locID, locInfo in ipairs(Locations) do
+for locID = 1, #Locations do
+    local locInfo = Locations[locID]
     local locTheaterInfo = LocationTheaterInfo[locInfo.Name]
 
     if locTheaterInfo then
         locInfo.Theater = locTheaterInfo
-        lastTheaterLocID = locID
+        table.remove(Locations, locID)
+        table.insert(Locations, lastTheaterLocID, locInfo)
+        lastTheaterLocID = lastTheaterLocID + 1
     end
 end
 
