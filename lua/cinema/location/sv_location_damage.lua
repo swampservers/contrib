@@ -62,7 +62,7 @@ LocationDamageInfo = {
             dmginfo:SetDamageForce(vector_origin)
             dmginfo:SetInflictor(world)
             dmginfo:SetAttacker(world)
-            dmginfo:SetDamageType(DMG_DROWN)
+            dmginfo:SetDamageType(DMG_DROWN) -- The old trigger_hurt used to use DMG_ACID
             dmginfo:SetDamage(5 * (2 ^ rep))
             ply:TakeDamageInfo(dmginfo)
 

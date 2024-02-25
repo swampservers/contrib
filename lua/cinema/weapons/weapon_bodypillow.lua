@@ -66,33 +66,39 @@ function SWEP:TimeScale()
 end
 
 function bodypillow_unjiggle(self)
+    if not self.Unjiggled then
+        self:AddCallback("BuildBonePositions", function(e, nb)
+            PILLOW_UNJIGGLE(e, nb)
+        end)
+
+        self.Unjiggled = true
+    end
 end
 
--- if not self.Unjiggled then
---     self:AddCallback("BuildBonePositions", function(e, nb)
---         PILLOW_UNJIGGLE(e, nb)
---     end)
---     self.Unjiggled = true
--- end
--- function PILLOW_UNJIGGLE(self, nb)
---     pcall(function()
---         --or (self.wep and not self.wep:GetHardened())
---         if self:GetModel() ~= "models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
---         for i = 0, nb - 1 do
---             local i2 = i < 3 and i or 2 - i
---             local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
---             local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
---             if self:GetClass() == "prop_trash_pillow" then
---                 ro, ra = self:GetPos(), self:GetAngles()
---             end
---             if not ro then
---                 if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
---                 ro, ra = self.wep:GetViewModelPosition(self.wep.Owner:EyePos(), self.wep.Owner:EyeAngles())
---             end
---             self:SetBonePosition(i, LocalToWorld(Vector(0, 0, i2 * 10), a, ro, ra))
---         end
---     end)
--- end
+function PILLOW_UNJIGGLE(self, nb)
+    pcall(function()
+        --or (self.wep and not self.wep:GetHardened())
+        if self:GetModel() ~= "models/swamponions/bodypillow.mdl" then return end --it got set on the viewmodel entity
+
+        for i = 0, nb - 1 do
+            local i2 = i < 3 and i or 2 - i
+            local a = i == 0 and Angle(0, 0, 90) or (i < 3 and Angle() or Angle(0, 0, 180))
+            local ro, ra = self:GetRenderOrigin(), self:GetRenderAngles()
+
+            if self:GetClass() == "prop_trash_pillow" then
+                ro, ra = self:GetPos(), self:GetAngles()
+            end
+
+            if not ro then
+                if not IsValid(self.wep) or not IsValid(self.wep.Owner) then return end
+                ro, ra = self.wep:GetViewModelPosition(self.wep.Owner:EyePos(), self.wep.Owner:EyeAngles())
+            end
+
+            self:SetBonePosition(i, LocalToWorld(Vector(0, 0, i2 * 10), a, ro, ra))
+        end
+    end)
+end
+
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
