@@ -321,7 +321,7 @@ function GetPlayersInLocation(idx)
 
     for _, ply in ipairs(Ents.player) do
         if ply:GetLocation() == idx then
-            table.insert(tab, ply)
+            tab[#tab + 1] = ply
         end
     end
 

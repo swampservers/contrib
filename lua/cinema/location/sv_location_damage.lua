@@ -202,6 +202,39 @@ LocationDamageInfo = {
         Frequency = 0.5,
         ShouldApplyDamage = IsPlayerOnSlime,
         ApplyDamage = ApplyLavaDamage
+    },
+    ["Church"] = {
+        Frequency = 5,
+        ShouldApplyDamage = function(ply) return ply:Alive() and ply:IsPony() and not ply:IsAFK() and not tobool(math.random(0, 999)) end,
+        ApplyDamage = function(ply, rep, applymatch, locinfo)
+            local world = game.GetWorld()
+            local dmginfo = DamageInfo()
+            dmginfo:SetDamagePosition(ply:GetPos())
+            dmginfo:SetDamageForce(vector_origin)
+            dmginfo:SetInflictor(world)
+            dmginfo:SetAttacker(world)
+            dmginfo:SetDamageType(DMG_SHOCK)
+            dmginfo:SetDamage(1000)
+            ply:TakeDamageInfo(dmginfo)
+            local startpos = Vector(math.Rand(locinfo.Min.x, locinfo.Max.x), math.Rand(locinfo.Min.y, locinfo.Max.y), locinfo.Max.z)
+            local effect = EffectData()
+            effect:SetStart(startpos)
+            effect:SetOrigin(ply:GetPos()) -- Aka EndPos
+            effect:SetScale(32)
+            util.Effect("lightning", effect, true, true)
+            ply:ScreenFade(SCREENFADE.IN, color_white, 0.25, 0)
+            local zapnum = math.random(1, 9)
+            zapnum = zapnum == 4 and 3 or zapnum
+            ply:EmitSound("ambient/energy/zap" .. tostring(zapnum) .. ".wav", 50)
+            -- Running EmitSound locally on the LocalPlayer entity makes it appear as if it's coming from "all around" while still obeying our EntityEmitSound stuff
+            local thundersndpath = "ambient/atmosphere/thunder" .. tostring(math.random(1, 4)) .. ".wav"
+
+            for _, locply in ipairs(GetPlayersInLocation(locinfo.Index)) do
+                locply:SendLua([[LocalPlayer():EmitSound("]] .. thundersndpath .. [[")]])
+            end
+
+            ply:Notify("The Lord smote you for you are condemned.")
+        end
     }
 }
 
@@ -225,24 +258,25 @@ end
 timer.Create("Location.DamageTick", 0, 0, function()
     for _, ply in ipairs(player.GetHumans()) do
         if ply:Alive() then
-            local locdmginfo = ply:GetLocationTable().Damage
+            local locinfo = ply:GetLocationTable()
+            local locdmginfo = locinfo.Damage
 
             if locdmginfo then
+                local curtime = CurTime()
                 local applymatch = locdmginfo.ShouldApplyDamage(ply)
+                ply.NextLocDamageTime = ply.NextLocDamageTime or 0
 
-                if applymatch then
-                    local curtime = CurTime()
-                    ply.NextTakeDamageTime = ply.NextTakeDamageTime or 0
-
-                    if curtime > ply.NextTakeDamageTime then
+                if curtime > ply.NextLocDamageTime then
+                    if applymatch then
                         local rep = ply.DamageSourceRepeats or 0
-                        locdmginfo.ApplyDamage(ply, rep, applymatch)
+                        locdmginfo.ApplyDamage(ply, rep, applymatch, locinfo)
                         ply.DamageSourceRepeats = rep + 1
-                        ply.NextTakeDamageTime = curtime + locdmginfo.Frequency
+                    else
+                        ply.DamageSourceRepeats = 0
+                        StopWaterDeathSounds(ply)
                     end
-                else
-                    ply.DamageSourceRepeats = 0
-                    StopWaterDeathSounds(ply)
+
+                    ply.NextLocDamageTime = curtime + locdmginfo.Frequency
                 end
             else
                 ply.DamageSourceRepeats = 0
@@ -252,6 +286,10 @@ timer.Create("Location.DamageTick", 0, 0, function()
             StopWaterDeathSounds(ply)
         end
     end
+end)
+
+hook.Add("PlayerSpawn", "Location.Damage.ResetDamageTimeOnRespawn", function(ply)
+    ply.NextLocDamageTime = CurTime() + 1
 end)
 
 local lastppdoorcheck = 0
