@@ -205,7 +205,7 @@ LocationDamageInfo = {
     },
     ["Church"] = {
         Frequency = 5,
-        ShouldApplyDamage = function(ply) return ply:Alive() and ply:IsPony() and not ply:IsAFK() and not tobool(math.random(0, 999)) end,
+        ShouldApplyDamage = function(ply) return ply:Alive() and ply:IsPony() and not ply:IsAFK() and not tobool(math.random(0, 499)) end,
         ApplyDamage = function(ply, rep, applymatch, locinfo)
             local world = game.GetWorld()
             local dmginfo = DamageInfo()
@@ -225,7 +225,7 @@ LocationDamageInfo = {
             ply:ScreenFade(SCREENFADE.IN, color_white, 0.25, 0)
             local zapnum = math.random(1, 9)
             zapnum = zapnum == 4 and 3 or zapnum
-            ply:EmitSound("ambient/energy/zap" .. tostring(zapnum) .. ".wav", 50)
+            ply:EmitSound("ambient/energy/zap" .. tostring(zapnum) .. ".wav", 75, 100, 0.5)
             -- Running EmitSound locally on the LocalPlayer entity makes it appear as if it's coming from "all around" while still obeying our EntityEmitSound stuff
             local thundersndpath = "ambient/atmosphere/thunder" .. tostring(math.random(1, 4)) .. ".wav"
 
