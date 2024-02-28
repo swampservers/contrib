@@ -12,7 +12,7 @@ end
 
 --- Boolean, mostly for players
 function Entity:IsPony()
-    return IsPonyModel(self:GetModel())
+    return IsPonyModel(self:GetModel()) or self.GetDisplayModel and IsPonyModel(self:GetDisplayModel())
 end
 
 function Entity:IsPPMPony()
@@ -39,7 +39,7 @@ function Entity:PonyPlayer()
     if self:IsPlayer() then return self end
     if self:EntIndex() == -1 then return Me end --pointshop model
     if self.RagdollSourcePlayer then return self.RagdollSourcePlayer end
-    -- if self.PonyPlayerEntity then return 
+    -- if self.PonyPlayerEntity then return
     -- if its a ragdoll then return owner
     print(self, "unknown pony")
 end
