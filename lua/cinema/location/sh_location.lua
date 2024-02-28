@@ -211,9 +211,10 @@ LocationTheaterInfo = {
     }
 }
 
--- NOTE(winter): We're moving stuff around a little bit here. It goes Theaters then MobileTheaters then all normal Locations
+-- NOTE(winter): We're moving stuff around a little bit here. It goes Theaters, then MobileTheaters, then The Underworld, then all normal Locations
 -- This is so MobileTheaters will always work, except when intersecting map theater locations (priority order)
 local lastTheaterLocID = 1
+local underworldLocID = nil
 
 for locID = 1, #Locations do
     local locInfo = Locations[locID]
@@ -223,6 +224,11 @@ for locID = 1, #Locations do
         locInfo.Theater = locTheaterInfo
         table.remove(Locations, locID)
         table.insert(Locations, lastTheaterLocID, locInfo)
+
+        if locInfo.Name == "The Underworld" then
+            underworldLocID = lastTheaterLocID
+        end
+
         lastTheaterLocID = lastTheaterLocID + 1
     end
 end
@@ -231,9 +237,9 @@ end
 MobileLocations = {}
 
 for mobileLocOffset = 0, 31 do
-    table.insert(MobileLocations, lastTheaterLocID + mobileLocOffset)
+    table.insert(MobileLocations, lastTheaterLocID + mobileLocOffset - 1)
 
-    table.insert(Locations, lastTheaterLocID, {
+    table.insert(Locations, lastTheaterLocID + mobileLocOffset, {
         MobileLocationIndex = #MobileLocations,
         Name = "MobileTheater" .. tostring(#MobileLocations),
         Min = Vector(-1, -1, -10001),
@@ -249,8 +255,11 @@ for mobileLocOffset = 0, 31 do
     })
 
     -- Just so indexes stay in sync
-    table.insert(LocationsDebug, lastTheaterLocID, "mobiletheater")
+    table.insert(LocationsDebug, lastTheaterLocID - 1, "mobiletheater")
 end
+
+-- Put Underworld after MobileTheaters so they work in there
+table.insert(Locations, lastTheaterLocID + 31, table.remove(Locations, underworldLocID))
 
 -- After everything
 Locations[#Locations + 1] = {
@@ -292,8 +301,8 @@ for locName in pairs(LocationTheaterInfo) do
 end
 
 function RefreshLocations()
-    for k, v in pairs(ents.GetAll()) do
-        v.LastLocationCoords = nil
+    for _, ent in pairs(ents.GetAll()) do
+        ent.LastLocationCoords = nil
     end
 end
 
@@ -303,8 +312,8 @@ function FindLocation(ent_or_pos)
         ent_or_pos = ent_or_pos:GetPos()
     end
 
-    for k, v in ipairs(Locations) do
-        if v:Contains(ent_or_pos) then return k end
+    for id, info in ipairs(Locations) do
+        if info:Contains(ent_or_pos) then return id end
     end
 
     return #Locations
