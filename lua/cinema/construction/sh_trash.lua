@@ -110,5 +110,8 @@ TrashLocationOverrides = {
 }
 
 -- Prevent stuff being taped within a sphere around the position
--- TODO(winter): Is this still used/necessary?
-TrashNoFreezeNodes = {} --{Vector(-2040, -60, 80), 120},
+TrashNoFreezeNodes = {
+    {Vector(850, 1830, -3180), 768}, -- Sewer trickshot (top)
+    {Vector(775, 1785, -740), 256} -- Sewer trickshot (bottom)
+    
+}
