@@ -262,19 +262,21 @@ function SWEP:TraceCapsule(vp, vr, cp, ca, cmin, cmax, radius, maxdist)
 end
 
 function SWEP:TargetedPlayer()
-    local vp = self.Owner:EyePos()
-    local vr = self.Owner:EyeAngles():Forward()
+    local owner = self:GetOwner()
+    local vp = owner:EyePos()
+    local vr = owner:EyeAngles():Forward()
     local ca = Vector(0, 0, 1)
 
     -- TODO(winter): There better be a good reason we're iterating over ALL PLAYERS and doing traces for every single one of them!!
-    for k, v in ipairs(Ents.player) do
-        if v == self.Owner then continue end
-        if v:InVehicle() then continue end
-        if not v:Alive() then continue end
-        if v:IsProtected(self.Owner) then continue end
+    -- TODO(winter): What's more expensive, this or util.TraceHull within strike range, then narrowing down via a filter until we hit something with both util.TraceHull and TraceCapsule?
+    for _, ply in ipairs(Ents.player) do
+        if ply == owner then continue end
+        if ply:InVehicle() then continue end
+        if not ply:Alive() then continue end
+        if ply:IsProtected(owner) then continue end
 
         --radius was 12
-        if self:TraceCapsule(vp, vr, v:GetPos(), ca, 12, v:Crouching() and 38 or 58, 12.5, 100) then
+        if self:TraceCapsule(vp, vr, ply:GetPos(), ca, 12, ply:Crouching() and 38 or 58, 12.5, 100) then
             local tr = util.TraceLine({
                 start = vp,
                 endpos = self.TraceHitPos,
@@ -283,11 +285,11 @@ function SWEP:TargetedPlayer()
 
             if tr.Hit then continue end
 
-            return v
+            return ply
         end
     end
 
-    local trace = self.Owner:GetEyeTrace()
+    local trace = owner:GetEyeTrace()
 
     if IsValid(trace.Entity) then
         local traceEntClass = trace.Entity:GetClass()
