@@ -409,6 +409,7 @@ hook.Add("HUDPaint", "InstrumentPaint", function()
 end)
 
 -- Override regular keys
+-- NOTE(winter): Hook order means this doesn't prevent SwampChat from opening... see swamp/chat/cl_overrides.lua
 hook.Add("PlayerBindPress", "InstrumentHook", function(ply, bind, pressed)
     if IsValid(ply.Instrument) then return true end
 end)
