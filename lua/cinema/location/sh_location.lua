@@ -351,7 +351,7 @@ end
 --- Int location ID
 function Entity:GetLocation()
     assert(not self:IsPlayer())
-    local pos = self:GetPos()
+    local pos = self:WorldSpaceCenter()
 
     if self.LastLocationCoords == nil or self.LastLocationCoords:DistToSqr(pos) > 1 then
         self.LastLocationCoords = pos
