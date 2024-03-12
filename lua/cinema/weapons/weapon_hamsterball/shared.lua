@@ -82,6 +82,7 @@ function SWEP:Holster()
         local pos = owner:GetPos()
         local newpos = Vector(pos.x, pos.y, navmesh.GetGroundHeight(pos))
 
+        -- TODO(winter): Optimize
         local tracedata = {
             start = newpos,
             endpos = newpos,
@@ -95,18 +96,21 @@ function SWEP:Holster()
 
         if tr.Hit then
             local navarea = navmesh.GetNearestNavArea(pos, false, 256)
-            local randpos = navarea:GetRandomPoint()
-            local _, groundnormal = navmesh.GetGroundHeight(randpos)
 
-            for i = 0, 16 do
-                local testpos = randpos + groundnormal * i
-                tracedata.start = testpos
-                tracedata.endpos = testpos
-                tr = util.TraceHull(tracedata)
+            if navarea then
+                local randpos = navarea:GetRandomPoint()
+                local _, groundnormal = navmesh.GetGroundHeight(randpos)
 
-                if not tr.Hit then
-                    newpos = testpos
-                    break
+                for i = 0, 16 do
+                    local testpos = randpos + groundnormal * i
+                    tracedata.start = testpos
+                    tracedata.endpos = testpos
+                    tr = util.TraceHull(tracedata)
+
+                    if not tr.Hit then
+                        newpos = testpos
+                        break
+                    end
                 end
             end
         end
