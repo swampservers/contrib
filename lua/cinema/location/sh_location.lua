@@ -355,7 +355,7 @@ function Entity:GetLocation()
 
     if self.LastLocationCoords == nil or self.LastLocationCoords:DistToSqr(pos) > 1 then
         self.LastLocationCoords = pos
-        self.LastLocation = FindLocation(self)
+        self.LastLocation = FindLocation(pos)
     end
 
     return self.LastLocation

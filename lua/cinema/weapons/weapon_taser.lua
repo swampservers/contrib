@@ -44,8 +44,11 @@ if CLIENT then
         if not ply.IsTaseredBy then return end
         ply:SetSequence(0)
     end)
-else -- server code 
-    hook.Add("PlayerSwitchWeapon", "DisableWeaponSwitchingTaser", function(ply) return ply:IsFrozen() end) -- ply:Freeze() doesn't account for weapon switching
+else -- server code
+    hook.Add("PlayerSwitchWeapon", "DisableWeaponSwitchingTaser", function(ply)
+        -- ply:Freeze() doesn't account for weapon switching
+        if ply:IsFrozen() then return true end
+    end)
 
     hook.Add("DoPlayerDeath", "OnPlayerTaserDeath", function(ply, att, dmg)
         -- victim dies

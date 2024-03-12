@@ -28,7 +28,7 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.Primary.Automatic = true -- Do We Have To Click Or Hold Down The Click
-SWEP.Primary.Ammo = "none" -- What Ammo Does This SWEP Use (If Melee Then Use None)                			-- How Much Jump After An Attack        
+SWEP.Primary.Ammo = "none" -- What Ammo Does This SWEP Use (If Melee Then Use None)                			-- How Much Jump After An Attack
 SWEP.Primary.ClipSize = -1 -- Size Of The Clip
 SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Force = 100000 -- damage force to apply
@@ -49,7 +49,7 @@ SWEP.ChopDelayHit = 1.1 - 0.2 -- How long after chop interrupted we can chop aga
 SWEP.ChargeAttackVelocity = 750 --Velocity to apply during charge
 SWEP.ChargeAttackDamagePeak = 70 --Damage to apply when moving at peak units per second
 SWEP.ChargeAttackVelocityPeak = 800 --Peak speed for charge damage
-SWEP.ChargeDuration = 1 --Time to charge before stopping	
+SWEP.ChargeDuration = 1 --Time to charge before stopping
 SWEP.ChargeDelay = 3 --Time before charging again
 SWEP.ChargeFOV = 120 -- Camera FOV while charging
 SWEP.RenderGroup = RENDERGROUP_BOTH
@@ -473,7 +473,7 @@ end
 hook.Add("DoPlayerDeath", "Holiness", function(ply, attacker, dmg)
     local wep = dmg:GetInflictor()
 
-    if wep:GetClass() == "weapon_crusadersword" then
+    if IsValid(wep) and wep:GetClass() == "weapon_crusadersword" then
         attacker:SetHealth(math.max(math.min(attacker:Health() + 3, attacker:GetMaxHealth()), attacker:Health()))
         wep.KillChain = (wep.KillChain or 0) + 1
 

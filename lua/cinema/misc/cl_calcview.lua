@@ -7,6 +7,7 @@ local thirdperson_view_pitch = 0
 function UseThirdperson()
     local localply = IsValid(Me) and Me
     if localply and localply:IsPlayingTaunt() then return true end
+    if localply and localply:GetObserverMode() ~= OBS_MODE_NONE then return false end
     local vehicle = localply:GetVehicle()
     if IsValid(vehicle) and vehicle:GetThirdPersonMode() then return true end
     local wep = localply and localply:GetActiveWeapon()
@@ -83,11 +84,21 @@ end)
 hook.Add("ShouldDrawLocalPlayer", "ShouldDrawLocalPlayer_ThirdPerson", function(ply)
     local wep = ply:GetActiveWeapon()
     if IsValid(wep) and wep.GetSelfie and wep:GetSelfie() then return true end
+    if thirdperson_lerp > 0 or ply:IsPlayingTaunt() then return true end
+end)
 
-    return thirdperson_lerp > 0 or ply:IsPlayingTaunt()
+hook.Add("ShouldDrawLocalPlayer", "ShouldDrawLocalPlayer_Observer", function(ply)
+    if ply:GetObserverMode() ~= OBS_MODE_NONE then return true end
 end)
 
 function GM:CalcView(ply, origin, angles, fov, znear, zfar)
+    -- TODO(winter): This should probably be like, "FakeSpectateEntity" or something instead, so it's more generalized than just using it for the hamster ball
+    local hamsterball = ply:GetNWEntity("HamsterBall")
+
+    if IsValid(hamsterball) then
+        origin = hamsterball:WorldSpaceCenter() + Vector(0, 0, 8)
+    end
+
     local view = {
         origin = origin,
         angles = angles,
@@ -97,7 +108,8 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
         drawviewer = false
     }
 
-    if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then return view end
+    -- NOTE(winter): Disabled since we do things better with our own thirdperson camera
+    --if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then return view end
     local use_third_person = UseThirdperson()
     thirdperson_lerp = math.Approach(thirdperson_lerp or 0, use_third_person and 1 or 0, FrameTime() * 128)
 
