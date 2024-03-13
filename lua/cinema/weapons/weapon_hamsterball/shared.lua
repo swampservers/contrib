@@ -3,6 +3,7 @@ SWEP.PrintName = "Hamster Ball (WIP)"
 SWEP.Slot = 4
 SWEP.ViewModel = Model("")
 SWEP.WorldModel = Model("")
+SWEP.CannotDrop = true
 
 --NOMINIFY
 function SWEP:PrimaryAttack()
@@ -78,11 +79,10 @@ function SWEP:Holster()
         owner:SetModelScale(1)
         owner:DrawShadow(true) -- TODO: Shadow from playermodel appears, disconnected from the hamsterball model...because we don't have proper working prediction
         -- Fix owner position on exit (they'll be clipped into things otherwise, or get themselves out of the map)
-        -- TODO: Make a standardized PLAYER:Unstuck function or something
+        -- TODO: Improve the PLAYER.UnStick function with this (just using UnStick leads to us being teleported out of the sewers entirely, for example)
         local pos = owner:GetPos()
         local newpos = Vector(pos.x, pos.y, navmesh.GetGroundHeight(pos))
 
-        -- TODO(winter): Optimize
         local tracedata = {
             start = newpos,
             endpos = newpos,
