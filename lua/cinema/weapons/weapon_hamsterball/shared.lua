@@ -80,6 +80,8 @@ function SWEP:Holster()
         owner:DrawShadow(true) -- TODO: Shadow from playermodel appears, disconnected from the hamsterball model...because we don't have proper working prediction
         -- Fix owner position on exit (they'll be clipped into things otherwise, or get themselves out of the map)
         -- TODO: Improve the PLAYER.UnStick function with this (just using UnStick leads to us being teleported out of the sewers entirely, for example)
+        -- NOTE(winter): Disabled because people want it to be buggy as a "feature"
+        --[[
         local pos = owner:GetPos()
         local newpos = Vector(pos.x, pos.y, navmesh.GetGroundHeight(pos))
 
@@ -116,6 +118,7 @@ function SWEP:Holster()
         end
 
         owner:SetPos(newpos)
+        ]]
         -- Fix owner velocity being fucked up after exiting (spams prediction errors and shakes camera)
         owner:SetVelocity(Vector(0, 0, 1))
 

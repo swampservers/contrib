@@ -5,7 +5,8 @@ SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.AlwaysThirdPerson = true
 
---NOMINIFY
+-- NOTE(winter): Disabled because people want it to be buggy as a "feature"
+--[[
 function SWEP:SetupMove(ply, mv, cmd)
     if self.IsHolstered then return end
     mv:SetOrigin(ply:GetNetworkOrigin())
@@ -13,7 +14,8 @@ function SWEP:SetupMove(ply, mv, cmd)
 
     return true
 end
-
+]]
+--NOMINIFY
 function SWEP:Move(ply, mv)
     if self.IsHolstered then return end
 
