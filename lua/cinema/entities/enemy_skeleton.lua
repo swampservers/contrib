@@ -88,12 +88,12 @@ if SERVER then
             if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < SKELETON_LIMIT then
                 local spawn = table.Random(SKELETON_SPAWNS)
 
-                if spawn then
+                if IsValid(spawn) then
                     local newskel = ents.Create("enemy_skeleton")
                     newskel:SetPos(spawn:GetCenter())
                     newskel:Spawn()
                 else
-                    ErrorNoHalt("failed to spawn skeleton, no spawnpoints.")
+                    ErrorNoHalt("Failed to spawn skeleton, invalid spawnpoint.\n")
                 end
             end
         end)
