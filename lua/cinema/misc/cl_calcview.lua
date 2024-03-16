@@ -109,6 +109,7 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
     }
 
     -- NOTE(winter): Disabled since we do things better with our own thirdperson camera
+    -- TODO: Is this broken now...?
     --if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then return view end
     local use_third_person = UseThirdperson()
     thirdperson_lerp = math.Approach(thirdperson_lerp or 0, use_third_person and 1 or 0, FrameTime() * 128)

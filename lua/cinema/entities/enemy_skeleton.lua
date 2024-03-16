@@ -59,33 +59,25 @@ hook.Add("EntityRemoved", "skeleton_remove", function(ent)
 end)
 
 if SERVER then
-    function BuildSkeletonSpawns()
-        SKELETON_SPAWNS = nil
-        local spawns = {}
+    local SKELETON_SPAWNS = {}
+
+    local function BuildSkeletonSpawns()
+        table.Empty(SKELETON_SPAWNS)
         local areas = navmesh.GetAllNavAreas()
 
-        for k, v in pairs(areas) do
-            if v:GetPlace() and not SKELETON_SPAWN_WHITELIST[v:GetPlace()] then continue end
-            if v:GetSizeX() < 32 or v:GetSizeY() < 32 then continue end
-            if v:IsUnderwater() then continue end
-            table.insert(spawns, v)
-        end
-
-        if table.Count(spawns) > 0 then
-            SKELETON_SPAWNS = spawns
+        for _, area in ipairs(areas) do
+            if area:GetPlace() and not SKELETON_SPAWN_WHITELIST[area:GetPlace()] then continue end
+            if area:GetSizeX() < 32 or area:GetSizeY() < 32 then continue end
+            if area:IsUnderwater() then continue end
+            table.insert(SKELETON_SPAWNS, area)
         end
     end
 
-    function InitSkeletonTimers()
-        BuildSkeletonSpawns()
-
-        --idk how often to update this. its probably a heavy function. i just wanna make sure this cache stays up to date.
-        timer.Create("Skeleton_Spawnpoint_List", 20, 0, function()
-            BuildSkeletonSpawns()
-        end)
+    local function InitSkeletonTimers()
+        timer.Simple(0, BuildSkeletonSpawns)
 
         timer.Create("Skeleton_Spawning", 1, 0, function()
-            if SKELETON_SPAWNS and SKELETON_CURRENT_NUMBER < SKELETON_LIMIT then
+            if SKELETON_CURRENT_NUMBER < SKELETON_LIMIT then
                 local spawn = table.Random(SKELETON_SPAWNS)
 
                 if IsValid(spawn) then

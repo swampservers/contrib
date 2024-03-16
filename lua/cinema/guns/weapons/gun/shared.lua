@@ -45,7 +45,7 @@ SWEP.SpraySaturation = 2
 SWEP.m_WeaponDeploySpeed = 1000
 
 function SWEP:Standingness()
-    local cur = self.Owner:GetCurrentViewOffset()
+    local cur = self.Owner:GetCurrentViewOffset() -- TODO: nil func sometimes?
     local stand = self.Owner:GetViewOffset()
     local duck = self.Owner:GetViewOffsetDucked()
 
@@ -122,7 +122,7 @@ function GunPerkOverrides(swep, perk)
     elseif perk == "airsoft" then
         t.Damage = 1
         t.HeadshotMultiplier = 1
-        t.KickUBase = 0 --.01 
+        t.KickUBase = 0 --.01
         t.KickLBase = 0
         t.KickUSpray = 0
         t.KickLSpray = 0
@@ -742,7 +742,7 @@ function SWEP:GunFire()
     local scoped = self:IsScoped()
     local ply = self:GetOwner()
     -- print("GF",cycletime)
-    -- cycletime=cycletime*10 
+    -- cycletime=cycletime*10
     self:SetDelayFire(true)
 
     -- self:SetShotsFired(self:GetShotsFired() + 1)
@@ -752,7 +752,7 @@ function SWEP:GunFire()
     -- 	if pCSInfo.AccuracyQuadratic then
     -- 		iShotsFired = iShotsFired * iShotsFired
     -- 	else
-    -- 		iShotsFired = iShotsFired * iShotsFired * iShotsFired 
+    -- 		iShotsFired = iShotsFired * iShotsFired * iShotsFired
     -- 	end
     -- 	self:SetAccuracy(( iShotsFired / pCSInfo.AccuracyDivisor) + pCSInfo.AccuracyOffset )
     -- 	if self:GetAccuracy() > pCSInfo.MaxInaccuracy then
@@ -1104,7 +1104,7 @@ end
 --     -- sprayfactor = accuracy
 --     -- print("SPR", self.SprayMax, self.SprayIncrement, self.AccuracyDivisor)
 --     return spread * sprayfactor
--- end 
+-- end
 -- -- OLD
 -- function SWEP:BuildSpread()
 --     -- local ply = self:GetOwner()
@@ -1214,7 +1214,7 @@ end
 -- end
 -- function SWEP:PenetrateBullet(dir, vecStart, flDistance, iPenetration, iDamage, flRangeModifier, fPenetrationPower, flPenetrationDistance, flCurrentDistance)
 --     flCurrentDistance = flCurrentDistance or 0
---     self.HalfDamageDistance 
+--     self.HalfDamageDistance
 --     self:GetOwner():FireBullets{
 --         AmmoType = self.Primary.Ammo,
 --         Distance = flDistance,

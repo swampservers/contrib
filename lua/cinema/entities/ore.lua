@@ -258,6 +258,7 @@ function ENT:DoHit(ply, tr, dmginfo)
     end
 
     if SERVER then
+        -- TODO(winter): Tweak how far the sounds for mining ore go
         self:EmitSound("physics/concrete/concrete_impact_bullet" .. math.random(1, 4) .. ".wav", 150, 80, 100, 1, CHAN_ITEM)
         local tweak_angle = self:GetAngles()
         self.EmbedDistance = self.EmbedDistance or self:BoundingRadius()
