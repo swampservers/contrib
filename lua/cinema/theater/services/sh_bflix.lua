@@ -42,8 +42,10 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://bflix.gg/watch%-%w-/.*%-%d+%.%d+$") then return url.encoded end
-
+    if string.match(url.encoded, "https://w1.nites.is/movies/([%w%-]+)$")
+        or string.match(url.encoded, "https://w1.nites.is/episode/([%w%-]+)$") then
+        return url.encoded
+    end
     return false
 end
 
@@ -56,7 +58,7 @@ if CLIENT then
                 vpanel:Remove()
             end
 
-            vpanel = vgui.Create("DHTML", nil, "BflixPanel")
+            vpanel = vgui.Create("DHTML", nil, "NitesPanel")
             vpanel:SetSize(ScrW(), ScrH())
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
@@ -81,27 +83,34 @@ if CLIENT then
                     end
                 end)
 
+                -- The main video page
                 if url == key then
                     self:QueueJavascript([[
+                        const title = document.querySelector('body div#aa-wp div.bd.cont section.section.single div.rw aside.left.cl1 article.post.single div.dfxb div header.entry-header h1.entry-title').textContent;
+                        const thumbnailUrl = document.querySelector('[itemprop=thumbnailUrl]').content;
+                        exTheater.onVideoInfoReady({
+                            "title": title,
+                            "thumb": thumbnailUrl,
+                        });
+                        // Go to first embed
+                        const embedUrl = document.querySelector('[itemprop=embedUrl]').href;
+                        window.location.href = embedUrl;
+                    ]])
+                -- First embed
+                elseif string.match(url, "trembed") then
+                    self:QueueJavascript([[
                         const initInterval = setInterval(function() {
-                            let iframe = document.getElementById("iframe-embed");
-                            if (iframe && iframe.src && iframe.src.includes("embed")) {
+                            let iframe = document.querySelector("iframe");
+                            if (iframe && iframe.src && iframe.src.includes("/player/v/")) {
+                                // Go to second embed
                                 window.location.href = iframe.src;
                                 exTheater.onVideoInfoReady({"data": iframe.src});
                                 clearInterval(initInterval);
                             }
                         }, 100);
-                        let title = document.querySelector("li[aria-current=\"page\"]").textContent;
-                        if (window.parent.location.href.includes("watch-tv")) {
-                            title = title.substring(0, title.lastIndexOf(":")).replace(/\s+/g, ' ');
-                        }
-                        title = title.trim();
-                        exTheater.onVideoInfoReady({
-                            "title": title,
-                            "thumb": document.querySelector("meta[property='og:image']").content
-                        });
                     ]])
-                else
+                -- Second embed (the actual player)
+                elseif string.match(url, "/player/v/") then
                     self:QueueJavascript([[
                         const initInterval = setInterval(function() {
                             const player = document.querySelector("video");
@@ -119,10 +128,10 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL(Video:Key())
+        panel:EnsureURL(Video:Data())
 
         panel.OnDocumentReady = function(_, url)
-            if string.match(url, "embed") then
+            if string.match(url, "/player/v/") then
                 panel:AddFunction("gmod", "loaded", function()
                     self:SeekTo(CurTime() - Video:StartTime(), panel)
                     self:SetVolume(theater.GetVolume(), panel)
@@ -130,17 +139,8 @@ if CLIENT then
 
                 panel:QueueJavascript(theater.TheaterJS)
                 panel:QueueJavascript(self.ServiceJS)
-            else
-                panel:QueueJavascript([[
-                    const initInterval = setInterval(function() {
-                        document.querySelector('body').style = "display:none";
-                        let iframe = document.getElementById("iframe-embed");
-                        if (iframe && iframe.src && iframe.src.includes("embed")) {
-                            window.location.href = iframe.src;
-                            clearInterval(initInterval);
-                        }
-                    }, 100);
-                ]])
+                -- Hide overflow to get rid of scrollbar
+                panel:QueueJavascript("document.body.style.overflow = 'hidden';")
             end
         end
     end
