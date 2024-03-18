@@ -86,7 +86,7 @@ if CLIENT then
                 -- The main video page
                 if url == key then
                     self:QueueJavascript([[
-                        const title = document.querySelector('body div#aa-wp div.bd.cont section.section.single div.rw aside.left.cl1 article.post.single div.dfxb div header.entry-header h1.entry-title').textContent;
+                        const title = document.querySelector('h1[itemprop="name"]').textContent;
                         const thumbnailUrl = document.querySelector('[itemprop=thumbnailUrl]').content;
                         exTheater.onVideoInfoReady({
                             "title": title,
@@ -128,19 +128,21 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL(Video:Data())
+        if Video:Data() ~= "" then
+            panel:EnsureURL(Video:Data())
 
-        panel.OnDocumentReady = function(_, url)
-            if string.match(url, "/player/v/") then
-                panel:AddFunction("gmod", "loaded", function()
-                    self:SeekTo(CurTime() - Video:StartTime(), panel)
-                    self:SetVolume(theater.GetVolume(), panel)
-                end)
+            panel.OnDocumentReady = function(_, url)
+                if string.match(url, "/player/v/") then
+                    panel:AddFunction("gmod", "loaded", function()
+                        self:SeekTo(CurTime() - Video:StartTime(), panel)
+                        self:SetVolume(theater.GetVolume(), panel)
+                    end)
 
-                panel:QueueJavascript(theater.TheaterJS)
-                panel:QueueJavascript(self.ServiceJS)
-                -- Hide overflow to get rid of scrollbar
-                panel:QueueJavascript("document.body.style.overflow = 'hidden';")
+                    panel:QueueJavascript(theater.TheaterJS)
+                    panel:QueueJavascript(self.ServiceJS)
+                    -- Hide overflow to get rid of scrollbar
+                    panel:QueueJavascript("document.body.style.overflow = 'hidden';")
+                end
             end
         end
     end
