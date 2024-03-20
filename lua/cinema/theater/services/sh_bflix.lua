@@ -42,7 +42,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://w1.nites.is/movies/([%w%-]+)$") or string.match(url.encoded, "https://w1.nites.is/episode/([%w%-]+)$") then return url.encoded end
+    if string.match(url.encoded, "https://w1.nites.is/movies/([%w%-]+)/?$") or string.match(url.encoded, "https://w1.nites.is/episode/([%w%-]+)/?$") then return url.encoded end
 
     return false
 end
