@@ -1,4 +1,4 @@
-﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 sv_GetVideoInfo = sv_GetVideoInfo or {}
 
 sv_GetVideoInfo.bflix = function(self, key, ply, onSuccess, onFailure)

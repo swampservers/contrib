@@ -1,16 +1,16 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
-SERVICE.Name = "Bflix"
+SERVICE.Name = "Nites"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
 SERVICE.ServiceJS = [[
-    var bflixPlayer;
+    var nitesPlayer;
     var targetTime = -0.5;
     var updateTimeNow = false;
     function th_volume(vol) {
-        if (bflixPlayer) {
-            bflixPlayer.volume = vol * 0.01;
+        if (nitesPlayer) {
+            nitesPlayer.volume = vol * 0.01;
         }
     }
     function th_seek(seconds) {
@@ -20,21 +20,21 @@ SERVICE.ServiceJS = [[
     // Think
     setInterval(function() {
         targetTime += 0.1;
-        if (bflixPlayer) {
-            if (bflixPlayer.paused) {
-                bflixPlayer.play();
+        if (nitesPlayer) {
+            if (nitesPlayer.paused) {
+                nitesPlayer.play();
             }
-            if (bflixPlayer.duration > 0) {
+            if (nitesPlayer.duration > 0) {
                 var maxOffset = 15;
-                if (updateTimeNow || Math.abs(bflixPlayer.currentTime - targetTime) > maxOffset) {
-                    bflixPlayer.currentTime = Math.max(0, targetTime);
+                if (updateTimeNow || Math.abs(nitesPlayer.currentTime - targetTime) > maxOffset) {
+                    nitesPlayer.currentTime = Math.max(0, targetTime);
                     updateTimeNow = false;
                 }
             }
         } else {
             let player = document.querySelector('video');
             if (player) {
-                bflixPlayer = player;
+                nitesPlayer = player;
                 gmod.loaded();
             }
         }
@@ -42,7 +42,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://bflix.gg/watch%-%w-/.*%-%d+%.%d+$") then return url.encoded end
+    if string.match(url.encoded, "https://w1.nites.is/movies/([%w%-]+)/?$") or string.match(url.encoded, "https://w1.nites.is/episode/([%w%-]+)/?$") then return url.encoded end
 
     return false
 end
@@ -56,7 +56,7 @@ if CLIENT then
                 vpanel:Remove()
             end
 
-            vpanel = vgui.Create("DHTML", nil, "BflixPanel")
+            vpanel = vgui.Create("DHTML", nil, "NitesPanel")
             vpanel:SetSize(ScrW(), ScrH())
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
@@ -66,7 +66,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("Bflix request failed")
+                    print("Nites request failed")
                     callback()
                 end
             end)
@@ -81,27 +81,34 @@ if CLIENT then
                     end
                 end)
 
+                -- The main video page
                 if url == key then
                     self:QueueJavascript([[
+                        const title = document.querySelector('h1[itemprop="name"]').textContent;
+                        const thumbnailUrl = document.querySelector('[itemprop=thumbnailUrl]').content;
+                        exTheater.onVideoInfoReady({
+                            "title": title,
+                            "thumb": thumbnailUrl,
+                        });
+                        // Go to first embed
+                        const embedUrl = document.querySelector('[itemprop=embedUrl]').href;
+                        window.location.href = embedUrl;
+                    ]])
+                    -- First embed
+                elseif string.match(url, "trembed") then
+                    self:QueueJavascript([[
                         const initInterval = setInterval(function() {
-                            let iframe = document.getElementById("iframe-embed");
-                            if (iframe && iframe.src && iframe.src.includes("embed")) {
+                            let iframe = document.querySelector("iframe");
+                            if (iframe && iframe.src && iframe.src.includes("/player/v/")) {
+                                // Go to second embed
                                 window.location.href = iframe.src;
                                 exTheater.onVideoInfoReady({"data": iframe.src});
                                 clearInterval(initInterval);
                             }
                         }, 100);
-                        let title = document.querySelector("li[aria-current=\"page\"]").textContent;
-                        if (window.parent.location.href.includes("watch-tv")) {
-                            title = title.substring(0, title.lastIndexOf(":")).replace(/\s+/g, ' ');
-                        }
-                        title = title.trim();
-                        exTheater.onVideoInfoReady({
-                            "title": title,
-                            "thumb": document.querySelector("meta[property='og:image']").content
-                        });
                     ]])
-                else
+                elseif string.match(url, "/player/v/") then
+                    -- Second embed (the actual player)
                     self:QueueJavascript([[
                         const initInterval = setInterval(function() {
                             const player = document.querySelector("video");
@@ -119,31 +126,24 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        panel:EnsureURL(Video:Key())
+        if Video:Data() ~= "" then
+            panel:EnsureURL(Video:Data())
 
-        panel.OnDocumentReady = function(_, url)
-            if string.match(url, "embed") then
-                panel:AddFunction("gmod", "loaded", function()
-                    self:SeekTo(CurTime() - Video:StartTime(), panel)
-                    self:SetVolume(theater.GetVolume(), panel)
-                end)
+            panel.OnDocumentReady = function(_, url)
+                if string.match(url, "/player/v/") then
+                    panel:AddFunction("gmod", "loaded", function()
+                        self:SeekTo(CurTime() - Video:StartTime(), panel)
+                        self:SetVolume(theater.GetVolume(), panel)
+                    end)
 
-                panel:QueueJavascript(theater.TheaterJS)
-                panel:QueueJavascript(self.ServiceJS)
-            else
-                panel:QueueJavascript([[
-                    const initInterval = setInterval(function() {
-                        document.querySelector('body').style = "display:none";
-                        let iframe = document.getElementById("iframe-embed");
-                        if (iframe && iframe.src && iframe.src.includes("embed")) {
-                            window.location.href = iframe.src;
-                            clearInterval(initInterval);
-                        }
-                    }, 100);
-                ]])
+                    panel:QueueJavascript(theater.TheaterJS)
+                    panel:QueueJavascript(self.ServiceJS)
+                    -- Hide overflow to get rid of scrollbar
+                    panel:QueueJavascript("document.body.style.overflow = 'hidden';")
+                end
             end
         end
     end
 end
 
-theater.RegisterService('bflix', SERVICE)
+theater.RegisterService('nites', SERVICE)
