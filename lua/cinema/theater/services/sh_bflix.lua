@@ -42,10 +42,8 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://w1.nites.is/movies/([%w%-]+)$")
-        or string.match(url.encoded, "https://w1.nites.is/episode/([%w%-]+)$") then
-        return url.encoded
-    end
+    if string.match(url.encoded, "https://w1.nites.is/movies/([%w%-]+)$") or string.match(url.encoded, "https://w1.nites.is/episode/([%w%-]+)$") then return url.encoded end
+
     return false
 end
 
@@ -96,7 +94,7 @@ if CLIENT then
                         const embedUrl = document.querySelector('[itemprop=embedUrl]').href;
                         window.location.href = embedUrl;
                     ]])
-                -- First embed
+                    -- First embed
                 elseif string.match(url, "trembed") then
                     self:QueueJavascript([[
                         const initInterval = setInterval(function() {
@@ -109,8 +107,8 @@ if CLIENT then
                             }
                         }, 100);
                     ]])
-                -- Second embed (the actual player)
                 elseif string.match(url, "/player/v/") then
+                    -- Second embed (the actual player)
                     self:QueueJavascript([[
                         const initInterval = setInterval(function() {
                             const player = document.querySelector("video");
