@@ -688,6 +688,7 @@ function ENT:ComputePath(pos, options)
     return path, success
 end
 
+-- TODO(winter): This is really expensive!! Optimize it.
 function ENT:ChaseTarget(options)
     options = options or {}
     local path, result = self:ComputePath(self:GetTarget():GetPos(), options)
