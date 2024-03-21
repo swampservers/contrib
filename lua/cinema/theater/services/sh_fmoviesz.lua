@@ -94,7 +94,7 @@ if CLIENT then
                                 if (ulServers) {
                                     const liElements = ulServers.querySelectorAll('li');
                                     if (liElements) {
-                                        if (currentServerIndex <= liElements.length) {
+                                        if (currentServerIndex < liElements.length - 1) {
                                             liElements[++currentServerIndex].click();
                                         } else {
                                             currentServerIndex = 0;
