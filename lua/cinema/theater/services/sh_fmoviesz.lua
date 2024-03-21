@@ -59,7 +59,7 @@ if CLIENT then
 
             vpanel = vgui.Create("DHTML", nil, "FmovieszPanel")
             vpanel:SetSize(ScrW(), ScrH())
-            vpanel:SetAlpha(1)
+            vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
             vpanel:SetKeyboardInputEnabled(false)
             vpanel:OpenURL(key)
