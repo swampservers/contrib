@@ -64,7 +64,7 @@ if CLIENT then
             vpanel:SetKeyboardInputEnabled(false)
             vpanel:OpenURL(key)
 
-            timer.Simple(10, function()
+            timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
                     print("Fmoviesz request failed")
