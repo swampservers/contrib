@@ -95,6 +95,7 @@ TrashLocationOverrides = {
     ["SushiTheater First Floor"] = TRASHLOC_BUILD,
     ["The Pit"] = TRASHLOC_BUILD,
     ["The Underworld"] = TRASHLOC_BUILD,
+    ["Throne Room"] = TRASHLOC_BUILD,
     ["Tree"] = TRASHLOC_BUILD,
     ["Trump Tower Casino"] = TRASHLOC_NOSPAWN,
     ["Trump Tower Gaymergear"] = TRASHLOC_BUILD,

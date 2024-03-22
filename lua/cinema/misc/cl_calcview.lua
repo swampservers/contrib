@@ -6,7 +6,6 @@ local thirdperson_view_pitch = 0
 
 function UseThirdperson()
     local localply = IsValid(Me) and Me
-    if localply and localply:IsPlayingTaunt() then return true end
     if localply and localply:GetObserverMode() ~= OBS_MODE_NONE then return false end
     local vehicle = localply:GetVehicle()
     if IsValid(vehicle) and vehicle:GetThirdPersonMode() then return true end
@@ -108,10 +107,15 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
         drawviewer = false
     }
 
-    -- NOTE(winter): Disabled since we do things better with our own thirdperson camera
-    -- TODO: Is this broken now...?
-    --if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then return view end
-    local use_third_person = UseThirdperson()
+    -- NOTE(winter): We want the angles from this, but nothing else, because its trace will collide with the hamsterball
+    local taunting = false
+
+    if self.TauntCam:CalcView(view, ply, ply:IsPlayingTaunt()) then
+        angles = view.angles
+        taunting = true
+    end
+
+    local use_third_person = taunting or UseThirdperson()
     thirdperson_lerp = math.Approach(thirdperson_lerp or 0, use_third_person and 1 or 0, FrameTime() * 128)
 
     if thirdperson_lerp > 0 then
