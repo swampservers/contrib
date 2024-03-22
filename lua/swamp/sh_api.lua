@@ -252,6 +252,7 @@ local any_type_writers = {
 }
 
 any_type_writers.Player = any_type_writers.Entity
+any_type_writers.Weapon = any_type_writers.Entity
 
 function net.ReadAny()
     local id = ReadUInt(any_id_bits)
