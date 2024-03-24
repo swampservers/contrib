@@ -57,7 +57,7 @@ function bench(func, reps)
         return
     end
 
-    -- TODO pass ... if that is possible
+    -- TODO: pass ... if that is possible
     -- , calls
     local t, calls
 

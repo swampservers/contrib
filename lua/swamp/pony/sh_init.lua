@@ -12,7 +12,7 @@ end
 
 --- Boolean, mostly for players
 function Entity:IsPony()
-    return IsPonyModel(self:GetModel())
+    return IsPonyModel(self:GetModel()) or self.GetDisplayModel and IsPonyModel(self:GetDisplayModel())
 end
 
 function Entity:IsPPMPony()
@@ -39,7 +39,7 @@ function Entity:PonyPlayer()
     if self:IsPlayer() then return self end
     if self:EntIndex() == -1 then return Me end --pointshop model
     if self.RagdollSourcePlayer then return self.RagdollSourcePlayer end
-    -- if self.PonyPlayerEntity then return 
+    -- if self.PonyPlayerEntity then return
     -- if its a ragdoll then return owner
     print(self, "unknown pony")
 end
@@ -50,8 +50,8 @@ PPM.isLoaded = false
 -- Deleted items because apparently it was never even meant to save, what a garbage system!
 -- Even if I added saving of the items, it would be incompatible with other PPM servers.
 -- Plus it is extra complication.
--- TODO SET MAX NUMBERS TO THE CORRECT MAX OR AT LEAST HIGH ENOUGH
--- TODO MOVE THIS TO pony_player.lua AND USE THE SAME TABLE AS IS IN THERE
+-- TODO: SET MAX NUMBERS TO THE CORRECT MAX OR AT LEAST HIGH ENOUGH
+-- TODO: MOVE THIS TO pony_player.lua AND USE THE SAME TABLE AS IS IN THERE
 local ponydata_numbers = {
     age = {2, 2, 2},
     body_type = {1, 1, 1},

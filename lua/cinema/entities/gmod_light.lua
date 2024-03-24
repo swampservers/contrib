@@ -95,7 +95,7 @@ function ENT:DrawTranslucent()
 end
 
 --[[---------------------------------------------------------
-   Overridden because I want to show the name of the 
+   Overridden because I want to show the name of the
    player that spawned it..
 -----------------------------------------------------------]]
 function ENT:GetOverlayText()

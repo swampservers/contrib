@@ -1,9 +1,8 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 LASTERRORTIME = -100
-REALERRORFUNCTION = REALERRORFUNCTION or debug.getregistry()[1]
 local reportederrors = {}
 
-debug.getregistry()[1] = function(...)
+hook.Add("OnLuaError", "ReportErrorHash.CatchBaseError", function(...)
     LASTERRORTIME = SysTime()
 
     local hash = tonumber(util.CRC(({...})[1]))
@@ -14,9 +13,7 @@ debug.getregistry()[1] = function(...)
         net.WriteUInt(hash, 32)
         net.SendToServer()
     end
-
-    return REALERRORFUNCTION(...)
-end
+end)
 
 local matAlert = Material("icon16/error.png")
 

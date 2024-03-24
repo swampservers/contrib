@@ -366,7 +366,7 @@ function ENT:CanTape(userid)
     if self:GetRating() == 1 then return false end
     if self:CannotTape(userid) then return false end
     -- If the obbcenter intersects the world, dont allow
-    local center = self:LocalToWorld(self:OBBCenter())
+    local center = self:WorldSpaceCenter()
 
     if util.TraceLine({
         start = center,
@@ -379,7 +379,7 @@ function ENT:CanTape(userid)
     if HumanTeamName ~= nil then return self:CanEdit(userid) end
 
     for k, v in ipairs(TrashNoFreezeNodes) do
-        if self:GetPos():Distance(v[1]) < v[2] then return false end
+        if center:Distance(v[1]) < v[2] then return false end
     end
 
     local lown, lcl = self:GetLocationOwner(), self:GetLocationClass()

@@ -45,7 +45,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     end
 end)
 
-function TryAddBounty(ply, targets, amount)
+function TryAddBounty(ply, targets, amount, locname)
     amount = math.floor(tonumber(amount) or 0)
 
     if amount < 1000 then
@@ -74,8 +74,8 @@ function TryAddBounty(ply, targets, amount)
                 sc.log(ply, " set a bounty on ", targets[1], " for ", amount, " points")
             end
         else
-            NamedBotMessage(ply, " has increased everyone's bounty by ", Style.rainbow(amount), " points!")
-            sc.log(ply, " set a bounty on everyone for ", amount, " points")
+            NamedBotMessage(ply, " has increased the bounty of everyone", locname and " in " .. locname or "", " by ", Style.rainbow(amount), " points!")
+            sc.log(ply, " set a bounty on everyone", locname and " in " .. locname or "", " for ", amount, " points")
         end
     end, function()
         if IsValid(ply) then
@@ -93,12 +93,66 @@ RegisterChatCommand({'bounty', 'setbounty'}, function(ply, arg)
         local found = FindSinglePlayer(arg)
 
         if isnumber(found) then
-            ply:ChatPrint("[red]Player " .. arg .. (found == 0 and " not found" or " matched " .. found .. " players"))
+            ply:ChatPrint("[red]Player \"" .. arg .. (found == 0 and "\" not found" or "\" matched " .. found .. " players"))
         else
             TryAddBounty(ply, {found}, p)
         end
     else
         ply:ChatPrint("[orange]!bounty player points")
+    end
+end, {
+    global = true,
+    throttle = true
+})
+
+RegisterChatCommand({'bountylocation', 'setbountylocation'}, function(ply, arg)
+    arg = string.Explode(" ", arg)
+    local p = tonumber(table.remove(arg))
+    arg = string.Implode(" ", arg)
+
+    if p then
+        -- Exact match
+        local found = LocationByName[arg]
+        local matchcount = found and 1 or 0
+
+        if not found then
+            arg = string.lower(arg)
+
+            for _, loc in ipairs(Locations) do
+                -- Exact (lowercase) match
+                local locname = string.lower(loc.Name)
+
+                if locname == arg then
+                    found = loc
+                    matchcount = 1
+                    break
+                end
+
+                -- Containing arg
+                if string.find(locname, arg, 1, true) then
+                    if not found then
+                        found = loc
+                        matchcount = 1
+                    else
+                        matchcount = matchcount + 1
+                    end
+                end
+            end
+        end
+
+        if matchcount ~= 1 then
+            ply:ChatPrint("[red]Location \"" .. arg .. (matchcount == 0 and "\" not found" or "\" matched " .. matchcount .. " locations"))
+        else
+            local players = GetPlayersInLocation(found.Index)
+
+            if #players > 0 then
+                TryAddBounty(ply, players, p, found.Name)
+            else
+                ply:ChatPrint("[orange]Nobody's in " .. found.Name .. " right now!")
+            end
+        end
+    else
+        ply:ChatPrint("[orange]!bountylocation locationname points")
     end
 end, {
     global = true,

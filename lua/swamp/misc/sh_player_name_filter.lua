@@ -4,7 +4,7 @@
 Player.TrueName = Player.TrueName or Player.Nick
 local decor_pattern = "[%[%]%{%}%(%)%<%>%-%|%=% ]+"
 
--- todo: create memo() which is like this but uses call interface and takes multiple args (memoization)
+-- TODO: create memo() which is like this but uses call interface and takes multiple args (memoization)
 local advertpattern = memo(function(advert)
     local pat = {decor_pattern}
 

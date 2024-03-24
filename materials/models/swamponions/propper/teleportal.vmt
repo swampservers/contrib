@@ -1,0 +1,27 @@
+"unlitgeneric"
+{
+	$model 1 	"$basetexture" "effects/strider_muzzle"
+	"$additive" "1"
+	"$translucent" "1"
+
+	"$color2" "[1 1 0.2]"
+
+
+	$center "[0.5 1.5]"
+	$angle 0
+	$scale 0.8
+
+	proxies {
+		texturetransform {
+			centervar $center
+			rotatevar $angle
+			scalevar $scale
+			resultvar $basetexturetransform
+		}	
+		linearramp {
+			rate -40
+			initialvalue 0
+			resultvar $angle
+		}		
+	}
+}

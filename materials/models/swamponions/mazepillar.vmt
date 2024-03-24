@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	 "egypt/maze_pillar"
+	"$surfaceprop" "rock"
+	//"$phong"     "1"
+	//"$halflambert"	1
+ 	//"$phongexponent"   "60"
+ 	//"$phongboost"   "0"
+ 	//"$phongfresnelranges"   "[.5 .8 1]"
+}

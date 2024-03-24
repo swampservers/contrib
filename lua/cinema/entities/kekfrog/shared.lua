@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 ENT.Type = "anim"
+ENT.Model = Model("models/swamponions/kekfrog.mdl")
 DEFINE_BASECLASS("base_gmodentity")
 
 function ENT:SetupDataTables()
@@ -34,7 +35,7 @@ function ENT:Initialize()
         self.lastcollect = CurTime()
     end
 
-    self:SetModel("models/swamponions/kekfrog.mdl")
+    self:SetModel(self.Model)
     self:SetModelScale(0.15)
     self:PhysicsInitBox(Vector(-1, -1, -1) * 10, Vector(1, 1, 1) * 10)
     self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -52,9 +53,11 @@ function ENT:Initialize()
     end
 end
 
+-- We want kekfrog to be above ground for income, but not into space or protected areas
+-- TODO(winter): Maybe bringing it to the moon would be a more impressive feat and therefore worth more?
 function ENT:Income()
     local p = self:GetPos()
-    if p.z < -100 or p.z > 1000 or p.x < -3300 or p.x > 3300 or self:IsProtected() then return 0 end
+    if p.z < -128 or p.z > 1184 or p.x < -4096 or p.x > 5120 or self:IsProtected() then return 0 end
     local inc = 1000 + self:GetOfferedPoints() / 50
     local i = 1
 

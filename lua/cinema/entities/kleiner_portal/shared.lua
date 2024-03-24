@@ -2,9 +2,9 @@
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
-KLEINERPORTALPOS = Vector(5980, 2880, -200)
+KLEINERPORTALPOS = MapTargets["kleiner_portal"][1]["origin"]
 
--- todo: some sort of color lerp, maybe portal particles when the player teleports
+-- TODO: some sort of color lerp, maybe portal particles when the player teleports
 function ENT:Initialize()
     --self:SetModel(self.Model)
     self:PhysicsInitBox(Vector(-8, -20, -42), Vector(8, 20, 42))

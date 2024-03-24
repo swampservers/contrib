@@ -95,7 +95,7 @@ hook.Add("PlayerSay", "ChatPonyspeak", function(ply, text, team)
     end
 end)
 
-RegisterChatCommand({'ponyspeak', 'pspeak', 'ponyrpchat', 'ponify'}, function(ply, arg)
+RegisterChatCommand({"ponyspeak", "pspeak", "ponyrpchat", "ponify"}, function(ply, arg)
     ply.PonyspeakEnabled = not ply.PonyspeakEnabled
     ply:ChatPrint("[pink]ponyspeak " .. (ply.PonyspeakEnabled and "enabled" or "disabled"))
 end, {
@@ -104,18 +104,18 @@ end, {
 })
 
 if gm == "cinema" then
-    RegisterChatCommand({'ponyrp'}, function(ply, arg)
+    RegisterChatCommand({"ponyrp"}, function(ply, arg)
         if IsValid(ply) and not ply:InVehicle() and ply:Alive() then
-            ply:SetPos(Vector(-388, 1400, -118)) --treatment room location
+            ply:SetPos(GetLocationCenterByName("Treatment Room") + Vector(0, 0, -64))
 
-            for k, v in ipairs(ents.GetAll()) do
-                if IsValid(v) then
-                    if v:GetName() == "treatmentdoor" then
-                        v:Fire("Close")
+            for _, ent in ipairs(ents.GetAll()) do
+                if IsValid(ent) then
+                    if ent:GetName() == "treatmentdoor" then
+                        ent:Fire("Close")
                     end
 
-                    if v:GetName() == "treatmentlever" then
-                        v:Fire("PressOut")
+                    if ent:GetName() == "treatmentlever" then
+                        ent:Fire("PressOut")
                     end
                 end
             end

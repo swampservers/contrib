@@ -5,8 +5,20 @@ SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.AlwaysThirdPerson = true
 
+-- NOTE(winter): Disabled because people want it to be buggy as a "feature"
+--[[
+function SWEP:SetupMove(ply, mv, cmd)
+    if self.IsHolstered then return end
+    mv:SetOrigin(ply:GetNetworkOrigin())
+    mv:SetVelocity(ply:GetAbsVelocity())
+
+    return true
+end
+]]
 --NOMINIFY
 function SWEP:Move(ply, mv)
+    if self.IsHolstered then return end
+
     -- bug when fullupdate happens, it causes the callback to go away but not the value set
     if not ply.AddedHamsterBallBoneCallback then
         ply.AddedHamsterBallBoneCallback = true
@@ -22,7 +34,7 @@ end
 --         -- local matrix = e:GetBoneMatrix(0):GetTranslation()
 --         -- local pos = matrix
 --         -- ply:SetRenderOrigin(e:GetPos())
---         -- mv:SetVelocity( e:GetVelocity()) 
+--         -- mv:SetVelocity( e:GetVelocity())
 --         -- e:SetRenderOrigin() --mv:GetOrigin())
 --         -- mv:SetOrigin( e:GetBoneMatrix(0):GetTranslation() )
 --         -- mv:SetVelocity(Vector(0,0,0))
@@ -68,7 +80,7 @@ function BuildHamsterBallBones(ent, nb)
 
     -- local move = e:GetNetworkOrigin() - e:GetPos()
     -- local move = ent:GetPos() - e:GetPos()
-    -- local move = e:GetNetworkOrigin() - ent:GetPos() 
+    -- local move = e:GetNetworkOrigin() - ent:GetPos()
     -- print("MOVE", move)
     for i = 0, nb - 1 do
         -- local p, a = ent:GetBonePosition(i)

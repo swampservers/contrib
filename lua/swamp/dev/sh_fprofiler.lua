@@ -15,7 +15,7 @@ include("fprofiler/cami.lua")
 
 CAMI.RegisterPrivilege{
     Name = "FProfiler",
-    MinAccess = "superadmin"
+    MinRank = 5
 }
 
 include("fprofiler/prettyprint.lua")

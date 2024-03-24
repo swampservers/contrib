@@ -252,6 +252,7 @@ local any_type_writers = {
 }
 
 any_type_writers.Player = any_type_writers.Entity
+any_type_writers.Weapon = any_type_writers.Entity
 
 function net.ReadAny()
     local id = ReadUInt(any_id_bits)
@@ -265,7 +266,13 @@ function net.ReadAny()
 end
 
 function net.WriteAny(v)
-    return any_type_writers[type(v)](v)
+    local writer = any_type_writers[type(v)]
+
+    if writer then
+        return writer(v)
+    else
+        error("Couldn't find net writer for type: " .. type(v) .. " | " .. tostring(v))
+    end
 end
 
 API_ANY = {net.ReadAny, net.WriteAny}
@@ -374,7 +381,7 @@ API_PLAYER = {
     net.WriteEntity
 }
 
--- NOTE: args will be a table: 
+-- NOTE: args will be a table:
 -- {argtype1, argtype2, unreliable=bool, ???}
 -- if there are zero positional arguments, it is vararg. if you really want an empty command just make 1 arg API_NIL
 -- parse argtypes and align parameters (argtypes is table, handler is function, unreliable is bool)
@@ -445,7 +452,7 @@ end
 --             writetype(sel)
 --             writers[sel](v)
 --         end
---     }    
+--     }
 -- end
 -- function API_Optional(typ)
 --     return API_Union({API_NIL, typ}, function(v) return v==nil and 1 or 2 end)

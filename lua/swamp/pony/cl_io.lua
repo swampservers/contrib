@@ -76,7 +76,7 @@ function PPM_Randomize()
     ponydata.eyecolor_line2 = iriscolor * 0.8
     ponydata.eyeholesize = 0.7 + math.Rand(-0.1, 0.1)
     ponydata.eyecolor_hole = Vector(0, 0, 0)
-    -- TODO assert(ponydata == SanitizePonyCfg(ponydata))
+    -- TODO: assert(ponydata == SanitizePonyCfg(ponydata))
     PPM_SetPonyCfg(Me, SanitizePonyCfg(ponydata))
 end
 

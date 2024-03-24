@@ -38,7 +38,7 @@ function GM:EntityTakeDamage(target, dmginfo)
             dmginfo:ScaleDamage(2)
         end
 
-        -- todo use inflictor
+        -- TODO: use inflictor
         if att:UsingWeapon("weapon_slam") then
             dmginfo:ScaleDamage(1.5)
         end

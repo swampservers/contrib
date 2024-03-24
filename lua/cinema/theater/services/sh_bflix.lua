@@ -42,7 +42,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://bflix.sx/watch%-%w-/.*%-%d+%.%d+$") then return url.encoded end
+    if string.match(url.encoded, "https://bflix.gg/watch%-%w-/.*%-%d+%.%d+$") then return url.encoded end
 
     return false
 end

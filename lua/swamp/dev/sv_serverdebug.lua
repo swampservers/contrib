@@ -5,13 +5,10 @@ function ServerDebug(e)
     RecentErrors[tostring(e)] = CurTime()
 end
 
-ERRORLOG_REALERRORFUNCTION = ERRORLOG_REALERRORFUNCTION or debug.getregistry()[1]
-
-debug.getregistry()[1] = function(e)
-    ServerDebug("Error: " .. tostring(e))
-
-    return ERRORLOG_REALERRORFUNCTION(e)
-end
+-- TODO(winter): Log server errors somewhere for review, even across restarts
+hook.Add("OnLuaError", "ServerDebug.CatchBaseError", function(e)
+    ServerDebug("Error: " .. e)
+end)
 
 util.AddNetworkString("PrintConsole")
 

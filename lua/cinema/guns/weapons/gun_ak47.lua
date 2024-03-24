@@ -40,7 +40,7 @@ SWEP.KickLBase = 0.1
 SWEP.KickLSpray = 0.5
 SWEP.MoveSpeed = 221 / 250
 -- SWEP.SprayIncrement = 0.5
---TODO: CycleTime for no spread instead of SprayIncrement?
+-- TODO: CycleTime for no spread instead of SprayIncrement?
 -- SprayShotsTo80(SWEP, 8)   
 -- SWEP.SprayDecay = 0.5     
 --

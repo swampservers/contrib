@@ -9,13 +9,12 @@ SWEP.Instructions = "Primary: Mine\nSecondary: Craft"
 SWEP.ViewModel = Model("models/staticprop/props_mining/pickaxe01.mdl")
 SWEP.WorldModel = Model("models/staticprop/props_mining/pickaxe01.mdl")
 SWEP.Primary.Automatic = true
-SWEP.SWINGINTERVAL = 0.3
+SWEP.SWINGINTERVAL = 0.4
 SWEP.TARGETDISTANCE = 120
 local DIAMONDMAT = Material("models/props_mining/pickaxe01_diamond")
 
 function SWEP:Initialize()
     self:SetHoldType("melee2")
-    self:SetModelScale(0.8)
 end
 
 if CLIENT then
@@ -26,42 +25,10 @@ if CLIENT then
             ["$basetexture"] = "swamponions/meinkraft/cracks",
             ["$alphatest"] = 1,
             -- ["$allowalphatocoverage"] = 1,
-            ["$alphatestreference"] = 0.38 - 0.035 * k,
+            ["$alphatestreference"] = 0.38 - (0.035 * k),
         }))
     end
 end
-
-hook.Add("PostDrawTranslucentRenderables", "DrawPickaxeBlockMarker", function(depth, sky)
-    if sky or depth then return end
-
-    if IsValid(Me) then
-        local wep = Me:GetActiveWeapon()
-
-        if IsValid(wep) and wep:GetClass():StartWith("weapon_pickaxe") then
-            local x, y, z = wep:GetTargetingBlock()
-
-            if x then
-                render.DepthRange(0, 0.9998)
-                render.DrawWireframeBox(cvx_to_game_coord_vec(Vector(x, y, z)), Angle(0, 0, 0), Vector(0, 0, 0), Vector(1, 1, 1) * CVX_SCALE, Color(0, 0, 0), true)
-                render.DepthRange(0, 1)
-            end
-
-            local hb = wep.HitBlock --wep:GetNWVector("HitBlock",nil)
-
-            if hb and cvx_in_world(hb.x, hb.y, hb.z) and cvx_get_vox_solid(hb.x, hb.y, hb.z) then
-                local hl = wep.HitBlockHealth or 1 --wep:GetNWFloat("HitBlockHealth",1)
-                hl = math.min(math.ceil((1 - hl) * 10), 10)
-
-                if hl > 0 then
-                    render.SetMaterial(MININGCRACKMATERIALS[hl])
-                    render.DepthRange(0, 0.9998)
-                    render.DrawBox(cvx_to_game_coord_vec(Vector(hb.x, hb.y, hb.z)), Angle(0, 0, 0), Vector(0, 0, 0), Vector(1, 1, 1) * CVX_SCALE, Color(0, 0, 0), true)
-                    render.DepthRange(0, 1)
-                end
-            end
-        end
-    end
-end)
 
 function SWEP:GetTargetingBlock()
     local tr = util.TraceLine({
@@ -75,25 +42,7 @@ function SWEP:GetTargetingBlock()
         collisiongroup = COLLISION_GROUP_PLAYER,
     })
 
-    if tr.Hit then return cvx_get_trace_hit_vox(tr) end -- else -- 	return cvx_get_nearest_solid_vox(self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 80, true)
-end
-
-function cvx_player_can_edit_vox(builder, x, y, z)
-    return not cvx_is_protected_spot(x, y, z, builder)
-end
-
-function cvx_is_protected_spot(x, y, z, builder)
-    if builder then
-        builder = builder:SteamID()
-    end
-
-    local pt = cvx_to_game_coord_vec(Vector(x + 0.5, y + 0.5, z + 0.5))
-
-    for k, v in ipairs(Ents.prop_trash_zone) do
-        if builder ~= v:GetOwnerID() and v:Protects(pt) then return true end
-    end
-
-    return false
+    if tr.Hit then return tr end -- else -- 	return cvx_get_nearest_solid_vox(self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 80, true)
 end
 
 function SWEP:PrimaryAttack()
@@ -110,7 +59,7 @@ function SWEP:PrimaryAttack()
         self.swingtime = SysTime()
     end
 
-    -- timer.Simple(self.SWINGINTERVAL/4,function() 
+    -- timer.Simple(self.SWINGINTERVAL/4,function()
     -- if SERVER then
     if not IsValid(self) or not IsFirstTimePredicted() then return end
     local bullet = {}
@@ -121,67 +70,13 @@ function SWEP:PrimaryAttack()
     bullet.Distance = self.TARGETDISTANCE
     bullet.Tracer = 0
     bullet.Force = 1
-    bullet.Damage = self:IsDiamond() and 2 or 1
+    bullet.Damage = self:IsDiamond() and math.random(2, 10) or math.random(1, 5)
 
     bullet.Callback = function(att, tr, dmginfo)
         local ent = tr.Entity
 
-        if IsValid(ent) then
-            if ent:GetClass() == "cvx_leaf" then
-                sound.Play("swamponions/pickaxe.wav", ent:GetPos(), 80, 100, 1)
-                local x, y, z = cvx_get_trace_hit_vox(tr)
-
-                if x then
-                    local ch = 1
-                    local hb = self.HitBlock --self:GetNWVector("HitBlock",nil)
-
-                    if hb and hb.x == x and hb.y == y and hb.z == z then
-                        -- ch = self:GetNWFloat("HitBlockHealth",1)
-                        ch = self.HitBlockHealth or 1
-                    end
-
-                    -- todo apply protection field here
-                    local dmg = 0.28
-
-                    if cvx_is_protected_spot(x, y, z, self.Owner) then
-                        dmg = 0.04
-                    end
-
-                    if self:IsDiamond() then
-                        dmg = dmg * 2
-                    end
-
-                    ch = ch - dmg
-
-                    if self.Owner:GetMoveType() == MOVETYPE_NOCLIP then
-                        ch = 0
-                    end
-
-                    if ch <= 0 then
-                        self.HitBlock = nil --self:SetNWVector("HitBlock", Vector(-1,-1,-1))
-
-                        if SERVER then
-                            local idx = cvx_world_index(x, y, z)
-                            Minecraft_Mine(idx, self.Owner)
-
-                            if not self.Owner:HasWeapon("cvx_blocks") then
-                                self.Owner:Give("cvx_blocks")
-                                self.Owner:SetAmmo(0, "blocks")
-                            end
-
-                            if self.Owner:GetAmmoCount("blocks") < 100 then
-                                self.Owner:GiveAmmo(2, "blocks", true)
-                            end
-                        end
-
-                        cvx_set_vox(x, y, z, CVX_VALUE_AIR)
-                    else
-                        self.HitBlock = Vector(x, y, z) --self:SetNWVector("HitBlock", Vector(x,y,z))
-                        -- self:SetNWFloat("HitBlockHealth",ch)
-                        self.HitBlockHealth = ch --NOT SHARED BECAUSE OF SHITTY PREDICTION
-                    end
-                end
-            end
+        if IsValid(ent) and ent.IsOre then
+            ent:DoHit(att, tr, dmginfo)
         end
     end
 
@@ -206,18 +101,39 @@ function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
     if IsValid(ply) then
-        local mat = ply:GetBoneMatrix(ply:LookupBone(ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand") or 0)
+        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+        local bon = ply:LookupBone(bn) or 0
+        local opos = self:GetPos()
+        local oang = self:GetAngles()
+        local bp, ba = ply:GetBonePosition(bon)
 
-        if mat then
-            local pos, ang = mat:GetTranslation(), mat:GetAngles()
-            pos, ang = LocalToWorld(Vector(3, -1, 8), Angle(180, 0, 0), pos, ang)
+        if bp then
+            opos = bp
+        end
 
-            if ply:IsPony() then
-                pos, ang = LocalToWorld(Vector(-4, 3.5, -8), Angle(0, 0, 0), pos, ang)
-            end
+        if ba then
+            oang = ba
+        end
 
-            self:SetRenderOrigin(pos)
-            self:SetRenderAngles(ang)
+        opos = opos + oang:Right() * 1
+        opos = opos + oang:Forward() * 3
+        opos = opos + oang:Up() * 8
+
+        if ply:IsPony() then
+            opos = opos + oang:Forward() * 4
+            opos = opos + oang:Up() * 8
+            opos = opos + oang:Right() * -3.5
+        end
+
+        oang:RotateAroundAxis(oang:Right(), 180)
+        self:SetupBones()
+        self:SetModelScale(0.8, 0)
+        local mrt = self:GetBoneMatrix(0)
+
+        if mrt then
+            mrt:SetTranslation(opos)
+            mrt:SetAngles(oang)
+            self:SetBoneMatrix(0, mrt)
         end
     end
 
@@ -245,15 +161,22 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos = pos + ang:Forward() * 25
     local dt = SysTime() - (self.swingtime or 0)
     dt = dt / self.SWINGINTERVAL
+    dt = math.Clamp(dt, 0, 1)
+    dt = math.pow(dt, 0.8)
 
-    if dt > 1 then
+    if dt < 0.5 then
+        dt = math.Remap(dt, 0, 0.5, 0, 1)
+        dt = math.ease.OutBack(dt)
+    elseif dt < 1 then
+        dt = math.Remap(dt, 0.5, 1, 0, 1)
+        dt = 1 - math.ease.InOutQuad(dt)
+    else
         dt = 0
     end
 
-    dt = math.pow(dt, 0.3)
-    dt = 1 - math.cos(dt * 2 * math.pi)
-    ang:RotateAroundAxis(ang:Up(), 180)
-    ang:RotateAroundAxis(ang:Right(), 30 * dt)
+    local sw = 70 * dt
+    ang:RotateAroundAxis(ang:Up(), 180 + 15)
+    ang:RotateAroundAxis(ang:Right(), sw)
 
     return pos, ang
 end
@@ -264,7 +187,7 @@ function SWEP:DrawHUD()
     local ptlrp = CurTime() - pickaxepointtime
 
     if ptlrp < 0.9 then
-        draw.DrawText("+" .. tostring(pickaxepointamount), "TargetID", ScrW() * 0.5 + pickaxepointdirx * ptlrp * 100, ScrH() * 0.5 - (50 + ptlrp * 100), Color(255, 200, 50, 255 * (0.9 - ptlrp)), TEXT_ALIGN_CENTER)
+        draw.DrawText("+" .. tostring(pickaxepointamount), "TargetID", (ScrW() * 0.5) + (pickaxepointdirx * ptlrp * 100), (ScrH() * 0.5) - (50 + (ptlrp * 100)), Color(255, 200, 50, 255 * (0.9 - ptlrp)), TEXT_ALIGN_CENTER)
     end
 end
 

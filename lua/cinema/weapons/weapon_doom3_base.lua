@@ -321,12 +321,11 @@ if CLIENT then
     local t = 1
     local BobTime = 0
     local BobTimeLast = RealTime()
+    local GetVelocity = FindMetaTable("Entity").GetVelocity
+    local Length = FindMetaTable("Vector").Length2D
 
     function SWEP:CalcViewModelView(vm, oldpos, oldang, pos, ang)
         if not IsValid(vm) or not IsValid(self.Owner) then return end
-        local reg = debug.getregistry()
-        local GetVelocity = reg.Entity.GetVelocity
-        local Length = reg.Vector.Length2D
         local vel = Length(GetVelocity(self.Owner))
         local bob
         local RT = RealTime()

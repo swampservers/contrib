@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 --- For hacking/debugging. FindSinglePlayer but just returns nil if matches multiple.
-function Ply(name)
-    local found = FindSinglePlayer(name)
+function Ply(name, exact_overrides_multiple)
+    local found = FindSinglePlayer(name, exact_overrides_multiple)
 
     if isnumber(found) then
         return nil

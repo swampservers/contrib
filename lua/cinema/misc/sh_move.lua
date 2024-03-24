@@ -18,4 +18,6 @@ function GM:Move(ply, mv)
 end
 
 function GM:FinishMove(ply, mv)
+    local w = ply:GetActiveWeapon()
+    if IsValid(w) and w.FinishMove and not ply:InVehicle() then return w:FinishMove(ply, mv) end
 end

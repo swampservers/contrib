@@ -4,7 +4,7 @@
 --- ply.NWP = {}
 --NOMINIFY
 -- TODO: should we use the stringtable for key names?
--- TODO try API_NETWORK_STRING
+-- TODO: try API_NETWORK_STRING
 API_NETWORK_STRING_TABLE_UPDATE = {
     function()
         local out, nvals = {{}}, net.ReadLength()

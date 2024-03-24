@@ -23,6 +23,8 @@
 	"$rimmask" "1"
 	"$nocull" "1"
 
+	"$nodecal" "1"
+
 	"$normalmapalphaenvmapmask" "1"
 
 

@@ -105,7 +105,7 @@ end
 
 function SWEP:Think()
     if SERVER then
-        if self.Owner:InVehicle() or self.Owner:GetPos():Distance(self.SourceMic:GetPos()) > 250 or self.Owner:GetPos().x > -2680 then
+        if self.Owner:InVehicle() or self.Owner:GetLocationName() ~= "SushiTheater First Floor" then
             self:Remove()
         end
     end

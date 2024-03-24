@@ -186,31 +186,6 @@ if CLIENT then
 end
 
 if SERVER then
-    hook.Add("InitPostEntity", "MAKEHT", function()
-        SHOULDSETUPHELLTAKER = true
-        SETUPHELLTAKER()
-    end)
-
-    function SETUPHELLTAKER()
-        if not SHOULDSETUPHELLTAKER then return end
-
-        for i, v in ipairs(ents.FindByClass("ent_helltaker")) do
-            v:Remove()
-        end
-
-        local e = ents.Create("ent_helltaker")
-        e:SetAngles(Angle(0, -90, 0))
-        e:SetPos(Vector(-520, 1355, -8))
-        e:Spawn()
-        e:Activate()
-        e = ents.Create("ent_helltaker")
-        e:SetAngles(Angle(0, 180, 0))
-        e:SetPos(Vector(-2060, -1025, -8))
-        e:Spawn()
-        e:Activate()
-    end
-
-    timer.Simple(0, SETUPHELLTAKER)
     util.AddNetworkString("HELLTAKER")
     net.Receive("HELLTAKER", function(len, ply) end) -- ply:UnLock()
 end

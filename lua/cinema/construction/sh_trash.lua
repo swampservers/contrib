@@ -32,7 +32,7 @@ end
 TRASH_MODEL_CLASSES = TRASH_MODEL_CLASSES or {}
 TRASH_SPAWN_COOLDOWN = 3
 TRASH_MANAGER_LOAD_RANGE = 1000
-TRASH_MANAGER_PROP_LIMIT = 100
+TRASH_MANAGER_PROP_LIMIT = 200
 -- function GetTrashClass(mdl)
 --     return TRASH_MODEL_CLASSES[mdl] or "prop_trash"
 -- end
@@ -60,54 +60,59 @@ TRASHACT_PAINT = 4
 TRASHACT_UNPAINT = 5
 
 TrashLocationOverrides = {
-    ["Vapor Lounge"] = TRASHLOC_BUILD,
-    ["Furnace"] = TRASHLOC_NOSPAWN,
     ["AFK Corral"] = TRASHLOC_BUILD,
-    ["Reddit"] = TRASHLOC_BUILD,
-    ["Maintenance Room"] = TRASHLOC_BUILD,
-    ["Rat's Lair"] = TRASHLOC_BUILD,
-    ["Sewer Theater"] = TRASHLOC_BUILD,
-    ["Moon Base"] = TRASHLOC_BUILD,
-    ["Office of the Vice President"] = TRASHLOC_BUILD,
-    ["Situation Monitoring Room"] = TRASHLOC_BUILD,
-    ["Stairwell"] = TRASHLOC_NOSPAWN,
-    ["Elevator Shaft"] = TRASHLOC_NOSPAWN,
-    ["Trump Lobby"] = TRASHLOC_BUILD,
-    ["SushiTheater"] = TRASHLOC_BUILD,
-    ["SushiTheater Basement"] = TRASHLOC_BUILD,
-    ["SushiTheater Second Floor"] = TRASHLOC_NOSPAWN,
-    ["SushiTheater Attic"] = TRASHLOC_BUILD,
-    ["Trump Taj Mahal"] = TRASHLOC_NOSPAWN,
     ["Auditorium"] = TRASHLOC_BUILD,
-    ["The Pit"] = TRASHLOC_BUILD,
-    ["Control Room"] = TRASHLOC_BUILD,
-    ["Cemetery"] = TRASHLOC_BUILD,
-    ["Power Plant"] = TRASHLOC_BUILD,
-    ["The Underworld"] = TRASHLOC_BUILD,
-    ["Void"] = TRASHLOC_BUILD,
-    ["The Box"] = TRASHLOC_BUILD,
-    ["Throne Room"] = TRASHLOC_BUILD,
-    ["Trump Tower"] = TRASHLOC_BUILD,
-    ["SportZone"] = TRASHLOC_BUILD,
-    ["Gym"] = TRASHLOC_BUILD,
-    ["Locker Room"] = TRASHLOC_BUILD,
-    ["Janitor\"s Closet"] = TRASHLOC_BUILD,
-    ["Outdoor Pool"] = TRASHLOC_BUILD,
+    ["Basement"] = TRASHLOC_BUILD,
+    ["Caverns"] = TRASHLOC_BUILD,
+    ["City 17"] = TRASHLOC_BUILD,
+    ["Elevator Shaft"] = TRASHLOC_NOSPAWN,
+    ["Furnace"] = TRASHLOC_NOSPAWN,
     ["Golf"] = TRASHLOC_NOSPAWN,
-    ["In Minecraft"] = TRASHLOC_BUILD,
-    ["Tree"] = TRASHLOC_BUILD,
-    ["Shooting Range"] = TRASHLOC_NOSPAWN,
-    ["Temple of Kek"] = TRASHLOC_BUILD,
-    ["Labyrinth"] = TRASHLOC_BUILD,
+    ["Graveyard"] = TRASHLOC_BUILD,
+    ["Gym"] = TRASHLOC_BUILD,
+    ["Janitor's Closet"] = TRASHLOC_BUILD,
+    ["Labyrinth of Kek"] = TRASHLOC_NOBUILD,
+    ["Locker Room"] = TRASHLOC_BUILD,
+    ["Maintenance Room"] = TRASHLOC_BUILD,
+    ["Moon Base"] = TRASHLOC_BUILD,
     ["Moon"] = TRASHLOC_BUILD,
-    ["Deep Space"] = TRASHLOC_BUILD,
-    ["Potassium Palace"] = TRASHLOC_BUILD,
-    ["Sewer Tunnels"] = TRASHLOC_BUILD,
+    ["Office of the Vice President"] = TRASHLOC_BUILD,
     ["Outside"] = TRASHLOC_BUILD,
-    ["Way Outside"] = TRASHLOC_BUILD
+    ["Pool"] = TRASHLOC_BUILD,
+    ["Potassium Abyss"] = TRASHLOC_BUILD,
+    ["Power Plant"] = TRASHLOC_BUILD,
+    ["Reddit"] = TRASHLOC_BUILD,
+    ["Sewer Theater"] = TRASHLOC_BUILD,
+    ["Sewer"] = TRASHLOC_BUILD,
+    ["Shooting Range"] = TRASHLOC_NOSPAWN,
+    ["Situation Monitoring Room"] = TRASHLOC_BUILD,
+    ["Sneed's Feed and Seed"] = TRASHLOC_BUILD,
+    ["SportZone"] = TRASHLOC_BUILD,
+    ["SushiTheater Attic"] = TRASHLOC_BUILD,
+    ["SushiTheater Basement"] = TRASHLOC_BUILD,
+    ["SushiTheater Third Floor"] = TRASHLOC_NOSPAWN,
+    ["SushiTheater Second Floor"] = TRASHLOC_BUILD,
+    ["SushiTheater First Floor"] = TRASHLOC_BUILD,
+    ["The Pit"] = TRASHLOC_BUILD,
+    ["The Underworld"] = TRASHLOC_BUILD,
+    ["Throne Room"] = TRASHLOC_BUILD,
+    ["Tree"] = TRASHLOC_BUILD,
+    ["Trump Tower Casino"] = TRASHLOC_NOSPAWN,
+    ["Trump Tower Gaymergear"] = TRASHLOC_BUILD,
+    ["Trump Tower Hotel"] = TRASHLOC_BUILD,
+    ["Trump Tower Lobby"] = TRASHLOC_BUILD,
+    ["Trump Tower Throne Room"] = TRASHLOC_BUILD,
+    ["Trump Tower X HQ"] = TRASHLOC_BUILD,
+    ["Trumppenbunker"] = TRASHLOC_BUILD,
+    ["Vapor Lounge"] = TRASHLOC_BUILD,
+    ["Void"] = TRASHLOC_BUILD,
+    ["Way Outside"] = TRASHLOC_BUILD,
+    ["Zen Garden"] = TRASHLOC_BUILD
 }
 
+-- Prevent stuff being taped within a sphere around the position
 TrashNoFreezeNodes = {
-    {Vector(-2040, -60, 80), 120},
-    {Vector(-1970, -1120, 100), 150}
+    {Vector(850, 1830, -3180), 768}, -- Sewer trickshot (top)
+    {Vector(775, 1785, -740), 256} -- Sewer trickshot (bottom)
+    
 }

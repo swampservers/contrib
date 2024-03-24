@@ -80,7 +80,7 @@ function entity_meta:__index(key)
         if val ~= nil then return val end
     end
 
-    -- TODO remove this and collapse this function to be like Player
+    -- TODO: remove this and collapse this function to be like Player
     if key == "Owner" then return ent_owner(self) end
 end
 
@@ -105,7 +105,7 @@ function weapon_meta:__index(key)
         if val ~= nil then return val end
     end
 
-    -- TODO remove this and collapse this function to be like Player
+    -- TODO: remove this and collapse this function to be like Player
     if key == "Owner" then return ent_owner(self) end
 end
 -- Makes it so like Entity_GetTable maps to Entity.GetTable automatically.

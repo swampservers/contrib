@@ -98,7 +98,7 @@ end
 
 local find, sub = string.find, string.sub
 
--- TODO optimize format thing sub!
+-- TODO: optimize format thing sub!
 local function findfiles(dir)
     local files, dirs = file.Find(dir .. "*", "LUA", "namedesc")
     -- sorting broken by update

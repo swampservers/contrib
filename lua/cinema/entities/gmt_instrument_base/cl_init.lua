@@ -333,13 +333,13 @@ end
 
 function ENT:SheetMusicForward()
     if not IsValid(self.Browser) then return end
-    self.Browser:Exec("pageForward()")
+    self.Browser:QueueJavascript("pageForward()")
     self:EmitSound(self.PageTurnSound, 100, math.random(120, 150))
 end
 
 function ENT:SheetMusicBack()
     if not IsValid(self.Browser) then return end
-    self.Browser:Exec("pageBack()")
+    self.Browser:QueueJavascript("pageBack()")
     self:EmitSound(self.PageTurnSound, 100, math.random(100, 120))
 end
 
@@ -409,6 +409,7 @@ hook.Add("HUDPaint", "InstrumentPaint", function()
 end)
 
 -- Override regular keys
+-- NOTE(winter): Hook order means this doesn't prevent SwampChat from opening... see swamp/chat/cl_overrides.lua
 hook.Add("PlayerBindPress", "InstrumentHook", function(ply, bind, pressed)
     if IsValid(ply.Instrument) then return true end
 end)

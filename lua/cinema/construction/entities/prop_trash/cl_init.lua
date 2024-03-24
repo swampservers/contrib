@@ -110,7 +110,7 @@ end
 -- local matcache = {}
 -- function ENT:SetGoodSkin()
 --     self:SetMaterial()
---     self:SetSkin(0) 
+--     self:SetSkin(0)
 --     local mdl = self:GetModel()
 --     if mdl=="models/props_crates/static_crate_40.mdl" then self:SetSkin(1) end
 --     -- local bestidx = 0
@@ -201,7 +201,7 @@ function FrustrumCull(frustrum, p, r)
     return false
 end
 
--- TODO can we do one every tick cyclically instead of all at once
+-- TODO: can we do one every tick cyclically instead of all at once
 timer.Create("TrashLights", 0.1, 0, function()
     if not IsValid(Me) then return end
     local ep = Me:EyePos()
@@ -290,7 +290,7 @@ timer.Create("TrashLights", 0.1, 0, function()
     end
 end)
 
--- TODO merge this shit with zone
+-- TODO: merge this shit with zone
 hook.Add("PreDrawTranslucentRenderables", "TrashHoverDraw", function()
     if IsValid(PropTrashLookedAt) and PropTrashLookedAt:GetSpecialModelData().class == "gate" then
         -- render.CullMode(MATERIAL_CULLMODE_CW)
@@ -365,7 +365,7 @@ hook.Add("PreDrawHalos", "TrashHalos", function()
                 halo.Add(TRASHMANAGERFILEBUTTONS.mymodels, Color(0, 255, 0), sz, sz, 1, true, false)
             end
         end
-        -- 
+        --
         -- halo.Add(Me:GetActiveWeapon():GetSaveEntities(), Color( 0,255, 0), sz, sz, 1, true, false)
     end
 end)

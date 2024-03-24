@@ -96,7 +96,7 @@ local UNIQUEVALUE = tostring(os.time())
 hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
     for ply, _ in pairs(PPM_PONIES_NEARBY) do
         if ply.ponydata and not ply.ponymaterials then
-            ply.ponydata_tex = {} -- todo remove this
+            ply.ponydata_tex = {} -- TODO: remove this
             ply.ponymaterials = {}
 
             for _, v in ipairs(PPM_player_mat) do
