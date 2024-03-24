@@ -1,4 +1,4 @@
--- This file is subject to copyright - contact swampservers@gmail.com for more information.
+﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
 SERVICE.Name = "Fmoviesz"
 SERVICE.NeedsCodecs = true
@@ -42,8 +42,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://fmoviesz.to/movie/([%w%-]+)/1%-1/?$")
-        or string.match(url.encoded, "https://fmoviesz.to/tv/([%w%-]+)/%d+%-%d+/?$") then return url.encoded end 
+    if string.match(url.encoded, "https://fmoviesz.to/movie/([%w%-]+)/1%-1/?$") or string.match(url.encoded, "https://fmoviesz.to/tv/([%w%-]+)/%d+%-%d+/?$") then return url.encoded end
 
     return false
 end
@@ -163,7 +162,6 @@ if CLIENT then
                 panel:QueueJavascript(theater.TheaterJS)
                 panel:QueueJavascript(self.ServiceJS)
             end
-            
         end
     end
 end

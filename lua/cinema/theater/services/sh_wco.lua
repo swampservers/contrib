@@ -82,8 +82,8 @@ if CLIENT then
                         self:Remove()
                     end
                 end)
-                self:AddFunction("gmod", "loaded", function()
-                end)
+
+                self:AddFunction("gmod", "loaded", function() end)
 
                 if url == key then
                     self:QueueJavascript([[
