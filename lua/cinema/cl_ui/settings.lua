@@ -100,6 +100,7 @@ vgui.Register("ScoreboardSettings", {
         addSlider("Game", "cinema_game_volume", "Gunshots, footsteps etc.\nIf this doesn't work well, try the settings in the escape menu.")
         addSlider("Voice", "cinema_voice_volume", "voice chat")
         addSlider("Loading", "swamp_loading_volume", "Loading screen volume")
+        addSlider("Weapons", "swamp_weapon_volume", "Weapon volume (multiplied by normal game volume)")
         addCheckbox('Mute video while alt-tabbed', "cinema_mute_nofocus", 'No background noise')
         addCheckbox('Mute game while alt-tabbed', "snd_mute_losefocus", 'No background noise')
         addCheckbox('Mute game sound in theater', "cinema_mutegame", 'Mute game sound in theater.')
