@@ -41,6 +41,51 @@ SERVICE.ServiceJS = [[
     }, 100);
 ]]
 
+local find_player_iframe_js = [[
+    var playerIframe;
+
+    // Automatically find a good server
+    let timeSinceLastServerSwitch = 0;
+    let currentServerIndex = -1;
+
+    const findPlayerInterval = setInterval(function() {
+        if (currentServerIndex == -1 || timeSinceLastServerSwitch >= 2500) {
+            const ulServers = document.querySelector('ul.servers');
+            if (ulServers) {
+                const liElements = ulServers.querySelectorAll('li');
+                if (liElements) {
+                    if (currentServerIndex < liElements.length - 1) {
+                        liElements[++currentServerIndex].click();
+                    } else {
+                        currentServerIndex = 0;
+                    }
+
+                    timeSinceLastServerSwitch = 0;
+                }
+            }
+        } else {
+            timeSinceLastServerSwitch += 500;
+
+            const playButton = document.querySelector('.btn-watchnow');
+            if (playButton) {
+                playButton.click();
+            }
+            const iframes = document.querySelectorAll('iframe');
+            let tempPlayerIframe = null;
+            iframes.forEach(iframe => {
+                const allowAttributes = iframe.getAttribute('allow');
+                if (allowAttributes && allowAttributes.includes('autoplay') && allowAttributes.includes('fullscreen')) {
+                    tempPlayerIframe = iframe;
+                }
+            });
+            if (tempPlayerIframe && tempPlayerIframe.src) {
+                playerIframe = tempPlayerIframe;
+                clearInterval(findPlayerInterval);
+            }
+        }
+    }, 500);
+]]
+
 function SERVICE:GetKey(url)
     if string.match(url.encoded, "https://fmoviesz.to/movie/([%w%-]+)/1%-1/?$") or string.match(url.encoded, "https://fmoviesz.to/tv/([%w%-]+)/%d+%-%d+/?$") then return url.encoded end
 
@@ -75,62 +120,27 @@ if CLIENT then
                 self:AddFunction("exTheater", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
 
-                    if videoInfo.title and videoInfo.data and videoInfo.duration and videoInfo.thumb then
+                    if videoInfo.title and videoInfo.duration and videoInfo.thumb then
                         callback(videoInfo)
                         self:Remove()
                     end
                 end)
 
                 if url == key then
+                    self:QueueJavascript(find_player_iframe_js)
                     self:QueueJavascript([[
-                        // Automatically find a good server
-                        let timeSinceLastServerSwitch = 0;
-                        let currentServerIndex = -1;
-
-                        const initInterval = setInterval(function() {
-                            if (currentServerIndex == -1 || timeSinceLastServerSwitch >= 2500) {
-                                const ulServers = document.querySelector('ul.servers');
-                                if (ulServers) {
-                                    const liElements = ulServers.querySelectorAll('li');
-                                    if (liElements) {
-                                        if (currentServerIndex < liElements.length - 1) {
-                                            liElements[++currentServerIndex].click();
-                                        } else {
-                                            currentServerIndex = 0;
-                                        }
-
-                                        timeSinceLastServerSwitch = 0;
-                                    }
-                                }
-                            } else {
-                                timeSinceLastServerSwitch += 500;
-
-                                const playButton = document.querySelector('.btn-watchnow');
-                                if (playButton) {
-                                    playButton.click();
-                                }
-                                const iframes = document.querySelectorAll('iframe');
-                                let playerIframe = null;
-                                iframes.forEach(iframe => {
-                                    const allowAttributes = iframe.getAttribute('allow');
-                                    if (allowAttributes && allowAttributes.includes('autoplay') && allowAttributes.includes('fullscreen')) {
-                                        playerIframe = iframe;
-                                    }
-                                });
-                                if (playerIframe && playerIframe.src) {
-                                    window.location.href = playerIframe.src;
-                                    exTheater.onVideoInfoReady({"data": playerIframe.src});
-                                    clearInterval(initInterval);
-                                }
-                            }
-                        }, 500);
-
                         const title = document.querySelector('h1[itemprop="name"]').textContent;
                         const thumb = document.querySelector('img[itemprop="image"]').src;
                         exTheater.onVideoInfoReady({
                             "title": title,
                             "thumb": thumb
                         });
+                        const initInterval = setInterval(function() {
+                            if (playerIframe && playerIframe.src) {
+                                window.location.href = playerIframe.src;
+                                clearInterval(initInterval);
+                            }
+                        }, 100);
                     ]])
                 else
                     self:QueueJavascript([[
@@ -150,15 +160,24 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        if Video:Data() ~= "" then
-            panel:EnsureURL(Video:Data())
+        panel:EnsureURL(Video:Key())
 
-            panel.OnDocumentReady = function(_, url)
+        panel.OnDocumentReady = function(_, url)
+            if url == Video:Key() then
+                panel:QueueJavascript(find_player_iframe_js)
+                panel:QueueJavascript([[
+                    const initInterval = setInterval(function() {
+                        if (playerIframe && playerIframe.src) {
+                            window.location.href = playerIframe.src;
+                            clearInterval(initInterval);
+                        }
+                    }, 100);
+                ]])
+            else
                 panel:AddFunction("gmod", "loaded", function()
                     self:SeekTo(CurTime() - Video:StartTime(), panel)
                     self:SetVolume(theater.GetVolume(), panel)
                 end)
-
                 panel:QueueJavascript(theater.TheaterJS)
                 panel:QueueJavascript(self.ServiceJS)
             end
