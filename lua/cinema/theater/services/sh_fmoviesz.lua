@@ -40,7 +40,6 @@ SERVICE.ServiceJS = [[
         }
     }, 100);
 ]]
-
 local find_player_iframe_js = [[
     var playerIframe;
 
@@ -178,6 +177,7 @@ if CLIENT then
                     self:SeekTo(CurTime() - Video:StartTime(), panel)
                     self:SetVolume(theater.GetVolume(), panel)
                 end)
+
                 panel:QueueJavascript(theater.TheaterJS)
                 panel:QueueJavascript(self.ServiceJS)
             end
