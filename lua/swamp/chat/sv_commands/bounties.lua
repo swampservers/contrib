@@ -39,7 +39,7 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
         end
 
         ply.BountyFunders = nil
-        atk:GivePoints(bounty)
+        atk:GivePoints(bounty, "Bounty.Claimed")
         NamedBotMessage(Style.edgy(atk), " has claimed ", Style.gold(ply, "'s"), " bounty of ", Style.rainbow(bounty), " points!")
         sc.log(atk, " claimed a bounty on ", ply, " for ", bounty, " points")
     end
@@ -57,7 +57,7 @@ function TryAddBounty(ply, targets, amount, locname)
     local needed = amount * #targets
 
     -- local total = (BountyLimit[ply:SteamID()] or 0) + needed
-    ply:TryTakePoints(needed, function()
+    ply:TryTakePoints(needed, "Bounty.Added", function()
         if not IsValid(ply) then return end
 
         for k, v in ipairs(targets) do
@@ -248,11 +248,11 @@ RegisterChatCommand({'givepointsrandom', 'randomgivepoints'}, function(ply, arg)
         if #ranply == 0 then return end
         local rcvr = ranply[math.random(#ranply)]
 
-        ply:TryTakePoints(p, function()
+        ply:TryTakePoints(p, "GivePointsRandom.Giver", function()
             if not IsValid(ply) then return end
 
             if IsValid(rcvr) then
-                rcvr:GivePoints(p, function()
+                rcvr:GivePoints(p, "GiverPointsRandom.Receiver", function()
                     ply:Notify("You gave " .. rcvr:Nick() .. " " .. p .. " points.")
                     rcvr:Notify(ply:Nick() .. " gave you " .. p .. " of their points.")
                 end, function() return end)

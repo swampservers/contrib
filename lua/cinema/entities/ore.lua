@@ -280,7 +280,7 @@ function ENT:DoHit(ply, tr, dmginfo)
             self:PhysicsInit(SOLID_VPHYSICS)
 
             if ply.GivePoints then
-                ply:GivePoints(self.PointsValue)
+                ply:GivePoints(self.PointsValue, "Ore.Mined")
                 ply:Notify("You mined ore worth " .. tostring(self.PointsValue) .. " Points!")
                 ply:AddStat("mined")
             end

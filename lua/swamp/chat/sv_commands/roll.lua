@@ -193,7 +193,7 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
 
     ply:SendLua("chat.PlaySound()")
 
-    ply:TryTakePoints(bet, function()
+    ply:TryTakePoints(bet, "Roll.Roll", function()
         ply:NamedBotMessage(bet > 0 and string.Comma(bet) .. " points removed." or "Rolling...")
 
         ply:TimerSimple(0.9, function()
@@ -206,7 +206,7 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
             ply:TimerSimple(0.1, function()
                 if bet > 0 and getsize > 1 then
                     WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ', tostring(get), " and won ", Style.gold(bet * 10, " points"), ".", Style.red(compliment))
-                    ply:GivePoints(bet * 10)
+                    ply:GivePoints(bet * 10, "Roll.Won")
                 else
                     WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ', tostring(get), ".", Style.red(compliment))
                 end
@@ -225,7 +225,7 @@ end, {
 -- function autistic_random()
 --     local start,deltas = SysTime(),{}
 --     local t = start
---     for bit=1,32 do   
+--     for bit=1,32 do
 --         local t2, delta
 --         repeat
 --             t2 = SysTime()
@@ -237,7 +237,7 @@ end, {
 --     local total = t-start
 --     table.SortByMember(deltas, 1)
 --     local x = 0
---     for i=1,16 do 
+--     for i=1,16 do
 --         x = x + 2^deltas[i][2]
 --     end
 --     return x

@@ -332,7 +332,7 @@ end
 local function MagicOutcomePrize(ply)
     local amount = ButtonMoneyPrize()
     if ply.GivePoints == nil then return nil end
-    ply:GivePoints(amount)
+    ply:GivePoints(amount, "MagicButton.Prize.Points")
 
     return "and won [white]" .. string.Comma(amount) .. " points[bot]! ;coins;"
 end
@@ -340,7 +340,7 @@ end
 local function MagicOutcomeBountyAndPrize(ply)
     local amount = ButtonMoneyPrize()
     if ply.GivePoints == nil or ply.SetBounty == nil or ply.GetBounty == nil then return nil end
-    ply:GivePoints(amount)
+    ply:GivePoints(amount, "MagicButton.Prize.PointsAndBounty")
     ply:SetBounty(ply:GetBounty() + amount)
 
     return "and won [red]" .. string.Comma(amount) .. " points[bot] and also a [red]" .. string.Comma(amount) .. " point bounty[bot] on themself! ;fingers;"

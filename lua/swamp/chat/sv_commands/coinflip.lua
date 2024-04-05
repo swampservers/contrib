@@ -124,12 +124,12 @@ function finishCoinFlip(fromID, toPlayer)
 
         -- Instead of taking the amount away from both and then giving the winner the amount x 2, simply remove/add here
         if heads then
-            toPlayer:TryTakePoints(amount, function()
-                fromPlayer:GivePoints(amount) --math.floor(amount*0.99)) 
+            toPlayer:TryTakePoints(amount, "CoinFlip.Lost", function()
+                fromPlayer:GivePoints(amount, "CoinFlip.Won") --math.floor(amount*0.99))
             end)
         else
-            fromPlayer:TryTakePoints(amount, function()
-                toPlayer:GivePoints(amount) --math.floor(amount*0.99))
+            fromPlayer:TryTakePoints(amount, "CoinFlip.Lost", function()
+                toPlayer:GivePoints(amount, "CoinFlip.Won") --math.floor(amount*0.99))
             end)
         end
     else
