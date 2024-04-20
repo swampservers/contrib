@@ -106,6 +106,12 @@ if CLIENT then
         player.addEventListener("onStateChange", onPlayerStateChange);
         player.addEventListener("onError", gmod.player_error);
 
+        // Play it silent while we're still grabbing ahold of it, and also set the Default to Muted so they don't hear a volume spike with Embed Disabled videos
+        // WARN: Fragile localStorage usage!
+        const timeNow = new Date().getTime();
+        localStorage.setItem("yt-player-volume", JSON.stringify({"data": {"volume": 0, "muted": true}, "expiration": timeNow + 2592e6, "creation": timeNow}));
+        player.mute();
+
         if (player.getPlayerState() == 1) {
             // It may be so fast it's already in the Playing state by the time we get here
             onPlayerReady();
@@ -114,12 +120,20 @@ if CLIENT then
             gmod.player_error(101);
         }
 
-        // Try again if we're STILL unstarted after 5 seconds, regardless of the page
+        // Try again if we're STILL unstarted after 10 seconds, regardless of the page
         setTimeout(function() {
             if (player.getPlayerState() == -1) {
                 gmod.player_error(101);
             }
-        }, 5000);
+        }, 10000);
+
+        // Behold! The Ad-Destroyer-Inator!
+        setInterval(function() {
+            const adSkipButton = document.getElementsByClassName("ytp-skip-ad-button")[0];
+            if (adSkipButton) {
+                adSkipButton.click();
+            }
+        }, 500);
     ]]
     local noembed_js = [[
         document.body.appendChild(player);
@@ -156,10 +170,9 @@ if CLIENT then
     ]]
 
     function SERVICE:LoadVideo(Video, panel)
-        -- TODO(winter): Auto-skip ads, other improvements we could do
         -- NOTE(winter): We aren't using https://swamp.sv/s/cinema/youtube.html anymore; embedding JS like this makes us more flexible to support Age Restricted and Embed Disabled videos
         -- NOTE(noz): mute=1 to prevent annoying full volume initialization; immediately check player.isMuted() to player.unMute() when possible, player.setVolume(0) doesn't set player.isMuted() to true so it's fine
-        panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1&mute=1")
+        panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1&mute=1&start=" .. math.Round(CurTime() - Video:StartTime()))
 
         panel.OnBeginLoadingDocument = function()
             if self:IsMature(Video) then
@@ -186,7 +199,7 @@ if CLIENT then
                     end
 
                     -- TODO: CC support for Embed Disabled Videos
-                    panel:OpenURL("https://www.youtube.com/watch?v=" .. Video:Key())
+                    panel:OpenURL("https://www.youtube.com/watch?v=" .. Video:Key() .. "&start=" .. math.Round(CurTime() - Video:StartTime()))
                 end
             end)
 
