@@ -78,6 +78,7 @@ LocationDamageInfo = {
             end
         end
     },
+        --[[
     ["Power Plant"] = {
         Frequency = 0.5,
         ShouldApplyDamage = function(ply)
@@ -203,6 +204,7 @@ LocationDamageInfo = {
         ShouldApplyDamage = IsPlayerOnSlime,
         ApplyDamage = ApplyLavaDamage
     },
+    ]]
     ["Church"] = {
         Frequency = 5,
         ShouldApplyDamage = function(ply) return ply:Alive() and ply:IsPony() and not ply:IsAFK() and not tobool(math.random(0, 499)) end,
@@ -292,6 +294,7 @@ hook.Add("PlayerSpawn", "Location.Damage.ResetDamageTimeOnRespawn", function(ply
     ply.NextLocDamageTime = CurTime() + 1
 end)
 
+--[[
 local lastppdoorcheck = 0
 
 hook.Add("PlayerUse", "Location.PowerPlant.ElectrifiedDoor", function(ply, ent)
@@ -318,5 +321,50 @@ hook.Add("PlayerUse", "Location.PowerPlant.ElectrifiedDoor", function(ply, ent)
         else
             ErrorNoHalt("Missing pp_power_button??\n")
         end
+    end
+end)
+]]
+hook.Add("EntityTakeDamage", "Location.TriggerDamageEffects", function(ent, dmg)
+    if not IsValid(ent) or not ent:IsPlayer() then return end
+    local inflictor = dmg:GetInflictor()
+    if not IsValid(inflictor) or dmg:GetInflictor():GetClass() ~= "trigger_hurt" then return end
+
+    -- HACK(winter): The trigger_hurt for the reactor water uses DMG_GENERIC, since we don't want geiger sounds playing ALL THE TIME nearby
+    if ent:GetLocationName() == "Power Plant" and ent:WaterLevel() > 0 and ent:GetPos().z < -48 then
+        dmg:SetDamageType(DMG_RADIATION)
+    end
+
+    local dmgtype = dmg:GetDamageType()
+
+    if dmgtype == DMG_SHOCK then
+        ent:ScreenFade(SCREENFADE.IN, color_white, 0.25, 0)
+        local zapnum = math.random(1, 9)
+        zapnum = zapnum == 4 and 3 or zapnum
+        ent:EmitSound("ambient/energy/zap" .. tostring(zapnum) .. ".wav", 50)
+    elseif dmgtype == DMG_RADIATION then
+        local alpha = math.min((dmg:GetDamage() / 100) * 255, 255)
+        local flashcolor = Color(255, 255, 255, alpha)
+        ent:ScreenFade(SCREENFADE.IN, flashcolor, 0.25, 0)
+    elseif dmgtype == DMG_BURN then
+        -- Burning should light them on fire too
+        ent:Ignite(0.5, 0) -- Does 1 damage/hit
+
+        -- If this burning will kill them, make it dissolve them too
+        if dmg:GetDamage() >= ent:Health() then
+            dmg:SetDamageType(DMG_DISSOLVE)
+        end
+    end
+end)
+
+hook.Add("PostEntityTakeDamage", "Location.TriggerPostDamageEffects", function(ent, dmg, took)
+    if not took then return end
+    if not IsValid(ent) or not ent:IsPlayer() then return end
+    local inflictor = dmg:GetInflictor()
+    if not IsValid(inflictor) or dmg:GetInflictor():GetClass() ~= "trigger_hurt" then return end
+    -- Make sure it actually killed them
+    local dmgtype = dmg:GetDamageType()
+
+    if dmgtype == DMG_DISSOLVE and ent:Health() <= 0 then
+        ent:EmitSound("NPC_CombineBall.KillImpact")
     end
 end)
