@@ -18,7 +18,7 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_338MAG"
 SWEP.Primary.ClipSize = 10
 SWEP.Primary.DefaultClip = 10
 SWEP.Primary.Automatic = false
-SWEP.Damage = 120
+SWEP.Damage = 115 --120
 SWEP.CycleTime = 1.5000
 SWEP.HalfDamageDistance = 32768
 --
@@ -39,7 +39,7 @@ SWEP.ScopeLevels = {40 / 90, 10 / 90}
 
 SWEP.UnscopeOnShoot = true
 SWEP.KickUBase = 3
-SWEP.MoveSpeed = 210 / 250
+SWEP.MoveSpeed = 205 / 250
 SWEP.ScopedSpeedRatio = 0.5
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

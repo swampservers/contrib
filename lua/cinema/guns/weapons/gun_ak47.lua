@@ -18,9 +18,9 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_762MM"
 SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = true
-SWEP.Damage = 28 --36
+SWEP.Damage = 27 --36
 SWEP.CycleTime = 0.1
-SWEP.HalfDamageDistance = 16384
+SWEP.HalfDamageDistance = 8192 --16384
 --
 SWEP.SpreadBase = 0.005
 SWEP.SpreadMove = 0.06
@@ -38,7 +38,7 @@ SWEP.KickUBase = 0.5
 SWEP.KickUSpray = 3
 SWEP.KickLBase = 0.1
 SWEP.KickLSpray = 0.5
-SWEP.MoveSpeed = 221 / 250
+SWEP.MoveSpeed = 220 / 250
 -- SWEP.SprayIncrement = 0.5
 -- TODO: CycleTime for no spread instead of SprayIncrement?
 -- SprayShotsTo80(SWEP, 8)   
