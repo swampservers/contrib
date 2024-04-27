@@ -90,7 +90,6 @@ TrashLocationOverrides = {
     ["SportZone"] = TRASHLOC_BUILD,
     ["SushiTheater Attic"] = TRASHLOC_BUILD,
     ["SushiTheater Basement"] = TRASHLOC_BUILD,
-    ["SushiTheater Third Floor"] = TRASHLOC_NOSPAWN,
     ["SushiTheater Second Floor"] = TRASHLOC_BUILD,
     ["SushiTheater First Floor"] = TRASHLOC_BUILD,
     ["The Pit"] = TRASHLOC_BUILD,
