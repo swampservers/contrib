@@ -26,8 +26,8 @@ function PPM_PrePonyDraw(ent)
     end
 
     PPM_PONIES_NEARBY[ply] = true
-    -- players will get set in ApplyModItems
-    if ent:IsPlayer() then return end
+    -- players / editor models will get set in ApplyModItems
+    if ent:IsPlayer() or ent.BigShopPreview then return end
     ent:SetSubMaterial()
     ent:SetPonyMaterials()
 
@@ -110,14 +110,14 @@ hook.Add("PreDrawHUD", "PPM_PreDrawHUD", function()
                 ply.ponydata_tex[k] = PPM_CreateTexture(UNIQUEVALUE .. tostring(ply:EntIndex()) .. k, v)
                 -- ply.ponydata_tex[k .. "_hash"] = v.hash(pony) --remove
                 ply.ponydata_tex[k .. "_draw"] = PPM.currt_success -- remove
-                -- if PPM.currt_success then 
+                -- if PPM.currt_success then
                 v.render(ply, ply.ponymaterials)
                 -- print(k)
                 -- mats = PPM_CLONE_MATERIALS(mats)
                 -- for _,v in ipairs(mats) do
                 --     ply.ponymaterials[v[2]] = v[1]
                 -- end
-                -- ent.ponydata_tex[k .. "_mat"] = 
+                -- ent.ponydata_tex[k .. "_mat"] =
                 -- end
                 -- print(ent, k)
                 -- once per frame
