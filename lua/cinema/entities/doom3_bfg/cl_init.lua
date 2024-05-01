@@ -1,10 +1,18 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 include('shared.lua')
 
+local bfgflare = CreateMaterial( "bfgflare", "UnlitGeneric", {
+    ["$basetexture"] = "sprites/yellowflare",
+    ["$additive"] = 1,
+    ["$vertexalpha"] = 1,
+    ["$vertexcolor"] = 1,
+    ["$ignorez"] = 0
+})
+
 function ENT:Initialize()
     local Pos = self:GetPos()
     local emitter = ParticleEmitter(Pos)
-    self.particle = emitter:Add("particles/fire_glow", Pos)
+    self.particle = emitter:Add(bfgflare, Pos)
 
     if self.particle then
         self.particle:SetLifeTime(0)

@@ -106,12 +106,6 @@ if CLIENT then
         player.addEventListener("onStateChange", onPlayerStateChange);
         player.addEventListener("onError", gmod.player_error);
 
-        // Play it silent while we're still grabbing ahold of it, and also set the Default to Muted so they don't hear a volume spike with Embed Disabled videos
-        // WARN: Fragile localStorage usage!
-        const timeNow = new Date().getTime();
-        localStorage.setItem("yt-player-volume", JSON.stringify({"data": {"volume": 0, "muted": true}, "expiration": timeNow + 2592e6, "creation": timeNow}));
-        player.mute();
-
         if (player.getPlayerState() == 1) {
             // It may be so fast it's already in the Playing state by the time we get here
             onPlayerReady();
@@ -174,7 +168,18 @@ if CLIENT then
         -- NOTE(noz): mute=1 to prevent annoying full volume initialization; immediately check player.isMuted() to player.unMute() when possible, player.setVolume(0) doesn't set player.isMuted() to true so it's fine
         panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1&mute=1&start=" .. math.Round(CurTime() - Video:StartTime()))
 
-        panel.OnBeginLoadingDocument = function()
+        panel.OnBeginLoadingDocument = function(_, url)
+            if not string.match(url, "/embed/") then
+                panel:RunJavascript([[
+                    function think() {
+                        if (typeof(player_ready) == "undefined"){
+                            var player = document.getElementsByClassName("html5-video-player")[0];
+                            player.setVolume(]]..theater.GetVolume()..[[);
+                        }
+                    }
+                    setInterval(think, 100);
+                ]])
+            end
             if self:IsMature(Video) then
                 panel:RunJavascript(age_restrict_js)
             end
