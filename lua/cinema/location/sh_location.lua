@@ -186,14 +186,16 @@ LocationTheaterInfo = {
         Pos = Vector(1842, 3240, 295),
         Ang = Angle(0, 90, 0),
         Width = 336,
-        Height = 189
+        Height = 189,
+        AllowItems = true
     },
     ["Church"] = {
         Flags = THEATER_REPLICATED,
         Pos = Vector(-906.5, 3872, 176),
         Ang = Angle(0, 270, 0),
         Width = 192,
-        Height = 108
+        Height = 108,
+        AllowItems = true
     },
     ["Potassium Abyss Theater"] = {
         Flags = THEATER_NONE,
