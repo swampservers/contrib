@@ -123,7 +123,7 @@ if CLIENT then
 
         // Behold! The Ad-Destroyer-Inator!
         setInterval(function() {
-            const adSkipButton = document.getElementsByClassName("ytp-skip-ad-button")[0];
+            const adSkipButton = document.getElementsByClassName("ytp-ad-skip-button-slot")[0];
             if (adSkipButton) {
                 adSkipButton.click();
             }
@@ -170,16 +170,18 @@ if CLIENT then
 
         panel.OnBeginLoadingDocument = function(_, url)
             if not string.match(url, "/embed/") then
+                -- This will get overridden by our think function in OnDocumentReady's js once it's run
                 panel:RunJavascript([[
                     function think() {
                         if (typeof(player_ready) == "undefined"){
                             var player = document.getElementsByClassName("html5-video-player")[0];
-                            player.setVolume(]]..theater.GetVolume()..[[);
+                            player.setVolume(]] .. theater.GetVolume() .. [[);
                         }
                     }
                     setInterval(think, 100);
                 ]])
             end
+
             if self:IsMature(Video) then
                 panel:RunJavascript(age_restrict_js)
             end

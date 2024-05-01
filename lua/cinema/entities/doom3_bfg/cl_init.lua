@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 include('shared.lua')
 
-local bfgflare = CreateMaterial( "bfgflare", "UnlitGeneric", {
+local bfgflare = CreateMaterial("bfgflare", "UnlitGeneric", {
     ["$basetexture"] = "sprites/yellowflare",
     ["$additive"] = 1,
     ["$vertexalpha"] = 1,
