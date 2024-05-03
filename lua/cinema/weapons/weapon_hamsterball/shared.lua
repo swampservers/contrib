@@ -57,7 +57,7 @@ function SWEP:Deploy()
         BroadcastLua([[
             local wep = Entity(]] .. self:EntIndex() .. [[)
             if IsValid(wep) and wep.Deploy then
-                wep:Deploy(wep)
+                wep:Deploy()
             end
         ]])
     end
@@ -129,7 +129,7 @@ function SWEP:Holster()
         BroadcastLua([[
             local wep = Entity(]] .. self:EntIndex() .. [[)
             if IsValid(wep) and wep.Holster then
-                wep:Holster(wep)
+                wep:Holster()
             end
         ]])
     end
