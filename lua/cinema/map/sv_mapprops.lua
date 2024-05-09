@@ -115,6 +115,12 @@ function GetMapPropTable()
             pos = Vector(-2554, -325, 482),
             ang = Angle(0, 90, 0)
         },
+        {
+            class = "prop_dynamic_override",
+            model = "models/props_phx/rt_screen.mdl",
+            pos = Vector(-2396, -432, 542),
+            ang = Angle(0, 90, 0)
+        },
     }
 
     --IN VAPOR LOUNGE

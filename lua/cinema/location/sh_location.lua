@@ -210,6 +210,13 @@ LocationTheaterInfo = {
         Ang = Angle(0, 277, 0),
         Width = 54,
         Height = 32
+    },
+    ["Trump Tower Casino"] = {
+        Flags = THEATER_REPLICATED,
+        Pos = Vector(-2368, -426, 576.75),
+        Ang = Angle(0, 180, 0),
+        Width = 56,
+        Height = 31.5
     }
 }
 
