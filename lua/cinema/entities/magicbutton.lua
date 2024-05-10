@@ -655,6 +655,14 @@ local MagicButtonOutcomes = {
             end
         end,
         weight = 8
+    },
+    {
+        func = function(ply, button)
+            ply:SetPos(GetLocationCenterByName("Skybox"))
+
+            return "and got teleported into the sky! " .. table.Random({";4am;", ";aliendance;", ";catufo;"})
+        end,
+        weight = 1
     }
 }
 

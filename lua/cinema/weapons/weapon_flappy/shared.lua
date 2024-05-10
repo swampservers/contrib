@@ -28,7 +28,7 @@ function SWEP:SetupMove(ply, mv, cmd)
         local self = ply:GetActiveWeapon()
         local power = 200
 
-        if ply.InTheater and ply:InTheater() then
+        if ply.InTheater and ply:InTheater() and ply:GetLocationName() ~= "Trump Tower Casino" then
             power = 155
             if not ply:IsOnGround() then return end
         end
