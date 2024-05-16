@@ -217,6 +217,14 @@ LocationTheaterInfo = {
         Ang = Angle(0, 180, 0),
         Width = 56,
         Height = 31.5
+    },
+    ["Pool"] = {
+        Flags = THEATER_REPLICATED,
+        Pos = Vector(1740, -864.5, 120),
+        Ang = Angle(0, 90, 0),
+        Width = 48,
+        Height = 27,
+        Projected = true
     }
 }
 

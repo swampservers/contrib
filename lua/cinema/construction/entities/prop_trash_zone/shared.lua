@@ -39,14 +39,11 @@ TrashZoneModels = {
         center = Vector(150, 0, 0),
         cubesize = 400,
         theater = {
-            pos = Vector(300, 160, 90),
-            ang = Angle(0, -90, 0),
-            w = 320,
-            h = 180,
-            projection = {
-                pos = Vector(0, 0, 0),
-                ang = Angle(0, 0, 0),
-            }
+            projected = true,
+            pos = Vector(9.5, 3, -3),
+            ang = Angle(0, 0, 0),
+            w = 48,
+            h = 27
         }
     },
     ["models/maxofs2d/hover_classic.mdl"] = {
@@ -144,13 +141,7 @@ function ENT:CreateTheater()
     l.Name = self:GetTheaterName()
     l.Theater.Width, l.Theater.Height = th.w, th.h
     l.Theater.Pos, l.Theater.Ang = LocalToWorld(th.pos, th.ang, self:GetPos(), self:GetAngles())
-    -- if tmtd.projection then
-    --     -- TODO: implement this
-    --     l.Theater.Projector = {
-    --         pos = self:LocalToWorld(tmtd.projection.pos),
-    --         ang = self:LocalToWorldAngles(tmtd.projection.ang),
-    --     }
-    -- end
+    l.Theater.Projected = th.projected
     l.Theater.PermanentOwnerID = self:GetOwnerID()
     local t = theater.GetByLocation(li)
 
@@ -165,6 +156,7 @@ function ENT:CreateTheater()
         t._Ang = l.Theater.Ang
         t._Width = l.Theater.Width * 10
         t._Height = l.Theater.Height * 10
+        t._Projected = l.Theater.Projected
         t._PermanentOwnerID = l.Theater.PermanentOwnerID
     end
 
@@ -192,7 +184,7 @@ function ENT:OnRemove()
 end
 
 function ENT:CannotTape(userid)
-    -- self:GetPos():Distance(Vector(0, -1152, 0)) > 900 and 
+    -- self:GetPos():Distance(Vector(0, -1152, 0)) > 900 and
     local basederror = BaseClass.CannotTape and BaseClass.CannotTape(self, userid)
     if basederror then return basederror end
     local badcount = -1
