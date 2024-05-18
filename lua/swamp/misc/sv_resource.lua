@@ -7,6 +7,7 @@ resource.AddWorkshop("2453150686")
 resource.AddWorkshop("2453150754")
 resource.AddWorkshop("2453150824")
 resource.AddWorkshop("2453151168")
+
 -- removed additional shards
 -- resource.AddWorkshop("2453151259")
 -- resource.AddWorkshop("2453151358")
@@ -23,8 +24,7 @@ resource.AddWorkshop("2453151168")
 -- resource.AddWorkshop( "346465496" ) -- Christmas Props
 -- resource.AddWorkshop( "822232922" ) -- UXmas model pack
 -- resource.AddWorkshop( "1783952608" ) --HEV KLEINER
-resource.AddSingleFile("gamemodes/cinema/logo.png")
-
+-- resource.AddSingleFile("gamemodes/cinema/logo.png") -- Now shipped in the stub gamemode
 -- end
 if gm == "fatkid" then
     resource.AddWorkshop("625476776") -- Fat Kid playermodel
