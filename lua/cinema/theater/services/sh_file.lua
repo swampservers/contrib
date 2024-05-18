@@ -2,14 +2,18 @@
 local SERVICE = {}
 SERVICE.Name = "File"
 SERVICE.Mature = true
+SERVICE.NeedsChromium = true
 SERVICE.NeedsCodecs = true
 SERVICE.CacheLife = 0
 SERVICE.LivestreamCacheLife = 0
 
 function SERVICE:GetKey(url)
     if url.scheme == "rtmp" then return url.encoded end
+    -- Extensions should always be lowercase
+    -- TODO(winter): Improve this; maybe do a HEAD request for Content-Type instead of relying on file extensions?
+    local lowerpath = string.lower(url.path)
 
-    if string.sub(url.path, -4) == ".mp4" then
+    if string.sub(lowerpath, -4) == ".mp4" or string.sub(lowerpath, -5) == ".webm" or string.sub(lowerpath, -4) == ".mov" then
         if string.match(url.host, "dropbox.com") then return "https://www.dropbox.com" .. url.path .. "?dl=0" end
 
         return url.encoded
@@ -69,6 +73,7 @@ if CLIENT then
                     end
                 end)
 
+                -- TODO(winter): Fix support for thumbnails on Dropbox (probably using og:image)
                 if not isDropbox then
                     self:QueueJavascript(string.format("th_video('%s');", string.JavascriptSafe(key)))
                 end

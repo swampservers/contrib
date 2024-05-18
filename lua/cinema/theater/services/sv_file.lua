@@ -35,51 +35,24 @@ sv_GetVideoInfo.file = function(self, key, ply, onSuccess, onFailure)
         end
     end
 
-    local onFetchReceive = function(body, length, headers, code)
-        local info = {}
-        local t = string.match(body, "InitReact.mountComponent%(mod, ({.+ViewerContainer\"})")
-
-        if t ~= nil then
-            t = util.JSONToTable(t).props.file or {}
-            info.thumb = t.preview.content.poster_url_tmpl and t.preview.content.poster_url_tmpl .. "?size=1280x960&size_mode=2" or ""
-
-            http.Fetch(t.preview.content.metadata_url or "", function(body2)
-                if type(util.JSONToTable(body2)) == "table" then
-                    info.duration = math.ceil(tonumber(util.JSONToTable(body2).duration))
+    theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
+        --don't accept links that can't be viewed by both the client and the server
+        --[[HTTP({
+            method = "HEAD",
+            url = key,
+            success = function(code)
+                --whitelist for discord's annoying anti-scrape measure
+                if (code == 200 or string.match(key, "cdn.discordapp.com")) then
                     onReceive(info)
                 else
-                    theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure) --failsafe
-                end
-            end, function()
-                theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure) --failsafe
-            end)
-        else
-            theater.GetVideoInfoClientside(self:GetClass(), key, ply, onReceive, onFailure) --failsafe
-        end
-    end
-
-    if string.match(key, "dropbox.com") then
-        self:Fetch(string.Replace(key, "?dl=1", ""), onFetchReceive, onFailure)
-    else
-        theater.GetVideoInfoClientside(self:GetClass(), key, ply, function(info)
-            --don't accept links that can't be viewed by both the client and the server
-            --[[HTTP({
-                method = "HEAD",
-                url = key,
-                success = function(code)
-                    --whitelist for discord's annoying anti-scrape measure
-                    if (code == 200 or string.match(key, "cdn.discordapp.com")) then
-                        onReceive(info)
-                    else
-                        onFailure('File is only available to you')
-                    end
-                end,
-                failed = function(err)
-                    ply:PrintMessage(HUD_PRINTCONSOLE, err)
                     onFailure('File is only available to you')
                 end
-            })]]
-            onReceive(info)
-        end, onFailure)
-    end
+            end,
+            failed = function(err)
+                ply:PrintMessage(HUD_PRINTCONSOLE, err)
+                onFailure('File is only available to you')
+            end
+        })]]
+        onReceive(info)
+    end, onFailure)
 end

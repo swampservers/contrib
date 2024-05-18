@@ -39,6 +39,18 @@ SERVICE.ServiceJS = [[
             }
         }
     }, 100);
+
+    // Ad-Destroyer
+    setInterval(function() {
+        for (const iframeElem of document.getElementsByTagName("iframe")) {
+            iframeElem.remove();
+        }
+
+        const adContainer = document.getElementById("overlay-container");
+        if (adContainer) {
+            adContainer.remove();
+        }
+    }, 500);
 ]]
 
 function SERVICE:GetKey(url)
