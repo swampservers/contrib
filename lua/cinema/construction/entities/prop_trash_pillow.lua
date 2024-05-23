@@ -60,6 +60,7 @@ function ENT:Use(ply)
 end
 
 function ENT:Tape()
+    self.BaseClass.Tape(self)
 end
 
 function ENT:Draw()
