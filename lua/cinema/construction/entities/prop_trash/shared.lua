@@ -350,7 +350,7 @@ else
         -- someone sitting in the seat
         if IsValid((self.UseTable or {})[1]) then return true end
 
-        return not (self:GetLocationClass() == TRASHLOC_NOSPAWN and self:GetOwnerID() ~= self:GetLocationOwner())
+        return self:GetLocationClass() ~= TRASHLOC_NOSPAWN or self:GetOwnerID() == self:GetLocationOwner()
     end
 end
 

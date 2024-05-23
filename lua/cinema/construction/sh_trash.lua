@@ -86,7 +86,6 @@ TrashLocationOverrides = {
     ["Sewer"] = TRASHLOC_BUILD,
     ["Shooting Range"] = TRASHLOC_NOSPAWN,
     ["Situation Monitoring Room"] = TRASHLOC_BUILD,
-    ["Skybox"] = TRASHLOC_BUILD,
     ["Sneed's Feed and Seed"] = TRASHLOC_BUILD,
     ["SportZone"] = TRASHLOC_BUILD,
     ["SushiTheater Attic"] = TRASHLOC_BUILD,
