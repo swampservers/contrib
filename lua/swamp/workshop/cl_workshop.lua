@@ -209,7 +209,7 @@ function Entity:GetActualModel()
     --     local dmdl, wsid = self:GetDisplayModel()
     --     if dmdl then
     --         register_workshop_model(dmdl, wsid)
-    --         -- print(require_workshop(wsid)) 
+    --         -- print(require_workshop(wsid))
     --         if require_workshop(wsid) then
     --             if self:GetModel()~=dmdl then self:SetModel(dmdl) end
     --         end
@@ -228,13 +228,17 @@ function require_playermodel_list(wsid)
 
     if not STEAMWS_PLAYERMODELS[wsid] then
         local mdl_list = {}
+        print("Scanning for playermodels in " .. wsid .. "...")
 
         for k, f in ipairs(STEAMWS_MOUNTED[wsid]) do
             if f:EndsWith(".mdl") then
                 local isplr, err, err2 = MDLIsPlayermodel(f)
 
                 if isplr then
+                    print("\t- Found: " .. f)
                     table.insert(mdl_list, f)
+                else
+                    print("\t- Rejecting: " .. f .. " | " .. err, err2 or "")
                 end
             end
         end

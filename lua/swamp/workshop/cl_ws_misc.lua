@@ -10,19 +10,19 @@ end
 function MDLIsPlayermodel(f)
     local mdl, err, err2 = mdlinspect.Open(f)
     if not mdl then return nil, err, err2 end
-    if mdl.version < 44 or mdl.version > 49 then return false, "bad model version" end
+    if mdl.version < 44 or mdl.version > 49 then return false, "Bad model version" end
     local ok, err = mdl:ParseHeader()
     if not ok then return false, err or "hdr" end
-    if not mdl.bone_count or mdl.bone_count <= 2 then return false, "nobones" end
+    if not mdl.bone_count or mdl.bone_count <= 2 then return false, "No bones" end
     local imdls = mdl:IncludedModels()
     local found_anm
 
     for k, v in next, imdls do
         v = v[2]
-        if v and v:find("_arms_", 1, true) then return false, "arms" end
-        if v and not v:find"%.mdl$" then return false, "badinclude", v end
+        if v and v:find("_arms_", 1, true) then return false, "Arms" end
+        if v and not v:find("%.mdl$") then return false, "Bad include", v end
 
-        if v == "models/m_anm.mdl" or v == "models/f_anm.mdl" or v == "models/z_anm.mdl" then
+        if v == "models/m_anm.mdl" or v == "models/f_anm.mdl" or v == "models/z_anm.mdl" or v == "models/mlp/pony_anims.mdl" then
             found_anm = true
         end
     end
@@ -30,7 +30,7 @@ function MDLIsPlayermodel(f)
     local attachments = mdl:Attachments()
 
     if (not attachments or not next(attachments)) and not found_anm then
-        return false, "noattachments"
+        return false, "No attachments"
     else
         local found
 
@@ -43,7 +43,7 @@ function MDLIsPlayermodel(f)
             end
         end
 
-        if not found and not found_anm then return false, "attachments" end
+        if not found and not found_anm then return false, "Missing required attachments" end
     end
 
     -- bounds check

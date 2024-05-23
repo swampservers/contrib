@@ -355,10 +355,10 @@ function MDL:ParseHeader()
     res.localposeparam_count = from_int(f:Read(4), true)
     res.localposeparam_index = from_int(f:Read(4), true)
     --[[
-	 * For anyone trying to follow along, as of this writing,
-	 * the next "surfaceprop_index" value is at position 0x0134 (308)
-	 * from the start of the file.
-	 --]]
+     * For anyone trying to follow along, as of this writing,
+     * the next "surfaceprop_index" value is at position 0x0134 (308)
+     * from the start of the file.
+     --]]
     -- Surface property value (single null-terminated string)
     res.surfaceprop_index = from_int(f:Read(4), true)
     -- Unusual: In this one index comes first, then count.
@@ -399,10 +399,10 @@ function MDL:ParseHeader()
     res.flexcontrollerui_count = from_int(f:Read(4), true)
     res.flexcontrollerui_index = from_int(f:Read(4), true)
     --[[*
-	 * Offset for additional header information.
-	 * May be zero if not present, or also 408 if it immediately
-	 * follows this studiohdr_t
-	 --]]
+     * Offset for additional header information.
+     * May be zero if not present, or also 408 if it immediately
+     * follows this studiohdr_t
+     --]]
     -- studiohdr2_t
     res.studiohdr2index = from_int(f:Read(4), true)
 
@@ -567,7 +567,7 @@ function MDL:TextureDirs()
 end
 
 -----------------------------
-local mstudiobodyparts_t_size = 4 + 4 + 4 + 4 -- int	sznameindex; -- int	nummodels; -- int	base; -- int	modelindex; 
+local mstudiobodyparts_t_size = 4 + 4 + 4 + 4 -- int	sznameindex; -- int	nummodels; -- int	base; -- int	modelindex;
 
 function MDL:offsetBodyPart(i)
     assert(i >= 0 and i <= self.bodypart_count)
@@ -727,10 +727,14 @@ function MT:SetBodygroup(group, val)
     local bodypart = self.data[group]
 
     if not bodypart then
-        for _, v in next, self.data do
-            if v.name == group then
-                bodypart = v
-                break
+        for _, candidate in next, self.data do
+            if candidate.name == group then
+                -- there can be duplicates, choose the last one
+                if candidate.nummodels > 1 then
+                    bodypart = candidate
+                else
+                    bodypart = bodypart or candidate
+                end
             end
         end
 
