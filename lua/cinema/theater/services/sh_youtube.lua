@@ -123,7 +123,7 @@ if CLIENT then
 
         // Behold! The Ad-Destroyer-Inator!
         setInterval(function() {
-            const adSkipButton = document.getElementsByClassName("ytp-ad-skip-button-slot")[0];
+            const adSkipButton = document.getElementsByClassName("ytp-ad-skip-button-slot")[0] || document.getElementsByClassName("ytp-skip-ad-button")[0];
             if (adSkipButton) {
                 adSkipButton.click();
             }

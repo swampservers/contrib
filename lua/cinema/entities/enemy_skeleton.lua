@@ -435,7 +435,7 @@ function ENT:FindTarget()
     end
 
     -- Slowly die if they end up somewhere where nobody is
-    --this is a terrible place for this todo move
+    -- TODO: This is a terrible place for this, move it
     if playersum == 0 then
         self.WasteCounter = (self.WasteCounter or 1000) - 1
         self.NextTargetTime = CurTime() + 1
