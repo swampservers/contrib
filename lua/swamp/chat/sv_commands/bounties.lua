@@ -90,7 +90,7 @@ RegisterChatCommand({'bounty', 'setbounty'}, function(ply, arg)
     arg = string.Implode(" ", arg)
 
     if p then
-        local found = FindSinglePlayer(arg)
+        local found = FindSinglePlayer(arg, true)
 
         if isnumber(found) then
             ply:ChatPrint("[red]Player \"" .. arg .. (found == 0 and "\" not found" or "\" matched " .. found .. " players"))
@@ -194,7 +194,7 @@ end, {
 })
 
 RegisterChatCommand({'showbounty'}, function(ply, arg)
-    local found = FindSinglePlayer(arg)
+    local found = FindSinglePlayer(arg, true)
 
     if isnumber(found) then
         ply:ChatPrint("[orange]!showbounty player (found " .. found .. " players)")

@@ -217,7 +217,7 @@ if CLIENT then
         Mixer:DockPadding(0, 0, 0, 40)
         local DButton = vgui.Create("DButton", Frame)
         DButton:SetPos(128, 200)
-        DButton:SetText("Build!")
+        DButton:SetText("Color!")
         DButton:SetSize(64, 32)
 
         DButton.DoClick = function()

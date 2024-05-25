@@ -207,7 +207,7 @@ LocationDamageInfo = {
     ]]
     ["Church"] = {
         Frequency = 5,
-        ShouldApplyDamage = function(ply) return ply:Alive() and ply:IsPony() and not ply:IsAFK() and not tobool(math.random(0, 499)) end,
+        ShouldApplyDamage = function(ply) return ply:Alive() and ply:IsPony() and not ply:IsAFK() and not tobool(math.random(0, 249)) end,
         ApplyDamage = function(ply, rep, applymatch, locinfo)
             local world = game.GetWorld()
             local dmginfo = DamageInfo()

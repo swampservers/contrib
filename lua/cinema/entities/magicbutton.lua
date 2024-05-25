@@ -20,7 +20,7 @@ ENT.PlacementSettings.SurfacePropBlacklist = {"dirt", "grass", "gravel", "rock"}
 ENT.PlacementSettings.TextureBlacklist = {"**empty**", "TOOLS/TOOLSBLACK", "**studio**"}
 
 if SERVER then
-    MAGICBUTTON_ENT_DESIRED_NUMBER = 2
+    MAGICBUTTON_ENT_DESIRED_NUMBER = 3
 
     timer.Create("magicbutton_ent_spawner", 5, 0, function()
         if #Ents.magicbutton < MAGICBUTTON_ENT_DESIRED_NUMBER then

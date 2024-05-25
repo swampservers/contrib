@@ -20,7 +20,7 @@ RegisterChatCommand({'coin', 'coinflip'}, function(ply, arg)
         end
     else
         table.remove(t)
-        local found = FindSinglePlayer(string.Implode(" ", t))
+        local found = FindSinglePlayer(string.Implode(" ", t), true)
 
         if not isnumber(found) then
             if ply == found then
