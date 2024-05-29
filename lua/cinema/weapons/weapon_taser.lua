@@ -166,6 +166,15 @@ function SWEP:UnTasePlayer()
     if SERVER then
         ply:Freeze(false)
         ply:SendLua("THIRDPERSON = false")
+        -- HACK(winter): If we don't do this, UnTasePlayer only ever gets called on the client for the SWEP's owner
+        BroadcastLua([[
+            local wep = Entity(]] .. self:EntIndex() .. [[)
+            if IsValid(wep) and wep.UnTasePlayer then
+                wep.AttachedPlayer = Entity(]] .. ply:EntIndex() .. [[)
+                wep:UnTasePlayer()
+                wep.AttachedPlayer = nil
+            end
+        ]])
         --ply:UnSpectate()
         self.Rope:SetKeyValue("EndOffset", tostring(Vector(0, 0, 48)))
     end
