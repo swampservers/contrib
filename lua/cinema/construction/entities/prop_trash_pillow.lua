@@ -17,7 +17,7 @@ function ENT:OnTakeDamage(dmg)
     if dmg:GetDamageType() == DMG_ACID then
         self:SetNWBool("Hard", true)
     else
-        self.BaseClass.OnTakeDamage(self)
+        self.BaseClass.OnTakeDamage(self, dmg)
     end
 end
 
