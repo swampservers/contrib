@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-SWEP.PrintName = "Hamster Ball (WIP)"
+SWEP.PrintName = "Hamster Ball"
 SWEP.Slot = 4
 SWEP.ViewModel = Model("")
 SWEP.WorldModel = Model("")

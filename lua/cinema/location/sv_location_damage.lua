@@ -1,4 +1,6 @@
 ﻿local function IsPlayerDrowning(ply)
+    if IsValid(ply.hamsterball) then return ply.hamsterball:WaterLevel() > 0 end
+
     return ply:WaterLevel() > 0
 end
 
