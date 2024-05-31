@@ -14,7 +14,6 @@ list.Set("NPC", "Skeleton", {
 })
 
 SKELETON = SKELETON or {}
-SKELETON_TARGETS = SKELETON_TARGETS or {}
 SKELETON_CURRENT_NUMBER = SKELETON_CURRENT_NUMBER or 0
 SKELETONS_FILTER = SKELETONS_FILTER or {}
 SKELETON_LIMIT = 20
@@ -43,8 +42,6 @@ hook.Add("OnEntityCreated", "skeleton_add", function(ent)
         SKELETON[ent] = true
         SKELETON_CURRENT_NUMBER = table.Count(SKELETON)
         SKELETONS_FILTER = table.GetKeys(SKELETON)
-    elseif ent:IsPlayer() then
-        SKELETON_TARGETS[ent] = true
     end
 end)
 
@@ -53,8 +50,6 @@ hook.Add("EntityRemoved", "skeleton_remove", function(ent)
         SKELETON[ent] = nil
         SKELETON_CURRENT_NUMBER = table.Count(SKELETON)
         SKELETONS_FILTER = table.GetKeys(SKELETON)
-    elseif ent:IsPlayer() then
-        SKELETON_TARGETS[ent] = nil
     end
 end)
 
@@ -94,10 +89,10 @@ if SERVER then
     --This hook is called from the maze code
     hook.Add("PreUpdateNavigation", "SkeletonsHandling", function()
         --cleanup all skeletons
-        timer.Destroy("Skeleton_Spawning")
-        timer.Destroy("Skeleton_Spawnpoint_List")
+        timer.Remove("Skeleton_Spawning")
+        timer.Remove("Skeleton_Spawnpoint_List")
 
-        for _, ent in pairs(ents.FindByClass("enemy_skeleton")) do
+        for _, ent in ipairs(ents.FindByClass("enemy_skeleton")) do
             ent:Remove()
         end
     end)
@@ -157,12 +152,12 @@ function ENT:GetName()
     return "Skeleton"
 end
 
-ENT.LoseTargetDist = 1000 --distance at which skeletons will go dormant
-ENT.SearchRadius = 500 --distance at which skeletons will pop out
+ENT.LoseTargetDist = 1000 ^ 2 --distance at which skeletons will go dormant
+ENT.SearchRadius = 500 ^ 2 --distance at which skeletons will pop out
 ENT.KillReward = 100
 ENT.TargetHeight = 2048
 ENT.TargetHeightInner = 4096
-ENT.TargetHeightInnerRadius = 500
+ENT.TargetHeightInnerRadius = 500 ^ 2
 local TotalPathingBudget = 20000
 
 local function PathingIterationLimit()
@@ -275,11 +270,11 @@ function ENT:BodyUpdate()
     self.FootstepTimer = self.FootstepTimer or 0
     local spd = 0
 
-    if self.loco:GetVelocity():Length() > 1 then
+    if self.loco:GetVelocity():LengthSqr() > 1 then
         act = ACT_HL2MP_WALK_ZOMBIE_01
     end
 
-    if self.loco:GetVelocity():Length() > 150 then
+    if self.loco:GetVelocity():LengthSqr() > 150 ^ 2 then
         act = ACT_HL2MP_RUN_ZOMBIE
 
         if self:AlmostNearTarget() then
@@ -288,7 +283,7 @@ function ENT:BodyUpdate()
         end
     end
 
-    spd = self.loco:GetVelocity():Length() / 150
+    spd = self.loco:GetVelocity():LengthSqr() / (150 ^ 2)
 
     if not self.loco:IsOnGround() or self.loco:IsClimbingOrJumping() or self.IsJumping then
         --act = ACT_HL2MP_JUMP_SCARED
@@ -339,7 +334,7 @@ end
 
 function ENT:PosInRange(pos)
     local heightlimit = self.TargetHeight * 1
-    local horizontalrange = (self:GetPos() * Vector(1, 1, 0)):Distance(pos * Vector(1, 1, 0))
+    local horizontalrange = (self:GetPos() * Vector(1, 1, 0)):DistToSqr(pos * Vector(1, 1, 0))
     local heightdiff = math.abs((self:GetPos() - pos).z)
 
     if horizontalrange < self.TargetHeightInnerRadius then
@@ -364,7 +359,7 @@ end
 
 -- Use this if you want to add special requirements for the entity to become a target
 function ENT:CanBecomeTarget(ent)
-    if not IsValid(ent) or self:GetRangeTo(ent) > self.SearchRadius then return false end
+    if not IsValid(ent) or self:GetRangeSquaredTo(ent) > self.SearchRadius then return false end
 
     return self:CanBeTarget(ent)
 end
@@ -372,19 +367,19 @@ end
 function ENT:AlmostNearTarget()
     if not IsValid(self:GetTarget()) then return false end
 
-    return self:GetPos():Distance(self:GetTarget():GetPos()) < 129
+    return self:GetPos():DistToSqr(self:GetTarget():GetPos()) < 129 ^ 2
 end
 
 function ENT:NearTarget()
     if not IsValid(self:GetTarget()) then return false end
 
-    return self:GetPos():Distance(self:GetTarget():GetPos()) < 64
+    return self:GetPos():DistToSqr(self:GetTarget():GetPos()) < 64 ^ 2
 end
 
 function ENT:GetTargetPriority(ent)
     if not IsValid(ent) then return 0 end
     local priority = ent:IsPlayer() and 100 or 0.05 -- Base amount
-    priority = priority * (1 + (math.Clamp(self.LoseTargetDist - self:GetRangeTo(ent), 0, self.LoseTargetDist) / self.LoseTargetDist) / 5) -- Up to 20% gain based on proximity
+    priority = priority * (1 + (math.Clamp(self.LoseTargetDist - self:GetRangeSquaredTo(ent), 0, self.LoseTargetDist) / self.LoseTargetDist) / 5) -- Up to 20% gain based on proximity
 
     return priority
 end
@@ -398,20 +393,14 @@ end
 
 function ENT:FindTarget()
     if self.NextTargetTime and self.NextTargetTime > CurTime() then end --self:SetTarget(nil) --return false
-    local _ents = SKELETON_TARGETS
     local targetsum = 0
     local targets = {}
     local targetcount = 0
-    local playersum = 0
 
-    for ent, val in pairs(_ents) do
-        if self:CanBecomeTarget(ent) and self:GetTargetPriority(ent) > 0 then
-            if ent:IsPlayer() then
-                playersum = playersum + 1
-            end
-
-            table.insert(targets, ent)
-            targetsum = targetsum + self:GetTargetPriority(ent)
+    for _, ply in ipairs(Ents.player) do
+        if self:CanBecomeTarget(ply) and self:GetTargetPriority(ply) > 0 then
+            table.insert(targets, ply)
+            targetsum = targetsum + self:GetTargetPriority(ply)
             targetcount = targetcount + 1
         end
     end
@@ -424,7 +413,7 @@ function ENT:FindTarget()
 
     local samplevalue = math.Rand(0, 1) * targetsum
 
-    for key, ent in pairs(targets) do
+    for _, ent in ipairs(targets) do
         samplevalue = samplevalue - self:GetTargetPriority(ent)
 
         if samplevalue <= 0 then
@@ -436,7 +425,7 @@ function ENT:FindTarget()
 
     -- Slowly die if they end up somewhere where nobody is
     -- TODO: This is a terrible place for this, move it
-    if playersum == 0 then
+    if targetcount == 0 then
         self.WasteCounter = (self.WasteCounter or 1000) - 1
         self.NextTargetTime = CurTime() + 1
 
@@ -476,6 +465,7 @@ function ENT:WanderToPos(pos)
     self:MoveToPos(pos, {})
 end
 
+-- lua_run for _, ent in ipairs(ents.FindByClass("enemy_skeleton")) do ent:Remove() end
 function ENT:RunBehaviour()
     -- This function is called when the entity is first spawned, it acts as a giant loop that will run as long as the NPC exists
     while true do
@@ -499,13 +489,13 @@ function ENT:RunBehaviour()
         self.loco:SetGravity(1000)
         local target = self:GetTarget()
         local should_chase = IsValid(target)
-        local testpath
+        local testpath = nil
 
-        if IsValid(target) then
+        if should_chase then
             testpath = self:ComputePath(target:GetPos())
         end
 
-        if IsValid(target) and testpath and testpath:IsValid() and self:CanBeTarget(target) then
+        if should_chase and IsValid(testpath) and self:CanBeTarget(target) then
             if not self:Dead() then
                 --come out of hiding if needed
                 if self:IsHiding() then
@@ -610,12 +600,13 @@ function ENT:MoveToPos(pos, options)
     return "ok"
 end
 
-function ENT:GetCurrentPathPoint()
+function ENT:GetCurrentPathPoint(segments)
     if IsValid(self.path) then
+        segments = segments or self.path:GetAllSegments()
         local start = 1
 
-        for k, v in pairs(self.path:GetAllSegments()) do
-            if k ~= 1 and (v.pos * Vector(1, 1, 0)):Distance(self:GetPos() * Vector(1, 1, 0)) > 32 then
+        for k, v in ipairs(segments) do
+            if k ~= 1 and (v.pos * Vector(1, 1, 0)):DistToSqr(self:GetPos() * Vector(1, 1, 0)) > 32 ^ 2 then
                 start = k
                 break
             end
@@ -625,7 +616,7 @@ function ENT:GetCurrentPathPoint()
             start = start - 1
         end
 
-        return self.path:GetAllSegments()[start], start
+        return segments[start], start
     end
 
     return nil, -1
@@ -634,8 +625,9 @@ end
 function ENT:GetNextPathPoint(ahead)
     if not IsValid(self.path) then return end
     ahead = ahead or 1
-    local seg, index = self:GetCurrentPathPoint()
-    if index then return self.path:GetAllSegments()[index + ahead] end
+    local segments = self.path:GetAllSegments()
+    local seg, index = self:GetCurrentPathPoint(segments)
+    if index then return segments[index + ahead] end
 end
 
 -- TODO(winter/pyro): Better solution than just teleporting through doors and shit
@@ -699,7 +691,7 @@ function ENT:ChaseTarget(options)
     while IsValid(path) and self:HaveTarget() and not self:NearTarget() and IsValid(target) do
         --self.loco:SetStepHeight(64)
         --self.loco:SetDeathDropHeight(5000)
-        local range = self:GetRangeTo(self:GetTarget():GetPos()) or self.LoseTargetDist
+        local range = self:GetRangeSquaredTo(self:GetTarget():GetPos()) or self.LoseTargetDist
         local updaterate = math.max(PathingRateHigh() * (range / self.LoseTargetDist), 0.5)
 
         if path:GetAge() > updaterate and target:IsOnGround() then
@@ -764,11 +756,11 @@ function ENT:WhilePathing(path)
         if self.loco:IsOnGround() and ((deltaZ > -15 and deltaZ > self.loco:GetStepHeight()) or force) and deltaZ <= self.loco:GetMaxJumpHeight() then
             local jumpstart = seg1.area:GetCenter()
             local jumptarget = goal.area:GetCenter()
-            local dist = jumpstart:Distance(jumptarget)
+            local dist = jumpstart:DistToSqr(jumptarget)
             path:MoveCursorToClosestPosition(jumptarget, SEEK_ENTIRE_PATH)
             debugoverlay.Box(jumptarget, Vector(1, 1, 1) * -4, Vector(1, 1, 1) * 4, 2, Color(255, 0, 255, 64))
             self.IsJumping = true
-            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32)), jumptarget - self:GetPos())
+            self.loco:JumpAcrossGap(jumptarget + Vector(0, 0, math.min(dist, 32 ^ 2)), jumptarget - self:GetPos())
             self.loco:FaceTowards(jumptarget)
             self.loco:SetDeceleration(500)
             coroutine.wait(0.6)
@@ -794,12 +786,13 @@ ENT.PathGen = function(area, fromArea, ladder, elevator, length)
         --if(not self:PosInRange(area:GetCenter()))then return -1 end
         local dist = 0
 
+        -- NOTE(winter): Lengths are squared so we can use LengthSqr and avoid expensive sqrt
         if IsValid(ladder) then
-            dist = ladder:GetLength()
+            dist = ladder:GetLength() ^ 2
         elseif length > 0 then
-            dist = length
+            dist = length ^ 2
         else
-            dist = (area:GetCenter() - fromArea:GetCenter()):Length() -- TODO(winter): Length is expensive! Don't use it!
+            dist = (area:GetCenter() - fromArea:GetCenter()):LengthSqr()
         end
 
         local cost = dist + fromArea:GetCostSoFar()

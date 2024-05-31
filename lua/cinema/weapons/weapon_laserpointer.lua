@@ -219,7 +219,7 @@ hook.Add("KeyRelease", "LaserPointerReleaseCheck", function(ply, key)
             pointer:SetOnState(false)
             pointer:SetNextPrimaryFire(CurTime() + 0.2)
             pointer:ButtonSound(false)
-            timer.Destroy(pointer:EntIndex() .. "LaserPointerOff")
+            timer.Remove(pointer:EntIndex() .. "LaserPointerOff")
         end
     end
 end)

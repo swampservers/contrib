@@ -15,7 +15,7 @@ hook.Add("FindUseEntity", "ELEVATORBUTTONZ", function(ply, ent)
         local tr = ply:GetEyeTrace()
 
         if tr.Hit then
-            for _, v in pairs(ents.FindByClass("func_button")) do
+            for _, v in ipairs(ents.FindByClass("func_button")) do
                 if v:GetName():StartWith("tt_elevator_button_") and v:GetPos():Distance(tr.HitPos) < ent:GetPos():Distance(tr.HitPos) then
                     ent = v
                 end

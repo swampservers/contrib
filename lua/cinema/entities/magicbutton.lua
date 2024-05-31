@@ -354,7 +354,7 @@ local function MagicOutcomeBountyAll(ply)
         amount = math.random(2, 45)
     end
 
-    for k, v in pairs(player.GetAll()) do
+    for k, v in player.Iterator() do
         v:SetBounty(v:GetBounty() + amount)
     end
 
@@ -438,7 +438,7 @@ local function MagicOutcomeKleinerTeleported(ply)
             someoneelse = true
         end
 
-        for k, v in pairs(ents.FindByClass("kleiner")) do
+        for k, v in ipairs(ents.FindByClass("kleiner")) do
             v:TeleportSafe(ply:GetPos())
         end
 

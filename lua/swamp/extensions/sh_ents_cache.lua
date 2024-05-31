@@ -41,7 +41,7 @@ local function create(ent)
     end)
 end
 
-for _, ent in ipairs(ents.GetAll()) do
+for _, ent in ents.Iterator() do
     create(ent)
 end
 
@@ -134,7 +134,7 @@ end)
 --         end
 --     end
 --     local realclasses = {}
---     for k, v in ipairs(ents.GetAll()) do
+--     for k, v in ents.Iterator() do
 --         if EntIndex(v) <= 0 then continue end
 --         realclasses[v:GetClass()] = true
 --     end

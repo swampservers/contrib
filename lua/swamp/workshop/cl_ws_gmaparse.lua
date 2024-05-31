@@ -181,7 +181,7 @@ for i=1,8192 do
 	end
 end
 
-for k,entry in next,mdls do
+for k,entry in ipairs(mdls) do
 	print("Entry: '"..entry.Name.."'",string.NiceSize(entry.Size))
 	local dat,err = gma:ReadEntry(entry)
 	if not dat then print("","fail",err) continue end
@@ -192,6 +192,6 @@ PrintTable(gma)
 PrintTable(gma.tmp_entry)
 gma:Close()
 
-	
+
 --]]
 return _M

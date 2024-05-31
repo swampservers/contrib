@@ -279,7 +279,7 @@ if SERVER then
             wep:SetWebMatInfo(url, ply:SteamID())
 
             if id then
-                for _, pillow_ent in pairs(ents.FindByClass("prop_trash_pillow")) do
+                for _, pillow_ent in ipairs(ents.FindByClass("prop_trash_pillow")) do
                     local t_url, t_owner = pillow_ent:GetWebMatInfo()
 
                     if t_owner == ply:SteamID() and url ~= t_url then
@@ -347,7 +347,7 @@ function SWEP:PrimaryAttack()
                 aim.z = 0.7
                 aim = aim * 30
 
-                for k, v in pairs(player.GetAll()) do
+                for k, v in player.Iterator() do
                     local bcenter = v:LocalToWorld(v:OBBCenter())
 
                     if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then

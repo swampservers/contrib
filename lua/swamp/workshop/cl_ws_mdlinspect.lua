@@ -109,7 +109,7 @@ visit_folders = function(init_path, scope, cb)
         local ret = cb(entry .. '/', fi, fo)
 
         if ret == nil then
-            for k, v in next, fo do
+            for k, v in ipairs(fo) do
                 table.insert(stack, 1, entry .. '/' .. v)
             end
         elseif ret == false then
@@ -555,7 +555,7 @@ function MDL:TextureDirs()
         offsets[i] = offset
     end
 
-    for _, offset in next, offsets do
+    for _, offset in ipairs(offsets) do
         assert(self:SeekTo(offset))
         local name = f:ReadString()
         t[#t + 1] = name
@@ -663,7 +663,7 @@ function MDL:BodyPartsEx()
     self:ParseHeader()
     t = table.Copy(self:BodyParts())
 
-    for _, part in next, t do
+    for _, part in ipairs(t) do
         for i = 0, part.nummodels - 1 do
             part.models = part.models or {}
             part.models[i + 1] = self:BodyPartModel(part, i)

@@ -251,20 +251,20 @@ end
 MyDragonVapeParticles = {}
 
 timer.Create("DragonVapeCollisionDetection", 0.2, 0, function()
-    for k2, p in next, MyDragonVapeParticles do
+    for k2, p in ipairs(MyDragonVapeParticles) do
         if p:GetDieTime() - p:GetLifeTime() < 0.1 then
             table.remove(MyDragonVapeParticles, k2)
         end
     end
 
     if #MyDragonVapeParticles > 0 then
-        for k, v in next, ents.GetAll() do
+        for k, v in ents.Iterator() do
             if (v.nextDragonVapeTime or 0) < CurTime() and v:IsSolid() and v ~= Me then
                 local pos = v:LocalToWorld(v:OBBCenter())
                 local rad = v:BoundingRadius() + 20
                 rad = rad * rad
 
-                for k2, p in next, MyDragonVapeParticles do
+                for k2, p in ipairs(MyDragonVapeParticles) do
                     if (v.nextDragonVapeTime or 0) < CurTime() then
                         if pos:DistToSqr(p:GetPos()) < rad then
                             net.Start("DragonVapeIgnite")

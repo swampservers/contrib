@@ -20,7 +20,7 @@ end)
 function FindAllTrash()
     local tab = {}
 
-    for i, v in ipairs(ents.GetAll()) do
+    for i, v in ents.Iterator() do
         if v:GetTrashClass() then
             table.insert(tab, v)
         end

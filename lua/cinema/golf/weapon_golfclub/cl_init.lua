@@ -574,7 +574,7 @@ end
 function SWEP:CustomAmmoDisplay()
 end
 -- if CLIENT then end -- --[[ hook.Add( "PreDrawHalos", "GolfHalo", function()
--- for k, v in pairs(ents.FindByClass("ent_golfball")) do
+-- for k, v in ipairs(ents.FindByClass("ent_golfball")) do
 --     if (v:GetNWEntity("BallOwner") == Me) then
 --         if (v:GetNWBool("shootable")) then
 --             halo.Add({v}, Color(100, 255, 100), 2, 2, 2)

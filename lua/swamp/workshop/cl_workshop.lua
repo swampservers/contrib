@@ -151,7 +151,7 @@ hook.Add("Tick", "WorkshopMounter", function()
         -- mounting with a clientside error model crashes the game
         local resetmodels = {}
 
-        for i, v in ipairs(ents.GetAll()) do
+        for i, v in ents.Iterator() do
             if v:EntIndex() == -1 then
                 local m = v:GetModel()
 

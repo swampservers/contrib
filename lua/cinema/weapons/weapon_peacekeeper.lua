@@ -153,7 +153,7 @@ function SWEP:Deploy()
     local timerName = "ShotgunReload_" .. self.Owner:UniqueID()
 
     if timer.Exists(timerName) then
-        timer.Destroy(timerName)
+        timer.Remove(timerName)
     end
 
     self:SendWeaponAnim(ACT_VM_DRAW)
@@ -306,7 +306,7 @@ function SWEP:InsertShell()
         local curwep = self.Owner:GetActiveWeapon()
 
         if curwep:GetClass() ~= "weapon_peacekeeper" then
-            timer.Destroy(timerName)
+            timer.Remove(timerName)
 
             return
         end
@@ -314,7 +314,7 @@ function SWEP:InsertShell()
         if self:Clip1() >= self.Primary.ClipSize then -- or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
             -- if clip is full or ammo is out, then...
             self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH) -- send the pump anim
-            timer.Destroy(timerName) -- kill the timer
+            timer.Remove(timerName) -- kill the timer
         elseif self:Clip1() <= self.Primary.ClipSize then --and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 0 then
             self.InsertingShell = true --well, I tried!
 
@@ -329,7 +329,7 @@ function SWEP:InsertShell()
             self:SetClip1(self:Clip1() + 1)
         end
     else
-        timer.Destroy(timerName) -- kill the timer
+        timer.Remove(timerName) -- kill the timer
     end
 end
 

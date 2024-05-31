@@ -318,7 +318,7 @@ for locName in pairs(LocationTheaterInfo) do
 end
 
 function RefreshLocations()
-    for _, ent in pairs(ents.GetAll()) do
+    for _, ent in ents.Iterator() do
         ent.LastLocationCoords = nil
     end
 end

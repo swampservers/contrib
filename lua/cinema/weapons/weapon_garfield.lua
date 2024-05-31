@@ -345,7 +345,7 @@ function SWEP:PrimaryAttack()
         if ply and alpha >= 1 then
             surface.PlaySound("physics/flesh/flesh_bloody_break.wav")
             net.WriteEntity(ply)
-            -- self:SetNW2Entity("EATINGp", ply) 
+            -- self:SetNW2Entity("EATINGp", ply)
             -- print("E")
         end
 
@@ -395,7 +395,7 @@ function SWEP:GetTargetPlayer()
     local bestalpha = 0
     local blocked = {}
 
-    for k, v in ipairs(player.GetAll()) do
+    for k, v in player.Iterator() do
         if v == self.Owner then continue end
         if not v:Alive() then continue end
         if CLIENT and v:IsDormant() then continue end
@@ -447,7 +447,7 @@ function SWEP:GetTargetPlayer()
     -- local ply = nil
     -- local blocked = {}
     -- local c1 = self.Owner:LocalToWorld(self.Owner:OBBCenter())
-    -- for k, v in ipairs(player.GetAll()) do
+    -- for k, v in player.Iterator() do
     --     if v==self.Owner then continue end
     --     if v:GetPos():Distance(center) > (25+25 * math.pow(self.Owner:ObesityScale(),0.5)) then continue end
     --     if not v:Alive() then continue end
@@ -459,7 +459,7 @@ function SWEP:GetTargetPlayer()
     --         mask = MASK_SOLID_BRUSHONLY
     --     })
     --     if tr and tr.Hit then continue end
-    --     if IsValid(v:GetNW2Entity("EATER")) then 
+    --     if IsValid(v:GetNW2Entity("EATER")) then
     --         if CLIENT and v:GetNW2Entity("EATER")==self.Owner then else
     --         continue end
     --         end

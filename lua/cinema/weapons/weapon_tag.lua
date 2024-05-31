@@ -143,7 +143,7 @@ function SWEP:PrimaryAttack(right)
             local allply = player.GetAll()
             local tracepos = self.Owner:GetEyeTrace().HitPos
 
-            for k, v in pairs(allply) do
+            for k, v in ipairs(allply) do
                 if v:Alive() and v ~= self.Owner then
                     local otherpos = v:LocalToWorld(v:OBBCenter())
                     local dis = tracepos:Distance(otherpos)

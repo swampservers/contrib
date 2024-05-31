@@ -194,7 +194,7 @@ end)
 --     local v1 = EyeVector():GetNormalized()
 --     local lp = Me
 --     local ep = EyePos()
---     -- for _, ply in ipairs(player.GetAll()) do
+--     -- for _, ply in player.Iterator() do
 --     -- for k,ply in ipairs(ap) do
 --     for k, ply in ipairs(Ents.player) do
 --         if ply ~= lp then

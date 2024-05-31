@@ -108,7 +108,7 @@ if gm == "cinema" then
         if IsValid(ply) and not ply:InVehicle() and ply:Alive() then
             ply:SetPos(GetLocationCenterByName("Treatment Room") + Vector(0, 0, -64))
 
-            for _, ent in ipairs(ents.GetAll()) do
+            for _, ent in ents.Iterator() do
                 if IsValid(ent) then
                     if ent:GetName() == "treatmentdoor" then
                         ent:Fire("Close")

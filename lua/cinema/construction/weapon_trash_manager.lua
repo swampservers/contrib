@@ -324,7 +324,7 @@ but you need a nearby theater/field to respawn them.]])
                             p:AddColumn("Player")
                             p:AddColumn("Friend?"):SetFixedWidth(50)
 
-                            for i, v in ipairs(player.GetAll()) do
+                            for i, v in player.Iterator() do
                                 if v ~= Me and not v:IsBot() then
                                     p:AddLine(v:Name(), Me.TrashFriends[v] and "X" or "").player = v
                                 end
@@ -384,7 +384,7 @@ function SWEP:GetDeleteEntities()
     local id = self.Owner:SteamID()
     local cleanups = {}
 
-    for i, v in ipairs(ents.GetAll()) do
+    for i, v in ents.Iterator() do
         if v:GetTrashClass() and v:GetTrashClass() ~= "prop_trash_zone" and v:GetLocationOwner() == id and v:GetPos():Distance(self.Owner:GetPos()) <= TRASH_MANAGER_LOAD_RANGE then
             table.insert(cleanups, v)
         end
@@ -401,7 +401,7 @@ function SWEP:GetSaveEntities()
         itemids[v.id] = v
     end
 
-    for i, v in ipairs(ents.GetAll()) do
+    for i, v in ents.Iterator() do
         if v:GetTrashClass() then
             local id = v:GetItemID()
 

@@ -17,7 +17,7 @@ function MDLIsPlayermodel(f)
     local imdls = mdl:IncludedModels()
     local found_anm
 
-    for k, v in next, imdls do
+    for k, v in ipairs(imdls) do
         v = v[2]
         if v and v:find("_arms_", 1, true) then return false, "Arms" end
         if v and not v:find("%.mdl$") then return false, "Bad include", v end
@@ -29,12 +29,12 @@ function MDLIsPlayermodel(f)
 
     local attachments = mdl:Attachments()
 
-    if (not attachments or not next(attachments)) and not found_anm then
+    if (not attachments or not attachments[1]) and not found_anm then
         return false, "No attachments"
     else
         local found
 
-        for k, v in next, attachments do
+        for k, v in ipairs(attachments) do
             local name = v[1]
 
             if name == "eyes" or name == "anim_attachment_head" or name == "mouth" or name == "anim_attachment_RH" or name == "anim_attachment_LH" then
@@ -257,7 +257,7 @@ visit_folders = function(init_path, scope, cb)
         local ret = cb(entry .. '/', fi, fo)
 
         if ret == nil then
-            for k, v in next, fo do
+            for k, v in ipairs(fo) do
                 table.insert(stack, 1, entry .. '/' .. v)
             end
         elseif ret == false then
