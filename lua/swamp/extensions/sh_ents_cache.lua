@@ -70,7 +70,8 @@ end
 hook.Add("OnEntityCreated", "Ents_OnEntityCreated", create)
 hook.Add("NetworkEntityCreated", "Ents_NetworkEntityCreated", create)
 
--- Note: This gets called asynchronously, so iterate-and-remove works
+-- NOTE: This gets called asynchronously, so iterate-and-remove works
+-- TODO(winter): This is probably NOT reliable on the client (PVS, FullUpdate, etc)
 hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent)
     if EntIndex(ent) <= 0 then return end
     local cl = EntClass(ent)
@@ -82,6 +83,21 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent)
         remove(ents_[ent:IsBot() and "bot" or "human"], ent)
     end
 end)
+
+-- An even faster version of player.Iterator and ipairs(Ents.player)
+local inext = ipairs({})
+
+function Ents.PlayerIterator()
+    return inext, ents_["player"], 0
+end
+
+function Ents.BotIterator()
+    return inext, ents_["bot"], 0
+end
+
+function Ents.HumanIterator()
+    return inext, ents_["human"], 0
+end
 -- needs to be fixed to deal with Ents[class][ent] = index
 -- function EntsWithPrefix(pfx)
 --     local ok, ov, ik, iv

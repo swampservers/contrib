@@ -112,6 +112,7 @@ TrashLocationOverrides = {
 -- Prevent stuff being taped within a sphere around the position
 TrashNoFreezeNodes = {
     {Vector(850, 1830, -3180), 768}, -- Sewer trickshot (top)
-    {Vector(775, 1785, -740), 256} -- Sewer trickshot (bottom)
+    {Vector(775, 1785, -740), 256}, -- Sewer trickshot (bottom)
+    {Vector(-160, -4256, -1078), 256} -- Trollcano
     
 }

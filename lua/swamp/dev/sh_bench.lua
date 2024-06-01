@@ -90,7 +90,7 @@ end
 --   for i=1,100000 do
 --     table.insert(tab, i)
 --   end
--- print("GO") 
+-- print("GO")
 -- bench(function() local n=#tab local i=0 for k = 1,n do i=i+tab[k] end end)
 -- bench(function() local i=0 for _,v in ipairs(tab) do i=i+v end end)
 -- bench(function() local i=0 for v in list_iter(tab) do i=i+v end end)

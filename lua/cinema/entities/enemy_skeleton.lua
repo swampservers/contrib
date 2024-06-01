@@ -465,7 +465,6 @@ function ENT:WanderToPos(pos)
     self:MoveToPos(pos, {})
 end
 
--- lua_run for _, ent in ipairs(ents.FindByClass("enemy_skeleton")) do ent:Remove() end
 function ENT:RunBehaviour()
     -- This function is called when the entity is first spawned, it acts as a giant loop that will run as long as the NPC exists
     while true do
