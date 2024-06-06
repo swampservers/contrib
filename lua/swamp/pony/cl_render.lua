@@ -181,7 +181,7 @@ function PPM_CLONE_MATERIAL(mat, forcename)
 end
 
 concommand.Add("ppm_refresh", function(ply, cmd, args)
-    for _, ent in player.Iterator() do
+    for _, ent in Ents.PlayerIterator() do
         ent.UpdatedPony = nil
         ent.ponydata = nil
         ent.ponymaterials = nil

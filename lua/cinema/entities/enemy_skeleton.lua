@@ -92,7 +92,7 @@ if SERVER then
         timer.Remove("Skeleton_Spawning")
         timer.Remove("Skeleton_Spawnpoint_List")
 
-        for _, ent in ipairs(ents.FindByClass("enemy_skeleton")) do
+        for _, ent in ipairs(Ents.enemy_skeleton) do
             ent:Remove()
         end
     end)
@@ -397,7 +397,7 @@ function ENT:FindTarget()
     local targets = {}
     local targetcount = 0
 
-    for _, ply in ipairs(Ents.player) do
+    for _, ply in Ents.PlayerIterator() do
         if self:CanBecomeTarget(ply) and self:GetTargetPriority(ply) > 0 then
             table.insert(targets, ply)
             targetsum = targetsum + self:GetTargetPriority(ply)

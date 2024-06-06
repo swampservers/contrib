@@ -21,7 +21,7 @@ PlacementSettings.SurfacePropWhitelist = {"dirt", "grass", "gravel", "rock"}
 PlacementSettings.TextureBlacklist = {"**empty**", "TOOLS/TOOLSBLACK"}
 
 local function EntityCount(class)
-    return table.Count(ents.FindByClass(class))
+    return #Ents[class]
 end
 
 local function IsOreTraceValid(trace)

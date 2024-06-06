@@ -324,7 +324,7 @@ but you need a nearby theater/field to respawn them.]])
                             p:AddColumn("Player")
                             p:AddColumn("Friend?"):SetFixedWidth(50)
 
-                            for i, v in player.Iterator() do
+                            for i, v in Ents.PlayerIterator() do
                                 if v ~= Me and not v:IsBot() then
                                     p:AddLine(v:Name(), Me.TrashFriends[v] and "X" or "").player = v
                                 end

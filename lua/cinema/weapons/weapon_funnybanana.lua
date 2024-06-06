@@ -27,7 +27,7 @@ function SWEP:PrimaryAttack()
     if SERVER then
         self.Owner:Say("hahaha! what a funny picture!")
 
-        for k, v in player.Iterator() do
+        for k, v in Ents.PlayerIterator() do
             if self.Owner:GetPos():Distance(v:GetPos()) < 200 then
                 if v ~= self.Owner then
                     timer.Simple(math.Rand(0, 1.5), function()

@@ -60,7 +60,7 @@ function TryAddBounty(ply, targets, amount, locname)
     ply:TryTakePoints(needed, "Bounty.Added", function()
         if not IsValid(ply) then return end
 
-        for k, v in ipairs(targets) do
+        for _, v in ipairs(targets) do
             if IsValid(v) then
                 v:SetBounty(v:GetBounty() + amount)
                 v.BountyFunders = v.BountyFunders or {}
@@ -163,7 +163,7 @@ RegisterChatCommand({'bountyall', 'setbountyall'}, function(ply, arg)
     local p = tonumber(arg)
 
     if p then
-        TryAddBounty(ply, player.GetHumans(), p)
+        TryAddBounty(ply, Ents.human, p)
     else
         ply:ChatPrint("[orange]!bountyall points")
     end
@@ -178,7 +178,7 @@ RegisterChatCommand({'bountyrandom', 'setbountyrandom', 'randombounty', 'setrand
     if p then
         local ranply = {}
 
-        for k, v in ipairs(player.GetHumans()) do
+        for k, v in Ents.HumanIterator() do
             if not v:IsProtected() then
                 table.insert(ranply, v)
             end
@@ -209,7 +209,7 @@ end, {
 RegisterChatCommand({'bounties', 'showbounties'}, function(ply, arg)
     local t = {}
 
-    for k, v in pairs(player.GetHumans()) do
+    for k, v in Ents.HumanIterator() do
         if v:GetBounty() > 0 then
             table.insert(t, {v, v:GetBounty()})
         end
@@ -239,7 +239,7 @@ RegisterChatCommand({'givepointsrandom', 'randomgivepoints'}, function(ply, arg)
     if p > 0 then
         local ranply = {}
 
-        for k, v in ipairs(player.GetHumans()) do
+        for k, v in Ents.HumanIterator() do
             if v:IsActive() and v ~= ply then
                 table.insert(ranply, v)
             end

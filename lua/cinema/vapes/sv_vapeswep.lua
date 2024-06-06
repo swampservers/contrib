@@ -115,7 +115,7 @@ function ReleaseVape(ply)
 end
 
 timer.Create("VapeHeliumUpdater", 0.2, 0, function()
-    for k, v in player.Iterator() do
+    for _, v in Ents.PlayerIterator() do
         if not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_vape_helium" and v.vapeArm) then
             SetVapeHelium(v, math.max(0, (v.vapeHelium or 0) - 2))
         end

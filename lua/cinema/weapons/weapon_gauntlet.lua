@@ -115,7 +115,7 @@ function SWEP:FindTarget()
     local ply = self:GetOwner()
     local tracepos = ply:GetEyeTrace().HitPos
 
-    for _, v in ipairs(Ents.player) do
+    for _, v in Ents.PlayerIterator() do
         local mins, maxs = v:GetCollisionBounds()
         local otherpos = v:LocalToWorld(v:OBBCenter())
         local ofs = v:InVehicle() and Vector(0, 0, -maxs.z / 2) or Vector()

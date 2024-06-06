@@ -354,7 +354,7 @@ local function MagicOutcomeBountyAll(ply)
         amount = math.random(2, 45)
     end
 
-    for k, v in player.Iterator() do
+    for k, v in Ents.PlayerIterator() do
         v:SetBounty(v:GetBounty() + amount)
     end
 
@@ -366,7 +366,7 @@ local function MagicOutcomeKleinerFanclub(ply)
         local someoneelse
 
         if math.random(1, 20) == 1 then
-            ply = table.Random(player.GetAll())
+            ply = Ents.player[math.random(1, #Ents.player)]
             someoneelse = true
         end
 
@@ -418,7 +418,7 @@ local function MagicOutcomeKleinerSlur(ply)
         local someoneelse
 
         if math.random(1, 20) == 1 then
-            ply = table.Random(player.GetAll())
+            ply = Ents.player[math.random(1, #Ents.player)]
             someoneelse = true
         end
 
@@ -434,11 +434,11 @@ local function MagicOutcomeKleinerTeleported(ply)
         local someoneelse
 
         if math.random(1, 20) == 1 then
-            ply = table.Random(player.GetAll())
+            ply = Ents.player[math.random(1, #Ents.player)]
             someoneelse = true
         end
 
-        for k, v in ipairs(ents.FindByClass("kleiner")) do
+        for k, v in ipairs(Ents.kleiner) do
             v:TeleportSafe(ply:GetPos())
         end
 

@@ -29,7 +29,7 @@ end
 
 if SERVER then
     timer.Create("FlareControl", 5, 0, function()
-        for k, v in ipairs(ents.FindByClass("weapon_flare")) do
+        for k, v in ipairs(Ents.weapon_flare) do
             if v:GetPos().z > -10 then
                 v:Remove()
             end

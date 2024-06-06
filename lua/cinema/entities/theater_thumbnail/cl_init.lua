@@ -42,7 +42,7 @@ function ENT:DrawThumbnail()
         surface.SetMaterial(Material["theater/static.vmt"])
         surface.DrawTexturedRect(0, 0, ThumbWidth - 1, ThumbHeight - 1)
         background = ""
-    elseif IsValid(Me) and Me:FlashlightIsOn() then
+    else
         surface.SetDrawColor(80, 80, 80)
         surface.SetMaterial(Material["theater/static.vmt"]) --FIX WEIRD BUG
         surface.DrawTexturedRect(0, 0, 1, 1)
@@ -63,7 +63,7 @@ function ENT:DrawThumbnail()
             self.HTML:Remove()
         end
 
-        -- 
+        --
         self.LastSetting = setting
         self.ThumbMat = nil
     elseif self.LastSetting and not self.ThumbMat then
@@ -91,7 +91,7 @@ body {
     overflow: hidden;
 }
 div {
-    color:white; 
+    color:white;
     text-align: center;
     background-color: rgba(0,0,0,0.5);
 }
@@ -117,7 +117,7 @@ span {
     function autofont(el) {
         //div.style.fontSize = Math.min(10,((div.innerText.length > 45 ? 440 : 220)/div.innerText.length))+"vw";
         for(var i=10.0; i>0; i-=0.5) {
-            el.style.fontSize = i+"vw";    
+            el.style.fontSize = i+"vw";
             if (el.getBoundingClientRect().width < 512) {
                 break;
             }

@@ -194,9 +194,9 @@ end)
 --     local v1 = EyeVector():GetNormalized()
 --     local lp = Me
 --     local ep = EyePos()
---     -- for _, ply in player.Iterator() do
+--     -- for _, ply in Ents.PlayerIterator() do
 --     -- for k,ply in ipairs(ap) do
---     for k, ply in ipairs(Ents.player) do
+--     for k, ply in Ents.PlayerIterator() do
 --         if ply ~= lp then
 --             local v2 = (ply:EyePos() - ep)
 --             local dist2 = v2:LengthSqr()

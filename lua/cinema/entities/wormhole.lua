@@ -102,7 +102,7 @@ end
 function ENT:GetLinkChoices()
     local tab = {}
 
-    for k, v in ipairs(ents.FindByClass("wormhole")) do
+    for k, v in ipairs(Ents.wormhole) do
         if v:GetTargetName() == "" then continue end
         tab[v:GetTargetName()] = v:GetTargetName()
     end

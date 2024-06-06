@@ -63,7 +63,7 @@ end
 
 if SERVER then
     timer.Simple(1, function()
-        for _, ent in ipairs(ents.FindByClass("ent_pumpkin")) do
+        for _, ent in ipairs(Ents.ent_pumpkin) do
             ent:Remove()
         end
 

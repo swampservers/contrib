@@ -33,7 +33,7 @@ if SERVER then
     timer.Create("Ebolaaa", 1.8, 0, function()
         ebprint = not ebprint
 
-        for k, v in ipairs(Ents.player) do
+        for k, v in Ents.PlayerIterator() do
             if v:HasWeapon("weapon_ebola") then
                 if v:Health() < 3 then
                     v:ChatPrint("[red]you died of coronavirus")
@@ -67,7 +67,7 @@ function SWEP:PrimaryAttack()
     if SERVER then
         local coughcenter = self.Owner:GetPos() + self.Owner:GetAimVector() * 20
 
-        for k, v in ipairs(Ents.player) do
+        for k, v in Ents.PlayerIterator() do
             if v:IsProtected() or v:InVehicle() then continue end
             if v:GetNWBool("spacehat") then continue end
 

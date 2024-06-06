@@ -260,7 +260,7 @@ end
 
 -- TODO(winter): Use PlayerTick instead?
 timer.Create("Location.DamageTick", 0, 0, function()
-    for _, ply in ipairs(player.GetHumans()) do
+    for _, ply in Ents.HumanIterator() do
         if ply:Alive() then
             local locinfo = ply:GetLocationTable()
             local locdmginfo = locinfo.Damage

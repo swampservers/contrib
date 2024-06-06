@@ -395,7 +395,7 @@ function SWEP:GetTargetPlayer()
     local bestalpha = 0
     local blocked = {}
 
-    for k, v in player.Iterator() do
+    for _, v in Ents.PlayerIterator() do
         if v == self.Owner then continue end
         if not v:Alive() then continue end
         if CLIENT and v:IsDormant() then continue end
@@ -447,7 +447,7 @@ function SWEP:GetTargetPlayer()
     -- local ply = nil
     -- local blocked = {}
     -- local c1 = self.Owner:LocalToWorld(self.Owner:OBBCenter())
-    -- for k, v in player.Iterator() do
+    -- for k, v in Ents.PlayerIterator() do
     --     if v==self.Owner then continue end
     --     if v:GetPos():Distance(center) > (25+25 * math.pow(self.Owner:ObesityScale(),0.5)) then continue end
     --     if not v:Alive() then continue end
