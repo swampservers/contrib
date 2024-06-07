@@ -70,13 +70,14 @@ end
 hook.Add("OnEntityCreated", "Ents_OnEntityCreated", create)
 hook.Add("NetworkEntityCreated", "Ents_NetworkEntityCreated", create)
 -- NOTE: This gets called asynchronously, so iterate-and-remove works
--- TODO(winter): This is NOT reliable on the client (PVS, FullUpdate, sometimes ents are created but not removed, etc; server should be telling us instead or something!)
+-- BUG(winter): This is NOT reliable on the client (PVS, FullUpdate, sometimes ents are created but not removed, etc; server should be telling us instead or something!)
 -- Semi-related issues: https://github.com/Facepunch/garrysmod-issues/issues/5800 and https://github.com/Facepunch/garrysmod-issues/issues/5792
 local lastremovewasfullupdate = false
 
 hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent, fullupdate)
     if EntIndex(ent) <= 0 then return end
 
+    --[[
     if CLIENT and fullupdate then
         -- Fix full update causing desync sometimes (just flush the entire cache)
         -- Don't do it more than once per full update
@@ -87,33 +88,71 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent, fullupdate)
             ents_ = Ents
         end
     else
-        local cl = EntClass(ent)
-        cl = classmapping[cl] or cl
-        remove(ents_["all"], ent)
-        remove(ents_[cl], ent)
+    ]]
 
-        if ent:IsPlayer() then
-            remove(ents_[ent:IsBot() and "bot" or "human"], ent)
-        end
+    local cl = EntClass(ent)
+    cl = classmapping[cl] or cl
+    remove(ents_["all"], ent)
+    remove(ents_[cl], ent)
+
+    if ent:IsPlayer() then
+        remove(ents_[ent:IsBot() and "bot" or "human"], ent)
     end
 
-    lastremovewasfullupdate = fullupdate
+    --lastremovewasfullupdate = fullupdate
 end)
 
 -- An even faster version of player.Iterator and ipairs(Ents.player)
 local inext = ipairs({})
 
-function player.Iterator()
-    return inext, ents_["player"], 0
+if SERVER then
+    function player.Iterator()
+        return inext, ents_["player"], 0
+    end
+
+    function player.BotIterator()
+        return inext, ents_["bot"], 0
+    end
+
+    function player.HumanIterator()
+        return inext, ents_["human"], 0
+    end
+else
+    -- NOTE(winter): ents_ has too many problems desyncing on the client, so we're doing a separate approach
+    -- See the EntityRemoved comments above
+    local BotCache = nil
+    local HumanCache = nil
+
+    function player.BotIterator()
+        if BotCache == nil then
+            BotCache = player.GetBots()
+        end
+
+        return inext, BotCache, 0
+    end
+
+    function player.HumanIterator()
+        if HumanCache == nil then
+            HumanCache = player.GetHumans()
+        end
+
+        return inext, HumanCache, 0
+    end
+
+    local function InvalidatePlayerCache(ent)
+        if ent:IsPlayer() then
+            if ent:IsBot() then
+                BotCache = nil
+            else
+                HumanCache = nil
+            end
+        end
+    end
+
+    hook.Add("OnEntityCreated", "Ents_OnEntityCreated_Players", InvalidatePlayerCache)
+    hook.Add("EntityRemoved", "Ents_EntityRemoved_Players", InvalidatePlayerCache)
 end
 
-function player.BotIterator()
-    return inext, ents_["bot"], 0
-end
-
-function player.HumanIterator()
-    return inext, ents_["human"], 0
-end
 -- needs to be fixed to deal with Ents[class][ent] = index
 -- function EntsWithPrefix(pfx)
 --     local ok, ov, ik, iv
