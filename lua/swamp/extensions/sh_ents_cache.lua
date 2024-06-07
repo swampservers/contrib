@@ -76,7 +76,6 @@ local lastremovewasfullupdate = false
 
 hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent, fullupdate)
     if EntIndex(ent) <= 0 then return end
-
     --[[
     if CLIENT and fullupdate then
         -- Fix full update causing desync sometimes (just flush the entire cache)
@@ -89,7 +88,6 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent, fullupdate)
         end
     else
     ]]
-
     local cl = EntClass(ent)
     cl = classmapping[cl] or cl
     remove(ents_["all"], ent)
@@ -98,10 +96,9 @@ hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent, fullupdate)
     if ent:IsPlayer() then
         remove(ents_[ent:IsBot() and "bot" or "human"], ent)
     end
-
-    --lastremovewasfullupdate = fullupdate
 end)
 
+--lastremovewasfullupdate = fullupdate
 -- An even faster version of player.Iterator and ipairs(Ents.player)
 local inext = ipairs({})
 
@@ -152,7 +149,6 @@ else
     hook.Add("OnEntityCreated", "Ents_OnEntityCreated_Players", InvalidatePlayerCache)
     hook.Add("EntityRemoved", "Ents_EntityRemoved_Players", InvalidatePlayerCache)
 end
-
 -- needs to be fixed to deal with Ents[class][ent] = index
 -- function EntsWithPrefix(pfx)
 --     local ok, ov, ik, iv
