@@ -69,19 +69,35 @@ end
 
 hook.Add("OnEntityCreated", "Ents_OnEntityCreated", create)
 hook.Add("NetworkEntityCreated", "Ents_NetworkEntityCreated", create)
-
 -- NOTE: This gets called asynchronously, so iterate-and-remove works
--- TODO(winter): This is probably NOT reliable on the client (PVS, FullUpdate, etc)
-hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent)
-    if EntIndex(ent) <= 0 then return end
-    local cl = EntClass(ent)
-    cl = classmapping[cl] or cl
-    remove(ents_["all"], ent)
-    remove(ents_[cl], ent)
+-- TODO(winter): This is NOT reliable on the client (PVS, FullUpdate, sometimes ents are created but not removed, etc; server should be telling us instead or something!)
+-- Semi-related issues: https://github.com/Facepunch/garrysmod-issues/issues/5800 and https://github.com/Facepunch/garrysmod-issues/issues/5792
+local lastremovewasfullupdate = false
 
-    if ent:IsPlayer() then
-        remove(ents_[ent:IsBot() and "bot" or "human"], ent)
+hook.Add("EntityRemoved", "Ents_EntityRemoved", function(ent, fullupdate)
+    if EntIndex(ent) <= 0 then return end
+
+    if CLIENT and fullupdate then
+        -- Fix full update causing desync sometimes (just flush the entire cache)
+        -- Don't do it more than once per full update
+        if not lastremovewasfullupdate then
+            -- TODO(winter): I'm betting just recreating the whole List is faster than removing items one by one...is it? Emptying a regular table would DEFINITELY be faster...
+            print("TOASTING ENTS")
+            Ents = memo(function() return List() end)
+            ents_ = Ents
+        end
+    else
+        local cl = EntClass(ent)
+        cl = classmapping[cl] or cl
+        remove(ents_["all"], ent)
+        remove(ents_[cl], ent)
+
+        if ent:IsPlayer() then
+            remove(ents_[ent:IsBot() and "bot" or "human"], ent)
+        end
     end
+
+    lastremovewasfullupdate = fullupdate
 end)
 
 -- An even faster version of player.Iterator and ipairs(Ents.player)
