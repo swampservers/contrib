@@ -345,7 +345,7 @@ end
 function GetPlayersInLocation(idx)
     local tab = {}
 
-    for _, ply in Ents.PlayerIterator() do
+    for _, ply in player.Iterator() do
         if ply:GetLocation() == idx then
             tab[#tab + 1] = ply
         end

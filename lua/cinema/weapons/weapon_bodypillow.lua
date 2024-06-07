@@ -347,7 +347,7 @@ function SWEP:PrimaryAttack()
                 aim.z = 0.7
                 aim = aim * 30
 
-                for _, v in Ents.PlayerIterator() do
+                for _, v in player.Iterator() do
                     local bcenter = v:LocalToWorld(v:OBBCenter())
 
                     if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then

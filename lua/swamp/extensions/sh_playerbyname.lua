@@ -4,7 +4,7 @@ function FindSinglePlayer(name, exact_overrides_multiple)
     name = name:lower()
     local count, ply = 0, nil
 
-    for _, v in Ents.HumanIterator() do
+    for _, v in player.HumanIterator() do
         local plyname = v:Name():lower()
         -- exact match cancels any substring matches
         if exact_overrides_multiple and name == plyname then return v end

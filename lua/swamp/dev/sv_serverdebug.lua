@@ -49,7 +49,7 @@ function FlushErrorsForDB()
     if totalerrors > 0 then
         print("[ServerDebug] Storing " .. tostring(totalerrors) .. " error(s) in DB")
 
-        for _, ply in Ents.PlayerIterator() do
+        for _, ply in player.Iterator() do
             if ply:GetRank() >= 5 then
                 ply:ChatPrint("[red][ServerDebug][white] Storing " .. tostring(totalerrors) .. " error(s) in DB")
             end

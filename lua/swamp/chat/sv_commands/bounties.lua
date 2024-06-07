@@ -178,7 +178,7 @@ RegisterChatCommand({'bountyrandom', 'setbountyrandom', 'randombounty', 'setrand
     if p then
         local ranply = {}
 
-        for k, v in Ents.HumanIterator() do
+        for k, v in player.HumanIterator() do
             if not v:IsProtected() then
                 table.insert(ranply, v)
             end
@@ -209,7 +209,7 @@ end, {
 RegisterChatCommand({'bounties', 'showbounties'}, function(ply, arg)
     local t = {}
 
-    for k, v in Ents.HumanIterator() do
+    for k, v in player.HumanIterator() do
         if v:GetBounty() > 0 then
             table.insert(t, {v, v:GetBounty()})
         end
@@ -239,7 +239,7 @@ RegisterChatCommand({'givepointsrandom', 'randomgivepoints'}, function(ply, arg)
     if p > 0 then
         local ranply = {}
 
-        for k, v in Ents.HumanIterator() do
+        for k, v in player.HumanIterator() do
             if v:IsActive() and v ~= ply then
                 table.insert(ranply, v)
             end

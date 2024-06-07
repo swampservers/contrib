@@ -95,7 +95,7 @@ function Vote_ShowMenu(kick)
     plylist:AddColumn("Players")
     local plyz = {}
 
-    for k2, v2 in Ents.PlayerIterator() do
+    for k2, v2 in player.Iterator() do
         table.insert(plyz, {v2:Nick(), v2})
     end
 

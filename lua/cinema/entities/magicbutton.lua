@@ -354,7 +354,7 @@ local function MagicOutcomeBountyAll(ply)
         amount = math.random(2, 45)
     end
 
-    for k, v in Ents.PlayerIterator() do
+    for k, v in player.Iterator() do
         v:SetBounty(v:GetBounty() + amount)
     end
 

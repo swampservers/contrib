@@ -103,15 +103,15 @@ end)
 -- An even faster version of player.Iterator and ipairs(Ents.player)
 local inext = ipairs({})
 
-function Ents.PlayerIterator()
+function player.Iterator()
     return inext, ents_["player"], 0
 end
 
-function Ents.BotIterator()
+function player.BotIterator()
     return inext, ents_["bot"], 0
 end
 
-function Ents.HumanIterator()
+function player.HumanIterator()
     return inext, ents_["human"], 0
 end
 -- needs to be fixed to deal with Ents[class][ent] = index

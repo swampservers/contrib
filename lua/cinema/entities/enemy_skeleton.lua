@@ -397,7 +397,7 @@ function ENT:FindTarget()
     local targets = {}
     local targetcount = 0
 
-    for _, ply in Ents.PlayerIterator() do
+    for _, ply in player.Iterator() do
         if self:CanBecomeTarget(ply) and self:GetTargetPriority(ply) > 0 then
             table.insert(targets, ply)
             targetsum = targetsum + self:GetTargetPriority(ply)

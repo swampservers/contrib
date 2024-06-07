@@ -269,7 +269,7 @@ function SWEP:TargetedPlayer()
 
     -- TODO(winter): There better be a good reason we're iterating over ALL PLAYERS and doing traces for every single one of them!!
     -- TODO(winter): What's more expensive, this or util.TraceHull within strike range, then narrowing down via a filter until we hit something with both util.TraceHull and TraceCapsule?
-    for _, ply in Ents.PlayerIterator() do
+    for _, ply in player.Iterator() do
         if ply == owner then continue end
         if ply:InVehicle() then continue end
         if not ply:Alive() then continue end
