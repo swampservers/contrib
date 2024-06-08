@@ -166,7 +166,7 @@ if CLIENT then
     function SERVICE:LoadVideo(Video, panel)
         -- NOTE(winter): We aren't using https://swamp.sv/s/cinema/youtube.html anymore; embedding JS like this makes us more flexible to support Age Restricted and Embed Disabled videos
         -- NOTE(noz): mute=1 to prevent annoying full volume initialization; immediately check player.isMuted() to player.unMute() when possible, player.setVolume(0) doesn't set player.isMuted() to true so it's fine
-        panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1&mute=1&start=" .. math.Round(CurTime() - Video:StartTime()))
+        panel:OpenURL("https://www.youtube.com/embed/" .. Video:Key() .. "?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1&mute=1" .. (Video:Duration() > 0 and "&start=" .. math.Round(CurTime() - Video:StartTime()) or ""))
 
         panel.OnBeginLoadingDocument = function(_, url)
             if not string.match(url, "/embed/") then
@@ -206,7 +206,7 @@ if CLIENT then
                     end
 
                     -- TODO: CC support for Embed Disabled Videos
-                    panel:OpenURL("https://www.youtube.com/watch?v=" .. Video:Key() .. "&start=" .. math.Round(CurTime() - Video:StartTime()))
+                    panel:OpenURL("https://www.youtube.com/watch?v=" .. Video:Key() .. (Video:Duration() > 0 and "&start=" .. math.Round(CurTime() - Video:StartTime()) or ""))
                 end
             end)
 
