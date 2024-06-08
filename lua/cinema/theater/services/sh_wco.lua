@@ -4,7 +4,7 @@ SERVICE.Name = "wco"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
-SERVICE.ServiceJS = [[ 
+SERVICE.ServiceJS = [[
     var embedPlayer;
     var targetTime = -0.5;
     var updateTimeNow = false;
@@ -74,7 +74,7 @@ if CLIENT then
             end)
 
             function vpanel:OnDocumentReady(url)
-                self:AddFunction("exTheater", "onVideoInfoReady", function(newVideoInfo)
+                self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
 
                     if videoInfo.title and videoInfo.duration then
@@ -89,7 +89,7 @@ if CLIENT then
                     self:QueueJavascript([[
                         const title = document.querySelector("span.episode-descp").querySelector("span").textContent;
                         const embedUrl = document.querySelector('#cizgi-js-0').src;
-                        exTheater.onVideoInfoReady({"title": title});
+                        gmod.onVideoInfoReady({"title": title});
                         window.location.href = embedUrl;
                     ]])
                 elseif string.match(url, "embed") then
@@ -99,7 +99,7 @@ if CLIENT then
                             if (player && player.readyState > 0) {
                                 player.volume = 0;
                                 const duration = player.duration;
-                                exTheater.onVideoInfoReady({"duration": duration});
+                                gmod.onVideoInfoReady({"duration": duration});
                                 clearInterval(initInterval);
                             }
                         }, 100);

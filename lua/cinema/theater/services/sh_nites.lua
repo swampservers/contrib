@@ -72,7 +72,7 @@ if CLIENT then
             end)
 
             function vpanel:OnDocumentReady(url)
-                self:AddFunction("exTheater", "onVideoInfoReady", function(newVideoInfo)
+                self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
 
                     if videoInfo.title and videoInfo.data and videoInfo.duration and videoInfo.thumb then
@@ -86,7 +86,7 @@ if CLIENT then
                     self:QueueJavascript([[
                         const title = document.querySelector('h1[itemprop="name"]').textContent;
                         const thumbnailUrl = document.querySelector('[itemprop=thumbnailUrl]').content;
-                        exTheater.onVideoInfoReady({
+                        gmod.onVideoInfoReady({
                             "title": title,
                             "thumb": thumbnailUrl,
                         });
@@ -102,7 +102,7 @@ if CLIENT then
                             if (iframe && iframe.src && iframe.src.includes("/player/v/")) {
                                 // Go to second embed
                                 window.location.href = iframe.src;
-                                exTheater.onVideoInfoReady({"data": iframe.src});
+                                gmod.onVideoInfoReady({"data": iframe.src});
                                 clearInterval(initInterval);
                             }
                         }, 100);
@@ -114,7 +114,7 @@ if CLIENT then
                             const player = document.querySelector("video");
                             if (player && player.readyState > 0) {
                                 player.volume = 0;
-                                exTheater.onVideoInfoReady({"duration": player.duration});
+                                gmod.onVideoInfoReady({"duration": player.duration});
                                 clearInterval(initInterval);
                             }
                         }, 100);

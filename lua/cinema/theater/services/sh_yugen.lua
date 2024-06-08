@@ -44,7 +44,7 @@ if CLIENT then
             vpanel:OpenURL(key)
 
             function vpanel:OnDocumentReady(url)
-                self:AddFunction("exTheater", "onVideoInfoReady", function(newVideoInfo)
+                self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     if newVideoInfo.error then
                         chat.AddText("[red]Yugen Error: " .. newVideoInfo.error)
                         callback()
@@ -62,7 +62,7 @@ if CLIENT then
 
                 if url == key then
                     self:QueueJavascript([[
-                        exTheater.onVideoInfoReady({
+                        gmod.onVideoInfoReady({
                             "title": document.title.replace(" - YugenAnime", ""),
                             "thumb": document.querySelector("meta[property='og:image']").content,
                             "data": document.querySelector("iframe#main-embed").src
@@ -75,7 +75,7 @@ if CLIENT then
                         const initInterval = setInterval(function() {
                             const player = document.querySelector("video");
                             if (player != null && player.readyState > 0) {
-                                exTheater.onVideoInfoReady({"duration": player.duration});
+                                gmod.onVideoInfoReady({"duration": player.duration});
                                 clearInterval(initInterval);
                             }
                         }, 100);

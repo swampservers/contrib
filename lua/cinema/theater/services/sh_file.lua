@@ -50,7 +50,7 @@ if CLIENT then
             end)
 
             function vpanel:OnDocumentReady(url)
-                self:AddFunction("exTheater", "onVideoInfoReady", function(newVideoInfo)
+                self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
 
                     if videoInfo.duration then
@@ -88,7 +88,7 @@ if CLIENT then
                             videoElem.muted = true;
 
                             if (videoElem.readyState > 0) {
-                                exTheater.onVideoInfoReady({"duration": videoElem.duration});
+                                gmod.onVideoInfoReady({"duration": videoElem.duration});
                                 clearInterval(initInterval);
                             }
                         }

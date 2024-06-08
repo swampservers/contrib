@@ -116,7 +116,7 @@ if CLIENT then
             end)
 
             function vpanel:OnDocumentReady(url)
-                self:AddFunction("exTheater", "onVideoInfoReady", function(newVideoInfo)
+                self:AddFunction("gmod", "onVideoInfoReady", function(newVideoInfo)
                     table.Merge(videoInfo, newVideoInfo)
 
                     if videoInfo.title and videoInfo.duration and videoInfo.thumb then
@@ -130,7 +130,7 @@ if CLIENT then
                     self:QueueJavascript([[
                         const title = document.querySelector('h1[itemprop="name"]').textContent;
                         const thumb = document.querySelector('img[itemprop="image"]').src;
-                        exTheater.onVideoInfoReady({
+                        gmod.onVideoInfoReady({
                             "title": title,
                             "thumb": thumb
                         });
@@ -147,7 +147,7 @@ if CLIENT then
                             const player = document.querySelector("video");
                             if (player && player.readyState > 0) {
                                 player.volume = 0;
-                                exTheater.onVideoInfoReady({"duration": player.duration});
+                                gmod.onVideoInfoReady({"duration": player.duration});
                                 clearInterval(initInterval);
                             }
                         }, 100);
