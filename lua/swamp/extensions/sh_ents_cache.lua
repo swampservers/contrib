@@ -138,11 +138,8 @@ else
 
     local function InvalidatePlayerCache(ent)
         if ent:IsPlayer() then
-            if ent:IsBot() then
-                BotCache = nil
-            else
-                HumanCache = nil
-            end
+            BotCache = nil
+            HumanCache = nil
         end
     end
 

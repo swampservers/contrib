@@ -263,6 +263,7 @@ end
 
 function SWEP:TargetedPlayer()
     local owner = self:GetOwner()
+    if not IsValid(owner) then return end
     local vp = owner:EyePos()
     local vr = owner:EyeAngles():Forward()
     local ca = Vector(0, 0, 1)
