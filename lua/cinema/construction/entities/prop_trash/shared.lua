@@ -346,18 +346,20 @@ else
     function ENT:CanExist()
         -- local vec = self:GetPos()
         -- vec.x = math.abs(vec.x)
-        -- if vec:DistToSqr(Vector(160,160,80)) < 65536 then return false end --theater enterance
+        -- if vec:DistToSqr(Vector(160,160,80)) < 65536 then return false end --theater entrance
         -- someone sitting in the seat
         if IsValid((self.UseTable or {})[1]) then return true end
-
-        return self:GetLocationClass() ~= TRASHLOC_NOSPAWN or self:GetOwnerID() == self:GetLocationOwner()
+        if self:GetLocationClass() ~= TRASHLOC_NOSPAWN then return true end
+        if self:GetOwnerID() == self:GetLocationOwner() then return true end
+        local ply = player.GetBySteamID(self:GetLocationOwner())
+        if IsValid(ply) and (ply.TrashFriends or {})[self:GetOwnerID()] then return true end
     end
 end
 
 function ENT:CanEdit(userid)
     if self:GetOwnerID() == userid or self:GetLocationOwner() == userid then return true end
     local ply = player.GetBySteamID(self:GetOwnerID())
-    if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
+    if IsValid(ply) and (ply.TrashFriends or {})[userid] then return true end
 
     return false
 end
@@ -382,10 +384,14 @@ function ENT:CanTape(userid)
         if center:Distance(v[1]) < v[2] then return false end
     end
 
-    local lown, lcl = self:GetLocationOwner(), self:GetLocationClass()
-    if self:GetOwnerID() == userid and lown == nil and (lcl == TRASHLOC_BUILD or self:GetRating() == 8 and lcl == TRASHLOC_NOBUILD) or lown == userid and userid ~= nil then return true end
-    local ply = player.GetBySteamID(self:GetOwnerID())
-    if IsValid(ply) and (ply.TrashFriends or {})[player.GetBySteamID(userid) or ""] then return true end
+    local entownerid = self:GetOwnerID()
+    local locownerid, locclass = self:GetLocationOwner(), self:GetLocationClass()
+    if entownerid == userid and locownerid == nil and (locclass == TRASHLOC_BUILD or self:GetRating() == 8 and locclass == TRASHLOC_NOBUILD) then return true end
+    if locownerid == userid then return true, true end
+    local locowner = player.GetBySteamID(locownerid)
+    if IsValid(locowner) and (locowner.TrashFriends or {})[userid] then return true, true end
+    local entowner = player.GetBySteamID(entownerid)
+    if IsValid(entowner) and (entowner.TrashFriends or {})[userid] then return true, true end
 
     return false
 end

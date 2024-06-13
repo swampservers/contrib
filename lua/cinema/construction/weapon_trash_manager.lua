@@ -147,7 +147,7 @@ function SWEP:PrimaryAttack()
             ui.DLabel(function(p)
                 p:Dock(TOP)
                 p:SetText([[You can save any props spawned from your inventory.
-This will save any of your frozen props on the map,
+This will save any of your taped props on the map,
 but you need a nearby theater/field to respawn them.]])
                 p:SizeToContentsY()
             end)
@@ -205,7 +205,7 @@ but you need a nearby theater/field to respawn them.]])
                         TRASHMANAGERFILEBUTTONS:Remove()
                     end
 
-                    local f, d = file.Find("swampbuilds/*.txt", "DATA")
+                    local f = file.Find("swampbuilds/*.txt", "DATA")
 
                     for i, v in ipairs(f) do
                         self:AddLine(v)
@@ -324,16 +324,18 @@ but you need a nearby theater/field to respawn them.]])
                             p:AddColumn("Player")
                             p:AddColumn("Friend?"):SetFixedWidth(50)
 
-                            for i, v in player.Iterator() do
-                                if v ~= Me and not v:IsBot() then
-                                    p:AddLine(v:Name(), Me.TrashFriends[v] and "X" or "").player = v
+                            -- TODO(winter): This should probably be sorted alphabetically or something
+                            for _, ply in player.HumanIterator() do
+                                if ply ~= Me then
+                                    p:AddLine(ply:Name(), Me.TrashFriends[ply:SteamID()] and "X" or "").player = ply
                                 end
                             end
 
                             function p:OnRowSelected(index, pnl)
                                 if IsValid(pnl.player) then
-                                    Me.TrashFriends[pnl.player] = not Me.TrashFriends[pnl.player] and true or nil
-                                    pnl:SetColumnText(2, Me.TrashFriends[pnl.player] and "X" or "")
+                                    Me.TrashFriends[pnl.player:SteamID()] = not Me.TrashFriends[pnl.player:SteamID()] and true or nil
+                                    Me:Notify(pnl.player:Name() .. " is " .. (Me.TrashFriends[pnl.player:SteamID()] and "now" or "no longer") .. " a trash friend")
+                                    pnl:SetColumnText(2, Me.TrashFriends[pnl.player:SteamID()] and "X" or "")
                                 end
 
                                 net.Start("SetTrashFriends")
@@ -353,19 +355,6 @@ but you need a nearby theater/field to respawn them.]])
 
     self:SetNextPrimaryFire(CurTime() + 0.3)
 end
-
-net.Receive("SetTrashFriends", function(len)
-    local e = net.ReadEntity()
-    if not IsValid(e) then return end
-
-    if net.ReadBool() then
-        e.TrashFriends = {
-            [Me] = true
-        }
-    else
-        e.TrashFriends = {}
-    end
-end)
 
 function SWEP:SecondaryAttack()
     self:SetNextSecondaryFire(CurTime() + 0.3)
