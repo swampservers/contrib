@@ -654,7 +654,8 @@ end
 
 -- Attempt to teleport somewhere safe
 function ENT:TeleportSafe(tpos, radius)
-    local pos = table.Random(navmesh.Find(tpos or self:GetPos(), radius or 500, 128, 64)):GetCenter()
+    local areas = navmesh.Find(tpos or self:GetPos(), radius or 500, 128, 64)
+    local pos = areas[math.random(1, #areas)]:GetCenter()
     self:Teleport(pos or tpos or self:GetPos())
 end
 

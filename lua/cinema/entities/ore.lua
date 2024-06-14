@@ -52,7 +52,7 @@ local function OreOrigin()
     if ORE_CACHED_ORIGINPOINTS == nil then
         local origins = {}
 
-        for _, area in pairs(navareas) do
+        for _, area in ipairs(navareas) do
             local extent = area:GetExtentInfo()
             if not ore_areas[area:GetPlace()] then continue end
             if area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or (extent.SizeX < hull.x or extent.SizeY < hull.y) then continue end

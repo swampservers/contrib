@@ -22,7 +22,7 @@ local function AppropriateNavArea(ply, area)
     return true
 end
 
--- multiply disance along an axis, so we can  
+-- multiply disance along an axis, so we can
 local function biasdist(pos1, pos2, biasvec)
     return (pos1 * biasvec):Distance(pos2 * biasvec)
 end
@@ -74,7 +74,7 @@ function Player:UnStick()
     if not IsValid(bestarea) then
         areas = navmesh.Find(self:GetPos(), 512, 512, 64)
 
-        for k, area in pairs(areas) do
+        for _, area in ipairs(areas) do
             if AppropriateNavArea(self, area) then
                 if bestarea == nil or biasdist(self:GetPos(), area:GetCenter(), Vector(1, 1, 8)) < biasdist(self:GetPos(), bestareapos, Vector(1, 1, 8)) then
                     bestarea = area
@@ -90,7 +90,7 @@ function Player:UnStick()
     if not IsValid(bestarea) then
         areas = navmesh.GetAllNavAreas()
 
-        for k, area in pairs(areas) do
+        for _, area in ipairs(areas) do
             if AppropriateNavArea(self, area) then
                 if bestarea == nil or self:GetPos():Distance(area:GetCenter()) < self:GetPos():Distance(bestareapos) then
                     bestarea = area

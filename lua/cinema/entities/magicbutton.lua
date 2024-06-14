@@ -86,7 +86,8 @@ function ENT:FindSuitableCastOrigin()
             return
         end
 
-        for _, area in pairs(navareas) do
+        for _, area in ipairs(navareas) do
+            if area:GetPlace() == "Labyrinth of Kek" then continue end
             local extent = area:GetExtentInfo()
             local toosmall = extent.SizeX < 32 or extent.SizeY < 32
             if area:IsUnderwater() or area:HasAttributes(NAV_MESH_AVOID) or toosmall then continue end
@@ -98,7 +99,7 @@ function ENT:FindSuitableCastOrigin()
             tr.maxs = hull * Vector(1, 1, 0.1) * 0.5
             local trace = util.TraceHull(tr)
             if not self:IsTraceValid(trace) then continue end
-            local tr = {}
+            table.Empty(tr) -- Clear it
             tr.start = trace.HitPos
             tr.endpos = tr.start + Vector(0, 0, self.PlacementSettings.CeilingHeight)
             tr.mask = MASK_PLAYERSOLID
@@ -122,7 +123,7 @@ function ENT:FindSuitableCastOrigin()
         picks = MAGICBUTTON_CACHED_ORIGINPOINTS
     end
 
-    if table.Count(picks) > 0 then return table.Random(picks) end
+    if #picks > 0 then return picks[math.random(1, #picks)] end
 end
 
 function ENT:FindCastBox(casttrace)
@@ -155,7 +156,7 @@ function ENT:FindCastBox(casttrace)
     if self:IsTraceValid(trace2) then
         local navareas = navmesh.Find(trace2.HitPos, 128, 256, 256)
 
-        for k, v in pairs(navareas) do
+        for k, v in ipairs(navareas) do
             if v:IsUnderwater() or not v:Contains(trace2.HitPos) then
                 navareas[k] = nil
             end
@@ -208,7 +209,7 @@ function ENT:FindHidingSpot()
 
         if trace1 == nil or TRACE1_FAILURES > 10 then
             TRACE1_FAILURES = 0
-            trace1 = self:FindCastBox(startpoint) --returns a valid hull sized trace in a rnadom direction
+            trace1 = self:FindCastBox(startpoint) --returns a valid hull sized trace in a random direction
             TRACE_COUNTER = TRACE_COUNTER + 1
             trace2 = nil
         end
@@ -407,7 +408,7 @@ local function MagicOutcomeDecals(ply, button)
             util.Decal(decal, pos, pos + (VectorRand() * Vector(1, 1, 0.3)):GetNormalized() * 3000, ply)
         end
 
-        pos = table.Random(navareas):GetCenter() + Vector(0, 0, 40)
+        pos = navareas[math.random(1, #navareas)]:GetCenter() + Vector(0, 0, 40)
     end)
 
     return "and it sprayed a bunch of funny decals everywhere! ;smileylaugh;"
@@ -473,14 +474,10 @@ end)
 
 local function MagicOutcomeButtonSpawn(ply)
     local button = ents.Create("magicbutton")
-    button:Spawn()
-    local trace = button:FindHidingSpot()
-
-    if trace then
-        button:MoveToTraceResult(trace)
-    end
 
     if IsValid(button) then
+        button:Spawn()
+        button:Activate()
         local loc = button:GetLocation()
         local locd = Locations[loc]
         local locname = locd.Name
@@ -515,7 +512,8 @@ local function MagicOutcomeSpawnObject(ply, button)
         },
         npc_headcrab = {
             "Headcrab", math.random(1, 5), function(ent, button)
-                local pos = table.Random(navmesh.Find(button:GetPos() + button:GetUp() * 50, 100, 2000, 2000)):GetRandomPoint()
+                local areas = navmesh.Find(button:GetPos() + button:GetUp() * 50, 100, 2000, 2000)
+                local pos = areas[math.random(1, #areas)]:GetRandomPoint()
                 ent:SetPos(pos)
             end
         },

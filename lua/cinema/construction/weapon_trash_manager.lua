@@ -221,20 +221,30 @@ but you need a nearby theater/field to respawn them.]])
                         d = d.props or d
                         local items = {}
 
-                        for k, v in pairs(Me.items or {}) do
+                        for _, v in pairs(Me.items or {}) do
                             items[v.id] = v
                         end
 
                         DecorrectSaveData(d)
                         local i = 1
+                        local mepos = Me:GetPos()
+                        local meid = Me:SteamID()
 
                         while i <= #d do
                             local v = d[i]
 
-                            if not items[v.id] or v.pos:Distance(Me:GetPos()) > TRASH_MANAGER_LOAD_RANGE or TrashLocationOwner(FindLocation(v.pos), v.pos) ~= Me:SteamID() then
+                            -- TODO(winter): Distance is expensive!
+                            if not items[v.id] or v.pos:Distance(mepos) > TRASH_MANAGER_LOAD_RANGE then
                                 table.remove(d, i)
                             else
-                                i = i + 1
+                                local locownerid = TrashLocationOwner(FindLocation(v.pos), v.pos)
+                                local locowner = player.GetBySteamID(locownerid)
+
+                                if locownerid ~= meid and (not IsValid(locowner) or not (locowner.TrashFriends or {})[meid]) then
+                                    table.remove(d, i)
+                                else
+                                    i = i + 1
+                                end
                             end
                         end
 
