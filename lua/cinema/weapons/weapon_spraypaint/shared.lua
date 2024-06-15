@@ -36,7 +36,7 @@ SPRAYPAINT_DECALS_WHITELIST = {}
 SPRAYPAINT_DECALS = {}
 SPRAYPAINT_MATLOOKUP = SPRAYPAINT_MATLOOKUP or {}
 
-for i = 1, 81 do
+for i = 1, 36 do
     local dname = "spraypaint_decal" .. i
     local matname = "spray/" .. dname
     SPRAYPAINT_DECALS[i] = dname

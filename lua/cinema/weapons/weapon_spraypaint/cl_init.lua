@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 include("shared.lua")
-CreateClientConVar("spraypaint_decal", "spraypaint_decal1", true, true, "decal to spray from the can")
+CreateClientConVar("spraypaint_decal", "spraypaint_decal25", true, true, "decal to spray from the can")
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     self:SetBodygroup(2, 1)
@@ -288,19 +288,27 @@ end
 --     "$color2" "%s"
 -- }
 -- ]]
--- local stops = {1, 0.5, 0}
+-- local colors = {
+--     "[1 0 0]",
+--     "[1 0.25 0]",
+--     "[1 1 0]",
+--     "[0 1 0]",
+--     "[0 1 1]",
+--     "[0 0 1]",
+--     "[0.5 0.04 0.95]",
+--     "[1 0.09 0.55]",
+--     "[1 1 1]",
+--     "[0.5 0.5 0.5]",
+--     "[0 0 0]",
+--     "[0.5 0.25 0]"
+-- }
 -- local i = 1
 -- file.CreateDir("spray")
--- for _, r in ipairs(stops) do
---     for _, g in ipairs(stops) do
---         for _, b in ipairs(stops) do
---             for _, size in ipairs({"0.375", "0.1875", "0.09375"}) do
---                 local veccol = "[" .. r .. " " .. g .. " " .. b .. "]"
---                 file.Write("spray/spraypaint_decal" .. i .. ".vmt", string.format(mapvmt, size, i, veccol))
---                 file.Write("spray/spraypaint_decal" .. i .. "_model.vmt", string.format(modelvmt, size, veccol))
---                 i = i + 1
---             end
---         end
+-- for _, veccol in ipairs(colors) do
+--     for _, size in ipairs({"0.375", "0.1875", "0.09375"}) do
+--         file.Write("spray/spraypaint_decal" .. i .. ".vmt", string.format(mapvmt, size, i, veccol))
+--         file.Write("spray/spraypaint_decal" .. i .. "_model.vmt", string.format(modelvmt, size, veccol))
+--         i = i + 1
 --     end
 -- end
 -- print("Total Decals: " .. (i - 1))
