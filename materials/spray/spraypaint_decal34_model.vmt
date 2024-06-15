@@ -4,5 +4,5 @@
     "$translucent" "1"
     "$decal" "1"
     "$decalscale" "0.375"
-    "$color2" "[0.5 1 0]"
+    "$color2" "[0.5 0.25 0]"
 }
