@@ -5,5 +5,5 @@
     "$decal" "1"
     "$decalscale" "0.09375"
     "$modelmaterial" "spray/spraypaint_decal33_model"
-    "$color2" "[0.5 1 0.5]"
+    "$color2" "[0 0 0]"
 }
