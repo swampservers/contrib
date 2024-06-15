@@ -31,12 +31,12 @@ SWEP.DrawCrosshair = true
 SWEP.BounceWeaponIcon = false
 SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.PaintDelay = 1 / 30
-SWEP.MaxMovementDistance = 128 -- Maxmimum distance the player can move while drawing before it's prevented
+SWEP.MaxMovementDistance = 128 -- Maximum distance the player can move while drawing before it's prevented
 SPRAYPAINT_DECALS_WHITELIST = {}
 SPRAYPAINT_DECALS = {}
 SPRAYPAINT_MATLOOKUP = SPRAYPAINT_MATLOOKUP or {}
 
-for i = 1, 27 do
+for i = 1, 81 do
     local dname = "spraypaint_decal" .. i
     local matname = "spray/" .. dname
     SPRAYPAINT_DECALS[i] = dname

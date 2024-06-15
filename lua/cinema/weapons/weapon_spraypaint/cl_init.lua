@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 include("shared.lua")
-CreateClientConVar("spraypaint_decal", "spraypaint_decal17", true, true, "decal to spray from the can")
+CreateClientConVar("spraypaint_decal", "spraypaint_decal1", true, true, "decal to spray from the can")
 
 function SWEP:PreDrawViewModel(vm, weapon, ply)
     self:SetBodygroup(2, 1)
@@ -267,3 +267,40 @@ function SWEP:SpraypaintOpenPanel()
     Frame:SetTall(rows * (48 + 4) + 30)
     Frame:Center()
 end
+-- local mapvmt = [[
+-- "LightmappedGeneric"
+-- {
+--     "$basetexture" "spray/dot"
+--     "$translucent" "1"
+--     "$decal" "1"
+--     "$decalscale" "%s"
+--     "$modelmaterial" "spray/spraypaint_decal%s_model"
+--     "$color2" "%s"
+-- }
+-- ]]
+-- local modelvmt = [[
+-- "VertexLitGeneric"
+-- {
+--     "$basetexture" "spray/dot"
+--     "$translucent" "1"
+--     "$decal" "1"
+--     "$decalscale" "%s"
+--     "$color2" "%s"
+-- }
+-- ]]
+-- local stops = {1, 0.5, 0}
+-- local i = 1
+-- file.CreateDir("spray")
+-- for _, r in ipairs(stops) do
+--     for _, g in ipairs(stops) do
+--         for _, b in ipairs(stops) do
+--             for _, size in ipairs({"0.375", "0.1875", "0.09375"}) do
+--                 local veccol = "[" .. r .. " " .. g .. " " .. b .. "]"
+--                 file.Write("spray/spraypaint_decal" .. i .. ".vmt", string.format(mapvmt, size, i, veccol))
+--                 file.Write("spray/spraypaint_decal" .. i .. "_model.vmt", string.format(modelvmt, size, veccol))
+--                 i = i + 1
+--             end
+--         end
+--     end
+-- end
+-- print("Total Decals: " .. (i - 1))
