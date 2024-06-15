@@ -1,8 +1,8 @@
 "VertexLitGeneric"
-                {
-                    "$basetexture" "spray/dot"
-                    "$translucent" 1
-                    "$decal" "1"
-                    "$decalscale" "0.375"
-                    "$color2" "[1 0.25098040699959 0]"
-                }
+{
+    "$basetexture" "spray/dot"
+    "$translucent" "1"
+    "$decal" "1"
+    "$decalscale" "0.1875"
+    "$color2" "[1 1 1]"
+}

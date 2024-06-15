@@ -1,9 +1,9 @@
-"LightmappedGeneric" 
-                {
-                    "$basetexture" "spray/dot"
-                    "$translucent" "1"
-                    "$decal" "1"
-                    "$decalscale" "0.375"
-                    "$modelmaterial" "spray/spraypaint_decal6_model"
-                    "$color2" "[0.49411764740944 0.039215687662363 0.95294117927551]"
-                }
+"LightmappedGeneric"
+{
+    "$basetexture" "spray/dot"
+    "$translucent" "1"
+    "$decal" "1"
+    "$decalscale" "0.09375"
+    "$modelmaterial" "spray/spraypaint_decal6_model"
+    "$color2" "[1 1 0.5]"
+}
