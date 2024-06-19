@@ -14,6 +14,10 @@ function StoreErrorForDB(err, realm, stack, count, client)
         stack = FormatErrorStack(stack)
     end
 
+    if not stack then
+        stack = "no stack"
+    end
+
     if client and type(client) ~= "string" then
         client = IsValid(client) and client:Nick() .. " (" .. client:SteamID() .. ")" or "INVALID CLIENT"
     end
