@@ -117,7 +117,7 @@ vgui.Register("ScoreboardSettings", {
         addLabel('Display')
         addCheckbox('Show help menu', "swamp_help", 'Show controls on the top of your screen')
         addCheckbox('Hide player names', "cinema_hidenames", "Big names in yo face")
-        addCheckbox('Hide sprays', "cl_playerspraydisable", "May help performance (GMOD global)")
+        addCheckbox('Hide sprays', "spraymesh_disable", "May help performance")
         --addCheckbox('Don\'t load chat images',"fedorachat_hideimg","Hides all images in chat")
         addCheckbox('Hide interface', "cinema_hideinterface", "Clean Your Screen")
         addCheckbox('Hide players in theater', "cinema_hideplayers", 'For when trolls stand in front of your screen')

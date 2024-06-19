@@ -280,8 +280,11 @@ function ENT:DoHit(ply, tr, dmginfo)
 
             if ply.GivePoints then
                 ply:GivePoints(self.PointsValue, "Ore.Mined")
-                ply:Notify("You mined ore worth " .. tostring(self.PointsValue) .. " Points!")
                 ply:AddStat("mined")
+                --ply:Notify("You mined ore worth " .. tostring(self.PointsValue) .. " Points!")
+                net.Start("PickaxePoints")
+                net.WriteInt(self.PointsValue, 16)
+                net.Send(ply)
             end
 
             self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav", 100, 100, 1, CHAN_ITEM)

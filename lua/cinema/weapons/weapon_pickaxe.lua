@@ -17,7 +17,9 @@ function SWEP:Initialize()
     self:SetHoldType("melee2")
 end
 
-if CLIENT then
+if SERVER then
+    util.AddNetworkString("PickaxePoints")
+else
     MININGCRACKMATERIALS = {}
 
     for k = 1, 10 do
