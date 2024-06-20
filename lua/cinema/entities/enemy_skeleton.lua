@@ -659,8 +659,8 @@ function ENT:TeleportSafe(tpos, radius)
     self:Teleport(pos or tpos or self:GetPos())
 end
 
-local KLPATHGEN_ITERS
-local KLPATHGEN_ITERS_BUDGET
+local KLPATHGEN_ITERS = 0
+local KLPATHGEN_ITERS_BUDGET = PathingIterationLimit()
 
 --Compute a path
 function ENT:ComputePath(pos, options)
@@ -774,7 +774,7 @@ function ENT:WhilePathing(path)
 end
 
 ENT.PathGen = function(area, fromArea, ladder, elevator, length)
-    KLPATHGEN_ITERS = (KLPATHGEN_ITERS or 0) + 1
+    KLPATHGEN_ITERS = KLPATHGEN_ITERS + 1
     local self = TEMP_PATHGEN_ITEM -- This is bullshit, i guess this callback doesn't include the entity pathing.
     if not IsValid(self) then return -1 end
 

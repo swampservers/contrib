@@ -27,15 +27,15 @@ function SWEP:Initialize()
 end
 
 function SWEP:DrawWorldModel()
-    local ply = self:GetOwner()
+    local owner = self:GetOwner()
     self:SetModelScale(0.8)
 
-    if IsValid(ply) then
-        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-        local bon = ply:LookupBone(bn) or 0
+    if IsValid(owner) then
+        local bn = owner:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+        local bon = owner:LookupBone(bn) or 0
         local opos = self:GetPos()
         local oang = self:GetAngles()
-        local bp, ba = ply:GetBonePosition(bon)
+        local bp, ba = owner:GetBonePosition(bon)
 
         if bp then
             opos = bp
@@ -45,7 +45,7 @@ function SWEP:DrawWorldModel()
             oang = ba
         end
 
-        if ply:IsPony() then
+        if owner:IsPony() then
             opos = opos + oang:Forward() * 9.7
             opos = opos + oang:Up() * 1
             opos = opos + oang:Right() * -7

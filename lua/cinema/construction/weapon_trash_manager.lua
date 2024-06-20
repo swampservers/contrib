@@ -28,14 +28,14 @@ function SWEP:Initialize()
 end
 
 function SWEP:DrawWorldModel()
-    local ply = self:GetOwner()
+    local owner = self:GetOwner()
 
-    if IsValid(ply) then
-        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-        local bon = ply:LookupBone(bn) or 0
+    if IsValid(owner) then
+        local bn = owner:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+        local bon = owner:LookupBone(bn) or 0
         local opos = self:GetPos()
         local oang = self:GetAngles()
-        local bp, ba = ply:GetBonePosition(bon)
+        local bp, ba = owner:GetBonePosition(bon)
 
         if bp then
             opos = bp
@@ -45,7 +45,7 @@ function SWEP:DrawWorldModel()
             oang = ba
         end
 
-        if ply:IsPony() then
+        if owner:IsPony() then
             opos = opos + oang:Forward() * 10
             opos = opos + oang:Right() * -2
             oang:RotateAroundAxis(oang:Forward(), 180)
@@ -380,11 +380,13 @@ function SWEP:DrawHUD()
 end
 
 function SWEP:GetDeleteEntities()
-    local id = self.Owner:SteamID()
+    local owner = self:GetOwner()
+    local id = owner:SteamID()
+    local pos = owner:GetPos()
     local cleanups = {}
 
-    for i, v in ents.Iterator() do
-        if v:GetTrashClass() and v:GetTrashClass() ~= "prop_trash_zone" and v:GetLocationOwner() == id and v:GetPos():Distance(self.Owner:GetPos()) <= TRASH_MANAGER_LOAD_RANGE then
+    for _, v in ents.Iterator() do
+        if v:GetTrashClass() and v:GetTrashClass() ~= "prop_trash_zone" and v:GetLocationOwner() == id and v:GetPos():DistToSqr(pos) <= TRASH_MANAGER_LOAD_RANGE ^ 2 then
             table.insert(cleanups, v)
         end
     end
@@ -396,11 +398,11 @@ function SWEP:GetSaveEntities()
     local saves = {}
     local itemids = {}
 
-    for k, v in pairs(self.Owner.items or {}) do
+    for _, v in pairs(self:GetOwner().items or {}) do
         itemids[v.id] = v
     end
 
-    for i, v in ents.Iterator() do
+    for _, v in ents.Iterator() do
         if v:GetTrashClass() then
             local id = v:GetItemID()
 

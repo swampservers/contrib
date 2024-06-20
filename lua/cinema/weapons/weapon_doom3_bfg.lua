@@ -86,7 +86,7 @@ function SWEP:Deploy()
     self:Idle()
 
     if SERVER then
-        self.bfgsound = CreateSound(self.Owner, "weapons/doom3/bfg/bfg_idle.wav")
+        self.bfgsound = CreateSound(self:GetOwner(), "weapons/doom3/bfg/bfg_idle.wav")
         self.bfgsound:Play()
         self.bfgsound:ChangeVolume(.5)
     end
@@ -116,7 +116,7 @@ local DOOM3_STATE_IDLE = 3
 local DOOM3_STATE_ATTACK = 4
 
 function SWEP:CanPrimaryAttack()
-    if not IsValid(self.Owner) then return false end
+    if not IsValid(self:GetOwner()) then return false end
 
     if self:Ammo1() <= 0 then
         self:DryFire()
@@ -133,8 +133,9 @@ end
 
 function SWEP:PrimaryAttack()
     if not self:CanPrimaryAttack() or self:GetAttack() then return end
+    local owner = self:GetOwner()
 
-    if self.Owner:IsNPC() then
+    if owner:IsNPC() then
         if self:GetNextPrimaryFire() <= CurTime() then
             self:SetNextPrimaryFire(CurTime() + 1.5)
             self:WeaponSound(self.Primary.Sound)
@@ -142,13 +143,13 @@ function SWEP:PrimaryAttack()
             self:TakePrimaryAmmo(1)
 
             if SERVER then
-                local pos = self.Owner:GetShootPos()
-                local ang = self.Owner:GetAimVector():Angle()
+                local pos = owner:GetShootPos()
+                local ang = owner:GetAimVector():Angle()
                 pos = pos + ang:Right() * 0 + ang:Up() * 0
                 local ent = ents.Create("doom3_bfg")
                 ent:SetAngles(ang)
                 ent:SetPos(pos)
-                ent:SetOwner(self.Owner)
+                ent:SetOwner(owner)
                 ent:SetDamage(self.Primary.Radius, self.Primary.Damage / 2)
                 ent:Spawn()
                 ent:Activate()
@@ -168,7 +169,7 @@ function SWEP:PrimaryAttack()
     self:SendWeaponAnim(ACT_VM_PRIMARYATTACK_1)
 
     if not self.ChargeSound then
-        self.ChargeSound = CreateSound(self.Owner, self.Primary.Special1)
+        self.ChargeSound = CreateSound(owner, self.Primary.Special1)
         self.ChargeSound:SetSoundLevel(90)
         self.ChargeSound:Play()
     else
@@ -199,7 +200,7 @@ function SWEP:Think()
             self:SetAttack(nil)
             self:BfgFire(2.49)
             self:SetChargeTime(0)
-        elseif not self.Owner:KeyDown(IN_ATTACK) then
+        elseif not self:GetOwner():KeyDown(IN_ATTACK) then
             self:SetAttack(nil)
             self:BfgFire(chargetime)
             self:SetChargeTime(0)
@@ -215,8 +216,9 @@ end
 
 function SWEP:Muzzleflash()
     if not IsFirstTimePredicted() then return end
-    local pos = self.Owner:GetShootPos()
-    local ang = self.Owner:GetAimVector():Angle()
+    local owner = self:GetOwner()
+    local pos = owner:GetShootPos()
+    local ang = owner:GetAimVector():Angle()
     pos = pos + ang:Forward() * 50 + ang:Right() * 8 + ang:Up() * -10
     local effectdata = EffectData()
     effectdata:SetOrigin(pos)
@@ -245,10 +247,11 @@ function SWEP:BfgFire(charge)
 		dmgPower = self:Clip1()
 	end
 ]]
+    local owner = self:GetOwner()
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
     self:WeaponSound(self.Primary.Sound)
     self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
-    self.Owner:SetAnimation(PLAYER_ATTACK1)
+    owner:SetAnimation(PLAYER_ATTACK1)
     self:Muzzleflash()
     self:TakePrimaryAmmo(1) --dmgPower)
 
@@ -271,13 +274,13 @@ function SWEP:BfgFire(charge)
             end
         end)
 
-        local pos = self.Owner:GetShootPos()
-        local ang = self.Owner:GetAimVector():Angle()
+        local pos = owner:GetShootPos()
+        local ang = owner:GetAimVector():Angle()
         pos = pos + ang:Right() * 5 + ang:Up() * -5
         local ent = ents.Create("doom3_bfg")
         ent:SetAngles(ang)
         ent:SetPos(pos)
-        ent:SetOwner(self.Owner)
+        ent:SetOwner(owner)
         ent:SetDamage(self.Primary.Radius * 2, self.Primary.Damage * 2)
         --ent:SetDamage(self.Primary.Radius * dmgPower, self.Primary.Damage * dmgPower)
         ent:Spawn()
@@ -294,16 +297,17 @@ end
 
 function SWEP:OverCharge()
     self:SetNextPrimaryFire(CurTime() + 2)
+    local owner = self:GetOwner()
     local effectdata = EffectData()
     effectdata:SetOrigin(self:GetPos())
     util.Effect("HelicopterMegaBomb", effectdata)
     self:EmitSound("weapons/doom3/bfg/bfg_explode" .. math.random(1, 4) .. ".wav", 100, 100)
-    self.Owner:ViewPunch(Angle(math.Rand(-5, -10), math.Rand(1, 0), math.Rand(1, 2)))
+    owner:ViewPunch(Angle(math.Rand(-5, -10), math.Rand(1, 0), math.Rand(1, 2)))
     self:TakePrimaryAmmo(self:Clip1())
     self:SetAttack(nil)
     self:SetChargeTime(0)
     self:Idle(.8)
-    util.BlastDamage(self, self:GetOwner(), self:GetPos(), 500, 500)
+    util.BlastDamage(self, owner, self:GetPos(), 500, 500)
 end
 
 local textures = {"models/weapons/doom3/bfg/bfgblast1", "models/weapons/doom3/bfg/bfgblast2"}

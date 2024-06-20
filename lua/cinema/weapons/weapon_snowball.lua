@@ -80,32 +80,41 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Initialize()
+    local owner = self:GetOwner()
+
+    if not IsValid(owner) then
+        self:Remove()
+
+        return
+    end
+
     self:SetHoldType(self.HoldType)
-    self.Weapon:SetClip1(1)
-    local plycol = self:GetOwner():GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
+    self:SetClip1(1)
+    local plycol = owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor()
     self:SetColor(plycol)
 end
 
 function SWEP:PrimaryAttack()
-    local vm = self:GetOwner():GetViewModel()
+    local owner = self:GetOwner()
+    local vm = owner:GetViewModel()
 
     if IsValid(vm) then
         vm:SetPlaybackRate(1)
     end
 
-    self.Owner:SetAnimation(PLAYER_ATTACK1)
-    self.Weapon:SendWeaponAnim(ACT_VM_THROW)
-    self.Weapon:SetNextPrimaryFire(CurTime() + 1)
-    self.Weapon:EmitSound(self.ThrowSound, 75, 100, 0.4, CHAN_WEAPON)
+    owner:SetAnimation(PLAYER_ATTACK1)
+    self:SendWeaponAnim(ACT_VM_THROW)
+    self:SetNextPrimaryFire(CurTime() + 1)
+    self:EmitSound(self.ThrowSound, 75, 100, 0.4, CHAN_WEAPON)
     if not IsFirstTimePredicted() then return end
 
     if SERVER then
         local ball = ents.Create("ent_snowball_nodamage")
 
         if IsValid(ball) then
-            local front = self.Owner:GetAimVector()
-            ball:SetOwner(self.Owner)
-            ball:SetPos(self.Owner:GetShootPos() + front * 10 + self.Owner:EyeAngles():Up() * -5)
+            local front = owner:GetAimVector()
+            ball:SetOwner(owner)
+            ball:SetPos(owner:GetShootPos() + front * 10 + owner:EyeAngles():Up() * -5)
             ball:Spawn()
             ball:Activate()
             ball.Hardness = self:GetHardness() * 1
@@ -120,7 +129,7 @@ function SWEP:PrimaryAttack()
         end
     end
 
-    if SERVER and not FreeSnowballs(self.Owner) then
+    if SERVER and not FreeSnowballs(owner) then
         timer.Simple(0.6, function()
             if IsValid(self) then
                 self:Remove()
@@ -146,7 +155,7 @@ function SWEP:SecondaryAttack()
         m:SetPalette(true)
         m:SetAlphaBar(false)
         m:SetWangs(true)
-        m:SetColor(self.Owner:GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor())
+        m:SetColor(self:GetOwner():GetNWVector("SnowballColor", Vector(1, 1, 1)):ToColor())
         local b = vgui.Create("DButton", f)
         b:SetSize(100, 25)
         b:Dock(BOTTOM)
@@ -162,8 +171,9 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnRemove()
-    if not IsValid(self.Owner) then return end
-    local vm = self:GetOwner():GetViewModel()
+    local owner = self:GetOwner()
+    if not IsValid(owner) then return end
+    local vm = owner:GetViewModel()
 
     if IsValid(vm) then
         vm:SetPlaybackRate(1)
@@ -178,11 +188,11 @@ function SWEP:Reload()
     self:TimerSimple(delay / 5, function()
         if not IsValid(self) then return end
         self:SetHardness(self:GetHardness() + 1)
-        self.Weapon:EmitSound(self.ReloadSound, 75, 100, 0.4, CHAN_WEAPON)
+        self:EmitSound(self.ReloadSound, 75, 100, 0.4, CHAN_WEAPON)
     end)
 
-    self.Weapon:SetNextPrimaryFire(CurTime() + delay)
-    self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
+    self:SetNextPrimaryFire(CurTime() + delay)
+    self:SendWeaponAnim(ACT_VM_DRAW)
 
     if IsValid(vm) then
         vm:SetPlaybackRate(1 / delay)

@@ -82,6 +82,10 @@ if CLIENT then
                     ]])
                 end
             end
+        end, function()
+            chat.AddText("You need codecs to request this. Press F2.")
+
+            return callback()
         end)
     end
 

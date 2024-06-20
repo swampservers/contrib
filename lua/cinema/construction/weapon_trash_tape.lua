@@ -27,15 +27,15 @@ function SWEP:Initialize()
 end
 
 function SWEP:DrawWorldModel()
-    local ply = self:GetOwner()
+    local owner = self:GetOwner()
     self:SetModelScale(0.8)
 
-    if IsValid(ply) then
-        local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-        local bon = ply:LookupBone(bn) or 0
+    if IsValid(owner) then
+        local bn = owner:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+        local bon = owner:LookupBone(bn) or 0
         local opos = self:GetPos()
         local oang = self:GetAngles()
-        local bp, ba = ply:GetBonePosition(bon)
+        local bp, ba = owner:GetBonePosition(bon)
 
         if bp then
             opos = bp
@@ -45,7 +45,7 @@ function SWEP:DrawWorldModel()
             oang = ba
         end
 
-        if ply:IsPony() then
+        if owner:IsPony() then
             opos = opos + oang:Forward() * 9.5
             opos = opos + oang:Up() * 3.6
             opos = opos + oang:Right() * -3.7
@@ -152,14 +152,19 @@ end
 if CLIENT then
     hook.Add("Think", "TrashToolUpdate", function()
         PropTrashLookedAt = nil
+        local self = IsValid(Me) and Me:GetActiveWeapon()
 
-        if IsValid(Me) and IsValid(Me:GetActiveWeapon()) and Me:GetActiveWeapon():GetClass():StartWith("weapon_trash") then
-            local self = Me:GetActiveWeapon()
-            local tr = {}
-            tr.start = self.Owner:GetShootPos()
-            tr.endpos = self.Owner:GetShootPos() + self.Owner:GetAimVector() * 120
-            tr.filter = self.Owner
-            tr.mask = MASK_SHOT
+        if IsValid(self) and self:GetClass():StartWith("weapon_trash") then
+            local owner = self:GetOwner()
+            local ownershootpos = owner:GetShootPos()
+
+            local tr = {
+                start = ownershootpos,
+                endpos = ownershootpos + owner:GetAimVector() * 120,
+                filter = owner,
+                mask = MASK_SHOT
+            }
+
             local trace = util.TraceLine(tr)
             PropTrashLookedAt = nil
             PropTrashLookedAtPos = nil

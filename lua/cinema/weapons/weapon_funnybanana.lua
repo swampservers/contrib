@@ -6,9 +6,13 @@ SWEP.Instructions = "Left Click: Laugh\nRight Click: Laugh Hard"
 SWEP.ViewModel = "models/chev/bananaframe.mdl"
 SWEP.WorldModel = "models/chev/bananaframe.mdl"
 
+local cartoonsnd = {"funnysounds01.ogg", "funnysounds02.ogg"}
+
 function SWEP:PrimaryAttack()
+    local owner = self:GetOwner()
+
     if CLIENT then
-        if self.Owner:IsPony() then
+        if owner:IsPony() then
             RunConsoleCommand("act", "dance")
         else
             RunConsoleCommand("act", "laugh")
@@ -25,35 +29,31 @@ function SWEP:PrimaryAttack()
     end
 
     if SERVER then
-        self.Owner:Say("hahaha! what a funny picture!")
+        owner:Say("hahaha! what a funny picture!")
 
-        for k, v in player.Iterator() do
-            if self.Owner:GetPos():Distance(v:GetPos()) < 200 then
-                if v ~= self.Owner then
-                    timer.Simple(math.Rand(0, 1.5), function()
-                        if IsValid(v) then
-                            v:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {
-                                level = 70
-                            }, {
-                                pitch = math.random(90, 110)
-                            })
-                        end
-                    end)
-                end
+        for _, owner in player.Iterator() do
+            if owner ~= owner and owner:GetPos():Distance(owner:GetPos()) < 200 then
+                timer.Simple(math.Rand(0, 1.5), function()
+                    if IsValid(owner) then
+                        owner:ExtEmitSound("weapon_funnybanana/hahaha.ogg", {
+                            level = 70
+                        }, {
+                            pitch = math.random(90, 110)
+                        })
+                    end
+                end)
             end
         end
     end
 
-    local cartoonsnd = {"funnysounds01.ogg", "funnysounds02.ogg"}
-
-    self.Owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {
+    owner:ExtEmitSound("weapon_funnybanana/hahaha_funnypicture.ogg", {
         shared = true,
         level = 70,
         channel = CHAN_WEAPON
     })
 
     timer.Simple(2, function()
-        if IsValid(self) and IsValid(self.Owner) then
+        if IsValid(self) and IsValid(owner) then
             self:ExtEmitSound("weapon_funnybanana/audiencelaugh.ogg", {
                 shared = true,
                 level = 65,
@@ -93,9 +93,11 @@ function SWEP:SecondaryAttack()
 
     if SERVER then
         self:TimerSimple(5, function()
-            if IsValid(self.Owner) and self.Owner:Alive() and self.Owner:GetLocationName() ~= "Treatment Room" then
-                self.Owner:Kill()
-                self.Owner:ChatPrint("[red]you died after laughing too hard")
+            local owner = IsValid(self) and self:GetOwner()
+
+            if IsValid(owner) and owner:Alive() and owner:GetLocationName() ~= "Treatment Room" then
+                owner:Kill()
+                owner:ChatPrint("[red]you died after laughing too hard")
             end
         end)
     end
@@ -105,14 +107,14 @@ end
 
 if CLIENT then
     function SWEP:DrawWorldModel()
-        local ply = self:GetOwner()
+        local owner = self:GetOwner()
 
-        if IsValid(ply) then
-            local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
-            local bon = ply:LookupBone(bn) or 0
+        if IsValid(owner) then
+            local bn = owner:IsPony() and "LrigScull" or "ValveBiped.Bip01_R_Hand"
+            local bon = owner:LookupBone(bn) or 0
             local opos = self:GetPos()
             local oang = self:GetAngles()
-            local bp, ba = ply:GetBonePosition(bon)
+            local bp, ba = owner:GetBonePosition(bon)
 
             if bp then
                 opos = bp
@@ -122,7 +124,7 @@ if CLIENT then
                 oang = ba
             end
 
-            if ply:IsPony() then
+            if owner:IsPony() then
                 opos = opos + oang:Forward() * 11
                 opos = opos + oang:Up() * -0
                 opos = opos + oang:Right() * 0

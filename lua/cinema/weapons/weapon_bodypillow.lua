@@ -35,12 +35,12 @@ if SERVER then
     hook.Add("Tick", "DisallowWeaponsInVehicle", function()
         local nxt = {}
 
-        for ply, v in pairs(weaponppl) do
-            if IsValid(ply) then
-                if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_bodypillow" then
-                    nxt[ply] = true
+        for owner, v in pairs(weaponppl) do
+            if IsValid(owner) then
+                if IsValid(owner:GetActiveWeapon()) and owner:GetActiveWeapon():GetClass() == "weapon_bodypillow" then
+                    nxt[owner] = true
                 else
-                    ply:SetAllowWeaponsInVehicle(false)
+                    owner:SetAllowWeaponsInVehicle(false)
                 end
             end
         end
@@ -49,13 +49,14 @@ if SERVER then
     end)
 
     function SWEP:Deploy()
-        self.Owner:SetAllowWeaponsInVehicle(true)
-        weaponppl[self.Owner] = true
+        local owner = self:GetOwner()
+        owner:SetAllowWeaponsInVehicle(true)
+        weaponppl[owner] = true
     end
 end
 
 function SWEP:GetHardened()
-    -- return self.Owner:SteamID() == "STEAM_0:0:38422842"
+    -- return self:GetOwner():SteamID() == "STEAM_0:0:38422842"
     return self:GetNWBool("Hard", false)
 end
 
@@ -100,14 +101,14 @@ function PILLOW_UNJIGGLE(self, nb)
 end
 
 function SWEP:DrawWorldModel()
-    local ply = self:GetOwner()
+    local owner = self:GetOwner()
 
-    if IsValid(ply) then
-        local bn = ply:IsPony() and "Lrig_LEG_FR_Humerus" or "ValveBiped.Bip01_R_Hand"
-        local bon = ply:LookupBone(bn) or 0
+    if IsValid(owner) then
+        local bn = owner:IsPony() and "Lrig_LEG_FR_Humerus" or "ValveBiped.Bip01_R_Hand"
+        local bon = owner:LookupBone(bn) or 0
         local opos = self:GetPos()
         local oang = self:GetAngles()
-        local bp, ba = ply:GetBonePosition(bon)
+        local bp, ba = owner:GetBonePosition(bon)
 
         if bp then
             opos = bp
@@ -117,7 +118,7 @@ function SWEP:DrawWorldModel()
             oang = ba
         end
 
-        if ply:IsPony() then
+        if owner:IsPony() then
             local pf = self:Boof()
             opos = opos + oang:Right() * (3 - pf * 7)
             opos = opos + oang:Forward() * -8
@@ -134,7 +135,7 @@ function SWEP:DrawWorldModel()
             oang:RotateAroundAxis(oang:Right(), 170)
             oang:RotateAroundAxis(oang:Up(), 60 + (self:GetNWBool('flip') and 180 or 0))
 
-            if ply:InVehicle() then
+            if owner:InVehicle() then
                 oang:RotateAroundAxis(oang:Forward(), -30)
                 oang:RotateAroundAxis(oang:Right(), -50)
                 oang:RotateAroundAxis(oang:Up(), -40)
@@ -162,7 +163,7 @@ function SWEP:DrawWorldModel()
             owner = owner,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((owner ~= "" and owner or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((owner ~= "" and owner or (IsValid(owner) and owner:SteamID() or "")) .. url)) or nil,
             nsfw = "?"
         }))
     end
@@ -182,7 +183,7 @@ function HardenedPillowArgs(hsh)
     return string.format([[{["$detail"]="decals/decalstain%03da",["$detailscale"]="1",["$detailblendfactor"]="2"}]], hsh % 15 + 1)
 end
 
-function SWEP:PreDrawViewModel(vm, ply, wep)
+function SWEP:PreDrawViewModel(vm, owner, wep)
     self.PrintName = self:GetHardened() and "Body Pillow (Hardened)" or "Body Pillow"
     self.Purpose = self:GetHardened() and "Stands up on its own" or "Gives the feeling of companionship"
     local url, owner = self:GetWebMatInfo()
@@ -197,7 +198,7 @@ function SWEP:PreDrawViewModel(vm, ply, wep)
             owner = owner,
             pos = self:GetPos(),
             stretch = true,
-            params = self:GetHardened() and HardenedPillowArgs(util.CRC((owner ~= "" and owner or (IsValid(self.Owner) and self.Owner:SteamID() or "")) .. url)) or nil,
+            params = self:GetHardened() and HardenedPillowArgs(util.CRC((owner ~= "" and owner or (IsValid(owner) and owner:SteamID() or "")) .. url)) or nil,
             nsfw = "?"
         }))
     end
@@ -213,17 +214,18 @@ function SWEP:PostDrawViewModel()
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
-    --local of,_ = LocalToWorld(self.Owner:GetCurrentViewOffset(),Angle(0,0,0),Vector(0,0,0),ang)
+    local owner = self:GetOwner()
+    --local of,_ = LocalToWorld(owner:GetCurrentViewOffset(),Angle(0,0,0),Vector(0,0,0),ang)
     --pos = pos - (of*0.5)
-    if not IsValid(self.Owner) then return pos, ang end
+    if not IsValid(owner) then return pos, ang end
 
-    if self.Owner:InVehicle() then
-        local va = self.Owner:GetVehicle():GetAngles()
+    if owner:InVehicle() then
+        local va = owner:GetVehicle():GetAngles()
         va:RotateAroundAxis(va:Up(), 90)
         ang = LerpAngle(0.5, va, ang)
     end
 
-    pos = pos - self.Owner:GetCurrentViewOffset() * 0.5
+    pos = pos - owner:GetCurrentViewOffset() * 0.5
     local pf = self:Boof(true)
     local v = ang:Forward()
 
@@ -239,11 +241,11 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos = pos + ang:Up() * (10 + pf * 6)
     pos = pos + ang:Forward() * (24 + pf * 4)
 
-    if self.Owner:InVehicle() then
+    if owner:InVehicle() then
         pos = pos - Vector(0, 0, 30) + ang:Right() * 10 + ang:Forward() * -10
     end
 
-    ang:RotateAroundAxis(ang:Up(), self:GetNWBool('flip') and 90 or -90)
+    ang:RotateAroundAxis(ang:Up(), self:GetNWBool("flip") and 90 or -90)
     ang:RotateAroundAxis(ang:Forward(), 0)
     ang:RotateAroundAxis(ang:Up(), (1 - pf) * -50 + pf * 60)
     ang:RotateAroundAxis(angr, pf * -70)
@@ -262,29 +264,29 @@ if SERVER then
     util.AddNetworkString("pillowboof")
     util.AddNetworkString("SetMyBodyPillow")
 
-    net.Receive("SetMyBodyPillow", function(len, ply)
+    net.Receive("SetMyBodyPillow", function(len, owner)
         local url = net.ReadString()
 
-        if (ply.SetPillowTimeout or 0) > CurTime() - 2 then
-            ply:Notify("Wait...")
+        if (owner.SetPillowTimeout or 0) > CurTime() - 2 then
+            owner:Notify("Wait...")
 
             return
         end
 
-        ply.SetPillowTimeout = CurTime()
-        local wep = ply:GetWeapon("weapon_bodypillow")
+        owner.SetPillowTimeout = CurTime()
+        local wep = owner:GetWeapon("weapon_bodypillow")
 
         if IsValid(wep) then
             local url = SanitizeWebMatURL(url)
-            wep:SetWebMatInfo(url, ply:SteamID())
+            wep:SetWebMatInfo(url, owner:SteamID())
 
             if id then
                 for _, pillow_ent in ipairs(Ents.prop_trash_pillow) do
                     local t_url, t_owner = pillow_ent:GetWebMatInfo()
 
-                    if t_owner == ply:SteamID() and url ~= t_url then
+                    if t_owner == owner:SteamID() and url ~= t_url then
                         pillow_ent:SetWebMatInfo()
-                        ply:Notify("Can't have different custom pillows")
+                        owner:Notify("Can't have different custom pillows")
                     end
                 end
             end
@@ -328,18 +330,20 @@ function SWEP:PrimaryAttack()
         self.localpf = RealTime()
     end
 
-    if not self.Owner:IsPony() then
-        self:GetOwner():AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE, true)
+    local owner = self:GetOwner()
+
+    if not owner:IsPony() then
+        owner:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE, true)
     end
 
     if SERVER then
         timer.Simple(0.1 / self:TimeScale(), function()
-            if IsValid(self) and IsValid(self.Owner) then
-                local boof = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 50
-                local aim = self.Owner:EyeAngles():Forward()
+            if IsValid(self) and IsValid(owner) then
+                local boof = owner:EyePos() + owner:EyeAngles():Forward() * 50
+                local aim = owner:EyeAngles():Forward()
 
                 if math.abs(aim.z) == 1 then
-                    aim = -self.Owner:EyeAngles():Up()
+                    aim = -owner:EyeAngles():Up()
                 end
 
                 aim.z = 0
@@ -350,7 +354,7 @@ function SWEP:PrimaryAttack()
                 for _, v in player.Iterator() do
                     local bcenter = v:LocalToWorld(v:OBBCenter())
 
-                    if v ~= self.Owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then
+                    if v ~= owner and v:Alive() and bcenter:Distance(boof) < (self:GetHardened() and 100 or 70) then
                         bcenter = bcenter + VectorRand() * 16
                         bcenter.z = bcenter.z + 8
                         local sound2play = self:GetHardened() and "physics/plastic/plastic_barrel_impact_hard" .. tostring(math.random(1, 3)) .. ".wav" or "bodypillow/hit" .. tostring(math.random(1, 2)) .. ".wav"
@@ -359,7 +363,7 @@ function SWEP:PrimaryAttack()
                         net.WriteVector(bcenter)
                         net.SendPVS(bcenter)
 
-                        if not v:IsProtected() and not v:InVehicle() and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") and not (self.Owner.hvp and self.Owner.hvp == v.hvp) then
+                        if not v:IsProtected() and not v:InVehicle() and not (IsValid(v:GetActiveWeapon()) and v:GetActiveWeapon():GetClass() == "weapon_golfclub") and not (owner.hvp and owner.hvp == v.hvp) then
                             if v:IsOnGround() then
                                 v:SetPos(v:GetPos() + Vector(0, 0, 2))
                             end
@@ -369,7 +373,7 @@ function SWEP:PrimaryAttack()
                             if self:GetHardened() then
                                 aimvel = aim * 5
                                 local dmg = DamageInfo()
-                                dmg:SetAttacker(self.Owner)
+                                dmg:SetAttacker(owner)
                                 dmg:SetInflictor(self)
                                 dmg:SetDamage(15)
                                 dmg:SetDamagePosition(v:LocalToWorld(v:OBBCenter()))
@@ -410,18 +414,19 @@ end
 function SWEP:SecondaryAttack()
     if SERVER then
         if self.REMOVING then return end
+        local owner = self:GetOwner()
+        if not IsValid(owner) then return end
 
-        -- TODO: What if not IsValid(self.Owner?)
-        if not CannotMakeTrash(self.Owner) then
+        if not CannotMakeTrash(owner) then
             local e = ents.Create("prop_trash_pillow")
             if not IsValid(e) then return end
             e:SetNWBool("Hard", self:GetHardened())
-            local pos, ang = LocalToWorld(self.droppos or Vector(40, 0, 0), self.dropang or Angle(10, 240, -10), self.Owner:EyePos(), self.Owner:EyeAngles())
-            local fwdv = self.Owner:EyeAngles():Forward() * 10
+            local pos, ang = LocalToWorld(self.droppos or Vector(40, 0, 0), self.dropang or Angle(10, 240, -10), owner:EyePos(), owner:EyeAngles())
+            local fwdv = owner:EyeAngles():Forward() * 10
             local p2 = pos + fwdv
 
             local tr = util.TraceLine({
-                start = self.Owner:EyePos(),
+                start = owner:EyePos(),
                 endpos = p2,
                 mask = MASK_SOLID_BRUSHONLY
             })
@@ -433,16 +438,16 @@ function SWEP:SecondaryAttack()
             pos = p2 - fwdv
             e:SetPos(pos)
             e:SetAngles(ang)
-            e:SetOwnerID(self.Owner:SteamID())
+            e:SetOwnerID(owner:SteamID())
             e:Spawn()
             e:Activate()
-            e:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
+            e:GetPhysicsObject():SetVelocity(owner:GetVelocity())
             local url, owner = self:GetWebMatInfo()
             e:SetWebMatInfo(url, owner)
             self.REMOVING = true
             self:Remove()
         else
-            self.Owner:Notify("Can't drop right now, too much on map")
+            owner:Notify("Can't drop right now, too much on map")
         end
     end
 end
@@ -456,18 +461,22 @@ function SWEP:OnDrop()
 end
 
 function SWEP:OwnerChanged()
-    if SERVER and IsValid(self.Owner) then
-        local webmat_url = string.Trim(self.Owner:GetInfo("bodypillow_url"))
+    if SERVER then
+        local owner = self:GetOwner()
 
-        if webmat_url == "" then
-            webmat_url = string.Trim(self.Owner:GetInfo("bodypillow_imgur")) -- Fallback to the old ConVar
+        if IsValid(owner) then
+            local webmat_url = string.Trim(owner:GetInfo("bodypillow_url"))
 
-            if webmat_url ~= "" then
-                webmat_url = "i.imgur.com/" .. webmat_url
+            if webmat_url == "" then
+                webmat_url = string.Trim(owner:GetInfo("bodypillow_imgur")) -- Fallback to the old ConVar
+
+                if webmat_url ~= "" then
+                    webmat_url = "i.imgur.com/" .. webmat_url
+                end
             end
-        end
 
-        self:SetWebMatInfo(webmat_url, self.Owner:SteamID())
+            self:SetWebMatInfo(webmat_url, owner:SteamID())
+        end
     end
 end
 

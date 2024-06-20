@@ -45,9 +45,11 @@ SWEP.SpraySaturation = 2
 SWEP.m_WeaponDeploySpeed = 1000
 
 function SWEP:Standingness()
-    local cur = self.Owner:GetCurrentViewOffset() -- TODO: nil func sometimes?
-    local stand = self.Owner:GetViewOffset()
-    local duck = self.Owner:GetViewOffsetDucked()
+    local owner = self:GetOwner()
+    if not IsValid(owner) then return 1 end
+    local cur = owner:GetCurrentViewOffset() -- TODO: nil func sometimes?
+    local stand = owner:GetViewOffset()
+    local duck = owner:GetViewOffsetDucked()
 
     return math.Clamp((cur.z - duck.z) / (stand.z - duck.z), 0, 1)
 end
@@ -298,7 +300,6 @@ end
 
 function SWEP:SecondaryAttack()
     if not self.ScopeLevels then return end
-    local ply = self:GetOwner()
 
     -- if (self:GetZoomFullyActiveTime() > CurTime() or self:GetNextPrimaryFire() > CurTime()) then
     --     self:SetNextSecondaryFire(self:GetZoomFullyActiveTime() + 0.15)
@@ -349,6 +350,7 @@ end
 function SWEP:DoKickBack()
     -- if true then return end
     -- local up_base, lateral_base, up_modifier, lateral_modifier, up_max, lateral_max, direction_change = unpack(self.KickStanding)
+    local owner = self:GetOwner()
     local mfac = self:MovementPenalty()
     local sfac = self:Standingness()
     local multiplier = Lerp(mfac, 1, self.MoveKickMultiplier) * Lerp(sfac, self.CrouchKickMultiplier, 1)
@@ -370,7 +372,7 @@ function SWEP:DoKickBack()
     -- end
     -- dont need these
     -- lateral_max, up_max = 10000000, 10000000
-    local angle = self:GetOwner():GetViewPunchAngles()
+    local angle = owner:GetViewPunchAngles()
     -- local orig = Angle(angle)
     -- angle.x = math.max(-up_max, angle.x - flKickUp)
     -- if self:GetDirection() == 1 then
@@ -387,17 +389,17 @@ function SWEP:DoKickBack()
         self:SetKickLeft(not self:GetKickLeft())
     end
 
-    self:GetOwner():SetViewPunchAngles(angle)
-    -- local vel = self:GetOwner():GetViewPunchVelocity()
+    owner:SetViewPunchAngles(angle)
+    -- local vel = owner:GetViewPunchVelocity()
     -- -- vel.p = vel.p - flKickUp
     -- -- print(vel, flKickUp)
     -- vel.p = vel.p*0.5
-    -- self:GetOwner():SetViewPunchVelocity(vel)
-    -- if CLIENT and IsFirstTimePredicted() then self:GetOwner():SetEyeAngles(self:GetOwner():EyeAngles() + angle - orig) end
+    -- owner:SetViewPunchVelocity(vel)
+    -- if CLIENT and IsFirstTimePredicted() then owner:SetEyeAngles(owner:EyeAngles() + angle - orig) end
 end
 
 function SWEP:OwnerChanged()
-    if CLIENT and self.Owner == Me then
+    if CLIENT and self:GetOwner() == Me then
         self:GetItem()
     end
 end
@@ -412,7 +414,7 @@ function SWEP:Initialize()
     self.nwspecs = {}
 
     if CLIENT then
-    else -- request it -- if self.Owner==Me then self:GetItem() end -- print("ginit", self, self.Owner) -- self:SetupNWData()
+    else -- request it -- if self:GetOwner()==Me then self:GetItem() end -- print("ginit", self, self:GetOwner()) -- self:SetupNWData()
         timer.Simple(0, function()
             if IsValid(self) then
                 -- self:SetupNWData()
@@ -477,6 +479,7 @@ end
 --     return BaseClass.SetHoldType(self, ht)
 -- end
 function SWEP:Deploy()
+    local owner = self:GetOwner()
     -- request gun item so the value overrides get set
     -- self:GetItem()
     self:SetHoldType(self.HoldType)
@@ -498,12 +501,15 @@ function SWEP:Deploy()
     -- self:SetShotsFired(0)
     self:SetInReload(false)
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
-    self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
     self:SetNextPrimaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
     self:SetNextSecondaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
 
-    if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
-        self:GetOwner():SetFOV(0)
+    if IsValid(owner) then
+        owner:GetViewModel():SetPlaybackRate(self:GetHandling())
+
+        if owner:IsPlayer() then
+            owner:SetFOV(0)
+        end
     end
 
     return true
@@ -513,8 +519,8 @@ end
 -- function SWEP:HandleZoom()
 --     --GOOSEMAN : Return zoom level back to previous zoom level before we fired a shot. This is used only for the AWP.
 --     -- And Scout.
---     local ply = self:GetOwner()
---     if not ply:IsValid() then return end
+--     local owner = self:GetOwner()
+--     if not owner:IsValid() then return end
 --     if ((self:GetNextPrimaryFire() <= CurTime()) and self:GetResumeZoom()) then
 --         if (self:GetFOVRatio() == self:GetLastZoom()) then
 --             -- return the fade level in zoom.
@@ -558,13 +564,13 @@ end
 
 --NOMINIFY
 function SWEP:ShellReload()
-    local ply = self.Owner
-    if not IsValid(ply) then return end
-    if ply:GetAmmoCount(self.Primary.Ammo) <= 0 or self:Clip1() >= self.Primary.ClipSize then return end
+    local owner = self:GetOwner()
+    if not IsValid(owner) then return end
+    if owner:GetAmmoCount(self.Primary.Ammo) <= 0 or self:Clip1() >= self.Primary.ClipSize then return end
     if self:GetNextPrimaryFire() > CurTime() then return end
 
     if self:GetSpecialReload() == 0 then
-        ply:SetAnimation(PLAYER_RELOAD)
+        owner:SetAnimation(PLAYER_RELOAD)
         self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
         self:SetSpecialReload(1)
         self:SetNextPrimaryFire(CurTime() + 0.5)
@@ -579,14 +585,14 @@ function SWEP:ShellReload()
         self:SetNextIdle(CurTime() + 0.5)
 
         if self:Clip1() >= self:GetMaxClip1() - 1 then
-            ply:DoAnimationEvent(PLAYERANIMEVENT_RELOAD_END)
+            owner:DoAnimationEvent(PLAYERANIMEVENT_RELOAD_END)
         else
-            ply:DoAnimationEvent(PLAYERANIMEVENT_RELOAD_LOOP)
+            owner:DoAnimationEvent(PLAYERANIMEVENT_RELOAD_LOOP)
         end
     else
         self:SetClip1(self:Clip1() + 1)
-        ply:DoAnimationEvent(PLAYERANIMEVENT_RELOAD)
-        ply:RemoveAmmo(1, self.Primary.Ammo)
+        owner:DoAnimationEvent(PLAYERANIMEVENT_RELOAD)
+        owner:RemoveAmmo(1, self.Primary.Ammo)
         self:SetSpecialReload(1)
     end
 
@@ -605,7 +611,7 @@ function SWEP:Reload()
         self:WeaponSound("reload")
         self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_RELOAD))
         -- vm:SendViewModelMatchingSequence(vm:SelectWeightedSequence(ACT_VM_PRIMARYATTACK))
-        self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
+        owner:GetViewModel():SetPlaybackRate(self:GetHandling())
         owner:DoReloadEvent()
         local endtime = CurTime() + self:SequenceDuration() / self:GetHandling()
         self:SetNextPrimaryFire(endtime)
@@ -619,15 +625,15 @@ function SWEP:Reload()
 end
 
 function SWEP:Think()
-    local ply = self:GetOwner()
+    local owner = self:GetOwner()
 
     if self.UseShellReload then
         if self:GetNextIdle() < CurTime() then
-            -- if self:Clip1() == 0 and self:GetSpecialReload() == 0 and ply:GetAmmoCount(self.Primary.Ammo) ~= 0 then
+            -- if self:Clip1() == 0 and self:GetSpecialReload() == 0 and owner:GetAmmoCount(self.Primary.Ammo) ~= 0 then
             --     self:ShellReload()
             -- else
             if self:GetSpecialReload() ~= 0 then
-                if self:Clip1() ~= self:GetMaxClip1() and ply:GetAmmoCount(self.Primary.Ammo) ~= 0 then
+                if self:Clip1() ~= self:GetMaxClip1() and owner:GetAmmoCount(self.Primary.Ammo) ~= 0 then
                     self:ShellReload()
                 else
                     self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
@@ -654,15 +660,15 @@ function SWEP:Think()
     if self:GetInReload() and self:GetNextPrimaryFire() <= CurTime() then
         -- complete the reload.
         --Jvs TODO: shotgun reloading here
-        local j = math.min(self:GetMaxClip1() - self:Clip1(), ply:GetAmmoCount(self:GetPrimaryAmmoType()))
+        local j = math.min(self:GetMaxClip1() - self:Clip1(), owner:GetAmmoCount(self:GetPrimaryAmmoType()))
         -- Add them to the clip
         self:SetClip1(self:Clip1() + j)
-        ply:RemoveAmmo(j, self:GetPrimaryAmmoType())
+        owner:RemoveAmmo(j, self:GetPrimaryAmmoType())
         self:SetInReload(false)
     end
 
     if CLIENT and game.SinglePlayer() then return end
-    local plycmd = ply:GetCurrentCommand()
+    local plycmd = owner:GetCurrentCommand()
 
     -- if not plycmd:KeyDown(IN_ATTACK) and not plycmd:KeyDown(IN_ATTACK2) then
     --     -- no fire buttons down
@@ -740,7 +746,7 @@ end
 
 function SWEP:GunFire()
     local scoped = self:IsScoped()
-    local ply = self:GetOwner()
+    local owner = self:GetOwner()
     -- print("GF",cycletime)
     -- cycletime=cycletime*10
     self:SetDelayFire(true)
@@ -770,25 +776,25 @@ function SWEP:GunFire()
 
     self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_PRIMARYATTACK))
 
-    -- if self.Owner:SteamID() ~= "STEAM_0:0:38422842" then
-    if self:HasPerk("bottomless") and self.Owner:GetAmmoCount(self:GetPrimaryAmmoType()) > 0 then
-        self.Owner:RemoveAmmo(1, self:GetPrimaryAmmoType())
+    -- if owner:SteamID() ~= "STEAM_0:0:38422842" then
+    if self:HasPerk("bottomless") and owner:GetAmmoCount(self:GetPrimaryAmmoType()) > 0 then
+        owner:RemoveAmmo(1, self:GetPrimaryAmmoType())
     else
         self:SetClip1(self:Clip1() - 1)
     end
 
     -- end
-    if SERVER and (ply.GetLocationName and ply:GetLocationName() == "Weapons Testing Range") then
-        ply:GiveAmmo(1, self:GetPrimaryAmmoType())
+    if SERVER and (owner.GetLocationName and owner:GetLocationName() == "Weapons Testing Range") then
+        owner:GiveAmmo(1, self:GetPrimaryAmmoType())
     end
 
     -- player "shoot" animation
-    ply:DoAttackEvent()
+    owner:DoAttackEvent()
     local spread = self:GetSpread()
-    -- self:FireCSSBullet(ply:GetAimVector():Angle() + 2 * ply:GetViewPunchAngles(), primarymode, spread)
+    -- self:FireCSSBullet(owner:GetAimVector():Angle() + 2 * owner:GetViewPunchAngles(), primarymode, spread)
     -- >1 is good cuz the bullets will always appear below the crosshair otherwise (cuz the kick happens after the shot)
     local recoil_factor = 1.5
-    local ang = ply:EyeAngles() + ply:GetViewPunchAngles() * recoil_factor
+    local ang = owner:EyeAngles() + owner:GetViewPunchAngles() * recoil_factor
     --use "special1" for silenced m4 and usp
     self:WeaponSound("single_shot")
     local a = util.SharedRandom("SpreadAngle", 0, 2 * math.pi)
@@ -797,18 +803,18 @@ function SWEP:GunFire()
     local y = nil
     local dir = ang:Forward() + math.sin(a) * r * ang:Right() + math.cos(a) * r * ang:Up()
     dir:Normalize()
-    -- self:PenetrateBullet(dir, ply:GetShootPos(), self.Range, self.Penetration, self.Damage, self.RangeModifier) --, self:GetPenetrationFromBullet())
+    -- self:PenetrateBullet(dir, owner:GetShootPos(), self.Range, self.Penetration, self.Damage, self.RangeModifier) --, self:GetPenetrationFromBullet())
     -- flCurrentDistance = flCurrentDistance or 0
     local hdd = self.HalfDamageDistance * (self.nwspecs.range or 1)
     local dist = hdd * 4
 
-    self:GetOwner():FireBullets({
+    owner:FireBullets({
         Num = self.NumPellets,
         AmmoType = self.Primary.Ammo,
         Distance = dist,
         Tracer = 1,
         Damage = self.Damage,
-        Src = ply:GetShootPos(),
+        Src = owner:GetShootPos(),
         Dir = dir,
         Spread = Vector(self.PelletSpread, self.PelletSpread, 0),
         Callback = function(hitent, trace, dmginfo)
@@ -843,24 +849,22 @@ function SWEP:GunFire()
                 end
             end
 
-            if self:HasPerk("explosive") or self:HasPerk("explosiveslug") then
-                if trace.HitPos and SERVER then
-                    local p = trace.HitPos
-                    local effectdata = EffectData()
-                    effectdata:SetOrigin(p)
-                    effectdata:SetMagnitude(0)
-                    util.Effect("Explosion", effectdata, true, true)
+            if SERVER and (self:HasPerk("explosive") or self:HasPerk("explosiveslug")) and trace.HitPos then
+                local p = trace.HitPos
+                local effectdata = EffectData()
+                effectdata:SetOrigin(p)
+                effectdata:SetMagnitude(0)
+                util.Effect("Explosion", effectdata, true, true)
 
-                    timer.Simple(0, function()
-                        if IsValid(self) and IsValid(self.Owner) then
-                            if self:HasPerk("explosive") then
-                                util.BlastDamage(self, self.Owner, p, 250, 70)
-                            else
-                                util.BlastDamage(self, self.Owner, p, 200, 40)
-                            end
+                timer.Simple(0, function()
+                    if IsValid(self) and IsValid(owner) then
+                        if self:HasPerk("explosive") then
+                            util.BlastDamage(self, owner, p, 250, 70)
+                        else
+                            util.BlastDamage(self, owner, p, 200, 40)
                         end
-                    end)
-                end
+                    end
+                end)
             end
 
             dmginfo:SetDamage(math.Round(scale * self.Damage))
@@ -913,7 +917,7 @@ function SWEP:GunFire()
     -- end
     local curspray = self:GetSpray(correctedcurtime)
 
-    -- if self.Owner:SteamID() == "STEAM_0:0:38422842" then
+    -- if owner:SteamID() == "STEAM_0:0:38422842" then
     --     print("SPRAY", curspray)
     -- end
     -- make sure initial shots are always to the right
@@ -925,12 +929,12 @@ function SWEP:GunFire()
     -- print("SS", curspray, self.SpraySaturation)
     self:DoKickBack()
     -- if self.KickSimple then
-    --     local a = self:GetOwner():GetViewPunchAngles()
+    --     local a = owner:GetViewPunchAngles()
     --     a.p = a.p - self.KickSimple
-    --     self:GetOwner():SetViewPunchAngles(a)
-    -- elseif self:GetOwner():GetAbsVelocity():Length2DSqr() > 25 or not self:GetOwner():OnGround() then
+    --     owner:SetViewPunchAngles(a)
+    -- elseif owner:GetAbsVelocity():Length2DSqr() > 25 or not owner:OnGround() then
     --     self:DoKickBack(unpack(self.KickMoving))
-    -- elseif self:GetOwner():Crouching() then
+    -- elseif owner:Crouching() then
     --     self:DoKickBack(unpack(self.KickCrouching))
     -- else
     --     self:DoKickBack(unpack(self.KickStanding))
@@ -949,7 +953,7 @@ function SWEP:GunFire()
 
     if self:HasPerk("alwaysjam") or self:HasPerk("sometimesjam") and util.SharedRandom("shouldjam", 0, 1.5) < 1.0 / self:GetMaxClip1() then
         self:SendWeaponAnim(self:TranslateViewModelActivity(ACT_VM_DRAW))
-        self.Owner:GetViewModel():SetPlaybackRate(self:GetHandling())
+        owner:GetViewModel():SetPlaybackRate(self:GetHandling())
         self:SetNextPrimaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
         self:SetNextSecondaryFire(CurTime() + self:SequenceDuration() / self:GetHandling())
     end
@@ -960,7 +964,7 @@ function SWEP:GunFire()
         effectdata:SetOrigin(p)
         effectdata:SetMagnitude(0)
         util.Effect("Explosion", effectdata, true, true)
-        util.BlastDamage(self, self.Owner, p, 150, 80)
+        util.BlastDamage(self, owner, p, 150, 80)
 
         timer.Simple(0, function()
             if IsValid(self) then
@@ -975,7 +979,7 @@ function SWEP:GunFire()
     --     self:SetActualLastFire(self.realstuff[3])
     -- end
     -- print(CurTime())
-    -- if IsFirstTimePredicted() and self.Owner:SteamID() == "STEAM_0:0:38422842" then
+    -- if IsFirstTimePredicted() and owner:SteamID() == "STEAM_0:0:38422842" then
     --     self.SPS = (self.SPS or 0) + 1
     --     -- print(engine.TickCount() - (self.LTC or 0))
     --     self.LTC = engine.TickCount()
@@ -991,7 +995,8 @@ end
 
 function SWEP:MovementPenalty(clientsmoothing)
     -- softplus: ln(1+exp x)
-    local x = (self.Owner:OnGround() or self.Owner:GetMoveType() == MOVETYPE_NOCLIP) and math.Clamp((self:GetOwner():GetAbsVelocity():Length2D() - 10) / 100, 0, 1) or 1
+    local owner = self:GetOwner()
+    local x = IsValid(owner) and (owner:OnGround() or owner:GetMoveType() == MOVETYPE_NOCLIP) and math.Clamp((owner:GetAbsVelocity():Length2D() - 10) / 100, 0, 1) or 1
 
     if clientsmoothing then
         local t = engine.TickInterval()
@@ -1048,8 +1053,8 @@ function SWEP:SetupMove(ply, mv, cmd)
     mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * self:GetSpeedRatio())
 end
 -- function SWEP:GetSpread(clientsmoothing)
---     local ply = self:GetOwner()
---     if not ply:IsValid() then return end
+--     local owner = self:GetOwner()
+--     if not owner:IsValid() then return end
 --     -- local spread
 --     local movepenalty = self:MovementPenalty(clientsmoothing)
 --     --added
@@ -1058,25 +1063,25 @@ end
 --     end
 --     --and not self:GetBurstFireEnabled()) then
 --     if not self:IsScoped() then
---         spread = self.Spread + (ply:Crouching() and self.InaccuracyCrouch or self.InaccuracyStand)
---         if (ply:GetMoveType() == MOVETYPE_LADDER) then
+--         spread = self.Spread + (owner:Crouching() and self.InaccuracyCrouch or self.InaccuracyStand)
+--         if (owner:GetMoveType() == MOVETYPE_LADDER) then
 --             spread = spread + self.InaccuracyLadder
 --         end
---         -- if (ply:GetAbsVelocity():Length2D() > 50) then
+--         -- if (owner:GetAbsVelocity():Length2D() > 50) then
 --         spread = spread + self.InaccuracyMove * movepenalty
 --         -- end
---         if (not ply:IsOnGround()) then
+--         if (not owner:IsOnGround()) then
 --             spread = spread + self.InaccuracyJump
 --         end
 --     else
---         spread = self.SpreadAlt + (ply:Crouching() and self.InaccuracyCrouchAlt or not ply:IsOnGround() and self.InaccuracyJumpAlt or self.InaccuracyStandAlt)
---         if (ply:GetMoveType() == MOVETYPE_LADDER) then
+--         spread = self.SpreadAlt + (owner:Crouching() and self.InaccuracyCrouchAlt or not owner:IsOnGround() and self.InaccuracyJumpAlt or self.InaccuracyStandAlt)
+--         if (owner:GetMoveType() == MOVETYPE_LADDER) then
 --             spread = spread + self.InaccuracyLadderAlt
 --         end
---         -- if (ply:GetAbsVelocity():Length2D() > 50) then
+--         -- if (owner:GetAbsVelocity():Length2D() > 50) then
 --         spread = spread + self.InaccuracyMoveAlt * movepenalty
 --         -- end
---         if (not ply:IsOnGround()) then
+--         if (not owner:IsOnGround()) then
 --             spread = spread + self.InaccuracyJumpAlt
 --         end
 --     end
@@ -1107,30 +1112,30 @@ end
 -- end
 -- -- OLD
 -- function SWEP:BuildSpread()
---     -- local ply = self:GetOwner()
---     -- if not ply:IsValid() then return end
+--     -- local owner = self:GetOwner()
+--     -- if not owner:IsValid() then return end
 --     -- local spread
 --     -- --and not self:GetBurstFireEnabled() and not self:IsSilenced()) then
 --     -- if (not self:IsScoped()) then
---     --     spread = self.Spread + (ply:Crouching() and self.InaccuracyCrouch or self.InaccuracyStand)
---     --     if (ply:GetMoveType() == MOVETYPE_LADDER) then
+--     --     spread = self.Spread + (owner:Crouching() and self.InaccuracyCrouch or self.InaccuracyStand)
+--     --     if (owner:GetMoveType() == MOVETYPE_LADDER) then
 --     --         spread = spread + self.InaccuracyLadder
 --     --     end
---     --     if (ply:GetAbsVelocity():Length2D() > 5) then
+--     --     if (owner:GetAbsVelocity():Length2D() > 5) then
 --     --         spread = spread + self.InaccuracyMove
 --     --     end
---     --     if (not ply:IsOnGround()) then
+--     --     if (not owner:IsOnGround()) then
 --     --         spread = spread + self.InaccuracyJump
 --     --     end
 --     -- else
---     --     spread = self.SpreadAlt + (ply:Crouching() and self.InaccuracyCrouchAlt or not ply:IsOnGround() and self.InaccuracyJumpAlt or self.InaccuracyStandAlt)
---     --     if (ply:GetMoveType() == MOVETYPE_LADDER) then
+--     --     spread = self.SpreadAlt + (owner:Crouching() and self.InaccuracyCrouchAlt or not owner:IsOnGround() and self.InaccuracyJumpAlt or self.InaccuracyStandAlt)
+--     --     if (owner:GetMoveType() == MOVETYPE_LADDER) then
 --     --         spread = spread + self.InaccuracyLadderAlt
 --     --     end
---     --     if (ply:GetAbsVelocity():Length2D() > 5) then
+--     --     if (owner:GetAbsVelocity():Length2D() > 5) then
 --     --         spread = spread + self.InaccuracyMoveAlt
 --     --     end
---     --     if (not ply:IsOnGround()) then
+--     --     if (not owner:IsOnGround()) then
 --     --         spread = spread + self.InaccuracyJumpAlt
 --     --     end
 --     -- end

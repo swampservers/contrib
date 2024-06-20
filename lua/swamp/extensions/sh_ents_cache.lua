@@ -50,7 +50,7 @@ local function remove(tab, ent)
 
     -- TODO(winter): This happens consistently with point_message for some reason... maybe we should be using EntIndexes or something instead
     if ci == nil then
-        if SERVER then
+        if SERVER and (not IsValid(ent) or ent:GetClass() ~= "point_message") then
             ErrorNoHaltWithStack("cant remove ent " .. tostring(ent))
         end
 
