@@ -125,7 +125,15 @@ function net.ReadNetworkString()
         local st = API_NetworkStringCache[id]
 
         if st == nil then
-            ErrorNoHaltWithStack("Unknown network string! " .. id)
+            timer.Simple(0, function()
+                st = API_NetworkStringCache[id]
+
+                if st == nil then
+                    ErrorNoHaltWithStack("Unknown network string! " .. id .. "\n")
+                else
+                    ErrorNoHaltWithStack("Unknown network string, but available a tick later! " .. id .. " / " .. st .. "\n")
+                end
+            end)
 
             return "UNKNOWN"
         end
@@ -146,6 +154,7 @@ function net.WriteNetworkString(v)
 
     if SERVER then
         if not id then
+            -- NOTE: This just uses AddNetworkString/NetworkIDToString/NetworkStringToID as a stringtable, for common repeating strings. Nothing calls net.Start with these strings
             util.AddNetworkString(v)
             id = API_NetworkStringCache[v]
             assert(id)
