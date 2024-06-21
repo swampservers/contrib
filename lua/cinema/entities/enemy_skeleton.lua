@@ -181,7 +181,7 @@ function ENT:Initialize()
         self:SetUseType(SIMPLE_USE)
         self:SetHealth(3)
 
-        if math.random(0, 1000) == 1 then
+        if math.random(1, 100) == 1 then
             self:SetHealth(200)
             self.KillReward = 10000
             self.AttackDamageOverride = 10
