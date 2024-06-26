@@ -239,6 +239,13 @@ function SWEP:MakePaint(trace, delay)
 
     if trace.HitSky then return end
     if not trace.Hit then return end
+
+    if IsValid(trace.Entity) then
+        local class = trace.Entity:GetClass()
+        if class == "slotmachine" then return end
+        if string.match(class, "pcasino") then return end
+    end
+
     local pos = trace.HitPos * 1
     local normal = trace.HitNormal * 1
     local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)

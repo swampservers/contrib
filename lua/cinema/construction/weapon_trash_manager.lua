@@ -163,11 +163,15 @@ but you need a nearby theater/field to respawn them.]])
                         if IsValid(w) and w:GetClass() == "weapon_trash_manager" then
                             local c = {}
 
-                            for i, v in ipairs(w:GetSaveEntities()) do
+                            for _, ent in ipairs(w:GetSaveEntities()) do
+                                local matdata = ent:GetMaterialData()
+
+                                -- Don't store default matdata
                                 table.insert(c, {
-                                    id = v:GetItemID(),
-                                    pos = v:GetPos(),
-                                    ang = v:GetAngles()
+                                    id = ent:GetItemID(),
+                                    pos = ent:GetPos(),
+                                    ang = ent:GetAngles(),
+                                    matdata = matdata ~= '{"c":"[1 1 1]"}' and matdata or nil
                                 })
                             end
 
@@ -233,8 +237,7 @@ but you need a nearby theater/field to respawn them.]])
                         while i <= #d do
                             local v = d[i]
 
-                            -- TODO(winter): Distance is expensive!
-                            if not items[v.id] or v.pos:Distance(mepos) > TRASH_MANAGER_LOAD_RANGE then
+                            if not items[v.id] or v.pos:DistToSqr(mepos) > TRASH_MANAGER_LOAD_RANGE ^ 2 then
                                 table.remove(d, i)
                             else
                                 local locownerid = TrashLocationOwner(FindLocation(v.pos), v.pos)

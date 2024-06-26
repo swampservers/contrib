@@ -19,7 +19,7 @@ end
 function SWEP:Move(ply, mv)
     if self.IsHolstered then return end
 
-    -- bug when fullupdate happens, it causes the callback to go away but not the value set
+    -- TODO: bug when fullupdate happens, it causes the callback to go away but not the value set
     if not ply.AddedHamsterBallBoneCallback then
         ply.AddedHamsterBallBoneCallback = true
 
