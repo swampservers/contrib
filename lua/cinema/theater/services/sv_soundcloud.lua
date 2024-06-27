@@ -20,5 +20,5 @@ sv_GetVideoInfo.soundcloud = function(self, key, ply, onSuccess, onFailure)
         end
     end
 
-    self:Fetch("https://api-widget.soundcloud.com/resolve?url=" .. key .. "&format=json&client_id=LBCcHmRB8XSStWL6wKH2HPACspQlXg2P", onReceive, onFailure)
+    self:Fetch("https://api-widget.soundcloud.com/resolve?url=" .. key .. "&format=json&client_id=2TbzkniijIjR2bzVmnakv77C05jctxtC", onReceive, onFailure)
 end
