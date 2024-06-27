@@ -133,6 +133,6 @@ local function drawMoonStars()
     render.OverrideDepthEnable(false, false)
 end
 
--- BUG(winter): Map v4; for some reason only using the 3D post-draw doesn't work at certain camera angles
+-- BUG(winter): Map v4; for some reason only using the 3D post-draw doesn't work at certain camera angles (2D vs 3D Skybox brushes?)
 hook.Add("PostDraw2DSkyBox", "DrawMoonStars2D", drawMoonStars)
 hook.Add("PostDrawSkyBox", "DrawMoonStars3D", drawMoonStars)

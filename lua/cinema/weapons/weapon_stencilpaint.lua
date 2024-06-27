@@ -57,11 +57,6 @@ SPRAYPAINT_MATLOOKUP["Nought"] = "decals/nought"
 SPRAYPAINT_MATLOOKUP["Cross"] = "decals/cross"
 SPRAYPAINT_MATLOOKUP["Eye"] = "decals/eye"
 SPRAYPAINT_MATLOOKUP["Smile"] = "decals/smile"
-
-for dname, matname in pairs(SPRAYPAINT_MATLOOKUP) do
-    game.AddDecal(dname, matname)
-end
-
 SWEP.DecalSet = "SprayPaintStencils"
 SWEP.MenuColumns = 8
 SWEP.ConVar = "spraypaint_stencil"

@@ -42,10 +42,16 @@ for i = 1, 36 do
     SPRAYPAINT_DECALS[i] = dname
     SPRAYPAINT_DECALS_WHITELIST[dname] = true
     SPRAYPAINT_MATLOOKUP[dname] = matname
-    game.AddDecal(dname, matname)
     --Material(matname)
     list.Set("SprayPaintDecals", i, dname)
 end
+
+-- Register decals for spraypaint and stencilpaint once they're all in
+timer.Simple(0, function()
+    for dname, matname in pairs(SPRAYPAINT_MATLOOKUP) do
+        game.AddDecal(dname, matname)
+    end
+end)
 
 --NOMINIFY
 SWEP.DecalSet = "SprayPaintDecals"
@@ -110,6 +116,7 @@ function SWEP:PrimaryAttack()
 end
 
 if CLIENT then
+    -- Network to everyone else so sounds/particles/decals happen locally
     net.Receive("SpraypaintNetworked", function(len)
         local ent = net.ReadEntity()
 
@@ -177,7 +184,7 @@ end
 
 function SWEP:GetTrace()
     local ply = self:GetOwner()
-    local org = ply:EyePos() + ply:GetVelocity() * FrameTime()
+    local org = ply:GetShootPos()
     local tr = {}
     tr.start = org
     tr.endpos = org + ply:GetAimVector() * (self:GetPaintDistance() + 5)
@@ -227,14 +234,12 @@ end
 hook.Add("KeyPress", "SpraypaintColorPicker", function(ply, key) end)
 
 function SWEP:MakePaint(trace, delay)
-    local ply = self:GetOwner()
+    local owner = self:GetOwner()
     local color, size = self:GetDecalColor()
 
     if CLIENT then
         self:DoParticle(trace.HitPos, color)
         self:DoSound(delay)
-
-        return
     end
 
     if trace.HitSky then return end
@@ -246,20 +251,21 @@ function SWEP:MakePaint(trace, delay)
         if string.match(class, "pcasino") then return end
     end
 
-    local pos = trace.HitPos * 1
-    local normal = trace.HitNormal * 1
-    local surfdist = self:GetOwner():EyePos():Distance(trace.HitPos)
     local decalname = self:GetCurrentDecal()
 
     if SERVER then
         self:SetLastDecal(decalname)
 
-        util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
-
+        -- TODO/BUG(winter): Some decals are showing up as missing textures despite being added with game.AddDecal
+        -- TODO/BUG(winter): util.DecalMaterial returns the wrong value/crashes the server for materials added with game.AddDecal
+        -- Related issue: https://github.com/Facepunch/garrysmod-issues/issues/5921
+        --util.Decal(decalname, trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal, {ply})
         if (self.lastLog or 0) + 2 < CurTime() then
             self.lastLog = CurTime()
-            sc.log(self.Owner, " spraypainting in ", self.Owner:GetLocationName(), " at ", math.floor(trace.HitPos.x), ",", math.floor(trace.HitPos.y), ",", math.floor(trace.HitPos.z))
+            sc.log(owner, " spraypainting in ", owner:GetLocationName(), " at ", math.floor(trace.HitPos.x), ",", math.floor(trace.HitPos.y), ",", math.floor(trace.HitPos.z))
         end
+    else
+        util.DecalEx(SPRAYPAINT_MATLOOKUP[decalname], trace.Entity, trace.HitPos, trace.HitNormal, Color.white, 1, 1)
     end
 end
 
