@@ -30,10 +30,9 @@ SKELETON_LOCATION_WHITELIST = {
     ["Caverns"] = true,
     ["Labyrinth of Kek"] = true,
     ["maze"] = true,
-    ["Sewers"] = true,
-    ["Outside"] = true,
     ["Sneed's Feed and Seed"] = true,
-    ["The Pit"] = true,
+    ["Outside"] = true,
+    ["The Pit"] = true
 }
 
 --["Nowhere"] = true, --debug
@@ -54,14 +53,20 @@ hook.Add("EntityRemoved", "skeleton_remove", function(ent)
 end)
 
 if SERVER then
+    local areas = nil
     local SKELETON_SPAWNS = {}
 
     local function BuildSkeletonSpawns()
         table.Empty(SKELETON_SPAWNS)
-        local areas = navmesh.GetAllNavAreas()
+        -- Allow skeletons aboveground in the middle of the night
+        local hour = tonumber(os.date("%H"))
+        local allowoutside = hour >= 0 and hour < 3 -- 12AM-3AM
+        SKELETON_SPAWN_WHITELIST["Outside"] = allowoutside or nil
+        SKELETON_SPAWN_WHITELIST["The Pit"] = allowoutside or nil
 
         for _, area in ipairs(areas) do
-            if area:GetPlace() and not SKELETON_SPAWN_WHITELIST[area:GetPlace()] then continue end
+            local place = area:GetPlace()
+            if not place or not SKELETON_SPAWN_WHITELIST[place] then continue end
             if area:GetSizeX() < 32 or area:GetSizeY() < 32 then continue end
             if area:IsUnderwater() then continue end
             table.insert(SKELETON_SPAWNS, area)
@@ -69,7 +74,14 @@ if SERVER then
     end
 
     local function InitSkeletonTimers()
+        areas = navmesh.GetAllNavAreas()
         timer.Simple(0, BuildSkeletonSpawns)
+
+        -- At the top of each hour, regenerate spawns
+        timer.Create("Skeleton_RebuildSpawns", 3600 - (os.time() % 3600), 0, function()
+            BuildSkeletonSpawns()
+            timer.Adjust("Skeleton_RebuildSpawns", 3600)
+        end)
 
         timer.Create("Skeleton_Spawning", 1, 0, function()
             if SKELETON_CURRENT_NUMBER < SKELETON_LIMIT then
@@ -180,8 +192,9 @@ function ENT:Initialize()
         self:SetBloodColor(BLOOD_COLOR_YELLOW)
         self:SetUseType(SIMPLE_USE)
         self:SetHealth(3)
+        local hour = tonumber(os.date("%H"))
 
-        if math.random(1, 100) == 1 then
+        if math.random(1, hour >= 0 and hour < 3 and 50 or 100) == 1 then
             self:SetHealth(200)
             self.KillReward = 10000
             self.AttackDamageOverride = 10
