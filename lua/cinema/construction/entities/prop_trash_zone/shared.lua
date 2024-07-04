@@ -175,6 +175,7 @@ function ENT:DestroyTheater()
         local l = Locations[li]
         l.Min = Vector(-1, -1, -10001)
         l.Max = Vector(1, 1, -10000)
+        l.Name = l.Theater.Name
         RefreshLocations()
     end
 end
