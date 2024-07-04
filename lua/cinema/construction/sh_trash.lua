@@ -9,7 +9,6 @@ API_Command("HandleEntity", {API_ANY, API_ANY}, function(ent, touchpos)
         HandledEntity:SetRenderAngles()
     end
 
-    print(touchpos)
     HandledEntity = ent
 
     if ent then
