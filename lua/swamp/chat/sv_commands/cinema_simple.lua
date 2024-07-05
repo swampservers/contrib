@@ -10,21 +10,21 @@ RegisterChatLUACommand({'global', 'globalchat', 'ooc'}, [[ChatMessage(Color.oran
 RegisterChatLUACommand({'golf', 'golfclub'}, [[ChatMessage(Color.orange,"Walk up to a golf rack to grab a golf club!")]])
 
 RegisterChatCommand({'kills', 'showkills'}, function(ply, arg)
-    NamedBotMessage(ply, " has gotten ", Style.edgy(ply:GetStat("kill")), " kills!")
+    WhoSeesChat(ply, true):NamedBotMessage(ply, " has gotten ", Style.edgy(ply:GetStat("kill")), " kills!")
 end, {
     global = true,
     throttle = true
 })
 
 RegisterChatCommand({'deaths', 'showdeaths'}, function(ply, arg)
-    NamedBotMessage(ply, " has died ", Style.edgy(ply:GetStat("death")), " times!")
+    WhoSeesChat(ply, true):NamedBotMessage(ply, " has died ", Style.edgy(ply:GetStat("death")), " times!")
 end, {
     global = true,
     throttle = true
 })
 
 RegisterChatCommand({'playtime', 'showplaytime', 'hours'}, function(ply, arg)
-    NamedBotMessage(ply, " has played for ", Style.rainbow(math.floor(ply:GetStat("sec") / 3600)), " hours!")
+    WhoSeesChat(ply, true):NamedBotMessage(ply, " has played for ", Style.rainbow(math.floor(ply:GetStat("sec") / 3600)), " hours!")
 end, {
     global = true,
     throttle = true
