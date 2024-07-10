@@ -324,7 +324,7 @@ function TrashLocationOwner(locid, pos)
 
     if class ~= TRASHLOC_BUILD then return nil end -- The only way to own a non build area is with a theater. Not a field.
 
-    -- print(table.Count(Ents.prop_trash_zone))
+    -- print(#Ents.prop_trash_zone)
     for k, v in ipairs(Ents.prop_trash_zone) do
         if v:Protects(pos) then return v:GetOwnerID() end
     end

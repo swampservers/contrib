@@ -104,7 +104,7 @@ if SERVER then
     ORE_MAXNUMBER = 24
 
     timer.Create("ore_spawner", 1, 0, function()
-        if Ents and table.Count(Ents.ore) < ORE_MAXNUMBER then
+        if Ents and #Ents.ore < ORE_MAXNUMBER then
             local pos = OreOrigin()
 
             if pos then
