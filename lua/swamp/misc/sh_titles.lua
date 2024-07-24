@@ -363,7 +363,7 @@ AddTitle({
     {100000, "Ally"},
     {"s_lefty_donation_place10", "Libtard"},
     {"s_lefty_donation_place1", "Greatest Ally"}
-}, {"Visit Joe Biden's donation box and give at least 100,000 points", "Be on Joe Biden's donation leaderboard", "Be the top donor to Joe Biden"}, "s_lefty_donation")
+}, {"Visit Kamala Harris' donation box and give at least 100,000 points", "Be on Kamala Harris' donation leaderboard", "Be the top donor to Kamala Harris"}, "s_lefty_donation")
 
 -- TODO: print who currently has the title?
 AddTitle({
