@@ -205,7 +205,7 @@ LocationTheaterInfo = {
         Height = 198
     },
     ["Basement Den"] = {
-        Flags = THEATER_PRIVATEREPLICATED,
+        Flags = THEATER_PRIVATE,
         Pos = Vector(2449, 629, -116),
         Ang = Angle(0, 277, 0),
         Width = 54,
@@ -225,7 +225,14 @@ LocationTheaterInfo = {
         Width = 48,
         Height = 27,
         Projected = true
-    }
+    },
+    ["Patriot Cabin"] = {
+        Flags = THEATER_PRIVATE,
+        Pos = Vector(-2643, 3686, 25.75),
+        Ang = Angle(0, 270, 0),
+        Width = 16,
+        Height = 12
+    },
 }
 
 -- NOTE(winter): We're moving stuff around a little bit here. It goes Theaters, then MobileTheaters, then The Underworld, then all normal Locations
