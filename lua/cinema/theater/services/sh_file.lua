@@ -109,7 +109,7 @@ if CLIENT then
     end
 
     function SERVICE:GetHost(Video)
-        return url.parse2(Video:Key()).host
+        return urlparse.parse2(Video:Key()).host
     end
 
     function SERVICE:LoadVideo(Video, panel)

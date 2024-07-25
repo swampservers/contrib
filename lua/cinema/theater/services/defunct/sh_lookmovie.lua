@@ -20,8 +20,6 @@ function SERVICE:GetKey(url)
 end
 
 if CLIENT then
-    local url2 = url
-
     function SERVICE:GetVideoInfoClientside(key, callback)
         if vpanel then
             vpanel:Remove()
@@ -49,7 +47,7 @@ if CLIENT then
                     url = t["streams"][720] or t["streams"][480] or t["streams"][360] or t["streams"][1080]
                 end
 
-                local nk = url2.parse(url)
+                local nk = urlparse.parse(url)
                 url = nk.scheme .. "://" .. nk.host .. string.Replace(nk.path, ".", "%2e") --gmod's http library can't handle periods in the url path unless it's the file for some retarded reason
 
                 --find a good way to implement subtitle track choosing? lookmovie can have dozens of tracks and over a dozen tracks just for english with varying quality

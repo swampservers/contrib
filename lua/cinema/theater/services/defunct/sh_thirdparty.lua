@@ -10,7 +10,7 @@ function SERVICE:GetKey(tbl)
     local t = util.JSONToTable(tbl.encoded)
 
     if t and t["referer"] and t["key"] then
-        if url.parse2(t["referer"]).scheme and url.parse2(t["key"]).scheme then return tbl.encoded end
+        if urlparse.parse2(t["referer"]).scheme and urlparse.parse2(t["key"]).scheme then return tbl.encoded end
     end
 
     return false
@@ -45,7 +45,7 @@ if CLIENT then
     function SERVICE:GetHost(Video)
         local t = util.JSONToTable(Video:Key())
 
-        return url.parse2(t["key"]).host
+        return urlparse.parse2(t["key"]).host
     end
 
     function SERVICE:LoadVideo(Video, panel)
