@@ -2,7 +2,9 @@
 local SERVICE = {}
 SERVICE.Name = "Bitchute"
 SERVICE.NeedsCodecs = true
+SERVICE.NeedsChromium = true
 
+-- The key is the video ID
 function SERVICE:GetKey(url)
     local match = string.match(url.path, "/.+/(.+[^/])")
     if match ~= nil and string.find(url.encoded, "bitchute.com/video/(.+)") and not string.find(url.path, "%.") then return match end
@@ -12,38 +14,59 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
+        local video_info = {}
+
         EmbeddedCheckCodecs(function()
             if vpanel then
                 vpanel:Remove()
             end
 
-            vpanel = vgui.Create("DHTML", nil, "BitChuteVPanel")
-            vpanel:SetSize(100, 100)
+            vpanel = vgui.Create("DHTML", nil, "BitchutePanel")
+            vpanel:SetSize(500, 500)
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
+            vpanel:SetKeyboardInputEnabled(false)
+            vpanel:OpenURL("https://www.bitchute.com/embed/" .. key)
 
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("Failed")
+                    print("Bitchute request failed")
                     callback()
                 end
             end)
 
-            function vpanel:ConsoleMessage(msg)
-                if msg:StartWith("DURATION:") then
-                    local duration = math.ceil(tonumber(string.sub(msg, 10)))
-                    print("Duration: " .. duration)
-                    self:Remove()
-                    print("Success!")
+            function vpanel:OnDocumentReady(url)
+                self:AddFunction("gmod", "onVideoInfoReady", function(new_video_info)
+                    table.Merge(video_info, new_video_info)
 
-                    callback({
-                        duration = duration
-                    })
-                end
+                    -- 'data' is the backing media URL (.mp4)
+                    if video_info.title and video_info.data and video_info.duration and video_info.thumb then
+                        callback(video_info)
+                        self:Remove()
+                    end
+                end)
+
+                self:QueueJavascript([[
+                    const initInterval = setInterval(function() {
+                        let playButton = document.querySelector(".vjs-big-play-button");
+                        if (playButton) {
+                            playButton.click();
+                        }
+                        const player = document.querySelector("video");
+                        if (player && player.readyState > 0) {
+                            player.volume = 0;
+                            gmod.onVideoInfoReady({"duration": player.duration});
+                            clearInterval(initInterval);
+                        }
+                    }, 100);
+                    gmod.onVideoInfoReady({
+                        "title": video_name, // Bitchute embed provides video_name var
+                        "data": media_url, // Bitchute embed provides media_url var
+                        "thumb": thumbnail_url // Bitchute embed provides thumbnail_url var
+                    });
+                ]])
             end
-
-            vpanel:OpenURL("https://swamp.sv/s/cinema/filedata.php?file=" .. key)
         end, function()
             chat.AddText("You need codecs to request this. Press F2.")
 
