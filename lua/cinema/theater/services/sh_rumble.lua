@@ -140,12 +140,15 @@ if CLIENT then
                 </body>
             </html>
         ]])
+
         panel:AddFunction("gmod", "loaded", function()
             if Video:Duration() > 0 then
                 self:SeekTo(CurTime() - Video:StartTime(), panel)
             end
+
             self:SetVolume(theater.GetVolume(), panel)
         end)
+
         panel:QueueJavascript(theater.TheaterJS)
         panel:QueueJavascript(self.ServiceJS)
         panel:QueueJavascript("Rumble('play', {'video':'" .. Video:Data() .. "','div':'rumblePlayer', 'opts':['force_ga_load', 'noads', 'norumbleads']});")
