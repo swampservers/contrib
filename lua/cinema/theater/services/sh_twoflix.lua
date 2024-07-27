@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
-SERVICE.Name = "Fmoviesz"
+SERVICE.Name = "twoflix"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
@@ -43,50 +43,43 @@ SERVICE.ServiceJS = [[
 local find_player_iframe_js = [[
     var playerIframe;
 
-    // Automatically find a good server
-    let timeSinceLastServerSwitch = 0;
-    let currentServerIndex = -1;
+    let serverSwitchTime = 0;
+    let serverIndex = -1;
 
+    // This interval will try to play the video and find the video player from each server until a timeout is reached.
     const findPlayerInterval = setInterval(function() {
-        if (currentServerIndex == -1 || timeSinceLastServerSwitch >= 2500) {
-            const ulServers = document.querySelector('ul.servers');
-            if (ulServers) {
-                const liElements = ulServers.querySelectorAll('li');
-                if (liElements) {
-                    if (currentServerIndex < liElements.length - 1) {
-                        liElements[++currentServerIndex].click();
-                    } else {
-                        currentServerIndex = 0;
-                    }
+        let servers = [...document.querySelectorAll(".server")];
+        let timeSinceLastServerSwitch = Date.now() - serverSwitchTime;
 
-                    timeSinceLastServerSwitch = 0;
-                }
-            }
-        } else {
-            timeSinceLastServerSwitch += 500;
+        // Every 3 seconds, switch servers
+        if (serverIndex == -1 || timeSinceLastServerSwitch >= 3000 && servers) {
+            if (serverIndex >= servers.length - 1)
+                serverIndex = -1;
+            servers[++serverIndex].click();
+            serverSwitchTime = Date.now();
+        }
 
-            const playButton = document.querySelector('.btn-watchnow');
-            if (playButton) {
-                playButton.click();
+        let playButton = document.querySelector('.playnow-btn');
+        if (playButton) {
+            playButton.click();
+        }
+        const iframes = document.querySelectorAll('iframe');
+        let tempPlayerIframe = null;
+        iframes.forEach(iframe => {
+            const allowAttributes = iframe.getAttribute('allow');
+            if (allowAttributes && allowAttributes.includes('autoplay') && allowAttributes.includes('fullscreen')) {
+                tempPlayerIframe = iframe;
             }
-            const iframes = document.querySelectorAll('iframe');
-            let tempPlayerIframe = null;
-            iframes.forEach(iframe => {
-                const allowAttributes = iframe.getAttribute('allow');
-                if (allowAttributes && allowAttributes.includes('autoplay') && allowAttributes.includes('fullscreen')) {
-                    tempPlayerIframe = iframe;
-                }
-            });
-            if (tempPlayerIframe && tempPlayerIframe.src) {
-                playerIframe = tempPlayerIframe;
-                clearInterval(findPlayerInterval);
-            }
+        });
+        if (tempPlayerIframe && tempPlayerIframe.src) {
+            playerIframe = tempPlayerIframe;
+            clearInterval(findPlayerInterval);
         }
     }, 500);
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://fmovies24.to/movie/([%w%-]+)/1%-1/?$") or string.match(url.encoded, "https://fmovies24.to/tv/([%w%-]+)/%d+%-%d+/?$") then return url.encoded end
+    if string.match(url.encoded, "https://2flix.to/movie/([%w%-]+)/1%-1/?$") or string.match(url.encoded, "https://2flix.to/tv/([%w%-]+)/%d+%-%d+/?$") then return url.encoded end
 
     return false
 end
@@ -100,7 +93,7 @@ if CLIENT then
                 vpanel:Remove()
             end
 
-            vpanel = vgui.Create("DHTML", nil, "FmovieszPanel")
+            vpanel = vgui.Create("DHTML", nil, "TwoflixPanel")
             vpanel:SetSize(ScrW(), ScrH())
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
@@ -110,7 +103,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("Fmoviesz request failed")
+                    print("2flix request failed")
                     callback()
                 end
             end)
@@ -189,4 +182,4 @@ if CLIENT then
     end
 end
 
-theater.RegisterService('fmoviesz', SERVICE)
+theater.RegisterService('twoflix', SERVICE)
