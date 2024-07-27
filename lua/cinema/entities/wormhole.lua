@@ -590,38 +590,49 @@ end
 function ENT:Touch(ent)
     local link = self:GetLink()
     if not IsValid(link) then return end
+    if ent:IsPlayer() then return end
 
-    if not ent:IsPlayer() then
-        local phys = ent:GetPhysicsObject()
-        local pos = ent:GetPos()
-        local ang = ent:GetAngles()
-        local vel = ent:GetVelocity()
+    if ent:GetClass() == "kekfrog" then
+        local ply = ent.LastInteractPly
+
+        if IsValid(ply) then
+            ply:DropObject()
+            ent:UseMenuAction(ply, "curse")
+        end
+
+        return
+    end
+
+    if ent:GetTrashClass() ~= "prop_trash" then return end -- WARN: Don't allow wheelchairs (crashes)
+    local phys = ent:GetPhysicsObject()
+    local pos = ent:GetPos()
+    local ang = ent:GetAngles()
+    local vel = ent:GetVelocity()
+
+    if IsValid(phys) then
+        pos = phys:GetPos()
+        ang = phys:GetAngles()
+        vel = phys:GetVelocity()
+    end
+
+    local lpos = WorldToLocal(pos + vel * FrameTime(), ang, self:GetPos(), self:GetAngles())
+    local lv = WorldToLocal(vel, ang, Vector(), self:GetAngles())
+
+    if lpos.x < 0 and lv.x < 0 then
+        local npos, nang, nvel = self:GetProjectedPos(pos, ang, vel)
 
         if IsValid(phys) then
-            pos = phys:GetPos()
-            ang = phys:GetAngles()
-            vel = phys:GetVelocity()
+            phys:SetVelocity(nvel)
+            phys:SetPos(npos)
+            phys:SetAngles(nang)
+        else
+            ent:SetVelocity(-ent:GetVelocity() + nvel)
+            ent:SetPos(npos)
+            ent:SetAngles(nang)
         end
 
-        local lpos = WorldToLocal(pos + vel * FrameTime(), ang, self:GetPos(), self:GetAngles())
-        local lv = WorldToLocal(vel, ang, Vector(), self:GetAngles())
-
-        if lpos.x < 0 and lv.x < 0 then
-            local npos, nang, nvel = self:GetProjectedPos(pos, ang, vel)
-
-            if IsValid(phys) then
-                phys:SetVelocity(nvel)
-                phys:SetPos(npos)
-                phys:SetAngles(nang)
-            else
-                ent:SetVelocity(-ent:GetVelocity() + nvel)
-                ent:SetPos(npos)
-                ent:SetAngles(nang)
-            end
-
-            link:EmitSound("ambient/machines/machine1_hit2.wav", 120, 150, 0.1, CHAN_USER_BASE)
-            self:EmitSound("ambient/machines/machine1_hit2.wav", 120, 150, 0.1, CHAN_USER_BASE)
-        end
+        link:EmitSound("ambient/machines/machine1_hit2.wav", 120, 150, 0.1, CHAN_USER_BASE)
+        self:EmitSound("ambient/machines/machine1_hit2.wav", 120, 150, 0.1, CHAN_USER_BASE)
     end
 end
 
