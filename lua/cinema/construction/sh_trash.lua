@@ -67,6 +67,7 @@ TrashLocationOverrides = {
     ["Elevator Shaft"] = TRASHLOC_NOSPAWN,
     ["Furnace"] = TRASHLOC_NOSPAWN,
     ["Golf"] = TRASHLOC_NOSPAWN,
+    ["Golf Islands"] = TRASHLOC_NOSPAWN,
     ["Graveyard"] = TRASHLOC_BUILD,
     ["Gym"] = TRASHLOC_BUILD,
     ["Janitor's Closet"] = TRASHLOC_BUILD,
