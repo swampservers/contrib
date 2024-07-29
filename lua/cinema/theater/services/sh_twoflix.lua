@@ -50,11 +50,14 @@ local find_player_iframe_js = [[
     const findPlayerInterval = setInterval(function() {
         let servers = [...document.querySelectorAll(".server")];
         let timeSinceLastServerSwitch = Date.now() - serverSwitchTime;
+        let serversAvailable = servers && servers.length > 0;
 
         // Every 3 seconds, switch servers
-        if (serverIndex == -1 || timeSinceLastServerSwitch >= 3000 && servers) {
-            if (serverIndex >= servers.length - 1)
-                serverIndex = -1;
+        if (serversAvailable && (serverIndex == -1 || timeSinceLastServerSwitch >= 3000)) {
+            if (serverIndex >= servers.length - 1) {
+                clearInterval(findPlayerInterval); // We've tried all the servers
+                return;
+            }
             servers[++serverIndex].click();
             serverSwitchTime = Date.now();
         }
