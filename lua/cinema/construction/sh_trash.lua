@@ -100,7 +100,7 @@ TrashLocationOverrides = {
     ["Throne Room"] = TRASHLOC_BUILD,
     ["Tree"] = TRASHLOC_BUILD,
     ["Trump Tower Casino"] = TRASHLOC_NOSPAWN,
-    ["Trump Tower Gaymergear"] = TRASHLOC_BUILD,
+    ["Trump Tower Gaymergear"] = TRASHLOC_NOSPAWN,
     ["Trump Tower Hotel"] = TRASHLOC_BUILD,
     ["Trump Tower Lobby"] = TRASHLOC_BUILD,
     ["Trump Tower Throne Room"] = TRASHLOC_BUILD,
@@ -116,6 +116,7 @@ TrashLocationOverrides = {
 TrashNoFreezeNodes = {
     {Vector(850, 1830, -3180), 768}, -- Sewer trickshot (top)
     {Vector(775, 1785, -740), 256}, -- Sewer trickshot (bottom)
-    {Vector(-160, -4256, -1078), 256} -- Trollcano
+    {Vector(-160, -4256, -1078), 256}, -- Trollcano
+    {Vector(1281, -919, 9), 64} -- Gym respawn
     
 }
