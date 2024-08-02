@@ -248,6 +248,7 @@ function SWEP:MakePaint(trace, delay)
     if IsValid(trace.Entity) then
         local class = trace.Entity:GetClass()
         if class == "slotmachine" then return end
+        if class == "ent_gamingcomputer" then return end
         if string.match(class, "pcasino") then return end
     end
 
