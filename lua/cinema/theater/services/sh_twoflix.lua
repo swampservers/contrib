@@ -82,7 +82,7 @@ local find_player_iframe_js = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://2flix.to/movie/([%w%-]+)/1%-1/?$") or string.match(url.encoded, "https://2flix.to/tv/([%w%-]+)/%d+%-%d+/?$") then return url.encoded end
+    if string.match(url.encoded, "https://2flix.to/movie/([%w%-]+)$") or string.match(url.encoded, "https://2flix.to/tv/([%w%-]+)$") then return url.encoded end
 
     return false
 end
