@@ -60,6 +60,9 @@ if CLIENT then
     end)
 
     hook.Add("Tick", "LocalPlayerForceModel", function()
+        -- Try and prevent crashes due to mounting things so recently (ModelIsPlayermodel -> MDLIsPlayermodel -> util.GetModelMeshes)
+        if CRASH_DATA["JUSTMOUNTED"] then return end
+
         if IsValid(Me) then
             checkmodel(Me)
         end
