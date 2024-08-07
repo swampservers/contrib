@@ -37,7 +37,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if not string.match(url.host or "", "twitch.tv") then return false end
+    if not string.match(url.host, "twitch.tv") then return false end
     local key = url.host == "clips.twitch.tv" and string.match(url.path, "/(%w+)$") or string.match(url.path, "/clip/([%w%-]+)$") -- Clips
     local isclip = key ~= nil
     local isvod = false

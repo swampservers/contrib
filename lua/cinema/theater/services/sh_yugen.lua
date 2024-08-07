@@ -24,7 +24,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    return string.match(url.host or "", "yugenanime%.tv") and url.path and string.match(url.path, "^/watch/(%d+/[%w%-_]+/%d+/)") and url.encoded
+    return url.host == "yugenanime.tv" and url.path and string.match(url.path, "^/watch/(%d+/[%w%-_]+/%d+/)") and url.encoded
 end
 
 if CLIENT then

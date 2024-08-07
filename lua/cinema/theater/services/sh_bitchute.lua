@@ -31,7 +31,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("Bitchute request failed")
+                    chat.AddText("Bitchute request failed")
                     callback()
                 end
             end)

@@ -78,7 +78,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("Bflix request failed")
+                    chat.AddText("Bflix request failed")
                     callback()
                 end
             end)

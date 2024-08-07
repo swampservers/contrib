@@ -14,7 +14,7 @@ function SERVICE:IsEmbedDisabled(video)
 end
 
 function SERVICE:GetKey(url)
-    if not string.match(url.host or "", "youtu.?be[.com]?") then return false end
+    if not string.match(url.host, "youtu.?be[.com]?") then return false end
     local key = false
 
     -- https://www.youtube.com/watch?v=(videoId)

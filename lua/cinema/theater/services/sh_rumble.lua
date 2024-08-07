@@ -47,7 +47,7 @@ SERVICE.ServiceJS = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.host or "", "rumble.com") and string.match(url.path or "", "^/v%w%w%w%w%w%w%-(.+)%.html$") then return url.encoded end
+    if url.host == "rumble.com" and string.match(url.path or "", "^/v%w%w%w%w%w%w%-(.+)%.html$") then return url.encoded end
 
     return false
 end
@@ -70,7 +70,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("Rumble request failed")
+                    chat.AddText("Rumble request failed")
                     callback()
                 end
             end)

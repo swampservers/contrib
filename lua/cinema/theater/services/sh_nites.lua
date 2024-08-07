@@ -66,7 +66,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("Nites request failed")
+                    chat.AddText("Nites request failed")
                     callback()
                 end
             end)

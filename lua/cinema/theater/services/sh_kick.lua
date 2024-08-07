@@ -5,7 +5,7 @@ SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 
 function SERVICE:GetKey(url)
-    if not string.match(url.host or "", "kick.com") then return false end
+    if url.host ~= "kick.com" then return false end
     local key = string.match(url.path, "^/([%w_]+)$")
 
     if not key or string.len(key) < 1 then

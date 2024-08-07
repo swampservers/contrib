@@ -1,9 +1,19 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local SERVICE = {}
-SERVICE.Name = "twoflix"
+SERVICE.Name = "2Flix"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
 SERVICE.CacheLife = 0
+SERVICE.RequestBrowserJS = [[
+    // This is needed because clicking on a specific Episode doesn't update the URL
+    const urlUpdatePatch = setInterval(function() {
+        const activeEpisodeElem = document.querySelector("a.btn.active[data-slug]");
+
+        if (window.location.href != activeEpisodeElem.href) {
+            window.history.replaceState(null, "", activeEpisodeElem.href);
+        }
+    }, 100);
+]]
 SERVICE.ServiceJS = [[
     var embedPlayer;
     var targetTime = -0.5;
@@ -82,7 +92,10 @@ local find_player_iframe_js = [[
 ]]
 
 function SERVICE:GetKey(url)
-    if string.match(url.encoded, "https://2flix.to/movie/([%w%-]+)$") or string.match(url.encoded, "https://2flix.to/tv/([%w%-]+)$") then return url.encoded end
+    if url.host ~= "2flix.to" then return false end
+    if not url.path then return false end
+    if string.match(url.path, "/movie/([%w%-]+/%d+%-%d+)") or string.match(url.path, "/tv/([%w%-]+/%d+%-%d+)") then return url.encoded end
+    if string.match(url.path, "/movie/([%w%-/]+)") or string.match(url.path, "/tv/([%w%-/]+)") then return url.encoded, true end -- Partial match, only used to allow RequestBrowserJS to run
 
     return false
 end
@@ -96,7 +109,7 @@ if CLIENT then
                 vpanel:Remove()
             end
 
-            vpanel = vgui.Create("DHTML", nil, "TwoflixPanel")
+            vpanel = vgui.Create("DHTML", nil, "2FlixPanel")
             vpanel:SetSize(ScrW(), ScrH())
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
@@ -106,7 +119,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("2flix request failed")
+                    chat.AddText("2Flix request failed")
                     callback()
                 end
             end)
@@ -124,14 +137,24 @@ if CLIENT then
                 if url == key then
                     self:QueueJavascript(find_player_iframe_js)
                     self:QueueJavascript([[
-                        const title = document.querySelector('h1[itemprop="name"]').textContent;
-                        const thumb = document.querySelector('img[itemprop="image"]').src;
-                        gmod.onVideoInfoReady({
-                            "title": title,
-                            "thumb": thumb
-                        });
                         const initInterval = setInterval(function() {
                             if (playerIframe && playerIframe.src) {
+                                const thumb = document.querySelector('img[itemprop="image"]').src;
+                                const activeEpisodeElem = document.querySelector("a.btn.active[data-slug]");
+                                const activeEpisodeElemVisible = activeEpisodeElem.offsetParent != null;
+
+                                var title = document.querySelector('h1[itemprop="name"]').textContent; // Movie / TV Show
+
+                                if (activeEpisodeElemVisible) {
+                                    title += " " + document.querySelector("a.season-item.active").innerText.trim(); // Season
+                                    title += " " + activeEpisodeElem.innerText.split("\n")[0].trim(); // Episode
+                                }
+
+                                gmod.onVideoInfoReady({
+                                    "thumb": thumb,
+                                    "title": title
+                                });
+
                                 window.location.href = playerIframe.src;
                                 clearInterval(initInterval);
                             }
@@ -148,7 +171,6 @@ if CLIENT then
                             }
                         }, 100);
                     ]])
-                    self:QueueJavascript(SERVICE.ServiceJS)
                 end
             end
         end, function()
@@ -185,4 +207,4 @@ if CLIENT then
     end
 end
 
-theater.RegisterService('twoflix', SERVICE)
+theater.RegisterService("twoflix", SERVICE)

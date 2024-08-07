@@ -68,7 +68,7 @@ if CLIENT then
             timer.Simple(20, function()
                 if IsValid(vpanel) then
                     vpanel:Remove()
-                    print("WCO request failed")
+                    chat.AddText("WCO request failed")
                     callback()
                 end
             end)

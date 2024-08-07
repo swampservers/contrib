@@ -10,7 +10,7 @@ local infowars_domains = {"banned.video", "conspiracyfact.info", "freeworldnews.
 -- The key will either be a video ID or a channel name in the format channel:<name>
 function SERVICE:GetKey(url)
     for _, v in pairs(infowars_domains) do
-        if string.match(url.host or "", v) then
+        if url.host == v then
             local key = string.match(url.encoded or "", "/watch%?id=(%w+)$")
             if key then return key end -- was a video ID
             local key = string.match(url.encoded or "", "/channel/([%w%-]+)$")
