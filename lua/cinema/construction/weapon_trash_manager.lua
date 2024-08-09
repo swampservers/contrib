@@ -82,20 +82,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 --NOMINIFY
-local function CorrectSaveData(data)
-    for k, v in pairs(data) do
-        for pti = 4, 2, -1 do
-            local l = LocationByName["Private Theater " .. pti]
-            print(type(v.pos))
-
-            if v.pos:WithinAABox(l.Min, l.Max) then
-                v.pos.x = v.pos.x - 384
-            end
-        end
-    end
-end
-
-local function DecorrectSaveData(data)
+-- TODO(winter): Is this still needed?
+local function DecorrectSaveData(props)
     local shift = nil
 
     for pti = 2, 4 do
@@ -107,7 +95,7 @@ local function DecorrectSaveData(data)
     if shift then
         local l = LocationByName["Private Theater 1"]
 
-        for k, v in pairs(data) do
+        for _, v in ipairs(props) do
             if v.pos:WithinAABox(l.Min, l.Max) then
                 v.pos.x = v.pos.x + shift
             end
@@ -134,8 +122,9 @@ function SWEP:PrimaryAttack()
                 p:SetText("")
 
                 function p:DoClick()
-                    net.Start("TrashManagerAction")
-                    net.WriteString("cleanup")
+                    -- GetDeleteEntities gets called serverside for this
+                    net.Start("TrashBuilds")
+                    net.WriteUInt(TRASHBUILD_CLEANUP, TRASHBUILD_BITS)
                     net.SendToServer()
                 end
             end)
@@ -157,37 +146,17 @@ but you need a nearby theater/field to respawn them.]])
                 p:SetText("")
 
                 function p:DoClick()
-                    Derma_StringRequest("Filename", "Name of this prop configuration?", "stuff", function(text)
-                        local w = Me:GetActiveWeapon()
+                    Derma_StringRequest("Build Name", "Name of this prop configuration?", "stuff", function(buildname)
+                        buildname = buildname and string.Trim(buildname):gsub("[^%w-_]+", "") or ""
 
-                        if IsValid(w) and w:GetClass() == "weapon_trash_manager" then
-                            local c = {}
-
-                            for _, ent in ipairs(w:GetSaveEntities()) do
-                                local matdata = ent:GetMaterialData()
-
-                                -- Don't store default matdata
-                                table.insert(c, {
-                                    id = ent:GetItemID(),
-                                    pos = ent:GetPos(),
-                                    ang = ent:GetAngles(),
-                                    matdata = matdata ~= '{"c":"[1 1 1]"}' and matdata or nil
-                                })
-                            end
-
-                            CorrectSaveData(c)
-
-                            c = {
-                                map = game.GetMap(),
-                                props = c
-                            }
-
-                            if not file.IsDir("swampbuilds", "DATA") then
-                                file.CreateDir("swampbuilds")
-                            end
-
-                            file.Write("swampbuilds/" .. text .. ".txt", util.TableToJSON(c, true))
-                            TRASHMANAGERFILES:Reset()
+                        if buildname ~= "" then
+                            -- GetSaveEntities gets called serverside for this
+                            net.Start("TrashBuilds")
+                            net.WriteUInt(TRASHBUILD_UPDATE, TRASHBUILD_BITS)
+                            net.WriteString(buildname)
+                            net.SendToServer()
+                        else
+                            Me:Notify("Please specify a valid build name (letters, numbers, _, and -)")
                         end
                     end)
                 end
@@ -209,103 +178,113 @@ but you need a nearby theater/field to respawn them.]])
                         TRASHMANAGERFILEBUTTONS:Remove()
                     end
 
-                    local f = file.Find("swampbuilds/*.txt", "DATA")
+                    for buildname in pairs(TrashBuilds) do
+                        self:AddLine(buildname)
+                    end
+                end
 
-                    for i, v in ipairs(f) do
-                        self:AddLine(v)
+                function p:OnRowSelected(i, r)
+                    if IsValid(TRASHMANAGERFILEBUTTONS) then
+                        TRASHMANAGERFILEBUTTONS:Remove()
                     end
 
-                    function p:OnRowSelected(i, r)
-                        if IsValid(TRASHMANAGERFILEBUTTONS) then
-                            TRASHMANAGERFILEBUTTONS:Remove()
-                        end
+                    local buildname = r:GetColumnText(1)
+                    net.Start("TrashBuilds")
+                    net.WriteUInt(TRASHBUILD_DOWNLOAD, TRASHBUILD_BITS)
+                    net.WriteString(buildname)
+                    net.SendToServer()
+                end
 
-                        local fn = r:GetColumnText(1)
-                        local d = util.JSONToTable(file.Read("swampbuilds/" .. fn))
-                        d = d.props or d
-                        local items = {}
+                function p:LoadPreview(buildname)
+                    local props = TrashBuilds[buildname]
+                    props = props.props or props
+                    local items = {}
 
-                        for _, v in pairs(Me.items or {}) do
-                            items[v.id] = v
-                        end
+                    for _, v in pairs(Me.items or {}) do
+                        items[v.id] = v
+                    end
 
-                        DecorrectSaveData(d)
-                        local i = 1
-                        local mepos = Me:GetPos()
-                        local meid = Me:SteamID()
+                    DecorrectSaveData(props)
+                    local i = 1
+                    local mepos = Me:GetPos()
+                    local meid = Me:SteamID()
 
-                        while i <= #d do
-                            local v = d[i]
+                    -- Load range and location ownership limits (for the preview, done serverside as well)
+                    while i <= #props do
+                        local v = props[i]
 
-                            if not items[v.id] or v.pos:DistToSqr(mepos) > TRASH_MANAGER_LOAD_RANGE ^ 2 then
-                                table.remove(d, i)
+                        if not items[v.id] or v.pos:DistToSqr(mepos) > TRASH_MANAGER_LOAD_RANGE ^ 2 then
+                            table.remove(props, i)
+                        else
+                            local locownerid = TrashLocationOwner(FindLocation(v.pos), v.pos)
+                            local locowner = player.GetBySteamID(locownerid)
+
+                            if locownerid ~= meid and (not IsValid(locowner) or not (locowner.TrashFriends or {})[meid]) then
+                                table.remove(props, i)
                             else
-                                local locownerid = TrashLocationOwner(FindLocation(v.pos), v.pos)
-                                local locowner = player.GetBySteamID(locownerid)
-
-                                if locownerid ~= meid and (not IsValid(locowner) or not (locowner.TrashFriends or {})[meid]) then
-                                    table.remove(d, i)
-                                else
-                                    i = i + 1
-                                end
+                                i = i + 1
                             end
                         end
+                    end
 
-                        while #d > TRASH_MANAGER_PROP_LIMIT do
-                            table.remove(d)
-                        end
+                    -- Prop limit (for the preview, done serverside as well)
+                    while #props > TRASH_MANAGER_PROP_LIMIT do
+                        table.remove(props)
+                    end
 
-                        TRASHMANAGERFILEBUTTONS = ui.Panel({
-                            parent = TRASHMANAGERWINDOW
-                        }, function(p)
-                            p:Dock(BOTTOM)
+                    TRASHMANAGERFILEBUTTONS = ui.Panel({
+                        parent = TRASHMANAGERWINDOW
+                    }, function(p)
+                        p:Dock(BOTTOM)
 
-                            ui.DButton(function(p)
-                                p:SetText("Delete")
-                                p:Dock(LEFT)
+                        ui.DButton(function(p)
+                            p:SetText("Delete")
+                            p:Dock(LEFT)
 
-                                function p:DoClick()
-                                    file.Delete("swampbuilds/" .. fn)
-                                    TRASHMANAGERFILES:Reset()
-                                end
-                            end)
-
-                            ui.DButton(function(p)
-                                local price = TRASH_MANAGER_BASE_LOAD_PRICE
-
-                                for k, v in pairs(d) do
-                                    price = price + items[v.id]:SpawnPrice()
-                                end
-
-                                p:SetText("Load " .. table.Count(d) .. " props (cost " .. price .. ")")
-                                p:Dock(FILL)
-
-                                function p:DoClick()
-                                    net.Start("TrashManagerAction")
-                                    net.WriteString("load")
-                                    net.WriteTable(d)
-                                    net.SendToServer()
-                                end
-                            end)
-
-                            p:SizeToChildren(false, true)
-                            p.mymodels = {}
-
-                            for k, v in pairs(d) do
-                                local e = ClientsideModel(items[v.id]:Model())
-                                e:SetMaterial("models/effects/vol_light001")
-                                e:SetPos(v.pos)
-                                e:SetAngles(v.ang)
-                                table.insert(p.mymodels, e)
-                            end
-
-                            function p:OnRemove()
-                                for i, v in ipairs(p.mymodels) do
-                                    v:Remove()
-                                end
+                            function p:DoClick()
+                                net.Start("TrashBuilds")
+                                net.WriteUInt(TRASHBUILD_REMOVE, TRASHBUILD_BITS)
+                                net.WriteString(buildname)
+                                net.SendToServer()
                             end
                         end)
-                    end
+
+                        ui.DButton(function(p)
+                            local price = TRASH_MANAGER_BASE_LOAD_PRICE
+
+                            for _, v in ipairs(props) do
+                                price = price + items[v.id]:SpawnPrice()
+                            end
+
+                            p:SetText("Load " .. #props .. " props (cost " .. price .. ")")
+                            p:Dock(FILL)
+
+                            function p:DoClick()
+                                net.Start("TrashBuilds")
+                                net.WriteUInt(TRASHBUILD_LOAD, TRASHBUILD_BITS)
+                                net.WriteTable(props)
+                                net.SendToServer()
+                            end
+                        end)
+
+                        p:SizeToChildren(false, true)
+                        p.mymodels = {}
+
+                        -- Preview build
+                        for _, v in ipairs(props) do
+                            local e = ClientsideModel(items[v.id]:Model())
+                            e:SetMaterial("models/effects/vol_light001")
+                            e:SetPos(v.pos)
+                            e:SetAngles(v.ang)
+                            table.insert(p.mymodels, e)
+                        end
+
+                        function p:OnRemove()
+                            for _, v in ipairs(p.mymodels) do
+                                v:Remove()
+                            end
+                        end
+                    end)
                 end
 
                 p:Reset()
@@ -398,10 +377,11 @@ function SWEP:GetDeleteEntities()
 end
 
 function SWEP:GetSaveEntities()
+    local owner = self:GetOwner()
     local saves = {}
     local itemids = {}
 
-    for _, v in pairs(self:GetOwner().items or {}) do
+    for _, v in pairs(owner.items or {}) do
         itemids[v.id] = v
     end
 
@@ -409,7 +389,7 @@ function SWEP:GetSaveEntities()
         if v:GetTrashClass() then
             local id = v:GetItemID()
 
-            if id ~= 0 and itemids[id] and v:GetTaped() and not v:IsDormant() then
+            if id ~= 0 and itemids[id] and v:GetTaped() and (SERVER and owner:TestPVS(v) or CLIENT and not v:IsDormant()) then
                 table.insert(saves, v)
             end
         end
