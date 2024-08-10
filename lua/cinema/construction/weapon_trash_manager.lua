@@ -250,6 +250,19 @@ but you need a nearby theater/field to respawn them.]])
                         end)
 
                         ui.DButton(function(p)
+                            p:SetText("Adv. Edit")
+                            p:Dock(LEFT)
+
+                            function p:DoClick()
+                                TRASHMANAGERWINDOW:Close()
+
+                                ui.TrashBuildEditor(function(p)
+                                    p:SetBuild(buildname, items)
+                                end)
+                            end
+                        end)
+
+                        ui.DButton(function(p)
                             local price = TRASH_MANAGER_BASE_LOAD_PRICE
 
                             for _, v in ipairs(props) do
