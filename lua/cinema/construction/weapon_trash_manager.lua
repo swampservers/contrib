@@ -196,7 +196,7 @@ but you need a nearby theater/field to respawn them.]])
                 end
 
                 function p:LoadPreview(buildname)
-                    local props = TrashBuilds[buildname]
+                    local props = table.RealDeepCopy(TrashBuilds[buildname]) -- Needed so we don't wipe out networked data from the checks below
                     props = props.props or props
                     local items = {}
 
