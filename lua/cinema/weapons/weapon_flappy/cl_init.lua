@@ -15,10 +15,11 @@ end
 function SWEP:DrawWorldModel()
     local ply = self:GetOwner()
 
+    --[[
     if not self.UseFirstPersonTrail then
         self.CalcAbsolutePosition = nil
     end
-
+    ]]
     if IsValid(ply) then
         local bn = ply:IsPony() and "LrigScull" or "ValveBiped.Bip01_Head1"
         local bon = ply:LookupBone(bn) or 0
@@ -52,11 +53,12 @@ function SWEP:DrawWorldModel()
             mrt:SetAngles(oang)
             self:SetBoneMatrix(0, mrt)
         end
-
         -- This makes the trail appear where we want it
+        --[[
         if not self.UseFirstPersonTrail then
             self.CalcAbsolutePosition = function(ent, pos, ang) return opos + oang:Right() * 3, ang end
         end
+        ]]
     end
 
     self:DrawModel()
@@ -64,9 +66,15 @@ end
 
 function SWEP:Think()
     self.UseFirstPersonTrail = self.Owner == Me and not hook.Run("ShouldDrawLocalPlayer", Me)
+    local trail = self:GetNWEntity("trail", NULL)
 
+    if IsValid(trail) then
+        trail:SetNoDraw(self.UseFirstPersonTrail)
+    end
+    --[[
     if self.UseFirstPersonTrail then
         local ep = Me:EyePos() + Vector(0, 0, 3 + math.sin(SysTime() * 20)) - Me:EyeAngles():Forward() * 10
         self.CalcAbsolutePosition = function(ent, pos, ang) return ep, oang end
     end
+    ]]
 end

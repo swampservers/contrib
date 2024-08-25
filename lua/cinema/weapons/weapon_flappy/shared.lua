@@ -25,7 +25,6 @@ end
 function SWEP:SetupMove(ply, mv, cmd)
     if mv:KeyPressed(IN_JUMP) then
         if ply:IsJuggernaut() then return end
-        local self = ply:GetActiveWeapon()
         local power = 200
 
         if ply.InTheater and ply:InTheater() and ply:GetLocationName() ~= "Trump Tower Casino" then
