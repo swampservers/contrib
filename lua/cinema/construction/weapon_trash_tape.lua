@@ -83,6 +83,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 function SWEP:PrimaryAttack(force)
+    if self.IsHolstered then return end
     self:SetNextPrimaryFire(CurTime() + 0.3)
     if not IsFirstTimePredicted() and not force then return end
     TapeLookedAtTrash()
@@ -103,6 +104,7 @@ function TapeLookedAtTrash()
 end
 
 function SWEP:SecondaryAttack()
+    if self.IsHolstered then return end
     self:SetNextSecondaryFire(CurTime() + 0.3)
     if not IsFirstTimePredicted() then return end
 
@@ -122,6 +124,8 @@ end
 local LastReloadTime = 0
 
 function SWEP:Reload()
+    if self.IsHolstered then return end
+
     if CLIENT then
         if LastReloadTime + 0.3 > CurTime() then return end
         LastReloadTime = CurTime()
@@ -147,6 +151,42 @@ end
 function SWEP:DrawHUD()
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 2, Color(0, 0, 0, 25))
     surface.DrawCircle(ScrW() / 2, ScrH() / 2, 1, Color(255, 255, 255, 10))
+end
+
+-- TODO: Swamp Base Weapon
+function SWEP:Holster()
+    if self.IsHolstered then return true end
+    self.IsHolstered = true
+
+    if SERVER then
+        BroadcastLua([[
+            local wep = Entity(]] .. self:EntIndex() .. [[)
+            if IsValid(wep) and wep.Holster then
+                wep:Holster()
+            end
+        ]])
+    end
+
+    return true
+end
+
+function SWEP:Deploy()
+    self.IsHolstered = false
+
+    if SERVER then
+        BroadcastLua([[
+            local wep = Entity(]] .. self:EntIndex() .. [[)
+            if IsValid(wep) and wep.Deploy then
+                wep:Deploy()
+            end
+        ]])
+    end
+
+    return true
+end
+
+function SWEP:ShouldDrawViewModel()
+    return not self.IsHolstered
 end
 
 if CLIENT then
