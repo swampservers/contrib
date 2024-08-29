@@ -28,7 +28,7 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
         -- just released it
         if IsValid(HandledEntity) and EntityHandlingTargetAngle then
             net.Start("HandleEntity", true)
-            net.WriteAngle(EntityHandlingTargetAngle)
+            net.WritePreciseAngle(EntityHandlingTargetAngle)
             net.SendToServer()
         end
 
@@ -48,7 +48,7 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
 
     if not EntityHandlingTargetAngle then
         EntityHandlingTargetAngle = ea
-        EntityHandlingLastSentAngle = Angle(ea)
+        EntityHandlingLastSentAngle = ea * 1
     end
 
     -- EntityHandlingTargetAngle = EntityHandlingTargetAngle or ea
@@ -57,9 +57,9 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
     HandledEntity:SetRenderAngles(EntityHandlingTargetAngle)
 
     if CurTime() > (EntityHandlingLastSendTime or 0) + 0.2 and EntityHandlingTargetAngle ~= EntityHandlingLastSentAngle then
-        EntityHandlingLastSentAngle = Angle(EntityHandlingTargetAngle)
+        EntityHandlingLastSentAngle = EntityHandlingTargetAngle * 1
         net.Start("HandleEntity", true)
-        net.WriteAngle(EntityHandlingTargetAngle)
+        net.WritePreciseAngle(EntityHandlingTargetAngle)
         net.SendToServer()
         EntityHandlingLastSendTime = CurTime()
     end

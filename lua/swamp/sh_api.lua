@@ -30,6 +30,17 @@ local ReadFloat, WriteFloat = net.ReadFloat, net.WriteFloat
 local ReadDouble, WriteDouble = net.ReadDouble, net.WriteDouble
 local ReadString, WriteString = net.ReadString, net.WriteString
 
+function net.WritePreciseAngle(ang)
+    assert(TypeID(ang) == TYPE_ANGLE, "Expected angle, got" .. type(ang))
+    WriteDouble(ang[1])
+    WriteDouble(ang[2])
+    WriteDouble(ang[3])
+end
+
+function net.ReadPreciseAngle()
+    return Angle(ReadDouble(), ReadDouble(), ReadDouble())
+end
+
 --NOMINIFY
 -- TODO: check if having non byte aligned stuff matters for performance
 -- will be uints from 0 to numvals-1
