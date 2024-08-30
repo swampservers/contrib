@@ -36,10 +36,12 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
 
         if IsValid(HandledEntity) then
             HandledEntity:SetRenderAngles()
+            HandledEntity:SetRenderOrigin()
         end
 
         EntityHandlingTargetAngle = nil
         EntityHandlingLastSentAngle = nil
+        EntityHandlingTargetPosition = nil
 
         return
     end
@@ -54,7 +56,30 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
     -- EntityHandlingTargetAngle = EntityHandlingTargetAngle or ea
     local rv = EntityHandlingLastEyeAngle:Forward():Cross(cmd:GetViewAngles():Forward()) * -80
     EntityHandlingTargetAngle:RotateAroundAxis(rv:GetNormalized(), rv:Length())
+    -- See also: PlayerPhysicsPickup.Think
+    local start = EyePos()
+    local forward = Me:GetAimVector()
+    local distance = HandledEntity:BoundingRadius() + 36
+
+    local trace = util.TraceLine({
+        start = start,
+        endpos = start + forward * distance,
+        mask = MASK_SHOT,
+        filter = {Me, HandledEntity},
+        collisiongroup = COLLISION_GROUP_NONE
+    })
+
+    distance = trace.Fraction * distance
+
+    if distance >= 36 then
+        EntityHandlingTargetPosition = trace.HitPos
+        local obbOffset = HandledEntity:OBBCenter()
+        obbOffset:Rotate(EntityHandlingTargetAngle)
+        EntityHandlingTargetPosition = EntityHandlingTargetPosition - obbOffset
+    end
+
     HandledEntity:SetRenderAngles(EntityHandlingTargetAngle)
+    HandledEntity:SetRenderOrigin(EntityHandlingTargetPosition)
 
     if CurTime() > (EntityHandlingLastSendTime or 0) + 0.2 and EntityHandlingTargetAngle ~= EntityHandlingLastSentAngle then
         EntityHandlingLastSentAngle = EntityHandlingTargetAngle * 1

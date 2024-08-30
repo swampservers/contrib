@@ -591,18 +591,6 @@ function ENT:Touch(ent)
     local link = self:GetLink()
     if not IsValid(link) then return end
     if ent:IsPlayer() then return end
-
-    if ent:GetClass() == "kekfrog" then
-        local ply = ent.LastInteractPly
-
-        if IsValid(ply) then
-            ply:DropObject()
-            ent:UseMenuAction(ply, "curse")
-        end
-
-        return
-    end
-
     if ent:GetTrashClass() ~= "prop_trash" then return end -- WARN: Don't allow wheelchairs (crashes)
     local phys = ent:GetPhysicsObject()
     local pos = ent:GetPos()
