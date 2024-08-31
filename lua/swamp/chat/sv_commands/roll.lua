@@ -193,7 +193,6 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
 
     ply:SendLua("chat.PlaySound()")
     ply:NamedBotMessage("Rolling...")
- 
 
     ply:TimerSimple(0.9, function()
         if getsize == 1 then
@@ -203,29 +202,26 @@ RegisterChatCommand('roll', function(ply, arg, oarg, teamchat)
         end
     end)
 
-        ply:TimerSimple(1.0, function()
+    ply:TimerSimple(1.0, function()
+        ply:TryTakePoints(bet, "Roll.Roll", function()
+            if bet > 0 and getsize > 1 then
+                WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ', tostring(get), " and won ", Style.gold(bet * 10, " points"), ".", Style.red(compliment))
+                ply:GivePoints(bet * 10, "Roll.Won")
+            else
+                WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ', tostring(get), ".", Style.red(compliment))
 
-            ply:TryTakePoints(bet, "Roll.Roll", function()
-
-                if bet > 0 and getsize > 1 then
-                    WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ', tostring(get), " and won ", Style.gold(bet * 10, " points"), ".", Style.red(compliment))
-                    ply:GivePoints(bet * 10, "Roll.Won")
-                else
-                    WhoSeesChat(ply, teamchat):NamedBotMessage(ply, ' rolled ', tostring(get), ".", Style.red(compliment))
-                    if bet>0 then  ply:NamedBotMessage(string.Comma(bet) .. " points removed.") end
+                if bet > 0 then
+                    ply:NamedBotMessage(string.Comma(bet) .. " points removed.")
                 end
+            end
 
-                if bet == 0 then
-                    ply:NamedBotMessage("To bet, say: /roll 100")
-                end
-            
-            end, function()
-                WhoSeesChat(ply, teamchat):NamedBotMessage(Style.red(ply, " has gone broke!"))
-            end)
-
+            if bet == 0 then
+                ply:NamedBotMessage("To bet, say: /roll 100")
+            end
+        end, function()
+            WhoSeesChat(ply, teamchat):NamedBotMessage(Style.red(ply, " has gone broke!"))
         end)
-    
-
+    end)
 end, {
     throttle = true
 })
