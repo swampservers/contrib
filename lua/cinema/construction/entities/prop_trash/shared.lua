@@ -135,6 +135,8 @@ PropTrashSpecialModels = table.Merge(PropTrashSpecialModels or {}, {
 })
 
 function IsModelExplosive(mdl)
+    -- The c17 version isn't marked as explosive, but it should be
+    if mdl == "models/props_c17/oildrum001_explosive.mdl" then return true end
     local ModelInfo = util.GetModelInfo(mdl)
 
     if ModelInfo and ModelInfo.ModelKeyValues then

@@ -7,6 +7,7 @@ API_Command("HandleEntity", {API_ANY, API_ANY}, function(ent, touchpos)
     if not ent and IsValid(HandledEntity) then
         HandledEntity.AnchorTouchPos = nil
         HandledEntity:SetRenderAngles()
+        HandledEntity:SetRenderOrigin()
     end
 
     HandledEntity = ent
