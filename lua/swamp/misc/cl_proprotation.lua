@@ -57,7 +57,7 @@ hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)
     local rv = EntityHandlingLastEyeAngle:Forward():Cross(cmd:GetViewAngles():Forward()) * -80
     EntityHandlingTargetAngle:RotateAroundAxis(rv:GetNormalized(), rv:Length())
     -- See also: PlayerPhysicsPickup.Think
-    local start = EyePos()
+    local start = Me:EyePos()
     local forward = Me:GetAimVector()
     local distance = HandledEntity:BoundingRadius() + 36
 
