@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 ENT.Type = "anim"
-ENT.Model = Model("models/swamponions/kekfrog.mdl")
+ENT.Model = Model("models/swamponions/kekfrog_small.mdl")
 DEFINE_BASECLASS("base_gmodentity")
 
 function ENT:SetupDataTables()
@@ -36,10 +36,8 @@ function ENT:Initialize()
     end
 
     self:SetModel(self.Model)
-    self:SetModelScale(0.15)
-    self:PhysicsInitBox(Vector(-1, -1, -1) * 10, Vector(1, 1, 1) * 10)
+    self:PhysicsInit(SOLID_VPHYSICS)
     self:SetMoveType(MOVETYPE_VPHYSICS)
-    self:SetSolid(SOLID_VPHYSICS)
     -- self:PhysicsInitStatic(SOLID_VPHYSICS)
     self:DrawShadow(false)
     local phys = self:GetPhysicsObject()
