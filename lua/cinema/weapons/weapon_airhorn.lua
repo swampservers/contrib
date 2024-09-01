@@ -38,8 +38,8 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-    if (self.ReloadCooldown or 0) > CurTime() then return end
-    self.ReloadCooldown = CurTime() + 0.2
+    if (self.ReloadCooldown or 0) > RealTime() then return end
+    self.ReloadCooldown = RealTime() + 0.2
 
     self:ExtEmitSound("airhorn/honk2.ogg", {
         shared = true

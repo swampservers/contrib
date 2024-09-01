@@ -127,8 +127,8 @@ function SWEP:Reload()
     if self.IsHolstered then return end
 
     if CLIENT then
-        if LastReloadTime + 0.3 > CurTime() then return end
-        LastReloadTime = CurTime()
+        if LastReloadTime + 0.3 > RealTime() then return end
+        LastReloadTime = RealTime()
 
         if PropTrashLookedAt then
             net.Start("TrashAction")

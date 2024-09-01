@@ -118,8 +118,8 @@ end
 
 function SWEP:Reload()
     if SERVER then
-        if CurTime() - (self.ReloadTime or 0) < 0.5 then return end
-        self.ReloadTime = CurTime()
+        if RealTime() - (self.ReloadTime or 0) < 0.5 then return end
+        self.ReloadTime = RealTime()
         self:CancelShot()
         self:SetControls(not self:GetControls())
         self.Owner:SendLua([[surface.PlaySound('weapons/smg1/switch_single.wav')]])
