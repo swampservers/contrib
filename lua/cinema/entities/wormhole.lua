@@ -591,7 +591,7 @@ function ENT:Touch(ent)
     local link = self:GetLink()
     if not IsValid(link) then return end
     if ent:IsPlayer() then return end
-    if ent:GetTrashClass() ~= "prop_trash" then return end -- WARN: Don't allow wheelchairs (crashes)
+    if ent:GetTrashClass() ~= "prop_trash" and ent:GetClass() ~= "kekfrog" then return end -- WARN: Don't allow wheelchairs (crashes)
     local phys = ent:GetPhysicsObject()
     local pos = ent:GetPos()
     local ang = ent:GetAngles()

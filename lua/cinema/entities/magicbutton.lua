@@ -707,7 +707,7 @@ function ENT:Use(activator)
 
         local message = self:Effect(activator)
         assert(message)
-        NamedBotMessage(Style.white(activator), " pressed a hidden button ", ChatContent(message))
+        WhoSeesChat(activator, true):NamedBotMessage(Style.white(activator), " pressed a hidden button ", ChatContent(message))
         local c2 = self:GetColor()
         c2.r = c2.r / 5
         c2.g = c2.g / 5

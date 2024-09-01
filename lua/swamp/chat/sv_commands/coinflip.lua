@@ -118,7 +118,7 @@ function finishCoinFlip(fromID, toPlayer)
         -- Final Check, make sure they have funds still
         CoinFlips[fromID] = nil
         local heads = math.random() < 0.5 -- the "request from" player is always Heads.
-        NamedBotMessage(Style.edgy(fromPlayer), " flipped a coin worth ", Style.rainbow(amount * 2), " against ", Style.gold(toPlayer), " and ", Style.rainbow(heads and "Won" or "Lost"), "!")
+        WhoSeesChat(toPlayer, true):NamedBotMessage(Style.edgy(fromPlayer), " flipped a coin worth ", Style.rainbow(amount * 2), " against ", Style.gold(toPlayer), " and ", Style.rainbow(heads and "Won" or "Lost"), "!")
         fromPlayer:ChatMessage(Style[heads and "green" or "edgy"]("You ", heads and "won" or "lost", " ", Style.gold(amount), " points."))
         toPlayer:ChatMessage(Style[heads and "edgy" or "green"]("You ", heads and "lost" or "won", " ", Style.gold(amount), " points."))
 

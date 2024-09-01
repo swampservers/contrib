@@ -40,12 +40,12 @@ hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
 
         ply.BountyFunders = nil
         atk:GivePoints(bounty, "Bounty.Claimed")
-        NamedBotMessage(Style.edgy(atk), " has claimed ", Style.gold(ply, "'s"), " bounty of ", Style.rainbow(bounty), " points!")
+        WhoSeesChat(ply, true):NamedBotMessage(Style.edgy(atk), " has claimed ", Style.gold(ply, "'s"), " bounty of ", Style.rainbow(bounty), " points!")
         sc.log(atk, " claimed a bounty on ", ply, " for ", bounty, " points")
     end
 end)
 
-function TryAddBounty(ply, targets, amount, locname)
+function TryAddBounty(ply, targets, amount, locid, locname)
     amount = math.floor(tonumber(amount) or 0)
 
     if amount < 1000 then
@@ -70,11 +70,12 @@ function TryAddBounty(ply, targets, amount, locname)
 
         if #targets == 1 then
             if IsValid(targets[1]) then
-                NamedBotMessage(targets[1], "'s bounty is now ", Style.rainbow(targets[1]:GetBounty()), " points")
+                WhoSeesChat(targets[1], true):NamedBotMessage(targets[1], "'s bounty is now ", Style.rainbow(targets[1]:GetBounty()), " points")
                 sc.log(ply, " set a bounty on ", targets[1], " for ", amount, " points")
             end
         else
-            NamedBotMessage(ply, " has increased the bounty of everyone", locname and " in " .. locname or "", " by ", Style.rainbow(amount), " points!")
+            local filter = locid and WhoIsNear(ply, locid) or WhoSeesChat(NULL, true)
+            filter:NamedBotMessage(ply, " has increased the bounty of everyone", locname and " in " .. locname or "", " by ", Style.rainbow(amount), " points!")
             sc.log(ply, " set a bounty on everyone", locname and " in " .. locname or "", " for ", amount, " points")
         end
     end, function()
@@ -146,7 +147,7 @@ RegisterChatCommand({'bountylocation', 'setbountylocation'}, function(ply, arg)
             local players = GetPlayersInLocation(found.Index)
 
             if #players > 0 then
-                TryAddBounty(ply, players, p, found.Name)
+                TryAddBounty(ply, players, p, found.Index, found.Name)
             else
                 ply:ChatPrint("[orange]Nobody's in " .. found.Name .. " right now!")
             end
