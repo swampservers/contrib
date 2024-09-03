@@ -136,6 +136,7 @@ end
 -- seperate because the thing cant update
 function DRAWVOTE()
     if RealTime() > ACTIVEVOTEENDTIME then return end
+    if GetConVar("cinema_hideinterface") and GetConVar("cinema_hideinterface"):GetBool() == true then return end
     local title = ACTIVEVOTETITLE
     local options = ACTIVEVOTEOPTIONS
     surface.SetFont("PlayerOptionVoteFontTitle")
