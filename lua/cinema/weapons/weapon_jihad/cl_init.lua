@@ -6,6 +6,10 @@ SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 killicon.Add("weapon_jihad", "weapons/killicon/weapon_jihad", Color(255, 80, 0))
 
+function SWEP:ShouldDrawViewModel()
+    return false
+end
+
 function SWEP:DrawWorldModel()
     self:SetModelScale(1.6, 0)
     local movedown = 0

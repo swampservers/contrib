@@ -1,4 +1,5 @@
 ﻿AddCSLuaFile()
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Laser Pointer"
 SWEP.Author = "PYROTEKNIK & Brian"
 SWEP.Category = "PYROTEKNIK"
@@ -109,6 +110,8 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
+
     if CLIENT then
         self.HornBG = nil
     end
@@ -118,12 +121,7 @@ function SWEP:Deploy()
     return true
 end
 
-function SWEP:Holster()
-    return true
-end
-
 function SWEP:Reload()
-    return true
 end
 
 hook.Add("KeyPress", "LaserColorPicker", function(ply, key)

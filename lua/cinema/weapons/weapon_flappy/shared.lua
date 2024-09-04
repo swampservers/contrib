@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Flappy Fedora"
 SWEP.Slot = 1
 SWEP.Instructions = "Press jump to tip your fedora!"
@@ -13,12 +14,12 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
+
     if not self.Owner:InTheater() then
         self:EmitSound("mlady.ogg")
     end
-end
 
-function SWEP:Holster()
     return true
 end
 

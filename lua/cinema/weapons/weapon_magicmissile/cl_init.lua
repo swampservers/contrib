@@ -4,6 +4,10 @@ SWEP.Instructions = "Primary: Fire\nVaporizes Kleiners\nSecondary: Play sound"
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 
+function SWEP:ShouldDrawViewModel()
+    return false
+end
+
 function SWEP:DrawHUD()
     draw.SimpleText("Mana: " .. tostring(self:GetNWInt("mana")), "CloseCaption_Bold", ScrW() / 2, ScrH() - 40, Color(255, 255, 255, 255))
 end

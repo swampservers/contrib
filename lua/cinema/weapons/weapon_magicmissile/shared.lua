@@ -1,15 +1,13 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-if SERVER then
-    function SWEP:Deploy()
-        self.Owner:DrawViewModel(false)
-    end
-
-    SWEP.HoldType = "magic"
-end
-
+DEFINE_BASECLASS("weapon_swamp_base")
+SWEP.HoldType = "magic"
 SWEP.PrintName = "Magic Missile"
 SWEP.Slot = 1
 SWEP.WorldModel = ""
+
+function SWEP:ShouldDrawViewModel()
+    return false
+end
 
 function SWEP:PrimaryAttack()
     if SERVER then

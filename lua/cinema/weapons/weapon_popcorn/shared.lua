@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.ViewModel = "models/Teh_Maestro/popcorn.mdl"
 SWEP.WorldModel = "models/Teh_Maestro/popcorn.mdl"
 SWEP.PrintName = "Popcorn"

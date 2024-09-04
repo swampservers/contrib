@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Hamster Ball"
 SWEP.Slot = 4
 SWEP.ViewModel = Model("")
@@ -50,27 +51,12 @@ end
 -- models/hunter/misc/sphere075x075.mdl
 -- models/hunter/misc/sphere1x1.mdl
 -- models/hunter/misc/cone4x2mirrored.mdl
-function SWEP:Deploy()
-    self.IsHolstered = false
-
-    if SERVER then
-        BroadcastLua([[
-            local wep = Entity(]] .. self:EntIndex() .. [[)
-            if IsValid(wep) and wep.Deploy then
-                wep:Deploy()
-            end
-        ]])
-    end
-
-    return true
-end
-
 local vector_hull_mins = Vector(-16, -16, 0)
 local vector_hull_maxs = Vector(16, 16, 72)
 
 function SWEP:Holster()
     if self.IsHolstered then return true end
-    self.IsHolstered = true
+    BaseClass.Holster(self)
 
     if SERVER then
         local owner = self:GetOwner()
@@ -125,13 +111,6 @@ function SWEP:Holster()
         if IsValid(self.Ball) then
             self.Ball:Remove()
         end
-
-        BroadcastLua([[
-            local wep = Entity(]] .. self:EntIndex() .. [[)
-            if IsValid(wep) and wep.Holster then
-                wep:Holster()
-            end
-        ]])
     end
 
     return true

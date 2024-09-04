@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Big Bomb"
 SWEP.Slot = 4
 SWEP.ViewModel = Model("models/dynamite/dynamite.mdl")
@@ -31,5 +32,6 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     self:SendWeaponAnim(ACT_SLAM_THROW_DRAW)
 end

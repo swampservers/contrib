@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Dodgeball"
 SWEP.Slot = 0
 SWEP.ViewModel = "models/pyroteknik/dodgeball.mdl"
@@ -8,7 +9,6 @@ SWEP.Secondary.Automatic = true
 SWEP.Primary.Ammo = "none"
 SWEP.Secondary.Ammo = "none" --you should really leave these in here so that people don't receive pistol ammo when they pick it up
 SWEP.Spawnable = true
-SWEP.Category = "Swamp Cinema" -- TODO: remove these later i just need  this for testing 
 local outie = 64
 local innie = 28
 
@@ -69,14 +69,10 @@ end
 
 function SWEP:PrimaryAttack()
     self:BeginThrow(1400)
-
-    return true
 end
 
 function SWEP:SecondaryAttack()
     self:BeginThrow(600)
-
-    return true
 end
 
 function SWEP:Reload()

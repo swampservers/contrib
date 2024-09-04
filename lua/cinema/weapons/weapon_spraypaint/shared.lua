@@ -4,6 +4,7 @@ RunConsoleCommand("r_decals", tostring(math.max(cvar, 4096)))
 cvar = GetConVar("mp_decals"):GetInt()
 RunConsoleCommand("mp_decals", tostring(math.max(cvar, 4096)))
 --RunConsoleCommand("r_maxmodeldecal","32")
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Spraypaint"
 SWEP.Author = "PYROTEKNIK"
 SWEP.Category = "PYROTEKNIK"
@@ -137,6 +138,8 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
+
     if SERVER then
         self:SendWeaponAnim(ACT_VM_DRAW)
     end
@@ -145,10 +148,6 @@ function SWEP:Deploy()
 end
 
 function SWEP:OnDrop()
-end
-
-function SWEP:Holster()
-    return true
 end
 
 function SWEP:Reload()

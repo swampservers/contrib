@@ -6,6 +6,7 @@ if CLIENT then
     CreateClientConVar("bodypillow_imgur", "", true, true) -- NOTE(winter): Legacy ConVar; just here so we don't wipe out everyone's settings
 end
 
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Body Pillow"
 SWEP.Purpose = "Gives the feeling of companionship"
 SWEP.Instructions = "Left click: boof\nRight click: drop\nReload: customize"
@@ -49,6 +50,7 @@ if SERVER then
     end)
 
     function SWEP:Deploy()
+        BaseClass.Deploy(self)
         local owner = self:GetOwner()
         owner:SetAllowWeaponsInVehicle(true)
         weaponppl[owner] = true

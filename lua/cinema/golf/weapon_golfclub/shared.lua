@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Golf Club"
 SWEP.ViewModel = "models/pyroteknik/putter.mdl"
 SWEP.WorldModel = "models/pyroteknik/putter.mdl"
@@ -127,6 +128,9 @@ function SWEP:Reload()
 end
 
 function SWEP:Holster()
+    if self.IsHolstered then return true end
+    BaseClass.Holster(self)
+
     if SERVER then
         self:CancelShot()
     end

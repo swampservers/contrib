@@ -1,6 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 -- Encyclopedia SWEP by swamponions - STEAM_0:0:38422842
 AddCSLuaFile()
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Nintendo Switch"
 SWEP.Author = "swamponions"
 --They actually do. That's the joke.
@@ -64,12 +65,19 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
+
     if IsValid(self.Owner) then
         self.Owner:SetFlexScale(1.9)
     end
+
+    return true
 end
 
 function SWEP:Holster()
+    if self.IsHolstered then return true end
+    BaseClass.Holster(self)
+
     if IsValid(self.Owner) then
         self.Owner:SetFlexScale(1)
     end

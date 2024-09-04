@@ -4,6 +4,10 @@ SWEP.Instructions = "Primary: Vocal Outburst\nSecondary: Self-Harming\nReload: G
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 
+function SWEP:ShouldDrawViewModel()
+    return false
+end
+
 net.Receive("AutismArm", function()
     local ply = net.ReadEntity()
     if not IsValid(ply) then return end

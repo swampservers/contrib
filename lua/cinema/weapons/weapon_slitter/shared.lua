@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 --Throatneck Slitter by Swamp
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Throatneck Slitter"
 SWEP.Instructions = "Primary: Attack\nSecondary: Taunt"
 SWEP.Spawnable = true
@@ -102,6 +103,8 @@ function SWEP:SetItem(item)
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
+
     -- print("deploy",self, self.Owner)
     if SERVER and not self.AppliedSkin then
         self.AppliedSkin = true

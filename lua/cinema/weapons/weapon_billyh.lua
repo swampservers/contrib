@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "ASS WE CAN"
 SWEP.Slot = 2
 SWEP.ViewModel = ""

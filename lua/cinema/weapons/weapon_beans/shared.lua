@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.Author = "Noz"
 SWEP.Instructions = "Eat while watching Cars 2"
 SWEP.PrintName = "Beans"
@@ -19,7 +20,10 @@ SWEP.Slot = 1
 SWEP.SlotPos = 1
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     self:SetHoldType("slam")
+
+    return true
 end
 
 function SWEP:Reload()

@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Infinity Gauntlet"
 SWEP.Instructions = "*snap*"
 SWEP.Slot = 0
@@ -206,6 +207,7 @@ function SWEP:Reload()
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     self:SetHoldType("fist")
 end
 

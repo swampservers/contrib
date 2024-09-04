@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = true
@@ -329,6 +330,8 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Holster()
+    if self.IsHolstered then return true end
+    BaseClass.Holster(self)
     self:SetInReload(false)
 
     return true
@@ -479,6 +482,7 @@ end
 --     return BaseClass.SetHoldType(self, ht)
 -- end
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     local owner = self:GetOwner()
     -- request gun item so the value overrides get set
     -- self:GetItem()

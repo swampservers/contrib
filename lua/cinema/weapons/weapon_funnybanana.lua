@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Funny Picture of a Banana"
 SWEP.Purpose = "A hilarious picture. Look at it!"
 SWEP.Author = "John J. Callanan"
@@ -168,11 +169,8 @@ if CLIENT then
     end
 end
 
-function SWEP:Holster()
-    return true
-end
-
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     self:SetHoldType("pistol")
 
     return true

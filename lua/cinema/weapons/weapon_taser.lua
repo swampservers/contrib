@@ -1,4 +1,5 @@
-﻿SWEP.PrintName = "Police Taser"
+﻿DEFINE_BASECLASS("weapon_swamp_base")
+SWEP.PrintName = "Police Taser"
 SWEP.Author = "Chev"
 SWEP.Instructions = "Left click: Attach taser tongs to a player.\nRight click: Taser attached player.\nReload: Remove attached tongs."
 SWEP.Category = "Taser"
@@ -208,13 +209,20 @@ function SWEP:RemoveWire(force)
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     self:SetHoldType("revolver")
     self:SendWeaponAnim(ACT_VM_DRAW)
 end
 
 function SWEP:Holster()
+    if self.IsHolstered then return true end
+
     -- if a player is attached, prevent holster
-    return not IsValid(self.AttachedPlayer)
+    if not IsValid(self.AttachedPlayer) then
+        BaseClass.Holster(self)
+    else
+        return false
+    end
 end
 
 -- for !drop, etc.

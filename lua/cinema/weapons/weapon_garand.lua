@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 AddCSLuaFile()
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Garand"
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = false

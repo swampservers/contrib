@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "DEUS VULT"
 SWEP.Slot = 2
 SWEP.ViewModel = ""
@@ -11,8 +12,8 @@ function SWEP:Initialize()
     self:SetHoldType("normal")
 end
 
-function SWEP:Deploy()
-    self.Owner:DrawViewModel(false)
+function SWEP:ShouldDrawViewModel()
+    return false
 end
 
 function SWEP:PrimaryAttack()

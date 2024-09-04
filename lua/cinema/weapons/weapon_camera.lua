@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 AddCSLuaFile()
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.ViewModel = Model("models/weapons/c_arms_animations.mdl")
 SWEP.WorldModel = Model("models/MaxOfS2D/camera.mdl")
 SWEP.Primary.ClipSize = -1
@@ -77,10 +78,6 @@ end
 
 function SWEP:TranslateFOV(current_fov)
     return self:GetZoom()
-end
-
-function SWEP:Deploy()
-    return true
 end
 
 function SWEP:Equip()

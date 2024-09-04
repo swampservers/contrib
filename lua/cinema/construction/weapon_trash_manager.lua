@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-SWEP.PrintName = "Manager"
+DEFINE_BASECLASS("weapon_swamp_base")
+SWEP.PrintName = "Trash Manager"
 SWEP.DrawAmmo = false
 SWEP.ViewModelFOV = 85
 SWEP.Slot = 5
@@ -368,7 +369,6 @@ end
 local LastReloadTime = 0
 
 function SWEP:Reload()
-    return false
 end
 
 function SWEP:DrawHUD()

@@ -2,6 +2,7 @@
 -- weapon_vape/shared.lua
 -- Defines common shared code/defaults for Vape SWEP
 -- Vape SWEP by Swamp Onions - https://steamcommunity.com/id/swamponions/
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.Author = "Swamp Onions"
 SWEP.Instructions = "LMB: Rip Fat Clouds\n (Hold and release)\nRMB & Reload: Play Sounds\n\nVape Nation!"
 SWEP.PrintName = "Vape"
@@ -29,7 +30,10 @@ SWEP.VapeID = 1
 SWEP.DrawCrosshair = false
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     self:SetHoldType("slam")
+
+    return true
 end
 
 function SWEP:PrimaryAttack()
@@ -68,6 +72,9 @@ function SWEP:Reload()
 end
 
 function SWEP:Holster()
+    if self.IsHolstered then return true end
+    BaseClass.Holster(self)
+
     if SERVER and IsValid(self.Owner) then
         ReleaseVape(self.Owner)
     end

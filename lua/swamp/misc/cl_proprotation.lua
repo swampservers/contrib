@@ -1,8 +1,17 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 local function should_tape_on_click()
-    local w = Me and Me:GetActiveWeapon()
-    -- print(1)
-    if IsValid(w) and w:GetClass():StartWith("weapon_trash") then return PropTrashLookedAt == HandledEntity and CanTapeWhileHandling(HandledEntity) end -- print(2) -- print(PropTrashLookedAt==HandledEntity, CanTapeWhileHandling(HandledEntity))
+    if not IsValid(Me) then return false end
+    local trashwep = nil
+
+    for _, wep in ipairs(Me:GetWeapons()) do
+        if wep:GetClass():find("weapon_trash") then
+            trashwep = wep
+            break
+        end
+    end
+
+    if IsValid(trashwep) then return PropTrashLookedAt == HandledEntity and CanTapeWhileHandling(HandledEntity) end
+    -- print(PropTrashLookedAt==HandledEntity, CanTapeWhileHandling(HandledEntity))
 end
 
 hook.Add("CreateMove", "RotateHeldEnts1", function(cmd)

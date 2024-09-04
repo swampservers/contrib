@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-SWEP.PrintName = "PaintBucket"
+DEFINE_BASECLASS("weapon_swamp_base")
+SWEP.PrintName = "Paint Bucket"
 SWEP.DrawAmmo = false
 SWEP.ViewModelFOV = 85
 SWEP.Slot = 5

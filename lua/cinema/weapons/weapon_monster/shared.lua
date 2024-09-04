@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Monster Zero"
 SWEP.Author = "Noz"
 SWEP.Instructions = "Left click for a sip. Right click for a boomer phrase."

@@ -6,7 +6,7 @@ ENT.CanChangeTrashOwner = false
 
 -- AddTrashClass("prop_trash_pillow", "models/swamponions/bodypillow.mdl")
 function ENT:Think()
-    self.BaseClass.Think(self)
+    BaseClass.Think(self)
 
     if self:WaterLevel() > 0 then
         self:SetNWBool("Hard", true)
@@ -17,7 +17,7 @@ function ENT:OnTakeDamage(dmg)
     if dmg:GetDamageType() == DMG_ACID then
         self:SetNWBool("Hard", true)
     else
-        self.BaseClass.OnTakeDamage(self, dmg)
+        BaseClass.OnTakeDamage(self, dmg)
     end
 end
 
@@ -62,7 +62,7 @@ function ENT:Use(ply)
 end
 
 function ENT:Tape()
-    self.BaseClass.Tape(self)
+    BaseClass.Tape(self)
 end
 
 function ENT:Draw()

@@ -1,7 +1,7 @@
 ﻿------------------------------// General Settings \\------------------------------------------------------------|
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.Author = "PYROTEKNIK / Horatio" -- Your name.
 SWEP.Contact = "" -- How People could contact you.
-SWEP.base = "weapon_base" -- What base should the swep be based on.
 SWEP.ViewModel = "models/aoc_weapon/v_longsword.mdl" -- The viewModel, the model you see when you are holding it.
 SWEP.WorldModel = "models/aoc_weapon/w_longsword.mdl" -- The world model, The model you when it's down on the ground.
 SWEP.HoldType = "melee2" -- How the swep is hold Pistol smg grenade melee.
@@ -185,7 +185,7 @@ end
 
 --------------
 function SWEP:Deploy()
-    self.Owner:DrawViewModel(true)
+    BaseClass.Deploy(self)
     self:SetHoldType(self.HoldType)
     self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
 end

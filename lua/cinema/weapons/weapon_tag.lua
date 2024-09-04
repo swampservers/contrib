@@ -1,5 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 AddCSLuaFile()
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Tag"
 SWEP.Author = "Ugleh"
 SWEP.Purpose = "Tag someone within 30 seconds or you will die."
@@ -53,6 +54,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
+    BaseClass.Deploy(self)
     self:SetHoldType("fist")
     local vm = self.Owner:GetViewModel()
     vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_draw"))

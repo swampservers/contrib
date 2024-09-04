@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.Instructions = "For all your MLG needs"
 SWEP.PrintName = "Airhorn"
 SWEP.IconLetter = "V"
@@ -15,11 +16,12 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawAmmo = false
-SWEP.HoldType = "Slam"
+SWEP.HoldType = "slam"
 SWEP.Category = "Airhorn"
 
 function SWEP:Deploy()
-    self:SetHoldType("Slam")
+    BaseClass.Deploy(self)
+    self:SetHoldType(self.HoldType)
 end
 
 function SWEP:PrimaryAttack()
@@ -80,6 +82,8 @@ function SWEP:Think()
 end
 
 function SWEP:Holster()
+    if self.IsHolstered then return true end
+    BaseClass.Holster(self)
     self.Weapon:StopSound("airhorn/mlg.ogg")
 
     return true

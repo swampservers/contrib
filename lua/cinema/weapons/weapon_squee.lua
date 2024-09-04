@@ -1,4 +1,5 @@
-﻿SWEP.PrintName = "Squee"
+﻿DEFINE_BASECLASS("weapon_swamp_base")
+SWEP.PrintName = "Squee"
 SWEP.Slot = 2
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
