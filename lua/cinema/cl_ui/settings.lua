@@ -120,7 +120,7 @@ vgui.Register("ScoreboardSettings", {
         addCheckbox('Hide sprays', "spraymesh_disable", "May help performance")
         --addCheckbox('Don\'t load chat images',"fedorachat_hideimg","Hides all images in chat")
         addCheckbox('Hide interface', "cinema_hideinterface", "Clean Your Screen")
-        addCheckbox('Hide players in theater', "cinema_hideplayers", 'For when trolls stand in front of your screen')
+        addCheckbox('Hide players in theater/casino', "cinema_hideplayers", 'For when trolls stand in front of your screen')
         -- addLabel('Adult content (18+)')
         addCheckbox('Adult videos & sprays (F6)', "swamp_mature_content", 'Show potentially mature videos & sprays')
 

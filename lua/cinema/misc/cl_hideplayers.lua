@@ -15,7 +15,7 @@ hook.Add("PrePlayerDraw", "HidePlayers", function(ply)
             transhide = true
         end
 
-        if Me:InTheater() and cvar:GetBool() then
+        if cvar:GetBool() and (Me:InTheater() or Me:GetLocationName() == "Trump Tower Casino") then
             transhide = true
         end
 
