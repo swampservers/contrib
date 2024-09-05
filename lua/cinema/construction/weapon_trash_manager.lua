@@ -190,6 +190,7 @@ but you need a nearby theater/field to respawn them.]])
                     end
 
                     local buildname = r:GetColumnText(1)
+                    p.SelectedBuildName = buildname
                     net.Start("TrashBuilds")
                     net.WriteUInt(TRASHBUILD_DOWNLOAD, TRASHBUILD_BITS)
                     net.WriteString(buildname)
@@ -197,6 +198,12 @@ but you need a nearby theater/field to respawn them.]])
                 end
 
                 function p:LoadPreview(buildname)
+                    if p.SelectedBuildName ~= buildname then return end
+
+                    if IsValid(TRASHMANAGERFILEBUTTONS) then
+                        TRASHMANAGERFILEBUTTONS:Remove()
+                    end
+
                     local props = table.RealDeepCopy(TrashBuilds[buildname]) -- Needed so we don't wipe out networked data from the checks below
                     props = props.props or props
                     local items = {}

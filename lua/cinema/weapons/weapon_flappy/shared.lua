@@ -8,6 +8,7 @@ SWEP.DrawCrosshair = false
 SWEP.ViewModelFOV = 85
 SWEP.WorldModel = "models/fedora_rainbowdash/fedora_rainbowdash.mdl"
 SWEP.ViewModel = "models/fedora_rainbowdash/fedora_rainbowdash.mdl"
+SWEP.NoHolsterOnPhysicsPickup = true
 
 function SWEP:Initialize()
     self:SetHoldType("normal")
