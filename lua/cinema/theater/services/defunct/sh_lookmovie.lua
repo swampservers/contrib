@@ -206,7 +206,7 @@ if CLIENT then
                             vpanel.AddressBar.OnEnter = function() end
                             vpanel.BackButton.DoClick = function() end
                             vpanel.ForwardButton.DoClick = function() end
-                            vpanel.RefreshButton.DoClick = function() end
+                            vpanel.RefreshStopButton.DoClick = function() end
                             vpanel.HomeButton.DoClick = function() end
                             vpanel.Browser:OpenURL(key)
                             vpanel.Text = vgui.Create('DButton', vpanel.BrowserContainer) --easier than a panel and label

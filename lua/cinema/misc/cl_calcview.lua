@@ -134,7 +134,7 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
 
         trace = util.TraceHull(trace)
 
-        if trace.Hit then
+        if trace.Hit and not trace.AllSolid then
             view.origin = origin - (offset * trace.Fraction)
         else
             view.origin = origin - offset
