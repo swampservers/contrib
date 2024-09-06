@@ -98,6 +98,11 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
         origin = hamsterball:WorldSpaceCenter() + Vector(0, 0, 8)
     end
 
+    -- Help ponies see what the hell they're doing
+    if ply:IsPony() and ply:GetLocationName() == "Trump Tower Casino" then
+        origin = origin + Vector(0, 0, 16)
+    end
+
     local view = {
         origin = origin,
         angles = angles,
