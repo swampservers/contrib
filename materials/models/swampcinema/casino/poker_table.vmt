@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/swampcinema/casino/poker_table"
+	"$normalmap" "models/swampcinema/casino/poker_table_n"
+}
