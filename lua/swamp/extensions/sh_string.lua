@@ -32,3 +32,7 @@ function string.reduce(str, font, width)
 
     return str
 end
+
+function string.Pluralize(noun, num, capitalize)
+    return num == 1 and noun or noun .. (capitalize and "S" or "s")
+end
