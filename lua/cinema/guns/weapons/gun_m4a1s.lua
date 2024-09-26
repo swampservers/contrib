@@ -19,9 +19,9 @@ SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 30
 SWEP.Primary.Automatic = true
 -- headshot only at point blank
-SWEP.Damage = 26.8 --33.6
+SWEP.Damage = 25.1 --33.6
 SWEP.CycleTime = 0.0900
-SWEP.HalfDamageDistance = 16384 * 0.66
+SWEP.HalfDamageDistance = 8192 * 0.9 --16384 * 0.66
 --
 SWEP.SpreadBase = 0.004
 SWEP.SpreadMove = 0.06
@@ -38,7 +38,7 @@ SWEP.KickUBase = 0.2
 SWEP.KickUSpray = 2.5
 SWEP.KickLBase = 0.05
 SWEP.KickLSpray = 0.3
-SWEP.MoveSpeed = 230 / 250
+SWEP.MoveSpeed = 225 / 250
 
 function SWEP:TranslateViewModelActivity(act)
     return ({

@@ -22,9 +22,9 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_BUCKSHOT"
 SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 8
 SWEP.Primary.Automatic = false
-SWEP.Damage = 12
+SWEP.Damage = 11
 SWEP.CycleTime = 0.57
-SWEP.HalfDamageDistance = 768 --1024
+SWEP.HalfDamageDistance = 1024 * 0.88
 --
 SWEP.SpreadBase = 0.006
 SWEP.SpreadMove = 0.02
@@ -32,7 +32,7 @@ SWEP.Spray = 0.12
 SWEP.SprayExponent = 2
 
 ComputeSpray(SWEP, {
-    TapFireInterval = 0.9,
+    TapFireInterval = 1,
     ShotsTo90Spray = 5
 })
 
@@ -44,7 +44,7 @@ SWEP.KickUBase = 2.5
 SWEP.KickUSpray = 1.5
 SWEP.KickLBase = 0.2
 SWEP.KickLSpray = 0.3
-SWEP.MoveSpeed = 230 / 250
+SWEP.MoveSpeed = 225 / 250
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"220"

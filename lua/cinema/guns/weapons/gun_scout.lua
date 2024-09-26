@@ -18,7 +18,7 @@ SWEP.Primary.Ammo = "BULLET_PLAYER_762MM"
 SWEP.Primary.ClipSize = 10
 SWEP.Primary.DefaultClip = 10
 SWEP.Primary.Automatic = false
-SWEP.Damage = 80
+SWEP.Damage = 74
 SWEP.CycleTime = 1.2500
 SWEP.HalfDamageDistance = 32768
 --
@@ -46,8 +46,8 @@ SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
-SWEP.SpawnPriceMod = 0.7
-SWEP.AmmoPriceMod = 0.6
+SWEP.SpawnPriceMod = 0.77 -- (74 / 1.25) / (115 / 1.5)
+SWEP.AmmoPriceMod = 0.5
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"260"
