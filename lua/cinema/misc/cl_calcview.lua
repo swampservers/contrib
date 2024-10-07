@@ -99,10 +99,12 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
     end
 
     -- Help ponies see what the hell they're doing
+    -- TODO(winter): Fix 3D cursor stuff being broken by this, and other issues
+    --[[
     if ply:IsPony() and ply:GetLocationName() == "Trump Tower Casino" then
         origin = origin + Vector(0, 0, 16)
     end
-
+    ]]
     local view = {
         origin = origin,
         angles = angles,

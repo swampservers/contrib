@@ -16,8 +16,9 @@ end
 
 function SWEP:Deploy()
     BaseClass.Deploy(self)
+    local owner = self:GetOwner()
 
-    if not self.Owner:InTheater() then
+    if IsValid(owner) and not owner:InTheater() then
         self:EmitSound("mlady.ogg")
     end
 
@@ -69,7 +70,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-    if self.Owner:KeyPressed(IN_RELOAD) then
+    if self:GetOwner():KeyPressed(IN_RELOAD) then
         self:ExtEmitSound("friendzoned.ogg", {
             speech = 0.85,
             shared = true
