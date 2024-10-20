@@ -28,7 +28,6 @@ function SWEP:Deploy()
 
     if IsValid(owner) then
         self:ExtEmitSound("boomer/crack_open.wav", {
-            speech = 0.85,
             shared = true
         })
     end
@@ -54,7 +53,6 @@ end
 function SWEP:Reload()
     if self:GetOwner():KeyPressed(IN_RELOAD) then
         self:ExtEmitSound("boomer/crack_open.wav", {
-            speech = 0.85,
             shared = true
         })
     end
