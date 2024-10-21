@@ -23,9 +23,8 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
-    self:ExtEmitSound("boomer/crack_open.wav", {
-        shared = true
-    })
+    BaseClass.Deploy(self)
+    self:EmitSound("boomer/crack_open.wav")
     return true
 end
 
@@ -45,11 +44,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-    if self:GetOwner():KeyPressed(IN_RELOAD) then
-        self:ExtEmitSound("boomer/crack_open.wav", {
-            shared = true
-        })
-    end
+    self:EmitSound("boomer/crack_open.wav")
 end
 
 SWEP.OnDrop = SWEP.Holster
