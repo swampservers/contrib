@@ -23,15 +23,9 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
-    BaseClass.Deploy(self)
-    local owner = self:GetOwner()
-
-    if IsValid(owner) then
-        self:ExtEmitSound("boomer/crack_open.wav", {
-            shared = true
-        })
-    end
-
+    self:ExtEmitSound("boomer/crack_open.wav", {
+        shared = true
+    })
     return true
 end
 
