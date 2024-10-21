@@ -23,7 +23,6 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
-    BaseClass.Deploy(self)
     self:EmitSound("boomer/crack_open.wav")
     return true
 end
