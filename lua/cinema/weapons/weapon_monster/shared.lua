@@ -2,7 +2,7 @@
 DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Monster Zero"
 SWEP.Author = "Noz"
-SWEP.Instructions = "Left click for a sip. Right click for a boomer phrase."
+SWEP.Instructions = "Left click for a sip. Right click for a boomer phrase. Reload to crack open another."
 SWEP.Slot = 2
 SWEP.SlotPos = 2
 SWEP.Primary.ClipSize = -1
@@ -22,6 +22,13 @@ function SWEP:Initialize()
     self:SetHoldType("slam")
 end
 
+function SWEP:Deploy()
+    self:ExtEmitSound("boomer/crack_open.wav", {
+        shared = true
+    })
+    return true
+end
+
 function SWEP:PrimaryAttack()
     if SERVER then
         MonsterUpdate(self.Owner)
@@ -35,6 +42,14 @@ function SWEP:SecondaryAttack()
         shared = true,
         speech = 1.8
     })
+end
+
+function SWEP:Reload()
+    if self:GetOwner():KeyPressed(IN_RELOAD) then
+        self:ExtEmitSound("boomer/crack_open.wav", {
+            shared = true
+        })
+    end
 end
 
 SWEP.OnDrop = SWEP.Holster
