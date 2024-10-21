@@ -20,6 +20,9 @@ SWEP.WorldModel = "models/noz/monsterzero.mdl"
 
 function SWEP:Initialize()
     self:SetHoldType("slam")
+
+    -- TODO why does EmitSound work but not ExtEmitSound?
+    self:EmitSound("boomer/crack_open.wav")
 end
 
 function SWEP:Deploy()
