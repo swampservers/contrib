@@ -17,7 +17,8 @@ local allowed = {
     ["STEAM_0:1:33536503"] = true, -- medroit
     ["STEAM_0:0:16678862"] = true, -- legacy
     ["STEAM_0:0:183303619"] = true, -- pura
-    ["STEAM_0:0:40298592"] = true -- royal
+    ["STEAM_0:0:40298592"] = true, -- royal
+    ["STEAM_0:0:24559428"] = true, -- narshal
     
 }
 
@@ -202,7 +203,7 @@ concommand.Add("dev", function()
     end
 end, nil, "Toggle dev mode, editing in addons/contrib", FCVAR_UNREGISTERED)
 
--- force refresh a singular file 
+-- force refresh a singular file
 concommand.Add("dev_refresh", function(_, _, args)
     local filePath = args[1]
     if not DEVTOOLS_ENABLED or not filePath then return end
