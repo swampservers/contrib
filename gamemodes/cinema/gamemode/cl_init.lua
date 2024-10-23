@@ -1,5 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-GM.Name = "Swamp Cinema"
+GM.Name = "Cinema" --"Swamp Cinema"
 GM.Author = "Swamp (STEAM_0:0:38422842)"
 GM.Email = "swampservers@gmail.com"
 GM.Website = "swamp.sv"
