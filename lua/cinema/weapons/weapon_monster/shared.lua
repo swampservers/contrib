@@ -2,7 +2,7 @@
 DEFINE_BASECLASS("weapon_swamp_base")
 SWEP.PrintName = "Monster Zero"
 SWEP.Author = "Noz"
-SWEP.Instructions = "Left click for a sip. Right click for a boomer phrase."
+SWEP.Instructions = "Left click for a sip. Right click for a boomer phrase. Reload to crack open another."
 SWEP.Slot = 2
 SWEP.SlotPos = 2
 SWEP.Primary.ClipSize = -1
@@ -20,6 +20,14 @@ SWEP.WorldModel = "models/noz/monsterzero.mdl"
 
 function SWEP:Initialize()
     self:SetHoldType("slam")
+
+    -- TODO why does EmitSound work but not ExtEmitSound?
+    self:EmitSound("boomer/crack_open.wav")
+end
+
+function SWEP:Deploy()
+    self:EmitSound("boomer/crack_open.wav")
+    return true
 end
 
 function SWEP:PrimaryAttack()
@@ -35,6 +43,10 @@ function SWEP:SecondaryAttack()
         shared = true,
         speech = 1.8
     })
+end
+
+function SWEP:Reload()
+    self:EmitSound("boomer/crack_open.wav")
 end
 
 SWEP.OnDrop = SWEP.Holster
