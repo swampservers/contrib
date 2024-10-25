@@ -21,12 +21,15 @@ SWEP.WorldModel = "models/noz/monsterzero.mdl"
 function SWEP:Initialize()
     self:SetHoldType("slam")
 
-    -- TODO why does EmitSound work but not ExtEmitSound?
-    self:EmitSound("boomer/crack_open.wav")
+    self:ExtEmitSound("boomer/crack_open.wav", {
+        shared = true,
+    })
 end
 
 function SWEP:Deploy()
-    self:EmitSound("boomer/crack_open.wav")
+    self:ExtEmitSound("boomer/crack_open.wav", {
+        shared = true,
+    })
     return true
 end
 
@@ -46,7 +49,9 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-    self:EmitSound("boomer/crack_open.wav")
+    self:ExtEmitSound("boomer/crack_open.wav", {
+        shared = true,
+    })
 end
 
 SWEP.OnDrop = SWEP.Holster
