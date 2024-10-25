@@ -211,7 +211,7 @@ function vape_do_particle(particle, vel, fx)
     local mega = 1
 
     if fx == 2 then
-        mega = 4
+        mega = 3
     end
 
     particle:SetVelocity(vel * mega * (fx == 6 and 2 or 1))
