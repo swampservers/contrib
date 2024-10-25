@@ -30,6 +30,7 @@ function SWEP:Deploy()
     self:ExtEmitSound("boomer/crack_open.wav", {
         shared = true,
     })
+
     return true
 end
 
