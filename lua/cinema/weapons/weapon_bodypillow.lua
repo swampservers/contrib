@@ -29,7 +29,6 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
-
 SWEP.AllowInVehicle = true
 
 if SERVER then
