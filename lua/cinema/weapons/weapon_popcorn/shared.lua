@@ -15,6 +15,35 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
+-- SWEP.AllowInVehicle=true
+
+-- if SERVER then
+--     local weaponppl = {}
+
+--     hook.Add("Tick", "DisallowWeaponsInVehicle2", function()
+--         local nxt = {}
+
+--         for owner, v in pairs(weaponppl) do
+--             if IsValid(owner) then
+--                 if IsValid(owner:GetActiveWeapon()) and owner:GetActiveWeapon().AllowInVehicle then
+--                     nxt[owner] = true
+--                 else
+--                     owner:SetAllowWeaponsInVehicle(false)
+--                 end
+--             end
+--         end
+
+--         weaponppl = nxt
+--     end)
+
+--     function SWEP:Deploy()
+--         BaseClass.Deploy(self)
+--         local owner = self:GetOwner()
+--         owner:SetAllowWeaponsInVehicle(true)
+--         weaponppl[owner] = true
+--     end
+-- end
+
 function SWEP:Initialize()
     self:SetHoldType("slam")
     self:SetModelScale(0.9)

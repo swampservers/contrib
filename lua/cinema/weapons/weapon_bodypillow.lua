@@ -30,6 +30,8 @@ SWEP.Secondary.Damage = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
+SWEP.AllowInVehicle = true
+
 if SERVER then
     local weaponppl = {}
 
@@ -38,7 +40,7 @@ if SERVER then
 
         for owner, v in pairs(weaponppl) do
             if IsValid(owner) then
-                if IsValid(owner:GetActiveWeapon()) and owner:GetActiveWeapon():GetClass() == "weapon_bodypillow" then
+                if IsValid(owner:GetActiveWeapon()) and owner:GetActiveWeapon().AllowInVehicle then
                     nxt[owner] = true
                 else
                     owner:SetAllowWeaponsInVehicle(false)
