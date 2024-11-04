@@ -165,7 +165,6 @@ AddTitle({
 }, 'Wear a "Make America Great Again" hat', "s_trumphat")
 
 -- there should be a title for unlocking a lot of titles that shows the actual number
-
 AddTitle({
     {3600, "Extrovert", 1000},
     {36000, "Audiophile", 10000},
