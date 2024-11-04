@@ -161,11 +161,17 @@ AddTitle({
 }, "Dance (say /dance) on the steps near the Joker statue", "s_jokerdance")
 
 AddTitle({
+    {1, "Trump Supporter", 2024}
+}, 'Wear a "Make America Great Again" hat', "s_trumphat")
+
+-- there should be a title for unlocking a lot of titles that shows the actual number
+
+AddTitle({
     {3600, "Extrovert", 1000},
     {36000, "Audiophile", 10000},
     {180000, "Radio Host", 50000},
     {720000, "Swamp DJ", 200000},
-}, "Speak on voice chat for %s seconds.", "s_sec_speaking")
+}, "Speak on voice chat for %s seconds", "s_sec_speaking")
 
 AddTitle({
     {1800, "Squatter", 5000},
@@ -175,7 +181,7 @@ AddTitle({
     {3600 * 100, "Squatting Slav", 100000},
     {"s_sec_crouching_place3", "KGB Agent", 0},
     {"s_sec_crouching_place1", "Grand Tzar", 0},
-}, "Crouch for %s seconds.", "s_sec_crouching")
+}, "Crouch for %s seconds", "s_sec_crouching")
 
 TitleCategory("Fun")
 
