@@ -77,7 +77,7 @@ local vapesignmaterial = Material("models/vapor/sign/sign_green")
 local computerscreenmaterial = Material("models/unconid/pc_models/c64/screen_c64_ll")
 
 timer.Simple(0, function()
-    flagmaterial:SetTexture("$basetexture", "models/props_fairgrounds/fairgrounds_flagpole01_alternate")
+    --flagmaterial:SetTexture("$basetexture", "models/props_fairgrounds/fairgrounds_flagpole01_alternate")
 
     vapermaterial:SetMatrix("$basetexturetransform", Matrix({
         {1, 0, 0, 0},
