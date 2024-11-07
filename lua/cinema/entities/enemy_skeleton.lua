@@ -197,7 +197,7 @@ function ENT:Initialize()
         if math.random(1, hour >= 0 and hour < 3 and 50 or 100) == 1 then
             self:SetHealth(200)
             self.KillReward = 10000
-            self.AttackDamageOverride = 10
+            self.AttackDamageOverride = 50
             self:SetColor(Color(32, 32, 32))
         end
 
@@ -334,7 +334,7 @@ function ENT:DoSlapAttack()
 
     if trace.Hit and trace.Entity:Health() > 0 then
         local d = DamageInfo()
-        d:SetDamage(self.AttackDamageOverride or math.random(1, 2))
+        d:SetDamage(self.AttackDamageOverride or math.random(1, 10))
         d:SetAttacker(self)
         d:SetInflictor(self)
         d:SetDamageType(DMG_SLASH)
