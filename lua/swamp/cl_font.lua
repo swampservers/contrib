@@ -127,6 +127,18 @@ function GetTextHeight(font)
     return h
 end
 
+-- Filename casing matters
+local linux = system.IsLinux()
+
+local linux_fontnames = {
+    ["CircularStd-Bold"] = "CircularStd-Bold.ttf",
+    ["CircularStd-Book"] = "CircularStd-Book.ttf",
+    ["CircularStd-Medium"] = "CircularStd-Medium.ttf",
+    --["Marlett"] = "", -- TODO(winter): This is a Windows-only font that we can't redistribute!
+    ["Righteous"] = "righteous-regular.ttf",
+    ["Roboto"] = "Roboto-Regular.ttf",
+}
+
 -- TODO: add bold and the other shit. parse kvs?
 local function parse_settings(setting_str)
     local stuff = ("_"):Explode(setting_str)
@@ -156,7 +168,7 @@ local function parse_settings(setting_str)
 
     -- aliases
     if settings.font == "sans" then
-        -- settings.font = "Swampkarta SemiBold" 
+        -- settings.font = "Swampkarta SemiBold"
         -- settings.weight = 600
         settings.font = "CircularStd-Book"
     end
@@ -167,6 +179,16 @@ local function parse_settings(setting_str)
 
     if settings.font == "sansbold" then
         settings.font = "CircularStd-Bold"
+    end
+
+    if linux then
+        local linux_fontname = linux_fontnames[settings.font]
+
+        if linux_fontname then
+            settings.font = linux_fontname
+        elseif not string.EndsWith(settings.font, ".ttf") then
+            ErrorNoHalt("[Linux] Missing translated font name: " .. settings.font .. "\n")
+        end
     end
 
     return settings
