@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 ENT.Type = "anim"
-DEFINE_BASECLASS("base_gmodentity")
+DEFINE_BASECLASS("base_anim")
 ENT.Model = Model("models/props_halloween/jackolantern_01.mdl")
 local ti = os.date("%B", os.time())
 if ti ~= "October" then return end --Check if the month is October so this entity doesn't have to be enabled/disabled manually

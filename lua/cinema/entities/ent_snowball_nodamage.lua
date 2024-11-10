@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 AddCSLuaFile()
 ENT.Type = "anim"
-DEFINE_BASECLASS("base_gmodentity")
+DEFINE_BASECLASS("base_anim")
 ENT.Model = Model("models/weapons/w_snowball_thrown.mdl")
 local hitsnd = Sound("weapons/weapon_snowball/snowhit.ogg")
 

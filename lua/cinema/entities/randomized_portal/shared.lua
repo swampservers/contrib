@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 ENT.Type = "anim"
-DEFINE_BASECLASS("base_gmodentity")
+DEFINE_BASECLASS("base_anim")
 ENT.Model = Model("models/swamponions/teleportal.mdl")
 
 -- TODO: some sort of color lerp, maybe portal particles when the player teleports

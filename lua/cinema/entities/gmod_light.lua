@@ -1,6 +1,6 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 AddCSLuaFile()
-DEFINE_BASECLASS("base_gmodentity")
+DEFINE_BASECLASS("base_anim")
 ENT.RenderGroup = RENDERGROUP_BOTH
 local matLight = Material("sprites/light_ignorez")
 local MODEL = Model("models/MaxOfS2D/light_tubular.mdl")

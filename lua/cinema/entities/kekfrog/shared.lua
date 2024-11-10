@@ -1,7 +1,7 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
 ENT.Type = "anim"
 ENT.Model = Model("models/swamponions/kekfrog_small.mdl")
-DEFINE_BASECLASS("base_gmodentity")
+DEFINE_BASECLASS("base_anim")
 
 function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "CollectPoints")
