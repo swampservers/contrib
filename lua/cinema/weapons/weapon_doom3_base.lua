@@ -37,6 +37,7 @@ else
     })
 end
 
+-- TODO(winter): Use weapon_swamp_base like everything else
 SWEP.Author = "Upset"
 SWEP.Category = "DOOM 3"
 SWEP.Primary.Recoil = 1

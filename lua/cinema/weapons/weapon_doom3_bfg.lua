@@ -1,4 +1,5 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
+-- TODO(winter): Use weapon_swamp_base like everything else
 if CLIENT then
     SWEP.PrintName = "BFG9K"
     SWEP.Author = "Upset"
