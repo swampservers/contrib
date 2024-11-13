@@ -197,7 +197,7 @@ function ENT:Initialize()
         if math.random(1, hour >= 0 and hour < 3 and 50 or 100) == 1 then
             self:SetHealth(200)
             self.KillReward = 10000
-            self.AttackDamageOverride = 50
+            self.AttackDamageOverride = 40
             self:SetColor(Color(32, 32, 32))
         end
 
