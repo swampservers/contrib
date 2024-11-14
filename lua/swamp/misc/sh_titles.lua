@@ -276,6 +276,12 @@ AddTitle({
     reward_id = "skeletonkill"
 })
 
+AddTitle({
+    {10, "Dogecoin Investor", 9000},
+    {100, "Cybertruck Owner", 10000},
+    {1000, "Ketamine Enthusiast", 11000},
+}, "To help Elon Musk overthrow Twitter, occupy the office and place at least %s props", "s_twitterbase")
+
 TitleCategory("Weapons")
 
 -- Jihadi, Fundamentalist, Islamist, Insurrectionist, Extremist, Fanatic
