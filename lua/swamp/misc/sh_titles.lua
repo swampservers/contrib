@@ -78,11 +78,7 @@ function AddTitle(thresholds, description, nwp_vars, args)
     end
 
     local function num(p)
-        if not isnumber(p) then
-            p = p and 1 or 0
-        end
-
-        return p
+        return isnumber(p) and p or (p and 1 or 0)
     end
 
     local progress_fn = args.progress_fn or function(ply)
