@@ -235,7 +235,7 @@ LocationTheaterInfo = {
     },
 }
 
--- NOTE(winter): We're moving stuff around a little bit here. It goes Theaters, then MobileTheaters, then The Underworld, then all normal Locations
+-- NOTE(winter): We're moving stuff around a little bit here. It goes Theaters, then TRASHLOC_NOBUILD locations, then MobileTheaters, then The Underworld, then all normal Locations
 -- This is so MobileTheaters will always work, except when intersecting map theater locations (priority order)
 local lastTheaterLocID = 1
 local underworldLocID = nil
@@ -243,8 +243,9 @@ local underworldLocID = nil
 for locID = 1, #Locations do
     local locInfo = Locations[locID]
     local locTheaterInfo = LocationTheaterInfo[locInfo.Name]
+    local locTrashOverride = TrashLocationOverrides[locInfo.Name]
 
-    if locTheaterInfo then
+    if locTheaterInfo or locTrashOverride == TRASHLOC_NOBUILD then
         locInfo.Theater = locTheaterInfo
         table.remove(Locations, locID)
         table.insert(Locations, lastTheaterLocID, locInfo)

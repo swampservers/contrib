@@ -126,6 +126,16 @@ function GetMapPropTable()
             pos = Vector(-2400 + math.random(-arcadeyposrnd, arcadeyposrnd), -280 + math.random(-arcadexposrnd, arcadexposrnd), 480),
             ang = Angle(0, 90 + math.random(-arcadeanglernd, arcadeanglernd), 0)
         },
+        {
+            class = "texasholdem",
+            pos = Vector(-2200 + math.random(-arcadeyposrnd, arcadeyposrnd), 50 + math.random(-arcadexposrnd, arcadexposrnd), 0),
+            ang = Angle(0, 270 + math.random(-arcadeanglernd, arcadeanglernd), 0)
+        },
+        {
+            class = "texasholdem",
+            pos = Vector(-2400 + math.random(-arcadeyposrnd, arcadeyposrnd), 50 + math.random(-arcadexposrnd, arcadexposrnd), 0),
+            ang = Angle(0, 270 + math.random(-arcadeanglernd, arcadeanglernd), 0)
+        },
     }
 
     --IN VAPOR LOUNGE

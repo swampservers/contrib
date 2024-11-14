@@ -2,7 +2,7 @@
 if CLIENT then
     local notifications = {}
 
-    net.Receive('Notify', function(length)
+    net.Receive("Notify", function(length)
         Notify(net.ReadString())
     end)
 
@@ -19,22 +19,22 @@ if CLIENT then
 
     hook.Add("HUDDrawScoreBoard", "HUDPaint_PSNotification", function()
         local t = SysTime()
-        local i = 1
+        local ft = FrameTime()
+        local scrw = ScrW()
+        local scrh = ScrH()
+        surface.SetFont("ChatFont")
 
-        while i <= #notifications do
-            local v = notifications[i]
+        for i, v in ipairs(notifications) do
             v.time = v.time or t
-            local dt = SysTime() - v.time
+            local dt = t - v.time
             -- pos converges to i
             -- TODO: make fps independent
-            v.pos = math.min(i, v.pos + FrameTime() + (i - v.pos) * 0.05)
+            v.pos = math.min(i, v.pos + ft + (i - v.pos) * 0.05)
             local a = math.Clamp(math.min(dt * 4, 5 - dt), 0, 1) - v.pos ^ 2 * 0.01
 
             if a > 0 then
-                surface.SetFont("ChatFont")
                 local w, h = surface.GetTextSize(v.txt)
-                draw.WordBox(6, ScrW() / 2, (ScrH() - 20) - (v.pos - 1) * (h + 16), v.txt, "ChatFont", Color(0, 0, 0, 150 * a), Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-                i = i + 1
+                draw.WordBox(6, scrw / 2, (scrh - 20) - (v.pos - 1) * (h + 16), v.txt, "ChatFont", Color(0, 0, 0, 150 * a), Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
             elseif dt > 1 then
                 table.remove(notifications, i)
             end
@@ -75,7 +75,7 @@ if CLIENT then
         end
     end)
 else
-    util.AddNetworkString('Notify')
+    util.AddNetworkString("Notify")
 end
 
 --- Show a notification (bottow center screen popup). OK to call on invalid players (does nothing).
@@ -84,7 +84,7 @@ function Player:Notify(...)
 
     if SERVER then
         if IsValid(self) then
-            net.Start('Notify')
+            net.Start("Notify")
             net.WriteString(st)
             net.Send(self)
         end
