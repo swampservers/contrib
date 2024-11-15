@@ -48,7 +48,7 @@ if CLIENT then
                 ]])
             end
 
-            vpanel:OpenURL("https://alexjones.network/watch")
+            vpanel:OpenURL(key)
         end, function()
             chat.AddText("You need codecs to request this. Press F2.")
 
