@@ -3,7 +3,6 @@ local SERVICE = {}
 SERVICE.Name = "AlexJonesNetwork"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
-
 local rumbleService = theater.GetServiceByClass("rumble")
 
 function SERVICE:GetKey(url)
@@ -25,7 +24,7 @@ if CLIENT then
             vpanel:SetSize(100, 100)
             vpanel:SetAlpha(0)
             vpanel:SetMouseInputEnabled(false)
-            vpanel:SetKeyboardInputEnabled(false) 
+            vpanel:SetKeyboardInputEnabled(false)
 
             timer.Simple(20, function()
                 if IsValid(vpanel) then
