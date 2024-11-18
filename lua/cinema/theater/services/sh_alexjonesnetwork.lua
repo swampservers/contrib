@@ -1,18 +1,19 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local SERVICE = {}
-SERVICE.Name = "AlexJonesNetwork"
-SERVICE.NeedsCodecs = true
-SERVICE.NeedsChromium = true
-local rumbleService = theater.GetServiceByClass("rumble")
+local AJNSERVICE = {}
+AJNSERVICE.Name = "AlexJonesNetwork"
+AJNSERVICE.NeedsCodecs = true
+AJNSERVICE.NeedsChromium = true
 
-function SERVICE:GetKey(url)
+local rumble_service = theater.GetServiceByClass("rumble")
+
+function AJNSERVICE:GetKey(url)
     if string.match(url.encoded, "https://alexjones.network/watch$") then return url.encoded end
 
     return false
 end
 
 if CLIENT then
-    function SERVICE:GetVideoInfoClientside(key, callback)
+    function AJNSERVICE:GetVideoInfoClientside(key, callback)
         local videoInfo = {}
 
         EmbeddedCheckCodecs(function()
@@ -36,7 +37,7 @@ if CLIENT then
 
             function vpanel:OnDocumentReady(url)
                 self:AddFunction("gmod", "onRumbleURL", function(rumbleURL)
-                    rumbleService:GetVideoInfoClientside(rumbleURL, callback)
+                    rumble_service:GetVideoInfoClientside(rumbleURL, callback)
                 end)
 
                 self:QueueJavascript([[
@@ -55,9 +56,9 @@ if CLIENT then
         end)
     end
 
-    function SERVICE:LoadVideo(Video, panel)
-        rumbleService:LoadVideo(Video, panel)
+    function AJNSERVICE:LoadVideo(Video, panel)
+        rumble_service:LoadVideo(Video, panel)
     end
 end
 
-theater.RegisterService('alexjonesnetwork', SERVICE)
+theater.RegisterService('alexjonesnetwork', AJNSERVICE)
