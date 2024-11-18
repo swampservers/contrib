@@ -1,19 +1,19 @@
 ﻿-- This file is subject to copyright - contact swampservers@gmail.com for more information.
-local AJNSERVICE = {}
-AJNSERVICE.Name = "AlexJonesNetwork"
-AJNSERVICE.NeedsCodecs = true
-AJNSERVICE.NeedsChromium = true
+local SERVICE = {}
+SERVICE.Name = "AlexJonesNetwork"
+SERVICE.NeedsCodecs = true
+SERVICE.NeedsChromium = true
 
 local rumble_service = theater.GetServiceByClass("rumble")
 
-function AJNSERVICE:GetKey(url)
+function SERVICE:GetKey(url)
     if string.match(url.encoded, "https://alexjones.network/watch$") then return url.encoded end
 
     return false
 end
 
 if CLIENT then
-    function AJNSERVICE:GetVideoInfoClientside(key, callback)
+    function SERVICE:GetVideoInfoClientside(key, callback)
         local videoInfo = {}
 
         EmbeddedCheckCodecs(function()
@@ -56,9 +56,9 @@ if CLIENT then
         end)
     end
 
-    function AJNSERVICE:LoadVideo(Video, panel)
+    function SERVICE:LoadVideo(Video, panel)
         rumble_service:LoadVideo(Video, panel)
     end
 end
 
-theater.RegisterService('alexjonesnetwork', AJNSERVICE)
+theater.RegisterService('alexjonesnetwork', SERVICE)
