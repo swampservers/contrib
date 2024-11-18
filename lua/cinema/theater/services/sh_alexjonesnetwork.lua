@@ -3,7 +3,7 @@ local SERVICE = {}
 SERVICE.Name = "AlexJonesNetwork"
 SERVICE.NeedsCodecs = true
 SERVICE.NeedsChromium = true
-local rumbleService = theater.GetServiceByClass("rumble")
+local rumble_service = nil
 
 function SERVICE:GetKey(url)
     if string.match(url.encoded, "https://alexjones.network/watch$") then return url.encoded end
@@ -13,7 +13,9 @@ end
 
 if CLIENT then
     function SERVICE:GetVideoInfoClientside(key, callback)
-        local videoInfo = {}
+        if not rumble_service then
+            rumble_service = theater.GetServiceByClass("rumble")
+        end
 
         EmbeddedCheckCodecs(function()
             if vpanel then
@@ -36,7 +38,7 @@ if CLIENT then
 
             function vpanel:OnDocumentReady(url)
                 self:AddFunction("gmod", "onRumbleURL", function(rumbleURL)
-                    rumbleService:GetVideoInfoClientside(rumbleURL, callback)
+                    rumble_service:GetVideoInfoClientside(rumbleURL, callback)
                 end)
 
                 self:QueueJavascript([[
@@ -56,8 +58,12 @@ if CLIENT then
     end
 
     function SERVICE:LoadVideo(Video, panel)
-        rumbleService:LoadVideo(Video, panel)
+        if not rumble_service then
+            rumble_service = theater.GetServiceByClass("rumble")
+        end
+
+        rumble_service:LoadVideo(Video, panel)
     end
 end
 
-theater.RegisterService('alexjonesnetwork', SERVICE)
+theater.RegisterService("alexjonesnetwork", SERVICE)
