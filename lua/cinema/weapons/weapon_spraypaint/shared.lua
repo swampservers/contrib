@@ -167,7 +167,7 @@ function SWEP:GetCurrentDecal()
     local ply = self:GetOwner()
     local decal = ply:GetInfo(self.ConVar)
 
-    --I don't think GetInfo is properly networked
+    -- GetInfo isn't properly networked! Only works for LocalPlayer
     if CLIENT and ply ~= Me then
         decal = self:GetLastDecal()
     end
@@ -210,7 +210,6 @@ function SWEP:GetDecalColor(decal)
     decal = decal or self:GetCurrentDecal()
     if SPRAYPAINT_DECALCOLOR_CACHE[decal] and SPRAYPAINT_DECALSIZE_CACHE[decal] then return SPRAYPAINT_DECALCOLOR_CACHE[decal], SPRAYPAINT_DECALSIZE_CACHE[decal] end
     local mat = Material(SPRAYPAINT_MATLOOKUP[decal] or util.DecalMaterial(decal))
-    local maintex
 
     if mat:GetTexture("$basetexture") then
         maintex = mat:GetTexture("$basetexture")

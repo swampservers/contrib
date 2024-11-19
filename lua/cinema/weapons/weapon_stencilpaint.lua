@@ -64,6 +64,12 @@ SWEP.ConVar = "spraypaint_stencil"
 function SWEP:GetCurrentDecal()
     local ply = self:GetOwner()
     local decal = ply:GetInfo(self.ConVar)
+
+    -- GetInfo isn't properly networked! Only works for LocalPlayer
+    if CLIENT and ply ~= Me then
+        decal = self:GetLastDecal()
+    end
+
     if SPRAYPAINT_STENCILS_WHITELIST[decal] then return decal end
     -- if decal~="" and ply==Me then
     --     net.Start("BanMe")

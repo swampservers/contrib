@@ -3,6 +3,7 @@ local cvar = CreateClientConVar("cinema_hideplayers", 0, true, false, "", 0, 1)
 local undomodelblend = false
 local white = Material("models/debug/debugwhite")
 
+-- TODO(winter): Fix weapons still drawing with this
 hook.Add("PrePlayerDraw", "HidePlayers", function(ply)
     assert(not ply:GetNoDraw())
     -- TODO: or ply:GetNoDraw()?
@@ -31,5 +32,9 @@ hook.Add("PrePlayerDraw", "HidePlayers", function(ply)
                 hook.Remove("PostPlayerDraw", "UndoPlayerBlend")
             end)
         end
+
+        ply.PartiallyTransparent = transhide
+    else
+        ply.PartiallyTransparent = nil
     end
 end)
