@@ -10,9 +10,9 @@ ENT.PointsValue = 1000
 ENT.IsOre = true
 ENT.AdminSpawnable = true
 local PlacementSettings = {}
+-- NOTE: Generally the process will be less efficient if both of these are set to false!
 PlacementSettings.RequireCeiling = false
 PlacementSettings.AllowFloor = false
--- NOTE: Generally the process will be less efficient if both of these are set to false!
 PlacementSettings.CeilingHeight = 192
 
 PlacementSettings.SurfacePropWhitelist = {"dirt", "grass", "gravel", "rock"}
@@ -49,6 +49,7 @@ local function OreOrigin()
     local picks
 
     -- Cache good ore points
+    -- TODO(winter/pyro): This needs to be improved so it stops spawning inside of displacements
     if ORE_CACHED_ORIGINPOINTS == nil then
         local origins = {}
 
