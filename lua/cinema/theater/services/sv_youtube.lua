@@ -33,6 +33,11 @@ sv_GetVideoInfo.youtube = function(self, key, ply, onSuccess, onFailure)
             info.data = "adult"
         end
 
+        -- No accountless workaround for age-restricted videos therefore allowing them to be queued is pointless https://github.com/yt-dlp/yt-dlp/issues/11296#issuecomment-2425188728
+        if table.Lookup(item, "contentDetails.contentRating.ytRating") == "ytAgeRestricted" then
+            return onFailure('This video is age-restricted and cannot be viewed.')
+        end
+
         if not table.Lookup(item, "status.embeddable") then
             info.data = (info.data and "," or "") .. "noembed"
         end
