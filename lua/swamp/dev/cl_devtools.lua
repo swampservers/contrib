@@ -19,7 +19,6 @@ local allowed = {
     ["STEAM_0:0:183303619"] = true, -- pura
     ["STEAM_0:0:40298592"] = true, -- royal
     ["STEAM_0:0:24559428"] = true, -- narshal
-    ["STEAM_0:0:629179167"] = true, -- madoura
     
 }
 
