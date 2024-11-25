@@ -22,7 +22,6 @@ SERVICE.ServiceJS = [[
         if (videoElem != null) {
             // Stop it from playing sound initially!
             videoElem.volume = 0;
-            videoElem.muted = true;
 
             if (videoElem.readyState > 0) {
                 videoElem.play();
@@ -87,6 +86,11 @@ if CLIENT then
             panel:QueueJavascript(self.ServiceJS)
         end
         -- TODO: Hook into Swamp's mature warning system to close Twitch's (F8 or whatever)
+    end
+
+    function SERVICE:SetVolume(vol, panel)
+        local str = string.format("localStorage.setItem('volume','%s'); document.querySelector('video').volume = %s;", vol * 0.01, vol * 0.01)
+        panel:QueueJavascript(str)
     end
 end
 
