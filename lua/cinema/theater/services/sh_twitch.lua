@@ -7,6 +7,16 @@ SERVICE.ServiceJS = [[
     // TODO(winter): Restore quality selection
     //var quality = window.innerHeight < 700 ? "medium" : "chunked";
 
+    // Close the Mature Content warning (if present)
+    // We use Swamp's global one instead
+    var matureAcceptButtonInterval = setInterval(function() {
+        const matureAcceptButton = document.querySelector('[data-a-target="content-classification-gate-overlay-start-watching-button"]');
+        if (matureAcceptButton != null) {
+            matureAcceptButton.click();
+            clearInterval(matureAcceptButtonInterval);
+        }
+    }, 10);
+
     // Close the Muted Segments warning (if present)
     var mutedSegmentsButtonInterval = setInterval(function() {
         const mutedSegmentsButton = document.querySelector('[data-test-selector="muted-segments-alert-overlay-presentation__dismiss-button"]');
@@ -89,7 +99,6 @@ if CLIENT then
             panel:QueueJavascript(string.format("maxoffset = 5; islive = %s;", islive))
             panel:QueueJavascript(self.ServiceJS)
         end
-        -- TODO: Hook into Swamp's mature warning system to close Twitch's (F8 or whatever)
     end
 
     function SERVICE:SetVolume(vol, panel)
