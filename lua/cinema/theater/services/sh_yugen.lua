@@ -91,7 +91,6 @@ if CLIENT then
 
     function SERVICE:LoadVideo(Video, panel)
         panel:EnsureURL(Video:Key())
-        panel:QueueJavascript(string.format("window.location.href = '%s';", string.JavascriptSafe(Video:Data())))
 
         panel.OnDocumentReady = function(_, url)
             if url == Video:Data() then
@@ -102,6 +101,8 @@ if CLIENT then
 
                 panel:QueueJavascript(theater.TheaterJS)
                 panel:QueueJavascript(self.ServiceJS)
+            else
+                panel:QueueJavascript(string.format("window.location.href = '%s';", string.JavascriptSafe(Video:Data())))
             end
         end
     end
