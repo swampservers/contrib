@@ -6,8 +6,19 @@ hook.Add("AcceptInput", "ElevatorSoundsFix", function(ent, name, activator, call
     end
 end)
 
+-- TODO(winter): Remove once this is fixed in the map
+timer.Simple(0, function()
+    local tt_elevator = ents.FindByName("tt_elevator")[1]
+    tt_elevator:SetSaveValue("m_flBlockDamage", 1)
+end)
+
 hook.Add("PlayerShouldTakeDamage", "elevattorfix", function(ply, att)
-    if att:GetClass() == "func_movelinear" and att:GetName() == "tt_elevator" then return false end
+    if att:GetName() == "tt_elevator" then
+        -- Push players out of the way if they're blocking
+        ply:SetVelocity(Vector(0, -128, 0))
+
+        return false
+    end
 end)
 
 hook.Add("FindUseEntity", "ELEVATORBUTTONZ", function(ply, ent)
