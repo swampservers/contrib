@@ -259,7 +259,7 @@ function ENT:DoHit(ply, tr, dmginfo)
     end
 
     if SERVER then
-        self:EmitSound("physics/concrete/concrete_impact_bullet" .. math.random(1, 4) .. ".wav", 80, 100, 1, CHAN_ITEM)
+        self:EmitSound("physics/concrete/concrete_impact_bullet" .. math.random(1, 4) .. ".wav", 65, 100, 1, CHAN_ITEM)
         local tweak_angle = self:GetAngles()
         self.EmbedDistance = self.EmbedDistance or self:BoundingRadius()
         if self.EmbedDistance <= 0 then return end
@@ -288,7 +288,7 @@ function ENT:DoHit(ply, tr, dmginfo)
                 net.Send(ply)
             end
 
-            self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav", 100, 100, 1, CHAN_ITEM)
+            self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav", 75, 100, 1, CHAN_ITEM)
             self:GetPhysicsObject():Wake()
             self:GetPhysicsObject():SetVelocity(self.PlacementNormal:GetNormalized() * 100)
             self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
