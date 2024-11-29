@@ -127,7 +127,9 @@ end
 --     -- end
 --     -- self:SetSkin(bestidx)
 -- end
-function ENT:Draw()
+ENT.RenderGroup = RENDERGROUP_OPAQUE
+
+function ENT:Draw(flags)
     --     local acd = self:GetPos():DistToSqr(EyePos())
     --     local acr = AutoCullBase() * (self:GetModelRadius() or 1)
     --     if acd > acr * 3.5 then return end
@@ -152,7 +154,7 @@ function ENT:Draw()
     --             }))
     --         end
     --     end
-    self:DrawModel()
+    self:DrawModel(flags)
     --     render.SetColorModulation(1, 1, 1)
     --     render.MaterialOverride()
     --     -- local h = self.GetStrength and self:GetStrength()*100 or 100 --self:Health()
