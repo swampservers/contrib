@@ -253,3 +253,17 @@ concommand.Add("model", function()
         print("Ent Class: " .. ent:GetClass() .. "\nEnt Mdl: " .. ent:GetModel())
     end
 end)
+
+concommand.Add("swamp_fix_lighting", function()
+    RunConsoleCommand("r_lightcache_zbuffercache", "0")
+
+    hook.Add("PostRender", "ForceApplyLighting", function()
+        hook.Remove("PostRender", "ForceApplyLighting")
+        render.RedownloadAllLightmaps(true, true)
+
+        hook.Add("PostRender", "ForceApplyLighting", function()
+            hook.Remove("PostRender", "ForceApplyLighting")
+            EnableSwampFPSBoost(SwampFPSBoost:GetBool())
+        end)
+    end)
+end)
