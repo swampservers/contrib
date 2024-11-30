@@ -153,7 +153,7 @@ end
 local function EstimateAngle(bitmask, x1, x2)
     local px1, py1, px2, py2 = GetBBox(bitmask)
     -- Taller than long, probably a knife
-    if py2 - py1 > px2 - px1 then return 0 end
+    if py2 - py1 > px2 - px1 then return 270 end
     local xs, ys = ScrW(), ScrH()
     local linesused = {}
     local slopeweight = {}
