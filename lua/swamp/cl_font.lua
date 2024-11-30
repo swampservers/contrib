@@ -73,6 +73,8 @@ function surface.CreateFont(name, settings)
         end
     end
 
+    -- Fix non-Latin-1 characters
+    settings.extended = true
     -- if (settings.font or ""):StartWith("Plus Jak") then
     -- settings.size = (settings.size or 13)*1.2
     -- end
@@ -134,11 +136,13 @@ local linux_fontnames = {
     ["CircularStd-Bold"] = "CircularStd-Bold.ttf",
     ["CircularStd-Book"] = "CircularStd-Book.ttf",
     ["CircularStd-Medium"] = "CircularStd-Medium.ttf",
+    ["Lato"] = "lato-regular_.ttf",
     --["Marlett"] = "", -- TODO(winter): This is a Windows-only font that we can't redistribute!
     ["Righteous"] = "righteous-regular.ttf",
     ["Roboto"] = "Roboto-Regular.ttf",
 }
 
+--["Segoe Script"] = "", -- TODO(winter): This is a Windows-only font that we can't redistribute!
 -- TODO: add bold and the other shit. parse kvs?
 local function parse_settings(setting_str)
     local stuff = ("_"):Explode(setting_str)

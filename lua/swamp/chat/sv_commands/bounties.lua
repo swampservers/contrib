@@ -75,8 +75,8 @@ function TryAddBounty(ply, targets, amount, locid, locname)
             end
         else
             local filter = locid and WhoIsNear(ply, locid) or WhoSeesChat(NULL, true)
-            filter:NamedBotMessage(ply, " has increased the bounty of everyone", locname and " in " .. locname or "", " by ", Style.rainbow(amount), " points!")
-            sc.log(ply, " set a bounty on everyone", locname and " in " .. locname or "", " for ", amount, " points")
+            filter:NamedBotMessage(ply, " has increased the bounty of ", #targets == #Ents.human and "everyone" or #targets .. " players", locname and " in " .. locname or "", " by ", Style.rainbow(amount), " points!")
+            sc.log(ply, " set a bounty on ", #targets == #Ents.human and "everyone" or #targets .. " players", locname and " in " .. locname or "", " for ", amount, " points")
         end
     end, function()
         if IsValid(ply) then
@@ -154,6 +154,27 @@ RegisterChatCommand({'bountylocation', 'setbountylocation'}, function(ply, arg)
         end
     else
         ply:ChatPrint("[orange]!bountylocation locationname points")
+    end
+end, {
+    global = true,
+    throttle = true
+})
+
+RegisterChatCommand({'bountyactive', 'setbountyactive'}, function(ply, arg)
+    local p = tonumber(arg)
+
+    if p then
+        local players = {}
+
+        for _, human in ipairs(Ents.human) do
+            if not human:IsAFK() then
+                players[#players + 1] = human
+            end
+        end
+
+        TryAddBounty(ply, players, p)
+    else
+        ply:ChatPrint("[orange]!bountyactive points")
     end
 end, {
     global = true,
