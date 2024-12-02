@@ -351,7 +351,7 @@ end
 
 function MakeAutoIcon(p, mode)
     -- print("MAKE",p.mainmodel)
-    SetCrashData("AUTOICON", p.mainmodel, 0.05)
+    if SetCrashData then SetCrashData("AUTOICON", p.mainmodel, 0.05) end
     local mainent = ClientsideModel(p.mainmodel)
     assert(IsValid(mainent))
     local extraents = {}

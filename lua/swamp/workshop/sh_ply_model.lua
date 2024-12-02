@@ -27,7 +27,7 @@ if CLIENT then
         local dmdl, dwsid, dbodygroups = ply:GetDisplayModel()
 
         if dmdl and (dmdl ~= mdl or ply.ForceFixPlayermodel) then
-            if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(Me:GetPos()))) and ModelIsPlayermodel[dmdl] then
+            if (dwsid == nil or require_model(dmdl, dwsid, ply:GetPos():Distance(Me:GetPos()))) and ModelIsPlayermodel and ModelIsPlayermodel[dmdl] then
                 ply.ForceFixPlayermodel = nil
                 ply:SetModel(dmdl)
 
