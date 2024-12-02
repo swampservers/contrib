@@ -192,6 +192,7 @@ function ENT:Initialize()
         self.Entity:SetMoveType(MOVETYPE_NONE)
         self:SetColor(Color(255, 230, 51))
 
+        -- TODO(winter): More ore types with higher values and lower odds
         if math.random(1, 100) == 1 then
             self:SetColor(Color(100, 200, 255))
             self.PointsValue = 10000
