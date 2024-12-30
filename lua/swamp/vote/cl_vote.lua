@@ -3,9 +3,9 @@ concommand.Add("vote", function()
     Vote_ShowMenu()
 end)
 
-concommand.Add("votekick", function()
-    Vote_ShowMenu(true)
-end)
+-- concommand.Add("votekick", function()
+--     Vote_ShowMenu(true)
+-- end)
 
 function Vote_ShowMenu(kick)
     local frame = vgui.Create("DFrame")
@@ -21,8 +21,8 @@ function Vote_ShowMenu(kick)
     local rtab = sheet:AddSheet("Vote", frame1, "icon16/star.png")
     local frame2 = vgui.Create("DPanel", sheet)
     frame2.Paint = function() end
-    local ktab = sheet:AddSheet("Votekick", frame2, "icon16/cross.png")
-    sheet:SetActiveTab((kick and ktab or rtab).Tab)
+    -- local ktab = sheet:AddSheet("Votekick", frame2, "icon16/cross.png")
+    sheet:SetActiveTab(rtab.Tab) --(kick and ktab or rtab).Tab)
     local stuff = {}
     local votekickreason = nil
     local votekickplayer = nil
@@ -88,27 +88,29 @@ function Vote_ShowMenu(kick)
         end
     end
 
-    local plylist = vgui.Create("DListView", frame2)
-    plylist:SetPos(10, 30)
-    plylist:SetSize(195, 170)
-    plylist:SetMultiSelect(false)
-    plylist:AddColumn("Players")
-    local plyz = {}
+    -- local plylist = vgui.Create("DListView", frame2)
+    -- plylist:SetPos(10, 30)
+    -- plylist:SetSize(195, 170)
+    -- plylist:SetMultiSelect(false)
+    -- plylist:AddColumn("Players")
+    -- local plyz = {}
 
-    for k2, v2 in player.Iterator() do
-        table.insert(plyz, {v2:Nick(), v2})
-    end
+    -- for k2, v2 in player.Iterator() do
+    --     table.insert(plyz, {v2:Nick(), v2})
+    -- end
 
-    table.sort(plyz, function(a, b) return a[1]:lower() < b[1]:lower() end)
+    -- table.sort(plyz, function(a, b) return a[1]:lower() < b[1]:lower() end)
 
-    for k2, v2 in ipairs(plyz) do
-        local pn = plylist:AddLine(v2[1])
-        pn.ply = v2[2]
-    end
+    -- for k2, v2 in ipairs(plyz) do
+    --     local pn = plylist:AddLine(v2[1])
+    --     pn.ply = v2[2]
+    -- end
 
-    plylist.OnRowSelected = function(lst, index, pnl)
-        votekickplayer = pnl.ply
-    end
+    -- plylist.OnRowSelected = function(lst, index, pnl)
+    --     votekickplayer = pnl.ply
+    -- end
+
+    frame2:Remove()
 end
 
 function Vote_HideMenu()
