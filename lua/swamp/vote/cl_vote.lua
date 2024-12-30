@@ -6,7 +6,6 @@ end)
 -- concommand.Add("votekick", function()
 --     Vote_ShowMenu(true)
 -- end)
-
 function Vote_ShowMenu(kick)
     local frame = vgui.Create("DFrame")
     frame:SetTitle("Vote Maker")
@@ -94,22 +93,17 @@ function Vote_ShowMenu(kick)
     -- plylist:SetMultiSelect(false)
     -- plylist:AddColumn("Players")
     -- local plyz = {}
-
     -- for k2, v2 in player.Iterator() do
     --     table.insert(plyz, {v2:Nick(), v2})
     -- end
-
     -- table.sort(plyz, function(a, b) return a[1]:lower() < b[1]:lower() end)
-
     -- for k2, v2 in ipairs(plyz) do
     --     local pn = plylist:AddLine(v2[1])
     --     pn.ply = v2[2]
     -- end
-
     -- plylist.OnRowSelected = function(lst, index, pnl)
     --     votekickplayer = pnl.ply
     -- end
-
     frame2:Remove()
 end
 
