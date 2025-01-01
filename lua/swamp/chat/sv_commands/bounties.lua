@@ -28,6 +28,7 @@ function Player:SetBounty(bounty)
     self.NW.bounty = bounty
 end
 
+
 hook.Add("PlayerDeath", "BountyDeath", function(ply, infl, atk)
     local bounty = ply:GetBounty()
 
