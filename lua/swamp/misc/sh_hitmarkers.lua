@@ -76,5 +76,4 @@ hook.Add("PostDrawTranslucentRenderables", "DrawHitMarkers", function(d, s, s3)
         render.DepthRange(0, 1)
     end
 end)
-
 -- hook.Add("HUDDrawScoreBoard", "DrawHitMarkers", function() end) -- local duration = 1 -- local t = SysTime() -- local i = 1 -- while i <= #hitmarkers do --     local marker = hitmarkers[i] --     if marker.t + duration < t then --         table.remove(hitmarkers, i) --     else --         i = i + 1 --         local drift = (t - marker.t) / duration --         local alpha = 1 - drift --         drift = drift + 0.1 --         -- ..marker.dmg.."" --         draw.SimpleText(marker.kill and "KILL " .. marker.dmg or tostring(marker.dmg), Font.Trebuchet24_1000, ScrW() / 2 + drift * 100 * marker.x, ScrH() / 2 + drift * 125, Color(255, 0, 0, 255 * alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER) --     end -- end
