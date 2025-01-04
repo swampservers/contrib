@@ -41,6 +41,10 @@ SWEP.UnscopeOnShoot = true
 SWEP.KickUBase = 3
 SWEP.MoveSpeed = 210 / 250
 SWEP.ScopedSpeedRatio = 0.5
+
+SWEP.CSPrice = 4750
+
+
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed"			"210"

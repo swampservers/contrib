@@ -42,6 +42,9 @@ SWEP.KickUBase = 1
 SWEP.KickUSpray = 1
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
+
+SWEP.CSPrice  = 4200
+SWEP.CSTeam = "CT"
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed"		"210"
