@@ -44,8 +44,7 @@ SWEP.KickLBase = 0.4
 SWEP.KickLSpray = 0.2
 SWEP.KickDance = 1
 SWEP.MoveSpeed = 235 / 250
-
-SWEP.CSPrice  = 3500
+SWEP.CSPrice = 3500
 SWEP.CSTeam = "CT"
 -- SWEP.KickMoving = {1, 0.45, 0.28, 0.04, 4.25, 2.5, 7}
 -- SWEP.KickStanding = {0.625, 0.375, 0.25, 0.0125, 4, 2.25, 9}

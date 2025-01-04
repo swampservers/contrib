@@ -50,8 +50,7 @@ SWEP.KickLSpray = 0.3
 SWEP.BurstFire = 3
 SWEP.BurstFireInterval = 0.1
 SWEP.MoveSpeed = 220 / 250
-
-SWEP.CSPrice  = 2250
+SWEP.CSPrice = 2250
 SWEP.CSTeam = "CT"
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

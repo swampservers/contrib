@@ -40,8 +40,7 @@ SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
 SWEP.SpawnPriceMod = 1.2
-
-SWEP.CSPrice  = 500
+SWEP.CSPrice = 500
 -- SWEP.KickSimple = 2
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {

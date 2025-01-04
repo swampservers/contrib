@@ -41,8 +41,7 @@ SWEP.KickUSpray = 0
 SWEP.KickLBase = 0
 SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 220 / 250
-
-SWEP.CSPrice  = 1700
+SWEP.CSPrice = 1700
 -- CSParseWeaponInfo(SWEP, [[WeaponData
 -- {
 -- 	"MaxPlayerSpeed" 		"220"

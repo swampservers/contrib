@@ -40,10 +40,7 @@ SWEP.KickLSpray = 1
 SWEP.MoveSpeed = 1
 --
 SWEP.SpawnPriceMod = 1.4
-
 SWEP.CSPrice = 650
-
-
 -- SWEP.ShootSound = "Weapon_DEagle.Single"
 -- SWEP.CSSTeam = "ANY" 
 -- CSParseWeaponInfo(SWEP, [[WeaponData

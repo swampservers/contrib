@@ -42,8 +42,7 @@ SWEP.MoveKickMultiplier = 2
 SWEP.MoveSpeed = 1
 --
 SWEP.SpawnPriceMod = 0.8
-
-SWEP.CSPrice  = 1400
+SWEP.CSPrice = 1400
 SWEP.CSTeam = "T"
 -- SWEP.KickMoving = {0.45, 0.3, 0.2, 0.0275, 4, 2.25, 7}
 -- SWEP.KickStanding = {0.3, 0.225, 0.125, 0.02, 3.25, 1.25, 8}
