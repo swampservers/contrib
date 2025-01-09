@@ -51,7 +51,7 @@ end
 
 function SERVICE:GetKey(url)
     if not string.match(url.host, "twitch.tv") then return false end
-    local key = url.host == "clips.twitch.tv" and string.match(url.path, "/(%w+)$") or string.match(url.path, "/clip/([%w%-]+)$") -- Clips
+    local key = url.host == "clips.twitch.tv" and string.match(url.path, "/([%w%-_]+)$") or string.match(url.path, "/clip/([%w%-_]+)$") -- Clips
     local isclip = key ~= nil
     local isvod = false
 
@@ -60,7 +60,7 @@ function SERVICE:GetKey(url)
         isvod = key ~= nil
 
         if not isvod then
-            key = string.match(url.path, "/([%w_%-]+)$") -- Streams
+            key = string.match(url.path, "/([%w%-_]+)$") -- Streams
         end
     end
 
@@ -75,7 +75,7 @@ if CLIENT then
         local isvod = string.match(key, "videos/")
         local isclip = string.match(key, "clips/")
 
-        return "https://" .. (isclip and "clips" or "player") .. ".twitch.tv/" .. (isclip and "embed" or "") .. "?parent=twitch.tv&" .. (isclip and "clip=" or isvod and "video=" or "channel=") .. ((isclip or isvod) and string.Explode("/", key)[2] or key)
+        return "https://" .. (isclip and "clips" or "player") .. ".twitch.tv/" .. (isclip and "embed" or "") .. "?parent=twitch.tv&autoplay=true&" .. (isclip and "clip=" or isvod and "video=" or "channel=") .. ((isclip or isvod) and string.Explode("/", key)[2] or key)
     end
 
     function SERVICE:LoadVideo(Video, panel)
