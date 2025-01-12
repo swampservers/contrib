@@ -2,7 +2,7 @@
 -- The rest of this file is in includes/util
 -- possibly would it be useful to save the current hook name?
 function CrashDataScope(callback, data)
-    if !CRASH_DATA then return end
+    if not CRASH_DATA then return end
     local lastscope, lastdata = CRASH_DATA.scope, CRASH_DATA.scope_data
     data = data or {}
 
