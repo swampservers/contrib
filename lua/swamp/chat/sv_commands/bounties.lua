@@ -20,10 +20,12 @@ hook.Add("PlayerInitialSpawn", "LoadBounty", function(ply)
 end)
 
 function Player:GetBounty()
+    self.NW = self.NW or {}
     return self.NW.bounty or 0
 end
 
 function Player:SetBounty(bounty)
+    self.NW = self.NW or {}
     self:SetPData("bounty", bounty)
     self.NW.bounty = bounty
 end
